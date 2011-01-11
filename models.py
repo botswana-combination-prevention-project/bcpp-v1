@@ -2,7 +2,7 @@ from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django.contrib import admin
-from common.fields import HostnameCreationField, HostnameModificationField, MyUUIDField
+from bhp_fields.fields import HostnameCreationField, HostnameModificationField, MyUUIDField
 
 
 class MyBasicModel(TimeStampedModel):
@@ -56,6 +56,9 @@ class MyBasicCodeListModel(MyBasicListModel):
                 
     def __unicode__(self):
         return "%s: %s" % (self.code, self.name)
+
+    class Meta:
+        abstract = True
 
 
 # Admin Models
