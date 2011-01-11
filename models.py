@@ -61,6 +61,5 @@ class MyBasicCodeListModel(MyBasicListModel):
         abstract = True
 
 
-# Admin Models
-class MyAutoCompleteAdminModel(ForeignKeyAutocompleteAdmin):
-    pass
+#class MyAutoCompleteAdminModel(ForeignKeyAutocompleteAdmin):
+#    pass
