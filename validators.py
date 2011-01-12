@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 from django.core.exceptions import ValidationError
+from bhp_study_variables.models import Variable
 
 def dob_not_future (value):
     now  = date.today()
@@ -22,8 +23,16 @@ def date_not_future (value):
     if value > now:
         raise ValidationError(u'Date cannot be a future date. You entered %s' % (value,))
 
-#def time_not_past (value):
-##    now  = date.today()
-#    if now == value :
-#        raise ValidationError(u'Date cannot be a future date. You entered %s.' % value)
+def date_not_before_study_start (value):
+    vars = Variable.Objects.all()
+    started  = vars.study_start_dateime
+    protocol_number = vars.protocol_number
+    if value < started:
+        raise ValidationError(u'Date cannot be before the study started. %s started on %s. You entered %s.' % (protocol_number, started, value,))
 
+def datetime_not_before_study_start (value):
+    vars = Variable.Objects.all()
+    started  = vars.study_start_dateime
+    protocol_number = vars.protocol_number
+    if value < started:
+        raise ValidationError(u'Date and time cannot be before the study started. %s started on %s. You entered %s.' % (protocol_number, started, value,))
