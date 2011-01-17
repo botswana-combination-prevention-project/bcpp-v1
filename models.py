@@ -15,6 +15,15 @@ class MyCodeList (MyBasicModel):
         abstract=True
 
 #dx and ssx        
+
+class WhoClinicalStagingDxAdult(MyCodeList):
+    list_ref = models.CharField("List Reference",
+        max_length=35)    
+
+class WhoClinicalStagingDxPediatric(MyCodeList):
+    list_ref = models.CharField("List Reference",
+        max_length=35)    
+
 class DiagnosisCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
