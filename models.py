@@ -2,7 +2,9 @@ from django.db import models
 from bhp_basic_models.models import MyBasicModel, MyBasicUuidModel, MyBasicListModel
 from bhp_validators.validators import datetime_not_future
 from bhp_validators.validators import datetime_not_before_study_start
-from bhp_consent_models.models import SubjectConsent
+
+# modify to point to your app consent model
+from mpepu.models.consent import SubjectConsent
 
 class Panel(MyBasicModel):
     name = models.CharField("Panel Name", max_length=25)
