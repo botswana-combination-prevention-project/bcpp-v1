@@ -23,6 +23,17 @@ def date_not_future (value):
     if value > now:
         raise ValidationError(u'Date cannot be a future date. You entered %s' % (value,))
 
+def datetime_is_future (value):
+    now  = date.today()
+    if value < now:
+        raise ValidationError(u'Date and time must be a future date and time. You entered %s' % (value,))
+
+def datetime_is_after_consent (value):
+    """ not working..."""
+    now  = value
+    if value != now:
+        raise ValidationError(u'Date and time cannot be prior to consent date. You entered %s' % (value,))
+
 def date_not_before_study_start (value):
     dte = Configuration.objects.all()[0]
     started  = dte.study_start_datetime
