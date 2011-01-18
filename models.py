@@ -1,0 +1,91 @@
+from django.db import models
+from bhp_basic_models.models import MyBasicModel, MyBasicUuidModel, MyBasicListModel
+from bhp_validators.validators import datetime_not_future
+from bhp_validators.validators import datetime_not_before_study_start
+from bhp_consent_models.models import SubjectConsent
+
+class Panel(MyBasicModel):
+    name = models.CharField("Panel Name", max_length=25)
+    comment = models.CharField("Comment", max_length=250, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Test(MyBasicModel):
+    test_code = models.CharField("Univeral Test ID", max_length=10, unique=True)
+    test_name = models.CharField("UTestID Description", max_length=25)
+    comment = models.CharField("Comment", max_length=250, blank=True)
+    panel = models.ForeignKey(Panel)
+
+    def __unicode__(self):
+        return "%s: %s" % (self.test_code,self.test_name)
+
+
+class LabAliquotType(MyBasicListModel):
+    def __unicode__(self):
+        return "%s: %s" % ( self.short_name.upper() ,self.name)
+
+    class Meta:
+        ordering = ["short_name"]
+        
+class LabAliquotCondition(MyBasicListModel):
+    def __unicode__(self):
+        return "%s: %s" % ( self.short_name.upper() ,self.name)
+    class Meta:
+        ordering = ["display_index"]
+
+class LabAliquot (MyBasicUuidModel):
+    aliquot_identifier = models.CharField(
+        verbose_name='Aliquot Identifier', 
+        max_length=25, 
+        unique=True, 
+        help_text="Aliquot identifier", 
+        editable=False
+        )
+    id_int = models.IntegerField(
+        editable=False
+        )
+    id_seed = models.IntegerField(
+        editable=False
+        )
+    lab_aliquot_type = models.ForeignKey(LabAliquotType,
+        verbose_name="Aliquot Type",
+        )
+    aliquot_volume = models.DecimalField("Volume in mL / Spots",
+        max_digits=10,decimal_places=2
+        )
+    lab_aliquot_condition = models.ForeignKey(LabAliquotCondition,
+        verbose_name="Aliquot Condition",
+        )
+    
+    def __unicode__(self):
+        return self.aliquot_identifier
+
+    #def get_absolute_url(self):
+    #    return "/mpepu/labaliquot/%s/" % self.id
+        
+class LabReceive (MyBasicUuidModel):
+    lab_aliquot = models.OneToOneField(LabAliquot)
+    datetime_received = models.DateTimeField("Date and time received",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future,]
+            )
+    subject_consent = models.ForeignKey(SubjectConsent,
+        verbose_name="Subject",
+        )
+    datetime_drawn = models.DateTimeField("Date and time drawn",
+            validators=[
+            datetime_not_before_study_start,
+            datetime_not_future,]
+            )
+
+    def __unicode__(self):
+        return unicode(self.lab_aliquot)
+
+    #def get_absolute_url(self):
+    #    return "//labreceive/%s/" % self.id
+
+    
+
