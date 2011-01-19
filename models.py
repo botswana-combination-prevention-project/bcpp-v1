@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
-from bhp_basic_models.models import MyBasicUuidModel
+from bhp_fields.fields import MyUUIDField
+from bhp_basic_models.models import MyBasicUuidModel, MyBasicModel
 from bhp_choices.choices import GENDER, YES_NO, DOB_ESTIMATE
 from bhp_validators.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start
 
@@ -39,7 +40,7 @@ class ConsentModel(MyBasicUuidModel):
         max_length=25, 
         unique=True, 
         help_text='Subject ID from barcode', 
-        editable=False)
+        )
     first_name = models.CharField(
         verbose_name='First name', 
         max_length=250, 
@@ -132,14 +133,15 @@ class ConsentedSubjectModel(MyBasicUuidModel):
         abstract = True 
 
 
-class SubjectIdentifierAuditTrail(MyBasicUuidModel):
+class SubjectIdentifierAuditTrail(MyBasicModel):
     """
     A table to track every attempt to allocate a subject identifier
-    to a consented subject. If a subject consent is deleted
+    to a consented subject 'by this device'. If a subject consent is deleted
     the record in this table remains. So this is not a master list of
     valid identifiers. 
     See also AllocateSubjectIdentifier()
     """
+    subject_consent_id = MyUUIDField()
     subject_identifier = models.CharField(max_length=25)
     first_name = models.CharField(max_length=250) 
     initials = models.CharField(max_length=3)

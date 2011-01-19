@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_admin_models.models import MyModelAdmin, MyStackedInline
-from bhp_consent_models.models import SubjectIdentifierAuditTrail
+from bhp_consent.models import SubjectIdentifierAuditTrail
 
 class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
     list_display = (
