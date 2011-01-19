@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 from django.core.exceptions import ValidationError
-from bhp_variables.models import Configuration
+from bhp_variables.models import StudySpecific
 
 def dob_not_future (value):
     now  = date.today()
@@ -42,14 +42,14 @@ def datetime_is_after_consent (value):
         raise ValidationError(u'Date and time cannot be prior to consent date. You entered %s' % (value,))
 
 def date_not_before_study_start (value):
-    dte = Configuration.objects.all()[0]
+    dte = StudySpecific.objects.all()[0]
     started  = dte.study_start_datetime
     protocol_number = dte.protocol_number
     if value < started:
         raise ValidationError(u'Date cannot be before the study started. %s started on %s. You entered %s.' % (protocol_number, started, value,))
 
 def datetime_not_before_study_start (value):
-    dte = Configuration.objects.all()[0]
+    dte = StudySpecific.objects.all()[0]
     started  = dte.study_start_datetime
     protocol_number = dte.protocol_number
     if value < started:
