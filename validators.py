@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 from django.core.exceptions import ValidationError
-from bhp_study_variables.models import Configuration
+from bhp_variables.models import Configuration
 
 def dob_not_future (value):
     now  = date.today()
