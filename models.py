@@ -23,6 +23,10 @@ class StudySpecific (MyBasicModel):
         blank=True,
         help_text="Usually the numeric part of protocol_number. E.g. for BHP056 use '056'"
         )
+    subject_identifier_modulus = models.IntegerField("Subject Identifier modulus",
+        help_text="For the check digit. Use 7 for single digit, 77 for double digit, etc"
+        )
+
     device_id = models.IntegerField("device id",
         help_text="a numeric ID between 10-99 to be part of an identifier that represents the server that allocates an identifier",
         validators = [
