@@ -62,3 +62,12 @@ def eligible_if_yes (value):
 def eligible_if_no (value):        
     if value != 'No':
         raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')        
+        
+def eligible_if_female (value):        
+    if value != 'F':
+        raise ValidationError('If gender not Female, Participant is NOT ELIGIBLE and registration cannot continue.')
+
+def eligible_if_male (value):        
+    if value != 'M':
+        raise ValidationError('If gender not Male, Participant is NOT ELIGIBLE and registration cannot continue.')
+        
