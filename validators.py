@@ -71,3 +71,7 @@ def eligible_if_male (value):
     if value != 'M':
         raise ValidationError('If gender not Male, Participant is NOT ELIGIBLE and registration cannot continue.')
         
+def eligible_if_negative (value):        
+    if value != 'NEG':
+        raise ValidationError('Participant must be HIV Negative. Participant is NOT ELIGIBLE and registration cannot continue.')
+        
