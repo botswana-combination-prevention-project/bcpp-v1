@@ -93,7 +93,7 @@ class ConsentModel(MyBasicUuidModel):
     is_dob_estimated = models.CharField(
         max_length=25,
         choices=DOB_ESTIMATE,
-        verbose_name="Does the subject know their exact Date of birth?",
+        verbose_name="Is the subject's date of birth estimated?",
         help_text="If the subject does not know their exact date of birth, please indicate which part of the date of birth was estimated.",
         )
     comment = models.CharField("Comment", 
