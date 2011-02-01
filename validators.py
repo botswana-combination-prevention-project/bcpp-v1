@@ -30,6 +30,20 @@ def dob_gt_eq_18 (value):
     if value > now - age_in_days:
         raise ValidationError(u'Participant must be 18yrs or older. Date of birth suggests otherwise. You entered %s ' % (value))
 
+def dob_gt_eq (value, age_in_years):
+    now  = date.today()
+    day_years = 365*age_in_years
+    age_in_days = timedelta(days=day_years)
+    if value => now - age_in_days:
+        raise ValidationError(u'Participant must be %syrs or older. Date of birth suggests otherwise. You entered %s ' % (age_in_years, value))
+
+def dob_lt_eq (value, age_in_years):
+    now  = date.today()
+    day_years = 365*age_in_years
+    age_in_days = timedelta(days=day_years)
+    if value <= now - age_in_days:
+        raise ValidationError(u'Participant must be %syrs or younger. Date of birth suggests otherwise. You entered %s ' % (age_in_years, value))
+
 def datetime_is_future (value):
     now  = datetime.today()
     if value < now:
