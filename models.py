@@ -4,7 +4,7 @@ from bhp_validators.validators import datetime_not_future
 from bhp_validators.validators import datetime_not_before_study_start
 
 # modify to point to your app consent model
-from cancer.models.consent import SubjectConsent
+from mochudi.models.subject_consent import SubjectConsent
 
 class Panel(MyBasicModel):
     name = models.CharField("Panel Name", max_length=25)
@@ -67,16 +67,27 @@ class LabAliquot (MyBasicUuidModel):
     #def get_absolute_url(self):
     #    return "/mpepu/labaliquot/%s/" % self.id
         
-class LabReceive (MyBasicUuidModel):
+         
+""" 
+    Lab receiving table.
+    Create a LabReceive model in your app that inheret from this
+    Add the patient key field, for example
+    
+    from bhp_lab.models import LabReceiveModel
+    class LabReceive(LabReceiveModel):
+        subject_consent = models.ForeignKey(SubjectConsent,
+        verbose_name="Subject",
+        )
+"""
+    
+            
+class LabReceiveModel (MyBasicUuidModel):
     lab_aliquot = models.OneToOneField(LabAliquot)
     datetime_received = models.DateTimeField("Date and time received",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future,]
             )
-    subject_consent = models.ForeignKey(SubjectConsent,
-        verbose_name="Subject",
-        )
     datetime_drawn = models.DateTimeField("Date and time drawn",
             validators=[
             datetime_not_before_study_start,
@@ -88,6 +99,8 @@ class LabReceive (MyBasicUuidModel):
 
     #def get_absolute_url(self):
     #    return "//labreceive/%s/" % self.id
+    class Meta:
+        abstract=True
 
     
 
