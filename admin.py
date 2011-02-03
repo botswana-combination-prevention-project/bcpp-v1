@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_admin_models.models import MyModelAdmin, MyStackedInline
-from models import Panel, Test, LabAliquot, LabReceive, LabAliquotType, LabAliquotCondition
+from models import Panel, Test, LabAliquot, LabAliquotType, LabAliquotCondition
 
 class TestInline(admin.TabularInline):
     model = Test
@@ -43,6 +43,8 @@ class LabAliquotAdmin(MyModelAdmin):
     readonly_fields = ('aliquot_identifier',)        
 admin.site.register(LabAliquot, LabAliquotAdmin)    
 
+#unregistered admin_models
+
 class LabReceiveAdmin(MyModelAdmin):
     def get_readonly_fields(self, request, obj = None):
         if obj: #In edit mode
@@ -56,4 +58,4 @@ class LabReceiveAdmin(MyModelAdmin):
         return super(LabReceiveAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
             
     list_display = ('lab_aliquot', 'subject_consent', 'datetime_drawn', 'datetime_received')        
-admin.site.register(LabReceive, LabReceiveAdmin)    
+#admin.site.register(LabReceive, LabReceiveAdmin)    
