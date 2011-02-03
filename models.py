@@ -4,7 +4,7 @@ from bhp_validators.validators import datetime_not_future
 from bhp_validators.validators import datetime_not_before_study_start
 
 # modify to point to your app consent model
-from mpepu.models.consent import SubjectConsent
+from cancer.models.consent import SubjectConsent
 
 class Panel(MyBasicModel):
     name = models.CharField("Panel Name", max_length=25)
