@@ -15,7 +15,7 @@ class ConsentModel(MyBasicUuidModel):
     
     That is, you would add:
       
-    class SubjectConsent(MyConsentModel):
+    class SubjectConsent(ConsentModel):
         household_structure_member = models.OneToOneField(HouseholdStructureMember)
         class Meta:
             app_label = 'mochudi'
