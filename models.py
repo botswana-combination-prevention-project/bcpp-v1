@@ -3,9 +3,6 @@ from bhp_basic_models.models import MyBasicModel, MyBasicUuidModel, MyBasicListM
 from bhp_validators.validators import datetime_not_future
 from bhp_validators.validators import datetime_not_before_study_start
 
-# modify to point to your app consent model
-from mochudi.models.subject_consent import SubjectConsent
-
 class Panel(MyBasicModel):
     name = models.CharField("Panel Name", max_length=25)
     comment = models.CharField("Comment", max_length=250, blank=True)
