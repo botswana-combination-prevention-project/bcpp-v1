@@ -1,14 +1,16 @@
-import re
 from datetime import datetime, date, timedelta
 from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
+from common import TelephoneNumber
+
+
 
 def BWCellNumber(value):
-    str_value = "%s" % (value)
-    p = re.compile('^[7]{1}[123456]{1}[0-9]{6}$')
-    if p.match(str_value):
-        raise ValidationError(u'Invalid cell number. You entered %s.' % value)
+    TelephoneNumber(value, '^[7]{1}[123456]{1}[0-9]{6}$', 'cell')
     
+def BWTelephoneNumber(value):
+    TelephoneNumber(value, '^[2-8]{1}[0-9]{6}$', 'telephone')
+
 def dob_not_future (value):
     now  = date.today()
     if now < value :
