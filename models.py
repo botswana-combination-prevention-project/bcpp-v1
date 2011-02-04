@@ -108,7 +108,7 @@ class LabOrder(MyBasicUuidModel):
 class LabResult(MyBasicUuidModel):
     lab_order = models.ForeignKey(LabOrder)
 
-class LabResultItems(MyBasicUuidModel):
+class LabResultItem(MyBasicUuidModel):
     lab_result = models.ForeignKey(LabResult)
     
 

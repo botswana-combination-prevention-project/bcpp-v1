@@ -1,16 +1,32 @@
 from django.contrib import admin
 from bhp_admin_models.models import MyModelAdmin, MyStackedInline
 from models import Panel, Test, LabAliquot, LabAliquotType, LabAliquotCondition
+from models import LabResult, LabOrder, LabResultItem
+
 
 class TestInline(admin.TabularInline):
     model = Test
     extra = 5
    
+
+
 class PanelAdmin(MyModelAdmin):
     inlines = [TestInline]
     list_display = ('name',)
-
 admin.site.register(Panel, PanelAdmin)
+
+class LabResultAdmin(MyModelAdmin):
+    pass
+admin.site.register(LabResult, LabResultAdmin)
+
+class LabResultItemAdmin(MyModelAdmin):
+    pass
+admin.site.register(LabResultItem, LabResultItemAdmin)
+
+class LabOrderAdmin(MyModelAdmin):
+    pass
+admin.site.register(LabOrder, LabOrderAdmin)
+
 
 class LabAliquotTypeAdmin(MyModelAdmin):
     list_display = ('display_index', 'name', 'short_name', 'field_name', 'created', 'modified')
