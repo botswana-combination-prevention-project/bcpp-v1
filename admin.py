@@ -2,13 +2,11 @@ from django.contrib import admin
 from bhp_admin_models.models import MyModelAdmin, MyStackedInline
 from models import Panel, Test, LabAliquot, LabAliquotType, LabAliquotCondition
 from models import LabResult, LabOrder, LabResultItem
-from view import AllocateAliquotIdentifier
+from views import AllocateAliquotIdentifier
 
 class TestInline(admin.TabularInline):
     model = Test
     extra = 5
-   
-
 
 class PanelAdmin(MyModelAdmin):
     inlines = [TestInline]
@@ -26,7 +24,6 @@ admin.site.register(LabResultItem, LabResultItemAdmin)
 class LabOrderAdmin(MyModelAdmin):
     pass
 admin.site.register(LabOrder, LabOrderAdmin)
-
 
 class LabAliquotTypeAdmin(MyModelAdmin):
     list_display = ('display_index', 'name', 'short_name', 'field_name', 'created', 'modified')

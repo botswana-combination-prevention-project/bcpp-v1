@@ -1,4 +1,5 @@
 from models import LabAliquot
+from local_settings import ALIQUOT_SEED
 
 def AllocateAliquotIdentifier(user, lab_aliquot_type): 
 
