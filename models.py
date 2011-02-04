@@ -35,6 +35,8 @@ class LabAliquotCondition(MyBasicListModel):
         ordering = ["display_index"]
 
 
+class LabOrder(MyBasicUuidModel):
+    lab_aliquot = models.ForeignKey(LabAliquot)    
 
 class LabResult(MyBasicUuidModel):
     lab_order = models.ForeignKey(LabOrder)
@@ -42,8 +44,6 @@ class LabResult(MyBasicUuidModel):
 class LabResultItems(MyBasicUuidModel):
     lab_result = models.ForeignKey(LabResult)
 
-class LabOrder(MyBasicUuidModel):
-    lab_aliquot = models.ForeignKey(LabAliquot)    
 
 class LabAliquot (MyBasicUuidModel):
     aliquot_identifier = models.CharField(
