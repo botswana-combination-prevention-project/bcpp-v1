@@ -34,6 +34,17 @@ class LabAliquotCondition(MyBasicListModel):
     class Meta:
         ordering = ["display_index"]
 
+
+
+class LabResult(MyBasicUuidModel):
+    lab_order = models.ForeignKey(LabOrder)
+
+class LabResultItems(MyBasicUuidModel):
+    lab_result = models.ForeignKey(LabResult)
+
+class LabOrder(MyBasicUuidModel):
+    lab_aliquot = models.ForeignKey(LabAliquot)    
+
 class LabAliquot (MyBasicUuidModel):
     aliquot_identifier = models.CharField(
         verbose_name='Aliquot Identifier', 
@@ -99,12 +110,6 @@ class LabReceiveModel (MyBasicUuidModel):
     class Meta:
         abstract=True
 
-class LabOrder(MyBasicUuidModel):
-    lab_aliquot = models.ForeignKey(LabAliquot)    
     
-class LabResult(MyBasicUuidModel):
-    lab_order = models.ForeignKey(LabResult)
 
-class LabResultItems(MyBasicUuidModel):
-    lab_result = models.ForeignKey(LabResult)
 
