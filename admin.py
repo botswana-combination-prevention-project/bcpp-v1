@@ -2,7 +2,7 @@ from django.contrib import admin
 from bhp_admin_models.models import MyModelAdmin, MyStackedInline
 from models import Panel, Test, LabAliquot, LabAliquotType, LabAliquotCondition
 from models import LabResult, LabOrder, LabResultItem
-
+from view import AllocateAliquotIdentifier
 
 class TestInline(admin.TabularInline):
     model = Test
