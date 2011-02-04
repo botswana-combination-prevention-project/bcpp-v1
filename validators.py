@@ -4,8 +4,10 @@ from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
 
 def BWCellNumber(value):
-    if re.match(value, '^[7]{1}[123456]{1}[0-9]{6}$'):
-        raise ValidationError(u'Invalid cell number. You entered %s.' % value)
+    str_value = "%s" % (value)
+    #p = re.compile('^[7]{1}[123456]{1}[0-9]{6}$')
+    #@if p.match(str_value):
+    #    raise ValidationError(u'Invalid cell number. You entered %s.' % value)
     
 def dob_not_future (value):
     now  = date.today()
