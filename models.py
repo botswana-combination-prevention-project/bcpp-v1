@@ -21,14 +21,14 @@ class Test(MyBasicModel):
         return "%s: %s" % (self.test_code,self.test_name)
 
 
-class LabAliquotType(MyBasicListModel):
+class AliquotType(MyBasicListModel):
     def __unicode__(self):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
 
     class Meta:
         ordering = ["short_name"]
         
-class LabAliquotCondition(MyBasicListModel):
+class AliquotCondition(MyBasicListModel):
     def __unicode__(self):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
     class Meta:
@@ -37,7 +37,7 @@ class LabAliquotCondition(MyBasicListModel):
 
 
 
-class LabAliquot (MyBasicUuidModel):
+class Aliquot (MyBasicUuidModel):
     aliquot_identifier = models.CharField(
         verbose_name='Aliquot Identifier', 
         max_length=25, 
@@ -51,13 +51,13 @@ class LabAliquot (MyBasicUuidModel):
     id_seed = models.IntegerField(
         editable=False
         )
-    lab_aliquot_type = models.ForeignKey(LabAliquotType,
+    aliquot_type = models.ForeignKey(AliquotType,
         verbose_name="Aliquot Type",
         )
     aliquot_volume = models.DecimalField("Volume in mL / Spots",
         max_digits=10,decimal_places=2
         )
-    lab_aliquot_condition = models.ForeignKey(LabAliquotCondition,
+    aliquot_condition = models.ForeignKey(AliquotCondition,
         verbose_name="Aliquot Condition",
         )
     
@@ -73,16 +73,16 @@ class LabAliquot (MyBasicUuidModel):
     Create a LabReceive model in your app that inheret from this
     Add the patient key field, for example
     
-    from bhp_lab.models import LabReceiveModel
-    class LabReceive(LabReceiveModel):
+    from bhp_lab.models import ReceiveModel
+    class Receive(ReceiveModel):
         subject_consent = models.ForeignKey(SubjectConsent,
         verbose_name="Subject",
         )
 """
     
             
-class LabReceiveModel (MyBasicUuidModel):
-    lab_aliquot = models.OneToOneField(LabAliquot)
+class ReceiveModel (MyBasicUuidModel):
+    aliquot = models.OneToOneField(Aliquot)
     datetime_received = models.DateTimeField("Date and time received",
         validators=[
             datetime_not_before_study_start,
@@ -102,14 +102,14 @@ class LabReceiveModel (MyBasicUuidModel):
     class Meta:
         abstract=True
 
-class LabOrder(MyBasicUuidModel):
-    lab_aliquot = models.ForeignKey(LabAliquot)    
+class Order(MyBasicUuidModel):
+    aliquot = models.ForeignKey(Aliquot)    
 
-class LabResult(MyBasicUuidModel):
-    lab_order = models.ForeignKey(LabOrder)
+class Result(MyBasicUuidModel):
+    order = models.ForeignKey(Order)
 
-class LabResultItem(MyBasicUuidModel):
-    lab_result = models.ForeignKey(LabResult)
+class ResultItem(MyBasicUuidModel):
+    result = models.ForeignKey(Result)
     
 
 

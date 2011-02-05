@@ -1,10 +1,10 @@
-from models import LabAliquot
+from models import Aliquot
 from local_settings import ALIQUOT_SEED
 
-def AllocateAliquotIdentifier(user, lab_aliquot_type): 
+def AllocateAliquotIdentifier(user, aliquot_type): 
 
     #get id in reverse order and select the top 1 int
-    aliquot = LabAliquot.objects.order_by('-id_int')
+    aliquot = Aliquot.objects.order_by('-id_int')
     if aliquot.count() > 0:
         seed = aliquot[0].id_seed+1
     else: 
@@ -27,9 +27,9 @@ def AllocateAliquotIdentifier(user, lab_aliquot_type):
     aliquot_identifier['id_seed'] = seed
     aliquot_identifier['id_int'] = id_int
     
-    if lab_aliquot_type < 10:
-        lab_aliquot_type = "%s%s" % ('0', lab_aliquot_type)
+    if aliquot_type < 10:
+        aliquot_type = "%s%s" % ('0', aliquot_type)
     
-    aliquot_identifier['id'] = "%s%s%s%s" % (aliquot_identifier['id'], '0000', lab_aliquot_type, '01')
+    aliquot_identifier['id'] = "%s%s%s%s" % (aliquot_identifier['id'], '0000', aliquot_type, '01')
     
     return aliquot_identifier
