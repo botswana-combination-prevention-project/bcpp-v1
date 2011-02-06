@@ -9,6 +9,7 @@ admin.site.register(VisitTrackingVisitReason)
 
 class VisitTrackingReportAdmin(MyModelAdmin):
     fields = (
+        'registered_subject',
         'appointment',
         'visit_datetime',
         'info_source',
@@ -18,6 +19,7 @@ class VisitTrackingReportAdmin(MyModelAdmin):
         'next_scheduled_visit_datetime',
     )
 admin.site.register(VisitTrackingReport, VisitTrackingReportAdmin)
+
 
 class AppointmentAdmin(MyModelAdmin):
     fields = (

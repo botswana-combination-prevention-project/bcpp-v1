@@ -57,6 +57,8 @@ class VisitDefinition(MyBasicUuidModel):
     An appointment covers ONE VisitTracking record. 
     So the user must make an appointment before tracking the visit.
     
+    Subject must be consented before making an appointment
+    
 """    
 class Appointment (MyBasicUuidModel):
 
