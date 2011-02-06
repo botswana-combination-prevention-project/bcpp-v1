@@ -100,7 +100,8 @@ class RegisteredSubject (MyBasicUuidModel):
         choices=REGISTRATION_STATUS,
         )
     
-
+    def __unicode__ (self):
+        return "%s %s" % (self.subject_identifier, self.registration_status)
 
 
 class OffStudyReason (MyBasicListModel):
@@ -155,7 +156,7 @@ class DeathReasonHospitalized (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
         
-class Death(MyBasicListModel):
+class DeathForm(MyBasicUuidModel):
     
     register_subject = models.OneToOneField(RegisteredSubject)
     
