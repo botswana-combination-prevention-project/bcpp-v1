@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib import admin
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
-from bhp_fields.fields import HostnameCreationField, HostnameModificationField, MyUUIDField
+from fields import HostnameCreationField, HostnameModificationField, MyUUIDField
 
 
 class MyBasicModel(TimeStampedModel):

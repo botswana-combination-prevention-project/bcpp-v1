@@ -3,8 +3,6 @@ import re
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
-from common import TelephoneNumber
-
 
 def TelephoneNumber(value, pattern, word):
     str_value = "%s" % (value)
