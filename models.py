@@ -3,7 +3,9 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator, Regex
 from bhp_common.fields import MyUUIDField
 from bhp_common.models import MyBasicUuidModel, MyBasicModel
 from bhp_common.choices import GENDER, YES_NO, DOB_ESTIMATE
+from bhp_common.fields import OtherCharField
 from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start, dob_gt_eq_18
+from bhp_common.validators import BWCellNumber, BWTelephoneNumber
 from choices import SITE_IDENTIFIERS
 
 class ConsentModel(MyBasicUuidModel):
@@ -172,6 +174,126 @@ class SubjectIdentifierAuditTrail(MyBasicModel):
         ordering = ['-date_allocated']
 
 
+class LocatorBaseModel(MyBasicUuidModel): 
 
+    date_signed = models.DateField( 
+        verbose_name="1.Date Locator Form signed ",
+        help_text="",
+        ) 
+    mail_address = OtherCharField(
+        max_length=35,
+        verbose_name="1e. Mailing address ",
+        help_text="",
+        )
+    care_clinic = OtherCharField(
+        max_length=35,
+        verbose_name="1f. Health clinic where your infant will receive their routine care ",
+        help_text="",
+        ) 
+    home_visit_permission = models.CharField(
+        max_length=25,
+        choices=YES_NO,
+        verbose_name="2. Has the participant given her permission for study stuff to make home visits for follow-up purposes before and during the study?",
+        help_text="if 'No' go to Question 3, otherwise continue",
+        )
+    physical_address = OtherCharField(
+        max_length=50,
+        verbose_name="2a. If yes, please provide physical address with detailed description",
+        help_text="",
+        ) 
+    may_follow_up = models.CharField(
+        max_length=25,
+        choices=YES_NO,
+        verbose_name="3. Has the participant given her permission for study stuff to call her  for follow-up purposes before and during the study?", 
+        help_text="if 'No' go to Question 4, otherwise continue",
+        )
+    subject_cell = models.IntegerField(
+        max_length=8,
+        verbose_name="3a. Cell number",
+        validators = [BWCellNumber,],
+        help_text="",
+        )
+    subject_cell_alt= models.IntegerField(
+        max_length=8,
+        verbose_name="3b. Cell number (alternate)",
+        validators = [BWCellNumber,],
+        help_text="",
+        )
+    subject_phone = models.IntegerField(
+        max_length=8,
+        verbose_name="3c. Telephone",
+        validators = [BWTelephoneNumber,],        
+        help_text="",
+        )  
+    subject_phone_alt = models.IntegerField(
+        max_length=8,
+        verbose_name="3d. Telephone (alternate)",
+        validators = [BWTelephoneNumber,],                
+        help_text="",
+        )  
+    may_call_work = models.CharField(
+        max_length=25,
+        choices=YES_NO,
+        verbose_name="4. Has the participant given her permission for study staff to contact her at work for follow up purposes before and during the study?", 
+        help_text=" if 'No' go to section B, otherwise continue"
+    )
+    subject_work_place = OtherCharField(
+        max_length=35,
+        verbose_name="4a. Name and location of work place",
+        help_text="",
+        )
+    may_contact_someone = models.CharField(
+        max_length=25,
+        choices=YES_NO,
+        verbose_name="1. Has the participant given her permission for study staff to contact anyone else (e.g partner, spouse, family member, neighbour) for follow-up purposes before and during the study?", 
+        help_text="",
+        )
+    contact_name = OtherCharField(
+        max_length=35,
+        verbose_name="1a.Full names of the contact person",
+        help_text="",
+        )
+    contact_rel = OtherCharField(
+        max_length=35,
+        verbose_name="1b.Relationship to participant",
+        help_text="",
+        )
+    contact_physical_address = OtherCharField(
+        max_length=35,
+        verbose_name="1c.Full physical address ",
+        help_text="",
+        )
+    contact_cell = models.IntegerField(
+        max_length=8,
+        verbose_name="1d. Cell number",
+        help_text="",
+        )
+    contact_phone = models.IntegerField(
+        max_length=8,
+        verbose_name="1e. Telephone number",
+        help_text="",
+        )
+    has_caretaker_alt = models.CharField(
+        max_length=25,
+        choices=YES_NO,
+        verbose_name="2.Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?", 
+        help_text=""
+        )
+    caretaker_name = OtherCharField(
+        max_length=35,
+        verbose_name="2a. Full Name of the responsible person",
+        help_text="include firstname and surname",
+        )
+    caretaker_cell = models.IntegerField(
+        max_length=8,
+        verbose_name="2b. Cell number",
+        help_text="",
+        )
+    caretaker_tel = models.IntegerField(
+        max_length=8,
+        verbose_name="2c. Telephone number",
+        help_text="",
+        ) 
 
-
+    class Meta:
+        abstract=True
