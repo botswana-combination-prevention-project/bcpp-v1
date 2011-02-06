@@ -19,15 +19,40 @@ ART_STATUS_CONFIRM = (
     ( 'Pic', '3. Identify Pictorial'),
 )
 
+CONFIRMED_SUSPECTED = (
+    ('CONFIRMED', 'Confirmed'),
+    ('SUSPECTED', 'Suspected'),
+)    
+
 DOB_ESTIMATE = (
-    ('-', 'Yes'),
-    ('D', 'No, estimated the Day'),            
-    ('MD', 'No, estimated Month and Day'),
-    ('YMD', 'No, estimated Year, Month and Day'),            
+    ('-', 'No'),
+    ('D', 'Yes, estimated the Day'),            
+    ('MD', 'Yes, estimated Month and Day'),
+    ('YMD', 'Yes, estimated Year, Month and Day'),            
 )
+
+FEEDING = (
+   ('BF', 'Breast Feed'),
+   ('FF', 'Formula Feed'),   
+)
+
 GENDER = (
     ('M', 'Male'),
     ('F', 'Female'),
+)
+
+GENDER_UNDETERMINED = (
+    ('M', 'Male'),
+    ('F', 'Female'),
+    ('U' , 'Undetermined'),
+)
+
+GRADE = (
+    ('1', 'Grade 1'),
+    ('2', 'Grade 2'),
+    ('3', 'Grade 3'),        
+    ('4', 'Grade 4'),
+    ('5', 'Grade 5'),        
 )
 
 HOUSEHOLD_VISIT_STATUS = (
@@ -40,7 +65,24 @@ LOCATIONS = (
     ('HOUSEHOLD', 'Household'),
 )
 
-POS_NEG = (
+NORMAL_ABNORMAL =(
+    ('NORMAL', 'Normal'),
+    ('ABNORMAL', 'Abnormal'),
+)
+
+NORMAL_ABNORMAL_NOEXAM =(
+    ('NORMAL', 'Normal'),
+    ('ABNORMAL', 'Abnormal'),
+    ('NO_EXAM', 'No Exam Performed'),
+)
+
+NORMAL_ABNORMAL_NOTEVALUATED =(
+    ('NORMAL', 'Normal'),
+    ('ABNORMAL', 'Abnormal'),
+    ('NOT_EVAL', 'Not Evaluated'),
+)
+
+POS_NEG =(
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
     ('IND', 'Indeterminate'),
@@ -76,11 +118,14 @@ RESULT_OPTIONS = (
     ('C','C'),
     ('D','D'),
     ('E','E'),
-)   
+)  
+
+ 
+
 
 WILL_DECL = (
     ('WILLING', 'Willing'),
-    ('DELINED', 'Delined'),
+    ('DELINED', 'Declined'),
 )
 
 YES_NO = (
@@ -88,18 +133,33 @@ YES_NO = (
     ('No', 'No'),
 )
 
+YES_NO_NA_SPECIFY = (
+    ('Yes', 'Yes, (Specify below)'),
+    ('No', 'No'),
+    ('N/A', 'Not applicable'),    
+)
 
 YES_NO_NA = (
     ('Yes', 'Yes'),
     ('No', 'No'),
     ('N/A', 'Not applicable'),    
 )
+
+YES_NO_UNKNOWN =(
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ('Unknown', 'Unknown'),
+)    
+
 YES_NO_UNSURE = (
     ('Yes', 'Yes'),
     ('No', 'No'),
     ('Not Sure', 'Not Sure'),
 )
 
-
-
+YES_NO_DONT_KNOW = (
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ('Dont_know', 'Do not Know'),
+)
 
