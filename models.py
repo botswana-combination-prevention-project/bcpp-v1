@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
-from bhp_validators.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future, datetime_is_after_consent
-from bhp_basic_models.models import MyBasicListModel, MyBasicUuidModel
-from bhp_fields.fields import OtherCharField
+from bhp_common.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future, datetime_is_after_consent
+from bhp_common.models import MyBasicListModel, MyBasicUuidModel
+from bhp_common.fields import OtherCharField
 from bhp_consent.models import SubjectConsent
 from bhp_registration.models import RegisteredSubject
 from choices import VISIT_INTERVAL_UNITS, APPT_STATUS
