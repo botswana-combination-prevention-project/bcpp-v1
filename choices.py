@@ -1,7 +1,8 @@
 REGISTRATION_STATUS = (
     ('SCREENING','SCREENING'),
     ('REGISTERED','REGISTERED'),
-    ('RANDOMIZED','RANDOMIZED'),            
+    ('RANDOMIZED','RANDOMIZED'),
+    ('OFF_STUDY','OFF STUDY'),                            
 )
 
 SUBJECT_TYPE = (
