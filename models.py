@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
 from bhp_fields.fields import HostnameCreationField, HostnameModificationField, MyUUIDField
@@ -58,5 +59,28 @@ class MyBasicCodeListModel(MyBasicListModel):
 
     class Meta:
         abstract = True
+
+
+class MyAutoCompleteAdminModel(ForeignKeyAutocompleteAdmin):
+    pass
+
+class MyModelAdmin (MyAutoCompleteAdminModel):
+    """Overide ModelAdmin to force username to be saved on add and change""" 
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.user_created = request.user.username
+        if change:
+            obj.user_modified = request.user.username
+        obj.save()
+
+
+class MyStackedInline (admin.StackedInline):
+    """Overide ModelAdmin to force username to be saved on add and change"""
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.user_created = request.user.username
+        if change:
+            obj.user_modified = request.user.username
+        obj.save()
 
 
