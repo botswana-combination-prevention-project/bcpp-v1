@@ -54,7 +54,7 @@ class VisitDefinition(MyBasicUuidModel):
 # Appointment #######################################
 
 """
-    An appointment covers ONE VisitTrack record. 
+    An appointment covers ONE VisitTracking record. 
     So the user must make an appointment before tracking the visit.
     
 """    
@@ -99,17 +99,17 @@ class Appointment (MyBasicUuidModel):
 
       
 
-# VisitTracking #######################################
+# VisitTrackinging #######################################
 
-class VisitTrackInfoSource (MyBasicListModel):
+class VisitTrackingInfoSource (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
 
-class VisitTrackVisitReason (MyBasicListModel):
+class VisitTrackingVisitReason (MyBasicListModel):
     class Meta:
         ordering = ['display_index']   
 
-class VisitTrackSubjCurrStatus (MyBasicListModel):
+class VisitTrackingSubjCurrStatus (MyBasicListModel):
     class Meta:
         ordering = ['display_index']   
 
@@ -120,7 +120,7 @@ class VisitTrackSubjCurrStatus (MyBasicListModel):
 
     User should only be allowed to select "scheduled" appointments
 """
-class VisitTrackBaseModel (MyBasicUuidModel):
+class VisitTrackingBaseModel (MyBasicUuidModel):
     
     """
         in admin, the drop down should be limited to scheduled
@@ -143,12 +143,12 @@ class VisitTrackBaseModel (MyBasicUuidModel):
         )
         
     
-    subject_current_status = models.ForeignKey(VisitTrackSubjCurrStatus,
+    subject_current_status = models.ForeignKey(VisitTrackingSubjCurrStatus,
         verbose_name = "What is the subject\'s current study status?",
         help_text = "",
         )
       
-    visit_reason = models.ForeignKey(VisitTrackVisitReason, 
+    visit_reason = models.ForeignKey(VisitTrackingVisitReason, 
         verbose_name = "What is the reason for this visit?  ",
         help_text="",
         )  
@@ -160,7 +160,7 @@ class VisitTrackBaseModel (MyBasicUuidModel):
         null = True,   
         )  
 
-    info_source = models.ForeignKey(VisitTrackInfoSource,
+    info_source = models.ForeignKey(VisitTrackingInfoSource,
         verbose_name = "What is the main source of this information?",
         help_text="",
         )
@@ -196,7 +196,7 @@ class VisitTrackBaseModel (MyBasicUuidModel):
     Sample Visit Tracking Report as would be defined in your applicacation
 """    
 
-class VisitTrackReport (VisitTrackBaseModel):
+class VisitTrackingReport (VisitTrackingBaseModel):
 
     pass
     

@@ -1,13 +1,13 @@
 from django.contrib import admin
-from bhp_admin_models.models import MyModelAdmin, MyStackedInline
-from models import Appointment, VisitDefinition, VisitTrackingInfoSource, VisitTrackingVisitReason, VisitReport
+from bhp_common.models import MyModelAdmin, MyStackedInline
+from models import Appointment, VisitDefinition, VisitTrackingInfoSource, VisitTrackingVisitReason, VisitTrackingReport
 
 admin.site.register(VisitDefinition)
 admin.site.register(VisitTrackingInfoSource)
 admin.site.register(VisitTrackingVisitReason)
 
 
-class VisitReportAdmin(MyModelAdmin):
+class VisitTrackingReportAdmin(MyModelAdmin):
     fields = (
         'appointment',
         'visit_datetime',
@@ -17,11 +17,11 @@ class VisitReportAdmin(MyModelAdmin):
         'visit_reason_missed',        
         'next_scheduled_visit_datetime',
     )
-admin.site.register(VisitReport, VisitReportAdmin)
+admin.site.register(VisitTrackingReport, VisitTrackingReportAdmin)
 
 class AppointmentAdmin(MyModelAdmin):
     fields = (
-        'subject_identifier',
+        'subject_consent',
         'appt_datetime',
         'appt_status',
         'visit_definition',        
