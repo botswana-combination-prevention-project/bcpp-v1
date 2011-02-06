@@ -1,9 +1,10 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
-from bhp_fields.fields import MyUUIDField
-from bhp_basic_models.models import MyBasicUuidModel, MyBasicModel
-from bhp_choices.choices import GENDER, YES_NO, DOB_ESTIMATE
-from bhp_validators.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start
+from bhp_common.fields import MyUUIDField
+from bhp_common.models import MyBasicUuidModel, MyBasicModel
+from bhp_common.choices import GENDER, YES_NO, DOB_ESTIMATE
+from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start, dob_gt_eq_18
+from choices import SITE_IDENTIFIERS
 
 class ConsentModel(MyBasicUuidModel):
     """ A consent model. The app model 'SubjectConsent' must inheret from this.
@@ -110,7 +111,24 @@ class ConsentModel(MyBasicUuidModel):
         abstract = True
  
 
-      
+class SubjectConsent(ConsentModel):
+    site = models.IntegerField(
+        verbose_name = 'Site',
+        choices=SITE_IDENTIFIERS,
+        help_text="This refers to the site or 'clinic area' where the subject is being consented."
+        )
+    dob = models.DateField('Date of birth',
+        validators = [
+            dob_not_future, 
+            dob_not_today,
+            dob_gt_eq_18,
+            ],
+        help_text="Format is YYYY-MM-DD",
+        )
+
+    def __unicode__(self):
+        return "%s %s (%s)" % (self.subject_identifier, self.first_name, self.initials)
+              
 
 class ConsentedSubjectModel(MyBasicUuidModel):
     """All subsequent models collecting information from consented subjects
@@ -152,4 +170,8 @@ class SubjectIdentifierAuditTrail(MyBasicModel):
         
     class Meta:
         ordering = ['-date_allocated']
-    
+
+
+
+
+
