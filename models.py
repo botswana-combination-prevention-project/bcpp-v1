@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from bhp_basic_models.models import MyBasicModel
+from bhp_common.models import MyBasicModel
 
 class StudySpecific (MyBasicModel):
     protocol_number = models.CharField("Protocol number",
