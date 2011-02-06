@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_basic_models.models import MyBasicModel
+from bhp_common.models import MyBasicModel
 
 class MyCodeList (MyBasicModel):
     code = models.CharField("Code",
