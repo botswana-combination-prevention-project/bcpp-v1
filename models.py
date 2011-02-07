@@ -2,6 +2,7 @@ from django.db import models
 from bhp_common.models import MyBasicModel, MyBasicUuidModel, MyBasicListModel
 from bhp_common.validators import datetime_not_future
 from bhp_common.validators import datetime_not_before_study_start
+from bhp_consent.models import SubjectConsent
 
 class Panel(MyBasicModel):
     name = models.CharField("Panel Name", max_length=25)
@@ -101,6 +102,12 @@ class ReceiveModel (MyBasicUuidModel):
     #    return "//labreceive/%s/" % self.id
     class Meta:
         abstract=True
+        
+class Receive(ReceiveModel):
+    subject_consent = models.ForeignKey(SubjectConsent,
+    verbose_name="Subject",
+    )
+            
 
 class Order(MyBasicUuidModel):
     aliquot = models.ForeignKey(Aliquot)    

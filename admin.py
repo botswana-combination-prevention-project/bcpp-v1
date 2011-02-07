@@ -1,7 +1,7 @@
 from django.contrib import admin
-from bhp_admin_models.models import MyModelAdmin, MyStackedInline
+from bhp_common.models import MyModelAdmin, MyStackedInline
 from models import Panel, Test, Aliquot, AliquotType, AliquotCondition
-from models import Result, Order, ResultItem
+from models import Receive, Result, Order, ResultItem
 from views import AllocateAliquotIdentifier
 
 class TestInline(admin.TabularInline):
@@ -71,4 +71,4 @@ class ReceiveAdmin(MyModelAdmin):
         return super(ReceiveAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
             
     list_display = ('aliquot', 'subject_consent', 'datetime_drawn', 'datetime_received')        
-#admin.site.register(Receive, ReceiveAdmin)    
+admin.site.register(Receive, ReceiveAdmin)    
