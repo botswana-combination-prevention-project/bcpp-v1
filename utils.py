@@ -18,7 +18,7 @@ def AllocateIdentifier(new_pk, user):
     #get the consent just created
     consent = SubjectConsent.objects.get(pk=new_pk)
 
-    subject_identifier['site'] = consent.site
+    subject_identifier['site'] = consent.study_site.site_code
     
     #add a new record in the audit trail for this consent and identifier-'to be'
     #leave subject_identifier 'null' for now

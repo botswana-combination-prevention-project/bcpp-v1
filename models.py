@@ -57,6 +57,8 @@ class RandomizationList (RandomizationListBase):
 
 class RegisteredSubject (MyBasicUuidModel):
        
+    subject_consent_id = models.CharField(max_length=100, null=True)
+       
     subject_identifier = models.CharField(
         verbose_name = "Subject Identifier",
         max_length=25, 
