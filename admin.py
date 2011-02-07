@@ -2,12 +2,9 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_consent.models import SubjectIdentifierAuditTrail, SubjectConsent
 from bhp_registration.utils import AllocateIdentifier
-from bhp_consent.forms import SubjectConsentForm
 
 class SubjectConsentAdmin(MyModelAdmin):
-    
-    form = SubjectConsentForm
-    
+  
     def save_model(self, request, obj, form, change):
         obj.user_created = request.user
         obj.user_modified = request.user            
@@ -25,7 +22,7 @@ class SubjectConsentAdmin(MyModelAdmin):
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj = None):
         if obj: #In edit mode
-            return ('subject_identifier','first_name','last_name','site','initials','consent_datetime',) + self.readonly_fields
+            return ('subject_identifier','first_name','last_name','study_site','initials','consent_datetime',) + self.readonly_fields
         else:
             return ('subject_identifier',) + self.readonly_fields  
             
@@ -34,7 +31,7 @@ class SubjectConsentAdmin(MyModelAdmin):
         'first_name',
         'last_name',
         'initials',
-        'site',
+        'study_site',
         'consent_datetime',
         'omang',
         'gender',
@@ -46,7 +43,7 @@ class SubjectConsentAdmin(MyModelAdmin):
 
     radio_fields = {
         "gender":admin.VERTICAL,
-        "site":admin.VERTICAL,
+        "study_site":admin.VERTICAL,
         "may_store_samples":admin.VERTICAL,
         "is_dob_estimated":admin.VERTICAL,                
         }        

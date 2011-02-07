@@ -4,9 +4,10 @@ from bhp_common.fields import MyUUIDField
 from bhp_common.models import MyBasicUuidModel, MyBasicModel
 from bhp_common.choices import GENDER, YES_NO, DOB_ESTIMATE
 from bhp_common.fields import OtherCharField
-from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start, dob_gt_eq_18
+from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start
+from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
 from bhp_common.validators import BWCellNumber, BWTelephoneNumber
-from choices import SITE_IDENTIFIERS
+from bhp_variables.models import StudySite
 
 class ConsentModel(MyBasicUuidModel):
     """ A consent model. The app model 'SubjectConsent' must inheret from this.
@@ -59,6 +60,15 @@ class ConsentModel(MyBasicUuidModel):
             RegexValidator("^[a-zA-Z]{1,250}$", "Ensure last name does not contain any spaces or numbers"),
             RegexValidator("^[A-Z]{1,250}$", "Ensure last name is in uppercase"),],
         )
+    dob = models.DateField('Date of birth',
+        validators = [
+            dob_not_future, 
+            dob_not_today,
+            MinConsentAge,
+            MaxConsentAge,            
+            ],
+        help_text="Format is YYYY-MM-DD",
+        )
     omang = models.CharField(
         verbose_name='Identity number (OMANG, etc)', 
         max_length=250, 
@@ -73,6 +83,10 @@ class ConsentModel(MyBasicUuidModel):
             MaxLengthValidator(3), 
             RegexValidator("^[A-Z]{1,4}$", "Ensure initials are in uppercase"),],
         )
+    study_site = models.ForeignKey(StudySite,
+        verbose_name = 'Site',
+        help_text="This refers to the site or 'clinic area' where the subject is being consented."
+        )
     consent_datetime = models.DateTimeField("Consent date and time",
         validators=[
             datetime_not_before_study_start,
@@ -85,7 +99,10 @@ class ConsentModel(MyBasicUuidModel):
         )
     gender = models.CharField('Gender',
         max_length=1, 
-        choices=GENDER
+        choices=GENDER,
+        validators=[
+            GenderOfConsent,
+            ]
         )
     #dob = models.DateField('Date of birth',
     #    validators = [
@@ -114,20 +131,7 @@ class ConsentModel(MyBasicUuidModel):
  
 
 class SubjectConsent(ConsentModel):
-    site = models.IntegerField(
-        verbose_name = 'Site',
-        choices=SITE_IDENTIFIERS,
-        help_text="This refers to the site or 'clinic area' where the subject is being consented."
-        )
-    dob = models.DateField('Date of birth',
-        validators = [
-            dob_not_future, 
-            dob_not_today,
-            dob_gt_eq_18,
-            ],
-        help_text="Format is YYYY-MM-DD",
-        )
-
+    pass 
     def __unicode__(self):
         return "%s %s (%s)" % (self.subject_identifier, self.first_name, self.initials)
               
