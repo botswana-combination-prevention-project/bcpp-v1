@@ -9,6 +9,7 @@ from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
 from bhp_common.validators import BWCellNumber, BWTelephoneNumber
 from bhp_variables.models import StudySite
 
+
 class ConsentModel(MyBasicUuidModel):
     """ A consent model. The app model 'SubjectConsent' must inheret from this.
     Also, you may need to add a foreignkey field if relevant to your app. 
@@ -140,14 +141,9 @@ class ConsentedSubjectModel(MyBasicUuidModel):
     """All subsequent models collecting information from consented subjects
     should inheret from this model
     
-    You need to add 
-    
-        subject_consent = models.OneToOneField(SubjectConsent)
-        
-    replacing 'SubjectConsent' with the model name of your consent
-    
     """
-
+    subject_consent = models.OneToOneField(SubjectConsent)                   
+    
     report_datetime = models.DateTimeField("Today's date",
         validators=[
             datetime_not_before_study_start,
@@ -179,7 +175,9 @@ class SubjectIdentifierAuditTrail(MyBasicModel):
 
 
 class LocatorBaseModel(MyBasicUuidModel): 
-
+    
+    subject_consent = models.OneToOneField(SubjectConsent)
+    
     date_signed = models.DateField( 
         verbose_name="1.Date Locator Form signed ",
         help_text="",
