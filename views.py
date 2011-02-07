@@ -1,5 +1,5 @@
 from models import Aliquot
-from local_settings import ALIQUOT_SEED
+from settings import ALIQUOT_SEED
 
 def AllocateAliquotIdentifier(user, aliquot_type): 
 

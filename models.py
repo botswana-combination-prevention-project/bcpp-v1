@@ -1,7 +1,7 @@
 from django.db import models
-from bhp_basic_models.models import MyBasicModel, MyBasicUuidModel, MyBasicListModel
-from bhp_validators.validators import datetime_not_future
-from bhp_validators.validators import datetime_not_before_study_start
+from bhp_common.models import MyBasicModel, MyBasicUuidModel, MyBasicListModel
+from bhp_common.validators import datetime_not_future
+from bhp_common.validators import datetime_not_before_study_start
 
 class Panel(MyBasicModel):
     name = models.CharField("Panel Name", max_length=25)
