@@ -206,5 +206,10 @@ class VisitTrackingReport (VisitTrackingBaseModel):
         return "%s: %s [%s]" % (self.registered_subject, self.appointment, self.visit_datetime.strftime('%Y-%m-%d'))
         
         
-        
+class VisitTrackingModel(MyBasicUuidModel):
 
+    visit_tracking_report = models.OneToOneField(VisitTrackingReport)        
+
+    class Meta:
+        abstract = True 
+    
