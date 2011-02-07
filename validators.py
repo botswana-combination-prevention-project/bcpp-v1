@@ -3,6 +3,7 @@ import re
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
+from bhp_variables.choices import GENDER_OF_CONSENT
 
 def TelephoneNumber(value, pattern, word):
     str_value = "%s" % (value)
@@ -37,28 +38,42 @@ def date_not_future (value):
     if value > now:
         raise ValidationError(u'Date cannot be a future date. You entered %s' % (value,))
 
-def dob_gt_eq_18 (value):
+def MinConsentAge (value):
     now  = date.today()
-    d18 = 365*18
-    age_in_days = timedelta(days=d18)
+    ss = StudySpecific.objects.all()[0]
+    
+    min_consent_age_years = ss.minimum_age_of_consent
+    min_consent_age_days = 365*min_consent_age_years
+    age_in_days = timedelta(days=min_consent_age_days)
     if value > now - age_in_days:
-        raise ValidationError(u'Participant must be 18yrs or older. Date of birth suggests otherwise. You entered %s ' % (value))
+        raise ValidationError(u'Participant must be %syrs or older. Date of birth suggests otherwise. You entered %s ' % (min_consent_age_years, value))
 
-def dob_gt_eq_16 (value):
-    age_in_years=64
+def MaxConsentAge (value):
     now  = date.today()
-    day_years = 365*age_in_years
-    age_in_days = timedelta(days=day_years)
-    if value >= now - age_in_days:
-        raise ValidationError(u'Participant must be %syrs or older. Date of birth suggests otherwise. You entered %s ' % (age_in_years, value))
+    ss = StudySpecific.objects.all()[0]
+    max_consent_age_years = ss.maximum_age_of_consent
+    max_consent_age_days = 365*max_consent_age_years
+    age_in_days = timedelta(days=max_consent_age_days)
+    if value < now - age_in_days:
+        raise ValidationError(u'Participant must be no older than %syrs. Date of birth suggests otherwise. You entered %s ' % (max_consent_age_years, value))
 
-def dob_lt_eq_64 (value):
-    age_in_years=64
-    now  = date.today()
-    day_years = 365*age_in_years
-    age_in_days = timedelta(days=day_years)
-    if value <= now - age_in_days:
-        raise ValidationError(u'Participant must be %syrs or younger. Date of birth suggests otherwise. You entered %s ' % (age_in_years, value))
+
+def GenderOfConsent (value):
+    ss = StudySpecific.objects.all()[0]
+    
+    gender_allowed = ss.gender_of_consent
+    
+    for lst in GENDER_OF_CONSENT:
+        if lst[0] == gender_allowed:
+            allowed = lst
+   
+    for lst in GENDER_OF_CONSENT:
+        if lst[0] == value:
+            entry = lst
+        
+    if value != allowed[0]:    
+        raise ValidationError(u'Gender of consent is %s only. You entered %s.' % ( allowed[1], entry[1]))
+
 
 def datetime_is_future (value):
     now  = datetime.today()
