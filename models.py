@@ -98,13 +98,13 @@ class RegisteredSubject (MyBasicUuidModel):
         )
     
     def __unicode__ (self):
-        return "%s %s" % (self.subject_identifier, self.registration_status)
+        return "%s %s" % (self.subject_identifier, self.subject_type)
 
 
 
 class RegistrationFormBase(MyBasicUuidModel):
     
-    registered_subject = models.ForeignKey(RegisteredSubject,
+    registered_subject = models.OneToOneField(RegisteredSubject,
         editable=False  
         )
     
@@ -167,7 +167,7 @@ class OffStudy(MyBasicUuidModel):
         verbose_name="Comments:",
         blank=True,
         null=True,   
-        )    
+        ) 
 
 """
     Death form / AF005

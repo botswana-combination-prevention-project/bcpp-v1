@@ -2,6 +2,7 @@ from datetime import date, timedelta, datetime
 from bhp_consent.models import SubjectIdentifierAuditTrail
 from bhp_variables.models import StudySpecific
 from bhp_consent.models import SubjectConsent
+from models import RegisteredSubject
 
 def AllocateIdentifier(new_pk, user):
     
@@ -76,3 +77,25 @@ def AllocateIdentifier(new_pk, user):
     
     # return the new subject identifier to the form currently being save()'d
     return subject_identifier['identifier']
+    
+
+
+def RegisterSubject (subject_consent, subject_type, user):
+    
+    #try:
+    consent = SubjectConsent.objects.get(pk=subject_consent) 
+    
+    rm = RegisteredSubject(    
+        subject_identifier = consent.subject_identifier,
+        registration_datetime=datetime.now(),
+        subject_type = subject_type,
+        user_created=user,
+        created=datetime.now(),
+        subject_consent_id=consent.pk,
+        first_name=consent.first_name,
+        initials=consent.initials
+        )
+    
+    rm.save()
+    
+    return rm    
