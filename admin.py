@@ -1,7 +1,12 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from bhp_consent.models import SubjectIdentifierAuditTrail, SubjectConsent
 from bhp_registration.utils import AllocateIdentifier
+from models import SubjectIdentifierAuditTrail, SubjectConsent
+from models import LocatorForm  
+
+class LocatorFormAdmin(MyModelAdmin):
+    pass
+admin.site.register(LocatorForm, LocatorFormAdmin)
 
 class SubjectConsentAdmin(MyModelAdmin):
   

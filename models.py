@@ -174,7 +174,7 @@ class SubjectIdentifierAuditTrail(MyBasicModel):
         ordering = ['-date_allocated']
 
 
-class LocatorBaseModel(MyBasicUuidModel): 
+class LocatorFormBaseModel(MyBasicUuidModel): 
     
     subject_consent = models.OneToOneField(SubjectConsent)
     
@@ -299,3 +299,6 @@ class LocatorBaseModel(MyBasicUuidModel):
 
     class Meta:
         abstract=True
+        
+class LocatorForm(LocatorFormBaseModel):     
+    pass   
