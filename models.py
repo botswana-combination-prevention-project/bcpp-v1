@@ -94,7 +94,7 @@ class Appointment (MyBasicUuidModel):
     
 
     def __unicode__(self):
-        return "%s for %s [%s]" % (self.subject_consent, self.visit_definition.visit_code, self.appt_datetime, self.appt_status) 
+        return "%s for %s [%s - %s]" % (self.subject_consent, self.visit_definition.code, self.appt_datetime, self.appt_status) 
 
     class Meta:
         unique_together = [('subject_consent', 'visit_definition', 'visit_instance')]
@@ -203,7 +203,7 @@ class VisitTrackingReport (VisitTrackingBaseModel):
     pass
     
     def __unicode__(self):
-        return "%s: %s [%s]" % (self.registered_subject, self.appointment, self.visit_datetime.strftime('%Y-%m-%d'))
+        return "%s [%s] visit %s" % (self.registered_subject,self.registered_subject.initials, self.appointment.visit_definition.code )
         
         
 class VisitTrackingModel(MyBasicUuidModel):
