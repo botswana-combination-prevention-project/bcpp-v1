@@ -153,8 +153,7 @@ class SubjectIdentifierAuditTrail(MyBasicModel):
 
 class LocatorFormBaseModel(MyBasicUuidModel): 
     
-    subject_consent = models.OneToOneField(SubjectConsent)
-    
+
     date_signed = models.DateField( 
         verbose_name="1.Date Locator Form signed ",
         help_text="",
