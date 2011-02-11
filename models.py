@@ -3,7 +3,6 @@ from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_common.choices import YES_NO
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
-from bhp_consent.models import SubjectConsent
 from bhp_code_lists.models import DiagnosisCode
 from choices import REGISTRATION_STATUS, SUBJECT_TYPE
 
@@ -115,21 +114,6 @@ class RegistrationFormBase(MyBasicUuidModel):
     
     class Meta:
         abstract=True
-
-
-class RegistrationFormConsentedBase(RegistrationFormBase):
-    
-    subject_consent = models.OneToOneField(SubjectConsent)                   
-    
-    class Meta:
-        abstract=True
-
-"""
-    This table will be populated by a view function
-    linked to one or more registration or
-    randomization functions, depending on the 
-    design of the protocol.
-"""    
 
 
 

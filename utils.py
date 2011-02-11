@@ -1,32 +1,33 @@
 from datetime import date, timedelta, datetime
 from bhp_consent.models import SubjectIdentifierAuditTrail
 from bhp_variables.models import StudySpecific
-from bhp_consent.models import SubjectConsent
 from models import RegisteredSubject
 
-def AllocateIdentifier(new_pk, user):
+def AllocateIdentifier(ObjConsent, user):
     
     """
     Allocate an identifier at the time of consent
     
     generate an identifier and save it back to the consent form 
     and update the identifier audit trail.
+    
+    ObjConsent is the selected and new consent. Count=1
         
     """
     
     subject_identifier = {}
     
     #get the consent just created
-    consent = SubjectConsent.objects.get(pk=new_pk)
+    #consent = SubjectConsent.objects.get(pk=new_pk)
 
-    subject_identifier['site'] = consent.study_site.site_code
+    subject_identifier['site'] = ObjConsent.study_site.site_code
     
     #add a new record in the audit trail for this consent and identifier-'to be'
     #leave subject_identifier 'null' for now
     audit = SubjectIdentifierAuditTrail(
-        subject_consent_id=consent, 
-        first_name = consent.first_name,
-        initials = consent.initials,
+        subject_consent_id=ObjConsent.pk, 
+        first_name = ObjConsent.first_name,
+        initials = ObjConsent.initials,
         date_allocated=datetime.now(),
         user_created = user,
         )
@@ -80,20 +81,20 @@ def AllocateIdentifier(new_pk, user):
     
 
 
-def RegisterSubject (subject_consent, subject_type, user):
+def RegisterSubject (ObjConsent, subject_type, user):
     
     #try:
-    consent = SubjectConsent.objects.get(pk=subject_consent) 
+    #consent = SubjectConsent.objects.get(pk=subject_consent) 
     
     rm = RegisteredSubject(    
-        subject_identifier = consent.subject_identifier,
+        subject_identifier = ObjConsent.subject_identifier,
         registration_datetime=datetime.now(),
         subject_type = subject_type,
         user_created=user,
         created=datetime.now(),
-        subject_consent_id=consent.pk,
-        first_name=consent.first_name,
-        initials=consent.initials
+        subject_consent_id=ObjConsent.pk,
+        first_name=ObjConsent.first_name,
+        initials=ObjConsent.initials
         )
     
     rm.save()
