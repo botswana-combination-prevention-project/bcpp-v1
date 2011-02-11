@@ -141,20 +141,7 @@ class SubjectConsent(ConsentModel):
         return "%s %s (%s)" % (self.subject_identifier, self.first_name, self.initials)
               
 
-class ConsentedSubjectModel(MyBasicUuidModel):
-    """All subsequent models collecting information from consented subjects
-    should inheret from this model
-    
-    """
-    subject_consent = models.OneToOneField(SubjectConsent)                   
-    
-    report_datetime = models.DateTimeField("Today's date",
-        validators=[
-            datetime_not_before_study_start,
-            datetime_not_future,])
 
-    class Meta:
-        abstract = True 
 
 
 class SubjectIdentifierAuditTrail(MyBasicModel):
