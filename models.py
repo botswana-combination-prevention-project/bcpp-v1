@@ -131,19 +131,6 @@ class ConsentModel(MyBasicUuidModel):
         abstract = True
  
 
-class SubjectConsent(ConsentModel):
-    pass 
-    
-    class Meta(ConsentModel.Meta):
-        pass
-        
-    def __unicode__(self):
-        return "%s %s (%s)" % (self.subject_identifier, self.first_name, self.initials)
-              
-
-
-
-
 class SubjectIdentifierAuditTrail(MyBasicModel):
     """
     A table to track every attempt to allocate a subject identifier
