@@ -9,7 +9,6 @@ from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
 from bhp_common.validators import BWCellNumber, BWTelephoneNumber
 from bhp_variables.models import StudySite
 
-
 class ConsentModel(MyBasicUuidModel):
     """ A consent model. The app model 'SubjectConsent' must inheret from this.
     Also, you may need to add a foreignkey field if relevant to your app. 
