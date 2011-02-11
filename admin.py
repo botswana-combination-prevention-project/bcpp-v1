@@ -1,27 +1,22 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_registration.utils import AllocateIdentifier
-from models import SubjectIdentifierAuditTrail, SubjectConsent
-from models import LocatorForm  
+from models import SubjectIdentifierAuditTrail
 
-class LocatorFormAdmin(MyModelAdmin):
-    pass
-admin.site.register(LocatorForm, LocatorFormAdmin)
-
-class SubjectConsentAdmin(MyModelAdmin):
+class SubjectConsentAdminBase(MyModelAdmin):
   
-    def save_model(self, request, obj, form, change):
-        obj.user_created = request.user
-        obj.user_modified = request.user            
-        obj.save()
-        
-        new_pk = obj.pk
-        
-        if not change:
-            #allocate subject identifier
-            obj = SubjectConsent.objects.get(pk=new_pk)
-            obj.subject_identifier = AllocateIdentifier(new_pk, request.user)
-            obj.save()
+    #def save_model(self, request, obj, form, change):
+    #    obj.user_created = request.user
+    #    obj.user_modified = request.user            
+    #    obj.save()
+    #    
+    #    new_pk = obj.pk
+    #    
+    #    if not change:
+    #        #allocate subject identifier
+    #        obj = SubjectConsent.objects.get(pk=new_pk)
+    #        obj.subject_identifier = AllocateIdentifier(new_pk, request.user)
+    #        obj.save()
 
             
     #override to disallow subject to be changed
@@ -53,7 +48,7 @@ class SubjectConsentAdmin(MyModelAdmin):
         "is_dob_estimated":admin.VERTICAL,                
         }        
         
-admin.site.register(SubjectConsent, SubjectConsentAdmin)
+#admin.site.register(SubjectConsent, SubjectConsentAdmin)
 
 class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
     list_display = (

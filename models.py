@@ -276,5 +276,4 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     class Meta:
         abstract=True
         
-class LocatorForm(LocatorFormBaseModel):     
-    pass   
+  

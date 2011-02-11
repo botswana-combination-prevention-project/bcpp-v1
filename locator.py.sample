@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_consent import LocatorFormBaseModel
+from bhp_consent.models import LocatorFormBaseModel
 
 """
 assuming you also use the consent.py (see sample)
@@ -8,4 +8,8 @@ assuming you also use the consent.py (see sample)
 from consent import SubjectConsent
 
 class LocatorForm(LocatorFormBaseModel):     
+
     subject_consent = models.OneToOneField(SubjectConsent)
+
+    class Meta:
+        app_label='mpepu'
