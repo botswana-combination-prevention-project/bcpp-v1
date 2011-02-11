@@ -133,6 +133,10 @@ class ConsentModel(MyBasicUuidModel):
 
 class SubjectConsent(ConsentModel):
     pass 
+    
+    class Meta(ConsentModel.Meta):
+        pass
+        
     def __unicode__(self):
         return "%s %s (%s)" % (self.subject_identifier, self.first_name, self.initials)
               
