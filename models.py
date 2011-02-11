@@ -2,7 +2,7 @@ from django.db import models
 from bhp_common.models import MyBasicModel, MyBasicUuidModel, MyBasicListModel
 from bhp_common.validators import datetime_not_future
 from bhp_common.validators import datetime_not_before_study_start
-from bhp_consent.models import SubjectConsent
+from bhp_registration.models import RegisteredSubject
 
 class Panel(MyBasicModel):
     name = models.CharField("Panel Name", max_length=25)
@@ -74,11 +74,6 @@ class Aliquot (MyBasicUuidModel):
     Create a LabReceive model in your app that inheret from this
     Add the patient key field, for example
     
-    from bhp_lab.models import ReceiveModel
-    class Receive(ReceiveModel):
-        subject_consent = models.ForeignKey(SubjectConsent,
-        verbose_name="Subject",
-        )
 """
     
             
@@ -104,7 +99,7 @@ class ReceiveModel (MyBasicUuidModel):
         abstract=True
         
 class Receive(ReceiveModel):
-    subject_consent = models.ForeignKey(SubjectConsent,
+    registered_subject = models.ForeignKey(RegisteredSubject,
     verbose_name="Subject",
     )
             
