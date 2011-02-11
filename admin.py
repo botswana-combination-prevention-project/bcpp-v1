@@ -26,7 +26,7 @@ admin.site.register(VisitTrackingReport, VisitTrackingReportAdmin)
 
 class AppointmentAdmin(MyModelAdmin):
     fields = (
-        'subject_consent',
+        'registered_subject',
         'appt_datetime',
         'appt_status',
         'visit_definition',        

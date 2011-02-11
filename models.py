@@ -3,7 +3,6 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future, datetime_is_after_consent
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
-from bhp_consent.models import SubjectConsent
 from bhp_registration.models import RegisteredSubject
 from choices import VISIT_INTERVAL_UNITS, APPT_STATUS
 
@@ -62,7 +61,7 @@ class VisitDefinition(MyBasicUuidModel):
 """    
 class Appointment (MyBasicUuidModel):
 
-    subject_consent = models.ForeignKey(SubjectConsent) 
+    registered_subject = models.ForeignKey(RegisteredSubject) 
 
     appt_datetime = models.DateTimeField(
         verbose_name="Appointment date and time",
@@ -97,7 +96,7 @@ class Appointment (MyBasicUuidModel):
         return "%s for %s [%s - %s]" % (self.subject_consent, self.visit_definition.code, self.appt_datetime, self.appt_status) 
 
     class Meta:
-        unique_together = [('subject_consent', 'visit_definition', 'visit_instance')]
+        unique_together = [('registered_subject', 'visit_definition', 'visit_instance')]
 
       
 
