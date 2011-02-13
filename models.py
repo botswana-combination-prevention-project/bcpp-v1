@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicUuidModel
 from choices import GENDER_OF_CONSENT
 
@@ -38,6 +38,15 @@ class StudySpecific (MyBasicUuidModel):
         )
     subject_identifier_modulus = models.IntegerField("Subject Identifier modulus",
         help_text="For the check digit. Use 7 for single digit, 77 for double digit, etc"
+        )
+
+    hostname_prefix = models.CharField("Hostname prefix",
+        max_length=15,
+        validators = [
+            RegexValidator("^[a-zA-Z]{1,15}$", "Ensure prefix does not contain any spaces or numbers"),
+            RegexValidator("^[a-z]{1,15}$", "Ensure prefix is in lowercase"),
+            ],
+        help_text="Refers to the machine hostname. Hostname_prefix+device_id = hostname"
         )
 
     device_id = models.IntegerField("device id",
