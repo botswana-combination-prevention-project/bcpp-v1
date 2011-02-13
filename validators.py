@@ -1,9 +1,9 @@
 from datetime import datetime, date, timedelta
 import re
 from django.core.exceptions import ValidationError
-from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
 from bhp_variables.choices import GENDER_OF_CONSENT
+from utils import check_omang_field
 
 def TelephoneNumber(value, pattern, word):
     str_value = "%s" % (value)
@@ -38,6 +38,18 @@ def date_not_future (value):
     if value > now:
         raise ValidationError(u'Date cannot be a future date. You entered %s' % (value,))
 
+
+def datetime_is_future (value):
+    now  = datetime.now()
+    time_error = timedelta(minutes=10)
+    if value < datetime.now() + time_error:
+        raise ValidationError(u'Date must be a future date and time. You entered %s' % (value,))
+
+def date_is_future (value):
+    now  = date.today()
+    if value < now:
+        raise ValidationError(u'Date must be a future date. You entered %s' % (value,))
+
 def MinConsentAge (value):
     now  = date.today()
     ss = StudySpecific.objects.all()[0]
@@ -63,16 +75,19 @@ def GenderOfConsent (value):
     
     gender_allowed = ss.gender_of_consent
     
-    for lst in GENDER_OF_CONSENT:
-        if lst[0] == gender_allowed:
-            allowed = lst
+    if gender_allowed == 'MF':
+        allowed = 'MF'
+    else:
+        for lst in GENDER_OF_CONSENT:
+            if lst[0] == gender_allowed:
+                allowed = lst
    
-    for lst in GENDER_OF_CONSENT:
-        if lst[0] == value:
-            entry = lst
+        for lst in GENDER_OF_CONSENT:
+            if lst[0] == value:
+                entry = lst
         
-    if value != allowed[0]:    
-        raise ValidationError(u'Gender of consent is %s only. You entered %s.' % ( allowed[1], entry[1]))
+    if value != allowed[0] or allowed[0] == 'MF':    
+        raise ValidationError(u'Gender of consent is %s. You entered %s.' % ( allowed[1], entry[1]))
 
 
 def datetime_is_future (value):
@@ -119,4 +134,10 @@ def eligible_if_male (value):
 def eligible_if_negative (value):        
     if value != 'NEG':
         raise ValidationError('Participant must be HIV Negative. Participant is NOT ELIGIBLE and registration cannot continue.')
+
+def Omang(value):
+    """ note this can also be checked at the form level"""
+    check_omang_field(value)
+    
+            
         

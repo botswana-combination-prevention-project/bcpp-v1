@@ -60,6 +60,15 @@ HOUSEHOLD_VISIT_STATUS = (
     (2, 'No'),
 )
 
+"""do not change without inspecting implication to check_omang_field() in utils.py"""
+IDENTITY_TYPE = (
+    ('OMANG', 'Omang'),
+    ('DRIVERS', 'Driver\'s License'),
+    ('PASSPORT', 'Passport'),
+    ('OMANG_RCPT', 'Omang Receipt'),                    
+    ('OTHER', 'Other'),                        
+)
+
 LOCATIONS = (
     ('CLINIC', 'Clinic'),
     ('HOUSEHOLD', 'Household'),
