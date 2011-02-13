@@ -2,14 +2,14 @@ from django.db import models
 from bhp_consent import ConsentModel
 from bhp_common.models import MyBasicUuidModel
 
-"""change the meta tag app_label"""
+"""change the meta tag app_label below!!"""
 class SubjectConsent(ConsentModel):
     pass 
     def __unicode__(self):
         return "%s %s (%s)" % (self.subject_identifier, self.first_name, self.initials)
 
     class Meta:
-        app_label='mpepu'             
+        app_label='[my_app]'             
 
 
 class ConsentedSubjectModel(MyBasicUuidModel):
