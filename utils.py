@@ -1,7 +1,7 @@
 from datetime import date, timedelta, datetime
 from bhp_consent.models import SubjectIdentifierAuditTrail
 from bhp_variables.models import StudySpecific
-from models import RegisteredSubject
+from models import RegisteredSubject, RandomizedSubject
 
 def AllocateIdentifier(ObjConsent, user):
     
@@ -86,7 +86,7 @@ def RegisterSubject (ObjConsent, subject_type, user):
     #try:
     #consent = SubjectConsent.objects.get(pk=subject_consent) 
     
-    rm = RegisteredSubject(    
+    ObjRS = RegisteredSubject(    
         subject_identifier = ObjConsent.subject_identifier,
         registration_datetime=datetime.now(),
         subject_type = subject_type,
@@ -94,9 +94,43 @@ def RegisterSubject (ObjConsent, subject_type, user):
         created=datetime.now(),
         subject_consent_id=ObjConsent.pk,
         first_name=ObjConsent.first_name,
-        initials=ObjConsent.initials
+        initials=ObjConsent.initials,
+        registration_status='registered',
         )
     
-    rm.save()
+    ObjRS.save()
     
-    return rm    
+    return ObjRS    
+
+"""
+    A Randmized subject must always be Registered first
+    
+"""    
+def RandomizeSubject (ObjConsent, subject_type, user):
+    
+    #try:
+    #consent = SubjectConsent.objects.get(pk=subject_consent) 
+    
+    dte=datetime.now()
+    
+    ObjRS = RegisteredSubject.objects.get(subject_identifier=ObjConsent.subject_identifier) 
+    ObjRS.randomization_datetime=dte
+    ObjRS.registration_status='randomized'
+    ObjRS.save()
+    
+    objRandS = RandomizedSubject(    
+        subject_identifier = ObjConsent.subject_identifier,
+        registration_datetime=dte,
+        randomization_datetime=dte,
+        subject_type = subject_type,
+        user_created=user,
+        created=datetime.now(),
+        subject_consent_id=ObjConsent.pk,
+        first_name=ObjConsent.first_name,
+        initials=ObjConsent.initials,
+        )
+    
+    objRandS.save()
+    
+    return objRandS
+    

@@ -49,7 +49,7 @@ class RandomizationList (RandomizationListBase):
 
 """
 
-class RegisteredSubject (MyBasicUuidModel):
+class Subject (MyBasicUuidModel):
        
     subject_consent_id = models.CharField(max_length=100, null=True)
        
@@ -98,8 +98,24 @@ class RegisteredSubject (MyBasicUuidModel):
     
     def __unicode__ (self):
         return "%s %s" % (self.subject_identifier, self.subject_type)
+    
+    class Meta:
+        abstract=True
+
+class RegisteredSubject(Subject):
+
+    pass
+
+    def __unicode__ (self):
+        return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)
 
 
+class RandomizedSubject(Subject):
+
+    pass
+
+    def __unicode__ (self):
+        return "%s %s" % (self.subject_identifier, self.subject_type)
 
 class RegistrationFormBase(MyBasicUuidModel):
     
@@ -115,6 +131,19 @@ class RegistrationFormBase(MyBasicUuidModel):
     class Meta:
         abstract=True
 
+class RandomizationFormBase(MyBasicUuidModel):
+    
+    randomized_subject = models.OneToOneField(RandomizedSubject,
+        editable=False  
+        )
+    
+    registration_datetime = models.DateTimeField("Today's date",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future,])
+    
+    class Meta:
+        abstract=True
 
 
 class OffStudyReason (MyBasicListModel):
