@@ -70,5 +70,5 @@ class ReceiveAdmin(MyModelAdmin):
             kwargs["queryset"] = Aliquot.objects.filter(receive__isnull=True)
         return super(ReceiveAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
             
-    list_display = ('aliquot', 'subject_consent', 'datetime_drawn', 'datetime_received')        
+    list_display = ('aliquot', 'registered_subject', 'datetime_drawn', 'datetime_received')        
 admin.site.register(Receive, ReceiveAdmin)    
