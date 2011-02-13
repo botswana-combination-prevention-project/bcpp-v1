@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from bhp_common.fields import MyUUIDField
 from bhp_common.models import MyBasicUuidModel, MyBasicModel
-from bhp_common.choices import GENDER, YES_NO, DOB_ESTIMATE
+from bhp_common.choices import GENDER, YES_NO, DOB_ESTIMATE, IDENTITY_TYPE
 from bhp_common.fields import OtherCharField
 from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start
 from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
@@ -75,6 +75,11 @@ class ConsentModel(MyBasicUuidModel):
         unique=True,
         help_text="Use Omang, Passport number, driver's license number or Omang receipt number"
         )
+    identity_type = models.CharField(
+        max_length=10,
+        verbose_name='What type of identity number is this?', 
+        choices=IDENTITY_TYPE,
+        )    
     initials = models.CharField("Initials", 
         max_length=3, 
         help_text="Format as uppercase. Initials should match initals those recorded previously",
