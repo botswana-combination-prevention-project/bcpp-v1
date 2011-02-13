@@ -10,6 +10,7 @@ from choices import VISIT_INTERVAL_UNITS, APPT_STATUS
 List of valid visit codes and their name
 """
 class VisitDefinition(MyBasicUuidModel):
+
     code = models.IntegerField(
         validators = [
             MinValueValidator(1000),
@@ -93,7 +94,7 @@ class Appointment (MyBasicUuidModel):
     
 
     def __unicode__(self):
-        return "%s for %s [%s - %s]" % (self.subject_consent, self.visit_definition.code, self.appt_datetime, self.appt_status) 
+        return "%s for %s [%s - %s]" % (self.registered_subject, self.visit_definition.code, self.appt_datetime, self.appt_status) 
 
     class Meta:
         unique_together = [('registered_subject', 'visit_definition', 'visit_instance')]
@@ -208,6 +209,9 @@ class VisitTrackingReport (VisitTrackingBaseModel):
 class VisitTrackingModel(MyBasicUuidModel):
 
     visit_tracking_report = models.OneToOneField(VisitTrackingReport)        
+
+    def __unicode___(self):
+        return "%s" % (self.visit_tracking_report)    
 
     class Meta:
         abstract = True 
