@@ -26,27 +26,27 @@ class SubjectConsentAdminBase(MyModelAdmin):
         else:
             return ('subject_identifier',) + self.readonly_fields  
             
-    fields = (
-        'subject_identifier',
+fields = (
+        'household_structure_member',
         'first_name',
         'last_name',
         'initials',
-        'study_site',
         'consent_datetime',
-        'omang',
+        'study_site',
         'gender',
         'dob',
         'is_dob_estimated',
-        'may_store_samples',        
-        'comment',
-        )        
-
+        'omang',
+        'identity_type',
+        'may_store_samples',
+        )
     radio_fields = {
         "gender":admin.VERTICAL,
         "study_site":admin.VERTICAL,
+        "is_dob_estimated":admin.VERTICAL,
+        "identity_type":admin.VERTICAL,
         "may_store_samples":admin.VERTICAL,
-        "is_dob_estimated":admin.VERTICAL,                
-        }        
+        }
         
 #admin.site.register(SubjectConsent, SubjectConsentAdmin)
 
