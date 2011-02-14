@@ -129,7 +129,13 @@ RESULT_OPTIONS = (
     ('E','E'),
 )  
 
- 
+TIME_UNITS = (
+    ('TODAY', 'Today'),
+    ('DAYS', 'Days'),
+    ('WEEKS', 'Weeks'),
+    ('MONTHS', 'Months'),
+    ('YEARS', 'Years'),    
+)
 
 
 WILL_DECL = (
