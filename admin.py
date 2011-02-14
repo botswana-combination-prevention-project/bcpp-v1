@@ -26,8 +26,8 @@ class SubjectConsentAdminBase(MyModelAdmin):
         else:
             return ('subject_identifier',) + self.readonly_fields  
             
-fields = (
-        'household_structure_member',
+    fields = (
+        'subject_identifier',
         'first_name',
         'last_name',
         'initials',
