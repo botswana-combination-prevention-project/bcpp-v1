@@ -5,7 +5,7 @@ Erik's additional model fields
 import sys, socket
 from django.db.models import CharField
 from django_extensions.db.fields import UUIDField
-from django_extensions.db.fields.encrypted import EncryptedCharField
+#from django_extensions.db.fields.encrypted import EncryptedCharField
 
 
 class MyUUIDField (UUIDField):
@@ -104,11 +104,11 @@ class OtherCharField(CharField):
         return (field_class, args, kwargs)
         
 
-class MyEncryptedCharField(EncryptedCharField):        
-    
-    def get_db_prep_value(self, value):
-        #if not value.startswith(self.prefix):
-        #    value = self.prefix + self.crypt.Encrypt(value)
-        return value
+#class MyEncryptedCharField(EncryptedCharField):        
+#    
+#    def get_db_prep_value(self, value):
+#        #if not value.startswith(self.prefix):
+#        #    value = self.prefix + self.crypt.Encrypt(value)
+#        return value
         
 
