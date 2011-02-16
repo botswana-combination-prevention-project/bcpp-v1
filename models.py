@@ -1,10 +1,13 @@
 from django.db import models
+from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future, datetime_is_after_consent
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_registration.models import RegisteredSubject
+from bhp_registration.choices import SUBJECT_TYPE
 from choices import VISIT_INTERVAL_UNITS, APPT_STATUS
+
 
 """
 List of valid visit codes and their name
@@ -104,6 +107,10 @@ class Appointment (MyBasicUuidModel):
 # VisitTrackinging #######################################
 
 class VisitTrackingInfoSource (MyBasicListModel):
+    subject_type = models.CharField(
+        max_length = 25,
+        choices=SUBJECT_TYPE,
+        )  
     class Meta:
         ordering = ['display_index']  
 
@@ -140,7 +147,7 @@ class VisitTrackingBaseModel (MyBasicUuidModel):
         validators = [
             datetime_not_before_study_start,
             datetime_is_after_consent,
-            datetime_not_future,
+            """datetime_not_future,"""
             ],
         )
         
