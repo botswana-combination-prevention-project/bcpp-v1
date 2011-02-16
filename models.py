@@ -199,13 +199,12 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     subject_cell_alt= models.IntegerField(
         max_length=8,
         verbose_name="3b. Cell number (alternate)",
+        validators = [BWCellNumber,],
         help_text="",
-        blank=True,
-        null=True,
         )
     subject_phone = models.IntegerField(
         max_length=8,
-        verbose_name="3c. Telephone",      
+        verbose_name="3c. Telephone",     
         help_text="",
         blank=True,
         null=True,
