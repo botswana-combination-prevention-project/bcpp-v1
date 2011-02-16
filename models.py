@@ -207,16 +207,12 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         verbose_name="3c. Telephone",
         validators = [BWTelephoneNumber,],        
         help_text="",
-        blank=True,
-        null=True,
         )  
     subject_phone_alt = models.IntegerField(
         max_length=8,
         verbose_name="3d. Telephone (alternate)",
         validators = [BWTelephoneNumber,],                
         help_text="",
-        blank=True,
-        null=True,
         )  
     may_call_work = models.CharField(
         max_length=25,
@@ -263,9 +259,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     contact_phone = models.IntegerField(
         max_length=8,
         verbose_name="5e. Telephone number",
-        help_text="",
-        blank=True,
-        null=True,        
+        help_text="",      
         )
     has_caretaker_alt = models.CharField(
         max_length=25,
@@ -282,8 +276,6 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=8,
         verbose_name="6b. Cell number",
         help_text="",
-        blank=True,
-        null=True, 
         )
     caretaker_tel = models.IntegerField(
         max_length=8,
