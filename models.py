@@ -176,7 +176,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     home_visit_permission = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name="2. Has the participant given her permission for study stuff to make home visits for follow-up purposes before and during the study?",
+        verbose_name="2. Has the participant given her permission for study staff to make home visits for follow-up purposes before and during the study?",
         help_text="if 'No' go to Question 3, otherwise continue",
         )
     physical_address = OtherCharField(
@@ -187,7 +187,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     may_follow_up = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name="3. Has the participant given her permission for study stuff to call her  for follow-up purposes before and during the study?", 
+        verbose_name="3. Has the participant given her permission for study staff to call her  for follow-up purposes before and during the study?", 
         help_text="if 'No' go to Question 4, otherwise continue",
         )
     subject_cell = models.IntegerField(
@@ -199,20 +199,26 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     subject_cell_alt= models.IntegerField(
         max_length=8,
         verbose_name="3b. Cell number (alternate)",
-        validators = [BWCellNumber,],
+        """validators = [BWCellNumber,],"""
         help_text="",
+        blank=True,
+        null=True,
         )
     subject_phone = models.IntegerField(
         max_length=8,
         verbose_name="3c. Telephone",
-        validators = [BWTelephoneNumber,],        
+        """validators = [BWTelephoneNumber,],"""        
         help_text="",
+        blank=True,
+        null=True,
         )  
     subject_phone_alt = models.IntegerField(
         max_length=8,
         verbose_name="3d. Telephone (alternate)",
-        validators = [BWTelephoneNumber,],                
+        """"validators = [BWTelephoneNumber,],"""                
         help_text="",
+        blank=True,
+        null=True,
         )  
     may_call_work = models.CharField(
         max_length=25,
@@ -253,11 +259,15 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=8,
         verbose_name="5d. Cell number",
         help_text="",
+        blank=True,
+        null=True,
         )
     contact_phone = models.IntegerField(
         max_length=8,
         verbose_name="5e. Telephone number",
-        help_text="",      
+        help_text="",   
+        blank=True,
+        null=True,   
         )
     has_caretaker_alt = models.CharField(
         max_length=25,
@@ -269,16 +279,22 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=35,
         verbose_name="6a. Full Name of the responsible person",
         help_text="include firstname and surname",
+        blank=True,
+        null=True,
         )
     caretaker_cell = models.IntegerField(
         max_length=8,
         verbose_name="6b. Cell number",
         help_text="",
+        blank=True,
+        null=True,
         )
     caretaker_tel = models.IntegerField(
         max_length=8,
         verbose_name="6c. Telephone number",
         help_text="",
+        blank=True,
+        null=True,
         
         ) 
 
