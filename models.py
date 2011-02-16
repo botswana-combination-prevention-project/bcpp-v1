@@ -147,7 +147,7 @@ class VisitTrackingBaseModel (MyBasicUuidModel):
         validators = [
             datetime_not_before_study_start,
             datetime_is_after_consent,
-            """datetime_not_future,"""
+            datetime_not_future,
             ],
         )
         
