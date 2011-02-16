@@ -253,8 +253,6 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=8,
         verbose_name="5d. Cell number",
         help_text="",
-        blank=True,
-        null=True, 
         )
     contact_phone = models.IntegerField(
         max_length=8,
@@ -281,8 +279,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=8,
         verbose_name="6c. Telephone number",
         help_text="",
-        blank=True,
-        null=True,        
+        
         ) 
 
     class Meta:
