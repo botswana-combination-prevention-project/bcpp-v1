@@ -165,12 +165,12 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         ) 
     mail_address = OtherCharField(
         max_length=35,
-        verbose_name="1e. Mailing address ",
+        verbose_name="1a. Mailing address ",
         help_text="",
         )
     care_clinic = OtherCharField(
         max_length=35,
-        verbose_name="1f. Health clinic where your infant will receive their routine care ",
+        verbose_name="1b. Health clinic where your infant will receive their routine care ",
         help_text="",
         ) 
     home_visit_permission = models.CharField(
@@ -201,18 +201,24 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         verbose_name="3b. Cell number (alternate)",
         validators = [BWCellNumber,],
         help_text="",
+        blank=True,
+        null=True,
         )
     subject_phone = models.IntegerField(
         max_length=8,
         verbose_name="3c. Telephone",
         validators = [BWTelephoneNumber,],        
         help_text="",
+        blank=True,
+        null=True,
         )  
     subject_phone_alt = models.IntegerField(
         max_length=8,
         verbose_name="3d. Telephone (alternate)",
         validators = [BWTelephoneNumber,],                
         help_text="",
+        blank=True,
+        null=True,
         )  
     may_call_work = models.CharField(
         max_length=25,
@@ -224,6 +230,8 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=35,
         verbose_name="4a. Name and location of work place",
         help_text="",
+        blank=True,
+        null=True,        
         )
     may_contact_someone = models.CharField(
         max_length=25,
@@ -240,6 +248,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=35,
         verbose_name="1b.Relationship to participant",
         help_text="",
+        
         )
     contact_physical_address = OtherCharField(
         max_length=35,
@@ -255,12 +264,16 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=8,
         verbose_name="1e. Telephone number",
         help_text="",
+        blank=True,
+        null=True,        
         )
     has_caretaker_alt = models.CharField(
         max_length=25,
         choices=YES_NO,
         verbose_name="2.Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?", 
-        help_text=""
+        help_text="",
+        blank=True,
+        null=True,        
         )
     caretaker_name = OtherCharField(
         max_length=35,
@@ -276,6 +289,8 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=8,
         verbose_name="2c. Telephone number",
         help_text="",
+        blank=True,
+        null=True,        
         ) 
 
     class Meta:
