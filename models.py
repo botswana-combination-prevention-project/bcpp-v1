@@ -93,9 +93,9 @@ class ConsentModel(MyBasicUuidModel):
         help_text="This refers to the site or 'clinic area' where the subject is being consented."
         )
     consent_datetime = models.DateTimeField("Consent date and time",
-        validators=[
+        """validators=[
             datetime_not_before_study_start,
-            datetime_not_future,],
+            datetime_not_future,],"""
         )
     may_store_samples = models.CharField("Sample storage",
         max_length=3, 

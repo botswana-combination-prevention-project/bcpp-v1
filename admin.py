@@ -2,6 +2,7 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_registration.utils import AllocateIdentifier
 from models import SubjectIdentifierAuditTrail
+from models import LocatorFormBaseModel
 
 class SubjectConsentAdminBase(MyModelAdmin):
   
@@ -60,4 +61,42 @@ class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
     list_per_page = 15
         
 admin.site.register(SubjectIdentifierAuditTrail, SubjectIdentifierAuditTrailAdmin)
+
+
+class LocatorFormBaseModelAdmin(MyModelAdmin):
+    
+    fields = (
+        'date_signed',
+        'mail_address',
+        'care_clinic',
+        'home_visit_permission',
+        'physical_address',
+        'may_follow_up',
+        'subject_cell',
+        'subject_cell_alt',
+        'subject_phone',
+        'subject_phone_alt',
+        'may_call_work',
+        'subject_work_place',
+        'may_contact_someone',
+        'contact_name',
+        'contact_rel',
+        'contact_physical_address',
+        'contact_cell',
+        'contact_phone',
+        'has_caretaker_alt',
+        'caretaker_name',
+        'caretaker_cell',
+        'caretaker_tel',
+        )
+        
+    radio_fields = {
+        "home_visit_permission":admin.VERTICAL,
+        "may_follow_up":admin.VERTICAL,
+        "may_call_work":admin.VERTICAL,
+        "may_contact_someone":admin.VERTICAL,  
+        "has_caretaker_alt":admin.VERTICAL, 
+              
+        }                
+admin.site.register(LocatorFormBaseModel, LocatorFormBaseModelAdmin)
 
