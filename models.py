@@ -202,7 +202,6 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         validators = [BWCellNumber,],
         help_text="",
         blank=True,
-        null=True,
         )
     subject_phone = models.IntegerField(
         max_length=8,
