@@ -180,7 +180,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         help_text="if 'No' go to Question 3, otherwise continue",
         )
     physical_address = OtherCharField(
-        max_length=50,
+        max_length=350,
         verbose_name="2a. If yes, please provide physical address with detailed description",
         help_text="",
         ) 
@@ -236,33 +236,33 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     may_contact_someone = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name="1. Has the participant given her permission for study staff to contact anyone else (e.g partner, spouse, family member, neighbour) for follow-up purposes before and during the study?", 
+        verbose_name="5. Has the participant given her permission for study staff to contact anyone else (e.g partner, spouse, family member, neighbour) for follow-up purposes before and during the study?", 
         help_text="",
         )
     contact_name = OtherCharField(
         max_length=35,
-        verbose_name="1a.Full names of the contact person",
+        verbose_name="5a.Full names of the contact person",
         help_text="",
         )
     contact_rel = OtherCharField(
         max_length=35,
-        verbose_name="1b.Relationship to participant",
+        verbose_name="5b.Relationship to participant",
         help_text="",
         
         )
     contact_physical_address = OtherCharField(
-        max_length=35,
-        verbose_name="1c.Full physical address ",
+        max_length=350,
+        verbose_name="5c.Full physical address ",
         help_text="",
         )
     contact_cell = models.IntegerField(
         max_length=8,
-        verbose_name="1d. Cell number",
+        verbose_name="5d. Cell number",
         help_text="",
         )
     contact_phone = models.IntegerField(
         max_length=8,
-        verbose_name="1e. Telephone number",
+        verbose_name="5e. Telephone number",
         help_text="",
         blank=True,
         null=True,        
@@ -270,24 +270,24 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     has_caretaker_alt = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name="2.Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?", 
+        verbose_name="6.Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?", 
         help_text="",
         blank=True,
         null=True,        
         )
     caretaker_name = OtherCharField(
         max_length=35,
-        verbose_name="2a. Full Name of the responsible person",
+        verbose_name="6a. Full Name of the responsible person",
         help_text="include firstname and surname",
         )
     caretaker_cell = models.IntegerField(
         max_length=8,
-        verbose_name="2b. Cell number",
+        verbose_name="6b. Cell number",
         help_text="",
         )
     caretaker_tel = models.IntegerField(
         max_length=8,
-        verbose_name="2c. Telephone number",
+        verbose_name="6c. Telephone number",
         help_text="",
         blank=True,
         null=True,        
