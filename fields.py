@@ -103,6 +103,65 @@ class OtherCharField(CharField):
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
         
+class DobField(DateTimeField):
+    """field for date of birth"""
+            
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('help_text', 'Format is YYYY-MM-DD)
+        DateTimeField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "DateTimeField"
+  
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.DateTimeField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+class WeightField(DecimalField):
+    """field for weight"""
+            
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('max_digits', 5)
+        kwargs.setdefault('max_places', 1)                        
+        kwargs.setdefault('help_text', 'Format is 999.9 in Kg)
+        DecimalField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "DecimalField"
+  
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.DecimalField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+class OmangField(CharField):
+    """field for omang"""
+           
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('max_length', 9)
+        kwargs.setdefault('help_text', 'Format is 9999[12]9999)
+        CharField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "CharField"
+  
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
 
 #class MyEncryptedCharField(EncryptedCharField):        
 #    
