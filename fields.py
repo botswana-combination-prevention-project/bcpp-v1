@@ -3,7 +3,7 @@ Erik's additional model fields
 """
 
 import sys, socket
-from django.db.models import CharField
+from django.db.models import CharField, DateTimeField, DecimalField
 from django_extensions.db.fields import UUIDField
 #from django_extensions.db.fields.encrypted import EncryptedCharField
 
@@ -108,7 +108,7 @@ class DobField(DateTimeField):
             
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
-        kwargs.setdefault('help_text', 'Format is YYYY-MM-DD)
+        kwargs.setdefault('help_text', 'Format is YYYY-MM-DD')
         DateTimeField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
@@ -128,8 +128,8 @@ class WeightField(DecimalField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_digits', 5)
-        kwargs.setdefault('max_places', 1)                        
-        kwargs.setdefault('help_text', 'Format is 999.9 in Kg)
+        kwargs.setdefault('decimal_places', 1)                        
+        kwargs.setdefault('help_text', 'Format is 999.9 in Kg')
         DecimalField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
@@ -149,7 +149,7 @@ class OmangField(CharField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_length', 9)
-        kwargs.setdefault('help_text', 'Format is 9999[12]9999)
+        kwargs.setdefault('help_text', 'Format is 9999[12]9999')
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
