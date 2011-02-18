@@ -207,7 +207,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         verbose_name="3c. Telephone",     
         help_text="",
         blank=True,
-        Null=True,
+        null=True,
         )  
     subject_phone_alt = models.IntegerField(
         max_length=8,
