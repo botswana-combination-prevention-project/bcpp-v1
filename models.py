@@ -4,7 +4,7 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
 from fields import HostnameCreationField, HostnameModificationField, MyUUIDField
-
+from bhp_common.choices import ISSUE_STATUS
 
 class MyBasicModel(TimeStampedModel):
     """
@@ -83,5 +83,71 @@ class MyStackedInline (admin.StackedInline):
         if change:
             obj.user_modified = request.user.username
         obj.save()
+
+    
+
+
+class IssueTracker(MyBasicUuidModel):
+
+    item_uuid = models.CharField(
+        editable=False,
+        max_length=50)
+
+    item_id = models.CharField(
+        max_length=50)
+
+    
+    item_type = models.CharField(
+        max_length=50,
+        )
+
+    item_app = models.CharField(
+        editable=False,
+        max_length=50,
+        )
+
+    item_datetime = models.DateTimeField()
+
+    subject = models.CharField(
+        verbose_name="Subject line",
+        max_length=35,
+        )
+
+    rt_number = models.IntegerField(
+        blank=True,
+        null=True,
+        )
+
+    description = models.TextField(
+        max_length=250,
+        verbose_name="Description",
+        )
+    
+    status = models.CharField(
+        max_length=25,
+        choices=ISSUE_STATUS,
+        verbose_name="Status",
+        )
+    def get_absolute_url(self):
+        return "/bhp_common/issuetracker/%s/" % self.id
+        
+    def __unicode__(self):
+        return '[rt #%s] %s' % (self.rt_number, self.subject)
+
+    class Meta:
+        ordering = ['-item_datetime',]
+        
+class IssueTrackerHistory(MyBasicUuidModel):
+   
+    history = models.ForeignKey(IssueTracker)
+    
+    item_datetime = models.DateTimeField()
+    
+    description = models.TextField(
+        max_length=250,
+        verbose_name="Description",
+        )
+
+    
 
 

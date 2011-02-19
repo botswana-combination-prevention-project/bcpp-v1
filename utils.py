@@ -1,6 +1,9 @@
-import re
+import re, socket, sys
+from geopy import Point
+from geopy.distance import distance, VincentyDistance
 from django import forms
 from django.core.exceptions import ValidationError
+
 
 def check_initials_field(first_name, last_name, initials):
     """
@@ -28,3 +31,16 @@ def check_omang_field(omang, gender):
         p = re.compile(pattern)
         if p.match(str_value) == None:
             raise ValidationError(u'Invalid Omang number. You entered %s.' % (str_value))
+            
+def os_variables():
+            
+    a = {}
+    a['hostname'] = socket.gethostname()
+    
+    return a
+
+
+def distance_from_gps(lat1, lon1):
+    return VincentyDistance(miles=distMiles).destination(Point(lat1, lon1), bearing)
+    
+            

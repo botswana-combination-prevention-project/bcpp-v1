@@ -1,0 +1,29 @@
+{% extends "base_site.html" %}
+{% block content %}
+<div id="content-main">
+    <h2>Issues</h2>
+{% include "search.html" %}    
+  <div class="results">
+      <table  cellspacing="0" id="result_list" border=1>
+    	<thead>
+			<tr>
+    	<th>RT</th>
+        <th>Type</th>    	
+    	<th>Id</th>
+    	<th>Date Modified</th>    	    	
+    	<th>User Created</th>
+    	<th>Hostname</th>    	    	
+    	</thead>	
+{% for issue in object_list %}
+    <tr class="{% cycle 'row1' 'row2' %}">
+    <td><A href="/admin{{ issue.get_absolute_url }}">{{ issue.rt_number|escape}}</A></td>
+ 	  <td>{{ issue.item_id|escape }}</td>
+ 	  <td>{{ issue.item_type|escape }}</td>
+  	  <td>{{ issue.modified|date:"Y-m-d" }}</td>
+ 	  <td>{{ issue.user_created|escape }}</td>
+   	  <td>{{ issue.hostname_created|escape }}</td>
+    </tr>
+
+{% endfor %}
+</div>
+{% endblock%}
