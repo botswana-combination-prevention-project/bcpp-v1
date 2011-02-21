@@ -1,6 +1,4 @@
 import re, socket, sys
-from geopy import Point
-from geopy.distance import distance, VincentyDistance
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -40,7 +38,5 @@ def os_variables():
     return a
 
 
-def distance_from_gps(lat1, lon1):
-    return VincentyDistance(miles=distMiles).destination(Point(lat1, lon1), bearing)
     
             
