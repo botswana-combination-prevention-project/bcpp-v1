@@ -3,7 +3,7 @@ import re
 from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
 from bhp_variables.choices import GENDER_OF_CONSENT
-from utils import check_omang_field
+#from utils import check_omang_field
 
 def TelephoneNumber(value, pattern, word):
     str_value = "%s" % (value)
@@ -122,7 +122,12 @@ def eligible_if_yes (value):
         
 def eligible_if_no (value):        
     if value != 'No':
-        raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')        
+        raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')
+        
+  
+def eligible_if_unknown (value):        
+    if value != 'Unknown':
+        raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')              
         
 def eligible_if_female (value):        
     if value != 'F':
