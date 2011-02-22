@@ -194,6 +194,8 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         max_length=8,
         verbose_name="3a. Cell number",
         validators = [BWCellNumber,],
+        blank=True,
+        null=True,
         help_text="",
         )
     subject_cell_alt= models.IntegerField(
@@ -201,18 +203,24 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         verbose_name="3b. Cell number (alternate)",
         validators = [BWCellNumber,],
         help_text="",
+        blank=True,
+        null=True,
         )
     subject_phone = models.IntegerField(
         max_length=8,
         verbose_name="3c. Telephone",  
         validators = [BWTelephoneNumber,],    
         help_text="",
+        blank=True,
+        null=True,
         )  
     subject_phone_alt = models.IntegerField(
         max_length=8,
         verbose_name="3d. Telephone (alternate)",               
         help_text="",
         validators = [BWTelephoneNumber,],
+        blank=True,
+        null=True,
         )  
     may_call_work = models.CharField(
         max_length=25,
@@ -254,12 +262,16 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         verbose_name="5d. Cell number",
         validators = [BWCellNumber,],
         help_text="",
+        blank=True,
+        null=True,
         )
     contact_phone = models.IntegerField(
         max_length=8,
         verbose_name="5e. Telephone number",
         validators = [BWTelephoneNumber,],
-        help_text="",    
+        help_text="", 
+        blank=True,
+        null=True,   
         )
     has_caretaker_alt = models.CharField(
         max_length=25,
@@ -279,12 +291,16 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         verbose_name="6b. Cell number",
         validators = [BWCellNumber,],
         help_text="",
+        blank=True,
+        null=True,
         )
     caretaker_tel = models.IntegerField(
         max_length=8,
         verbose_name="6c. Telephone number",
         validators = [BWTelephoneNumber,],
         help_text="",
+        blank=True,
+        null=True,
         ) 
 
     class Meta:
