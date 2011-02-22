@@ -123,8 +123,7 @@ def eligible_if_yes (value):
 def eligible_if_no (value):        
     if value != 'No':
         raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')
-        
-  
+          
 def eligible_if_unknown (value):        
     if value != 'Unknown':
         raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')              
