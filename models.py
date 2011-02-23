@@ -235,6 +235,14 @@ class LocatorFormBaseModel(MyBasicUuidModel):
         blank=True,
         null=True,        
         )
+    subject_work_phone = models.IntegerField(
+        max_length=8,
+        verbose_name="4b. Telephone (alternate)",               
+        help_text="",
+        validators = [BWTelephoneNumber,],
+        blank=True,
+        null=True,
+        )          
     may_contact_someone = models.CharField(
         max_length=25,
         choices=YES_NO,

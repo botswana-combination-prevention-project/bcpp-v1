@@ -78,6 +78,7 @@ class LocatorFormBaseModelAdmin(MyModelAdmin):
         'subject_phone_alt',
         'may_call_work',
         'subject_work_place',
+        'subject_work_phone',
         'may_contact_someone',
         'contact_name',
         'contact_rel',
