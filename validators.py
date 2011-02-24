@@ -49,7 +49,6 @@ def date_not_future (value):
     if value > now:
         raise ValidationError(u'Date cannot be a future date. You entered %s' % (value,))
 
-
 def datetime_is_future (value):
     now  = datetime.now()
     time_error = timedelta(minutes=10)
