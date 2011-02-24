@@ -37,7 +37,7 @@ class SubjectConsentAdminBase(MyModelAdmin):
         'gender',
         'dob',
         'is_dob_estimated',
-        'omang',
+        'identity',
         'identity_type',
         'may_store_samples',
         )

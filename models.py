@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from bhp_common.fields import MyUUIDField
-from bhp_common.models import MyBasicUuidModel, MyBasicModel, OmangField
+from bhp_common.models import MyBasicUuidModel, MyBasicModel
+from bhp_common.fields import OmangField
 from bhp_common.choices import GENDER, YES_NO, DOB_ESTIMATE, IDENTITY_TYPE
 from bhp_common.fields import OtherCharField
 from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start
@@ -12,12 +13,14 @@ from bhp_variables.models import StudySite
 
 class BaseConsentModel(MyBasicUuidModel):
 
-    """infants consnt models may wish to start here"""
+    """infants consent models may wish to start here as they would not need the identity fields
+       and the dob validators would be different from those reading values from StudySpecific
+    """
      
     subject_identifier = models.CharField('Subject Identifier', 
         max_length=25, 
         unique=True, 
-        help_text='Subject ID from barcode', 
+        help_text='', 
         )
     first_name = models.CharField(
         verbose_name='First name', 
@@ -100,9 +103,9 @@ class ConsentModel(BaseConsentModel):
             ],
         help_text="Format is YYYY-MM-DD",
         )
-    omang = OmangField(
+    identity = models.CharField(
         verbose_name='Identity number (OMANG, etc)', 
-        max_length=250, 
+        max_length=25, 
         unique=True,
         help_text="Use Omang, Passport number, driver's license number or Omang receipt number"
         )
