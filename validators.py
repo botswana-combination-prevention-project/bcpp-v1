@@ -3,7 +3,6 @@ import re
 from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
 from bhp_variables.choices import GENDER_OF_CONSENT
-#from utils import check_omang_field
 
 
 def MinDecimalValidator(value, min_value):

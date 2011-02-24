@@ -3,7 +3,7 @@ from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
-from fields import HostnameCreationField, HostnameModificationField, MyUUIDField
+from fields import HostnameCreationField, HostnameModificationField, MyUUIDField, OmangField
 from bhp_common.choices import ISSUE_STATUS
 
 class MyBasicModel(TimeStampedModel):
