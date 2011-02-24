@@ -3,7 +3,7 @@ from bhp_consent.models import SubjectIdentifierAuditTrail
 from bhp_variables.models import StudySpecific
 from models import RegisteredSubject, RandomizedSubject
 
-def AllocateIdentifier(ObjConsent, subject_type='subject', user=''):
+def AllocateIdentifier(ObjConsent, subject_type='SUBJECT', user=''):
     
     """
     Allocate an identifier at the time of consent
@@ -152,6 +152,7 @@ def RegisterSubject (identifier, consent_pk, first_name, initials, subject_type,
     
     #try:
     #consent = SubjectConsent.objects.get(pk=subject_consent) 
+    subject_type=subject_type.upper()
     
     ObjRS = RegisteredSubject(    
         subject_identifier = identifier,

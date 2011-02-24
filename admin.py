@@ -11,6 +11,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         'subject_consent_id',        
         'first_name',
         'initials',
+        'subject_type',
         'user_created',
         'created',        
     )   
