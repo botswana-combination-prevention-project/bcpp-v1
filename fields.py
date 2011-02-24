@@ -128,8 +128,8 @@ class WeightField(DecimalField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_digits', 5)
-        kwargs.setdefault('decimal_places', 1)                        
-        kwargs.setdefault('help_text', 'Format is 999.9 in Kg')
+        kwargs.setdefault('decimal_places', 2)                        
+        kwargs.setdefault('help_text', ' in kg. Format is 9.99, 99.99, etc')
         DecimalField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):

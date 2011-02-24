@@ -5,6 +5,15 @@ from bhp_variables.models import StudySpecific
 from bhp_variables.choices import GENDER_OF_CONSENT
 #from utils import check_omang_field
 
+
+def MinDecimalValidator(value, min_value):
+    if min_value > value :
+        raise ValidationError(u'Ensure this value is greater than or equal to %s.' % value)
+            
+def MaxDecimalValidator(value, max_value):
+    if max_value < value :
+        raise ValidationError(u'Ensure this value is less than or equal to %s.' % value)
+            
 def TelephoneNumber(value, pattern, word):
     str_value = "%s" % (value)
     p = re.compile(pattern)
@@ -17,6 +26,9 @@ def BWCellNumber(value):
 def BWTelephoneNumber(value):
     TelephoneNumber(value, '^[2-8]{1}[0-9]{6}$', 'telephone')
 
+def IsTodayDateTime (value):
+    pass
+    
 def dob_not_future (value):
     now  = date.today()
     if now < value :
