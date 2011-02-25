@@ -62,5 +62,13 @@ class IssueTrackerAdmin (MyModelAdmin):
             else:
                 post_url = '../../'
             return HttpResponseRedirect(post_url) 
+            
     inlines=[IssueTrackerHistoryInline,]
+    
+    list_display = (
+        'rt_number',
+        'subject',
+        'status'
+        )
+
 admin.site.register(IssueTracker, IssueTrackerAdmin)
