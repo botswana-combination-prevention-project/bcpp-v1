@@ -138,6 +138,21 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
         ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
         subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '67')
         ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
+    if live_infants == 4:
+        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '48')
+        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
+        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '58')
+        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
+        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '68')
+        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
+        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '78')
+        ret = RegisterSubject(
+                    subject_identifier['id'], 
+                    registered_mother, 
+                    first_name, 
+                    initials, 
+                    'infant', 
+                    user)
            
 
 
