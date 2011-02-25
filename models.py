@@ -39,7 +39,7 @@ class BaseConsentModel(MyBasicUuidModel):
         )
     initials = models.CharField("Initials", 
         max_length=3, 
-        help_text="Format as uppercase. Initials should match initals those recorded previously",
+        help_text="Format as uppercase. Initials should match first and last name and any reference to initals recorded previously",
         validators=[
             MinLengthValidator(2),
             MaxLengthValidator(3), 
