@@ -8,7 +8,6 @@ admin.site.register(VisitTrackingVisitReason)
 admin.site.register(VisitTrackingSubjCurrStatus)
 
 
-
 class VisitTrackingReportAdmin(MyModelAdmin):
     fields = (
         'registered_subject',
