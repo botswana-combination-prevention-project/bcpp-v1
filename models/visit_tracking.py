@@ -6,6 +6,7 @@ from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_registration.models import RegisteredSubject
 from bhp_registration.choices import SUBJECT_TYPE
+from bhp_visit.models import RegisteredSubjectAppointment
 
 
 class VisitTrackingInfoSource (MyBasicListModel):
@@ -42,7 +43,7 @@ class VisitTrackingBaseModel (MyBasicUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject)
 
-    appointment  = models.OneToOneField(Appointment)
+    appointment  = models.OneToOneField(RegisteredSubjectAppointment)
     
     visit_datetime = models.DateTimeField(
         verbose_name = "Visit Date and Time",

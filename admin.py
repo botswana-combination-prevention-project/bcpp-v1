@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from models import Appointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason, VisitTrackingReport
+from models import RegisteredSubjectAppointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason, VisitTrackingReport
 
 admin.site.register(VisitDefinition)
 admin.site.register(VisitTrackingInfoSource)
@@ -31,5 +31,5 @@ class AppointmentAdmin(MyModelAdmin):
         'visit_definition',        
         'visit_instance',
     )
-admin.site.register(Appointment, AppointmentAdmin)
+admin.site.register(RegisteredSubjectAppointment, AppointmentAdmin)
 

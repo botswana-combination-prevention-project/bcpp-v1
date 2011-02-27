@@ -1,8 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
-from choices import VISIT_INTERVAL_UNITS
-
+from bhp_visit.choices import VISIT_INTERVAL_UNITS
 
 
 """

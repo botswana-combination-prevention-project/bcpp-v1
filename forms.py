@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta
 from django import forms
 from django.contrib.admin import widgets                                       
 
-class MyAf002Form(forms.ModelForm):
+class BaseVisitTrackingForm(forms.ModelForm):
     
     class Meta:
         model = VisitTracking        
