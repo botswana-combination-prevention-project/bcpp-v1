@@ -1,10 +1,14 @@
 """
 Erik's additional model fields
 """
-
-import sys, socket
+import sys, socket, re
+from django.utils.translation import ugettext_lazy as _
 from django.db.models import CharField, DateTimeField, DecimalField
+from django.forms import RegexField
 from django_extensions.db.fields import UUIDField
+from bhp_common.choices import DATE_ESTIMATED
+from choices import IDENTITY_TYPE
+
 #from django_extensions.db.fields.encrypted import EncryptedCharField
 
 
@@ -13,6 +17,9 @@ class MyUUIDField (UUIDField):
     http://code.djangoproject.com/ticket/12235
     subclassed to avoid MultiValueDictKeyError when editing Inline objects
     """
+
+    description = _("Custom Uuid field")
+
     def contribute_to_class(self, cls, name):
         if self.primary_key == True: 
             assert not cls._meta.has_auto_field, "A model can't have more than one AutoField: %s %s %s; have %s" % (self,cls,name,cls._meta.auto_field)
@@ -28,6 +35,8 @@ class HostnameCreationField (CharField):
 
     By default, sets editable=False, blank=True, default=socket.gethostname()
     """
+
+    description = _("Custom field for hostname created")
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', False)
@@ -58,6 +67,8 @@ class HostnameModificationField (CharField):
     Sets value to socket.gethostname() on each save of the model.
     """
 
+    description = _("Custom field for hostname modified")
+    
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', False)
         kwargs.setdefault('blank', True)
@@ -84,12 +95,14 @@ class HostnameModificationField (CharField):
         
 class OtherCharField(CharField):
     """field for "Other specify" options"""
+
+    description = _("Custom field for 'Other specify' form field")
             
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('blank', True)
         kwargs.setdefault('max_length', 35)
-        kwargs.setdefault('verbose_name', '...if "Other", specify')
+        kwargs.setdefault('verbose_name', _('...if "Other", specify'))
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
@@ -105,12 +118,16 @@ class OtherCharField(CharField):
         
 class DobField(DateTimeField):
     """field for date of birth"""
+
+    description = _("Custom field for date of birth")
             
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('verbose_name', _('Date of Birth'))
         kwargs.setdefault('editable', True)
-        kwargs.setdefault('help_text', 'Format is YYYY-MM-DD')
+        kwargs.setdefault('help_text', _('Format is YYYY-MM-DD'))
+        #self.validators.append(datetime_is_not_future)
         DateTimeField.__init__(self, *args, **kwargs)
-
+    
     def get_internal_type(self):
         return "DateTimeField"
   
@@ -122,14 +139,97 @@ class DobField(DateTimeField):
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
 
+
+
+class IsDateEstimatedField(CharField):
+    
+    """field to question if date is estimated"""
+
+    description = _("Custom field to question if date is estimated")
+            
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('max_length', 25)        
+        kwargs.setdefault('choices', DATE_ESTIMATED)
+        kwargs.setdefault('help_text', _('If the exact date is not known, please indicate which part of the date is estimated.'))
+        CharField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "CharField"
+  
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.DateTimeField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+
+
+class NameField(CharField):
+   
+    description = _("Custom field for Name of person")
+    
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('verbose_name', _('Name'))
+        kwargs.setdefault('max_length',50)        
+        kwargs.setdefault('help_text', _('Type only letters, all in uppercase and no spaces'))
+        CharField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "CharField"
+    
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': RegexField,
+            'regex': re.compile("^[A-Z]{1,250}$"),
+            'max_length': self.max_length,
+            'error_messages': {
+                'invalid': _(u'Enter a valid name, all letters, in uppercase and no spaces.'),
+            }
+        }
+        defaults.update(kwargs)
+        return super(NameField, self).formfield(**defaults)
+
+class InitialsField(CharField):
+   
+    description = _("Custom field for a person\'s initials")
+    
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('verbose_name', _('Initials'))
+        kwargs.setdefault('max_length',3)        
+        kwargs.setdefault('help_text', _('Type 2-3 letters, all in uppercase and no spaces'))
+        CharField.__init__(self, *args, **kwargs)
+    
+    def get_internal_type(self):
+        return "CharField"
+    
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': RegexField,
+            'regex': re.compile("^[A-Z]{2,3}$"),
+            'max_length': self.max_length,
+            'error_messages': {
+                'invalid': _(u'Enter valid initials. Must be 2-3 letters, all in uppercase and no spaces.'),
+            }
+        }
+        defaults.update(kwargs)
+        return super(InitialsField, self).formfield(**defaults)
+
+
 class WeightField(DecimalField):
     """field for weight"""
+
+    description = _("Custom field for weight")
             
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_digits', 5)
         kwargs.setdefault('decimal_places', 2)                        
-        kwargs.setdefault('help_text', ' in kg. Format is 9.99, 99.99, etc')
+        kwargs.setdefault('help_text', _('Report in kg. Format is 9.99, 99.99, etc'))
         DecimalField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
@@ -144,17 +244,78 @@ class WeightField(DecimalField):
         return (field_class, args, kwargs)
 
 class OmangField(CharField):
-    """field for omang"""
-           
+    
+    """field for omang. If getting an ID that may alos be something other than an Omang, 
+        use IdentityField along with IdentityTypeField
+    """
+
+    description = _("Custom field for Botswana Omang")
+               
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_length', 9)
-        kwargs.setdefault('help_text', 'Format is 9999[12]9999')
+        kwargs.setdefault('help_text', _('Format is 9999[12]9999'))
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
         return "CharField"
   
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': RegexField,
+            'regex': re.compile("^[0-9]{4}[12]{1}[0-9]{4}$"),
+            'max_length': self.max_length,
+            'error_messages': {
+                'invalid': _(u'Enter a valid Omang. Must be 9 numbers. Note that digit 5 represents gender.'),
+            }
+        }
+        defaults.update(kwargs)
+        return super(InitialsField, self).formfield(**defaults)
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+class IdentityTypeField(CharField):
+    
+    """
+        have IdentityTypeField immediately follow an identity field:
+        
+        For example, 
+
+        ...
+        
+        identity = models.CharField(
+            verbose_name=_("Identity number (OMANG, etc)"), 
+            max_length=25, 
+            unique=True,
+            help_text=_("Use Omang, Passport number, driver's license number or Omang receipt number")
+            )
+            
+        identity_type = IdentityTypeField()            
+        
+        ...
+        
+        Use the value of identity_type to check the cleaned value of identity at the form level.
+        
+    """
+
+    description = _("Custom field for Identity Type")
+               
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('verbose_name', _('What type of identity number is this?'))
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('max_length', 15)
+        kwargs.setdefault('choices', IDENTITY_TYPE)        
+        #kwargs.setdefault('help_text', _('Format is 9999[12]9999'))
+        CharField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "CharField"
+      
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.

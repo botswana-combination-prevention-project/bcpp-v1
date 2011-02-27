@@ -24,7 +24,7 @@ CONFIRMED_SUSPECTED = (
     ('SUSPECTED', 'Suspected'),
 )    
 
-DOB_ESTIMATE = (
+DATE_ESTIMATED = (
     ('-', 'No'),
     ('D', 'Yes, estimated the Day'),            
     ('MD', 'Yes, estimated Month and Day'),

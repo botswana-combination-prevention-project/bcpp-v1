@@ -28,7 +28,7 @@ def check_omang_field(omang, gender):
     if pattern:
         p = re.compile(pattern)
         if p.match(str_value) == None:
-            raise ValidationError(u'Invalid Omang number. You entered %s.' % (str_value))
+            raise ValidationError(u'Invalid Omang number for gender (%s). You entered %s.' % (gender, str_value))
             
 def os_variables():
             

@@ -60,6 +60,11 @@ def date_is_future (value):
     if value < now:
         raise ValidationError(u'Date must be a future date. You entered %s' % (value,))
 
+def date_not_future (value):
+    now  = date.today()
+    if value > now:
+        raise ValidationError(u'Date must not be a future date. You entered %s' % (value,))
+
 def MinConsentAge (value):
     now  = date.today()
     ss = StudySpecific.objects.all()[0]
