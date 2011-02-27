@@ -1,9 +1,11 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from bhp_common.fields import MyUUIDField
+from bhp_common.fields import NameField, InitialsField, IdentityTypeField, IsDateEstimatedField
 from bhp_common.models import MyBasicUuidModel, MyBasicModel
 from bhp_common.fields import OmangField
-from bhp_common.choices import GENDER, YES_NO, DOB_ESTIMATE, IDENTITY_TYPE
+from bhp_common.choices import GENDER, YES_NO
 from bhp_common.fields import OtherCharField
 from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start
 from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
@@ -22,29 +24,17 @@ class BaseConsentModel(MyBasicUuidModel):
         unique=True, 
         help_text='', 
         )
-    first_name = models.CharField(
-        verbose_name='First name', 
-        max_length=250, 
-        help_text="First name should match first name as recorded previously",
-        validators = [
-            RegexValidator("^[a-zA-Z]{1,250}$", "Ensure first name does not contain any spaces or numbers"),
-            RegexValidator("^[A-Z]{1,250}$", "Ensure first name is in uppercase"),],
+        
+    first_name = NameField(
+        verbose_name = _("First name")
         )
-    last_name = models.CharField(
-        verbose_name='Last name', 
-        max_length=250,
-        validators = [
-            RegexValidator("^[a-zA-Z]{1,250}$", "Ensure last name does not contain any spaces or numbers"),
-            RegexValidator("^[A-Z]{1,250}$", "Ensure last name is in uppercase"),],
-        )
-    initials = models.CharField("Initials", 
-        max_length=3, 
-        help_text="Format as uppercase. Initials should match first and last name and any reference to initals recorded previously",
-        validators=[
-            MinLengthValidator(2),
-            MaxLengthValidator(3), 
-            RegexValidator("^[A-Z]{1,4}$", "Ensure initials are in uppercase"),],
-        )
+        
+    last_name = NameField(
+        verbose_name = _("Last name")
+    )
+    
+    initials = InitialsField()
+    
     study_site = models.ForeignKey(StudySite,
         verbose_name = 'Site',
         help_text="This refers to the site or 'clinic area' where the subject is being consented."
@@ -94,45 +84,44 @@ class ConsentModel(BaseConsentModel):
     
     """
     
-    dob = models.DateField('Date of birth',
+    dob = models.DateField(
+        verbose_name = _("Date of birth"),
         validators = [
             dob_not_future, 
             dob_not_today,
             MinConsentAge,
             MaxConsentAge,            
             ],
-        help_text="Format is YYYY-MM-DD",
+        help_text=_("Format is YYYY-MM-DD"),
         )
+
     identity = models.CharField(
-        verbose_name='Identity number (OMANG, etc)', 
+        verbose_name=_("Identity number (OMANG, etc)"), 
         max_length=25, 
         unique=True,
-        help_text="Use Omang, Passport number, driver's license number or Omang receipt number"
+        help_text=_("Use Omang, Passport number, driver's license number or Omang receipt number")
         )
-    identity_type = models.CharField(
-        max_length=10,
-        verbose_name='What type of identity number is this?', 
-        choices=IDENTITY_TYPE,
-        )    
-    may_store_samples = models.CharField("Sample storage",
+
+    identity_type = IdentityTypeField()
+    
+    may_store_samples = models.CharField(
+        verbose_name = _("Sample storage"),
         max_length=3, 
         choices=YES_NO, 
-        help_text="Does the subject agree to have samples stored after the study has ended"
+        help_text=_("Does the subject agree to have samples stored after the study has ended")
         )
-    gender = models.CharField('Gender',
+    gender = models.CharField(
+        verbose_name = _("Gender"),
         max_length=1, 
         choices=GENDER,
         validators=[
             GenderOfConsent,
             ]
         )
-    is_dob_estimated = models.CharField(
-        max_length=25,
-        choices=DOB_ESTIMATE,
-        verbose_name="Is the subject's date of birth estimated?",
-        help_text="If the subject does not know their exact date of birth, please indicate which part of the date of birth was estimated.",
-        )
-    
+        
+    is_dob_estimated = IsDateEstimatedField( 
+        verbose_name=_("Is the subject's date of birth estimated?"),       
+    )    
 
     def __unicode__(self):
         return unicode(self.subject_identifier)
@@ -168,7 +157,7 @@ class LocatorFormBaseModel(MyBasicUuidModel):
     
 
     date_signed = models.DateField( 
-        verbose_name="1.Date Locator Form signed ",
+        verbose_name = "1.Date Locator Form signed ",
         help_text="",
         ) 
     mail_address = OtherCharField(
