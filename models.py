@@ -13,9 +13,11 @@ class StudySpecific (models.Model):
     protocol_title = models.CharField(
         verbose_name = _("Local Title"),
         max_length=100,
+        unique=True,        
         help_text=_("Local name for the protocol, e.g. Mashi, Mmabana, ..."))    
     research_title = models.CharField("Research Title",
         max_length=250,
+        unique=True,                
         help_text=_("Protocol title used on the grant"))    
     study_start_datetime = models.DateTimeField(
         verbose_name = _("Study Start Date and Time"),
@@ -27,6 +29,12 @@ class StudySpecific (models.Model):
     maximum_age_of_consent = models.IntegerField(
         verbose_name = _("Maximum age of consent (<=)"),
         )    
+    
+    age_at_adult_lower_bound = models.IntegerField(
+        verbose_name = _("Lower bound age at adult. Default is 18."),
+        default=18,
+        help_text = _("At what age is a subject old enough to consent without the presence of a guardian")
+        )
 
     gender_of_consent = models.CharField(
         verbose_name = _("Gender"),
@@ -40,6 +48,7 @@ class StudySpecific (models.Model):
     subject_identifier_prefix = models.CharField(
         verbose_name = _("Subject Identifier prefix"),
         max_length=3,
+        unique=True,                
         help_text="Usually the numeric part of protocol_number. E.g. for BHP056 use '056'"
         )
     subject_identifier_modulus = models.IntegerField("Subject Identifier modulus",
