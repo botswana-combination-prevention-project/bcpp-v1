@@ -45,6 +45,17 @@ class BaseConsentModel(MyBasicUuidModel):
             datetime_not_future,],
         )
         
+    guardian_name = models.CharField(
+        verbose_name = _("Guardian\'s Last and first name (minors only)"),
+        max_length = 150,
+        validators = [
+            RegexValidator('^[A-Z]{1-50}\,[A-Z]{1-50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+            ],
+        blank=True,
+        null=True,    
+        help_text = _('Required only if subject  a minor. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+        )
+            
     comment = models.CharField("Comment", 
         max_length=250, 
         blank=True
