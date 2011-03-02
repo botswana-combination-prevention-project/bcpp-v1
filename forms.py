@@ -1,6 +1,7 @@
 from django import forms
 from bhp_variables import StudySpecific
 
+
 class BaseSubjectConsentForm(forms.ModelForm):
 
 class BaseSubjectConsentForm(forms.ModelForm):
@@ -37,4 +38,6 @@ class BaseSubjectConsentForm(forms.ModelForm):
     
     class Meta:
         abstract = True
+        
+        
 
