@@ -1,4 +1,5 @@
+from django.conf.urls.defaults import *
+
 #urlpatterns = patterns('bhp_visit.views',
-###    (r'^/appoinment/$', 'index'),
-##    (r'^/visit/$', 'index'),    
-#)
+#    (r'^visitdefinition/$', 'visitdefinition_search'),            
+#) 

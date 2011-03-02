@@ -1,7 +1,6 @@
 from datetime import datetime, date, timedelta
 from django.core.exceptions import ValidationError
 
-
 """
 check if decimal value of visit code is sequentially correct
 """
