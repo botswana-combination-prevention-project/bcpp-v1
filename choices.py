@@ -121,13 +121,7 @@ REFUSAL_STATUS = (
     ('NOT_REFUSED','No longer refusing'),    
 )    
 
-RESULT_OPTIONS = (
-    ('A','A'),
-    ('B','B'),
-    ('C','C'),
-    ('D','D'),
-    ('E','E'),
-)  
+ 
 
 
 TIME_UNITS = (
