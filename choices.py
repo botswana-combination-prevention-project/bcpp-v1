@@ -129,12 +129,6 @@ RESULT_OPTIONS = (
     ('E','E'),
 )  
 
-ISSUE_STATUS = (
-    ('NEW', 'New'),
-    ('OPEN', 'Open'),
-    ('STALLED', 'Stalled'),
-    ('CLOSED', 'Closed'),                            
-)
 
 TIME_UNITS = (
     ('TODAY', 'Today'),
