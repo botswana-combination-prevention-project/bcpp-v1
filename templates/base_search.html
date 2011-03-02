@@ -1,0 +1,58 @@
+{% extends "section_search.html" %}
+
+{% block title %}Search {{ search_name }}{% endblock %}
+
+{% block content %}
+
+{% block search_title %}
+<h2>Search {{ report_title|default:"Search something"|capfirst }}</h2>
+<small><I>{{ report_helptext|default:"" }}</I></small>
+{% endblock %}
+
+{% block search %}{% endblock search%}
+
+{% block results %}
+    {% block result_title %}<h2>Results for {{ week_range }} period {{ date_start|date:"Y-m-d" }} to {{ date_end|date:"Y-m-d" }}:</h2>{% endblock %}
+    {% block pagination_top %}
+    <div class="pagination">
+    <span class="step-links">
+        {% if search_results.has_previous %}
+            <a href="?page={{ search_results.previous_page_number }}&date_start={{ date_start|date:"Y-m-d" }}&date_end={{ date_end|date:"Y-m-d" }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ search_results.number }} of {{ search_results.paginator.num_pages }}.
+        </span>
+
+        {% if search_results.has_next %}
+            <a href="?page={{ search_results.next_page_number }}&date_start={{ date_start|date:"Y-m-d" }}&date_end={{ date_end|date:"Y-m-d" }}">next</a>
+        {% endif %}
+    </span>
+    </div>
+    {% endblock pagination_top %}
+
+    {% block result_body %}{% endblock %}
+    
+    {% block pagination_bottom %}
+    <BR>
+    <div class="pagination">
+    <span class="step-links">
+        {% if search_results.has_previous %}
+            <a href="?page={{ search_results.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ search_results.number }} of {{ search_results.paginator.num_pages }}.
+        </span>
+
+        {% if search_results.has_next %}
+            <a href="?page={{ search_results.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+    </div>
+    {% endblock pagination_bottom %}
+
+
+{% endblock results%}
+{% endblock content %}
+
