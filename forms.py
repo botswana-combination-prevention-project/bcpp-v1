@@ -1,10 +1,10 @@
 from django import forms
-from bhp_variables import StudySpecific
+from bhp_variables.models import StudySpecific
 
 
 class BaseSubjectConsentForm(forms.ModelForm):
 
-class BaseSubjectConsentForm(forms.ModelForm):
+#class BaseSubjectConsentForm(forms.ModelForm):
 
     def clean(self):
 
@@ -16,7 +16,7 @@ class BaseSubjectConsentForm(forms.ModelForm):
         check omang if identity_type is omang
         """                        
         if cleaned_data.get("identity_type") == 'OMANG':
-            check_omang_field(cleaned_data.get("identity"), my_gender)            
+             check_omang_field(cleaned_data.get("identity"), my_gender)            
             
         """
         check 1st and last letters of initials match subjects name
