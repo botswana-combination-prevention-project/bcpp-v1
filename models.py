@@ -49,7 +49,7 @@ class BaseStudySpecific (MyBasicUuidModel):
         verbose_name = _("Subject Identifier Seed (Integer)"),
         default=1000,
         validators = [
-            RegexValidator("^[1-9]*$", "Ensure first digit is not zero (0)"),
+            RegexValidator("^[1-9]{1}[0-9]*$", "Ensure first digit is not zero (0)"),
             ],
         help_text="an integer, usually 1000.")
 
