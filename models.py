@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-#from bhp_common.models import MyBasicUuidModel
+from bhp_common.models import MyBasicUuidModel
 from choices import GENDER_OF_CONSENT
 
-class StudySpecific (models.Model):
+class StudySpecific (MyBasicUuidModel):
     protocol_number = models.CharField(
         verbose_name = _("BHP Protocol Number"),
         max_length=10,
@@ -78,7 +78,7 @@ class StudySpecific (models.Model):
         return "%s: %s started on %s" % (self.protocol_number, self.protocol_title, self.study_start_datetime)
         
         
-class StudySite(models.Model):
+class StudySite(MyBasicUuidModel):
     site_code = models.CharField(max_length=4)        
     site_name = models.CharField(max_length=35)    
     
