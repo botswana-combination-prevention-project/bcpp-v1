@@ -2,23 +2,25 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicUuidModel
-from choices import GENDER_OF_CONSENT
+from choices import GENDER_OF_CONSENT, SETTINGS_KEYWORD
 
-class StudySpecific (MyBasicUuidModel):
+class BaseStudySpecific (MyBasicUuidModel):
+
     protocol_number = models.CharField(
         verbose_name = _("BHP Protocol Number"),
         max_length=10,
         unique=True,
         help_text="e.g. BHP056, ...")
     protocol_title = models.CharField(
-        verbose_name = _("Local Title"),
+        verbose_name = _("Protocol Local Title"),
         max_length=100,
         unique=True,        
         help_text=_("Local name for the protocol, e.g. Mashi, Mmabana, ..."))    
-    research_title = models.CharField("Research Title",
+    research_title = models.CharField("Protocol Research Title",
         max_length=250,
         unique=True,                
         help_text=_("Protocol title used on the grant"))    
+    
     study_start_datetime = models.DateTimeField(
         verbose_name = _("Study Start Date and Time"),
         help_text=_("This is usually the date at which IRB approval was given OR, if later than IRB approval, the date of site activation"),
@@ -41,17 +43,25 @@ class StudySpecific (MyBasicUuidModel):
         max_length=3,
         choices=GENDER_OF_CONSENT,
         )
-        
+
+    
     subject_identifier_seed = models.IntegerField(
         verbose_name = _("Subject Identifier Seed (Integer)"),
-        help_text="an integer, usually 1000")
+        default=1000,
+        validators = [
+            RegexValidator("^[1-9]*$", "Ensure first digit is not zero (0)"),
+            ],
+        help_text="an integer, usually 1000.")
+
     subject_identifier_prefix = models.CharField(
         verbose_name = _("Subject Identifier prefix"),
         max_length=3,
         unique=True,                
         help_text="Usually the numeric part of protocol_number. E.g. for BHP056 use '056'"
         )
+
     subject_identifier_modulus = models.IntegerField("Subject Identifier modulus",
+        default=7,
         help_text="For the check digit. Use 7 for single digit, 77 for double digit, etc"
         )
 
@@ -74,10 +84,32 @@ class StudySpecific (MyBasicUuidModel):
             ]
     )    
 
+    class Meta:
+        abstract=True
+
+class StudySpecific (BaseStudySpecific):
+
     def __unicode__(self):
         return "%s: %s started on %s" % (self.protocol_number, self.protocol_title, self.study_start_datetime)
+
+class StudySpecificSetting (MyBasicUuidModel):
+
+    setting_keyword = models.CharField(
+        verbose_name = _("Setting"),
+        max_length = 50,
+        choices=SETTINGS_KEYWORD,
+        unique=True,
+        )
         
-        
+    setting_value = models.CharField(
+        verbose_name = _("Value"),
+        max_length =     50,
+        )
+
+    class Meta:
+        ordering = ['setting_keyword']    
+
+
 class StudySite(MyBasicUuidModel):
     site_code = models.CharField(max_length=4)        
     site_name = models.CharField(max_length=35)    
