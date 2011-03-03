@@ -4,10 +4,14 @@
 
 {% block content %}
 
-{% block search_title %}
-<h2>Search {{ report_title|default:"Search something"|capfirst }}</h2>
-<small><I>{{ report_helptext|default:"" }}</I></small>
-{% endblock %}
+<H5>{% block search_title %}
+Search {{ report_title|default:"Search something"|capfirst }}
+{% endblock %}</H5>
+
+<small>{% block search_help_text %}
+{{ search_helptext|wordwrap:25 }}
+{% endblock %}</small>
+
 
 {% block search %}{% endblock search%}
 

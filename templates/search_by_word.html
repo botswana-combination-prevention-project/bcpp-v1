@@ -1,6 +1,7 @@
 {% extends "base_search.html" %}
 {% block result_title %}<H3>Results for search word '{{ search_term }}'</H3>{%endblock%}
 {% block search %}
+	
 	<form action="." method="POST">
 	<div style='display:none'>  
       {% csrf_token %}
@@ -24,6 +25,7 @@
     </script>
         </table>
     </form>
+    
 {% endblock search%}
 
 {{ sql }}
