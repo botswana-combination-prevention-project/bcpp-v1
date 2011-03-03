@@ -1,5 +1,7 @@
 from django import forms
 from bhp_variables.models import StudySpecific
+from bhp_common.utils import check_omang_field, check_initials_field
+
 
 
 class BaseSubjectConsentForm(forms.ModelForm):
