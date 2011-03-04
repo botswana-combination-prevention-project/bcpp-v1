@@ -36,7 +36,10 @@ def os_variables():
     a['hostname'] = socket.gethostname()
     
     return a
+    
+
+                
 
 
     
-            
+
