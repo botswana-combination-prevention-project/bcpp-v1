@@ -1,0 +1,11 @@
+In oder to use bhp_search you need to do the following in your app:
+
+1. Define a function in your app that will have your labeled queries in it. See mochudi.utils.get_my_labeled_queryset as an example 
+
+2. Subclass each 'base_search_by_????' object in your app so that you can override get_labeled_queryset and point it to yours
+
+3. write the template/'result_include_file' include files referenced in the search templates. 
+
+4. create a view like mochudi.views.search_response that branches from the url to the correct object and follows to render_to_response.
+
+
