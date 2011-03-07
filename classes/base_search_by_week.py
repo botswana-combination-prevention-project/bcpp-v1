@@ -9,7 +9,7 @@ class BaseSearchByWeek(BaseSearch):
 
         BaseSearch.__init__(self, request, **kwargs )
         
-        self['report_title'] = "Search %s by week number" % (self['section_name'])
+        self['report_title'] = "Search %s by week number" % (self['search_name'])
         #may wish to handlethis as kwargs
         self['search_helptext'] = _(u'Search by week number. Week number is based on the date created. ')
         self['extend'] = "base_search_by_date.html"

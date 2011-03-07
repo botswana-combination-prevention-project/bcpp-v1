@@ -8,7 +8,7 @@ class BaseSearchByWord(BaseSearch):
         
         BaseSearch.__init__(self, request, **kwargs )
         
-        self['report_title'] = "Search %s by word" % (self['section_name'])
+        self['report_title'] = "Search %s by word" % (self['search_name'])
         
         #may wish to handlethis as kwargs
         self['search_helptext'] = _(u'Search by search term. ')

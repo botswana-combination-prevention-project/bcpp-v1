@@ -8,7 +8,7 @@ class BaseSearchByDate(BaseSearch):
         
         BaseSearch.__init__(self, request, **kwargs )
         
-        self['report_title'] = "Search %s by date range" % (self['section_name'])
+        self['report_title'] = "Search %s by date range" % (self['search_name'])
         
         #may wish to handlethis as kwargs
         self['search_helptext'] = _(u'Search by date range. Dates are based on the date created. ')
