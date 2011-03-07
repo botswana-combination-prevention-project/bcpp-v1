@@ -10,7 +10,7 @@ class BaseSearchByWord(BaseSearch):
         
         self['report_title'] = "Search %s by word" % (self['search_name'])
         
-        #may wish to handlethis as kwargs
+        #may wish to handle this as kwargs
         self['search_helptext'] = _(u'Search by search term. ')
         self['extend']= "base_search_by_word.html"  
         self['search_by_name']='word'  

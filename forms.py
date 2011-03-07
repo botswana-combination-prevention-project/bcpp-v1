@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django import forms
 
 class SearchForm(forms.Form):
@@ -8,6 +9,9 @@ class SearchForm(forms.Form):
         help_text="enter all or part of a word, name, identifier, etc",
         error_messages={'required': 'Please enter a search term.'},
         )
+
+
+
 
 class DateRangeSearchForm(forms.Form):
     date_start = forms.CharField(

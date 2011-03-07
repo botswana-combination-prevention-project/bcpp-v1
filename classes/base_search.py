@@ -8,20 +8,23 @@ class BaseSearch(BaseSearchTemplateContext):
     
         Inherets a base context specific to search
         
+        adds 
+        
+        section_name, 
+        search_name, 
+        result_include_file 
+        
+        and
+        
+        get_labeled_queryset() (which you have to override)
+        
     """
 
     def __init__(self, request, **kwargs):
         
         BaseSearchTemplateContext.__init__(self, **kwargs)
 
-        """ 
-            section_name, for example 'clinic', 'lab', 'admin', 'surveys' 
-            Comes as a parameter from the Url
-        """
-        if kwargs.get('section_name') is None:
-            raise TypeError('SearchResultResponse requires keyword/value for key \'section_name\'. None given.')
-        else:
-            self['section_name'] =  kwargs.get('section_name')
+        
 
         """ 
             search_name:              
@@ -29,7 +32,7 @@ class BaseSearch(BaseSearchTemplateContext):
         """
 
         if kwargs.get('search_name') is None:
-            raise TypeError('SearchResultResponse requires keyword/value for key \'search_name\'. None given.')
+            raise TypeError('BaseSearch requires keyword/value for key \'search_name\'. None given.')
         else:
             self['search_name'] =  kwargs.get('search_name')
         
@@ -56,5 +59,5 @@ class BaseSearch(BaseSearchTemplateContext):
             ...and then define get_my_labeled_queryset as well  
 
         """
-        raise TypeError("SearchResultResponse.get_labeled_queryset must be overridden by child class")        
+        raise TypeError("BaseSearch.get_labeled_queryset must be overridden by child class")        
 

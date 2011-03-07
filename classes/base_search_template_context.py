@@ -6,21 +6,12 @@ class BaseSearchTemplateContext(BaseTemplateContext):
     
     def __init__(self, **kwargs):
         
-        #init base class which loads default context from bhp_common
-        BaseTemplateContext.__init__(self)
+        BaseTemplateContext.__init__(self, **kwargs)
         
-        #load bhp_search default context
-        #if not TEMPLATE_CONTEXT is None: self.update(**TEMPLATE_CONTEXT)
-        
-        self['template'] = "search.html" 
-        #self['search_by'] = ""
+        self['template'] = "search.html"
+        self['base_search_extender'] = "section_search.html" #this template defined in your app
         self['search_results'] = ""        
         self['dbname']="default"      
-        #self['search_helptext'] = ""
-        #self['queryset_label'] = ""
-        #self['queryset_label_branch'] = ""
-        #self['order_by'] = ""
-        #self['result_include_file'] = ""
         
 
 
