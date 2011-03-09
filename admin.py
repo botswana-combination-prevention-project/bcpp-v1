@@ -38,9 +38,10 @@ admin.site.register(AliquotCondition,AliquotConditionAdmin)
 class AliquotAdmin(MyModelAdmin):
     def save_model(self, request, obj, form, change):
         if not change:
-            aliquot_identifier = AllocateAliquotIdentifier(request.user, 
+            aliquot_identifier = AllocateAliquotIdentifier(
+                request.user, 
                 request.POST.get('aliquot_type'),
-            )
+                )
             obj.aliquot_identifier = aliquot_identifier['id']
             obj.id_int = aliquot_identifier['id_int']
             obj.id_seed = aliquot_identifier['id_seed']
