@@ -31,6 +31,8 @@ def AllocateIdentifier(ObjConsent, subject_type='SUBJECT', user=''):
         date_allocated=datetime.now(),
         user_created = user,
         )
+        
+    audit.save()    
 
 
     # get the auto-increment id for the new audit trail record
@@ -47,7 +49,7 @@ def AllocateIdentifier(ObjConsent, subject_type='SUBJECT', user=''):
     
     # using the seed, device and audit trail id determine the integer segment of the id 
     subject_identifier['int'] = (((subject_identifier['seed']* subject_identifier['device_id']) + subject_identifier['audit_id'])) 
-    
+
     # using the integer segment, calculate the check digit
     check_digit = subject_identifier['int'] % subject_identifier['modulus']
 
@@ -76,7 +78,13 @@ def AllocateIdentifier(ObjConsent, subject_type='SUBJECT', user=''):
     audit.subject_identifier = subject_identifier['identifier']
     audit.save()
     
-    RegisterSubject (subject_identifier['identifier'], ObjConsent.pk, ObjConsent.first_name, ObjConsent.initials, subject_type, user)
+    RegisterSubject (
+        identifier=subject_identifier['identifier'], 
+        consent_pk=ObjConsent.pk, 
+        first_name=ObjConsent.first_name, 
+        initials=ObjConsent.initials, 
+        subject_type=subject_type, 
+        user=user)
     
     # return the new subject identifier to the form currently being save()'d
     return subject_identifier['identifier']
@@ -175,17 +183,16 @@ def RegisterSubject (**kwargs):
     if kwargs.get('user') is None:
         raise TypeError( 'bhp_registration.RegisterSubject expects a value for \'user\'. Got None.')
 
-    subject_type=subject_type.upper()
     
     ObjRS = RegisteredSubject(    
         subject_identifier = kwargs.get('identifier'),
         registration_datetime=datetime.now(),
-        subject_type = kwargs.get('subject_type'),
+        subject_type = kwargs.get('subject_type').upper(),
         user_created=kwargs.get('user'),
         created=datetime.now(),
         subject_consent_id=kwargs.get('consent_pk'),
         first_name=kwargs.get('first_name'),
-        initials=kwargs.get('initials'),
+        initials=kwargs.get('initials').upper(),
         registration_status='registered',
         )
     

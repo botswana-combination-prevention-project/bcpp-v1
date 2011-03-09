@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.fields import MyUUIDField
-from bhp_common.models import MyBasicUuidModel
+from bhp_common.models import MyBasicModel
 
 
-class SubjectIdentifierAuditTrail(MyBasicUuidModel):
+class SubjectIdentifierAuditTrail(MyBasicModel):
     """
     A table to track every attempt to allocate a subject identifier
     to a consented subject 'by this device'. If a subject consent is deleted
