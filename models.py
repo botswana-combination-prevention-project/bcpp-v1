@@ -75,9 +75,8 @@ class BaseStudySpecific (MyBasicUuidModel):
         help_text=_("Refers to the machine hostname. Hostname_prefix+device_id = hostname. To override validation, set hostname_prefix to your hostname and device_id to '0'.")
         )
 
-    device_id = models.CharField(
+    device_id = models.IntegerField(
         verbose_name = _("device id"),
-        max_length = 2,
         help_text=_("a numeric ID between 10-99 to be part of an identifier that represents the server that allocates an identifier"),
         validators = [
             RegexValidator("^[0]{1}$|^[1-9]{1}[0-9]{1}$", "Ensure value between 10 and 99 (or 0, if override).")
