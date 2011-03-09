@@ -6,8 +6,6 @@ from bhp_common.utils import check_omang_field, check_initials_field
 
 class BaseSubjectConsentForm(forms.ModelForm):
 
-#class BaseSubjectConsentForm(forms.ModelForm):
-
     def clean(self):
 
         cleaned_data = self.cleaned_data 
