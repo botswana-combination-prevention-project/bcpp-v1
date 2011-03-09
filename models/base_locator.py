@@ -12,7 +12,7 @@ from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
 from bhp_common.validators import BWCellNumber, BWTelephoneNumber
 from bhp_variables.models import StudySite
 
-class LocatorFormBaseModel(MyBasicUuidModel): 
+class BaseLocatorForm(MyBasicUuidModel): 
 
     date_signed = models.DateField( 
         verbose_name = "1.Date Locator Form signed ",
@@ -168,3 +168,4 @@ class LocatorFormBaseModel(MyBasicUuidModel):
 
     class Meta:
         abstract=True
+        
