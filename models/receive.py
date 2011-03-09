@@ -37,3 +37,5 @@ class Receive(ReceiveModel):
     verbose_name="Subject",
     )
             
+    class Meta:
+        app_label = 'bhp_lab'            

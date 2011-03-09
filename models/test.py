@@ -10,3 +10,6 @@ class Test(MyBasicModel):
 
     def __unicode__(self):
         return "%s: %s" % (self.test_code,self.test_name)
+        
+    class Meta:
+        app_label = 'bhp_lab'        

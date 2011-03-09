@@ -7,12 +7,14 @@ class AliquotType(MyBasicListModel):
 
     class Meta:
         ordering = ["short_name"]
+        app_label = 'bhp_lab'        
         
 class AliquotCondition(MyBasicListModel):
     def __unicode__(self):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
     class Meta:
         ordering = ["display_index"]
+        app_label = 'bhp_lab'        
 
 
 
@@ -44,6 +46,9 @@ class Aliquot (MyBasicUuidModel):
     
     def __unicode__(self):
         return self.aliquot_identifier
+
+    class Meta:
+        app_label = 'bhp_lab'
 
     #def get_absolute_url(self):
     #    return "/mpepu/labaliquot/%s/" % self.id
