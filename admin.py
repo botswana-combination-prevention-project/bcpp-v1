@@ -2,7 +2,7 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_registration.utils import AllocateIdentifier
 from models import SubjectIdentifierAuditTrail
-from models import LocatorFormBaseModel
+from models import BaseLocatorForm
 
 class SubjectConsentAdminBase(MyModelAdmin):
   
@@ -63,7 +63,7 @@ class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
 admin.site.register(SubjectIdentifierAuditTrail, SubjectIdentifierAuditTrailAdmin)
 
 
-class LocatorFormBaseModelAdmin(MyModelAdmin):
+class BaseLocatorFormAdmin(MyModelAdmin):
     
     fields = (
         'date_signed',
@@ -99,5 +99,5 @@ class LocatorFormBaseModelAdmin(MyModelAdmin):
         "has_caretaker_alt":admin.VERTICAL, 
               
         }                
-admin.site.register(LocatorFormBaseModel, LocatorFormBaseModelAdmin)
+#admin.site.register(BaseLocatorForm, BaseLocatorFormAdmin)
 
