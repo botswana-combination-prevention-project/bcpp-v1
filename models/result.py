@@ -1,4 +1,5 @@
 from django.db import models
+from bhp_common.models import MyBasicUuidModel
 from bhp_lab.models import Order
 
 class Result(MyBasicUuidModel):
