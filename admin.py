@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from models import RegisteredSubject, OffStudyReason, OffStudy, RandomizedSubject
+from models import RegisteredSubject, OffStudyReason, OffStudy, RandomizedSubject, SubjectIdentifierAuditTrail
 
 class RegisteredSubjectAdmin (MyModelAdmin):
 
@@ -20,4 +20,16 @@ admin.site.register(RandomizedSubject)
 admin.site.register(OffStudyReason)
 
 admin.site.register(OffStudy)
+
+
+class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
+    list_display = (
+        'subject_identifier',
+        'first_name',
+        'initials',
+        'date_allocated',
+        )
+    list_per_page = 15
+        
+admin.site.register(SubjectIdentifierAuditTrail, SubjectIdentifierAuditTrailAdmin)
 
