@@ -23,3 +23,4 @@ class SubjectIdentifierAuditTrail(MyBasicUuidModel):
         
     class Meta:
         ordering = ['-date_allocated']
+        app_label = 'bhp_registration'

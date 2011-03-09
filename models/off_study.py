@@ -13,7 +13,8 @@ class OffStudyReason (MyBasicListModel):
         )         
 
     class Meta:
-        ordering = ['display_index'] 
+        ordering = ['display_index']
+        app_label = 'bhp_registration'                    
 
 """
     Basic Off study / AF004
@@ -40,4 +41,6 @@ class OffStudy(MyBasicUuidModel):
         blank=True,
         null=True,   
         ) 
+    class Meta:
+        app_label = 'bhp_registration'           
 
