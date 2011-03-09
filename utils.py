@@ -1,5 +1,5 @@
 from datetime import date, timedelta, datetime
-from bhp_consent.models import SubjectIdentifierAuditTrail
+from bhp_registration.models import SubjectIdentifierAuditTrail
 from bhp_variables.models import StudySpecific
 from models import RegisteredSubject, RandomizedSubject
 
@@ -31,7 +31,7 @@ def AllocateIdentifier(ObjConsent, subject_type='SUBJECT', user=''):
         date_allocated=datetime.now(),
         user_created = user,
         )
-    audit.save()
+
 
     # get the auto-increment id for the new audit trail record
     # just created above
@@ -97,27 +97,20 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
     
     subject_identifier = {}
     
-    #get the consent just created
-    #consent = SubjectConsent.objects.get(pk=new_pk)
-
 
     rm = RegisteredSubject.objects.get(subject_consent_id=registered_mother)
 
     subject_identifier['mother'] = rm.subject_identifier
     
     #add a new record in the audit trail for this consent and identifier-'to be'
-    #leave subject_identifier 'null' for now
-    #audit = SubjectIdentifierAuditTrail(
-    #    subject_consent_id=consent, 
-    #    first_name = consent.first_name,
-    #    initials = consent.initials,
-    #    date_allocated=datetime.now(),
-    #    user_created = user,
-    #    )
-    #audit.save()
+    audit = SubjectIdentifierAuditTrail(
+        subject_consent_id=consent, 
+        first_name = consent.first_name,
+        initials = consent.initials,
+        date_allocated=datetime.now(),
+        user_created = user,
+        )
 
-    # get the number of live births from mp005
-    #if live_infants == 1:
 
     # we use the mother's consent as the consent pk to store in 
     # registered subject for this/these infant(s)
@@ -157,10 +150,9 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
 
 
     # update subject_identifier to the audit trail table
-    # audit.subject_identifier = subject_identifier['identifier']
-    # audit.save()
+    audit.subject_identifier = subject_identifier['identifier']
+    audit.save()
     
-    # return the new subject identifier to the form currently being save()'d
     return True
 
 def RegisterSubject (**kwargs):
