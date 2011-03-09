@@ -47,3 +47,5 @@ class VisitDefinition(MyBasicUuidModel):
     
     class Meta:
         ordering = ['time_point']  
+        app_label = 'bhp_visit'                    
+            

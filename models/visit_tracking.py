@@ -16,14 +16,17 @@ class VisitTrackingInfoSource (MyBasicListModel):
         )  
     class Meta:
         ordering = ['display_index']  
+        app_label = 'bhp_visit'            
 
 class VisitTrackingVisitReason (MyBasicListModel):
     class Meta:
-        ordering = ['display_index']   
+        ordering = ['display_index']
+        app_label = 'bhp_visit'                       
 
 class VisitTrackingSubjCurrStatus (MyBasicListModel):
     class Meta:
         ordering = ['display_index']   
+        app_label = 'bhp_visit'                    
 
 
 
@@ -114,7 +117,9 @@ class VisitTrackingReport (VisitTrackingBaseModel):
     
     def __unicode__(self):
         return "%s [%s] visit %s" % (self.registered_subject,self.registered_subject.initials, self.appointment.visit_definition.code )
-        
+
+    class Meta:        
+        app_label = 'bhp_visit'                    
         
 class VisitTrackingModel(MyBasicUuidModel):
 
