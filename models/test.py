@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-
+from bhp_lab.models import Panel
 
 class Test(MyBasicModel):
     test_code = models.CharField("Univeral Test ID", max_length=10, unique=True)
