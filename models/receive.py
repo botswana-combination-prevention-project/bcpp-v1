@@ -2,7 +2,7 @@ from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_lab.models import Aliquot
 from bhp_registration.models import RegisteredSubject
-
+from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 """ 
     Lab receiving table.
     Create a LabReceive model in your app that inheret from this
