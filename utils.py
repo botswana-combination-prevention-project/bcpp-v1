@@ -163,21 +163,37 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
     # return the new subject identifier to the form currently being save()'d
     return True
 
-def RegisterSubject (identifier, consent_pk, first_name, initials, subject_type, user):
+def RegisterSubject (**kwargs):
+
+    if kwargs.get('identifier') is None:
+        raise TypeError( 'bhp_registration.RegisterSubject expects a value for \'identifier\'. Got None.')
+
+    if kwargs.get('consent_pk') is None:
+        raise TypeError( 'bhp_registration.RegisterSubject expects a value for \'consent_pk\'. Got None.')
+
+    if kwargs.get('first_name') is None:
+        raise TypeError( 'bhp_registration.RegisterSubject expects a value for \'first_name\'. Got None.')
+        
+    if kwargs.get('initials') is None:
+        raise TypeError( 'bhp_registration.RegisterSubject expects a value for \'initials\'. Got None.')
+
+    if kwargs.get('subject_type') is None:
+        raise TypeError( 'bhp_registration.RegisterSubject expects a value for \'subject_type\'. Got None.')
     
-    #try:
-    #consent = SubjectConsent.objects.get(pk=subject_consent) 
+    if kwargs.get('user') is None:
+        raise TypeError( 'bhp_registration.RegisterSubject expects a value for \'user\'. Got None.')
+
     subject_type=subject_type.upper()
     
     ObjRS = RegisteredSubject(    
-        subject_identifier = identifier,
+        subject_identifier = kwargs.get('identifier'),
         registration_datetime=datetime.now(),
-        subject_type = subject_type,
-        user_created=user,
+        subject_type = kwargs.get('subject_type'),
+        user_created=kwargs.get('user'),
         created=datetime.now(),
-        subject_consent_id=consent_pk,
-        first_name=first_name,
-        initials=initials,
+        subject_consent_id=kwargs.get('consent_pk'),
+        first_name=kwargs.get('first_name'),
+        initials=kwargs.get('initials'),
         registration_status='registered',
         )
     
