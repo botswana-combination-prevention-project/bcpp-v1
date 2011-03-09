@@ -152,7 +152,7 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
                     registered_mother, 
                     first_name, 
                     initials, 
-                    'infant', 
+                    'INFANT', 
                     user)
            
 
