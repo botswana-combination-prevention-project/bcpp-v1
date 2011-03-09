@@ -5,7 +5,7 @@ from bhp_common.models import MyBasicUuidModel
 from bhp_common.fields import NameField, DobField, InitialsField
 from bhp_common.validators import datetime_is_future, date_not_future
 from bhp_registration.models import RegisteredSubject
-from choices import APPT_STATUS
+from bhp_appointment.choices import APPT_STATUS
 
 """
     An appointment covers ONE VisitTracking record. 
