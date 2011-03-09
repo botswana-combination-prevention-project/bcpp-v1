@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
-from choices import REGISTRATION_STATUS, SUBJECT_TYPE
+from bhp_registration.choices import REGISTRATION_STATUS, SUBJECT_TYPE
 
 class BaseSubject (MyBasicUuidModel):
        

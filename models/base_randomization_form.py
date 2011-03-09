@@ -1,8 +1,9 @@
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
+from randomized_subject import RandomizedSubject
 
-class RandomizationFormBase(MyBasicUuidModel):
+class BaseRandomizationForm(MyBasicUuidModel):
     
     randomized_subject = models.OneToOneField(RandomizedSubject,
         editable=False  

@@ -2,8 +2,8 @@ from django.db import models
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
-from choices import SUBJECT_TYPE
-
+from bhp_registration.choices import SUBJECT_TYPE
+from registered_subject import RegisteredSubject
 
 class OffStudyReason (MyBasicListModel):
 
