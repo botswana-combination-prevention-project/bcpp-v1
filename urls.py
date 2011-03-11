@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
 
-#urlpatterns = patterns('bhp_visit.views',
-#    (r'^visitdefinition/$', 'visitdefinition_search'),            
-#) 
+urlpatterns = patterns('bhp_visit.views',
+    (r'^scheduled_forms/$', 'scheduled_forms'),            
+) 
