@@ -81,7 +81,7 @@ class BaseStudySpecific (MyBasicUuidModel):
         validators = [
             RegexValidator("^[0]{1}$|^[1-9]{1}[0-9]{1}$", "Ensure value between 10 and 99 (or 0, if override).")
             ]
-    )    
+        )    
 
     class Meta:
         abstract=True
