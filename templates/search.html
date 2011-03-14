@@ -1,11 +1,36 @@
 {% extends extend %}
 {% block title %}{{ block.super|capfirst }} by {{ search_by_name }}{% endblock %}
 
+{% block pagination %}
+{% if search_results.object_list %}
+<div class="pagination">
+    <span class="step-links">
+        {% if search_results.has_previous %}
+            <a href="?page={{ search_results.previous_page_number }}&{{ magic_url }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ search_results.number }} of {{ search_results.paginator.num_pages }}.
+        </span>
+
+        {% if search_results.has_next %}
+            <a href="?page={{ search_results.next_page_number }}&{{ magic_url }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block results_title %}
+{% if search_results.object_list %}
+    <h3>{% block result_title %}{{ block.super }}{{ search_result_title }}{% endblock %}</h3>
+{% endif %}    
+{% endblock %}
+
+
 {% block results %}
 
     {% if search_results %}
-
-        <h3>{% block result_title %}{{ block.super }}{{ search_result_title }}{% endblock %}</h3>
 
         {% if search_results.object_list %}
         

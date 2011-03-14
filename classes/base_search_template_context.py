@@ -11,7 +11,9 @@ class BaseSearchTemplateContext(BaseTemplateContext):
         self['template'] = "search.html"
         self['base_search_extender'] = "section_search.html" #this template defined in your app
         self['search_results'] = ""        
-        self['dbname']="default"      
+        self['dbname'] = "default"
+        self['page'] = None      
+        self['magic_url'] = ''        
         
 
 

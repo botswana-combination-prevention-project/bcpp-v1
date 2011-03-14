@@ -21,11 +21,19 @@ class BaseSearchByWord(BaseSearch):
         else:
             self['queryset_label'] = '%s_by_word' % (self['search_name'])
 
-        if request.method == 'POST':            
-
-            self['form'] = SearchForm(request.POST)
+        if ((request.method == 'GET' and not request.GET == {}) or ( request.method == 'POST' and not request.POST == {})):            
+            if request.method == 'POST':
+                self['form'] = SearchForm(request.POST)
+            elif request.method == 'GET':    
+                self['form'] = SearchForm(request.GET)
+            else:
+                raise TypeError('Request method unknown. Expected POST or GET. See BaseSearchByWeek')
 
             if self['form'].is_valid():
+                if request.method == 'POST':
+                    self['magic_url'] = request.POST.urlencode()                
+                elif request.method == 'GET':    
+                    self['magic_url'] = request.GET.urlencode()                
 
                 self['search_term']= self['form'].cleaned_data['search_term']
                 self['search_result_title'] = 'Results for search term \'%s\'' % (self['search_term'])                

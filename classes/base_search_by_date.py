@@ -13,7 +13,7 @@ class BaseSearchByDate(BaseSearch):
         #may wish to handlethis as kwargs
         self['search_helptext'] = _(u'Search by date range. Dates are based on the date created. ')
         self['extend'] = "base_search_by_date.html" 
-        self['search_by_name']='date'           
+        self['search_by_name'] = 'date'           
             
         # check **kwargs for queryset_label, otherwise default
         if not kwargs.get('queryset_label') is None:
@@ -22,11 +22,24 @@ class BaseSearchByDate(BaseSearch):
             #self['queryset_label'] = '%s_by_date' % (self['search_name'])
             self['queryset_label'] = self['search_name']            
 
-        if request.method == 'POST':            
-            self['form'] = DateRangeSearchForm(request.POST)
+        if ((request.method == 'GET' and not request.GET == {}) or ( request.method == 'POST' and not request.POST == {})):            
+            if request.method == 'POST':
+                self['form'] = DateRangeSearchForm(request.POST)
+            elif request.method == 'GET':    
+                self['form'] = DateRangeSearchForm(request.GET)
+            else:
+                raise TypeError('Request method unknown. Expected POST or GET. See BaseSearchByWeek')
+
             if self['form'].is_valid():
-                self['date_start']= self['form'].cleaned_data['date_start']
-                self['date_end']= self['form'].cleaned_data['date_end']                
+                
+                if request.method == 'POST':
+                    self['magic_url'] = request.POST.urlencode()                
+                elif request.method == 'GET':    
+                    self['magic_url'] = request.GET.urlencode()                
+
+                
+                self['date_start'] = self['form'].cleaned_data['date_start']
+                self['date_end'] = self['form'].cleaned_data['date_end']                
                 self['search_result_title'] = 'Results for period from %s to %s.' % (self['date_start'], self['date_end'] )                               
 
                 """this will be overridden in the subclass"""

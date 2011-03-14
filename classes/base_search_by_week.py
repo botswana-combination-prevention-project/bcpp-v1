@@ -15,17 +15,29 @@ class BaseSearchByWeek(BaseSearch):
         self['extend'] = "base_search_by_date.html"
         self['search_by_name']='week'        
 
-
         # check **kwargs for queryset_label, otherwise default
         if not kwargs.get('queryset_label') is None:
             self['queryset_label'] = kwargs.get('queryset_label')
         else:
             #self['queryset_label'] = '%s_by_week' % (self['search_name'])
             self['queryset_label'] = self['search_name']
-        
-        if request.method == 'POST':            
-            self['form'] = WeekNumberSearchForm(request.POST)
-            if self['form'].is_valid():
+
+        if ((request.method == 'GET' and not request.GET == {}) or ( request.method == 'POST' and not request.POST == {})):            
+            if request.method == 'POST':
+                self['form'] = WeekNumberSearchForm(request.POST)
+            elif request.method == 'GET':    
+                self['form'] = WeekNumberSearchForm(request.GET)
+            else:
+                raise TypeError('Request method unknown. Expected POST or GET. See BaseSearchByWeek')
+                    
+            if self['form'].is_valid() :
+                
+                if request.method == 'POST':
+                    self['magic_url'] = request.POST.urlencode()                
+                elif request.method == 'GET':    
+                    self['magic_url'] = request.GET.urlencode()                
+
+                
                 week_start=self['form'].cleaned_data['date_start']
                 week_end=self['form'].cleaned_data['date_end']
                 year = int(self['form'].cleaned_data['year'])
