@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import CharField, DateTimeField, DecimalField
 from django.forms import RegexField
 from django_extensions.db.fields import UUIDField
+from south.modelsinspector import add_introspection_rules
 from bhp_common.choices import DATE_ESTIMATED
 from choices import IDENTITY_TYPE
 
@@ -28,6 +29,7 @@ class MyUUIDField (UUIDField):
             cls._meta.auto_field = self
         else:
             super(MyUUIDField, self).contribute_to_class(cls, name)
+
 
 class HostnameCreationField (CharField):  
     """ 
@@ -167,6 +169,7 @@ class IsDateEstimatedField(CharField):
 
 
 
+
 class NameField(CharField):
    
     description = _("Custom field for Name of person")
@@ -192,6 +195,16 @@ class NameField(CharField):
         }
         defaults.update(kwargs)
         return super(NameField, self).formfield(**defaults)
+
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+
 
 class InitialsField(CharField):
    
@@ -219,6 +232,14 @@ class InitialsField(CharField):
         defaults.update(kwargs)
         return super(InitialsField, self).formfield(**defaults)
 
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
 
 class WeightField(DecimalField):
     """field for weight"""
@@ -242,6 +263,8 @@ class WeightField(DecimalField):
         field_class = "django.db.models.fields.DecimalField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
+
+
 
 class OmangField(CharField):
     
@@ -278,6 +301,8 @@ class OmangField(CharField):
         field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
+
+
 
 class IdentityTypeField(CharField):
     
