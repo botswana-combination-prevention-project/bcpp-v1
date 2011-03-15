@@ -1,17 +1,25 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from models import Panel, Test, Aliquot, AliquotType, AliquotCondition
-from models import Receive, Result, Order, ResultItem
+from models import Panel, TestCode, Aliquot, AliquotType, AliquotCondition
+from models import Receive, Result, Order, ResultItem, TestGroup, TestMap
 from views import AllocateAliquotIdentifier
 
-class TestInline(admin.TabularInline):
-    model = Test
-    extra = 5
 
 class PanelAdmin(MyModelAdmin):
-    inlines = [TestInline]
     list_display = ('name',)
 admin.site.register(Panel, PanelAdmin)
+
+class TestCodeAdmin(MyModelAdmin):
+    pass
+admin.site.register(TestCode, TestCodeAdmin)
+
+class TestMapAdmin(MyModelAdmin):
+    pass
+admin.site.register(TestMap, TestMapAdmin)
+
+class TestGroupAdmin(MyModelAdmin):
+    pass
+admin.site.register(TestGroup, TestGroupAdmin)
 
 class ResultAdmin(MyModelAdmin):
     pass
