@@ -1,12 +1,45 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab.models import Order, Analyzer, Test
+from bhp_lab.models import Order, Analyzer, TestCode
 from bhp_lab.choices import RESULT_STATUS, RESULT_QUANTIFIER
 
 class Result(MyBasicUuidModel):
+
+    result_datetime = models.DateTimeField()
+
+    assay_datetime = models.DateTimeField()
+
+    analyzer = models.ForeignKey(Analyzer)
+
     order = models.ForeignKey(Order)
+
+    source = models.CharField(
+        verbose_name = 'Source',
+	    max_length = 50,
+	    null = True,
+        blank = True,	    
+	    help_text = 'Reference to source of information, such as files name'
+  	    )
+    archive = models.CharField(
+        verbose_name = 'Archive',
+	    max_length = 50,
+	    null = True,
+        blank = True,	    
+	    help_text = 'Reference to archived file/location, if any'
+  	    )
+
+    comment = models.CharField(
+        verbose_name = 'Error codes',
+	    max_length = 50,
+	    null = True,
+        blank = True,	    
+	    help_text = ''
+  	    )
     
+    def __unicode__(self):
+        return '%s :%s' % (self.order.order_number, self.result_datetime)
+        
     class Meta:
         app_label = 'bhp_lab'    
 
@@ -14,11 +47,9 @@ class ResultItem(MyBasicUuidModel):
 
     result = models.ForeignKey(Result)
 
-    test = models.ForeignKey(Test)
+    test_code = models.ForeignKey(TestCode)
 
-    assay_date = models.DateTimeField()
-
-    result = models.CharField(
+    result_value = models.CharField(
         verbose_name = 'Result',
 	    max_length = 25,
 	    help_text = ''
@@ -39,8 +70,6 @@ class ResultItem(MyBasicUuidModel):
 	    max_length = 10,
 	    help_text = 'Default is preliminary'
 	    )
-	
-    analyzer = models.ForeignKey(Analyzer)
     
     error_code = models.CharField(
         verbose_name = 'Error codes',
@@ -49,22 +78,8 @@ class ResultItem(MyBasicUuidModel):
         blank = True,	    
 	    help_text = ''
   	    )
-    source = models.CharField(
-        verbose_name = 'Source',
-	    max_length = 50,
-	    null = True,
-        blank = True,	    
-	    help_text = 'Reference to source of information, such as files name'
-  	    )
-    archive = models.CharField(
-        verbose_name = 'Archive',
-	    max_length = 50,
-	    null = True,
-        blank = True,	    
-	    help_text = 'Reference to archived file/location, if any'
-  	    )
     comment = models.CharField(
-        verbose_name = 'Error codes',
+        verbose_name = 'Comment',
 	    max_length = 50,
 	    null = True,
         blank = True,	    

@@ -2,6 +2,7 @@ from django.db import models
 from bhp_common.models import MyBasicUuidModel, MyBasicListModel
 
 class AliquotType(MyBasicListModel):
+    
     def __unicode__(self):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
 
@@ -10,13 +11,12 @@ class AliquotType(MyBasicListModel):
         app_label = 'bhp_lab'        
         
 class AliquotCondition(MyBasicListModel):
+    
     def __unicode__(self):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
     class Meta:
         ordering = ["display_index"]
         app_label = 'bhp_lab'        
-
-
 
 
 class Aliquot (MyBasicUuidModel):
@@ -50,7 +50,4 @@ class Aliquot (MyBasicUuidModel):
     class Meta:
         app_label = 'bhp_lab'
 
-    #def get_absolute_url(self):
-    #    return "/mpepu/labaliquot/%s/" % self.id
-        
   
