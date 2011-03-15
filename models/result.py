@@ -10,9 +10,11 @@ class Result(MyBasicUuidModel):
 
     assay_datetime = models.DateTimeField()
 
-    analyzer = models.ForeignKey(Analyzer)
+    #analyzer = models.ForeignKey(Analyzer)
+    analyzer = models.CharField(max_length=50)
 
-    order = models.ForeignKey(Order)
+    #order = models.ForeignKey(Order)
+    order = models.CharField(max_length=50)
 
     source = models.CharField(
         verbose_name = 'Source',
@@ -37,8 +39,8 @@ class Result(MyBasicUuidModel):
 	    help_text = ''
   	    )
     
-    def __unicode__(self):
-        return '%s :%s' % (self.order.order_number, self.result_datetime)
+    #def __unicode__(self):
+    #    return '%s :%s' % (self.order.order_number, self.result_datetime)
         
     class Meta:
         app_label = 'bhp_lab'    
@@ -47,7 +49,8 @@ class ResultItem(MyBasicUuidModel):
 
     result = models.ForeignKey(Result)
 
-    test_code = models.ForeignKey(TestCode)
+    #test_code = models.ForeignKey(TestCode)
+    test_code = models.CharField(max_length=50)
 
     result_value = models.CharField(
         verbose_name = 'Result',

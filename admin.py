@@ -21,13 +21,13 @@ class TestGroupAdmin(MyModelAdmin):
     pass
 admin.site.register(TestGroup, TestGroupAdmin)
 
-class ResultAdmin(MyModelAdmin):
-    pass
-admin.site.register(Result, ResultAdmin)
+#class ResultAdmin(MyModelAdmin):
+#    pass
+#admin.site.register(Result, ResultAdmin)
 
-class ResultItemAdmin(MyModelAdmin):
-    pass
-admin.site.register(ResultItem, ResultItemAdmin)
+#class ResultItemAdmin(MyModelAdmin):
+#    pass
+#admin.site.register(ResultItem, ResultItemAdmin)
 
 class OrderAdmin(MyModelAdmin):
     pass
