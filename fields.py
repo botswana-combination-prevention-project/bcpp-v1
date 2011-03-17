@@ -163,7 +163,7 @@ class IsDateEstimatedField(CharField):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
         from south.modelsinspector import introspector
-        field_class = "django.db.models.fields.DateTimeField"
+        field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
 
