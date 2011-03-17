@@ -40,6 +40,8 @@ def os_variables():
 
     variables['hostname'] = socket.gethostname()
 
+    
+    
     sp = StudySpecific.objects.all()[0]
     
     if not sp.hostname_prefix:
@@ -62,6 +64,7 @@ def os_variables():
         if not derived_hostname == variables['hostname'] :
             msg = 'hostname is %s but should be %s based on ip=%s and hostname_prefix=%s. Check wlan0 config and/or StudySpecific.hostname_prefix' % (variables['hostname'], derived_hostname, variables['wlan_ipaddr'], sp.hostname_prefix)
             syslog.syslog(syslog.LOG_ERR, msg)
+
 
     return variables
     
