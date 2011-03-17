@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import CharField, DateTimeField, DecimalField
 from django.forms import RegexField
 from django_extensions.db.fields import UUIDField
-from south.modelsinspector import add_introspection_rules
+# from south.modelsinspector import add_introspection_rules
 from bhp_common.choices import DATE_ESTIMATED
 from choices import IDENTITY_TYPE
 
