@@ -91,6 +91,7 @@ class StudySpecific (BaseStudySpecific):
     def __unicode__(self):
         return "%s: %s started on %s" % (self.protocol_number, self.protocol_title, self.study_start_datetime)
 
+"""
 class StudySpecificSetting (MyBasicUuidModel):
 
     setting_keyword = models.CharField(
@@ -107,10 +108,12 @@ class StudySpecificSetting (MyBasicUuidModel):
 
     class Meta:
         ordering = ['setting_keyword']    
-
+"""
 
 class StudySite(MyBasicUuidModel):
+    
     site_code = models.CharField(max_length=4)        
+    
     site_name = models.CharField(max_length=35)    
     
     def __unicode__(self):
