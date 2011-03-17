@@ -13,6 +13,8 @@ def uphosts(request, **kwargs):
 
     hosts = all_uphosts(**kwargs)
 
+
+
     return render_to_response(template, { 
         'report_title': 'HBC netbooks in the area', 
         'section_name': kwargs.get('section_name'), 

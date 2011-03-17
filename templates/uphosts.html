@@ -19,7 +19,7 @@
         <a href="/{{app_name}}">Home</a>
 
         {% if section_name  %}
-            &rsaquo; <a href="{{ section }}">{{ section_name|capfirst }}</a>
+            &rsaquo; <a href="{{ section }}">{{ section_name|capfirst|default:"" }}</a>
         {% endif %}        
         {% if report_title  %}
             &rsaquo; {{ report_title|capfirst }}
