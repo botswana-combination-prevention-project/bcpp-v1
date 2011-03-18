@@ -6,6 +6,11 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ("bhp_registration", "0001_initial"),
+        ("bhp_code_lists", "0001_initial"),                
+    )
+
     def forwards(self, orm):
         
         # Adding model 'DeathCauseInfo'
