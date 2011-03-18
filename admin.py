@@ -1,7 +1,7 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_registration.utils import AllocateIdentifier
-from models import BaseLocatorForm
+from models import BaseLocator
 
 class SubjectConsentAdminBase(MyModelAdmin):
   
@@ -54,6 +54,7 @@ class SubjectConsentAdminBase(MyModelAdmin):
 class BaseLocatorFormAdmin(MyModelAdmin):
     
     fields = (
+        'subject_consent',
         'date_signed',
         'mail_address',
         'care_clinic',

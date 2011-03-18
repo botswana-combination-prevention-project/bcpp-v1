@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_consent.models import LocatorFormBaseModel
+from bhp_consent.models import BaseLocator
 
 """
 assuming you also use the consent.py (see sample)
@@ -7,7 +7,7 @@ assuming you also use the consent.py (see sample)
 
 from consent import SubjectConsent
 
-class LocatorForm(LocatorFormBaseModel):     
+class LocatorForm(BaseLocator):     
 
     subject_consent = models.OneToOneField(SubjectConsent)
 
