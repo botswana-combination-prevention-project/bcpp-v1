@@ -119,9 +119,10 @@ def datetime_is_after_consent (value):
 
 def date_not_before_study_start (value):
     dte = StudySpecific.objects.all()[0]
+    value_datetime = datetime(value.year, value.month, value.day, 0,0)
     started  = dte.study_start_datetime
     protocol_number = dte.protocol_number
-    if value < started:
+    if value_datetime < started:
         raise ValidationError(u'Date cannot be before the study started. %s started on %s. You entered %s.' % (protocol_number, started, value,))
 
 def datetime_not_before_study_start (value):
