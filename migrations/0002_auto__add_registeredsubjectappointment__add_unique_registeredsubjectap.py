@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
         
         # Adding model 'RegisteredSubjectAppointment'
         db.create_table('bhp_visit_registeredsubjectappointment', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('created', self.gf('django.dbbhp_appointment_registeredsubjectappointment.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
