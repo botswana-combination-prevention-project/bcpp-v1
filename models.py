@@ -24,7 +24,7 @@ class DeathReasonHospitalized (MyBasicListModel):
         
 class DeathForm(MyBasicUuidModel):
     
-    register_subject = models.OneToOneField(RegisteredSubject)
+    registered_subject = models.OneToOneField(RegisteredSubject)
     
     death_date = models.DateField( 
         verbose_name="1. Date of Death:",
