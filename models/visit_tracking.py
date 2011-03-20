@@ -6,7 +6,7 @@ from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_registration.models import RegisteredSubject
 from bhp_registration.choices import SUBJECT_TYPE
-from bhp_appointment.models import RegisteredSubjectAppointment
+from bhp_visit.models import RegisteredSubjectAppointment
 
 
 class VisitTrackingInfoSource (MyBasicListModel):

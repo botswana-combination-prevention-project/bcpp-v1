@@ -30,7 +30,7 @@ class RegisteredSubjectAppointment(BaseAppointment):
 
     class Meta:
         unique_together = [('registered_subject', 'visit_definition', 'visit_instance')]
-        app_label = 'bhp_appointment'
+        app_label = 'bhp_visit' 
 
 
 
