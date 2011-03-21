@@ -6,7 +6,7 @@ from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_registration.models import RegisteredSubject
 from bhp_registration.choices import SUBJECT_TYPE
-from bhp_visit.models import RegisteredSubjectAppointment
+#from bhp_visit.models import RegisteredSubjectAppointment
 
 
 class VisitTrackingInfoSource (MyBasicListModel):
@@ -35,7 +35,7 @@ class VisitTrackingSubjCurrStatus (MyBasicListModel):
 
     User should only be allowed to select "scheduled" appointments
 """
-class VisitTrackingBaseModel (MyBasicUuidModel):
+class BaseVisitTracking (MyBasicUuidModel):
     
     """
         in admin, the drop down should be limited to scheduled
@@ -46,7 +46,7 @@ class VisitTrackingBaseModel (MyBasicUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject)
 
-    appointment  = models.OneToOneField(RegisteredSubjectAppointment)
+    #appointment  = models.OneToOneField(RegisteredSubjectAppointment)
     
     visit_datetime = models.DateTimeField(
         verbose_name = "Visit Date and Time",
@@ -111,7 +111,7 @@ class VisitTrackingBaseModel (MyBasicUuidModel):
     Sample Visit Tracking Report as would be defined in your applicacation
 """    
 
-class VisitTrackingReport (VisitTrackingBaseModel):
+class VisitTrackingReport (BaseVisitTracking):
 
     pass
     
