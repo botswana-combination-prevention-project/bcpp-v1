@@ -355,5 +355,44 @@ class IdentityTypeField(CharField):
 #        #if not value.startswith(self.prefix):
 #        #    value = self.prefix + self.crypt.Encrypt(value)
 #        return value
-        
+
+
+class BloodPressureField(CharField):
+    
+    """
+        Custom field for blood pressure, measured as systolic/diastolic
+    """
+
+    description = _("Custom field for Blood Pressure")
+               
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('max_length', 7)
+        kwargs.setdefault('help_text', _('Format is 99/999 or 999/999'))
+        CharField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "CharField"
+  
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': RegexField,
+            'regex': re.compile("^[0-9]{2,3}\/[0-9]{3}$"),
+            'max_length': self.max_length,
+            'error_messages': {
+                'invalid': _(u'Enter a valid blood pressure measurement. It must be systolic/diastolic.'),
+            }
+        }
+        defaults.update(kwargs)
+        return super(InitialsField, self).formfield(**defaults)
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+
+
 
