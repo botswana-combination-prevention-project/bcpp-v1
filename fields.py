@@ -368,7 +368,7 @@ class BloodPressureField(CharField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_length', 7)
-        kwargs.setdefault('help_text', _('Format is 99/999 or 999/999'))
+        kwargs.setdefault('help_text', _('The format is 999/999, but either of the two numbers can be two or three digits'))
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
@@ -377,7 +377,7 @@ class BloodPressureField(CharField):
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,
-            'regex': re.compile("^[0-9]{2,3}\/[0-9]{3}$"),
+            'regex': re.compile("^[0-9]{2,3}\/[0-9]{2,3}$"),
             'max_length': self.max_length,
             'error_messages': {
                 'invalid': _(u'Enter a valid blood pressure measurement. It must be systolic/diastolic.'),
