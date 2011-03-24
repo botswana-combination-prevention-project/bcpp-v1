@@ -6,7 +6,14 @@ ABSENTEE_STATUS = (
     ('ABSENT', 'Absent'),
     ('NOT_ABSENT', 'No longer absent'),    
 )
-    
+
+
+ACUTE_ESTABLISHED = (
+    ('Acute','Acute'),
+    ('Established','Established'),
+)    
+
+
 ART_STATUS = (
     ('ON', 'Yes, ON ART'),
     ('STOPPED', 'No, stopped ART'),
@@ -91,6 +98,7 @@ NORMAL_ABNORMAL_NOTEVALUATED =(
     ('NOT_EVAL', 'Not Evaluated'),
 )
 
+    
 POS_NEG =(
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
@@ -110,19 +118,18 @@ POS_NEG_ACU = (
     ('Indeterminate', 'Indeterminate'),
 )    
 
+
 POS_NEG_NOTESTED = (
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
     ('NEVER', 'Never tested for HIV'),
 )
 
+
 REFUSAL_STATUS = (
     ('REFUSED','Refused'),
     ('NOT_REFUSED','No longer refusing'),    
 )    
-
- 
-
 
 TIME_UNITS = (
     ('TODAY', 'Today'),
