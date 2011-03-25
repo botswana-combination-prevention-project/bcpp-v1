@@ -38,8 +38,9 @@ class BaseSearchByDate(BaseSearch):
                     self['magic_url'] = request.GET.urlencode()                
 
                 
-                self['date_start'] = self['form'].cleaned_data['date_start']
-                self['date_end'] = self['form'].cleaned_data['date_end']                
+                self['date_start'] = "%s 00:00" % (self['form'].cleaned_data['date_start'])
+                self['date_end'] = "%s 23:59" % (self['form'].cleaned_data['date_end'])
+                        
                 self['search_result_title'] = 'Results for period from %s to %s.' % (self['date_start'], self['date_end'] )                               
 
                 """this will be overridden in the subclass"""
