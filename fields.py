@@ -357,6 +357,42 @@ class IdentityTypeField(CharField):
 #        return value
 
 
+class CellPhoneField(CharField):
+    """
+        Custom field for bw cellphone numuber
+    """
+
+    description = _("Custom field for Cellphone numuber")
+               
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('verbose_name', _('Mobile'))    
+        kwargs.setdefault('editable', True)
+        kwargs.setdefault('max_length', 8)
+        kwargs.setdefault('help_text', _('The format is 99999999'))
+        CharField.__init__(self, *args, **kwargs)
+
+    def get_internal_type(self):
+        return "CharField"
+  
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': RegexField,
+            'regex': re.compile("^7[2-5]{1}[0-9]{6}$"),
+            'error_messages': {
+                'invalid': _(u'Enter a valid cellphone number. Allowed prefixes are 71, 72, 73, 74, 75.'),
+            }
+        }
+        defaults.update(kwargs)
+        return super(CellPhoneField, self).formfield(**defaults)
+        
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
 class BloodPressureField(CharField):
     
     """
@@ -384,7 +420,7 @@ class BloodPressureField(CharField):
             }
         }
         defaults.update(kwargs)
-        return super(InitialsField, self).formfield(**defaults)
+        return super(BloodPressureField, self).formfield(**defaults)
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
