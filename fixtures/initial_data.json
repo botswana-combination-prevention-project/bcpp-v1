@@ -1,0 +1,359 @@
+[
+  {
+    "pk": 1, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp04", 
+      "created": "2011-03-26 22:55:31", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 22:55:31", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "-", 
+      "model": "2100"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp10", 
+      "created": "2011-03-26 23:02:31", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:02:31", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp10", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp12", 
+      "created": "2011-03-26 23:09:11", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:09:11", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp12", 
+      "model": "2100"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp15", 
+      "created": "2011-03-26 23:03:16", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:03:16", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp15", 
+      "model": "2100"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp20", 
+      "created": "2011-03-26 23:03:55", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:03:55", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp20", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp25", 
+      "created": "2011-03-26 23:04:14", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:04:14", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp25", 
+      "model": "2100"
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp28", 
+      "created": "2011-03-26 23:07:53", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:07:53", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp28", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp37", 
+      "created": "2011-03-26 23:04:54", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:04:54", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp37", 
+      "model": "2100"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp40", 
+      "created": "2011-03-26 23:05:11", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:05:11", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp40", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp42", 
+      "created": "2011-03-26 23:06:46", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:06:46", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp42", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp44", 
+      "created": "2011-03-26 23:07:39", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:07:39", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp44", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp50", 
+      "created": "2011-03-26 23:07:19", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:07:19", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp50", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp54", 
+      "created": "2011-03-26 23:08:35", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:08:35", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp54", 
+      "model": "2100"
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp67", 
+      "created": "2011-03-26 23:07:02", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:07:02", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp67", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp70", 
+      "created": "2011-03-26 23:05:26", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:05:26", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp70", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp71", 
+      "created": "2011-03-26 23:06:14", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:06:14", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp71", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp78", 
+      "created": "2011-03-26 23:08:15", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:08:15", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp78", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp80", 
+      "created": "2011-03-26 23:05:43", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:05:43", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp80", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp83", 
+      "created": "2011-03-26 23:06:31", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:06:31", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp83", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp90", 
+      "created": "2011-03-26 23:04:42", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:04:42", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp90", 
+      "model": "2110"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "home", 
+      "date_purchased": "2011-03-26", 
+      "name": "mpp92", 
+      "created": "2011-03-26 23:06:00", 
+      "make": "Dell", 
+      "user_modified": "", 
+      "modified": "2011-03-26 23:06:00", 
+      "hostname_modified": "home", 
+      "user_created": "erikvw", 
+      "serial_number": "mpp92", 
+      "model": "2110"
+    }
+  }
+]
