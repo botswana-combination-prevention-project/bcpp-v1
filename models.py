@@ -35,6 +35,9 @@ class Netbook(MyBasicModel):
     
     def __unicode__(self):
         return "%s" % (self.name)
+        
+    class Meta:
+        ordering=['name']        
 
 class NetbookUser(MyBasicModel):
   
@@ -53,4 +56,9 @@ class NetbookUser(MyBasicModel):
 
     def __unicode__(self):
         return "%s %s" % (self.user, self.netbook)
+    def get_absolute_url(self):
+        return "/bhp_netbook/netbookuser/%s/" % self.id  
+    class Meta:
+        unique_together=['netbook', 'user']
+        ordering=['netbook']        
 
