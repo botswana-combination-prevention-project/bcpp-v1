@@ -377,7 +377,7 @@ class CellPhoneField(CharField):
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,
-            'regex': re.compile("^7[2-5]{1}[0-9]{6}$"),
+            'regex': re.compile("^7[1-5]{1}[0-9]{6}$"),
             'error_messages': {
                 'invalid': _(u'Enter a valid cellphone number. Allowed prefixes are 71, 72, 73, 74, 75.'),
             }
