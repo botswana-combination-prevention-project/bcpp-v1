@@ -131,6 +131,13 @@ REFUSAL_STATUS = (
     ('NOT_REFUSED','No longer refusing'),    
 )    
 
+
+SEXUAL_DEBUT = (
+    ('<=14','14 or under'),
+    ('15-17',' 15 - 17'),
+    ('>=18','18 or above'),
+)
+   
 TIME_UNITS = (
     ('TODAY', 'Today'),
     ('DAYS', 'Days'),
