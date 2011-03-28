@@ -40,7 +40,7 @@ def os_variables():
 
    
     variables['hostname'] = socket.gethostname()
-
+    variables['wlan_network'] = ""
     variables['warnings'] = []
 
     
@@ -52,8 +52,6 @@ def os_variables():
             syslog.syslog(syslog.LOG_WARNING, msg)          
     except:
         variables['warnings'].append('StudySpecific variables not set')                
-    
-      
     
     config = ifconfig('wlan0')
     

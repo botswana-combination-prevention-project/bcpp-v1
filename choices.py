@@ -105,6 +105,13 @@ POS_NEG =(
     ('IND', 'Indeterminate'),
 )
 
+POS_NEG_REFUSED =(
+    ('POS', 'Positive'),
+    ('NEG', 'Negative'),
+    ('IND', 'Indeterminate'),
+    ('REF', 'Refused to disclose'),
+)
+
 POS_NEG_ANY = (
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
@@ -155,6 +162,12 @@ WILL_DECL = (
 YES_NO = (
     ('Yes', 'Yes'),
     ('No', 'No'),
+)
+
+YES_NO_REFUSED = (
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ('REF', 'Refused to answer'),
 )
 
 YES_NO_NA_SPECIFY = (
