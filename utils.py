@@ -14,11 +14,6 @@ def all_uphosts(**kwargs):
     if not hosts or hosts == '0.0.0.0/24':
         hosts='192.168.1.0/24'
 
-    # a port scan requires root access ( ... -PE -PA80 )
-    #port = kwargs.get('port')
-    #if not port:
-    #    port=80
-
     hostname_prefix = kwargs.get('hostname_prefix')
     if not hostname_prefix:
         hostname_prefix='mpp'
