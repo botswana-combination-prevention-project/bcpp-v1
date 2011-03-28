@@ -111,6 +111,7 @@ class BaseVisitTracking (MyBasicUuidModel):
     Sample Visit Tracking Report as would be defined in your applicacation
 """    
 
+"""
 class VisitTrackingReport (BaseVisitTracking):
 
     pass
@@ -130,4 +131,4 @@ class VisitTrackingModel(MyBasicUuidModel):
 
     class Meta:
         abstract = True 
-    
+"""    
