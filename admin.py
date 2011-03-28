@@ -1,6 +1,7 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from models import RegisteredSubjectAppointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason, VisitTrackingReport
+from models import RegisteredSubjectAppointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason
+#VisitTrackingReport
 
 admin.site.register(VisitDefinition)
 admin.site.register(VisitTrackingInfoSource)
@@ -8,6 +9,7 @@ admin.site.register(VisitTrackingVisitReason)
 admin.site.register(VisitTrackingSubjCurrStatus)
 
 
+"""
 class VisitTrackingReportAdmin(MyModelAdmin):
     fields = (
         'registered_subject',
@@ -21,7 +23,7 @@ class VisitTrackingReportAdmin(MyModelAdmin):
         'next_scheduled_visit_datetime',
     )
 admin.site.register(VisitTrackingReport, VisitTrackingReportAdmin)
-
+"""
 
 class AppointmentAdmin(MyModelAdmin):
     fields = (
