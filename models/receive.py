@@ -13,6 +13,7 @@ from bhp_common.validators import datetime_not_before_study_start, datetime_not_
             
 class ReceiveModel (MyBasicUuidModel):
     aliquot = models.OneToOneField(Aliquot)
+    
     datetime_received = models.DateTimeField("Date and time received",
         validators=[
             datetime_not_before_study_start,
