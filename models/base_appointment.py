@@ -17,6 +17,7 @@ from bhp_visit.choices import APPT_STATUS
 
 class BaseAppointment (MyBasicUuidModel):
 
+    """
     subject_identifier = models.CharField(
         verbose_name = _("Subject identifier"),
         max_length = 36,
@@ -24,6 +25,7 @@ class BaseAppointment (MyBasicUuidModel):
         null=True,
         help_text = _("Subject identifier"),
         )
+    """
             
     appt_datetime = models.DateTimeField(
         verbose_name=_("Appointment date and time"),
