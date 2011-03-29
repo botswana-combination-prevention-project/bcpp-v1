@@ -8,9 +8,16 @@ ABSENTEE_STATUS = (
 )
 
 
-ACUTE_ESTABLISHED = (
+ACU_EST = (
     ('Acute','Acute'),
     ('Established','Established'),
+)    
+
+
+ACU_EST_NEG = (
+    ('Acute','Acute'),
+    ('Established','Established'),
+    ('Negative', 'Negative'),
 )    
 
 
