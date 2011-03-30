@@ -11,8 +11,6 @@ class SearchForm(forms.Form):
         )
 
 
-
-
 class DateRangeSearchForm(forms.Form):
     date_start = forms.CharField(
         max_length=10,

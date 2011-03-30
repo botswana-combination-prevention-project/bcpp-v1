@@ -2,42 +2,24 @@
 
 {% block search %}
 <!-- can take either a week or date form -->
+
 <form action="." method="POST">
     {% csrf_token %}
     <table>
     <tr>
-    <td class="field">
-         <label for="id_date_start">{{ form.date_start.label }}</label>
-    </td>     
-   <td class="field">
-         <label for="id_date_end">{{ form.date_end.label }}</label>
-    </td>     
-   {% if form.year %} 
-   <td class="field">
-         <label for="id_year">{{ form.year.label }}</label>
-    </td>     
-   {% endif %} 
-    <td></td>
+    {% for frm in form %}
+       <td class="field">
+         {{ frm.label_tag }}
+        </td>     
+   {% endfor %}
     </tr>
     <tr>    
-    {% if form.date_start %} 
+    {% for frm in form %}    
     <td class="field">
-        {{ form.date_start.errors }}
-        {{ form.date_start }}
+        {{ frm.errors }}
+        {{ frm }}
     </td>
-    {% endif %}     
-    {% if form.date_end %} 
-    <td class="field">
-        {{ form.date_end.errors }}
-        {{ form.date_end }}
-    </td>
-    {% endif %}     
-    {% if form.year %} 
-    <td class="field">
-        {{ form.year.errors }}
-        {{ form.year }}
-    </td>
-    {% endif %} 
+   {% endfor %}    
     <td>
         <input type="submit" value="Search" class="default" name="search" />
     </td>
@@ -52,4 +34,7 @@
     </script>
         </table>
     </form>
+
+
+
 {% endblock search %}

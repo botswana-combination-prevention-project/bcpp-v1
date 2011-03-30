@@ -60,4 +60,9 @@ class BaseSearch(BaseSearchTemplateContext):
 
         """
         raise TypeError("BaseSearch.get_labeled_queryset must be overridden by child class")        
+        
+    def form(self, post=None):
+        pass
+        """you can override this method to use a different form"""
+        #return SearchForm(post)            
 
