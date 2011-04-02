@@ -391,6 +391,23 @@
     }
   }, 
   {
+    "pk": 24, 
+    "model": "bhp_netbook.netbook", 
+    "fields": {
+      "hostname_created": "s007", 
+      "date_purchased": "2010-05-22", 
+      "name": "paper", 
+      "created": "2011-04-01 12:40:31", 
+      "make": "paper", 
+      "user_modified": "", 
+      "modified": "2011-04-01 12:40:31", 
+      "hostname_modified": "s007", 
+      "user_created": "erikvw", 
+      "serial_number": "paper", 
+      "model": "paper"
+    }
+  }, 
+  {
     "pk": 22, 
     "model": "bhp_netbook.netbookuser", 
     "fields": {
@@ -724,6 +741,22 @@
       "user_created": "erikvw", 
       "start_date": "2011-03-27", 
       "user": 21
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "bhp_netbook.netbookuser", 
+    "fields": {
+      "hostname_created": "s007", 
+      "end_date": "2011-01-01", 
+      "created": "2011-04-01 12:43:27", 
+      "user_modified": "", 
+      "modified": "2011-04-01 12:43:27", 
+      "hostname_modified": "s007", 
+      "netbook": 24, 
+      "user_created": "erikvw", 
+      "start_date": "2010-05-22", 
+      "user": 30
     }
   }
 ]
