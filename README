@@ -1,0 +1,15 @@
+bhp_netbook links to bhp_hbc. If you have an initial_data.json, be sure 
+to dumpdata the fixture for bhp_hbc as well. Same goes for loaddata.
+
+See bhp_hbc README for information on dumpdata and loaddata for bhp_hbc
+
+After bhp_hbc, update bhp_netbook, 
+
+# dumpdata
+python manage.py dumpdata bhp_netbook > bhp_hbc/fixtures/initial_data.json
+
+# loaddata
+python manage.py loaddata bhp_netbook/fixtures/initial_data.json
+
+# Commit to svn
+svn ci bhp_netbook/fixtures/initial_data.json -m "update fixtures"
