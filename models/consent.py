@@ -70,6 +70,7 @@ class ConsentModel(BaseConsentModel):
         choices=YES_NO, 
         help_text=_("Does the subject agree to have samples stored after the study has ended")
         )
+
     gender = models.CharField(
         verbose_name = _("Gender"),
         max_length=1, 
