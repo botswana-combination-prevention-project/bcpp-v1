@@ -107,10 +107,10 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
     
 
     rm = RegisteredSubject.objects.get(subject_consent_id=registered_mother)
-
-    subject_identifier['mother'] = rm.subject_identifier
+    subject_identifier['mother'] = rm.subject_identifier    
     
     #add a new record in the audit trail for this consent and identifier-'to be'
+
     #audit = SubjectIdentifierAuditTrail(
     #    subject_consent_id=consent, 
     #    first_name = consent.first_name,
@@ -158,8 +158,8 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
 
 
     # update subject_identifier to the audit trail table
-    #audit.subject_identifier = subject_identifier['identifier']
-    #audit.save()
+    # audit.subject_identifier = subject_identifier['identifier']
+    # audit.save()
     
     return True
 
