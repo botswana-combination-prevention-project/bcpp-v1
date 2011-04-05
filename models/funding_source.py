@@ -16,4 +16,5 @@ class FundingSource(models.Model):
         
     class Meta:
         ordering = ['name']
+        app_label = 'bhp_research_protocol'
 

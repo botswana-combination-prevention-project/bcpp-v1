@@ -11,4 +11,4 @@ class SiteLeader (Employee):
         return "/bhp_lab_registration/supervisor/%s/" % self.id   
         
     class Meta(Employee.Meta):
-        app_label = 'bhp_lab_registration'
+        app_label = 'bhp_research_protocol'

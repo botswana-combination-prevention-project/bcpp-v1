@@ -37,4 +37,4 @@ class Protocol(models.Model):
         
     class Meta:
         ordering = ['protocol_identifier']
-
+        app_label = 'bhp_research_protocol'
