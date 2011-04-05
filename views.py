@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.template import RequestContext
 from django.core.exceptions import ValidationError
 from bhp_common.utils import os_variables
-from bhp_labtemptable.models import LabError, LabSimpleResult
+from bhp_lab_temptables.models import LabError, LabSimpleResult
 
 @login_required
 def result_response(request, **kwargs):
