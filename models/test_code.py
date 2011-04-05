@@ -81,7 +81,7 @@ class TestCode(MyBasicModel):
         )
 
     gender = models.CharField(
-        verbose_name = "Gender"
+        verbose_name = "Gender",
         max_length=10, 
         )
 
@@ -94,13 +94,18 @@ class TestCode(MyBasicModel):
         max_length=75, 
         blank=True
         )
-    age_low_quantifier = models.CharField(max_length=75, blank=True)
-    age_high = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
-    age_high_unit = models.CharField(max_length=75, blank=True)
-    age_high_quantifier = models.CharField(max_length=75, blank=True)
-    panic_value = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
-    panic_value_quantifier = models.CharField(max_length=75, blank=True)
 
+    age_low_quantifier = models.CharField(max_length=75, blank=True)
+    
+    age_high = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
+    
+    age_high_unit = models.CharField(max_length=75, blank=True)
+    
+    age_high_quantifier = models.CharField(max_length=75, blank=True)
+    
+    panic_value = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
+    
+    panic_value_quantifier = models.CharField(max_length=75, blank=True)
         
     comment = models.CharField(
         verbose_name = "Comment", 
