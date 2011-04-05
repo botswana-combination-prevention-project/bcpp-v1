@@ -5,7 +5,7 @@ from django import template
 register = template.Library()
 
 @register.filter(name='age')
-def age(birth_date):
+def age(born):
     today = date.today()
     try: # raised when birth date is February 29 and the current year is not a leap year
         birthday = born.replace(year=today.year)
@@ -18,9 +18,9 @@ def age(birth_date):
 
 @register.filter(name='gender')
 def gender(value):
-    if 'F':
+    if value.lower() == 'f':
         return 'Female'
-    if 'M':
+    elif value.lower() == 'm':
         return 'Male'
     else:
         return value    
