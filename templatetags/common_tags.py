@@ -1,5 +1,5 @@
-from datetime import date
-
+from datetime import *
+from dateutil.relativedelta import *
 from django import template
 
 register = template.Library()
@@ -7,14 +7,21 @@ register = template.Library()
 @register.filter(name='age')
 def age(born):
     today = date.today()
-    try: # raised when birth date is February 29 and the current year is not a leap year
-        birthday = born.replace(year=today.year)
-    except ValueError:
-        birthday = born.replace(year=today.year, day=born.day-1)
-    if birthday > today:
-        return today.year - born.year - 1
+    rdelta = relativedelta(today, born)
+    if rdelta.years == 0 and rdelta.months == 0:
+        return '%sd' % (rdelta.days,'d')
+    elif rdelta.years == 0 and rdelta.months > 0 and rdelta.months <= 2:
+        return '%sm%sd' % (rdelta.months,rdelta.days)
+    elif rdelta.years == 0 and rdelta.months > 2:
+        return '%sm' % (rdelta.months)
+    elif rdelta.years == 1: 
+        m = rdelta.months + 12
+        return '%sm' % (m)        
+    elif rdelta.years > 1:
+        return '%sy' % (rdelta.years)
     else:
-        return today.year - born.year
+         raise TypeError('Age template tag missed a case... today - born. redelta = %s' % (rdelta))   
+
 
 @register.filter(name='gender')
 def gender(value):
