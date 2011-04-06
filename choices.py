@@ -207,3 +207,8 @@ YES_NO_DONT_KNOW = (
     ('Dont_know', 'Do not Know'),
 )
 
+YES_NO_DOESNT_WORK = (
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ('Doesnt_work', 'Doesnt Work'),    
+)
