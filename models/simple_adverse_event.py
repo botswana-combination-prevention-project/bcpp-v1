@@ -16,7 +16,17 @@ class AdverseEventStudyRelation (MyBasicListModel):
     class Meta:
         app_label="bhp_adverse"
         ordering = ['display_index']
+        
+class Ae010ReportType (MyBasicListModel):
+    class Meta:
+        app_label="bhp_adverse"
+        ordering = ['display_index']
 
+class Ae010AdverseStudyRel (MyBasicListModel):
+    class Meta:
+        app_label="bhp_adverse"
+        ordering = ['display_index']
+        
 class SimpleAdverseEvent (MyBasicUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject)
@@ -40,7 +50,7 @@ class SimpleAdverseEvent (MyBasicUuidModel):
     event_grade= models.IntegerField(
         verbose_name="4. Grade of primary event ",
         help_text=_("Use grading scale 1-5, where 5 is death"),
-        choices=GRADING_SCALE
+        choices=GRADING_SCALE,
         validators = [
             MaxValueValidator(5),
             MinValueValidator(1)
@@ -48,13 +58,13 @@ class SimpleAdverseEvent (MyBasicUuidModel):
         )
         
     adverse_study_rel = models.ForeignKey(Ae010AdverseStudyRel,
-        verbose_name="5. Please describe the relationship between this adverse event and study activities"),
+        verbose_name="5. Please describe the relationship between this adverse event and study activities",
         help_text="",    
         )  
         
     study_coord = models.CharField(
         max_length=35,
-        verbose_name="6. Study coordinator"),
+        verbose_name="6. Study coordinator",
         help_text="",
         ) 
         
