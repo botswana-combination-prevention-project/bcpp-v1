@@ -119,43 +119,33 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
     #    user_created = user,
     #    )
 
-
     # we use the mother's consent as the consent pk to store in 
     # registered subject for this/these infant(s)
+
     first_name=''
     initials=''
-    if live_infants == 1:
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '10')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-    if live_infants == 2:
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '25')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '35')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-    if live_infants == 3:
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '47')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '57')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '67')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-    if live_infants == 4:
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '48')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '58')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '68')
-        ret = RegisterSubject(subject_identifier['id'], registered_mother, first_name, initials, 'infant', user)
-        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], '78')
-        ret = RegisterSubject(
-                    subject_identifier['id'], 
-                    registered_mother, 
-                    first_name, 
-                    initials, 
-                    'INFANT', 
-                    user)
-           
 
+    if live_infants == 1:
+        id_suffix = 10
+    elif live_infants == 2:
+        id_suffix = 25
+    elif live_infants == 3:
+        id_suffix = 47
+    elif live_infants == 4:
+        id_suffix = 48
+    else:
+        raise TypeError('Ensure number of infants is greater than 0 and less than or equal to 4. You wrote %s' % (live_infants))
+
+    for infant_order in range(0,live_infants):
+        id_suffix += (infant_order) * 10
+        subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], id_suffix)            
+        ret = RegisterSubject(
+            identifier=subject_identifier['id'], 
+            consent_pk=registered_mother, 
+            first_name=first_name, 
+            initials=initials, 
+            subject_type='infant', 
+            user=user)
 
     # update subject_identifier to the audit trail table
     # audit.subject_identifier = subject_identifier['identifier']
