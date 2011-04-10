@@ -46,6 +46,7 @@ def os_variables():
     
     try:
         sp = StudySpecific.objects.all()[0]
+        variables['device_id'] = sp.device_id
         if not sp.hostname_prefix:
             msg = 'StudySpecific.hostname_prefix not set'
             variables['warnings'].append(msg)        
