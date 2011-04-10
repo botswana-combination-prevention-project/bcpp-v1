@@ -46,7 +46,7 @@ def os_variables():
     #netbook checks
     sp = StudySpecific.objects.all()[0]    
 
-    if sp.machine_type == 'NETBOOK'
+    if sp.machine_type == 'NETBOOK':
         try:
             variables['device_id'] = sp.device_id
             if not sp.hostname_prefix:
