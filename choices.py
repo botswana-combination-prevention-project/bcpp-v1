@@ -23,3 +23,10 @@ SETTINGS_KEYWORD = (
     ('hostname_prefix','hostname_prefix'),
     ('device_id','device_id'),
     )
+    
+    
+MACHINE_TYPE = (
+    ('NETBOOK','Netbook'),
+    ('SERVER','Server'),
+    ('DESKTOP','Desktop'),
+)    

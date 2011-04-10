@@ -2,8 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicUuidModel
-from choices import GENDER_OF_CONSENT, SETTINGS_KEYWORD
-
+from choices import GENDER_OF_CONSENT, SETTINGS_KEYWORD, MACHINE_TYPE
 class BaseStudySpecific (MyBasicUuidModel):
 
     protocol_number = models.CharField(
@@ -65,6 +64,14 @@ class BaseStudySpecific (MyBasicUuidModel):
         help_text="For the check digit. Use 7 for single digit, 77 for double digit, etc"
         )
 
+    machine_type = models.CharField(
+        verbose_name = 'Machine type',
+        choices = MACHINE_TYPE,
+        max_length=25,
+        default='NETBOOK',
+        help_text = 'If netbook, other checks are triggered',
+        )
+
     hostname_prefix = models.CharField(
         verbose_name = _("Hostname prefix"),
         max_length=15,
@@ -90,25 +97,6 @@ class StudySpecific (BaseStudySpecific):
 
     def __unicode__(self):
         return "%s: %s started on %s" % (self.protocol_number, self.protocol_title, self.study_start_datetime)
-
-"""
-class StudySpecificSetting (MyBasicUuidModel):
-
-    setting_keyword = models.CharField(
-        verbose_name = _("Setting"),
-        max_length = 50,
-        choices=SETTINGS_KEYWORD,
-        unique=True,
-        )
-        
-    setting_value = models.CharField(
-        verbose_name = _("Value"),
-        max_length =     50,
-        )
-
-    class Meta:
-        ordering = ['setting_keyword']    
-"""
 
 class StudySite(MyBasicUuidModel):
     
