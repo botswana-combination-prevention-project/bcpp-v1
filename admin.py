@@ -39,6 +39,7 @@ class SubjectConsentAdminBase(MyModelAdmin):
         'identity',
         'identity_type',
         'may_store_samples',
+        'comment',
         )
     radio_fields = {
         "gender":admin.VERTICAL,
