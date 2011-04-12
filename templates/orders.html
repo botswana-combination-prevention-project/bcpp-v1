@@ -1,0 +1,30 @@
+{% extends "reports/receiving.html" %}
+
+{% block orders %}<h2>Orders / Results</h2>
+      <table cellspacing="0" id="result_list" border='1'>
+        <thead><tr>
+                    
+        <th>Manage Result</th>     
+        <th>Assay date</th>   	    	
+        <th>Order</th> 
+        <th>Panel</th> 
+        <th>Panel Group</th> 
+        <th>Panel name</th> 
+        <th>Manage order</th> 
+        </thead>
+        <tbody>
+        
+          <tr class="{% cycle 'row2' 'row1' %}">
+				 <td></td>
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>                    
+            </tr>
+     
+                            
+      </tbody>
+      </table>
+{% endblock %} 

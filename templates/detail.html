@@ -1,0 +1,55 @@
+<div class="results">
+      <table cellspacing="0" id="result_list" border='1'>
+        <thead><tr>
+        <th>Result</th>
+        <th>BHHRL_REF</th>
+        <th>TGROUP</th>  
+        <th>PATIENT</th>              
+        <th>Date Received</th>
+        <th>Drawn</th>
+        <th>Assay_date</th>    	    	        
+        <th>PROTOCOL</th>
+        <th>SITEID</th>
+        <th>VISIT</th>              
+        <th>Comment</th>              
+        <th>Cond</th>        
+        <th>SRC</th>
+        <th>Edit</th>  
+        <th>RCV_ID</th> 
+        <th>User</th>   	    	            	    	
+        <th>lr</th> 
+        </thead>
+        <tbody>
+        
+          <tr class="{% cycle 'row2' 'row1' %}">
+          <td>
+          	{% if obj.result %}   
+          		<A href="/reports/{{obj.id }}/view">{{obj.sample_id }}
+            {% else %}      
+            	<div class="warning">???</div>
+            {% endif %}                                                   
+            </td>   
+                      
+            <td>{{obj.sample_id }}</td>
+            <td>{{obj.test }}</td> 
+             <td>{{obj.subject_identifier }}</td>
+             <td>{{obj.received|date:"Y-m-d"}}</td>  
+             <td>{{obj.date_sample_drawn|date:"Y-m-d"}}</td>
+             <td>{{obj.created|date:"Y-m-d"}}</td>          
+            <td></td>     
+            <td></td>            
+            <td></td>                          
+            <td></td>   
+            <td></td>            
+            <td></td>                          
+            <td></td>  
+            <td></td>         
+            <td>{{obj.modified|date:"Y-m-d"}}</td>                                    
+            <td></td>
+            </tr>
+     
+                            
+      </tbody>
+      </table>
+      </div>
+

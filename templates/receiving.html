@@ -1,0 +1,28 @@
+{% extends "reports/base.html" %}
+
+{% block receiving %}<h2>Receiving</h2>
+      <table cellspacing="0" id="result_list" border='1'>
+        <thead><tr>  
+        <th>Received</th>     
+        <th>Patient</th>   	    	
+        <th>Drawn</th> 
+        <th>Protocol</th> 
+        <th>Site</th> 
+        <th>Gender</th> 
+        <th>Dob</th> 
+        <th>Condition</th> 
+        </thead>
+        <tbody>
+          <tr class="{% cycle 'row2' 'row1' %}">
+				 <td>{{obj.sample_date_received|date:"Y-m-d"}}</td>
+             <td>{{obj.pat_id }}</td>
+             <td>{{obj.sample_date_drawn|date:"Y-m-d"}} {{obj.sample_time_drawn }}</td>
+             <td>{{obj.sample_protocolnumber }}</td>
+             <td>{{obj.sample_site_id }}</td>
+             <td>{{obj.gender }}</td>
+             <td>{{obj.dob }}</td>                    
+             <td>{{obj.sample_condition }}</td>
+            </tr>                           
+      </tbody>
+      </table>
+{% endblock %} 
