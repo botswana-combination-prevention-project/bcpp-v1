@@ -28,12 +28,10 @@ def index(request):
 		result=row.result,
 		result_quantifier=row.result_quantifier,
 		import_date=row.import_date)
-		
 		obj.save() 
-	
 	cursor.close() 
 	latest_results_list = Labtemp.objects.all().order_by('-import_date')[:30]
-	return render_to_response('reports/index.html', {'latest_results_list': latest_results_list})
+	return render_to_response('index.html', {'latest_results_list': latest_results_list})
 
 	#return HttpResponse("Hello, world. You're at the results index.")
 
