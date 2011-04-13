@@ -54,8 +54,9 @@ def fetch_receiving(sample_id):
 				 	l.batch_id
 				 from bhplab.dbo.lab01response as l
 				left join bhp.dbo._bid as bid on bid.pid=l.pat_id 
- 				where l.pid='"""
- 	sql = sql+sample_id+"'"
+ 				where l.pid='%s'"""
+ 	sql = sql % sample_id
+
  	#print sql
  	cursor.execute(sql)
  	row = cursor.fetchone()

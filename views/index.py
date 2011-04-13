@@ -5,43 +5,50 @@ from django.contrib.auth.decorators import login_required
 from bhp_variables.models import StudySpecific
 from bhp_common.utils import os_variables
 from settings import DATABASES
-from bhp_lab_temptables.models import LabError, LabSimpleResult
+#from bhp_lab_temptables.models import LabError, LabSimpleResult
+from forms import ResultSearchForm
 
 @login_required
 def index(request, **kwargs):
-    
-    warnings = {}
-    
-    study_specific = StudySpecific.objects.all()
-    
+
     section_name = kwargs.get('section_name')
-        
     os_vars = os_variables()
 
     template = 'result_report.html'
-
-    results = []
-   
-    result_items = LabError.objects.filter(sample_id__exact='UJ62429') 
     
-    if result_items:
-        for result_item in result_items:
-            row = {}
-            row['utestid'] = result_item.utestid
-            #row.append(result_item.description)
-            row['result'] = result_item.result
-            row['result_quantifier'] = result_item.result_quantifier
-            #row.append(result_item.assay_date)
-            #row.append(result_item.units)
-            results.append(row)
+    if request.method == 'POST':
+        
+        form = ResultSearchForm(request.POST)
+      
+        if form.is_valid():
 
+            cd = form.cleaned_data
+            search_term=cd['result_search_term']
+    
+            search_result = render_search(
+                search_term=search_term,
+                )
+    
+            return render_to_response(template, {
+                'form': form,
+                'search_term': search_term,                 
+                'section_name': section_name, 
+                'search_result': search_result  ,
+                'os_variables': os_vars, 
+                'report_name': kwargs.get('report_name'), 
+                'report_title': 'title',
+                }, context_instance=RequestContext(request))
+
+    else:
+        form = ResultSearchForm()
 
     return render_to_response(template, { 
-        'results': results,
-        'section_name': section_name,        
-        'comment':"",
-        'warnings': warnings, 
-        'bhp_variables': study_specific,
-        'os_variables': os_vars,
-        'database': DATABASES,     
-    },context_instance=RequestContext(request))
+        'form': form,
+        'section_name': section_name, 
+        'report': ''  ,
+        'os_variables': os_vars,  
+        'report_name': kwargs.get('report_name'),         
+        }, context_instance=RequestContext(request))
+        
+def render_search(**kwargs):
+    return None
