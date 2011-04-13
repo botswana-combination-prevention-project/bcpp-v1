@@ -27,26 +27,14 @@
             <td><A href="/admin{{obj.subject_consent.get_absolute_url}}">{{ obj.subject_consent.first_name }}</A></td>
             <td>{{obj.initials }}</td>
             <td>{{obj.dob|date:"Y-m-d"}}</td>            
-            <td><A href="/reports/{{obj.id }}">{{obj.sample_id }}</td>
+            <td><A href="/bhp_lab_result_report/{{obj.id }}">{{obj.sample_id }}</td>
             <td>{{obj.test }}</td>                        
             <td>{{obj.date_sample_drawn|date:"Y-m-d"}}</td>
             <td>{{obj.received|date:"Y-m-d"}}</td>            
             <td>{{obj.utestid|default:"" }}</td>            
             <td>{{obj.result_quantifier|default:"" }}</td>                        
             <td>
-                {% if obj.subject_hiv_result.result_word.lower == 'negative' %}
-                    {{obj.result|default:"" }}
-                {% else %}
-                    {% if obj.result %}   
-                        {{obj.result|default:"" }}
-                    {% else %}    
-                        {% if obj.subject_art_history.art_status == 'NAIVE' %}   
-                            <div class="warning">???</div>
-                        {% else %}    
-                            {{obj.result|default:"" }}                        
-                        {% endif %}                         
-                    {% endif %}                         
-                {% endif %}     
+                  {{ obj.result|default:"" }}
             </td>            
             <td><i>{{obj.subject_hiv_result.result_word.lower }}</i></td>                        
             <td><i>{{obj.subject_art_history.art_status }}</i></td>                        
