@@ -1,5 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicUuidModel, MyBasicListModel
+from bhp_lab.choices import ALIQUOT_STATUS
 
 class AliquotType(MyBasicListModel):
     
@@ -28,20 +29,27 @@ class Aliquot (MyBasicUuidModel):
         help_text="Aliquot identifier", 
         editable=False
         )
-    id_int = models.IntegerField(
+        
+    count = models.IntegerField(
         editable=False
         )
-    id_seed = models.IntegerField(
-        editable=False
-        )
+        
     aliquot_type = models.ForeignKey(AliquotType,
         verbose_name="Aliquot Type",
         )
-    aliquot_volume = models.DecimalField("Volume in mL / Spots",
-        max_digits=10,decimal_places=2
+        
+    volume = models.DecimalField("Volume in mL / Spots",
+        max_digits=10,
+        decimal_places=2
         )
-    aliquot_condition = models.ForeignKey(AliquotCondition,
+        
+    condition = models.ForeignKey(AliquotCondition,
         verbose_name="Aliquot Condition",
+        )
+        
+    status = models.CharField(
+        max_length = 25,
+        choices = ALIQUOT_STATUS,
         )
     
     def __unicode__(self):

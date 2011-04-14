@@ -1,3 +1,4 @@
+from specimen_type import *
 from aliquot import *
 from test_code import *
 from panel import *

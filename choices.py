@@ -3,6 +3,12 @@ ABS_CALC = (
     ('CALC', 'Calculated'),    
     )
 
+
+ALIQUOT_STATUS =  (
+    ('available', 'available'),
+    ('consumed', 'consumed'),
+    )
+
 RESULT_STATUS = (
     ('P','Preliminary'),
     ('F','Final'),
@@ -16,6 +22,20 @@ RESULT_QUANTIFIER = (
     ('lt','<'),
     ('lte','<='),                                                            
 )
+
+SPECIMEN_MEASURE_UNITS = (
+    ('mL','mL'),
+    ('uL','uL'),
+    ('spots','spots'),
+    ('n/a','Not Applicable'),                            
+    )
+
+SPECIMEN_MEDIUM = (
+    ('tube_any', 'Tube'),
+    ('tube_edta', 'Tube EDTA'),
+    ('swab', 'Swab'),
+    ('dbs_card', 'DBS Card'),    
+    )
 
 UNITS = (
     ('%','%'),

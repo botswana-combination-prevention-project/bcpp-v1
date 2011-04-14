@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicModel, MyBasicListModel
+from bhp_common.choices import GENDER
 from bhp_lab.choices import UNITS, ABS_CALC
     
 class TestGroup(MyBasicListModel):
@@ -80,8 +81,10 @@ class TestCode(MyBasicModel):
         blank = True,
         )
 
+    """
     gender = models.CharField(
         verbose_name = "Gender",
+        choices = GENDER,
         max_length=10, 
         )
 
@@ -106,6 +109,7 @@ class TestCode(MyBasicModel):
     panic_value = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
     
     panic_value_quantifier = models.CharField(max_length=75, blank=True)
+    """
         
     comment = models.CharField(
         verbose_name = "Comment", 

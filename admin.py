@@ -61,7 +61,7 @@ class AliquotAdmin(MyModelAdmin):
             return ('aliquot_type',) + self.readonly_fields
         else:
             return self.readonly_fields     
-    list_display = ('aliquot_identifier', 'aliquot_volume', 'aliquot_type', 'aliquot_condition')        
+    list_display = ('aliquot_identifier', 'volume',  'condition')        
     readonly_fields = ('aliquot_identifier',)        
 admin.site.register(Aliquot, AliquotAdmin)    
 
@@ -79,5 +79,5 @@ class ReceiveAdmin(MyModelAdmin):
             kwargs["queryset"] = Aliquot.objects.filter(receive__isnull=True)
         return super(ReceiveAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
             
-    list_display = ('aliquot', 'registered_subject', 'datetime_drawn', 'datetime_received')        
+    list_display = ('aliquot', 'patient', 'datetime_drawn', 'datetime_received')        
 admin.site.register(Receive, ReceiveAdmin)    
