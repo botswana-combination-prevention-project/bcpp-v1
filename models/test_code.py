@@ -7,7 +7,7 @@ from bhp_lab_core.choices import UNITS, ABS_CALC
 class TestGroup(MyBasicListModel):
 
     class Meta:
-        app_label = 'bhp_lab'            
+        app_label = 'bhp_lab_core'            
 
 class TestCode(MyBasicModel):
 
@@ -121,7 +121,7 @@ class TestCode(MyBasicModel):
         return "%s: %s" % (self.test_code,self.test_name)
         
     class Meta:
-        app_label = 'bhp_lab'     
+        app_label = 'bhp_lab_core'     
         
 class TestMap(MyBasicModel):
 
@@ -139,6 +139,6 @@ class TestMap(MyBasicModel):
         return "%s maps to %s" % (self.foreign_test_code,self.local_test_code)
 
     class Meta:
-        app_label = 'bhp_lab'            
+        app_label = 'bhp_lab_core'            
 
            

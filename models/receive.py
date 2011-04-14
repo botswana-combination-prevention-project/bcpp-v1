@@ -66,4 +66,4 @@ class Receive (MyBasicUuidModel):
     #    return "//labreceive/%s/" % self.id
 
     class Meta:
-        app_label = 'bhp_lab'            
+        app_label = 'bhp_lab_core'            

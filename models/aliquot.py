@@ -9,7 +9,7 @@ class AliquotType(MyBasicListModel):
 
     class Meta:
         ordering = ["short_name"]
-        app_label = 'bhp_lab'        
+        app_label = 'bhp_lab_core'        
         
 class AliquotCondition(MyBasicListModel):
     
@@ -17,7 +17,7 @@ class AliquotCondition(MyBasicListModel):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
     class Meta:
         ordering = ["display_index"]
-        app_label = 'bhp_lab'        
+        app_label = 'bhp_lab_core'        
 
 
 class Aliquot (MyBasicUuidModel):
@@ -56,6 +56,6 @@ class Aliquot (MyBasicUuidModel):
         return self.aliquot_identifier
 
     class Meta:
-        app_label = 'bhp_lab'
+        app_label = 'bhp_lab_core'
 
   

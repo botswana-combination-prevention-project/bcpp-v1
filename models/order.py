@@ -33,4 +33,4 @@ class Order(MyBasicUuidModel):
         return '%s %s %s' % (self.order_number, self.panel, self.order_datetime)
 
     class Meta:
-        app_label = 'bhp_lab'    
+        app_label = 'bhp_lab_core'    

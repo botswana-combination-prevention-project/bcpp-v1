@@ -43,7 +43,7 @@ class Result(MyBasicUuidModel):
     #    return '%s :%s' % (self.order.order_number, self.result_datetime)
         
     class Meta:
-        app_label = 'bhp_lab'    
+        app_label = 'bhp_lab_core'    
 
 class ResultItem(MyBasicUuidModel):
 
@@ -90,5 +90,5 @@ class ResultItem(MyBasicUuidModel):
   	    )
   	
     class Meta:
-        app_label = 'bhp_lab'    
+        app_label = 'bhp_lab_core'    
        

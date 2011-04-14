@@ -23,6 +23,6 @@ class Panel(MyBasicModel):
         return self.name
         
     class Meta:
-        app_label = 'bhp_lab'        
+        app_label = 'bhp_lab_core'        
 
 
