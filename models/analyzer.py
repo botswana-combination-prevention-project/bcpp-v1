@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab.models import Panel
+from bhp_lab_core.models import Panel
 
 class Analyzer(MyBasicUuidModel):
 

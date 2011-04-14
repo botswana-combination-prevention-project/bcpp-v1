@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab.models import Order, Analyzer, TestCode
-from bhp_lab.choices import RESULT_STATUS, RESULT_QUANTIFIER
+from bhp_lab_core.models import Order, Analyzer, TestCode
+from bhp_lab_core.choices import RESULT_STATUS, RESULT_QUANTIFIER
 
 class Result(MyBasicUuidModel):
 

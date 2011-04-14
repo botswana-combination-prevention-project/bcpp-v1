@@ -1,9 +1,9 @@
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab.models import Aliquot, SpecimenType
-from bhp_lab_registration.models import Patient
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
-from bhp_lab.choices import SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
+from bhp_lab_registration.models import Patient
+from bhp_lab_core.choices import SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
+from bhp_lab_core.models import Aliquot, SpecimenType
 
 """ 
     Lab receiving table.

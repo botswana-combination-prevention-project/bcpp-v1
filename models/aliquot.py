@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicUuidModel, MyBasicListModel
-from bhp_lab.choices import ALIQUOT_STATUS
+from bhp_lab_core.choices import ALIQUOT_STATUS
 
 class AliquotType(MyBasicListModel):
     

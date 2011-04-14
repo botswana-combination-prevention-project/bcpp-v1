@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-from bhp_lab.models import TestCode
+from bhp_lab_core.models import TestCode
 
 class Panel(MyBasicModel):
     
