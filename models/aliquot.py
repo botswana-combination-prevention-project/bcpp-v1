@@ -35,7 +35,8 @@ class Aliquot (MyBasicUuidModel):
     receive = models. ForeignKey(Receive)
         
     count = models.IntegerField(
-        editable=False
+        editable=False,
+        null=True
         )
         
     aliquot_type = models.ForeignKey(AliquotType,

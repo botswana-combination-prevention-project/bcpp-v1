@@ -2,6 +2,7 @@ from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_lab_registration.models import Patient
+from bhp_research_protocol.models import Protocol
 
 from bhp_lab_core.models import SpecimenType
 
@@ -15,6 +16,8 @@ from bhp_lab_core.models import SpecimenType
             
 class Receive (MyBasicUuidModel):
 
+    protocol = models.ForeignKey(Protocol)
+    
     receive_identifier = models.CharField(
         verbose_name = 'Receiving Identifier',
         max_length = 25,
@@ -25,8 +28,7 @@ class Receive (MyBasicUuidModel):
     patient = models.ForeignKey(Patient)
 
     datetime_drawn = models.DateTimeField("Date and time drawn",
-            validators=[
-            datetime_not_before_study_start,
+        validators=[
             datetime_not_future,]
             )
   
@@ -35,11 +37,8 @@ class Receive (MyBasicUuidModel):
             datetime_not_future,]
             )
 
-    #aliquot = models.ForeignKey(Aliquot)
-
-
     def __unicode__(self):
-        return unicode(self.aliquot)
+        return '%s %s' % (self.receive_identifier, self.patient)
 
     #def get_absolute_url(self):
     #    return "//labreceive/%s/" % self.id
