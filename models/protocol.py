@@ -32,8 +32,11 @@ class Protocol(models.Model):
         max_length=500,
         )    
 
+    def get_absolute_url(self):
+        return "/bhp_research_protocol/protocol/%s/" % self.id   
+
     def __unicode__(self):
-        return '%s %s' % (self.protocol_identifier, self.local_title)
+        return self.protocol_identifier
         
     class Meta:
         ordering = ['protocol_identifier']
