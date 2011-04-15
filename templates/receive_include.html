@@ -1,0 +1,30 @@
+  <div class="results">
+      <table  cellspacing="0" id="result_list" border=1>
+    	<thead>
+			<tr>
+    	<th>Receive</th>
+    	<th>Protocol</th>
+    	<th>Account</th>    	
+        <th>Subject</th>    	    	
+    	<th>Initials</th>    	        
+    	<th>Dob</th>    	
+    	<th>Gender</th>
+    	<th>User Created</th>
+    	<th>Date Modified</th>    	    	
+    	</thead>	
+        {% for receive in search_results.object_list %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+            <td><A href="/admin{{ receive.get_absolute_url }}">{{ receive.receive_identifier|escape}}</A></td>
+            <td><A href="/admin{{ receive.protocol.get_absolute_url }}">{{ receive.protocol|escape}}</A></td>
+         	  <td><A href="/admin{{ receive.account.get_absolute_url }}">{{ receive.account|escape }}</a></td>
+        	  <td>{{ receive.patient|escape }}</td>
+         	  <td>{{ receive.patient.initials|escape }}</td>
+         	  <td>{{ receive.patient.dob|escape }}</td>         	  
+         	  <td>{{ receive.patient.gender|escape }}</td>         	  
+         	  <td>{{ receive.user_created|escape }}</td>
+          	  <td>{{ receive.modified|date:"Y-m-d" }}</td>         	  
+            </tr>
+        {% endfor %}
+    </table>    
+    </div>
+
