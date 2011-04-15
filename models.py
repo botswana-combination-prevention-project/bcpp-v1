@@ -84,6 +84,15 @@ class MyStackedInline (admin.StackedInline):
             obj.user_modified = request.user.username
         obj.save()
 
+
+class MyTabularInline (admin.TabularInline):
+    """Overide ModelAdmin to force username to be saved on add and change"""
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.user_created = request.user.username
+        if change:
+            obj.user_modified = request.user.username
+        obj.save()
     
 
 
