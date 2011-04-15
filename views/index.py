@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_variables.models import StudySpecific
 from bhp_common.utils import os_variables
 from settings import DATABASES
 #from bhp_lab_temptables.models import LabError, LabSimpleResult
@@ -12,7 +11,6 @@ from bhp_lab_result_report.forms import ResultSearchForm
 def index(request, **kwargs):
 
     section_name = kwargs.get('section_name')
-    os_vars = os_variables()
 
     template = 'result_report.html'
     
@@ -34,7 +32,6 @@ def index(request, **kwargs):
                 'search_term': search_term,                 
                 'section_name': section_name, 
                 'search_result': search_result  ,
-                'os_variables': os_vars, 
                 'report_name': kwargs.get('report_name'), 
                 'report_title': 'title',
                 }, context_instance=RequestContext(request))
@@ -46,7 +43,6 @@ def index(request, **kwargs):
         'form': form,
         'section_name': section_name, 
         'report': ''  ,
-        'os_variables': os_vars,  
         'report_name': kwargs.get('report_name'),         
         }, context_instance=RequestContext(request))
         

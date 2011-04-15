@@ -1,7 +1,7 @@
 # Create your views here.
 """
 import pyodbc
-from bhp_lab_result.models import Labtemp
+from bhp_lab_result.models import LabSimpleResult
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 from bhp_lab_result_report.lab_specimens import fetch_receiving
@@ -13,7 +13,7 @@ def index(request):
 	Labtemp.objects.all().delete()
 	
 	for row in cursor:
-		obj = Labtemp(
+		obj = LabSimpleResult(
 		subject_identifier=row.subject_identifier,
 		initials=row.initials,
 		dob=row.dob,
