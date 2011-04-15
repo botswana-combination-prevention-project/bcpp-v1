@@ -36,12 +36,14 @@ class Receive (MyBasicUuidModel):
         validators=[
             datetime_not_future,]
             )
-
+            
+    dmis_reference = models.IntegerField()
+    
     def __unicode__(self):
         return '%s %s' % (self.receive_identifier, self.patient)
 
-    #def get_absolute_url(self):
-    #    return "//labreceive/%s/" % self.id
+    def get_absolute_url(self):
+        return "/bhp_lab_core/receive/%s/" % self.id   
 
     class Meta:
         app_label = 'bhp_lab_core'            
