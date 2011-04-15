@@ -1,4 +1,5 @@
 # Create your views here.
+"""
 import pyodbc
 from bhp_lab_result.models import Labtemp
 from django.shortcuts import render_to_response, get_object_or_404
@@ -38,4 +39,4 @@ def index(request):
 	#return HttpResponse("Hello, world. You're at the results index.")
 
 
-
+"""

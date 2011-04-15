@@ -1,4 +1,5 @@
 # Create your views here.
+"""
 import pyodbc
 from bhp_lab_result.models import Labtemp
 from django.shortcuts import render_to_response, get_object_or_404
@@ -17,3 +18,5 @@ def view(request, report_id):
 	
 def printPDF(request, report_id):
 	return HttpResponse("You're printing result %s." % report_id)
+	
+"""

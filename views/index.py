@@ -6,7 +6,7 @@ from bhp_variables.models import StudySpecific
 from bhp_common.utils import os_variables
 from settings import DATABASES
 #from bhp_lab_temptables.models import LabError, LabSimpleResult
-from forms import ResultSearchForm
+from bhp_lab_result_report.forms import ResultSearchForm
 
 @login_required
 def index(request, **kwargs):
