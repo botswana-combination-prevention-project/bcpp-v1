@@ -1,7 +1,7 @@
 [
   {
     "pk": 45, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "sputum", 
@@ -18,7 +18,7 @@
   }, 
   {
     "pk": 47, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Oral Swab", 
@@ -35,7 +35,7 @@
   }, 
   {
     "pk": 19, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "serum albumin", 
@@ -52,7 +52,7 @@
   }, 
   {
     "pk": 33, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Aspirated Fluid", 
@@ -69,7 +69,7 @@
   }, 
   {
     "pk": 38, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "bacterial cell line for research", 
@@ -86,7 +86,7 @@
   }, 
   {
     "pk": 1, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Buffy coat", 
@@ -103,7 +103,7 @@
   }, 
   {
     "pk": 23, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Buffy Coat DMSO", 
@@ -120,7 +120,7 @@
   }, 
   {
     "pk": 6, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Breast Milk: Pellet", 
@@ -137,7 +137,7 @@
   }, 
   {
     "pk": 30, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Breast Milk: Supernatant", 
@@ -154,7 +154,7 @@
   }, 
   {
     "pk": 29, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Breast Milk: Whole", 
@@ -171,7 +171,7 @@
   }, 
   {
     "pk": 36, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "BV Slide Methanol Fixed", 
@@ -188,7 +188,7 @@
   }, 
   {
     "pk": 39, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Cells for research", 
@@ -205,7 +205,7 @@
   }, 
   {
     "pk": 40, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Cell culture", 
@@ -222,7 +222,7 @@
   }, 
   {
     "pk": 34, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Cervical Vaginal Lavage Cell Pellet", 
@@ -239,7 +239,7 @@
   }, 
   {
     "pk": 13, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Cervical Vaginal Lavage Supernatant", 
@@ -256,7 +256,7 @@
   }, 
   {
     "pk": 14, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Cervical Vaginal Lavage SupernatantTriReagent", 
@@ -273,7 +273,7 @@
   }, 
   {
     "pk": 21, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Dried Blood Spot", 
@@ -290,7 +290,7 @@
   }, 
   {
     "pk": 48, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "diluted DNA", 
@@ -307,7 +307,7 @@
   }, 
   {
     "pk": 3, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "DNA", 
@@ -324,7 +324,7 @@
   }, 
   {
     "pk": 11, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Endocervical swabHIV", 
@@ -341,7 +341,7 @@
   }, 
   {
     "pk": 12, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Endocervical swabHSV", 
@@ -358,7 +358,7 @@
   }, 
   {
     "pk": 31, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Endocervical Swab", 
@@ -375,7 +375,7 @@
   }, 
   {
     "pk": 25, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Induced Sputum", 
@@ -392,7 +392,7 @@
   }, 
   {
     "pk": 20, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Infant Nasopharyngeal Aspirate", 
@@ -409,7 +409,7 @@
   }, 
   {
     "pk": 42, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "This sample type is not identifiable by title or box", 
@@ -426,7 +426,7 @@
   }, 
   {
     "pk": 4, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "PBMC", 
@@ -443,7 +443,7 @@
   }, 
   {
     "pk": 27, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "PBMC-ACD", 
@@ -460,7 +460,7 @@
   }, 
   {
     "pk": 2, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Plasma", 
@@ -477,7 +477,7 @@
   }, 
   {
     "pk": 15, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Plasma ACD", 
@@ -494,7 +494,7 @@
   }, 
   {
     "pk": 26, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Plasma EDTA", 
@@ -511,7 +511,7 @@
   }, 
   {
     "pk": 49, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Placenta", 
@@ -528,7 +528,7 @@
   }, 
   {
     "pk": 37, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "PBMC Pellet", 
@@ -545,7 +545,7 @@
   }, 
   {
     "pk": 44, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Proteins used for research", 
@@ -562,7 +562,7 @@
   }, 
   {
     "pk": 7, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Red Blood Cells", 
@@ -579,7 +579,7 @@
   }, 
   {
     "pk": 43, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "RNA", 
@@ -596,7 +596,7 @@
   }, 
   {
     "pk": 5, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "SERUM", 
@@ -613,7 +613,7 @@
   }, 
   {
     "pk": 35, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Slide gram stain", 
@@ -630,7 +630,7 @@
   }, 
   {
     "pk": 10, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Semen pellet", 
@@ -647,7 +647,7 @@
   }, 
   {
     "pk": 32, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Semen supernatant", 
@@ -664,7 +664,7 @@
   }, 
   {
     "pk": 46, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "stool", 
@@ -681,7 +681,7 @@
   }, 
   {
     "pk": 18, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Endo Swab Gen Probe", 
@@ -698,7 +698,7 @@
   }, 
   {
     "pk": 16, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Ulcer swab HSV", 
@@ -715,7 +715,7 @@
   }, 
   {
     "pk": 9, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Urine", 
@@ -732,7 +732,7 @@
   }, 
   {
     "pk": 17, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Urine Gen Probe", 
@@ -749,7 +749,7 @@
   }, 
   {
     "pk": 8, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Ulcer swab", 
@@ -766,7 +766,7 @@
   }, 
   {
     "pk": 41, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Cultured virus for research", 
@@ -783,7 +783,7 @@
   }, 
   {
     "pk": 22, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Vaginal Swab Slide", 
@@ -800,7 +800,7 @@
   }, 
   {
     "pk": 28, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Whole Blood", 
@@ -817,7 +817,7 @@
   }, 
   {
     "pk": 24, 
-    "model": "bhp_lab.aliquottype", 
+    "model": "bhp_lab_core.aliquottype", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Whole Blood DMSO", 
@@ -834,7 +834,7 @@
   }, 
   {
     "pk": 1, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Sample condition OK", 
@@ -851,7 +851,7 @@
   }, 
   {
     "pk": 2, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Inadequate volume for testing.", 
@@ -868,7 +868,7 @@
   }, 
   {
     "pk": 3, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Clotted or haemolised, please ensure tube is well mixed before delivery to lab.", 
@@ -885,7 +885,7 @@
   }, 
   {
     "pk": 8, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Clotted", 
@@ -902,7 +902,7 @@
   }, 
   {
     "pk": 9, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Haemolised", 
@@ -919,7 +919,7 @@
   }, 
   {
     "pk": 4, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Wrong tube type, unable to test.", 
@@ -936,7 +936,7 @@
   }, 
   {
     "pk": 5, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Sample degradation has occured. Unsuitable for testing.", 
@@ -953,7 +953,7 @@
   }, 
   {
     "pk": 6, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Expired tube.", 
@@ -970,7 +970,7 @@
   }, 
   {
     "pk": 7, 
-    "model": "bhp_lab.aliquotcondition", 
+    "model": "bhp_lab_core.aliquotcondition", 
     "fields": {
       "hostname_created": "dmc3", 
       "name": "Technical problem at lab, unable to test.", 
@@ -987,7 +987,7 @@
   }, 
   {
     "pk": 1, 
-    "model": "bhp_lab.panel", 
+    "model": "bhp_lab_core.panel", 
     "fields": {
       "comment": "", 
       "hostname_created": "dmc3", 

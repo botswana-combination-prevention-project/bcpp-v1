@@ -1,8 +1,8 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
+from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, TestCode, Aliquot, AliquotType, AliquotCondition
 from models import Receive, Result, Order, ResultItem, TestGroup, TestMap
-from views import AllocateAliquotIdentifier
+from utils import AllocateAliquotIdentifier
 
 
 class PanelAdmin(MyModelAdmin):
@@ -61,11 +61,15 @@ class AliquotAdmin(MyModelAdmin):
             return ('aliquot_type',) + self.readonly_fields
         else:
             return self.readonly_fields     
-    list_display = ('aliquot_identifier', 'volume',  'condition')        
+    list_display = ('aliquot_identifier', 'aliquot_type', 'measure', 'measure_units', 'condition', 'receive')        
     readonly_fields = ('aliquot_identifier',)        
 admin.site.register(Aliquot, AliquotAdmin)    
 
 #unregistered admin_models
+
+class AliquotInlineAdmin(MyTabularInline):
+    model = Aliquot
+    extra = 1
 
 class ReceiveAdmin(MyModelAdmin):
     def get_readonly_fields(self, request, obj = None):
@@ -79,5 +83,7 @@ class ReceiveAdmin(MyModelAdmin):
             kwargs["queryset"] = Aliquot.objects.filter(receive__isnull=True)
         return super(ReceiveAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
             
-    list_display = ('aliquot', 'patient', 'datetime_drawn', 'datetime_received')        
+    list_display = ('patient', 'datetime_drawn', 'datetime_received')        
+    
+    inlines = [AliquotInlineAdmin]
 admin.site.register(Receive, ReceiveAdmin)    

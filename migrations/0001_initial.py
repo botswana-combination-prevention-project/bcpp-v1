@@ -256,7 +256,6 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        
         # Deleting model 'SpecimenType'
         db.delete_table('bhp_lab_core_specimentype')
 

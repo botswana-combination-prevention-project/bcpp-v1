@@ -1,6 +1,8 @@
 from django.db import models
 from bhp_common.models import MyBasicUuidModel, MyBasicListModel
 from bhp_lab_core.choices import ALIQUOT_STATUS
+from bhp_lab_core.choices import SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
+from bhp_lab_core.models import Receive
 
 class AliquotType(MyBasicListModel):
     
@@ -29,6 +31,8 @@ class Aliquot (MyBasicUuidModel):
         help_text="Aliquot identifier", 
         editable=False
         )
+    
+    receive = models. ForeignKey(Receive)
         
     count = models.IntegerField(
         editable=False
@@ -38,10 +42,25 @@ class Aliquot (MyBasicUuidModel):
         verbose_name="Aliquot Type",
         )
         
-    volume = models.DecimalField("Volume in mL / Spots",
-        max_digits=10,
-        decimal_places=2
+    medium  = models.CharField(
+        verbose_name = 'Medium',
+        max_length = 25,        
+        choices = SPECIMEN_MEDIUM,
+        default = 'tube',
+        #help_text = "Indicate such as dbs card, tube, swab, etc",
         )
+  
+    measure  = models.DecimalField(
+        max_digits = 10,
+        decimal_places = 2,
+        )
+
+    measure_units = models.CharField(
+        max_length = 25,
+        choices=SPECIMEN_MEASURE_UNITS,
+        default = 'mL',
+        )
+
         
     condition = models.ForeignKey(AliquotCondition,
         verbose_name="Aliquot Condition",
@@ -50,6 +69,7 @@ class Aliquot (MyBasicUuidModel):
     status = models.CharField(
         max_length = 25,
         choices = ALIQUOT_STATUS,
+        default = 'available',
         )
     
     def __unicode__(self):
