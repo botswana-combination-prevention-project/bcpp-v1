@@ -6,8 +6,9 @@ from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLe
 from bhp_lab_core.models import DmisImportHistory
 
 
-def fetch_pending_from_dmis(**kwargs):
+def fetch_receive_from_dmis(process_status, **kwargs):
 
+    
     subject_identifier = kwargs.get('subject_identifier')
     receive_identifier = kwargs.get('receive_identifier')
     order_identifier = kwargs.get('order_identifier')    
@@ -24,6 +25,13 @@ def fetch_pending_from_dmis(**kwargs):
     
     import_datetime = obj.import_datetime
     
+    if process_status == 'pending':
+        has_order_sql = 'null'
+    elif process_status == 'available':
+        has_order_sql = 'not null'
+    else:
+        raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
+    
     sql  = 'select top 500 min(l.id) as id, \
             l.pid as pid, \
             l.sample_protocolnumber, \
@@ -36,11 +44,11 @@ def fetch_pending_from_dmis(**kwargs):
             min(l.datelastmodified) as datelastmodified \
             from lab01response as l \
             left join lab21response as l21 on l.pid=l21.pid \
-            where l21.pid is null \
+            where l21.pid is %s \
             and l.datelastmodified <=\'%s\' \
             group by l.pid, l.sample_protocolnumber, l.pat_id, l.gender   \
             having count(*)=1 \
-            order by l.id desc' % (import_datetime.strftime('%Y-%m-%d %H:%M'))
+            order by l.id desc' % (has_order_sql, import_datetime.strftime('%Y-%m-%d %H:%M'))
 
     cursor.execute(sql)
      

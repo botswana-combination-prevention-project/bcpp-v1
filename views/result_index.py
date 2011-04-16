@@ -5,18 +5,21 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.contrib.auth.decorators import login_required
 from settings import DATABASES
 from laboratory.classes import get_my_limit_queryset
-from bhp_lab_core.utils import fetch_pending_from_dmis
+from bhp_lab_core.utils import fetch_receive_from_dmis
 
-def pending(request, **kwargs):
+def result_index(request, **kwargs):
     
     section_name = kwargs.get('section_name')
     search_name = 'pending'    
     template = 'section_%s.html' % (section_name)
+    process_status = kwargs.get('process_status')
     search_results = ''
 
-    #fetch_pending_from_dmis()
+    #fetch_receive_from_dmis(process_status)
+    
+    query_label = 'receive_%s' % process_status
 
-    result = get_my_limit_queryset({'search_results':""}, 'receive_pending', limit=5)
+    result = get_my_limit_queryset({'search_results':""},query_label , limit=5)
     
     search_results  = result['search_results']
     
