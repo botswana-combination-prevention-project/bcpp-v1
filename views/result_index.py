@@ -38,6 +38,7 @@ def result_index(request, **kwargs):
     return render_to_response(template, { 
         'selected': section_name, 
         'section_name': section_name,
+        'search_name': search_name,        
         'search_results': search_results,          
         'top_result_include_file': "receive_include.html",
         'database': DATABASES,     

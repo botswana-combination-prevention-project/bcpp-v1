@@ -54,6 +54,7 @@ class Aliquot (MyBasicUuidModel):
     measure  = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
+        default = 5.00,
         )
 
     measure_units = models.CharField(
@@ -65,6 +66,7 @@ class Aliquot (MyBasicUuidModel):
         
     condition = models.ForeignKey(AliquotCondition,
         verbose_name="Aliquot Condition",
+        default = 10,
         )
         
     status = models.CharField(
