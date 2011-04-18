@@ -20,9 +20,9 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     now  = datetime.datetime.today()
     
     #insert new record into ImportHistory
-    obj = DmisImportHistory()
-    obj.save()
-    
+    obj = DmisImportHistory.objects.create(
+        import_label='fetch_receive'
+        )
     import_datetime = obj.import_datetime
     
     if process_status == 'pending':
@@ -35,6 +35,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     #note that some records will not be imported for having>1
     sql  = 'select top 5000 min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
+            l.tid, \
             l.sample_protocolnumber as protocol_identifier, \
             l.gender, \
             min(dob) as dob, \
@@ -51,7 +52,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             where l21.pid is %s \
             and l.datelastmodified <= \'%s\' \
             and sample_date_drawn <= \'%s\' \
-            group by l.pid, l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified  \
+            group by l.pid, l.tid, l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified  \
             having count(*)=1 \
             order by min(l.id) desc' % (has_order_sql, import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
 
@@ -77,15 +78,12 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             dmis_reference=row.dmis_reference,
             )
             
+            
+        oAliquot = fetch_or_create_aliquot( receive=oReceive , primary=True, tid=row.tid )
+        
         oOrder = fetch_or_create_order( 
             order_identifier = row.receive_identifier,
-            protocol_identifier = row.protocol_identifier,
-            subject_identifier = row.subject_identifier,
-            gender = row.gender,
-            dob = row.dob,
-            initials = row.initials,
-            datetime_drawn = row.datetime_drawn,
-            datetime_received = row.datetime_received,
+            aliquot = oAliquot,
             user_created = row.user_created,
             user_modified = row.user_modified,
             created = row.created,
@@ -93,7 +91,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             dmis_reference=row.dmis_reference,
             )
         
-        #oResult = fetch_or_create_result()
+        oResult = fetch_or_create_result()
         
                     
                                
@@ -264,4 +262,36 @@ def fetch_or_create_patient( **kwargs ):
     
     return oPatient    
 
+
+def fetch_or_create_aliquot( **kwargs ):
+    
+    oReceive = kwargs.get('receive')
+    tid = kwargs.get('tid')
+    if tid == '411':
+        aliquot_type = 'WB'
+        medium = 'DBS'
+    elif tid == '401' or tid == '402':
+        #create WB
+        pass
+        #create PL    
+    else:
+        aliquot_identifier = '%s00000201' % oReceive.receive_identifier    
+    
+    oAliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
+    
+    if oAliquot:
+        oAliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
+    else:
+
+        oAliquot = Aliquot.objects.create(
+            aliquot_identifier = aliquot_identifier,
+            receive = oReceive,
+            count = 1,
+            dob = kwargs.get('dob'),
+            is_dob_estimated = '-',
+            comment = 'auto created / imported from DMIS',            
+            )
+        oAliquot.account.add(account)        
+
+    return oAliquot
 

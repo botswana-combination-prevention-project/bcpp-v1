@@ -5,7 +5,7 @@ from bhp_lab_core.models import Aliquot, Panel
 
 class Order(MyBasicUuidModel):
 
-    order_number = models.CharField(
+    order_identifier = models.CharField(
         verbose_name = 'Order number',
         max_length = 25,
         help_text = 'Allocated internally',
@@ -21,7 +21,7 @@ class Order(MyBasicUuidModel):
     aliquot = models.ForeignKey(Aliquot)    
     
     panel  = models.ForeignKey(Panel)
-    
+
     comment = models.CharField(
         verbose_name = 'Comment',
         max_length = 150,

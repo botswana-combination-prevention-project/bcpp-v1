@@ -1,16 +1,39 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel, MyBasicListModel
+from django.core.validators import RegexValidator
+from bhp_common.models import MyBasicUuidModel, MyBasicListModel, MyBasicModel
 from bhp_lab_core.choices import ALIQUOT_STATUS
 from bhp_lab_core.choices import SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
 from bhp_lab_core.models import Receive
 
-class AliquotType(MyBasicListModel):
+class AliquotType(MyBasicModel):
+
+    name = models.CharField(
+        verbose_name = 'Description',
+        max_length=50,        
+        )
+    
+    alpha_code = models.CharField(
+        verbose_name = 'Aplha code',
+        validators = [
+            RegexValidator('^[A-Z]{2,15}$')
+            ],
+        max_length=15,
+        )
+    numeric_code = models.CharField(
+        verbose_name = 'Numeric code (2-digit)',
+        max_length = 2,
+        validators = [
+            RegexValidator('^[0-9]{2}$')
+            ],
+        )
+        
+    dmis_reference = models.IntegerField()        
     
     def __unicode__(self):
-        return "%s: %s" % ( self.short_name.upper() ,self.name)
+        return "%s: %s" % ( self.numeric_code, self.name.lower())
 
     class Meta:
-        ordering = ["short_name"]
+        ordering = ["name"]
         app_label = 'bhp_lab_core'        
         
 class AliquotCondition(MyBasicListModel):

@@ -21,21 +21,28 @@ class TestGroupAdmin(MyModelAdmin):
     pass
 admin.site.register(TestGroup, TestGroupAdmin)
 
-#class ResultAdmin(MyModelAdmin):
-#    pass
-#admin.site.register(Result, ResultAdmin)
+class ResultItemAdmin(MyModelAdmin):
+    pass
+admin.site.register(ResultItem, ResultItemAdmin)
 
-#class ResultItemAdmin(MyModelAdmin):
-#    pass
-#admin.site.register(ResultItem, ResultItemAdmin)
+
+class ResultItemInlineAdmin(MyTabularInline):
+    extra=2
+    model = ResultItem
+
+class ResultAdmin(MyModelAdmin):
+    fields = ('order', 'result_datetime', 'assay_datetime', 'analyzer', 'source', 'archive', 'comment')
+    inlines = [ResultItemInlineAdmin]
+admin.site.register(Result, ResultAdmin)
+
 
 class OrderAdmin(MyModelAdmin):
     pass
 admin.site.register(Order, OrderAdmin)
 
 class AliquotTypeAdmin(MyModelAdmin):
-    list_display = ('display_index', 'name', 'short_name', 'field_name', 'created', 'modified')
-    ordering = ['display_index']
+    list_display = ('alpha_code', 'numeric_code', 'name', 'created', 'modified')
+    ordering = ['name']
 admin.site.register(AliquotType,AliquotTypeAdmin)
 
 class AliquotConditionAdmin(MyModelAdmin):

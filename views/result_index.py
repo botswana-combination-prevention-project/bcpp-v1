@@ -5,19 +5,21 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.contrib.auth.decorators import login_required
 from settings import DATABASES
 from laboratory.classes import get_my_limit_queryset
-from bhp_lab_core.utils import fetch_receive_from_dmis
+from bhp_lab_core.utils import fetch_receive_from_dmis, fetch_lists_from_dmis
 from bhp_lab_core.models import Result
 from bhp_lab_result_report.forms import ResultSearchForm
 
 def result_index(request, **kwargs):
      
     section_name = kwargs.get('section_name')
-    #search_name = kwargs.get('search_name')
+    search_name = kwargs.get('search_name')
     template = 'section_%s.html' % (section_name)
     process_status = kwargs.get('process_status')
     search_results = ''
  
     
+    #fetch_lists_from_dmis()
+
     #fetch_receive_from_dmis(process_status)
     """
     if search_name == 'receive':
@@ -30,12 +32,13 @@ def result_index(request, **kwargs):
             'report_name': kwargs.get('report_name'),         
         }, context_instance=RequestContext(request))  
     """
-    search_name = "Pending"  
+
     if section_name ==  'result':
         query_label = 'result_%s' % process_status
     else:
         query_label = 'receive_%s' % process_status
     
+    raise TypeError(query_label)
     
     result = get_my_limit_queryset({'search_results':""},query_label , limit=5)
         

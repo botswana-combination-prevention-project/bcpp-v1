@@ -6,16 +6,15 @@ from bhp_lab_core.choices import RESULT_STATUS, RESULT_QUANTIFIER
 
 class Result(MyBasicUuidModel):
 
+    order = models.ForeignKey(Order)
+    
     result_datetime = models.DateTimeField()
 
     assay_datetime = models.DateTimeField()
 
     #analyzer = models.ForeignKey(Analyzer)
     analyzer = models.CharField(max_length=50)
-
-    #order = models.ForeignKey(Order)
-    order = models.CharField(max_length=50)
-
+   
     source = models.CharField(
         verbose_name = 'Source',
 	    max_length = 50,
@@ -32,7 +31,7 @@ class Result(MyBasicUuidModel):
   	    )
 
     comment = models.CharField(
-        verbose_name = 'Error codes',
+        verbose_name = 'Comment',
 	    max_length = 50,
 	    null = True,
         blank = True,	    
