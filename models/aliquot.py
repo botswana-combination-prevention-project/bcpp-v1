@@ -5,6 +5,15 @@ from bhp_lab_core.choices import ALIQUOT_STATUS
 from bhp_lab_core.choices import SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
 from bhp_lab_core.models import Receive
 
+
+class AliquotMedium(MyBasicListModel):
+
+    def __unicode__(self):
+        return "%s: %s" % ( self.short_name.upper() ,self.name)
+    class Meta:
+        ordering = ["display_index"]
+        app_label = 'bhp_lab_core'        
+
 class AliquotType(MyBasicModel):
 
     name = models.CharField(
@@ -77,7 +86,7 @@ class Aliquot (MyBasicUuidModel):
     measure  = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
-        default = 5.00,
+        default = '5.00',
         )
 
     measure_units = models.CharField(
@@ -96,6 +105,12 @@ class Aliquot (MyBasicUuidModel):
         max_length = 25,
         choices = ALIQUOT_STATUS,
         default = 'available',
+        )
+        
+    comment = models.CharField(
+        max_length = 50,
+        null=True,
+        blank=True,
         )
     
     def __unicode__(self):

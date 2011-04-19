@@ -17,8 +17,31 @@ def fetch_lists_from_dmis(**kwargs):
     import_datetime = obj.import_datetime
     
     import_datetime = obj.import_datetime
-    
-    #note that some records will not be imported for having>1
+
+    #aliquot types (WB, PL, etc)    
+    sql  = 'select id, substring(PID_name,1,50) as name, \
+            upper(PID) as alpha_code, sample_pip_code as numeric_code,\
+            keyopcreated as user_created,\
+            keyoplastmodified as user_modified,\
+            datecreated as created,\
+            datelastmodified as modified \
+            from BHPLAB.DBO.ST515Response'
+    cursor.execute(sql)
+    AliquotType.objects.all().delete()
+    for row in cursor:
+        AliquotType.objects.create( 
+            name=row.name,
+            alpha_code=row.alpha_code,
+            numeric_code=row.numeric_code,
+            dmis_reference=row.id
+            )
+            
+    try:
+        cursor.close()          
+    except:
+        pass
+
+    #panels
     sql  = 'select id, substring(PID_name,1,50) as name, \
             upper(PID) as alpha_code, sample_pip_code as numeric_code,\
             keyopcreated as user_created,\
@@ -40,11 +63,8 @@ def fetch_lists_from_dmis(**kwargs):
             alpha_code=row.alpha_code,
             numeric_code=row.numeric_code,
             dmis_reference=row.id
-            )
-            
-    try:
-        cursor.close()          
-    except:
-        pass
+            )    
+        
+        
         
     return None            

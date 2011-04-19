@@ -1,13 +1,21 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, TestCode, Aliquot, AliquotType, AliquotCondition
-from models import Receive, Result, Order, ResultItem, TestGroup, TestMap
+from models import Receive, Result, Order, ResultItem, TestGroup, TestMap, AliquotMedium, TidPanelMapping, PanelGroup
 from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
 
 
 class PanelAdmin(MyModelAdmin):
     list_display = ('name',)
 admin.site.register(Panel, PanelAdmin)
+
+class PanelGroupAdmin(MyModelAdmin):
+    list_display = ('name',)
+admin.site.register(PanelGroup, PanelGroupAdmin)
+
+class TidPanelMappingAdmin(MyModelAdmin):
+    list_display = ('tid','panel')
+admin.site.register(TidPanelMapping, TidPanelMappingAdmin)
 
 class TestCodeAdmin(MyModelAdmin):
     pass
@@ -39,6 +47,12 @@ admin.site.register(Result, ResultAdmin)
 class OrderAdmin(MyModelAdmin):
     pass
 admin.site.register(Order, OrderAdmin)
+
+class AliquotMediumAdmin(MyModelAdmin):
+    list_display = ('short_name', 'name', 'display_index', 'created', 'modified')
+    ordering = ['name']
+admin.site.register(AliquotMedium,AliquotMediumAdmin)
+
 
 class AliquotTypeAdmin(MyModelAdmin):
     list_display = ('alpha_code', 'numeric_code', 'name', 'created', 'modified')

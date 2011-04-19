@@ -1,6 +1,6 @@
 import datetime
 import pyodbc
-from bhp_lab_core.models import Receive, Order, Result, ResultItem, TestCode, TestGroup
+from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, TestGroup, AliquotMedium, AliquotType, AliquotCondition
 from bhp_lab_registration.models import Patient, Account
 from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
 from bhp_lab_core.models import DmisImportHistory
@@ -33,9 +33,10 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
     
     #note that some records will not be imported for having>1
-    sql  = 'select top 5000 min(l.id) as dmis_reference, \
+    sql  = 'select top 50 min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
             l.tid, \
+            l.sample_condition, \
             l.sample_protocolnumber as protocol_identifier, \
             l.gender, \
             min(dob) as dob, \
@@ -46,13 +47,14 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             min(l.headerdate) as datetime_received, \
             min(l.sample_date_drawn) as datetime_drawn, \
             min(l.datecreated) as created, \
-            min(l.datelastmodified) as modified \
+            min(l.datelastmodified) as modified, \
+            l21.id as order_identifier \
             from lab01response as l \
             left join lab21response as l21 on l.pid=l21.pid \
             where l21.pid is %s \
             and l.datelastmodified <= \'%s\' \
             and sample_date_drawn <= \'%s\' \
-            group by l.pid, l.tid, l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified  \
+            group by l.pid, l.tid, l.sample_condition, l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified, l21.id  \
             having count(*)=1 \
             order by min(l.id) desc' % (has_order_sql, import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
 
@@ -78,22 +80,25 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             dmis_reference=row.dmis_reference,
             )
             
-            
-        oAliquot = fetch_or_create_aliquot( receive=oReceive , primary=True, tid=row.tid )
+        #create an aliquot record, will guess specimen type by tid    
+        oAliquot = fetch_or_create_aliquot( receive=oReceive , condition=row.sample_condition, primary=True, tid=row.tid )
         
-        oOrder = fetch_or_create_order( 
-            order_identifier = row.receive_identifier,
-            aliquot = oAliquot,
-            user_created = row.user_created,
-            user_modified = row.user_modified,
-            created = row.created,
-            modified = row.modified,
-            dmis_reference=row.dmis_reference,
-            )
+        if process_status == 'available':
+            #get panel using TID or l21.panel_id
+            oPanel = TidPanelMapping.objects.get(tid__exact=kwargs.get('tid'))
+            #create new order
+            oOrder = fetch_or_create_order( 
+                order_identifier = row.receive_identifier,
+                aliquot = oAliquot,
+                panel=oPanel,
+                user_created = row.user_created,
+                user_modified = row.user_modified,
+                created = row.created,
+                modified = row.modified,
+                dmis_reference=row.dmis_reference,
+                )
         
-        oResult = fetch_or_create_result()
-        
-                    
+            #oResult = fetch_or_create_result()
                                
     try:
         cursor.close()          
@@ -151,47 +156,34 @@ def fetch_or_create_receive( **kwargs ):
     
 def fetch_or_create_order( **kwargs ):
 
-    receive_identifier = kwargs.get('receive_identifier')
-    protocol_identifier = kwargs.get('protocol_identifier')    
-    subject_identifier = kwargs.get('subject_identifier')
-    initials = kwargs.get('initials')
-    gender = kwargs.get('gender')
-    dob = kwargs.get('dob')
-    datetime_drawn = kwargs.get('datetime_drawn')
-    datetime_received = kwargs.get('datetime_received')
+    order_identifier = kwargs.get('order_identifier')
+    order_datetime = kwargs.get('order_datetime')
+    comment = '',
     created = kwargs.get('created')
     modified = kwargs.get('modified')
     dmis_reference = kwargs.get('dmis_reference')                    
  
-    oOrder = Order.objects.filter(receive_identifier = receive_identifier )
+    oOrder = Order.objects.filter(order_identifier = order_identifier )
             
     if oOrder:
-        oOrder = Receive.objects.get(receive_identifier = receive_identifier )    
+        oOrder = Order.objects.get(order_identifier = order_identifier )    
     else:
-        oProtocol = fetch_or_create_protocol(protocol_identifier)
-        oAccount = fetch_or_create_account(protocol_identifier)
-        oPatient = fetch_or_create_patient(
-                                    account = oAccount, 
-                                    subject_identifier = subject_identifier, 
-                                    gender=gender, 
-                                    dob=dob, 
-                                    initials=initials,
-                                    )
-        oReceive = Receive(
-            protocol = oProtocol,
-            receive_identifier = receive_identifier,
-            patient = oPatient,
-            datetime_drawn = datetime_drawn,
-            datetime_received = datetime_received,
-            #user_created = row.keyopcreated,
-            #user_modified = row.keyoplastmodified,
-            created = created,                                    
-            modified = modified,  
+        oAliquot = kwargs.get('aliquot')
+        panel = oPanel
+        
+        oOrder = Order(
+            order_identifier = order_identifier,
+            order_datetime = order_datetime,
+            aliquot = oAliquot,
+            panel = oPanel,
+            comment = '',
+            created = created,
+            modified = modified,
             dmis_reference = dmis_reference,
             ) 
-        oReceive.save()
+        oOrder.save()
 
-    return oReceive
+    return oOrder
 
 
 def fetch_or_create_protocol( protocol_identifier ):
@@ -266,32 +258,73 @@ def fetch_or_create_patient( **kwargs ):
 def fetch_or_create_aliquot( **kwargs ):
     
     oReceive = kwargs.get('receive')
+    oCondition = AliquotCondition.objects.get(short_name__exact=kwargs.get('condition'))
     tid = kwargs.get('tid')
+
+    #create primary
+    create = {}
     if tid == '411':
-        aliquot_type = 'WB'
-        medium = 'DBS'
-    elif tid == '401' or tid == '402':
-        #create WB
-        pass
-        #create PL    
+        create['type'] = '02' #WB
+        create['medium'] = 'DBS'
     else:
-        aliquot_identifier = '%s00000201' % oReceive.receive_identifier    
+        create['type'] = '02' #WB
+        create['medium'] = 'TUBE'
+    
+    aliquot_identifier = '%s0000%s01' % (oReceive.receive_identifier, create['type'])    
     
     oAliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
     
     if oAliquot:
         oAliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
     else:
-
+        create['comment'] = 'auto created on import from DMIS'
+        oAliquotType = AliquotType.objects.get(numeric_code__exact=create['type'])
+        oAliquotMedium = AliquotMedium.objects.get(short_name__iexact=create['medium'])            
         oAliquot = Aliquot.objects.create(
             aliquot_identifier = aliquot_identifier,
             receive = oReceive,
             count = 1,
-            dob = kwargs.get('dob'),
-            is_dob_estimated = '-',
-            comment = 'auto created / imported from DMIS',            
+            aliquot_type = oAliquotType,
+            medium = oAliquotMedium,
+            condition=oCondition,
+            comment = create['comment'],            
             )
-        oAliquot.account.add(account)        
+        #oAliquot.account.add(account)        
+
+    #if order is not placed against primary, create child
+    if tid=='1':
+        create = {}
+    elif tid=='2':    
+        create['type'] = '06' #WB
+        create['medium'] = 'TUBE'
+    elif tid=='3':    
+        create = {}
+    elif tid=='4':    
+        create['type'] = '32' #WB
+        create['medium'] = 'TUBE'
+    else:
+        create = {}        
+
+
+    if create:
+        aliquot_identifier = '%s0201%s02' % (oReceive.receive_identifier, create['type'])    
+        create['comment'] = 'auto created on import from DMIS'
+        oAliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
+        if oAliquot:
+            oAliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
+        else:
+            oAliquotType = AliquotType.objects.get(numeric_code__exact=create['type'])
+            oAliquotMedium = AliquotMedium.objects.get(short_name__iexact=create['medium'])   
+            oCondition = AliquotCondition.objects.get(short_name__iexact=create['medium'])            
+            oAliquot = Aliquot.objects.create(
+                aliquot_identifier = aliquot_identifier,
+                receive = oReceive,
+                count = 2,
+                aliquot_type = oAliquotType,
+                medium = oAliquotMedium,
+                condition=oCondition,
+                comment = create['comment'],            
+                )
 
     return oAliquot
 

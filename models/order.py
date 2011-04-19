@@ -29,6 +29,11 @@ class Order(MyBasicUuidModel):
         blank = True,
         )
     
+    dmis_reference = models.IntegerField(
+        null=True,
+        blank = True,        
+        )
+    
     def __unicode__(self):
         return '%s %s %s' % (self.order_number, self.panel, self.order_datetime)
 
