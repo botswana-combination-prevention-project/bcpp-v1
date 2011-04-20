@@ -1,7 +1,7 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, TestCode, Aliquot, AliquotType, AliquotCondition
-from models import Receive, Result, Order, ResultItem, TestCodeGroup, TestCodeInterfaceMapping, AliquotMedium, TidPanelMapping, PanelGroup
+from models import Receive, Result, Order, ResultItem, TestCodeGroup, TestCodeInterfaceMapping, AliquotMedium, TidPanelMapping, PanelGroup, ResultSource
 from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
 
 
@@ -38,8 +38,22 @@ class ResultItemInlineAdmin(MyTabularInline):
     extra=2
     model = ResultItem
 
+class ResultSourceAdmin(MyModelAdmin):
+    pass
+admin.site.register(ResultSource, ResultSourceAdmin)    
+
 class ResultAdmin(MyModelAdmin):
-    fields = ('order', 'result_datetime', 'assay_datetime', 'analyzer', 'source', 'archive', 'comment')
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.result_identifier = AllocateResultIdentifier(
+                request.user, 
+                request.POST.get('order'),
+                )
+        save = super(AliquotAdmin, self).save_model(request, obj, form, change)
+        return save
+
+    fields = ('order', 'result_datetime', 'assay_datetime', 'result_source', 'result_source_reference', 'comment')
     inlines = [ResultItemInlineAdmin]
 admin.site.register(Result, ResultAdmin)
 
@@ -79,13 +93,13 @@ class AliquotAdmin(MyModelAdmin):
 
     def get_readonly_fields(self, request, obj = None):
         if obj: #In edit mode
-            return ('aliquot_type','receive',) + self.readonly_fields
+            return ('aliquot_type','receive','original_measure',) + self.readonly_fields
         else:
             return self.readonly_fields     
 
-    fields = ('aliquot_identifier', 'receive', 'aliquot_type', 'medium', 'measure', 'measure_units', 'condition', 'status', 'comment')        
+    fields = ('aliquot_identifier', 'receive', 'aliquot_type', 'medium', 'original_measure', 'current_measure',  'measure_units', 'condition', 'status', 'comment')        
 
-    list_display = ('aliquot_identifier', 'aliquot_type', 'measure', 'measure_units', 'condition', 'receive')        
+    list_display = ('aliquot_identifier', 'aliquot_type', 'original_measure', 'current_measure', 'measure_units', 'condition', 'receive')        
 
     readonly_fields = ('aliquot_identifier',)        
 

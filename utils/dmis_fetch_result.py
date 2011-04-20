@@ -1,0 +1,75 @@
+import pyodbc, datetime
+from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+from bhp_lab_registration.models import Patient, Account
+from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
+from bhp_lab_core.models import DmisImportHistory, ResultSource
+from bhp_lab_core.utils import AllocateResultIdentifier
+
+def fetch_results_from_dmis(**kwargs):
+
+    Result.objects.all().delete()
+
+    oOrders  = Order.objects.all()
+    
+    for oOrder in oOrders:
+        fetch_or_create_result(order=oOrder)
+
+def fetch_or_create_result(**kwargs):
+    
+    oOrder = kwargs.get('order')
+        
+    cnxn2 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+    cursor_result = cnxn2.cursor()
+
+    cnxn3 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+    cursor_resultitem = cnxn3.cursor()
+
+    sql ='select headerdate as result_datetime, \
+          l21.keyopcreated as user_created, \
+          l21.datecreated as created \
+          from BHPLAB.DBO.LAB21Response as L21 \
+          where l21.id=\'%s\' '  % oOrder.order_identifier
+    
+    cursor_result.execute(sql)
+     
+    for row in cursor_result:
+
+        result_identifier=AllocateResultIdentifier(oOrder)    
+
+        oResultSource=ResultSource.objects.get(name__iexact='dmis')
+        
+        oResult = Result.objects.create(
+            result_identifier=result_identifier,
+            order = oOrder,
+            result_datetime=row.result_datetime,
+            result_source=oResultSource,
+            result_source_reference=datetime.datetime.today(),
+            comment='imported from dmis',
+            user_created=row.user_created,
+            created=row.created,
+            )
+            
+
+        sql ='select sample_assay_date, utestid, \
+              result, result_quantifier, status, mid,\
+              l21d.keyopcreated as user_created, \
+              l21.datecreated as created \
+              from BHPLAB.DBO.LAB21Response as L21 \
+              left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
+              where l21.id=\'%s\' and l21d.id is not null'  % oResult.order.order_identifier
+        
+        cursor_resultitem.execute(sql)
+        for ritem in cursor_resultitem:
+            oTestCode=TestCode.objects.get(code__exact=ritem.utestid)
+            ResultItem.objects.create(
+                result=oResult,
+                test_code=oTestCode,
+                result_quantifier=ritem.result_quantifier,
+                status=ritem.status,
+                result_item_source=ritem.mid,
+                comment='imported from dmis',
+                )
+            
+            
+            
+    return oResult

@@ -83,7 +83,13 @@ class Aliquot (MyBasicUuidModel):
         #help_text = "Indicate such as dbs card, tube, swab, etc",
         )
   
-    measure  = models.DecimalField(
+    original_measure  = models.DecimalField(
+        max_digits = 10,
+        decimal_places = 2,
+        default = '5.00',
+        )
+
+    current_measure  = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
         default = '5.00',

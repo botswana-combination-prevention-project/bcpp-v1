@@ -21,7 +21,7 @@ def result_index(request, **kwargs):
     #fetch_lists_from_dmis()
     #fetch_receive_from_dmis('pending')
     #fetch_receive_from_dmis('available')
-    #fetch_orders_from_dmis()
+
 
     """
     if search_name == 'receive':

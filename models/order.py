@@ -35,7 +35,7 @@ class Order(MyBasicUuidModel):
         )
     
     def __unicode__(self):
-        return '%s %s %s' % (self.order_identifier, self.panel, self.order_datetime)
+        return '%s %s' % (self.order_identifier, self.panel)
 
     class Meta:
         app_label = 'bhp_lab_core'    
