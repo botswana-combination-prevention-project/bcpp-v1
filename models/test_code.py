@@ -4,10 +4,22 @@ from bhp_common.models import MyBasicModel, MyBasicListModel
 from bhp_common.choices import GENDER
 from bhp_lab_core.choices import UNITS, ABS_CALC
     
-class TestGroup(MyBasicListModel):
-
+class TestCodeGroup(MyBasicModel):
+    
+    code = models.CharField(
+        max_length=3
+        )
+    name = models.CharField(
+        max_length = 25,
+        null=True,
+        blank=True,
+        )
+    
+    def __unicode__(self):
+        return self.code    
     class Meta:
         app_label = 'bhp_lab_core'            
+
 
 class TestCode(MyBasicModel):
 
@@ -22,10 +34,10 @@ class TestCode(MyBasicModel):
         
     name = models.CharField(
         verbose_name = "Test Code Description", 
-        max_length=25,
+        max_length=50,
         )
 
-    group = models.ForeignKey(TestGroup)
+    test_code_group = models.ForeignKey(TestCodeGroup)
     
     units = models.CharField(
         verbose_name = 'Units',
@@ -33,6 +45,12 @@ class TestCode(MyBasicModel):
         choices = UNITS,
         )
         
+    display_decimal_places = models.IntegerField(
+        verbose_name = 'Decimal places to display',
+        null = True,
+        blank = True,        
+        )
+
     reference_range_hi = models.DecimalField(
         verbose_name = 'Ref. Range Hi',
         decimal_places = 4,
@@ -45,12 +63,6 @@ class TestCode(MyBasicModel):
         max_digits = 10,
         )
     
-    display_decimal_places = models.IntegerField(
-        verbose_name = 'Decimal places to display',
-        null = True,
-        blank = True,        
-        )
-
     lln = models.DecimalField(
         verbose_name = 'LLN',
         decimal_places = 4,
@@ -69,8 +81,8 @@ class TestCode(MyBasicModel):
 
     is_absolute = models.CharField(
         verbose_name = 'Is the value absolute or calculated?',
-        max_length = '5',
-        default = 'ABS',
+        max_length = '15',
+        default = 'absolute',
         choices = ABS_CALC,
         )
         
@@ -81,7 +93,17 @@ class TestCode(MyBasicModel):
         blank = True,
         )
 
-    """
+    def __unicode__(self):
+        return "%s" % (self.name)
+        
+    class Meta:
+        ordering = ['name']
+        app_label = 'bhp_lab_core'     
+        
+class TestCodeReference(MyBasicModel):
+
+    test_code = models.ForeignKey(TestCode)
+
     gender = models.CharField(
         verbose_name = "Gender",
         choices = GENDER,
@@ -109,7 +131,6 @@ class TestCode(MyBasicModel):
     panic_value = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
     
     panic_value_quantifier = models.CharField(max_length=75, blank=True)
-    """
         
     comment = models.CharField(
         verbose_name = "Comment", 
@@ -118,12 +139,12 @@ class TestCode(MyBasicModel):
         )
 
     def __unicode__(self):
-        return "%s: %s" % (self.test_code,self.test_name)
+        return "%s" % (self.test_code)
         
     class Meta:
         app_label = 'bhp_lab_core'     
         
-class TestMap(MyBasicModel):
+class TestCodeInterfaceMapping(MyBasicModel):
 
     foreign_test_code = models.CharField(
         verbose_name = "Foreign Test Code", 

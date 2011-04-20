@@ -40,7 +40,7 @@ class Receive (MyBasicUuidModel):
     dmis_reference = models.IntegerField()
     
     def __unicode__(self):
-        return '%s %s' % (self.receive_identifier, self.patient)
+        return '%s' % (self.receive_identifier)
 
     def get_absolute_url(self):
         return "/bhp_lab_core/receive/%s/" % self.id   

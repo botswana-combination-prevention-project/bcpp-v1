@@ -9,9 +9,9 @@ from bhp_lab_core.models import Receive
 class AliquotMedium(MyBasicListModel):
 
     def __unicode__(self):
-        return "%s: %s" % ( self.short_name.upper() ,self.name)
+        return "%s" % ( self.name.upper())
     class Meta:
-        ordering = ["display_index"]
+        ordering = ["name"]
         app_label = 'bhp_lab_core'        
 
 class AliquotType(MyBasicModel):
@@ -50,7 +50,7 @@ class AliquotCondition(MyBasicListModel):
     def __unicode__(self):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
     class Meta:
-        ordering = ["display_index"]
+        ordering = ["short_name"]
         app_label = 'bhp_lab_core'        
 
 
@@ -79,7 +79,7 @@ class Aliquot (MyBasicUuidModel):
         verbose_name = 'Medium',
         max_length = 25,        
         choices = SPECIMEN_MEDIUM,
-        default = 'tube',
+        default = 'TUBE',
         #help_text = "Indicate such as dbs card, tube, swab, etc",
         )
   
@@ -115,6 +115,9 @@ class Aliquot (MyBasicUuidModel):
     
     def __unicode__(self):
         return self.aliquot_identifier
+
+    def get_absolute_url(self):
+        return "/bhp_lab_core/aliquot/%s/" % self.id   
 
     class Meta:
         app_label = 'bhp_lab_core'

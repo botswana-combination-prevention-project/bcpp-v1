@@ -1,12 +1,12 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, TestCode, Aliquot, AliquotType, AliquotCondition
-from models import Receive, Result, Order, ResultItem, TestGroup, TestMap, AliquotMedium, TidPanelMapping, PanelGroup
+from models import Receive, Result, Order, ResultItem, TestCodeGroup, TestCodeInterfaceMapping, AliquotMedium, TidPanelMapping, PanelGroup
 from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
 
 
 class PanelAdmin(MyModelAdmin):
-    list_display = ('name',)
+    list_display = ('name','panel_group')
 admin.site.register(Panel, PanelAdmin)
 
 class PanelGroupAdmin(MyModelAdmin):
@@ -18,16 +18,16 @@ class TidPanelMappingAdmin(MyModelAdmin):
 admin.site.register(TidPanelMapping, TidPanelMappingAdmin)
 
 class TestCodeAdmin(MyModelAdmin):
-    pass
+    list_display = ('code', 'name', 'test_code_group', 'units', 'display_decimal_places', 'reference_range_lo', 'reference_range_hi', 'lln', 'uln')
 admin.site.register(TestCode, TestCodeAdmin)
 
-class TestMapAdmin(MyModelAdmin):
+class TestCodeInterfaceMappingAdmin(MyModelAdmin):
     pass
-admin.site.register(TestMap, TestMapAdmin)
+admin.site.register(TestCodeInterfaceMapping, TestCodeInterfaceMappingAdmin)
 
-class TestGroupAdmin(MyModelAdmin):
+class TestCodeGroupAdmin(MyModelAdmin):
     pass
-admin.site.register(TestGroup, TestGroupAdmin)
+admin.site.register(TestCodeGroup, TestCodeGroupAdmin)
 
 class ResultItemAdmin(MyModelAdmin):
     pass
@@ -45,7 +45,7 @@ admin.site.register(Result, ResultAdmin)
 
 
 class OrderAdmin(MyModelAdmin):
-    pass
+    list_display = ('order_identifier', 'order_datetime', 'panel', 'aliquot', 'dmis_reference')
 admin.site.register(Order, OrderAdmin)
 
 class AliquotMediumAdmin(MyModelAdmin):
@@ -79,11 +79,16 @@ class AliquotAdmin(MyModelAdmin):
 
     def get_readonly_fields(self, request, obj = None):
         if obj: #In edit mode
-            return ('aliquot_type',) + self.readonly_fields
+            return ('aliquot_type','receive',) + self.readonly_fields
         else:
             return self.readonly_fields     
+
+    fields = ('aliquot_identifier', 'receive', 'aliquot_type', 'medium', 'measure', 'measure_units', 'condition', 'status', 'comment')        
+
     list_display = ('aliquot_identifier', 'aliquot_type', 'measure', 'measure_units', 'condition', 'receive')        
+
     readonly_fields = ('aliquot_identifier',)        
+
 admin.site.register(Aliquot, AliquotAdmin)    
 
 #unregistered admin_models

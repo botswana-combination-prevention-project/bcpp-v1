@@ -1,6 +1,6 @@
 import datetime
 import pyodbc
-from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, TestGroup, AliquotMedium, AliquotType, AliquotCondition
+from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
 from bhp_lab_registration.models import Patient, Account
 from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
 from bhp_lab_core.models import DmisImportHistory
@@ -13,6 +13,10 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     receive_identifier = kwargs.get('receive_identifier')
     order_identifier = kwargs.get('order_identifier')    
     aliquot_identifier = kwargs.get('aliquot_identifier')
+
+    Order.objects.all().delete()
+    Aliquot.objects.all().delete()
+    Receive.objects.all().delete()
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
@@ -33,7 +37,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
     
     #note that some records will not be imported for having>1
-    sql  = 'select top 50 min(l.id) as dmis_reference, \
+    sql  = 'select top 500 min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
             l.tid, \
             l.sample_condition, \
@@ -48,13 +52,14 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             min(l.sample_date_drawn) as datetime_drawn, \
             min(l.datecreated) as created, \
             min(l.datelastmodified) as modified, \
-            l21.id as order_identifier \
+            l21.id as order_identifier, \
+            l21.panel_id \
             from lab01response as l \
             left join lab21response as l21 on l.pid=l21.pid \
             where l21.pid is %s \
             and l.datelastmodified <= \'%s\' \
             and sample_date_drawn <= \'%s\' \
-            group by l.pid, l.tid, l.sample_condition, l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified, l21.id  \
+            group by l.pid, l.tid, l.sample_condition, l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
             having count(*)=1 \
             order by min(l.id) desc' % (has_order_sql, import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
 
@@ -85,10 +90,14 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         
         if process_status == 'available':
             #get panel using TID or l21.panel_id
-            oPanel = TidPanelMapping.objects.get(tid__exact=kwargs.get('tid'))
+            if not row.panel_id == None and not row.panel_id == '-9':
+                oPanel = Panel.objects.get(dmis_panel_identifier__exact=row.panel_id)
+            else:                                
+                oPanel = Panel.objects.filter(panel_group__name__exact=row.tid)[0]
             #create new order
             oOrder = fetch_or_create_order( 
-                order_identifier = row.receive_identifier,
+                order_identifier = row.order_identifier,
+                order_datetime = row.datetime_received,
                 aliquot = oAliquot,
                 panel=oPanel,
                 user_created = row.user_created,
@@ -157,6 +166,8 @@ def fetch_or_create_receive( **kwargs ):
 def fetch_or_create_order( **kwargs ):
 
     order_identifier = kwargs.get('order_identifier')
+    oPanel = kwargs.get('panel')
+    oAliquot = kwargs.get('aliquot')    
     order_datetime = kwargs.get('order_datetime')
     comment = '',
     created = kwargs.get('created')
@@ -168,9 +179,6 @@ def fetch_or_create_order( **kwargs ):
     if oOrder:
         oOrder = Order.objects.get(order_identifier = order_identifier )    
     else:
-        oAliquot = kwargs.get('aliquot')
-        panel = oPanel
-        
         oOrder = Order(
             order_identifier = order_identifier,
             order_datetime = order_datetime,
@@ -292,16 +300,18 @@ def fetch_or_create_aliquot( **kwargs ):
         #oAliquot.account.add(account)        
 
     #if order is not placed against primary, create child
-    if tid=='1':
+    if tid[0]=='1':
         create = {}
-    elif tid=='2':    
+    elif tid[0]=='2':    
         create['type'] = '06' #WB
         create['medium'] = 'TUBE'
-    elif tid=='3':    
+        create['condition'] = '10'                
+    elif tid[0]=='3':    
         create = {}
-    elif tid=='4':    
+    elif tid[0]=='4':    
         create['type'] = '32' #WB
         create['medium'] = 'TUBE'
+        create['condition'] = '10'        
     else:
         create = {}        
 
@@ -315,7 +325,7 @@ def fetch_or_create_aliquot( **kwargs ):
         else:
             oAliquotType = AliquotType.objects.get(numeric_code__exact=create['type'])
             oAliquotMedium = AliquotMedium.objects.get(short_name__iexact=create['medium'])   
-            oCondition = AliquotCondition.objects.get(short_name__iexact=create['medium'])            
+            oCondition = AliquotCondition.objects.get(short_name__iexact=create['condition'])            
             oAliquot = Aliquot.objects.create(
                 aliquot_identifier = aliquot_identifier,
                 receive = oReceive,

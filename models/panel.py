@@ -22,7 +22,7 @@ class Panel(MyBasicModel):
     
     name = models.CharField(
         verbose_name = "Panel Name", 
-        max_length=25,  
+        max_length=50,  
         unique=True,
         )
 
@@ -44,6 +44,11 @@ class Panel(MyBasicModel):
         max_length=250, 
         blank=True,
         )
+    dmis_panel_identifier = models.CharField(
+        max_length=25,
+        null=True,
+        blank=True,
+        )    
 
     def __unicode__(self):
         return self.name

@@ -1,6 +1,6 @@
 ABS_CALC = (
-    ('ABS', 'Absolute'),
-    ('CALC', 'Calculated'),    
+    ('absolute', 'Absolute'),
+    ('calculated', 'Calculated'),    
     )
 
 
