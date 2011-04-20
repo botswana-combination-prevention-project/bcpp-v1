@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-
+{% load common_tags %}
 {% block receiving %}<h2>Receiving</h2>
       <table cellspacing="0" id="result_list" border='1'>
         <thead><tr>  
+        <th>ReceiveID</th>     
         <th>Received</th>     
-        <th>Patient</th>   	    	
         <th>Drawn</th> 
+        <th>Patient</th>   	    	
         <th>Protocol</th> 
         <th>Site</th> 
         <th>Gender</th> 
@@ -14,14 +15,16 @@
         </thead>
         <tbody>
           <tr class="{% cycle 'row2' 'row1' %}">
-				 <td>{{obj.sample_date_received|date:"Y-m-d"}}</td>
-             <td>{{obj.pat_id }}</td>
-             <td>{{obj.sample_date_drawn|date:"Y-m-d"}} {{obj.sample_time_drawn }}</td>
-             <td>{{obj.sample_protocolnumber }}</td>
-             <td>{{obj.sample_site_id }}</td>
-             <td>{{obj.gender }}</td>
-             <td>{{obj.dob }}</td>                    
-             <td>{{obj.sample_condition }}</td>
+             <td>{{receive.receive_identifier }}</td>
+             <td>{{receive.datetime_received|date:"Y-m-d"}}</td>
+             <td>{{receive.datetime_drawn|date:"Y-m-d"}}</td>             
+             <td>{{receive.patient.subject_identifier }}</td>
+             <td>{{receive.protocol }}</td>
+             <td>{{receive.sample_site_id }}</td>
+             <td>{{receive.patient.gender|gender }}</td>
+             <td>{{receive.patient.dob|dob_or_dob_estimated }}</td>
+             <td>{{receive.patient.dob|age }}</td>                                                     
+             <td>{{receive.condition }}</td>
             </tr>                           
       </tbody>
       </table>
