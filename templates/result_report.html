@@ -1,8 +1,10 @@
-{% extends 'section_result.html' %}
+{% extends "section_result.html" %}
 
-{% block search %}
+{% block section_title%}Results{% endblock%}
 
-	<form action="." method="POST">
+{% block section_links %}
+
+ <form action="." method="POST">
 	<div style='display:none'>  
       {% csrf_token %}
     </div>
@@ -10,14 +12,15 @@
     <tr>
     <td class="field">
         {{ form.search_term.errors }}
-        <label for="id_search_term"></label>
+        <label for="id_result_search_term"></label>
+        <input type="text" class="default" name="result_search_term" />
         {{ form.search_term }}
     </td>
     <td>
         <input type="submit" value="Search" class="default" name="search" />
     </td>
     
-    <script type="text/javascript">document.getElementById("id_search_term").focus();</script>
+    <script type="text/javascript">document.getElementById("id_result_search_term").focus();</script>
     <script type="text/javascript">
         (function($) {
             var field = null;
@@ -25,66 +28,86 @@
     </script>
         </table>
     </form>
-    
-{% endblock search%}
+ {% endblock %}
 
 
-{% block receive %}
-{% endblock receive %}
-{% block order %}
-{% endblock order %}
+{% block top_search_name %}
+        {% if search_results.object_list %}
+            <h3>Most recent (top) {{ search_results.object_list.count }} {{search_name|capfirst}}{{ search_results.object_list|pluralize }}</h3>
+            <i><small>Showing top {{ search_results.object_list.count }} result{{ search_results.object_list|pluralize }} only. Use search to see more.</small></i>
+            {% include top_result_include_file %}
+        {% else %}
+            We have no results
+        {% endif %}
+          
+{% endblock top_search_name  %}
+
+
+{% block search_results %}
+if searching
+    {% if search_results %}
+    <div class="">
+    <table>
+    <thead><th align=left><B>Utestid</B></th>
+    <th align=left ><B>Description</B></th>
+    <th align=left ><B>assay date</B></th>
+    <th align=right ><B>Result</B></th>
+    <th align=center ><B>Units</B></th>
+    <th align=center ><B>Reference</B></th>
+    <th align=center "><B>Flag</B></th>
+    </thead>
+    <tbody>
+    {% for row in results %}
+        <tr>
+        <td>{{ row.utestid }} </td>
+        <td>{{ row.utestid_description }} </td>
+        <td>{{ row.assay_date }} </td>
+        <td>{{ row.result }} </td>
+        <td>{{ row.units }} </td>
+        <td>{{ row.reference_range }} </td>
+        <td>{{ row.reference_range_flag }} {{ row.grading_flag }} </td>
+        </tr>           
+    {% endfor %}    
+    </tbody>
+    </table>
+    </div>
+    {% endif %}
+{% endblock search_results %}
 
 {% block result %}
-
-<div class="">
-<table>
-<thead><th align=left><B>Utestid</B></th>
-<th align=left ><B>Description</B></th>
-<th align=left ><B>assay date</B></th>
-<th align=right ><B>Result</B></th>
-<th align=center ><B>Units</B></th>
-<th align=center ><B>Reference</B></th>
-<th align=center "><B>Flag</B></th>
-</thead>
-<tbody>
-{% for row in results %}
-    <tr>
-    <td>{{ row.utestid }} </td>
-    <td>{{ row.utestid_description }} </td>
-    <td>{{ row.assay_date }} </td>
-    <td>{{ row.result }} </td>
-    <td>{{ row.units }} </td>
-    <td>{{ row.reference_range }} </td>
-    <td>{{ row.reference_range_flag }} {{ row.grading_flag }} </td>
-    </tr>           
-{% endfor %}    
-</tbody>
-</table>
-</div>
-{% endblock result %}
-
-{%block validation %}
-<table>
-<tr>
-<td width=50% valign="top">
-    <table>
-    <tr><td >Comment: {{ sample_comment }}. {% for key,warning in result_warnings.items %}&nbsp;{{ i|upper }}&nbsp;{% endfor %}
-    <tr><td >Condition code:  {{ sample_condition }} {{ sample_condition_description }}</td></tr>
-    </table>
-</td>
-<td valign="top">
-    <table>
-    <tr><td>Authorised and released by:</td></tr>
-    <tr><td >Operator:  {{validation_ref_summary.operator}}</td></tr>
-    <tr><td >Validated by:  {{validation_ref_summary.validator}}</td></tr>
-    <tr><td >Validated on:  {{validation_ref_summary.date_validated|date:"Y-m-d" }} {{ validation_ref_summary.date_validated|date:'Y-m-d' }}</td></tr>
-    <tr><td >Method:  {{ validation_ref_summary.validation_method_ref }}</td></tr>
-    </td>
-    </tr>
-    </table>
-</td>
-</tr>
-</table>
-{% endblock validation %}
+    {% if result %}
+        {%  include result_include_file %}
+          
+        {%  include receiving_include_file %}
+        
+        {%  include orders_include_file %}
+        
+        {%  include result_items_include_file %}
+        
+        <div><h2>Validation Information</h2>
+        <table>
+        <tr>
+        <td width=50% valign="top">
+            <table>
+            <tr><td >Comment: {{ sample_comment }}. {% for key,warning in result_warnings.items %}&nbsp;{{ i|upper }}&nbsp;{% endfor %}
+            <tr><td >Condition code:  {{ sample_condition }} {{ sample_condition_description }}</td></tr>
+            </table>
+        </td>
+        <td valign="top">
+            <table>
+            <tr><td>Authorised and released by:</td></tr>
+            <tr><td >Operator:  {{validation_ref_summary.operator}}</td></tr>
+            <tr><td >Validated by:  {{validation_ref_summary.validator}}</td></tr>
+            <tr><td >Validated on:  {{validation_ref_summary.date_validated|date:"Y-m-d" }} {{ validation_ref_summary.date_validated|date:'Y-m-d' }}</td></tr>
+            <tr><td >Method:  {{ validation_ref_summary.validation_method_ref }}</td></tr>
+            </td>
+            </tr>
+            </table>
+        </td>
+        </tr>
+        </table>
+      </div>
+    {% endif %}
+{% endblock %}
 
 
