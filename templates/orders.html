@@ -1,30 +1,22 @@
-{% extends "receiving.html" %}
-
-{% block orders %}<h2>Orders / Results</h2>
+<h2>Orders</h2>
       <table cellspacing="0" id="result_list" border='1'>
         <thead><tr>
-                    
-        <th>Manage Result</th>     
-        <th>Assay date</th>   	    	
-        <th>Order</th> 
-        <th>Panel</th> 
-        <th>Panel Group</th> 
-        <th>Panel name</th> 
-        <th>Manage order</th> 
+        <th>ORDER</th> 
+        <th>ORDER DATE</th>   	    	
+        <th>PANEL</th> 
+        <th>PANEL GROUP</th> 
+        <th>DMIS Ref</th> 
+        <th>COMMENT</th> 
         </thead>
         <tbody>
         
-          <tr class="{% cycle 'row2' 'row1' %}">
-				 <td></td>
-             <td></td>
-             <td></td>
-             <td></td>
-             <td></td>
-             <td></td>
-             <td></td>                    
+          <tr>
+             <td>{{ order.order_identifier }}</td>
+			 <td>{{ order.order_datetime }}</td>
+             <td>{{ order.panel }}</td>
+             <td>{{ order.panel.panel_group }}</td>
+             <td>{{ order.dmis_reference }}</td>       
+             <td>{{ order.comment }}</td>     
             </tr>
-     
-                            
-      </tbody>
       </table>
-{% endblock %} 
+
