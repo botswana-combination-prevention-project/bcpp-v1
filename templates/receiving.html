@@ -1,6 +1,5 @@
-{% extends "base.html" %}
 {% load common_tags %}
-{% block receiving %}<h2>Receiving</h2>
+<h2>Receiving</h2>
       <table cellspacing="0" id="result_list" border='1'>
         <thead><tr>  
         <th>ReceiveID</th>     
@@ -15,17 +14,16 @@
         </thead>
         <tbody>
           <tr class="{% cycle 'row2' 'row1' %}">
-             <td>{{receive.receive_identifier }}</td>
-             <td>{{receive.datetime_received|date:"Y-m-d"}}</td>
-             <td>{{receive.datetime_drawn|date:"Y-m-d"}}</td>             
-             <td>{{receive.patient.subject_identifier }}</td>
-             <td>{{receive.protocol }}</td>
-             <td>{{receive.sample_site_id }}</td>
-             <td>{{receive.patient.gender|gender }}</td>
-             <td>{{receive.patient.dob|dob_or_dob_estimated }}</td>
-             <td>{{receive.patient.dob|age }}</td>                                                     
-             <td>{{receive.condition }}</td>
+             <td>{{ receive.receive_identifier }}</td>
+             <td>{{ receive.datetime_received|date:"Y-m-d" }}</td>
+             <td>{{ receive.datetime_drawn|date:"Y-m-d" }}</td>             
+             <td>{{ receive.patient.subject_identifier }}</td>
+             <td>{{ receive.protocol }}</td>
+             <td>{{ receive.sample_site_id }}</td>
+             <td>{{ receive.patient.gender|gender }}</td>
+             <td>{{ receive.patient.dob|dob_or_dob_estimated:receive.patient.is_dob_estimated }}</td>                                                     
+             <td>{{ aliquot.condition }}</td>
             </tr>                           
       </tbody>
       </table>
-{% endblock %} 
+
