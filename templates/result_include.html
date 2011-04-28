@@ -18,7 +18,7 @@
     	</thead>	
         {% for result in search_results.object_list %}
             <tr class="{% cycle 'row1' 'row2' %}">
-            <td><A href="/admin{{ result.get_absolute_url }}">{{ result.result_identifier|escape}}</A></td>
+            <td><A href="/bhp_lab_result_report/result/{{ result.result_identifier|escape}}/">{{ result.result_identifier|escape}}</A></td>
             <td><A href="/admin{{ result.order.get_absolute_url }}">{{ result.order.order_identifier }}</A></td>
             <td>{{ result.order.order_datetime|date:'Y-m-d' }}</td>
             <td>{{ result.order.panel }} </td>            
