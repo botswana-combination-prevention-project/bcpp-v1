@@ -75,15 +75,28 @@ if searching
 
 {% block result %}
     {% if result %}
-      <!-- {%  include result_include_file %} -->
+      {%  include result_include_file %} 
 <table bgcolor="LightYellow">
     <thead><th colspan="4">Options:</th></thead>
     <tr>
        <td>
-       <form method="GET" action="/bhp_lab_result_report/result/print_pdf/{{ result.result_identifier|escape}}/">
-        <input type="submit" value="Print" class="default" />
-        </form>
+            <form method="GET" action="/bhp_lab_result_report/result/print_pdf/{{ result.result_identifier|escape}}/">
+                <input type="submit" value="Print" class="default" />
+            </form>
         </td>
+        
+        <td>
+            <form method="GET" action="/bhp_lab_result_report/result/email/{{ result.result_identifier|escape}}/">
+                <input type="submit" value="Email" class="default" />
+            </form>
+        </td>
+
+        <td>
+            <form method="GET" action="/admin/bhp_lab_core/result/{{ result.id }}">
+                <input type="submit" value="Edit" class="default" />
+            </form>
+        </td>
+                        
     </tr>
     </table>        
          
