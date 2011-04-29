@@ -1,9 +1,9 @@
 {% extends "section_result.html" %}
 
-{% block section_title%}Results{% endblock%}
+{% block section_title%}<h1>Results Details for Result {{ result.result_identifier }}</h1>{% endblock%}
 
 {% block section_links %}
-
+<!--
  <form action="." method="POST">
 	<div style='display:none'>  
       {% csrf_token %}
@@ -28,6 +28,7 @@
     </script>
         </table>
     </form>
+    -->
  {% endblock %}
 
 
@@ -36,8 +37,6 @@
             <h3>Most recent (top) {{ search_results.object_list.count }} {{search_name|capfirst}}{{ search_results.object_list|pluralize }}</h3>
             <i><small>Showing top {{ search_results.object_list.count }} result{{ search_results.object_list|pluralize }} only. Use search to see more.</small></i>
             {% include top_result_include_file %}
-        {% else %}
-            We have no results
         {% endif %}
           
 {% endblock top_search_name  %}
@@ -76,8 +75,18 @@ if searching
 
 {% block result %}
     {% if result %}
-        {%  include result_include_file %}
-          
+      <!-- {%  include result_include_file %} -->
+<table bgcolor="LightYellow">
+    <thead><th colspan="4">Options:</th></thead>
+    <tr>
+       <td>
+       <form method="GET" action="/bhp_lab_result_report/result/print_pdf/{{ result.result_identifier|escape}}/">
+        <input type="submit" value="Print" class="default" />
+        </form>
+        </td>
+    </tr>
+    </table>        
+         
         {%  include receiving_include_file %}
         
         {%  include orders_include_file %}
