@@ -18,13 +18,12 @@ def index(request, **kwargs):
     result_identifier = kwargs.get('result_identifier')
     limit = 20
     template = 'result_report.html'
-    
-    if  result_identifier is not None:
+                  
+    if result_identifier is not None:
         result = get_object_or_404(Result, result_identifier=result_identifier)
         items = ResultItem.objects.filter(result=result)
         
-        #raise TypeError(items)
-        return render_to_response(template, {
+        payload = {
         'result': result,
         'receive': result.order.aliquot.receive,
         'order': result.order,
@@ -36,59 +35,30 @@ def index(request, **kwargs):
         'orders_include_file': "orders.html",
         'result_items_include_file': "result_items.html",
         'top_result_include_file': "result_include.html",
-
+        }
+        
+        return render_to_response(template, payload, context_instance=RequestContext(request))   
+    
+            
+    #raise TypeError(form)    
+    paginator = Paginator(search_results, 150)                                    
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        search_results = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        search_results = paginator.page(paginator.num_pages)              
+   
+        
+    return render_to_response(template, { 
+        'section_name': section_name, 
+        'report': 'Recent Results',
+        'search_results': search_results,
+        'report_name': kwargs.get('report_name'),  
+        'top_result_include_file': "result_include.html",       
         }, context_instance=RequestContext(request))
         
-    else:
-              
-        if request.method == 'POST':
-        
-            form = ResultSearchForm(request.POST)
-            #raise TypeError(form)
-            if form.is_valid():
-            
-                cd = form.cleaned_data
-                search_term=cd['result_search_term']
-    
-                search_results = render_search(
-                    search_term=search_term,
-                    )
-                """
-                return render_to_response(template, {
-                    'form': form,
-                    'search_term': search_term,                 
-                    'section_name': section_name, 
-                    'search_results': search_results,
-                    'report_name': kwargs.get('report_name'), 
-                    'report_title': 'Result Search Results',
-                    }, context_instance=RequestContext(request))
-               """
-
-        else:
-            form = ResultSearchForm()
-            results = get_my_limit_queryset({'search_results':""}, "result", limit=5)
-            search_results  = results['search_results']
-            
-        #raise TypeError(form)    
-        paginator = Paginator(search_results, 150)                                    
-        try:
-            page = int(request.GET.get('page', '1'))
-        except ValueError:
-            page = 1
-        try:
-            search_results = paginator.page(page)
-        except (EmptyPage, InvalidPage):
-            search_results = paginator.page(paginator.num_pages)              
-        #raise TypeError(search_results)
-        
-        return render_to_response(template, { 
-            'form': form,
-            'section_name': section_name, 
-            'report': 'Recent Results',
-            'search_results': search_results,
-            'report_name': kwargs.get('report_name'),  
-            'top_result_include_file': "result_include.html",       
-            }, context_instance=RequestContext(request))
-        
 def render_search(**kwargs):
-    return kwargs['search_term']
+    return Result.objects.filter(result_identifier=kwargs['search_term'])
