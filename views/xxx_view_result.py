@@ -2,13 +2,13 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_common.utils import os_variables
 from settings import DATABASES
+from bhp_common.utils import os_variables
 from bhp_lab_core.models import Result, ResultItem
 
 
 @login_required
-def view(request, **kwargs):
+def view_result(request, **kwargs):
 
     section_name = kwargs.get('section_name')
     search_name = "result"

@@ -1,19 +1,19 @@
 import cStringIO as StringIO
+import ho.pisa as pisa
+import cgi
+from reportlab.pdfgen import canvas
 from django.template.loader import render_to_string, get_template
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_lab_core.models import Result, ResultItem
-from reportlab.pdfgen import canvas
-import ho.pisa as pisa
-import cgi
 from django.template import Context
 from django import http
+from bhp_lab_core.models import Result, ResultItem
 
 
 @login_required
-def print_pdf(request, **kwargs):
+def view_result_as_pdf(request, **kwargs):
 
     section_name = kwargs.get('section_name')
     search_name = "result"

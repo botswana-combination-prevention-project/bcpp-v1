@@ -1,13 +1,14 @@
+from settings import DATABASES
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from bhp_common.utils import os_variables
-from settings import DATABASES
 from bhp_lab_core.models import Result, ResultItem
 from bhp_lab_result_report.forms import ResultSearchForm
 from laboratory.classes import get_my_limit_queryset
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
 
 
 @login_required

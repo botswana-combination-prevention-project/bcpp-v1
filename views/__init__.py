@@ -1,4 +1,4 @@
 from index import *
 from detail import *
-#from printPDF import *
-from view_pdf import *
+from view_result import *
+from view_result_as_pdf import *
