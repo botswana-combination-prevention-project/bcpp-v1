@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.core.validators import RegexValidator
 from bhp_common.models import MyBasicUuidModel, MyBasicListModel, MyBasicModel
@@ -62,6 +63,11 @@ class Aliquot (MyBasicUuidModel):
         unique=True, 
         help_text="Aliquot identifier", 
         editable=False
+        )
+        
+    aliquot_datetime = models.DateTimeField(
+        verbose_name = "Date and time aliquot created",
+        default = datetime.datetime.today(),
         )
     
     receive = models. ForeignKey(Receive)

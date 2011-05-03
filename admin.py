@@ -127,7 +127,7 @@ class ReceiveAdmin(MyModelAdmin):
 
         return save
             
-    list_display = ('patient', 'datetime_drawn', 'datetime_received')        
+    list_display = ('patient', 'datetime_drawn', 'receive_datetime')        
     
     inlines = [AliquotInlineAdmin]
 

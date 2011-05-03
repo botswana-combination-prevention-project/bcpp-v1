@@ -13,12 +13,13 @@
     	<th>Dob</th>    	
     	<th>Gender</th>
     	<th>User Created</th>
-    	<th>Date Modified</th>    	    	
+    	<th>Created</th>    	    	
+    	<th>Modified</th>    	    	
     	</thead>	
         {% for receive in search_results.object_list %}
             <tr class="{% cycle 'row1' 'row2' %}">
             <td><A href="/admin{{ receive.get_absolute_url }}">{{ receive.receive_identifier|escape}}</A></td>
-          	<td>{{ receive.datetime_received|date:'Y-m-d' }}</td>
+          	<td>{{ receive.receive_datetime|date:'Y-m-d' }}</td>
             <td>{{ receive.datetime_drawn|date:'Y-m-d' }}</td>                      	            
             <td><A href="/admin{{ receive.protocol.get_absolute_url }}">{{ receive.protocol|escape}}</A></td>
         	  <td><A href="/admin{{ receive.patient.get_absolute_url }}">{{ receive.patient }}</td>
@@ -27,6 +28,7 @@
          	  <td>{{ receive.patient.dob|dob_or_dob_estimated:receive.patient.is_dob_estimated }}</td>         	  
          	  <td>{{ receive.patient.gender }}</td>         	  
          	  <td>{{ receive.user_created }}</td>
+          	  <td>{{ receive.created|date:"Y-m-d" }}</td>         	  
           	  <td>{{ receive.modified|date:"Y-m-d" }}</td>         	  
             </tr>
         {% endfor %}

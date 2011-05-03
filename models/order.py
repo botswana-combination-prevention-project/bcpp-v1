@@ -36,6 +36,9 @@ class Order(MyBasicUuidModel):
     
     def __unicode__(self):
         return '%s %s' % (self.order_identifier, self.panel)
+        
+    def get_absolute_url(self):
+        return "/bhp_lab_core/order/%s/" % self.id   
 
     class Meta:
         app_label = 'bhp_lab_core'    

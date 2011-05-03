@@ -2,7 +2,7 @@ from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_lab_registration.models import Patient
-from bhp_research_protocol.models import Protocol
+from bhp_research_protocol.models import Protocol, Site
 
 from bhp_lab_core.models import SpecimenType
 
@@ -32,10 +32,17 @@ class Receive (MyBasicUuidModel):
             datetime_not_future,]
             )
   
-    datetime_received = models.DateTimeField("Date and time received",
+    receive_datetime = models.DateTimeField("Date and time received",
         validators=[
             datetime_not_future,]
             )
+
+    site = models.ForeignKey(Site)
+
+    visit = models.CharField(
+        verbose_name = "Visit",
+        max_length=25,
+        )
             
     dmis_reference = models.IntegerField()
     

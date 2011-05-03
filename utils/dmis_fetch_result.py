@@ -51,7 +51,7 @@ def fetch_or_create_result(**kwargs):
             
 
         sql ='select sample_assay_date, utestid, \
-              result, result_quantifier, status, mid,\
+              result as result_value, result_quantifier, status, mid,\
               l21d.keyopcreated as user_created, \
               l21.datecreated as created \
               from BHPLAB.DBO.LAB21Response as L21 \
@@ -64,8 +64,9 @@ def fetch_or_create_result(**kwargs):
             ResultItem.objects.create(
                 result=oResult,
                 test_code=oTestCode,
-                result_quantifier=ritem.result_quantifier,
-                status=ritem.status,
+                result_item_value=ritem.result_value,
+                result_item_quantifier=ritem.result_quantifier,
+                validation_status=ritem.status,
                 result_item_source=ritem.mid,
                 comment='imported from dmis',
                 )
