@@ -6,7 +6,6 @@ class PrincipalInvestigatorAdmin(MyModelAdmin):
     pass  
 admin.site.register(PrincipalInvestigator, PrincipalInvestigatorAdmin)
 
-
 class  SiteLeaderAdmin(MyModelAdmin):
     pass  
 admin.site.register( SiteLeader,  SiteLeaderAdmin)

@@ -7,14 +7,14 @@ class ResearchClinic(models.Model):
 
     protocol = models.OneToOneField(Protocol)
 
-    clinic_name = models.CharField(
+    name = models.CharField(
         max_length=35,
         unique=True,
         )
 
     def __unicode__(self):
-        return '%s %s' % (self.site.site_identifier, self.clinic_name)
+        return '%s %s %s' % (self.site.site_identifier, self.name, self.site.location)
         
     class Meta:
-        ordering = ['research_name']
+        ordering = ['name']
         app_label = 'bhp_research_protocol'        

@@ -19,7 +19,7 @@ class Site(models.Model):
         return '%s %s' % (self.site_identifier, self.name)
         
     class Meta:
-        ordering = ['name']
+        ordering = ['site_identifier']
         app_label = 'bhp_research_protocol'
         
 
