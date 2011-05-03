@@ -1,5 +1,5 @@
 from django.db import models
-
+from bhp_research_protocol.models import Location
 
 class Site(models.Model):
 

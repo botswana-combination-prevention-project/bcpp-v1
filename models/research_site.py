@@ -1,4 +1,5 @@
 from django.db import models
+from bhp_research_protocol.models import Site, Protocol
 
 class ResearchSite(models.Model):
 
