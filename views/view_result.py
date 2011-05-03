@@ -10,9 +10,42 @@ from bhp_lab_result_report.forms import ResultSearchForm
 from laboratory.classes import get_my_limit_queryset
 
 
-
 @login_required
-def index(request, **kwargs):
+def view_result(request, **kwargs):
+
+    section_name = kwargs.get('section_name')
+    search_name = kwargs.get('search_name')
+
+    result_identifier = kwargs.get('result_identifier')
+    limit = 20
+    template = 'result_report.html'
+                  
+    if result_identifier is not None:
+        oResult = Result.objects.get(result_identifier__exact=result_identifier)
+        oResultItems = ResultItem.objects.filter(result=oResult)
+        
+        context = {
+        'result': oResult,
+        'receive': oResult.order.aliquot.receive,
+        'order': oResult.order,
+        'aliquot': oResult.order.aliquot,
+        'result_items': oResultItems,
+        'section_name': section_name,
+        'search_name': search_name,        
+        'result_include_file': "detail.html",
+        'receiving_include_file':"receiving.html",
+        'orders_include_file': "orders.html",
+        'result_items_include_file': "result_items.html",
+        'top_result_include_file': "result_include.html",
+        }
+        
+        return render_to_response(template, 
+            context, 
+            context_instance=RequestContext(request)
+            )  
+            
+@login_required
+def xxxview_result(request, **kwargs):
 
     section_name = kwargs.get('section_name')
     search_name = "result"

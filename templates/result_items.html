@@ -1,4 +1,4 @@
-{% load common_tags %}
+{% load common_tags %}{% load result_tags %}
 <h1>Result Items</h1>
 <div class="results">
       <table cellspacing="0" cellpadding="2" id="result_list" border='1'>
@@ -7,21 +7,17 @@
         <th>Result</th>
         <th>Quantifier</th>  
         <th>Status</th>              
-        <th>Source</th>
-        <th>Source Reference</th>
-        <th>Error codes</th>    	    	        
+        <th>Validation Date</th>
         <th>Comments</th>
         </thead>
         <tbody>
         {% for item in result_items %}
           <tr class="{% cycle 'row2' 'row1' %}">
             <td>{{ item.test_code }}</td> 
-            <td>{{ item.result_value }}</td>
-            <td>{{ item.result_quantifier }}</td> 
-            <td>{{ item.status }}</td>
-            <td>{{ item.result_item_source }}</td>  
-            <td>{{ item.result_item_source_reference }}</td>
-            <td>{{ item.error_code  }}</td>          
+            <td>{{ item.result_item_value|format_result_by_status|item.validation_status }}</td>
+            <td>{{ item.result_item_quantifier }}</td> 
+            <td>{{ item.validation_status }}</td>
+            <td>{{ item.validation_datetime|date:"Y-m-d" }}</td>  
             <td>{{ item.comment }}</td>     
           </tr>
          {% endfor %}      
