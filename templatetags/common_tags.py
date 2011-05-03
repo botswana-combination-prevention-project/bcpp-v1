@@ -1,28 +1,14 @@
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
+from bhp_common.utils import formatted_age
 
 register = template.Library()
 
 @register.filter(name='age')
 def age(born):
-    today = date.today()
-    rdelta = relativedelta(today, born)
-    if born > today:
-        return '?'
-    elif rdelta.years == 0 and rdelta.months == 0:
-        return '%sd' % (rdelta.days)
-    elif rdelta.years == 0 and rdelta.months > 0 and rdelta.months <= 2:
-        return '%sm%sd' % (rdelta.months,rdelta.days)
-    elif rdelta.years == 0 and rdelta.months > 2:
-        return '%sm' % (rdelta.months)
-    elif rdelta.years == 1: 
-        m = rdelta.months + 12
-        return '%sm' % (m)        
-    elif rdelta.years > 1:
-        return '%sy' % (rdelta.years)
-    else:
-         raise TypeError('Age template tag missed a case... today - born. redelta = %s and %s' % (rdelta, born))   
+    reference_date = date.today()
+    return formatted_age(born, reference_date)
 
 @register.filter(name='dob_or_dob_estimated')
 def dob_or_dob_estimated(dob, is_dob_estimated):
@@ -50,4 +36,15 @@ def gender(value):
         return '?'
     else:
         return value    
+        
+        
+@register.filter(name='roundup')
+def roundup(d, digits):
+    from decimal import Decimal, ROUND_HALF_UP
+    try:
+        return Decimal(d).quantize(Decimal("1") / (Decimal('10') ** digits), ROUND_HALF_UP) 
+    except:
+        return d    
+
+
 

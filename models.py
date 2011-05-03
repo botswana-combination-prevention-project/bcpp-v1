@@ -5,7 +5,6 @@ from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
 from fields import HostnameCreationField, HostnameModificationField, MyUUIDField, OmangField
 
-
 class MyBasicModel(TimeStampedModel):
     """
     Base model class for all models. Adds created and modified values for user, date and hostname (computer)
