@@ -30,7 +30,7 @@
             
             <h5>{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} on {{ result.result_datetime|date:"Y-m-d" }}</h5>
             
-            {% inlcude "section_result_all.html %}
+            {% include "section_result_all.html" %}
             
         {% endif %}
     {% endblock %}

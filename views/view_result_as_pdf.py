@@ -19,7 +19,7 @@ def view_result_as_pdf(request, **kwargs):
     search_name = "result"
     result_identifier = kwargs.get('result_identifier')
     limit = 20
-    template = 'result_pdf.html'
+    template = 'result_report_pdf.html'
                   
     result = get_object_or_404(Result, result_identifier=result_identifier)
     items = ResultItem.objects.filter(result=result)
