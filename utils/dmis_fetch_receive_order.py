@@ -2,12 +2,11 @@ import datetime
 import pyodbc
 from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
 from bhp_lab_registration.models import Patient, Account
-from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
+from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
 from bhp_lab_core.models import DmisImportHistory
 
 
 def fetch_receive_from_dmis(process_status, **kwargs):
-
     
     subject_identifier = kwargs.get('subject_identifier')
     receive_identifier = kwargs.get('receive_identifier')
@@ -41,6 +40,8 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             l.pid as receive_identifier, \
             l.tid, \
             l.sample_condition, \
+            l.sample_site_id as site_identifier, \
+            l.sample_visitid as visit, \
             l.sample_protocolnumber as protocol_identifier, \
             l.gender, \
             min(dob) as dob, \
@@ -59,7 +60,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             where l21.pid is %s \
             and l.datelastmodified <= \'%s\' \
             and sample_date_drawn <= \'%s\' \
-            group by l.pid, l.tid, l.sample_condition, l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
+            group by l.pid, l.tid, l.sample_condition, l.sample_site_id, l.sample_visitid ,l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
             having count(*)=1 \
             order by min(l.id) desc' % (has_order_sql, import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
 
@@ -72,6 +73,8 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         oReceive = fetch_or_create_receive( 
             receive_identifier = row.receive_identifier,
             protocol_identifier = row.protocol_identifier,
+            site_identifier = row.site_identifier,            
+            visit = row.visit,
             subject_identifier = row.subject_identifier,
             gender = row.gender,
             dob = row.dob,
@@ -119,7 +122,9 @@ def fetch_receive_from_dmis(process_status, **kwargs):
 def fetch_or_create_receive( **kwargs ):
 
     receive_identifier = kwargs.get('receive_identifier')
-    protocol_identifier = kwargs.get('protocol_identifier')    
+    protocol_identifier = kwargs.get('protocol_identifier')
+    site_identifier = kwargs.get('site_identifier')    
+    visit = kwargs.get('visit')    
     subject_identifier = kwargs.get('subject_identifier')
     initials = kwargs.get('initials')
     gender = kwargs.get('gender')
@@ -139,6 +144,7 @@ def fetch_or_create_receive( **kwargs ):
     else:
         oProtocol = fetch_or_create_protocol(protocol_identifier)
         oAccount = fetch_or_create_account(protocol_identifier)
+        oSite = fetch_or_create_site(site_identifier)        
         oPatient = fetch_or_create_patient(
                                     account = oAccount, 
                                     subject_identifier = subject_identifier, 
@@ -150,6 +156,8 @@ def fetch_or_create_receive( **kwargs ):
             protocol = oProtocol,
             receive_identifier = receive_identifier,
             patient = oPatient,
+            site=oSite,
+            visit=visit,
             datetime_drawn = datetime_drawn,
             datetime_received = datetime_received,
             user_created = user_created,
@@ -193,6 +201,29 @@ def fetch_or_create_order( **kwargs ):
 
     return oOrder
 
+def fetch_or_create_site( site_identifier ):
+
+    oSite = Site.objects.filter(site_identifier__iexact=site_identifier)
+
+    if oSite:
+        oSite = Site.objects.get(site_identifier__iexact=site_identifier)
+    else:
+        oLocation = Location.objects.filter(name__exact='UNKNOWN')
+        if oLocation:
+            oLocation = Location.objects.get(name__exact='UNKNOWN')        
+        else:
+            oLocation = Location(
+                name = 'UNKNOWN',
+                )
+            oLocation.save()
+
+    
+        oSite = Site(
+            site_identifier = site_identifier,
+            name = site_identifier,
+            location=oLocation,
+            )
+        oSite.save()
 
 def fetch_or_create_protocol( protocol_identifier ):
 
