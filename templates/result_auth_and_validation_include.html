@@ -1,0 +1,22 @@
+<h5>Authorization and Validation Information</h5>
+<table>
+<tr>
+<td width=50% valign="top">
+    <table>
+    <tr><td >Comment: {{ sample_comment }}. {% for key,warning in result_warnings.items %}&nbsp;{{ i|upper }}&nbsp;{% endfor %}
+    </table>
+</td>
+<td valign="top">
+    <table>
+    <tr><td>Authorised and released by:</td></tr>
+    <tr><td >Operator:  {{validation_ref_summary.operator}}</td></tr>
+    <tr><td >Validated by:  {{validation_ref_summary.validator}}</td></tr>
+    <tr><td >Validated on:  {{validation_ref_summary.date_validated|date:"Y-m-d" }} {{ validation_ref_summary.date_validated|date:'Y-m-d' }}</td></tr>
+    </td>
+    </tr>
+    </table>
+</td>
+</tr>
+</table>
+<small>Lab QA Manager: P. Mangwendeza * Lab Manager: S. Moyo * Lab Director: R. Musonda</small>
+
