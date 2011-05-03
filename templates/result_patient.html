@@ -1,20 +1,18 @@
 {% load common_tags %}{% load result_tags %}
 <table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
 <thead>
-<th>Patient</th>   	    	
+<th>Patient ID (Initials)</th>   	    	
 <th>Protocol</th> 
-<th>Site</th> 
-<th>Initials</th> 
+<th>Clinic Site</th> 
 <th>Gender</th> 
 <th>Born</th>
 <th>Age</th>
 </thead>
 <tbody>
   <tr class="{% cycle 'row2' 'row1' %}">
-     <td>{{ result.order.aliquot.receive.patient.subject_identifier }}</td>
+     <td>{{ result.order.aliquot.receive.patient.subject_identifier }}&nbsp;({{ result.order.aliquot.receive.patient.initials|upper }})</td>
      <td>{{ result.order.aliquot.receive.protocol }}</td>
-     <td>{{ result.order.aliquot.receive.sample_site_id|result_site_name:result.order.aliquot.receive.protocol }}</td>
-     <td>{{ result.order.aliquot.receive.patient.initials|upper }}</td>
+     <td>{{ result.order.aliquot.receive.site.site_identifier|result_clinic_name:result.order.aliquot.receive.protocol.protocol_identifier }}</td>
      <td>{{ result.order.aliquot.receive.patient.gender|gender }}</td>
      <td>{{ result.order.aliquot.receive.patient.dob|dob_or_dob_estimated:result.order.aliquot.receive.patient.is_dob_estimated }}</td>
      <td>{{ result.order.aliquot.receive.patient.dob|result_age:result.order.aliquot.receive.datetime_drawn }}</td>                                                     
