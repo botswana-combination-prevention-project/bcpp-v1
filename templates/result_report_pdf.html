@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head> </head>
+<body>
+<div align="center">HIV Reference Laboratory - Princess Marina Hospital</div>
+<div align="center">Private Bag BO 320, Gaborone, Botswana * Tel: 3902671 ext 2003 * Fax: 3901284 </div>
+
+<div align="center"><strong><h5>{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} on {{ result.result_datetime|date:"Y-m-d" }}</h5></strong></div>
+
+<hr />
+
+{% block result %}
+    {% if result %}       
+         
+        {% inlcude "section_result_all.html %}
+        
+    {% endif %}
+{% endblock %}
+
+</body>
+</html>
+
+

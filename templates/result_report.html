@@ -30,15 +30,8 @@
             
             <h5>{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} on {{ result.result_datetime|date:"Y-m-d" }}</h5>
             
-            {%  include "result_patient.html" %}
-
-            {%  include "result_specimen.html" %}
+            {% inlcude "section_result_all.html %}
             
-            {%  include "result_order.html" %}            
-            
-            {%  include "result_items_include.html" %}
-            
-            {%  include "result_auth_and_validation_include.html" %}            
         {% endif %}
     {% endblock %}
 
