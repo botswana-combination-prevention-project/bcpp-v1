@@ -49,7 +49,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             l.pinitials as initials, \
             l.keyopcreated as user_created, \
             l.keyoplastmodified as user_modified, \
-            min(l.headerdate) as datetime_received, \
+            min(l.headerdate) as receive_datetime, \
             min(l.sample_date_drawn) as datetime_drawn, \
             min(l.datecreated) as created, \
             min(l.datelastmodified) as modified, \
@@ -80,7 +80,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             dob = row.dob,
             initials = row.initials,
             datetime_drawn = row.datetime_drawn,
-            datetime_received = row.datetime_received,
+            receive_datetime = row.receive_datetime,
             user_created = row.user_created,
             user_modified = row.user_modified,
             created = row.created,
@@ -100,7 +100,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             #create new order
             oOrder = fetch_or_create_order( 
                 order_identifier = row.order_identifier,
-                order_datetime = row.datetime_received,
+                order_datetime = row.receive_datetime,
                 aliquot = oAliquot,
                 panel=oPanel,
                 user_created = row.user_created,
@@ -130,7 +130,7 @@ def fetch_or_create_receive( **kwargs ):
     gender = kwargs.get('gender')
     dob = kwargs.get('dob')
     datetime_drawn = kwargs.get('datetime_drawn')
-    datetime_received = kwargs.get('datetime_received')
+    receive_datetime = kwargs.get('receive_datetime')
     user_created = kwargs.get('user_created')
     user_modified = kwargs.get('user_modified')    
     created = kwargs.get('created')
@@ -159,7 +159,7 @@ def fetch_or_create_receive( **kwargs ):
             site=oSite,
             visit=visit,
             datetime_drawn = datetime_drawn,
-            datetime_received = datetime_received,
+            receive_datetime = receive_datetime,
             user_created = user_created,
             user_modified = user_modified,
             created = created,                                    
@@ -202,7 +202,9 @@ def fetch_or_create_order( **kwargs ):
     return oOrder
 
 def fetch_or_create_site( site_identifier ):
-
+    if site_identifier == None or site_identifier == '' or site_identifier == '-9':
+        site_identifier = '00'
+        
     oSite = Site.objects.filter(site_identifier__iexact=site_identifier)
 
     if oSite:
@@ -217,13 +219,13 @@ def fetch_or_create_site( site_identifier ):
                 )
             oLocation.save()
 
-    
         oSite = Site(
             site_identifier = site_identifier,
             name = site_identifier,
             location=oLocation,
             )
         oSite.save()
+    return oSite        
 
 def fetch_or_create_protocol( protocol_identifier ):
 

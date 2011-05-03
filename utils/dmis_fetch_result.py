@@ -36,7 +36,16 @@ def fetch_or_create_result(**kwargs):
 
         result_identifier=AllocateResultIdentifier(oOrder)    
 
-        oResultSource=ResultSource.objects.get(name__iexact='dmis')
+        oResultSource=ResultSource.objects.filter(name__iexact='dmis')
+        if oResultSource:
+            oResultSource=ResultSource.objects.get(name__iexact='dmis')
+        else:
+            oResultSource=ResultSource.objects.create(
+                name='dmis',
+                short_name='dmis',                
+                display_index=10,
+                )
+            oResultSource.save()           
         
         oResult = Result.objects.create(
             result_identifier=result_identifier,
@@ -52,6 +61,7 @@ def fetch_or_create_result(**kwargs):
 
         sql ='select sample_assay_date, utestid, \
               result as result_value, result_quantifier, status, mid,\
+              l21d.datelastmodified as result_item_datetime, \
               l21d.keyopcreated as user_created, \
               l21.datecreated as created \
               from BHPLAB.DBO.LAB21Response as L21 \
@@ -64,6 +74,7 @@ def fetch_or_create_result(**kwargs):
             ResultItem.objects.create(
                 result=oResult,
                 test_code=oTestCode,
+                result_item_datetime=ritem.result_item_datetime,                
                 result_item_value=ritem.result_value,
                 result_item_quantifier=ritem.result_quantifier,
                 validation_status=ritem.status,
