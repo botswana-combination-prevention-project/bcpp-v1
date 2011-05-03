@@ -1,0 +1,28 @@
+{% load common_tags %}{% load result_tags %}
+<h5>Result Items</h5>
+<div class="results">
+  <table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
+    <thead>
+    <th>Test</th>
+    <th>Result</th>
+    <th>Units</th>    
+    <th>Reference</th>
+    <th>Flags</th>
+    <th>Validation Date</th>
+    <th>Comment</th>
+    </thead>
+    <tbody>
+    {% for item in result_items %}
+      <tr class="{% cycle 'row2' 'row1' %}">
+        <td>{{ item.test_code.code }}:&nbsp;{{ item.test_code }} </td> 
+        <td>{{ item.result_item_quantifier|quantifier }}&nbsp;{{ item.result_item_value|roundup:item.test_code.display_decimal_places|hide_not_final:item.validation_status }}</td>
+        <td>{{ item.test_code.units }}</td>
+        <td>{{ item.test_code.reference_range_lo|roundup:item.test_code.display_decimal_places }}&nbsp;-&nbsp;{{ item.test_code.reference_range_hi|roundup:item.test_code.display_decimal_places }}</td>
+        <td>{{ item.validation_status }}&nbsp;{{ item.result_item_value|grade:item}}&nbsp;{{ item.result_item_value|reference_range_comment:item}}</td>
+        <td>{{ item.validation_datetime|date:"Y-m-d" }}</td>                
+        <td>{{ item.comment }}</td>     
+      </tr>
+     {% endfor %}      
+  </tbody>
+  </table>
+  </div>
