@@ -1,4 +1,4 @@
-  {% load common_tags %}
+  {% load common_tags %}  {% load result_tags %}
   <div class="results">
       <table  cellspacing="0" id="result_list" border=1>
     	<thead>
@@ -8,7 +8,9 @@
     	<th>Drawn</th>    	
     	<th>Protocol</th>
         <th>Subject</th>    	    	
-    	<th>Account</th>    	        
+    	<th>Account</th>
+    	<th>Site</th>
+    	<th>Visit</th>    	            	    	            	    	            	    	        
     	<th>Initials</th>    	        
     	<th>Dob</th>    	
     	<th>Gender</th>
@@ -24,6 +26,8 @@
             <td><A href="/admin{{ receive.protocol.get_absolute_url }}">{{ receive.protocol|escape}}</A></td>
         	  <td><A href="/admin{{ receive.patient.get_absolute_url }}">{{ receive.patient }}</td>
          	  <td>{% for acc in receive.patient.account.all %}<A href="/admin{{ acc.get_absolute_url }}">{{ acc }}</a>&nbsp;{%endfor%}</td>        	  
+         	  <td>{{ receive.site.site_identifier|result_clinic_name:receive.protocol.protocol_identifier }}</td>
+         	  <td>{{ receive.visit }}</td>         	  
          	  <td>{{ receive.patient.initials|escape }}</td>
          	  <td>{{ receive.patient.dob|dob_or_dob_estimated:receive.patient.is_dob_estimated }}</td>         	  
          	  <td>{{ receive.patient.gender }}</td>         	  

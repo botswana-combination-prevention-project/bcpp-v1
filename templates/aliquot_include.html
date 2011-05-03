@@ -16,7 +16,7 @@
         {% for aliquot in search_results.object_list %}
             <tr class="{% cycle 'row1' 'row2' %}">
             <td><A href="/admin{{ aliquot.get_absolute_url }}">{{ aliquot.aliquot_identifier|escape}}</A></td>
-          	<td>{{ aliquot.receive.datetime_received|date:'Y-m-d' }}</td>
+          	<td>{{ aliquot.receive.receive_datetime|date:'Y-m-d' }}</td>
             <td>{{ aliquot.receive.datetime_drawn|date:'Y-m-d' }}</td>                      	            
             <td><A href="/admin{{ aliquot.receive.protocol.get_absolute_url }}">{{ aliquot.receive.protocol|escape}}</A></td>
         	  <td><A href="/admin{{ aliquot.receive.patient.get_absolute_url }}">{{ aliquot.receive.patient }}</td>

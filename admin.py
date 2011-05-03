@@ -35,7 +35,7 @@ admin.site.register(ResultItem, ResultItemAdmin)
 
 
 class ResultItemInlineAdmin(MyTabularInline):
-    extra=2
+    extra=1
     model = ResultItem
 
 class ResultSourceAdmin(MyModelAdmin):
@@ -110,7 +110,7 @@ admin.site.register(Aliquot, AliquotAdmin)
 class AliquotInlineAdmin(MyTabularInline):
     
     model = Aliquot
-    extra = 1
+    extra = 0
 
 class ReceiveAdmin(MyModelAdmin):
     

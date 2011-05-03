@@ -2,7 +2,7 @@ from datetime import *
 from dateutil.relativedelta import *
 from django import template
 from bhp_common.utils import formatted_age
-from bhp_research_protocol.models import ResearchSite
+from bhp_research_protocol.models import ResearchClinic
 register = template.Library()
 
 
@@ -11,14 +11,14 @@ def result_age(born, collection_date):
     reference_date = collection_date.date()
     return formatted_age(born, reference_date)
 
-@register.filter(name='result_site_name')
-def result_site_name(site_identifier, protocol_identifier):
-    oResearchSite.object.filter(site__site_identifier__iexact=site_identifier, protocol__protocol_identifier__iexact=protocol_identifier)
-    if oResearchSite:
-        site_name = oResearchSite[0]
-    else
-        site_name = site_identifier    
-    return site_name
+@register.filter(name='result_clinic_name')
+def result_clinic_name(site_identifier, protocol_identifier):
+    oResearchClinic = ResearchClinic.objects.filter(site__site_identifier__iexact=site_identifier, protocol__protocol_identifier__iexact=protocol_identifier)
+    if oResearchClinic:
+        clinic_name = oResearchClinic[0]
+    else:
+        clinic_name = site_identifier    
+    return clinic_name
 
 
 @register.filter(name='grade')
