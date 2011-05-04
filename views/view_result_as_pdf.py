@@ -1,6 +1,7 @@
 import cStringIO as StringIO
 import ho.pisa as pisa
 import cgi
+from math import ceil,trunc
 from reportlab.pdfgen import canvas
 from django.template.loader import render_to_string, get_template
 from django.http import HttpResponse
@@ -23,8 +24,14 @@ def view_result_as_pdf(request, **kwargs):
                   
     result = get_object_or_404(Result, result_identifier=result_identifier)
     items = ResultItem.objects.filter(result=result)
-
+    
+    total_page_number = trunc(ceil(items.count()/float(18)))
+    
+    #raise TypeError(items.count()/float(18))
+    
     payload = {
+        'pagesize': 'A4',
+        'total_page_number':total_page_number,
         'result': result,
         'receive': result.order.aliquot.receive,
         'order': result.order,
