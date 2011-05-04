@@ -1,7 +1,7 @@
 {% load common_tags %}{% load result_tags %}
 <table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
 <thead>
-<th>Patient ID (Initials)</th>   	    	
+<th colspan="2">Patient ID (Initials)</th>   	    	
 <th>Protocol</th> 
 <th>Clinic Site</th> 
 <th>Gender</th> 
@@ -10,7 +10,7 @@
 </thead>
 <tbody>
   <tr class="{% cycle 'row2' 'row1' %}">
-     <td>{{ result.order.aliquot.receive.patient.subject_identifier }}&nbsp;({{ result.order.aliquot.receive.patient.initials|upper }})</td>
+     <td colspan="2">{{ result.order.aliquot.receive.patient.subject_identifier }}&nbsp;({{ result.order.aliquot.receive.patient.initials|upper }})</td>
      <td>{{ result.order.aliquot.receive.protocol }}</td>
      <td>{{ result.order.aliquot.receive.site.site_identifier|result_clinic_name:result.order.aliquot.receive.protocol.protocol_identifier }}</td>
      <td>{{ result.order.aliquot.receive.patient.gender|gender }}</td>
