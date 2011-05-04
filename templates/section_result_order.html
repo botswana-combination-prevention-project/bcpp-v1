@@ -1,6 +1,6 @@
 <table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
 <thead>
-<th>Aliquot</th> 
+<th colspan="2">Aliquot</th> 
 <th>OrderID</th> 
 <th>Order Date</th>   	    	
 <th>ResultID</th> 
@@ -8,7 +8,7 @@
 </thead>
 <tbody>
 <tr>
-     <td>{{ result.order.aliquot.aliquot_identifier }}</td>                    
+     <td colspan="2">{{ result.order.aliquot.aliquot_identifier }}</td>                    
      <td>{{ result.order.order_identifier }}</td>
 	 <td>{{ result.order.order_datetime|date:"Y-m-d" }}</td>
      <td>{{ result.result_identifier }}</td>
