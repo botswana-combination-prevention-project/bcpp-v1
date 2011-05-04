@@ -59,9 +59,7 @@ class Result(MyBasicUuidModel):
         return "/bhp_lab_core/result/%s/" % self.id   
         
     def get_search_url(self):
-        return "/result/search/result/%s/" % self.result_identifier   
+        return "/laboratory/result/search/result/%s/" % self.result_identifier   
 
     class Meta:
-        app_label = 'bhp_lab_core'    
-
-
+        app_label = 'bhp_lab_core'   
