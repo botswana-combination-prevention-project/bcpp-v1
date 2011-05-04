@@ -35,7 +35,7 @@ admin.site.register(ResultItem, ResultItemAdmin)
 
 
 class ResultItemInlineAdmin(MyTabularInline):
-    extra=1
+    extra=0
     model = ResultItem
 
 class ResultSourceAdmin(MyModelAdmin):
@@ -50,11 +50,22 @@ class ResultAdmin(MyModelAdmin):
                 request.user, 
                 request.POST.get('order'),
                 )
-        save = super(AliquotAdmin, self).save_model(request, obj, form, change)
+        save = super(ResultAdmin, self).save_model(request, obj, form, change)
         return save
+      
+    def change_view(self, request, object_id, extra_context=None):
 
+        response = super(ResultAdmin, self).change_view(request, object_id, extra_context)
+
+        result = Result.objects.get(id__exact=object_id)
+        
+        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+            response['Location'] = result.get_search_url()
+        return response
+    
     fields = ('order', 'result_datetime', 'assay_datetime', 'result_source', 'result_source_reference', 'comment')
     inlines = [ResultItemInlineAdmin]
+    
 admin.site.register(Result, ResultAdmin)
 
 
