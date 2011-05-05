@@ -142,7 +142,11 @@ def fetch_lists_from_dmis(**kwargs):
                 panic_value_quantifier = row.panic_value_quantifier,
                 )
             
-            
+    #grading
+    sql  = 'select PID_NAME as name, comment as description from bhpdmc.dbo.dm100response'
+    
+    sql = ''
+    
     #panelgroups
     sql  = 'select panel_group as panel_group \
             FROM BHPLAB.DBO.F0100Response \
