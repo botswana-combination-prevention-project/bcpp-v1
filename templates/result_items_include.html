@@ -15,7 +15,7 @@
     <tbody>
     {% for item in result_items %}
       <tr class="{% cycle 'row2' 'row1' %}">
-        <td><A href="/admin/{{ item.get_absolute_url }}">{{ item.test_code.code }}</A>:&nbsp;{{ item.test_code }} </td> 
+        <td colspan="2"><A href="/admin/{{ item.get_absolute_url }}">{{ item.test_code.code }}</A>:&nbsp;{{ item.test_code }} </td> 
         <td>{{ item.result_item_quantifier|quantifier }}&nbsp;{{ item.result_item_value|roundup:item.test_code.display_decimal_places|hide_not_final:item.validation_status }}</td>
         <td>{{ item.test_code.units }}</td>
         <td>{{ item.test_code|lln:item|roundup:item.test_code.display_decimal_places }}&nbsp;-&nbsp;{{ item.test_code|uln:item|roundup:item.test_code.display_decimal_places }}</td>
