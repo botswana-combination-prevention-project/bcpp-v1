@@ -1,0 +1,30 @@
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from bhp_common.models import MyBasicModel, MyBasicListModel
+from bhp_lab_reference_range import BaseReferenceListItem
+from bhp_lab_reference_range.utils import get_lower_range_days, get_upper_range_days
+from bhp_grading.models import GradingList
+
+class GradingReference(BaseReferenceListItem):
+
+    grading_list = models.ForeignKey(GradingList)
+    
+    """
+        lower |	upper
+        ------|-------------
+        m*30  |	(1+m)*30)-1
+        y*365 |	(1+y)*365)-1 
+    """
+
+    def age_low_days(self):
+        return get_lower_range_days(self.age_low, self.age_low_unit)
+
+    def age_high_days(self):
+        return get_upper_range_days(self.age_high, self.age_high_unit)
+
+    def __unicode__(self):
+        return "%s" % (self.test_code)
+    
+    class Meta:
+        app_label = 'bhp_grading'  
+        ordering = ['test_code', 'age_low', 'age_low_unit']   
