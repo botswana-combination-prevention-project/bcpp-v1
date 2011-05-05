@@ -1,4 +1,7 @@
 """from http://code.djangoproject.com/wiki/AuditTrail"""
+"""https://github.com/LaundroMat/django-AuditTrail/blob/master/audit.py"""
+
+
 from django.dispatch import dispatcher
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
@@ -32,9 +35,9 @@ class AuditTrail(object):
                 # Enable admin integration
                 # If ModelAdmin needs options or different base class, find
                 # some way to make the commented code work
-                #   cls_admin_name = cls.__name__ + 'Admin'
-                #   clsAdmin = type(cls_admin_name, (admin.ModelAdmin,),{})
-                #   admin.site.register(cls, clsAdmin)
+                # cls_admin_name = cls.__name__ + 'Admin'
+                # clsAdmin = type(cls_admin_name, (admin.ModelAdmin,),{})
+                # admin.site.register(cls, clsAdmin)
                 # Otherwise, register class with default ModelAdmin
                 admin.site.register(model)
             descriptor = AuditTrailDescriptor(model._default_manager, sender._meta.pk.attname)
@@ -53,20 +56,21 @@ class AuditTrail(object):
                             return field_arr[2]
 
             def _audit(sender, instance, created, **kwargs):
-                # Write model changes to the audit model.
-                # instance is the current (non-audit) model.
-                kwargs = {}
-                for field in sender._meta.fields:
-                    #kwargs[field.attname] = getattr(instance, field.attname)
-                    kwargs[field.name] = getattr(instance, field.name)
-                if self.opts['save_change_type']:
-                    if created:
-                        kwargs['_audit_change_type'] = 'I'
-                    else:
-                        kwargs['_audit_change_type'] = 'U'
-                for field_arr in model._audit_track:
-                    kwargs[field_arr[0]] = _audit_track(instance, field_arr)
-                model._default_manager.create(**kwargs)
+                if not kwargs.get('raw'):
+                    # Write model changes to the audit model.
+                    # instance is the current (non-audit) model.
+                    kwargs = {}
+                    for field in sender._meta.fields:
+                        #kwargs[field.attname] = getattr(instance, field.attname)
+                        kwargs[field.name] = getattr(instance, field.name)
+                    if self.opts['save_change_type']:
+                        if created:
+                            kwargs['_audit_change_type'] = 'I'
+                        else:
+                            kwargs['_audit_change_type'] = 'U'
+                    for field_arr in model._audit_track:
+                        kwargs[field_arr[0]] = _audit_track(instance, field_arr)
+                    model._default_manager.create(**kwargs)
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
             ## Comment this line for pre r8223 Django builds
@@ -87,7 +91,7 @@ class AuditTrail(object):
                 #dispatcher.connect(_audit_delete, signal=models.signals.pre_delete, sender=cls, weak=False)
                 ## Comment this line for pre r8223 Django builds
                 models.signals.pre_delete.connect(_audit_delete, sender=cls, weak=False)
-        
+
         ## Uncomment this line for pre r8223 Django builds
         #dispatcher.connect(_contribute, signal=models.signals.class_prepared, sender=cls, weak=False)
         ## Comment this line for pre r8223 Django builds
@@ -215,4 +219,3 @@ def _track_fields(track_fields=None, unprocessed=False):
             else:
                 tracks_found.append(_build_track_field(track_item))
     return tracks_found
-
