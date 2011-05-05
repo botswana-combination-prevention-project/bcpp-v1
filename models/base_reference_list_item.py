@@ -2,17 +2,12 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicModel, MyBasicListModel
 from bhp_common.choices import GENDER
-from bhp_lab_core.choices import UNITS, ABS_CALC, GENDER_OF_REFERENCE
-from bhp_lab_core.models import TestCode
+from bhp_lab_core.choices import UNITS, ABS_CALC
+from bhp_lab_test_code.models import TestCode
+from bhp_lab_reference.choices import GENDER_OF_REFERENCE
+
 
 class BaseReferenceListItem(MyBasicModel):
-
-    """
-        lower |	upper
-        ------|-------------
-        m*30  |	(1+m)*30)-1
-        y*365 |	(1+y)*365)-1 
-    """
 
     test_code = models.ForeignKey(TestCode)
 
@@ -63,9 +58,7 @@ class BaseReferenceListItem(MyBasicModel):
         y*365 |	(1+y)*365)-1 
     """
 
-    def age_low_days(self):
-        return 
-
+    """
     def age_low_days(self):
         if self.age_low_unit.upper() == 'D':
             days = self.age_low * 1
@@ -90,6 +83,7 @@ class BaseReferenceListItem(MyBasicModel):
 
     def __unicode__(self):
         return "%s" % (self.test_code)
+    """
     
     class Meta:
         abstract = True
