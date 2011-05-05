@@ -1,6 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-from bhp_common.models import MyBasicModel, MyBasicListModel
 from bhp_lab_reference.models import BaseReferenceListItem
 from bhp_lab_reference.utils import get_lower_range_days, get_upper_range_days
 from bhp_lab_grading.models import GradingList
@@ -26,5 +24,5 @@ class GradingListItem(BaseReferenceListItem):
         return "%s" % (self.test_code)
     
     class Meta:
-        app_label = 'bhp_grading'  
+        app_label = 'bhp_lab_grading'  
         ordering = ['test_code', 'age_low', 'age_low_unit']   
