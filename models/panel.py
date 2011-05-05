@@ -1,7 +1,9 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-from bhp_lab_core.models import TestCode, AliquotType
 from bhp_lab_registration.models import Account
+from bhp_lab_test_code.models import TestCode
+from bhp_lab_core.models import AliquotType
+
 
 class PanelGroup (MyBasicModel):
 

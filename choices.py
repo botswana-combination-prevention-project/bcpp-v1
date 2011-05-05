@@ -8,13 +8,7 @@ ALIQUOT_STATUS =  (
     ('available', 'available'),
     ('consumed', 'consumed'),
     )
-    
-GENDER_OF_REFERENCE = (
-    ('F','Female'),
-    ('M','Male'),
-    ('MF','Male and Female'),            
-    )
-    
+   
 MODIFY_ACTIONS = (
     ('INSERT','Insert'),
     ('UPDATE','Update'),

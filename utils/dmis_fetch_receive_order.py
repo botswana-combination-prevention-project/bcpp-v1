@@ -2,7 +2,8 @@
 def fetch_receive_from_dmis(process_status, **kwargs):
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -122,7 +123,8 @@ def fetch_or_create_receive( **kwargs ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -181,7 +183,8 @@ def fetch_or_create_order( **kwargs ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -217,7 +220,8 @@ def fetch_or_create_order( **kwargs ):
 def fetch_or_create_site( site_identifier ):
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -251,7 +255,8 @@ def fetch_or_create_protocol( protocol_identifier ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -282,7 +287,8 @@ def fetch_or_create_account( account_name ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -308,7 +314,8 @@ def fetch_or_create_patient( **kwargs ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -341,7 +348,8 @@ def fetch_or_create_aliquot( **kwargs ):
     
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
@@ -433,7 +441,8 @@ if __name__ == "__main__":
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory

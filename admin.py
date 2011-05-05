@@ -1,9 +1,8 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
-from models import Panel, TestCode, Aliquot, AliquotType, AliquotCondition
-from models import Receive, Result, Order, ResultItem, TestCodeGroup, TestCodeReference, TestCodeInterfaceMapping, AliquotMedium, TidPanelMapping, PanelGroup, ResultSource
+from models import Panel, Aliquot, AliquotType, AliquotCondition
+from models import Receive, Result, Order, ResultItem, AliquotMedium, TidPanelMapping, PanelGroup, ResultSource
 from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
-
 
 class PanelAdmin(MyModelAdmin):
     list_display = ('name','panel_group')
@@ -16,23 +15,6 @@ admin.site.register(PanelGroup, PanelGroupAdmin)
 class TidPanelMappingAdmin(MyModelAdmin):
     list_display = ('tid','panel')
 admin.site.register(TidPanelMapping, TidPanelMappingAdmin)
-
-class TestCodeAdmin(MyModelAdmin):
-    list_display = ('code', 'name', 'test_code_group', 'units', 'display_decimal_places', 'reference_range_lo', 'reference_range_hi', 'lln', 'uln')
-admin.site.register(TestCode, TestCodeAdmin)
-
-class TestCodeReferenceAdmin(MyModelAdmin):
-    list_display = ('test_code', 'gender', 'lln', 'uln', 'age_low', 'age_low_unit','age_low_quantifier','age_high','age_high_unit','age_high_quantifier', 'panic_value', 'panic_value_quantifier')
-    search_fields = ['test_code__code','test_code__name',]
-admin.site.register(TestCodeReference, TestCodeReferenceAdmin)
-
-class TestCodeInterfaceMappingAdmin(MyModelAdmin):
-    pass
-admin.site.register(TestCodeInterfaceMapping, TestCodeInterfaceMappingAdmin)
-
-class TestCodeGroupAdmin(MyModelAdmin):
-    pass
-admin.site.register(TestCodeGroup, TestCodeGroupAdmin)
 
 class ResultItemAdmin(MyModelAdmin):
     

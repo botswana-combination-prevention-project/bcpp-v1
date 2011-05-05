@@ -26,7 +26,17 @@ class ResultItem(MyBasicUuidModel):
 	    help_text = '',
 	    )
     
-    result_item_datetime = models.DateTimeField()
+    result_item_datetime = models.DateTimeField(
+        verbose_name = 'Assay date and time',
+        )
+
+    validation_status = models.CharField(
+        verbose_name = 'Status',
+        default = 'P',
+        choices = RESULT_STATUS,
+	    max_length = 10,
+	    help_text = 'Default is preliminary'
+	    )
 
     validation_datetime = models.DateTimeField(
 	    null=True,
@@ -40,13 +50,7 @@ class ResultItem(MyBasicUuidModel):
 	    blank=True,
 	    )
 	    
-    validation_status = models.CharField(
-        verbose_name = 'Status',
-        default = 'P',
-        choices = RESULT_STATUS,
-	    max_length = 10,
-	    help_text = 'Default is preliminary'
-	    )
+    
 
     comment = models.CharField(
         verbose_name = 'Validation Comment',

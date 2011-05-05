@@ -2,7 +2,8 @@
 def fetch_lists_from_dmis(**kwargs):
     import datetime
     import pyodbc
-    from bhp_lab_core.models import AliquotType, AliquotCondition, TestCode, TestCodeGroup, TestCodeReference, Panel, PanelGroup
+    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
+    from bhp_lab_test_code.models import TestCode, TestCodeGroup, TestCodeReferenceList, TestCodeReferenceListItem
     from bhp_lab_core.models import DmisImportHistory
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
@@ -27,6 +28,7 @@ def fetch_lists_from_dmis(**kwargs):
             datelastmodified as modified \
             from BHPLAB.DBO.ST515Response'
     cursor.execute(sql)
+
     AliquotType.objects.all().delete()
     for row in cursor:
         AliquotType.objects.create( 
@@ -64,7 +66,9 @@ def fetch_lists_from_dmis(**kwargs):
 
     #testcodegroups
     sql  = 'select tid FROM BHPLAB.DBO.F0110Response group by tid'
+
     cursor.execute(sql)
+
     TestCodeGroup.objects.all().delete()
     for row in cursor:
         TestCodeGroup.objects.create( 
@@ -117,9 +121,22 @@ def fetch_lists_from_dmis(**kwargs):
             where age_low <> 0 and age_high<>120'
     cursor.execute(sql)
 
-    TestCodeReference.objects.all().delete()
+    #create a parent record for the TestCodeReferenceListItem(s) if it does not exist
+    oTestCodeReferenceList = TestCodeReferenceList.objects.filter(name__iexact='BHPLAB_NORMAL_RANGES_201005')
+    if not oTestCodeReferenceList:
+        oTestCodeReferenceList = TestCodeReferenceList(
+            name = 'BHPLAB_NORMAL_RANGES_201005',
+            description = 'BHPLAB_NORMAL_RANGES_201005',
+            )
+        oTestCodeReferenceList.save()        
+    else:
+        oTestCodeReferenceList = TestCodeReferenceList.objects.get(name__iexact='BHPLAB_NORMAL_RANGES_201005')        
+
+    TestCodeReferenceListItem.objects.all().delete()    
+    
     for row in cursor:
         oTestCode = TestCode.objects.filter(code__iexact=row.test_code)
+
         if oTestCode:
             oTestCode = TestCode.objects.get(code__iexact=row.test_code)
             if row.panic_value:
@@ -127,7 +144,8 @@ def fetch_lists_from_dmis(**kwargs):
             else:
                 panic_value = None
                     
-            TestCodeReference.objects.create( 
+            TestCodeReferenceListItem.objects.create( 
+                test_code_reference_list = oTestCodeReferenceList,
                 test_code=oTestCode,
                 gender = row.gender.upper(),
                 uln = ('%.4f' % (row.uln,)),
