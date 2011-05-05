@@ -1,7 +1,7 @@
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
-from bhp_common.utils import formatted_age
+from bhp_common.utils import formatted_age, round_up
 
 register = template.Library()
 
@@ -40,11 +40,7 @@ def gender(value):
         
 @register.filter(name='roundup')
 def roundup(d, digits):
-    from decimal import Decimal, ROUND_HALF_UP
-    try:
-        return Decimal(d).quantize(Decimal("1") / (Decimal('10') ** digits), ROUND_HALF_UP) 
-    except:
-        return d    
+    return round_up(d, digits)   
 
 
 
