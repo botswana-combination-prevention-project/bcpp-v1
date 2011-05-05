@@ -15,13 +15,13 @@
     <tbody>
     {% for item in result_items %}
       <tr class="{% cycle 'row2' 'row1' %}">
-        <td colspan="2">{{ item.test_code.code }}:&nbsp;{{ item.test_code }} </td> 
+        <td><A href="/admin/{{ item.get_absolute_url }}">{{ item.test_code.code }}</A>:&nbsp;{{ item.test_code }} </td> 
         <td>{{ item.result_item_quantifier|quantifier }}&nbsp;{{ item.result_item_value|roundup:item.test_code.display_decimal_places|hide_not_final:item.validation_status }}</td>
         <td>{{ item.test_code.units }}</td>
-        <td>{{ item.test_code.reference_range_lo|roundup:item.test_code.display_decimal_places }}&nbsp;-&nbsp;{{ item.test_code.reference_range_hi|roundup:item.test_code.display_decimal_places }}</td>
-        <td>{{ item.validation_status }}&nbsp;{{ item.result_item_value|grade:item}}&nbsp;{{ item.result_item_value|reference_range_comment:item}}</td>
+        <td>{{ item.test_code|lln:item|roundup:item.test_code.display_decimal_places }}&nbsp;-&nbsp;{{ item.test_code|uln:item|roundup:item.test_code.display_decimal_places }}</td>
+        <td>{{ item.validation_status|status_flag }}&nbsp;{{ item.result_item_value|grade_flag:item}}&nbsp;{{ item.result_item_value|reference_range_flag:item}}</td>
         <td>{{ item.result_item_datetime|date:"Y-m-d" }}</td>                
-        <td>{{ item.validation_datetime|date:"Y-m-d" }}</td>                
+        <td>{{ item.validation_datetime|date:"Y-m-d"|filter_validation_by_status:item.validation_status }}&nbsp;{{ item.validation_username }}</td>                
         <td>{{ item.comment }}</td>     
       </tr>
      {% endfor %}      

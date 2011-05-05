@@ -1,9 +1,9 @@
-import datetime
-import pyodbc
-from bhp_lab_core.models import AliquotType, AliquotCondition, TestCode, TestCodeGroup, Panel, PanelGroup
-from bhp_lab_core.models import DmisImportHistory
 
 def fetch_lists_from_dmis(**kwargs):
+    import datetime
+    import pyodbc
+    from bhp_lab_core.models import AliquotType, AliquotCondition, TestCode, TestCodeGroup, TestCodeReference, Panel, PanelGroup
+    from bhp_lab_core.models import DmisImportHistory
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
@@ -102,6 +102,47 @@ def fetch_lists_from_dmis(**kwargs):
             is_absolute=row.is_absolute,
             )    
 
+    #test_code_reference
+    sql  = 'SELECT PID, UTESTID as test_code, LONGNAME, UTESTID_UNITS, \
+            convert(decimal(12,4), LLN) as lln, \
+            convert(decimal(12,4), ULN) as uln, \
+            GENDER as gender, \
+            age_low, age_low_unit,\
+            age_low_quantifier, \
+            age_high, age_high_unit,\
+            age_high_quantifier, \
+            convert(decimal(12,4), panic_value) as panic_value, \
+            panic_value_quantifier \
+            FROM BHPLAB.DBO.F0110ResponseReference \
+            where age_low <> 0 and age_high<>120'
+    cursor.execute(sql)
+
+    TestCodeReference.objects.all().delete()
+    for row in cursor:
+        oTestCode = TestCode.objects.filter(code__iexact=row.test_code)
+        if oTestCode:
+            oTestCode = TestCode.objects.get(code__iexact=row.test_code)
+            if row.panic_value:
+                panic_value = ('%.4f' % (row.panic_value,))
+            else:
+                panic_value = None
+                    
+            TestCodeReference.objects.create( 
+                test_code=oTestCode,
+                gender = row.gender.upper(),
+                uln = ('%.4f' % (row.uln,)),
+                lln = ('%.4f' % (row.lln,)),
+                age_low = row.age_low,
+                age_low_unit = row.age_low_unit.upper(),
+                age_low_quantifier = row.age_low_quantifier,
+                age_high = row.age_high,
+                age_high_unit = row.age_high_unit.upper() ,
+                age_high_quantifier = row.age_high_quantifier,
+                panic_value = panic_value,
+                panic_value_quantifier = row.panic_value_quantifier,
+                )
+            
+            
     #panelgroups
     sql  = 'select panel_group as panel_group \
             FROM BHPLAB.DBO.F0100Response \
@@ -135,4 +176,20 @@ def fetch_lists_from_dmis(**kwargs):
         cursor.close()          
     except:
         pass
-    return None            
+    return None  
+    
+    
+if __name__ == "__main__":
+    
+    import sys,os
+    sys.path.append('/home/erikvw/source/')
+    sys.path.append('/home/erikvw/source/bhplab/')
+    os.environ['DJANGO_SETTINGS_MODULE'] ='bhplab.settings'
+    from django.core.management import setup_environ
+    from bhplab import settings
+
+    setup_environ(settings)
+    print 'fetching lab lists....'
+    fetch_lists_from_dmis()
+    print 'Done'
+    sys.exit (0)              

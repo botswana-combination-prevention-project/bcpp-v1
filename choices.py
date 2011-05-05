@@ -8,6 +8,20 @@ ALIQUOT_STATUS =  (
     ('available', 'available'),
     ('consumed', 'consumed'),
     )
+    
+GENDER_OF_REFERENCE = (
+    ('F','Female'),
+    ('M','Male'),
+    ('MF','Male and Female'),            
+    )
+    
+MODIFY_ACTIONS = (
+    ('INSERT','Insert'),
+    ('UPDATE','Update'),
+    ('DELETE','Delete'),
+    ('PRINT','Print'),
+    ('VIEW','Print'),                                                            
+    )
 
 RESULT_STATUS = (
     ('P','Preliminary'),
@@ -16,11 +30,11 @@ RESULT_STATUS = (
 )
 
 RESULT_QUANTIFIER = (
-    ('eq','='),
-    ('gt','>'),
-    ('gte','>='),
-    ('lt','<'),
-    ('lte','<='),                                                            
+    ('=','='),
+    ('>','>'),
+    ('>=','>='),
+    ('<','<'),
+    ('<=','<='),                                                            
 )
 
 SPECIMEN_MEASURE_UNITS = (

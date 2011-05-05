@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
 from bhp_lab_core.models import Result, TestCode
 from bhp_lab_core.choices import RESULT_STATUS, RESULT_QUANTIFIER
-
+from audit_trail import audit
 
 
 class ResultItem(MyBasicUuidModel):
@@ -33,8 +33,8 @@ class ResultItem(MyBasicUuidModel):
 	    blank=True,
 	    )
 	
-    validation_user = models.CharField(
-        verbose_name = "Validated by",
+    validation_username = models.CharField(
+        verbose_name = "Validation username",
         max_length=50,
 	    null=True,
 	    blank=True,
@@ -47,6 +47,15 @@ class ResultItem(MyBasicUuidModel):
 	    max_length = 10,
 	    help_text = 'Default is preliminary'
 	    )
+
+    comment = models.CharField(
+        verbose_name = 'Validation Comment',
+	    max_length = 50,
+	    null = True,
+        blank = True,	    
+	    help_text = ''
+  	    )
+
     result_item_source = models.CharField(
         max_length=25,
         verbose_name = 'Source',
@@ -70,14 +79,15 @@ class ResultItem(MyBasicUuidModel):
         blank = True,	    
 	    help_text = ''
   	    )
-    comment = models.CharField(
-        verbose_name = 'Comment',
-	    max_length = 50,
-	    null = True,
-        blank = True,	    
-	    help_text = ''
-  	    )
-  	
+  	    
+    history = audit.AuditTrail()
+  	    
+    def __unicode__(self):
+  	    return '%s %s' % (unicode(self.result), unicode(self.test_code))
+    def get_absolute_url(self):
+        return "bhp_lab_core/resultitem/%s/" % (self.id)
+    def get_result_printout_url(self):
+        return "/laboratory/result/search/result/%s/" % (self.result.result_identifier)  	
     class Meta:
         app_label = 'bhp_lab_core'    
        

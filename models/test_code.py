@@ -100,49 +100,7 @@ class TestCode(MyBasicModel):
         ordering = ['name']
         app_label = 'bhp_lab_core'     
         
-class TestCodeReference(MyBasicModel):
 
-    test_code = models.ForeignKey(TestCode)
-
-    gender = models.CharField(
-        verbose_name = "Gender",
-        choices = GENDER,
-        max_length=10, 
-        )
-
-    age_low = models.DecimalField(
-        null=True, 
-        max_digits=12, 
-        decimal_places=4, 
-        blank=True)
-    age_low_unit = models.CharField(
-        max_length=75, 
-        blank=True
-        )
-
-    age_low_quantifier = models.CharField(max_length=75, blank=True)
-    
-    age_high = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
-    
-    age_high_unit = models.CharField(max_length=75, blank=True)
-    
-    age_high_quantifier = models.CharField(max_length=75, blank=True)
-    
-    panic_value = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
-    
-    panic_value_quantifier = models.CharField(max_length=75, blank=True)
-        
-    comment = models.CharField(
-        verbose_name = "Comment", 
-        max_length=250, 
-        blank=True,
-        )
-
-    def __unicode__(self):
-        return "%s" % (self.test_code)
-        
-    class Meta:
-        app_label = 'bhp_lab_core'     
         
 class TestCodeInterfaceMapping(MyBasicModel):
 

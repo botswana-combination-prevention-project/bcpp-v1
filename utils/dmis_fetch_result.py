@@ -1,11 +1,13 @@
-import pyodbc, datetime
-from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
-from bhp_lab_registration.models import Patient, Account
-from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
-from bhp_lab_core.models import DmisImportHistory, ResultSource
-from bhp_lab_core.utils import AllocateResultIdentifier
+
 
 def fetch_results_from_dmis(**kwargs):
+
+    import pyodbc, datetime
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_registration.models import Patient, Account
+    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
+    from bhp_lab_core.models import DmisImportHistory, ResultSource
+    from bhp_lab_core.utils import AllocateResultIdentifier
 
     Result.objects.all().delete()
 
@@ -15,6 +17,14 @@ def fetch_results_from_dmis(**kwargs):
         fetch_or_create_result(order=oOrder)
 
 def fetch_or_create_result(**kwargs):
+
+    import pyodbc, datetime
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_registration.models import Patient, Account
+    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
+    from bhp_lab_core.models import DmisImportHistory, ResultSource
+    from bhp_lab_core.utils import AllocateResultIdentifier
+
     
     oOrder = kwargs.get('order')
         
@@ -85,3 +95,27 @@ def fetch_or_create_result(**kwargs):
             
             
     return oResult
+    
+if __name__ == "__main__":
+    
+    import sys,os
+    sys.path.append('/home/erikvw/source/')
+    sys.path.append('/home/erikvw/source/bhplab/')
+    os.environ['DJANGO_SETTINGS_MODULE'] ='bhplab.settings'
+    from django.core.management import setup_environ
+    from bhplab import settings
+
+    setup_environ(settings)
+    
+    import pyodbc, datetime
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
+    from bhp_lab_registration.models import Patient, Account
+    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
+    from bhp_lab_core.models import DmisImportHistory, ResultSource
+    from bhp_lab_core.utils import AllocateResultIdentifier
+
+    
+    print 'fetching lab results from dmis....'
+    fetch_results_from_dmis()
+    print 'Done'
+    sys.exit (0)                  

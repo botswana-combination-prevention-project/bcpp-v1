@@ -1,7 +1,7 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, TestCode, Aliquot, AliquotType, AliquotCondition
-from models import Receive, Result, Order, ResultItem, TestCodeGroup, TestCodeInterfaceMapping, AliquotMedium, TidPanelMapping, PanelGroup, ResultSource
+from models import Receive, Result, Order, ResultItem, TestCodeGroup, TestCodeReference, TestCodeInterfaceMapping, AliquotMedium, TidPanelMapping, PanelGroup, ResultSource
 from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
 
 
@@ -21,6 +21,11 @@ class TestCodeAdmin(MyModelAdmin):
     list_display = ('code', 'name', 'test_code_group', 'units', 'display_decimal_places', 'reference_range_lo', 'reference_range_hi', 'lln', 'uln')
 admin.site.register(TestCode, TestCodeAdmin)
 
+class TestCodeReferenceAdmin(MyModelAdmin):
+    list_display = ('test_code', 'gender', 'lln', 'uln', 'age_low', 'age_low_unit','age_low_quantifier','age_high','age_high_unit','age_high_quantifier', 'panic_value', 'panic_value_quantifier')
+    search_fields = ['test_code__code','test_code__name',]
+admin.site.register(TestCodeReference, TestCodeReferenceAdmin)
+
 class TestCodeInterfaceMappingAdmin(MyModelAdmin):
     pass
 admin.site.register(TestCodeInterfaceMapping, TestCodeInterfaceMappingAdmin)
@@ -30,7 +35,14 @@ class TestCodeGroupAdmin(MyModelAdmin):
 admin.site.register(TestCodeGroup, TestCodeGroupAdmin)
 
 class ResultItemAdmin(MyModelAdmin):
-    pass
+    
+    def change_view(self, request, object_id, extra_context=None):
+
+        result = super(ResultItemAdmin, self).change_view(request, object_id, extra_context)
+        oResultItem = ResultItem.objects.get(pk=object_id)
+        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+            result['Location'] = oResultItem.get_result_printout_url()
+        return result
 admin.site.register(ResultItem, ResultItemAdmin)
 
 
