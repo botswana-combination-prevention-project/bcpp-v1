@@ -3,6 +3,9 @@ from bhp_lab_reference.models import BaseReferenceList
 
 class TestCodeReferenceList(BaseReferenceList):
     
+    def __unicode__(self):
+        return self.name
+    
     class Meta:
         app_label = 'bhp_lab_test_code'  
         ordering = ['name']   

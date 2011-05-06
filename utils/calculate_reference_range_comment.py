@@ -38,10 +38,10 @@ def calculate_reference_range_comment(value, oResultItem):
             if reference_item.age_low_days() <= age_in_days and reference_item.age_high_days() >= age_in_days:
                 #see if value is out of range
                 #low? compare with correct decimal places
-                if round_up(result_value, oTestCode.display_decimal_places) < round_up(reference.lln, oTestCode.display_decimal_places):
+                if round_up(result_value, oTestCode.display_decimal_places) < round_up(reference_item.lln, oTestCode.display_decimal_places):
                     comment['low']='LO'
                 #high? compare with correct decimal places
-                if round_up(result_value, oTestCode.display_decimal_places) > round_up(reference.uln, oTestCode.display_decimal_places):
+                if round_up(result_value, oTestCode.display_decimal_places) > round_up(reference_item.uln, oTestCode.display_decimal_places):
                     comment['high']='HI'
                
                 #if result_value > reference.uln:

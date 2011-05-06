@@ -15,10 +15,13 @@ def get_reference_range(**kwargs):
                                     test_code_reference_list__name__iexact=REFLIST,
                                     test_code=kwargs.get('test_code'), 
                                     gender__icontains=kwargs.get('gender')
-                                    )    
+                                    )  
+                                    
+
+                                          
     #loop to find record for this age_in_days
     if oTestCodeReferenceListItem:
-
+        #raise TypeError(oTestCodeReferenceListItem)
         for reference_item in oTestCodeReferenceListItem:
             #find the record for this age 
             if reference_item.age_low_days() <= age_in_days and reference_item.age_high_days() >= age_in_days:
@@ -28,4 +31,5 @@ def get_reference_range(**kwargs):
                     ref_range_value = reference_item.uln
                 else:
                     raise TypeError('Invalid value for keyword argument \'range_category\' for get_reference_range(). You passed \'%s\'' % kwargs.get('range_category'))   
+
     return ref_range_value 
