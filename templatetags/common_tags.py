@@ -1,9 +1,35 @@
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
+from django.contrib.auth.models import User
 from bhp_common.utils import formatted_age, round_up
 
 register = template.Library()
+
+@register.filter(name='user_full_name')
+def user_full_name(username):
+    if not username:
+        return ''
+    else:    
+        try:
+            user=User.objects.get(username__iexact=username)
+            return '%s %s (%s)' % (user.first_name, user.last_name, user.get_profile().initials)
+        except:
+            return username
+
+
+@register.filter(name='user_initials')
+def user_initials(username):
+    if not username:
+        return ''
+    else:    
+        try:
+            user=User.objects.get(username__iexact=username)
+            return user.get_profile().initials
+        except:
+            return username
+
+
 
 @register.filter(name='age')
 def age(born):
