@@ -5,6 +5,7 @@
 			<tr>
     	<th>Result</th>
     	<th>Result Date</th>
+    	<th>Release</th>    	
     	<th>Order</th>
     	<th>Order Date</th>    	  	
     	<th>Panel</th>  
@@ -20,8 +21,9 @@
     	</thead>	
         {% for result in search_results.object_list %}
             <tr class="{% cycle 'row1' 'row2' %}">
-            <td><A href="/laboratory{{ result.get_search_url }}">{{ result.result_identifier|escape}}</A></td>
+            <td><A href="{{ result.get_document_url }}">{{ result.result_identifier|escape}}</A></td>
             <td>{{result.result_datetime|date:"Y-m-d"}}</td>
+            <td>{{result.release_status}}</td>            
             <td><A href="/admin{{ result.order.get_absolute_url }}">{{ result.order.order_identifier }}</A></td>
             <td>{{ result.order.order_datetime|date:'Y-m-d' }}</td>
             <td>{{ result.order.panel }} </td>            

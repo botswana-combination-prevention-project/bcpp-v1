@@ -17,7 +17,13 @@ MODIFY_ACTIONS = (
     ('VIEW','Print'),                                                            
     )
 
-RESULT_STATUS = (
+RESULT_RELEASE_STATUS = (
+    ('NEW','New'),
+    ('RELEASED','Released'),
+    ('AMENDED','Amended'),
+)
+
+RESULT_VALIDATION_STATUS = (
     ('P','Preliminary'),
     ('F','Final'),
     ('R','Rejected'),

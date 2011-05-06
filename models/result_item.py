@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab_core.models import Result, TestCode
-from bhp_lab_core.choices import RESULT_STATUS, RESULT_QUANTIFIER
+from bhp_lab_core.models import Result, TestCode, ResultSource
+from bhp_lab_core.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
 from audit_trail import audit
 
 
@@ -29,11 +29,17 @@ class ResultItem(MyBasicUuidModel):
     result_item_datetime = models.DateTimeField(
         verbose_name = 'Assay date and time',
         )
+    result_item_operator = models.CharField(
+        verbose_name = 'Operator',
+        max_length=50,
+	    null=True,
+	    blank=True,
+        )
 
     validation_status = models.CharField(
         verbose_name = 'Status',
         default = 'P',
-        choices = RESULT_STATUS,
+        choices = RESULT_VALIDATION_STATUS,
 	    max_length = 10,
 	    help_text = 'Default is preliminary'
 	    )
@@ -49,8 +55,6 @@ class ResultItem(MyBasicUuidModel):
 	    null=True,
 	    blank=True,
 	    )
-	    
-    
 
     comment = models.CharField(
         verbose_name = 'Validation Comment',
@@ -60,11 +64,8 @@ class ResultItem(MyBasicUuidModel):
 	    help_text = ''
   	    )
 
-    result_item_source = models.CharField(
-        max_length=25,
+    result_item_source = models.ForeignKey(ResultSource,
         verbose_name = 'Source',
-	    null = True,
-        blank = True,	    
 	    help_text = 'Reference to source of information, such as interface, manual, outside lab, ...'
   	    )
 
@@ -76,6 +77,7 @@ class ResultItem(MyBasicUuidModel):
 	    help_text = 'Reference to source, invoice, filename, machine, etc'
   	    )
 
+    
     error_code = models.CharField(
         verbose_name = 'Error codes',
 	    max_length = 50,
@@ -90,8 +92,8 @@ class ResultItem(MyBasicUuidModel):
   	    return '%s %s' % (unicode(self.result), unicode(self.test_code))
     def get_absolute_url(self):
         return "bhp_lab_core/resultitem/%s/" % (self.id)
-    def get_result_printout_url(self):
-        return "/laboratory/result/search/result/%s/" % (self.result.result_identifier)  	
+    def get_result_document_url(self):
+        return "/laboratory/result/document/%s/" % (self.result.result_identifier)  	
     class Meta:
         app_label = 'bhp_lab_core'    
        

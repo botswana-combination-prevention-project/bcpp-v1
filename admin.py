@@ -1,3 +1,4 @@
+from datetime import *
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, Aliquot, AliquotType, AliquotCondition
@@ -6,6 +7,7 @@ from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
 
 class PanelAdmin(MyModelAdmin):
     list_display = ('name','panel_group')
+    search_fields = ['name']
 admin.site.register(Panel, PanelAdmin)
 
 class PanelGroupAdmin(MyModelAdmin):
@@ -18,13 +20,26 @@ admin.site.register(TidPanelMapping, TidPanelMappingAdmin)
 
 class ResultItemAdmin(MyModelAdmin):
     
+    def save_model(self, request, obj, form, change):
+
+        obj.validation_datetime = datetime.today()
+        obj.validation_username = request.user.username
+
+        save = super(ResultItemAdmin, self).save_model(request, obj, form, change)
+        return save
+    
+    
     def change_view(self, request, object_id, extra_context=None):
 
         result = super(ResultItemAdmin, self).change_view(request, object_id, extra_context)
         oResultItem = ResultItem.objects.get(pk=object_id)
         if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
-            result['Location'] = oResultItem.get_result_printout_url()
+            result['Location'] = oResultItem.get_result_document_url()
         return result
+        
+    list_display = ( 'result', 'test_code', 'result_item_value', 'validation_status', 'result_item_datetime', 'result_item_operator', 'result_item_source_reference' )
+    search_fields=['result__result_identifier', 'test_code__code','test_code__name', 'result_item_source_reference',]    
+        
 admin.site.register(ResultItem, ResultItemAdmin)
 
 
@@ -51,14 +66,14 @@ class ResultAdmin(MyModelAdmin):
 
         response = super(ResultAdmin, self).change_view(request, object_id, extra_context)
 
-        result = Result.objects.get(id__exact=object_id)
+        oResult = Result.objects.get(id__exact=object_id)
         
         if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
-            response['Location'] = result.get_search_url()
+            response['Location'] = oResult.get_result_document_url()
         return response
     
-    fields = ('order', 'result_datetime', 'assay_datetime', 'result_source', 'result_source_reference', 'comment')
-    inlines = [ResultItemInlineAdmin]
+    #fields = ('order', 'result_datetime', 'release_status', 'release_datetime', 'comment')
+    #inlines = [ResultItemInlineAdmin]
     
 admin.site.register(Result, ResultAdmin)
 

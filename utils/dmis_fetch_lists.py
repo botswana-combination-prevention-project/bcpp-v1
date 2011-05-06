@@ -5,6 +5,7 @@ def fetch_lists_from_dmis(**kwargs):
     from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
     from bhp_lab_test_code.models import TestCode, TestCodeGroup, TestCodeReferenceList, TestCodeReferenceListItem
     from bhp_lab_core.models import DmisImportHistory
+    from bhp_lab_core.utils import fetch_grading_from_dmis
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
@@ -28,52 +29,24 @@ def fetch_lists_from_dmis(**kwargs):
             datelastmodified as modified \
             from BHPLAB.DBO.ST515Response'
     cursor.execute(sql)
-
-    AliquotType.objects.all().delete()
     for row in cursor:
-        AliquotType.objects.create( 
-            name=row.name,
-            alpha_code=row.alpha_code,
-            numeric_code=row.numeric_code,
-            dmis_reference=row.id
-            )
-            
+        if not AliquotType.objects.filter(numeric_code__exact=row.numeric_code):
+            AliquotType.objects.create( 
+                name=row.name,
+                alpha_code=row.alpha_code,
+                numeric_code=row.numeric_code,
+                dmis_reference=row.id
+                )
     
-
-    #panels
-    sql  = 'select id, substring(PID_name,1,50) as name, \
-            upper(PID) as alpha_code, sample_pip_code as numeric_code,\
-            keyopcreated as user_created,\
-            keyoplastmodified as user_modified,\
-            datecreated as created,\
-            datelastmodified as modified \
-            from BHPLAB.DBO.ST515Response'
-
-    #raise TypeError(sql)
-
-    cursor.execute(sql)
-
-    AliquotType.objects.all().delete()
-     
-    for row in cursor:
-
-        AliquotType.objects.create( 
-            name=row.name,
-            alpha_code=row.alpha_code,
-            numeric_code=row.numeric_code,
-            dmis_reference=row.id
-            )    
 
     #testcodegroups
     sql  = 'select tid FROM BHPLAB.DBO.F0110Response group by tid'
-
     cursor.execute(sql)
-
-    TestCodeGroup.objects.all().delete()
     for row in cursor:
-        TestCodeGroup.objects.create( 
-            code=row.tid,
-            )    
+        if not TestCodeGroup.objects.filter(code__exact=row.tid):
+            TestCodeGroup.objects.create( 
+                code=row.tid,
+                )    
 
     #testcodes
     sql  = 'select utestid as code, substring(longname,1,50) as name, utestid_units as units, \
@@ -87,24 +60,22 @@ def fetch_lists_from_dmis(**kwargs):
 
     cursor.execute(sql)
 
-    TestCode.objects.all().delete()
-     
+    #TestCode.objects.all().delete()
     for row in cursor:
-
         oTestCodeGroup = TestCodeGroup.objects.get(code__exact=row.test_code_group)
-
-        TestCode.objects.create( 
-            code=row.code,
-            name=row.name,
-            units=row.units,
-            test_code_group=oTestCodeGroup,
-            display_decimal_places=row.display_decimal_places,  
-            reference_range_lo=row.reference_range_lo,
-            reference_range_hi=row.reference_range_hi,  
-            uln=row.uln,
-            lln=row.lln,                                                                        
-            is_absolute=row.is_absolute,
-            )    
+        if not TestCode.objects.filter(code=row.code):
+            TestCode.objects.create( 
+                code=row.code,
+                name=row.name,
+                units=row.units,
+                test_code_group=oTestCodeGroup,
+                display_decimal_places=row.display_decimal_places,  
+                reference_range_lo=row.reference_range_lo,
+                reference_range_hi=row.reference_range_hi,  
+                uln=row.uln,
+                lln=row.lln,                                                                        
+                is_absolute=row.is_absolute,
+                )    
 
     #test_code_reference
     sql  = 'SELECT PID, UTESTID as test_code, LONGNAME, UTESTID_UNITS, \
@@ -161,10 +132,8 @@ def fetch_lists_from_dmis(**kwargs):
                 )
             
     #grading
-    sql  = 'select PID_NAME as name, comment as description from bhpdmc.dbo.dm100response'
-    
-    sql = ''
-    
+    fetch_grading_from_dmis()
+
     #panelgroups
     sql  = 'select panel_group as panel_group \
             FROM BHPLAB.DBO.F0100Response \

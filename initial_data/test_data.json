@@ -169,22 +169,6 @@
     }
   }, 
   {
-    "pk": 358, 
-    "model": "bhp_lab_core.aliquottype", 
-    "fields": {
-      "hostname_created": "home", 
-      "name": "bacterial cell line for research", 
-      "created": "2011-04-18 21:24:53", 
-      "dmis_reference": 43, 
-      "user_modified": "", 
-      "modified": "2011-04-18 21:24:53", 
-      "hostname_modified": "home", 
-      "numeric_code": "38", 
-      "alpha_code": "BACTCELL", 
-      "user_created": ""
-    }
-  }, 
-  {
     "pk": 326, 
     "model": "bhp_lab_core.aliquottype", 
     "fields": {

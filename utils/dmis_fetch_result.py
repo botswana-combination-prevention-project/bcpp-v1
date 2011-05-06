@@ -36,7 +36,8 @@ def fetch_or_create_result(**kwargs):
 
     sql ='select headerdate as result_datetime, \
           l21.keyopcreated as user_created, \
-          l21.datecreated as created \
+          l21.datecreated as created, \
+          convert(varchar(36), l21.result_guid) as result_guid \
           from BHPLAB.DBO.LAB21Response as L21 \
           where l21.id=\'%s\' '  % oOrder.order_identifier
     
@@ -46,6 +47,33 @@ def fetch_or_create_result(**kwargs):
 
         result_identifier=AllocateResultIdentifier(oOrder)    
 
+                 
+        
+        oResult = Result.objects.create(
+            result_identifier=result_identifier,
+            order = oOrder,
+            result_datetime=row.result_datetime,
+            comment='imported from dmis',
+            user_created=row.user_created,
+            created=row.created,
+            dmis_result_guid=row.result_guid,
+            )
+            
+
+        sql ='select sample_assay_date, utestid, \
+              result as result_value, \
+              result_quantifier, \
+              status, \
+              mid,\
+              l21d.datelastmodified as result_item_datetime, \
+              l21d.keyopcreated as user_created, \
+              l21.datecreated as created \
+              from BHPLAB.DBO.LAB21Response as L21 \
+              left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
+              where l21.id=\'%s\' and l21d.id is not null'  % oResult.order.order_identifier
+        
+        cursor_resultitem.execute(sql)
+        
         oResultSource=ResultSource.objects.filter(name__iexact='dmis')
         if oResultSource:
             oResultSource=ResultSource.objects.get(name__iexact='dmis')
@@ -55,41 +83,26 @@ def fetch_or_create_result(**kwargs):
                 short_name='dmis',                
                 display_index=10,
                 )
-            oResultSource.save()           
+            oResultSource.save()  
         
-        oResult = Result.objects.create(
-            result_identifier=result_identifier,
-            order = oOrder,
-            result_datetime=row.result_datetime,
-            result_source=oResultSource,
-            result_source_reference=datetime.datetime.today(),
-            comment='imported from dmis',
-            user_created=row.user_created,
-            created=row.created,
-            )
-            
-
-        sql ='select sample_assay_date, utestid, \
-              result as result_value, result_quantifier, status, mid,\
-              l21d.datelastmodified as result_item_datetime, \
-              l21d.keyopcreated as user_created, \
-              l21.datecreated as created \
-              from BHPLAB.DBO.LAB21Response as L21 \
-              left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
-              where l21.id=\'%s\' and l21d.id is not null'  % oResult.order.order_identifier
-        
-        cursor_resultitem.execute(sql)
         for ritem in cursor_resultitem:
             oTestCode=TestCode.objects.get(code__exact=ritem.utestid)
+            if ritem.user_created=='NT AUTHORITY\SYSTEM':
+                user_created='auto'
+            else:
+                user_created=ritem.user_created
+                
             ResultItem.objects.create(
                 result=oResult,
                 test_code=oTestCode,
                 result_item_datetime=ritem.result_item_datetime,                
                 result_item_value=ritem.result_value,
                 result_item_quantifier=ritem.result_quantifier,
-                validation_status=ritem.status,
-                result_item_source=ritem.mid,
-                comment='imported from dmis',
+                validation_status='P',
+                result_item_source=oResultSource,
+                result_item_source_reference=ritem.mid,
+                result_item_operator=user_created,                
+                comment='',
                 )
             
             

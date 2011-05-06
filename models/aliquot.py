@@ -28,6 +28,7 @@ class AliquotType(MyBasicModel):
             RegexValidator('^[A-Z]{2,15}$')
             ],
         max_length=15,
+        unique=True,        
         )
     numeric_code = models.CharField(
         verbose_name = 'Numeric code (2-digit)',
@@ -35,6 +36,7 @@ class AliquotType(MyBasicModel):
         validators = [
             RegexValidator('^[0-9]{2}$')
             ],
+        unique=True,    
         )
         
     dmis_reference = models.IntegerField()        

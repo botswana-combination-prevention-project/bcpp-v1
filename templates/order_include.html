@@ -21,7 +21,7 @@
         {% for order in search_results.object_list %}
             <tr class="{% cycle 'row1' 'row2' %}">
             <td><A href="/admin{{ order.get_absolute_url }}">{{ order.order_identifier|escape}}</A></td>
-            <td>{% for result in order.result_set.all %}<A href="/laboratory{{ result.get_search_url }}">{{ result.result_identifier|escape}}</A>&nbsp;{% endfor %}</td>            
+            <td>{% for result in order.result_set.all %}<A href="{{ result.get_search_url }}">{{ result.result_identifier|escape}}</A>&nbsp;{% endfor %}</td>            
             <td><A href="/admin{{ order.aliquot.receive.protocol.get_absolute_url }}">{{ order.aliquot.receive.protocol|escape}}</A></td>
           	<td>{{order.aliquot }}</td>
             <td>{{ order.panel }} </td>

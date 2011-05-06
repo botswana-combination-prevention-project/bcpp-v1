@@ -3,7 +3,6 @@ from dateutil.relativedelta import *
 from django import template
 from bhp_common.utils import formatted_age
 from bhp_research_protocol.models import ResearchClinic
-from bhp_lab_core.utils import calculate_reference_range_comment, get_reference_range
 register = template.Library()
 
 
@@ -30,17 +29,7 @@ def filter_validation_by_status(value, status):
     else:
         return value  
 
-@register.filter(name='grade_flag')
-def grade_flag(value, result_item):
-    
-    test_code = result_item.test_code 
-    dob=result_item.result.order.aliquot.receive.patient.dob 
-    gender=result_item.result.order.aliquot.receive.patient.gender
-    today = date.today()
-    
-    rdelta = relativedelta(today, dob)
-    
-    return 'G' 
+
 
 @register.filter(name='status_flag')
 def status_flag(value):
@@ -56,26 +45,6 @@ def hide_not_final(value, validation_status):
     else:    
         return '****'
     
-@register.filter(name='reference_range_flag')        
-def reference_range_flag(value, oResultItem):
-    comment  = calculate_reference_range_comment(value, oResultItem)
-    return '%s%s' % (comment['low'], comment['high'])
-
-@register.filter(name='lln')        
-def lln(test_code, oResultItem):
-    oPatient = oResultItem.result.order.aliquot.receive.patient
-    datetime_drawn = oResultItem.result.order.aliquot.receive.datetime_drawn
-    lln  = get_reference_range(range_category='lln', test_code=test_code, dob=oPatient.dob, gender=oPatient.gender, datetime_drawn=datetime_drawn)
-    return lln
-
-@register.filter(name='uln')        
-def uln(test_code, oResultItem):
-    oPatient = oResultItem.result.order.aliquot.receive.patient
-    datetime_drawn = oResultItem.result.order.aliquot.receive.datetime_drawn    
-    uln  = get_reference_range(range_category='uln', test_code=test_code, dob=oPatient.dob, gender=oPatient.gender,datetime_drawn=datetime_drawn)
-    return uln
-
-
 @register.filter(name='quantifier')
 def quantifier(value):
     if value == '=':
