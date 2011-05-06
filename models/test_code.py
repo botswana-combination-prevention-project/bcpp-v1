@@ -12,7 +12,7 @@ class TestCode(MyBasicModel):
         max_length=15, 
         unique=True,
         validators = [
-            RegexValidator('^[A-Z0-9\%\_]{1,15}$', 'Ensure test code is uppercase alphanumeric ( with _ ,%) and no spaces'),
+            RegexValidator('^[A-Z0-9\%\_\-]{1,15}$', 'Ensure test code is uppercase alphanumeric ( with _ ,%) and no spaces'),
             ],
         )
         
