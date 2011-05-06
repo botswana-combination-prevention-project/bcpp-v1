@@ -2,7 +2,7 @@
 <table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
 <thead>
 <th>Visit</th> 
-<th>Collection Date</th> 
+<th>Collection Datetime</th> 
 <th>ReceiveID</th>     
 <th>Receive Date</th>     
 <th>Condition</th> 
@@ -11,7 +11,7 @@
 <tbody>
   <tr class="{% cycle 'row2' 'row1' %}">
      <td>{{ result.order.aliquot.receive.visit }}</td>             
-     <td>{{ result.order.aliquot.receive.datetime_drawn|date:"Y-m-d" }}</td>             
+     <td>{{ result.order.aliquot.receive.datetime_drawn|date:"Y-m-d H:i" }}</td>             
      <td>{{ result.order.aliquot.receive.receive_identifier }}</td>
      <td>{{ result.order.aliquot.receive.receive_datetime|date:"Y-m-d" }}</td>
      <td>{{ result.order.aliquot.condition }}</td>
