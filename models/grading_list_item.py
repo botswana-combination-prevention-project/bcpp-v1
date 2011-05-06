@@ -7,6 +7,8 @@ class GradingListItem(BaseReferenceListItem):
 
     grading_list = models.ForeignKey(GradingList)
     
+    grade = models.IntegerField()
+    
     """
         lower |	upper
         ------|-------------
