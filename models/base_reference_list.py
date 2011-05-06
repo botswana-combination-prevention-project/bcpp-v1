@@ -6,7 +6,7 @@ class BaseReferenceList(MyBasicModel):
 
     name = models.CharField(
         verbose_name="List name",
-        max_length = 25,
+        max_length = 50,
         )
     
     description = models.CharField(
