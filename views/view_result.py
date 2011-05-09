@@ -13,8 +13,8 @@ from laboratory.classes import get_my_limit_queryset
 @login_required
 def view_result(request, **kwargs):
 
-    section_name = kwargs.get('section_name')
-    search_name = kwargs.get('search_name')
+    section_name = 'result'
+    search_name = 'result'
 
     result_identifier = kwargs.get('result_identifier')
     limit = 20

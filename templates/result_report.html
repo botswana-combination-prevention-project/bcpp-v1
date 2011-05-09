@@ -6,27 +6,7 @@
 
         {% if result %}
 
-            <table bgcolor="LightYellow">
-                <thead><th colspan="4">Report Options:</th></thead>
-                <tr>
-                <td>
-                    <form method="GET" action="/laboratory/result/search/result/{{ result.result_identifier|escape}}/pdf/"/">
-                    <input type="submit" value="Print" class="default" />
-                    </form>
-                </td>
-                <td>
-                    <form method="GET" action="/bhp_lab_result_report/result/email/{{ result.result_identifier|escape}}/">
-                    <input type="submit" value="Email" class="default" />
-                    </form>
-                </td>
-                <td>
-                    <form method="GET" action="/admin/bhp_lab_core/result/{{ result.id }}">
-                    <input type="submit" value="Edit" class="default" />
-                    </form>
-                </td>
-                        
-                </tr>
-            </table>        
+ 
             
             <h5>{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} on {{ result.result_datetime|date:"Y-m-d" }}</h5>
             
