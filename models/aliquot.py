@@ -128,10 +128,12 @@ class Aliquot (MyBasicUuidModel):
         )
     
     def __unicode__(self):
-        return self.aliquot_identifier
+        return '%s[%s]' % (self.aliquot_identifier, self.aliquot_type.alpha_code)
 
     def get_absolute_url(self):
         return "/bhp_lab_core/aliquot/%s/" % self.id   
+    def get_search_url(self):
+        return "/laboratory/aliquot/search/aliquot/byword/%s/" % self.id   
 
     class Meta:
         app_label = 'bhp_lab_core'

@@ -39,6 +39,8 @@ class Order(MyBasicUuidModel):
         
     def get_absolute_url(self):
         return "/bhp_lab_core/order/%s/" % self.id   
+    def get_search_url(self):
+        return "/laboratory/order/search/order/byword/%s/" % self.id   
 
     class Meta:
         app_label = 'bhp_lab_core'    

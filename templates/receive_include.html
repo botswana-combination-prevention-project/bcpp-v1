@@ -6,6 +6,7 @@
     	<th>ReceiveID</th>
     	<th>Received</th>
     	<th>Drawn</th>    	
+    	<th>Aliquot</th>
     	<th>Protocol</th>
         <th>Subject</th>    	    	
     	<th>Account</th>
@@ -23,6 +24,10 @@
             <td><A href="/admin{{ receive.get_absolute_url }}">{{ receive.receive_identifier|escape}}</A></td>
           	<td>{{ receive.receive_datetime|date:'Y-m-d' }}</td>
             <td>{{ receive.datetime_drawn|date:'Y-m-d' }}</td>                      	            
+            <td> {% if not receive.aliquot_set.all%}<A href="/admin{{ aliquot.get_absolute_url }}">add aliquot</A>{% endif %}
+            {% if receive.aliquot_set.all.count >= 1 %}            
+                {% for aliquot in receive.aliquot_set.all %}<A href="{{ aliquot.get_search_url }}">{{ aliquot }}</a><BR>{%endfor%}</td>
+            {% endif %}    
             <td><A href="/admin{{ receive.protocol.get_absolute_url }}">{{ receive.protocol|escape}}</A></td>
         	  <td><A href="/admin{{ receive.patient.get_absolute_url }}">{{ receive.patient }}</td>
          	  <td>{% for acc in receive.patient.account.all %}<A href="/admin{{ acc.get_absolute_url }}">{{ acc }}</a>&nbsp;{%endfor%}</td>        	  
