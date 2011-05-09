@@ -24,8 +24,6 @@ class BaseSearch(BaseSearchTemplateContext):
         
         BaseSearchTemplateContext.__init__(self, **kwargs)
 
-        
-
         """ 
             search_name:              
             Comes as a parameter from the Url
