@@ -57,7 +57,7 @@ def view_result_as_pdf(request, **kwargs):
    
     return response
     
-def print_result_as_pdf(**kwargs):
+def batch_print_result_as_pdf(**kwargs):
     import cStringIO as StringIO
     import ho.pisa as pisa
     import sys, os, subprocess
@@ -68,13 +68,30 @@ def print_result_as_pdf(**kwargs):
 
     section_name = 'result'
     search_name = "result"
-    #result_identifier = kwargs.get('result_identifier')
     limit = 20
     template = 'result_report_pdf.html'
     #result_ids = ['1240636-01','1242053-01','1241852-01','1242079-01','1241851-01']
     result_ids = ['1240636-01','1242053-01']
    
     for result_identifier in result_ids:
+        print_result_as_pdf(result_identifier,template)
+                
+    return 
+    
+def print_result_as_pdf(result_identifier,template):
+    import cStringIO as StringIO
+    import ho.pisa as pisa
+    import sys, os, subprocess
+    from math import ceil,trunc
+    from django.template.loader import render_to_string
+    from django.shortcuts import get_object_or_404
+    from bhp_lab_core.models import Result, ResultItem
+
+    section_name = 'result'
+    search_name = 'result'
+    limit = 20
+   
+    if result_identifier is not None:
         file_name = "/home/pmotshegwa/sources/printed_results/%s.pdf" % (result_identifier)
         file = open(file_name, "wb")
          
@@ -126,5 +143,4 @@ def print_result_as_pdf(**kwargs):
                 print e.output
                 
     return 
-    
     
