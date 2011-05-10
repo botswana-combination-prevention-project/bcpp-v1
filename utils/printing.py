@@ -7,12 +7,9 @@ def batch_print_result_as_pdf(**kwargs):
     from django.shortcuts import get_object_or_404
     from bhp_lab_core.models import Result, ResultItem
 
-    section_name = 'result'
-    search_name = "result"
-    limit = 20
     template = 'result_report_pdf.html'
-    #result_ids = ['1240636-01','1242053-01','1241852-01','1242079-01','1241851-01']
-    result_ids = ['1240636-01','1242053-01']
+    result_ids = ['1240636-01','1242053-01','1241852-01','1242079-01','1241851-01']
+    #result_ids = ['1240636-01','1242053-01']
    
     for result_identifier in result_ids:
         print_result_as_pdf(result_identifier,template)
@@ -30,8 +27,28 @@ def print_result_as_pdf(result_identifier,template):
 
     section_name = 'result'
     search_name = 'result'
-    limit = 20
-    num_results_last_page = 22
+    num_items_last_page = 18
+    num_items_first_page = 13
+    num_items_per_page = 23
+    total_page_number = 1    
+    
+    result = get_object_or_404(Result, result_identifier=result_identifier)
+    
+    items = ResultItem.objects.filter(result=result)
+    
+    num_items = items.count()
+    
+    if num_items > num_items_first_page:
+    
+        if (num_items - num_items_first_page) > num_items_last_page:
+        
+            num_items_other = num_items - num_items_first_page - num_items_last_page
+            
+            total_page_number += trunc( ceil( num_items_other / float( num_items_per_page ) ) )
+            
+        else:
+        
+            total_page_number = 2
    
     if result_identifier is not None:
         file_name = "/home/pmotshegwa/sources/printed_results/%s.pdf" % (result_identifier)
