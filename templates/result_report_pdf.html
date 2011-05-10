@@ -28,11 +28,24 @@
 
 </head>
 <body>
-<div id="headerContent" align="center">
-HIV Reference Laboratory - Princess Marina Hospital
-Private Bag BO 320, Gaborone, Botswana * Tel: 3902671 ext 2003 * Fax: 3901284
+
+    
+<div id="headerContent">
+<table>
+<tr>
+    <td>
+    HIV Reference Laboratory - Princess Marina Hospital <br>
+    Private Bag BO 320, Gaborone, Botswana<br> 
+    * Tel: 3902671 ext 2003 * Fax: 3901284
 <pdf:barcode value="{{ result.result_identifier }}">
-<strong><h5>{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} on {{ result.result_datetime|date:"Y-m-d" }}</h5></strong>
+</td>
+<td width="150" align="top">
+    <img width="80%" height="80%" src="/var/www/images/bhp_logo.jpg" />
+</td>
+
+</tr>
+</table>
+<strong><h5 align="center">{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} on {{ result.result_datetime|date:"Y-m-d" }}</h5></strong>
 </div>
 <hr />
 
@@ -46,10 +59,8 @@ Private Bag BO 320, Gaborone, Botswana * Tel: 3902671 ext 2003 * Fax: 3901284
 {% endblock %}
 
 <div id="footerContent">
-    Lab QA Manager: P. Mangwendeza * Lab Manager: S. Moyo * Lab Director: R. Musonda  -- 
-    page 
-<div align="right"><pdf:pagenumber> of {{ total_page_number }}</div>
-
+    Lab QA Manager: P. Mangwendeza * Lab Manager: S. Moyo * Lab Director: R. Musonda  
+    <div align="right">page <pdf:pagenumber> of {{ total_page_number }}</div>
 </div>
 
 </body>
