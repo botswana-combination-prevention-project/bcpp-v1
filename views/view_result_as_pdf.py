@@ -100,7 +100,10 @@ def print_result_as_pdf(result_identifier,template):
 
     section_name = 'result'
     search_name = 'result'
-    num_results_last_page = 22
+    num_items_last_page = 18
+    num_items_first_page = 13
+    num_items_per_page = 23
+    total_page_number = 1 
    
     if result_identifier is not None:
         file_name = "/home/pmotshegwa/sources/printed_results/%s.pdf" % (result_identifier)
@@ -109,7 +112,19 @@ def print_result_as_pdf(result_identifier,template):
         result = get_object_or_404(Result, result_identifier=result_identifier)
         items = ResultItem.objects.filter(result=result)
         
-        total_page_number = trunc(ceil(items.count()/float(18)))
+        num_items = items.count()
+    
+        if num_items > num_items_first_page:
+    
+            if (num_items - num_items_first_page) > num_items_last_page:
+        
+                num_items_other = num_items - num_items_first_page - num_items_last_page
+            
+                total_page_number += trunc( ceil( num_items_other / float( num_items_per_page ) ) )
+            
+            else:
+        
+                total_page_number = 2
         
         payload = {
             'pagesize': 'A4',
