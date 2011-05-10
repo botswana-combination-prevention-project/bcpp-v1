@@ -20,15 +20,29 @@ def view_result_as_pdf(request, **kwargs):
     section_name = kwargs.get('section_name')
     search_name = "result"
     result_identifier = kwargs.get('result_identifier')
-    limit = 20
     template = 'result_report_pdf.html'
-                  
+    num_items_last_page = 18
+    num_items_first_page = 13
+    num_items_per_page = 23
+    total_page_number = 1    
+    
     result = get_object_or_404(Result, result_identifier=result_identifier)
+    
     items = ResultItem.objects.filter(result=result)
     
-    total_page_number = trunc(ceil(items.count()/float(18)))
+    num_items = items.count()
     
-    #raise TypeError(items.count()/float(18))
+    if num_items > num_items_first_page:
+    
+        if (num_items - num_items_first_page) > num_items_last_page:
+        
+            num_items_other = num_items - num_items_first_page - num_items_last_page
+            
+            total_page_number += trunc( ceil( num_items_other / float( num_items_per_page ) ) )
+            
+        else:
+        
+            total_page_number = 2
     
     payload = {
         'pagesize': 'A4',
@@ -66,9 +80,6 @@ def batch_print_result_as_pdf(**kwargs):
     from django.shortcuts import get_object_or_404
     from bhp_lab_core.models import Result, ResultItem
 
-    section_name = 'result'
-    search_name = "result"
-    limit = 20
     template = 'result_report_pdf.html'
     #result_ids = ['1240636-01','1242053-01','1241852-01','1242079-01','1241851-01']
     result_ids = ['1240636-01','1242053-01']
@@ -89,7 +100,7 @@ def print_result_as_pdf(result_identifier,template):
 
     section_name = 'result'
     search_name = 'result'
-    limit = 20
+    num_results_last_page = 22
    
     if result_identifier is not None:
         file_name = "/home/pmotshegwa/sources/printed_results/%s.pdf" % (result_identifier)
@@ -119,7 +130,6 @@ def print_result_as_pdf(result_identifier,template):
         file_data = render_to_string(template, payload,)
         myfile = StringIO.StringIO()
         pdf = pisa.CreatePDF(file_data, myfile)
-        #myfile.seek(0)
               
         if pdf.err:
              print "*** %d ERRORS OCCURED" % pdf.err
@@ -128,12 +138,7 @@ def print_result_as_pdf(result_identifier,template):
             # Write pdf file to disk
             file.write(myfile.getvalue())
             file.close()
-        
-            #
-            if sys.platform == "darwin":
-                command = "open {0}".format( file_name )
-            else:
-                command = "lp {0}".format( file_name )
+            command = "lp {0}".format( file_name )
 
             try:
                 p = subprocess.Popen(command, shell = True)
