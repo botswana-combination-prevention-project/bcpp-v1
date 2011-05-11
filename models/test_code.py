@@ -35,34 +35,6 @@ class TestCode(MyBasicModel):
         blank = True,        
         )
 
-    reference_range_hi = models.DecimalField(
-        verbose_name = 'Ref. Range Hi',
-        decimal_places = 4,
-        max_digits = 10,
-        )
-
-    reference_range_lo = models.DecimalField(
-        verbose_name = 'Ref. Range Lo',
-        decimal_places = 4,
-        max_digits = 10,
-        )
-    
-    lln = models.DecimalField(
-        verbose_name = 'LLN',
-        decimal_places = 4,
-        max_digits = 10,
-        null = True,
-        blank = True,        
-        )
-
-    uln = models.DecimalField(
-        verbose_name = 'ULN',
-        decimal_places = 4,
-        max_digits = 10,
-        null = True,
-        blank = True,        
-        )
-
     is_absolute = models.CharField(
         verbose_name = 'Is the value absolute or calculated?',
         max_length = '15',
