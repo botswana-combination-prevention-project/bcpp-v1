@@ -41,10 +41,10 @@ class BaseReferenceListItem(MyBasicModel):
     
     age_high_quantifier = models.CharField(max_length=10, blank=True)
     
-    panic_value = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
+    panic_value_low = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
     
-    panic_value_quantifier = models.CharField(max_length=10, null=True, blank=True)
-        
+    panic_value_high = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
+      
     comment = models.CharField(
         verbose_name = "Comment", 
         max_length=250, 
