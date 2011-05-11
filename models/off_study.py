@@ -23,7 +23,7 @@ class OffStudy(MyBasicUuidModel):
 
     registered_subject = models.OneToOneField(RegisteredSubject)
 
-    off_study_date=models.DateField(
+    date_off_study=models.DateField(
         verbose_name="Off-study Date",
         help_text="",
         )

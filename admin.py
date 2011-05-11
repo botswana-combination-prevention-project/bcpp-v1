@@ -19,7 +19,9 @@ admin.site.register(RandomizedSubject)
 
 admin.site.register(OffStudyReason)
 
-admin.site.register(OffStudy)
+class OffStudyAdmin (MyModelAdmin):
+    pass
+admin.site.register(OffStudy, OffStudyAdmin)
 
 
 class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
