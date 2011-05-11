@@ -4,6 +4,7 @@ from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
 from fields import HostnameCreationField, HostnameModificationField, MyUUIDField, OmangField
+#from validators import datetime_not_before_study_start, datetime_not_future
 
 class MyBasicModel(TimeStampedModel):
     """
@@ -31,6 +32,18 @@ class MyBasicUuidModel(MyBasicModel):
 
     class Meta:
         abstract = True
+
+"""
+class BaseReportModel(MyBasicUuidModel):
+
+    report_datetime = models.DateTimeField("Today's date",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future,])
+
+    class Meta:
+        abstract = True   
+"""
 
 class MyBasicListModel(MyBasicModel):
     """Basic List Model. Not intended to be edited in the field (decentralized environment)"""
