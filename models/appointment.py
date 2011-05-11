@@ -5,7 +5,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import BaseAppointment
 from bhp_visit.models import VisitDefinition
 
-class RegisteredSubjectAppointment(BaseAppointment):
+class Appointment(BaseAppointment):
 
     registered_subject = models.ForeignKey(RegisteredSubject) 
         
