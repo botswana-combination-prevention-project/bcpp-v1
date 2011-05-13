@@ -448,7 +448,7 @@ def fetch_or_create_aliquotcondition( **kwargs ):
         display_index = AliquotCondition.objects.aggregate(Max('display_index'),)
         if not display_index:
             display_index = 10
-        else
+        else:
             display_index = display_index + 10
                 
         oCondition = AliquotCondition(
