@@ -27,6 +27,14 @@ ART_STATUS = (
     ('NAIVE', 'No, have never taken ART'),
 )
 
+ART_STATUS_UNKNOWN = (
+    ('ON', 'ON ART'),
+    ('STOPPED', 'Stopped'),
+    ('NAIVE', 'Naive'),
+    ('UNKNOWN', 'Unknown'),    
+    
+)
+
 ART_STATUS_CONFIRM = (
     ( 'OPD', '1. Show OPD/IDCC card' ),
     ( 'Pills','2. Show Pills'),
@@ -112,6 +120,7 @@ POS_NEG =(
     ('IND', 'Indeterminate'),
 )
 
+
 POS_NEG_REFUSED =(
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
@@ -123,6 +132,13 @@ POS_NEG_ANY = (
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
     ('ANY', 'Any'),
+)
+
+
+POS_NEG_UNKNOWN = (
+    ('POS', 'Positive'),
+    ('NEG', 'Negative'),
+    ('UNKNOWN', 'Unknown'),
 )
 
 POS_NEG_ACU = (
