@@ -1,7 +1,9 @@
+from datetime import datetime, timedelta
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_visit.choices import VISIT_INTERVAL_UNITS
+from bhp_visit.utils import get_lower_window_days, get_upper_window_days
 
 
 """
@@ -28,20 +30,35 @@ class VisitDefinition(MyBasicUuidModel):
         verbose_name = "Time point",
         )
   
-    time_point_unit = models.CharField(
-        max_length=15,    
-        verbose_name="Units for visit intervals (default is days)",
+    lower_window = models.IntegerField(
+        verbose_name="Window lower bound",
+        )
+    lower_window_unit = models.CharField(
+        max_length=10,    
+        verbose_name="Lower bound units",
         choices=VISIT_INTERVAL_UNITS,
+        default = 'D'
         )        
-    time_point_window_period_pre = models.IntegerField(
-        verbose_name="Pre-visit interval of window period",
-        help_text="time interval from visit time point to beginning of visit window",
+    upper_window = models.IntegerField(
+        verbose_name="Window upper bound",
         )
-    time_point_window_period_post = models.IntegerField(
-        verbose_name="Post-visit interval of window period",
-        help_text="time interval from visit time point to end of visit window",
-        )
+    upper_window_unit = models.CharField(
+        max_length=10,    
+        verbose_name="Upper bound units",
+        choices=VISIT_INTERVAL_UNITS,
+        default = 'D'
+        )        
     
+    def get_lower_window_datetime(self, appt_datetime):
+        days = get_lower_window_days(self.lower_window, self.lower_window_unit)
+        td = timedelta(days=days)
+        return appt_datetime - td
+        
+    def get_upper_window_datetime(self, appt_datetime):
+        days = get_upper_window_days(self.upper_window, self.upper_window_unit)
+        td = timedelta(days=days)
+        return appt_datetime + td
+        
     def __unicode__(self):
         return '%s: %s' % (self.code, self.title)
     

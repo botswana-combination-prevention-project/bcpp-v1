@@ -1,7 +1,10 @@
 from datetime import date, datetime, timedelta
 from django import forms
-from django.contrib.admin import widgets                                       
+from django.contrib.admin import widgets   
+from models import Appointment                                    
 
+
+"""
 class BaseVisitTrackingForm(forms.ModelForm):
     
     class Meta:
@@ -11,9 +14,8 @@ class BaseVisitTrackingForm(forms.ModelForm):
 
         cleaned_data = self.cleaned_data
     
-        """
-        check subjectconsent initials with householdstructuremember initials
-        """
+       
+        #check subjectconsent initials with householdstructuremember initials
         my_initials = cleaned_data.get("initials")
         my_household_structure_member = cleaned_data.get("household_structure_member")
         if my_initials and my_household_structure_member:
@@ -21,25 +23,21 @@ class BaseVisitTrackingForm(forms.ModelForm):
             if my_household_structure_member.initials != my_initials:
                 raise forms.ValidationError("Initials do not match. The initials recorded in the household member's information are '%s' but you wrote '%s'" % (my_household_structure_member.initials,my_initials))
             
-        """
-        check first name matches householdstructuremember
-        """
+        
+        #check first name matches householdstructuremember
         my_first_name = cleaned_data.get("first_name")
         if my_first_name and my_household_structure_member:
             if my_household_structure_member.first_name != my_first_name:
                 raise forms.ValidationError("First name does not match. The first name recorded in the household member's information are '%s' but you wrote '%s'" % (my_household_structure_member.first_name,my_first_name))
-        
-        """
-        check subjectconsent gender with householdstructuremember gender
-        """
+      
+        #check subjectconsent gender with householdstructuremember gender
         my_gender = cleaned_data.get("gender")
         if my_gender and my_household_structure_member:
             if my_household_structure_member.gender != my_gender:
                 raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (my_household_structure_member.gender, my_gender))
 
-        """
-        check age now
-        """
+     
+        #check age now
         this_dob = cleaned_data.get("dob")
         if this_dob and my_household_structure_member and this_dob != date.today():
             this_age = (date.today() - this_dob)
@@ -51,3 +49,32 @@ class BaseVisitTrackingForm(forms.ModelForm):
 
         # Always return the full collection of cleaned data.
         return cleaned_data
+"""
+        
+class AppointmentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Appointment        
+
+    def clean(self):
+
+        cleaned_data = self.cleaned_data  
+
+        appt_datetime = cleaned_data.get("appt_datetime")
+        appt_status = cleaned_data.get("appt_status")
+
+        t1 = date.today() - appt_datetime.date()
+        if appt_status == 'Cancelled':
+            pass
+        elif appt_status == 'Subject Seen':
+            #cannot be future
+            if t1.days < 0:
+                raise forms.ValidationError("Subject has been 'seen'. Appointment date cannot be a future date. You wrote '%s'" % appt_datetime) 
+        else:
+            #must be future
+            if t1.days >= 0:            
+                raise forms.ValidationError("If subject has not been 'seen', the appointment date must a future date. You wrote '%s'" % appt_datetime)             
+
+        # Always return the full collection of cleaned data.
+        return cleaned_data        
+

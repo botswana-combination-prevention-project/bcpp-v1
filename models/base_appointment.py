@@ -30,23 +30,23 @@ class BaseAppointment (MyBasicUuidModel):
     appt_datetime = models.DateTimeField(
         verbose_name=_("Appointment date and time"),
         help_text="",
-        validators=[datetime_is_future,],
+        #validators=[datetime_is_future,], check this at the form level...
         )
     appt_status = models.CharField(
         verbose_name = _("Status"),
         choices=APPT_STATUS,
         max_length=25,
         )
-    first_name = NameField(
-        verbose_name = _("First name"),
-        max_length=25,
-        )
+    #first_name = NameField(
+    #    verbose_name = _("First name"),
+    #    max_length=25,
+    #    )
 
-    initials = InitialsField()
+    #initials = InitialsField()
     
-    dob = DobField(
-        validators=[date_not_future,],
-        )
+    #dob = DobField(
+    #    validators=[date_not_future,],
+    #    )
 
     appt_reason = models.CharField(
         verbose_name=_("Reason for appointment"), 

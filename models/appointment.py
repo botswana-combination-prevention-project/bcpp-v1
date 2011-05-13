@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_registration.models import RegisteredSubject
@@ -22,14 +23,21 @@ class Appointment(BaseAppointment):
             MinValueValidator(0),
             MaxValueValidator(9),
             ],
+        default = 0,    
+        null = True,
+        blank = True,    
         help_text=_("A decimal to represent an additional report to be included with the original visit report. (NNNN.0)"),    
         )     
 
     def __unicode__(self):
-        return "%s for %s [%s - %s]" % (self.registered_subject, self.visit_definition.code, self.appt_datetime, self.appt_status) 
+        return "%s for %s.%s [%s - %s]" % (self.registered_subject, self.visit_definition.code, self.visit_instance,self.appt_datetime, self.appt_status) 
+
+    def get_absolute_url(self):
+        return reverse('admin:bhp_visit_appointment_change', args=(self.id,))
 
     class Meta:
-        unique_together = [('registered_subject', 'visit_definition', 'visit_instance')]
+        unique_together = [('registered_subject', 'visit_definition', 'visit_instance',),]
+        ordering = ['registered_subject','appt_datetime', ]
         app_label = 'bhp_visit' 
 
 

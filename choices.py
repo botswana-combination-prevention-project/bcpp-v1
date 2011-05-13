@@ -1,6 +1,8 @@
 VISIT_INTERVAL_UNITS = (
-    ('hours', 'Hours'),
-    ('days', 'Days'),
+    ('H', 'Hour'),
+    ('D', 'Day'),
+    ('M', 'Month'),
+    ('Y', 'Year'),            
     )
     
 APPT_STATUS = (
