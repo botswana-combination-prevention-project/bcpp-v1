@@ -4,6 +4,7 @@
 <th colspan="2">Patient ID (Initials)</th>   	    	
 <th>Protocol</th> 
 <th>Clinic Site</th> 
+<th>Clinician</th> 
 <th>Gender</th> 
 <th>Born</th>
 <th>Age</th>
@@ -13,6 +14,7 @@
      <td colspan="2"><a href="/admin{{ result.order.aliquot.receive.patient.get_absolute_url }}?return_object=result&object_id={{result.pk}}">{{ result.order.aliquot.receive.patient.subject_identifier }}&nbsp;({{ result.order.aliquot.receive.patient.initials|upper }})</A></td>
      <td>{{ result.order.aliquot.receive.protocol }}</td>
      <td>{{ result.order.aliquot.receive.site.site_identifier|result_clinic_name:result.order.aliquot.receive.protocol.protocol_identifier }}</td>
+     <td>{{ result.order.aliquot.receive.clinician_initials|upper }}</td>
      <td>{{ result.order.aliquot.receive.patient.gender|gender }}</td>
      <td>{{ result.order.aliquot.receive.patient.dob|dob_or_dob_estimated:result.order.aliquot.receive.patient.is_dob_estimated }}</td>
      <td>{{ result.order.aliquot.receive.patient.dob|result_age:result.order.aliquot.receive.datetime_drawn }}</td>                                                     
