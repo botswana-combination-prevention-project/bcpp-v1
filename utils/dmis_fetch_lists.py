@@ -103,7 +103,7 @@ def fetch_lists_from_dmis(**kwargs):
     else:
         oTestCodeReferenceList = TestCodeReferenceList.objects.get(name__iexact='BHPLAB_NORMAL_RANGES_201005')        
 
-    TestCodeReferenceListItem.objects.all().delete()    
+    #TestCodeReferenceListItem.objects.all().delete()    
     
     for row in cursor:
         oTestCode = TestCode.objects.filter(code__iexact=row.test_code)
@@ -139,7 +139,7 @@ def fetch_lists_from_dmis(**kwargs):
             FROM BHPLAB.DBO.F0100Response \
             group by panel_group'
     cursor.execute(sql)
-    PanelGroup.objects.all().delete()
+    #PanelGroup.objects.all().delete()
     for row in cursor:
         PanelGroup.objects.create( 
             name=row.panel_group,
@@ -151,7 +151,7 @@ def fetch_lists_from_dmis(**kwargs):
             group by substring(objname,1,50), pid, panel_group'
             
     cursor.execute(sql)
-    Panel.objects.all().delete()
+    #Panel.objects.all().delete()
     for row in cursor:
         oPanelGroup = PanelGroup.objects.get(name=row.panel_group)
         oPanel = Panel.objects.filter(name__iexact=row.name)
@@ -181,6 +181,7 @@ if __name__ == "__main__":
 
     setup_environ(settings)
     print 'fetching lab lists....'
-    fetch_lists_from_dmis()
+    print 'Cancelled, erik, you need to check for delete calls...
+    #fetch_lists_from_dmis()
     print 'Done'
     sys.exit (0)              

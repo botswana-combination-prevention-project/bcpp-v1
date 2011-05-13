@@ -13,9 +13,9 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     order_identifier = kwargs.get('order_identifier')    
     aliquot_identifier = kwargs.get('aliquot_identifier')
 
-    Order.objects.all().delete()
-    Aliquot.objects.all().delete()
-    Receive.objects.all().delete()
+    #Order.objects.all().delete()
+    #Aliquot.objects.all().delete()
+    #Receive.objects.all().delete()
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
@@ -36,7 +36,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
     
     #note that some records will not be imported for having>1
-    sql  = 'select top 500 min(l.id) as dmis_reference, \
+    sql  = 'select top 20000 min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
             l.tid, \
             l.sample_condition, \
@@ -69,7 +69,6 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     cursor.execute(sql)
      
     for row in cursor:
-
         oReceive = fetch_or_create_receive( 
             receive_identifier = row.receive_identifier,
             protocol_identifier = row.protocol_identifier,
