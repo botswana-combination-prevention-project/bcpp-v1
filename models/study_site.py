@@ -15,3 +15,5 @@ class StudySite(MyBasicUuidModel):
     class Meta:
         unique_together = [('site_code', 'site_name')]   
         ordering = ['site_code',] 
+        app_label='bhp_variables'
+        
