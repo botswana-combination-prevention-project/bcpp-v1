@@ -10,7 +10,8 @@ def calculate_grade(**kwargs):
     oTestCode = kwargs.get('test_code')
     datetime_drawn = kwargs.get('datetime_drawn')
     dob=kwargs.get('dob')
-    gender=kwargs.get('gender')    
+    gender=kwargs.get('gender')
+    hiv_status=kwargs.get('hiv_status')            
 
     #get age in days using the collection date as a reference
     age_in_days = get_age_in_days(datetime_drawn, dob)
@@ -20,6 +21,7 @@ def calculate_grade(**kwargs):
                                     grading_list__name__iexact=REFLIST,
                                     test_code=oTestCode, 
                                     gender__icontains=gender,
+                                    hiv_status=hiv_status,
                                     )    
     grade=None
 
