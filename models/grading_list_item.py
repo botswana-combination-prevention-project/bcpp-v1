@@ -30,7 +30,7 @@ class GradingListItem(BaseReferenceListItem):
         return get_upper_range_days(self.age_high, self.age_high_unit)
 
     def __unicode__(self):
-        return "%s" % (self.test_code)
+        return "%s" % ( unicode(self.test_code) )
     
     class Meta:
         app_label = 'bhp_lab_grading'  
