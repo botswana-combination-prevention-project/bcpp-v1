@@ -181,7 +181,7 @@ if __name__ == "__main__":
 
     setup_environ(settings)
     print 'fetching lab lists....'
-    print 'Cancelled, erik, you need to check for delete calls...
+    print 'Cancelled, erik, you need to check for delete calls...'
     #fetch_lists_from_dmis()
     print 'Done'
     sys.exit (0)              
