@@ -1,7 +1,9 @@
 
+
 def fetch_receive_from_dmis(process_status, **kwargs):
     import datetime
     import pyodbc
+    from django.db.models import Avg, Max, Min, Count    
     from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
     from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
@@ -347,6 +349,7 @@ def fetch_or_create_aliquot( **kwargs ):
     
     import datetime
     import pyodbc
+    from django.db.models import Avg, Max, Min, Count    
     from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
     from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium, Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
@@ -354,7 +357,9 @@ def fetch_or_create_aliquot( **kwargs ):
     from bhp_lab_core.models import DmisImportHistory
 
     oReceive = kwargs.get('receive')
-    oCondition = AliquotCondition.objects.get(short_name__exact=kwargs.get('condition'))
+    
+    oCondition = fetch_or_create_aliquotcondition(kwargs.get('condition'))
+    
     tid = kwargs.get('tid')
 
     #create primary
@@ -426,6 +431,34 @@ def fetch_or_create_aliquot( **kwargs ):
 
     return oAliquot
 
+def fetch_or_create_aliquotcondition( **kwargs ):
+
+    import datetime
+    import pyodbc
+    from django.db.models import Avg, Max, Min, Count    
+    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
+    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium, Panel, PanelGroup
+    from bhp_lab_registration.models import Patient, Account
+    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
+    from bhp_lab_core.models import DmisImportHistory
+
+    if AliquotCondition.objects.filter(short_name__exact=kwargs.get('condition')):
+        oCondition = AliquotCondition.objects.get(short_name__exact=kwargs.get('condition'))
+    else:        
+        display_index = AliquotCondition.objects.aggregate(Max('display_index'),)
+        if not display_index:
+            display_index = 10
+        else
+            display_index = display_index + 10
+                
+        oCondition = AliquotCondition(
+            name = kwargs.get('condition'),
+            short_name = kwargs.get('condition'),
+            display_index = display_index,
+            )    
+        oCondition.save()
+        
+    return oCondition        
 
 if __name__ == "__main__":
     
