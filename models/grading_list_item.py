@@ -2,10 +2,17 @@ from django.db import models
 from bhp_lab_reference.models import BaseReferenceListItem
 from bhp_lab_reference.utils import get_lower_range_days, get_upper_range_days
 from bhp_lab_grading.models import GradingList
+from bhp_common.choices import POS_NEG_ANY
 
 class GradingListItem(BaseReferenceListItem):
 
     grading_list = models.ForeignKey(GradingList)
+    
+    hiv_status = models.CharField(
+        max_length = 10,
+        choices = POS_NEG_ANY,
+        default='ANY',
+        )
     
     grade = models.IntegerField()
     
