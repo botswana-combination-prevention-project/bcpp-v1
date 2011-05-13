@@ -19,6 +19,7 @@ def fetch_grading_from_dmis(**kwargs):
            age_min as age_low, lower(substring(age_interval_min,1,1)) as age_low_unit, range_q_min as age_low_quantifier,\
            age_max as age_high, lower(substring(age_interval_max,1,1)) as age_high_unit, range_q_max as age_high_quantifier,\
            grade,\
+           case hiv_status when 2 then 'NEG' when 1 then 'POS' else 'ANY' end as hiv_status, \
            range_scale as utestid_decimal \
            FROM bhpdmc.dbo.dm100response AS dm100 \
            LEFT join  bhpdmc.dbo.dm100responseQ001X0 AS dm100d ON dm100.q001x0=dm100d.qid1x0 \
@@ -52,6 +53,7 @@ def fetch_grading_from_dmis(**kwargs):
                 test_code=oTestCode,
                 grade = row.grade,
                 gender = 'MF',
+                hiv_status = row.hiv_status,
                 uln = ('%.4f' % (row.uln,)),
                 lln = ('%.4f' % (row.lln,)),
                 age_low = row.age_low,
