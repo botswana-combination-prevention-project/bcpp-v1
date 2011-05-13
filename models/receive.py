@@ -1,9 +1,9 @@
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
+from bhp_common.fields import InitialsField
 from bhp_lab_registration.models import Patient
 from bhp_research_protocol.models import Protocol, Site
-
 from bhp_lab_core.models import SpecimenType
 
 """ 
@@ -43,6 +43,8 @@ class Receive (MyBasicUuidModel):
         verbose_name = "Visit",
         max_length=25,
         )
+    
+    clinician_initials = InitialsField()
             
     dmis_reference = models.IntegerField()
     
