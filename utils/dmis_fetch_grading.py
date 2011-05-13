@@ -46,7 +46,6 @@ def fetch_grading_from_dmis(**kwargs):
         if oTestCode:
             oTestCode = TestCode.objects.get(code__iexact=row.test_code)
             panic_value = None
-            panic_value_quantifier = None            
                     
             GradingListItem.objects.create( 
                 grading_list = oGradingList,
@@ -61,8 +60,8 @@ def fetch_grading_from_dmis(**kwargs):
                 age_high = row.age_high,
                 age_high_unit = row.age_high_unit.upper() ,
                 age_high_quantifier = row.age_high_quantifier,
-                panic_value = panic_value,
-                panic_value_quantifier = panic_value_quantifier,
+                panic_value_low = panic_value,
+                panic_value_high = panic_value,                
                 )
                 
                 
