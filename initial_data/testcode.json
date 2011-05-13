@@ -1,5 +1,467 @@
 [
   {
+    "pk": 1, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "-1", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "000", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "101", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "110", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "201", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "202", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "203", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "204", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "205", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "206", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "210", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "301", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "302", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "401", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "411", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "430", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "440", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "501", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "702", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "731", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "732", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "801", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "802", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "830", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "901", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "944", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "945", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "946", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "947", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "948", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "949", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "950", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "bhp_lab_test_code.testcodegroup", 
+    "fields": {
+      "hostname_created": "s007", 
+      "code": "951", 
+      "name": null, 
+      "created": "2011-05-06 15:58:16", 
+      "user_modified": "", 
+      "modified": "2011-05-06 15:58:16", 
+      "hostname_modified": "s007", 
+      "user_created": ""
+    }
+  }, 
+  {
     "pk": 82, 
     "model": "bhp_lab_test_code.testcode", 
     "fields": {
@@ -2239,468 +2701,6 @@
       "formula": null, 
       "test_code_group": 18, 
       "is_absolute": "absolute"
-    }
-  }, 
-  {
-    "pk": 1, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "-1", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 2, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "000", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 3, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "101", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 4, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "110", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 5, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "201", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 6, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "202", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 7, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "203", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 8, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "204", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 9, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "205", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 10, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "206", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 11, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "210", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 12, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "301", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 13, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "302", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 14, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "401", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 15, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "411", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 16, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "430", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 17, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "440", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 18, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "501", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 19, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "702", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 20, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "731", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 21, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "732", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 22, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "801", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 23, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "802", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 24, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "830", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 25, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "901", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 26, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "944", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 27, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "945", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 28, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "946", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 29, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "947", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 30, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "948", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 31, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "949", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 32, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "950", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
-    }
-  }, 
-  {
-    "pk": 33, 
-    "model": "bhp_lab_test_code.testcodegroup", 
-    "fields": {
-      "hostname_created": "s007", 
-      "code": "951", 
-      "name": null, 
-      "created": "2011-05-06 15:58:16", 
-      "user_modified": "", 
-      "modified": "2011-05-06 15:58:16", 
-      "hostname_modified": "s007", 
-      "user_created": ""
     }
   }, 
   {
@@ -5237,6 +5237,32 @@
       "user_created": "smoyo", 
       "panic_value_high": null, 
       "age_low": 18, 
+      "test_code_reference_list": 1
+    }
+  }, 
+  {
+    "pk": 309, 
+    "model": "bhp_lab_test_code.testcodereferencelistitem", 
+    "fields": {
+      "comment": "", 
+      "hostname_created": "s007", 
+      "age_low_quantifier": ">=", 
+      "age_high": 17, 
+      "created": "2011-05-13 16:46:52", 
+      "age_high_unit": "Y", 
+      "gender": "MF", 
+      "user_modified": "", 
+      "modified": "2011-05-13 16:46:53", 
+      "hostname_modified": "s007", 
+      "age_low_unit": "D", 
+      "age_high_quantifier": "<=", 
+      "test_code": 54, 
+      "panic_value_low": null, 
+      "uln": "0.2000", 
+      "lln": "0.0000", 
+      "user_created": "smoyo", 
+      "panic_value_high": null, 
+      "age_low": 31, 
       "test_code_reference_list": 1
     }
   }, 
