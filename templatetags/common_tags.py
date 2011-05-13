@@ -1,11 +1,29 @@
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from bhp_common.utils import formatted_age, round_up
 
 register = template.Library()
 
+
+
+@register.filter(name='model_verbose_name')
+def model_verbose_name(contenttype):
+    return contenttype.model_class()._meta.verbose_name
+    
+@register.filter(name='admin_url_from_contenttype')
+def admin_url_from_contenttype(contenttype, object_id=''):
+    if contenttype.model_class().objects.filter(pk=object_id):
+        view = 'admin:%s_%s_change' % (contenttype.app_label, contenttype.model)
+        view = str(view)
+        return reverse(view, args=(object_id,))
+    else:
+        view = 'admin:%s_%s_add' % (contenttype.app_label, contenttype.model)
+        view = str(view)
+        return reverse(view)
+    
 @register.filter(name='user_full_name')
 def user_full_name(username):
     if not username:
