@@ -49,7 +49,7 @@ def fetch_lists_from_dmis(**kwargs):
                 )    
 
     #testcodes
-    sql  = 'select utestid as code, substring(longname,1,50) as name, utestid_units as units, \
+    sql  = 'select ltrim(rtrim(utestid)) as code, substring(longname,1,50) as name, utestid_units as units, \
             utestid_dec as display_decimal_places, \
             range_low as reference_range_lo, \
             range_high as reference_range_hi, \

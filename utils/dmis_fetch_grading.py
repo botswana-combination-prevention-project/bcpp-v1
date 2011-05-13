@@ -42,10 +42,13 @@ def fetch_grading_from_dmis(**kwargs):
     GradingListItem.objects.all().delete()    
     
     for row in cursor:
-        oTestCode = TestCode.objects.filter(code__iexact=row.test_code)
+        
+        test_code = row.test_code.strip(' \t\n\r')
+
+        oTestCode = TestCode.objects.filter(code__iexact=test_code)
 
         if oTestCode:
-            oTestCode = TestCode.objects.get(code__iexact=row.test_code)
+            oTestCode = TestCode.objects.get(code__iexact=test_code)
             panic_value = None
                     
             GradingListItem.objects.create( 
@@ -70,8 +73,8 @@ def fetch_grading_from_dmis(**kwargs):
 if __name__ == "__main__":
     
     import sys,os
-    sys.path.append('/home/django/source/')
-    sys.path.append('/home/django/source/bhplab/')
+    sys.path.append('/home/erikvw/source/')
+    sys.path.append('/home/erikvw/source/bhplab/')
     os.environ['DJANGO_SETTINGS_MODULE'] ='bhplab.settings'
     from django.core.management import setup_environ
     from bhplab import settings
