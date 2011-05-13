@@ -358,7 +358,7 @@ def fetch_or_create_aliquot( **kwargs ):
 
     oReceive = kwargs.get('receive')
     
-    oCondition = fetch_or_create_aliquotcondition(kwargs.get('condition'))
+    oCondition = fetch_or_create_aliquotcondition( condition=kwargs.get('condition') )
     
     tid = kwargs.get('tid')
 
