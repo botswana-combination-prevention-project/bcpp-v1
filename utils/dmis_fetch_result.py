@@ -86,7 +86,7 @@ def fetch_or_create_result(**kwargs):
             else:
                 user_created=ritem.user_created
             # evaluate validation_reference
-            if validation_reference == '-9':
+            if ritem.validation_reference == '-9':
                 # this is an item from GetResults TCP connected to PSM
                 result_item_source = fetch_or_create_resultsource(interface='psm_interface')                
                 result_item_source_reference = ''
@@ -101,27 +101,27 @@ def fetch_or_create_result(**kwargs):
                 result_item_source = fetch_or_create_resultsource(interface='cd4_interface')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference == 'lab05'                               
-            elif re.search('^LAB23:', validation_reference):          
+            elif re.search('^LAB23:', ritem.validation_reference):          
                 # manual entry and validated via the LAB23 validation path                           
                 result_item_source = fetch_or_create_resultsource(interface='manual_entry')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference == 'lab23'                               
-            elif re.search('^IMPORT', validation_reference):          
+            elif re.search('^IMPORT', ritem.validation_reference):          
                 # manual entry and validated via the LAB23 validation path                           
                 result_item_source = fetch_or_create_resultsource(interface='direct_import')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference == 'auto'     
-            elif re.search('^LB003:', validation_reference):          
+            elif re.search('^LB003:', ritem.validation_reference):          
                 # manual entry and validated via the LAB23 validation path                           
                 result_item_source = fetch_or_create_resultsource(interface='direct_import')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference == 'auto'     
-            elif re.search('^LB004:', validation_reference):          
+            elif re.search('^LB004:', ritem.validation_reference):          
                 # manual entry and validated via the LAB23 validation path                           
                 result_item_source = fetch_or_create_resultsource(interface='direct_import')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference == 'auto'  
-            elif re.search('^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$', validation_reference):                   
+            elif re.search('^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$', ritem.validation_reference):                   
                 result_item_source = fetch_or_create_resultsource(interface='manual_entry')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference == 'auto'  
