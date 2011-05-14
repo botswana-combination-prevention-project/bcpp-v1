@@ -156,7 +156,7 @@ def fetch_or_create_resultsource( **kwargs ):
     display_index = 0
     # populate if not already ...
     for interface in interfaces:
-        if not oResultSource=ResultSource.objects.filter(name__iexact=interface)
+        if not ResultSource.objects.filter(name__iexact=interface)
             oResultSource=ResultSource.objects.create(
                 name=interface,
                 short_name=interface,                
@@ -165,7 +165,7 @@ def fetch_or_create_resultsource( **kwargs ):
             oResultSource.save()  
     # create a new one if given argument and does not exist already
     if kwargs.get('interface'):        
-        if not oResultSource=ResultSource.objects.filter(name__iexact=kwargs.get('interface'))
+        if not ResultSource.objects.filter(name__iexact=kwargs.get('interface'))
             oResultSource=ResultSource.objects.create(
                 name=kwargs.get('interface'),
                 short_name=kwargs.get('interface'),                
