@@ -116,7 +116,7 @@ class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
 
     list_display = ('result_identifier', 'result_datetime',  'release_status', 'order', )
     search_fields = ('result_identifier', 'release_status')    
-    filter_fields - ('result_datetime')
+    list_filter = ('result_datetime', 'release_status')
 
     #fields = ('order', 'result_datetime', 'release_status', 'release_datetime', 'comment')
     #inlines = [ResultItemInlineAdmin]
