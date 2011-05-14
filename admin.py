@@ -219,6 +219,13 @@ class ReceiveAdmin(AutocompleteAdmin, MyModelAdmin):
 
         return save
 
+    def get_readonly_fields(self, request, obj = None):
+        if obj: #In edit mode
+            return ('receive_identifier',) + self.readonly_fields
+        else:
+            return self.readonly_fields     
+
+
     def change_view(self, request, object_id, extra_context=None):
 
         result = super(ReceiveAdmin, self).change_view(request, object_id, extra_context)        
