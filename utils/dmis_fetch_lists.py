@@ -70,10 +70,6 @@ def fetch_lists_from_dmis(**kwargs):
                 units=row.units,
                 test_code_group=oTestCodeGroup,
                 display_decimal_places=row.display_decimal_places,  
-                reference_range_lo=row.reference_range_lo,
-                reference_range_hi=row.reference_range_hi,  
-                uln=row.uln,
-                lln=row.lln,                                                                        
                 is_absolute=row.is_absolute,
                 )    
 

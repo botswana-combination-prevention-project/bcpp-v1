@@ -81,7 +81,19 @@ def fetch_or_create_result(**kwargs):
             
             for ritem in cursor_resultitem:
                 test_code = ritem.utestid.strip(' \t\n\r')
-                oTestCode=TestCode.objects.get(code__exact=test_code)
+                try:
+                    oTestCode=TestCode.objects.get(code__exact=test_code)
+                except:
+                    oTestCodeGroup = TestCodeGroup.objects.filter(code__exact='000')
+                    TestCode.objects.create( 
+                        code=test_code,
+                        name=test_code,
+                        units='%',
+                        test_code_group=oTestCodeGroup,
+                        display_decimal_places=0,  
+                        is_absolute='absolute',
+                        )  
+                    oTestCode = TestCode.objects.get(code__iexact=test_code)                           
                 # change NT system username to auto
                 if ritem.user_created=='NT AUTHORITY\SYSTEM':
                     user_created='auto'
