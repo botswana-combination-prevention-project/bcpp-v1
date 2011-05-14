@@ -15,12 +15,7 @@ def fetch_validation_from_dmis(**kwargs):
     oResults  = Result.objects.all()
     
     for oResult in oResults:
-        
-        #if oResult.validation_reference == '-9': 
-        #    validation_reference='auto'
-        #else:    
-        #    validation_reference = oResult.validation_reference.lower()
-        
+    
         if validation_reference == 'auto':
             #use lab21 information
             ResultItem.objects.filter(result=oResult).update(
