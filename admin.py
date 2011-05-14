@@ -4,6 +4,8 @@ from bhp_lab_test_code.models import TestCode, TestCodeGroup, TestCodeReferenceL
 
 class TestCodeAdmin(MyModelAdmin):
     list_display = ('code', 'name', 'test_code_group', 'units', 'display_decimal_places')
+    search_fields = ('code', 'name', 'test_code_group__code', 'units', 'display_decimal_places')    
+    
 admin.site.register(TestCode, TestCodeAdmin)
 
 class TestCodeReferenceListAdmin(MyModelAdmin):
