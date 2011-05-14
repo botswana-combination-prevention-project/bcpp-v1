@@ -159,6 +159,7 @@ def fetch_or_create_resultsource( **kwargs ):
         display_index = agg['display_index__max']
     else:
         display_index = 0    
+    raise TypeError(display_index)    
     # populate if not already ...
     for interface in interfaces:
         if not ResultSource.objects.filter(name__iexact=interface):
