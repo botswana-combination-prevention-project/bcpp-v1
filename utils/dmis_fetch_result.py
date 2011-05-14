@@ -20,7 +20,7 @@ def fetch_results_from_dmis(**kwargs):
 
 def fetch_or_create_result(**kwargs):
 
-    import pyodbc, datetime
+    import pyodbc, datetime, re
     from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
