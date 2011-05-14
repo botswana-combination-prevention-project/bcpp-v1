@@ -56,7 +56,8 @@ class Result(MyBasicUuidModel):
     dmis_result_guid = models.CharField(
         max_length=36,
 	    null = True,
-        blank = True,	    
+        blank = True,	
+        editable=False,            
 	    help_text = 'dmis import value. N/A unless data imported from old system'
         )  	    
     
