@@ -10,7 +10,7 @@ def fetch_results_from_dmis(**kwargs):
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
     from bhp_lab_core.models import DmisImportHistory, ResultSource
     from bhp_lab_core.utils import AllocateResultIdentifier
-
+    
     Result.objects.all().delete()
 
     oOrders  = Order.objects.all()
@@ -151,9 +151,14 @@ def fetch_or_create_result(**kwargs):
     
 def fetch_or_create_resultsource( **kwargs ):
     from bhp_lab_core.models import ResultSource
+    from django.db.models import Avg, Max, Min, Count        
 
     interfaces = ['psm_interface', 'cd4_interface','auto', 'manual_entry', 'direct_import',]
-    display_index = 0
+    agg = ResultSource.objects.aggregate(Max('display_index'),)
+    if agg:
+        display_index = agg['display_index__max']
+    else:
+        display_index = 0    
     # populate if not already ...
     for interface in interfaces:
         if not ResultSource.objects.filter(name__iexact=interface):
