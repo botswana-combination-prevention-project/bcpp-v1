@@ -96,7 +96,7 @@ def fetch_or_create_result(**kwargs):
                 result_item_source = fetch_or_create_resultsource(interface='manual_entry')                
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'auto'                
-            elif re.search('^rad[0-9A-F]{5}\.tmp$', validation_reference):    
+            elif re.search('^rad[0-9A-F]{5}\.tmp$', ritem.validation_reference):    
                 # this is an item from GetResults Flatfile and validated via the LAB05 path
                 result_item_source = fetch_or_create_resultsource(interface='cd4_interface')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
