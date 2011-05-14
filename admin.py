@@ -115,7 +115,7 @@ class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
         return super(ResultAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
 
     list_display = ('result_identifier', 'result_datetime', 'order', 'release_status')
-    search_fields = ('result_identifier', 'result_datetime')    
+    search_fields = ('result_identifier', 'order', 'release_status')    
 
     #fields = ('order', 'result_datetime', 'release_status', 'release_datetime', 'comment')
     #inlines = [ResultItemInlineAdmin]
