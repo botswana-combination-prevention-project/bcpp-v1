@@ -139,7 +139,7 @@ def fetch_or_create_result(**kwargs):
                 result_item_quantifier=ritem.result_quantifier,
                 validation_status='P',
                 validation_reference=validation_reference,
-                result_item_source=oResultSource,
+                result_item_source=result_item_source,
                 result_item_source_reference=ritem.mid,
                 result_item_operator=user_created,                
                 comment='',
