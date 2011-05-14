@@ -55,6 +55,12 @@ class ResultItem(MyBasicUuidModel):
 	    null=True,
 	    blank=True,
 	    )
+    validation_reference = models.CharField(
+        verbose_name = "Validation reference",
+        max_length=50,
+	    null=True,
+	    blank=True,
+	    )
 
     comment = models.CharField(
         verbose_name = 'Validation Comment',
