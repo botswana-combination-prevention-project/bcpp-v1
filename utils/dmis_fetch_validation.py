@@ -28,7 +28,7 @@ def fetch_validation_from_dmis(**kwargs):
         else:    
             #use either LAB23 or LAB05
             #if order panel is CD4 get LAB05, otherwise LAB23
-            if oResult.order.panel.name == 'CD4 (ARV)':
+            if oResultItem.order.panel.name == 'CD4 (ARV)':
                 #this returns only one record per result, only, so update all items as one
                 # hmmm ... all imported results are from LAB21 which implies result_accepted=1, add "where result_accepted=1"                
                 sql = "select top 1 result_accepted_username as operator, \
@@ -44,8 +44,7 @@ def fetch_validation_from_dmis(**kwargs):
                 cursor_result = cnxn2.cursor()        
                 for row in cursor_result:                
                     ResultItem.objects.filter(result=oResult).update(
-                        validation_reference=validation_reference,
-                        validation_status=validation_status,                        
+                        validation_status=row.validation_status,                        
                         validation_datetime=row.validation_datetime,
                         validation_username=row.validation_username                        
                         )

@@ -57,7 +57,7 @@ class Result(MyBasicUuidModel):
         max_length=36,
 	    null = True,
         blank = True,	
-        editable=False,            
+        #editable=False,            
 	    help_text = 'dmis import value. N/A unless data imported from old system'
         )  	    
     
