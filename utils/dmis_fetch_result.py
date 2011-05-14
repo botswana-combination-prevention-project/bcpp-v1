@@ -80,7 +80,8 @@ def fetch_or_create_result(**kwargs):
             fetch_or_create_resultsource()
             
             for ritem in cursor_resultitem:
-                oTestCode=TestCode.objects.get(code__exact=ritem.utestid)
+                test_code = ritem.utestid.strip(' \t\n\r')
+                oTestCode=TestCode.objects.get(code__exact=test_code)
                 # change NT system username to auto
                 if ritem.user_created=='NT AUTHORITY\SYSTEM':
                     user_created='auto'
