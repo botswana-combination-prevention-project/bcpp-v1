@@ -12,7 +12,7 @@ admin.site.register(TestCodeReferenceList, TestCodeReferenceListAdmin)
     
 class TestCodeReferenceListItemAdmin(MyModelAdmin):
     list_display = ('test_code', 'gender', 'lln', 'uln', 'age_low', 'age_low_unit','age_low_quantifier','age_high','age_high_unit','age_high_quantifier', 'panic_value_low', 'panic_value_high', 'test_code_reference_list')
-    search_fields = ['test_code_reference_list', 'test_code__code','test_code__name',]
+    search_fields = ['test_code__code','test_code__test_code_group__code','gender','age_low','age_high',]
 admin.site.register(TestCodeReferenceListItem, TestCodeReferenceListItemAdmin)
 
 class TestCodeInterfaceMappingAdmin(MyModelAdmin):
@@ -20,6 +20,7 @@ class TestCodeInterfaceMappingAdmin(MyModelAdmin):
 admin.site.register(TestCodeInterfaceMapping, TestCodeInterfaceMappingAdmin)
 
 class TestCodeGroupAdmin(MyModelAdmin):
-    pass
+    list_display = ('code', 'name',)
+    search_fields = ('code', 'name',)    
 admin.site.register(TestCodeGroup, TestCodeGroupAdmin)
 

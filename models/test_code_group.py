@@ -16,3 +16,4 @@ class TestCodeGroup(MyBasicModel):
         return self.code    
     class Meta:
         app_label = 'bhp_lab_test_code'
+        ordering = ['code',]
