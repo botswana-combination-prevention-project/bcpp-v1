@@ -7,8 +7,6 @@ from bhp_common.utils import formatted_age, round_up
 
 register = template.Library()
 
-
-
 @register.filter(name='model_verbose_name')
 def model_verbose_name(contenttype):
     return contenttype.model_class()._meta.verbose_name
@@ -34,7 +32,6 @@ def user_full_name(username):
             return '%s %s (%s)' % (user.first_name, user.last_name, user.get_profile().initials)
         except:
             return username
-
 
 @register.filter(name='user_initials')
 def user_initials(username):
