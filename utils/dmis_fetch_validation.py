@@ -71,7 +71,7 @@ def fetch_validation_from_dmis(**kwargs):
                     convert(varchar, l23.id) as validation_reference \
                     from bhplab.dbo.lab23response as l23 \
                     left join bhplab.dbo.lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0 \
-                    where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % ( oResultItem.test_code__code, oResult.dmis_result_guid)
+                    where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % ( oResultItem.test_code.code, oResult.dmis_result_guid)
 
             cursor_result = cnxn2.cursor()            
             try:
