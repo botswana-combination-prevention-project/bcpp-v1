@@ -46,13 +46,13 @@ def fetch_validation_from_dmis(**kwargs):
                     where result_accepted=1 and convert(varchar(36),l5.result_guid)='%s'" % oResult.dmis_result_guid 
                     
             cursor_result = cnxn2.cursor()  
-            raise TypeError(cursor_result)      
-            for row in cursor_result:        
-                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\')
-                oResultItem.validation_status='F'
-                oResultItem.validation_datetime=row.validation_datetime
-                oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')
-                oResultItem.save()                            
+            if cursor_result:
+                for row in cursor_result:        
+                    oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\')
+                    oResultItem.validation_status='F'
+                    oResultItem.validation_datetime=row.validation_datetime
+                    oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')
+                    oResultItem.save()                            
 
         elif oResultItem.result_item_source==oManual_interface and oResultItem.validation_reference.lower()<>'lab23':                
             #use lab21 information for PSM, Manual, Import
@@ -72,13 +72,14 @@ def fetch_validation_from_dmis(**kwargs):
                     where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % ( oResult.test_code__code, oResult.dmis_result_guid)
 
             cursor_result = cnxn2.cursor()            
-            for row in cursor_result:  
-                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\'),
-                oResultItem.validation_reference=row.validation_reference,
-                oResultItem.validation_status='F',
-                oResultItem.validation_datetime=row.validation_datetime,
-                oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')                        
-                oResultItem.save()                            
+            if cursor_result:            
+                for row in cursor_result:  
+                    oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\'),
+                    oResultItem.validation_reference=row.validation_reference,
+                    oResultItem.validation_status='F',
+                    oResultItem.validation_datetime=row.validation_datetime,
+                    oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')                        
+                    oResultItem.save()                            
         else:
             raise TypeError('Unknown case result_item_source in dmis_fetch_validation. Got \'%s\' from result %s.' % (oResult.resultitem.result_item_source, oResult) )
     
