@@ -11,8 +11,8 @@ def fetch_validation_from_dmis(**kwargs):
     #unvalidate everything
     #Result.objects.all().update(validation_status='P', validation_datetime=None, validation_username=None)
 
-    oCD4_interface = ResultSource.objects.get(name__iexact='cd4 interface')
-    oPSM_interface = ResultSource.objects.get(name__iexact='psm interface')
+    oCD4_interface = ResultSource.objects.get(name__iexact='cd4_interface')
+    oPSM_interface = ResultSource.objects.get(name__iexact='psm_interface')
     oDirect_interface = ResultSource.objects.get(name__iexact='direct_import') 
     oManual_interface = ResultSource.objects.get(name__iexact='manual_entry')                           
 
