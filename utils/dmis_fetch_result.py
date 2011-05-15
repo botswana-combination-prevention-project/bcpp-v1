@@ -126,16 +126,17 @@ def fetch_or_create_result(**kwargs):
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'     
                 elif re.search('^LB003:', ritem.validation_reference):          
-                    # manual entry and validated via the LAB23 validation path                           
+                    # manual import                           
                     result_item_source = fetch_or_create_resultsource(interface='direct_import')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'     
                 elif re.search('^LB004:', ritem.validation_reference):          
-                    # manual entry and validated via the LAB23 validation path                           
+                    # manual import                           
                     result_item_source = fetch_or_create_resultsource(interface='direct_import')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'  
                 elif re.search('^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$', ritem.validation_reference):                   
+                    # manual import                                           
                     result_item_source = fetch_or_create_resultsource(interface='manual_entry')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'  
