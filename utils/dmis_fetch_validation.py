@@ -22,21 +22,17 @@ def fetch_validation_from_dmis(**kwargs):
         oResult=oResultItem.result
         if oResultItem.result_item_source==oPSM_interface:
             #use lab21 information for PSM, Manual, Import
-            oResultItem(
-                result_item_operator=oResult.user_created.strip('BHP\\bhp\\'),            
-                validation_status='F',                        
-                validation_datetime=oResult.result_datetime,
-                validation_username='auto',
-                )
+            oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
+            oResultItem.validation_status='F'   
+            oResultItem.validation_datetime=oResult.result_datetime
+            oResultItem.validation_username='auto'
             oResultItem.save()        
         elif oResultItem.result_item_source==oDirect_interface:
             #use lab21 information for Import
-            oResultItem(
-                result_item_operator=oResult.user_created.strip('BHP\\bhp\\'),            
-                validation_status='F',                        
-                validation_datetime=oResult.result_datetime,
-                validation_username='auto',
-                )
+            oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
+            oResultItem.validation_status='F'
+            oResultItem.validation_datetime=oResult.result_datetime
+            oResultItem.validation_username='auto'
             oResultItem.save()                        
         elif oResultItem.result_item_source==oCD4_interface:
             #this returns only one record per result, only, so update all items as one
@@ -51,22 +47,18 @@ def fetch_validation_from_dmis(**kwargs):
                     
             cursor_result = cnxn2.cursor()        
             for row in cursor_result:        
-                oResultItem(
-                    result_item_operator=row.operator.strip('BHP\\bhp\\'),
-                    validation_status='F',  
-                    validation_datetime=row.validation_datetime,
-                    validation_username=row.validation_username.strip('BHP\\bhp\\'),
-                    )
+                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\')
+                oResultItem.validation_status='F'
+                oResultItem.validation_datetime=row.validation_datetime
+                oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')
                 oResultItem.save()                            
 
         elif oResultItem.result_item_source==oManual_interface and oResultItem.validation_reference.lower()<>'lab23':                
             #use lab21 information for PSM, Manual, Import
-            oResultItem(
-                result_item_operator=oResult.user_created.strip('BHP\\bhp\\'),            
-                validation_status='F',                        
-                validation_datetime=oResult.result_datetime,
-                validation_username='auto',
-                )
+            oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
+            oResultItem.validation_status='F'   
+            oResultItem.validation_datetime=oResult.result_datetime
+            oResultItem.validation_username='auto'
             oResultItem.save()                        
         elif oResultItem.result_item_source==oManual_interface and oResultItem.validation_reference.lower()=='lab23':
             #this returns one record per result, only, so update all items as one
@@ -80,13 +72,11 @@ def fetch_validation_from_dmis(**kwargs):
 
             cursor_result = cnxn2.cursor()            
             for row in cursor_result:  
-                oResultItem(
-                    result_item_operator=row.operator.strip('BHP\\bhp\\'),
-                    validation_reference=row.validation_reference,
-                    validation_status='F',
-                    validation_datetime=row.validation_datetime,
-                    validation_username=row.validation_username.strip('BHP\\bhp\\')                        
-                    )
+                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\'),
+                oResultItem.validation_reference=row.validation_reference,
+                oResultItem.validation_status='F',
+                oResultItem.validation_datetime=row.validation_datetime,
+                oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')                        
                 oResultItem.save()                            
         else:
             raise TypeError('Unknown case result_item_source in dmis_fetch_validation. Got \'%s\' from result %s.' % (oResult.resultitem.result_item_source, oResult) )
