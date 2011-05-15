@@ -45,7 +45,8 @@ def fetch_validation_from_dmis(**kwargs):
                     left join bhplab.dbo.results_101 as r101 on l5.result_guid=r101.result_guid \
                     where result_accepted=1 and convert(varchar(36),l5.result_guid)='%s'" % oResult.dmis_result_guid 
                     
-            cursor_result = cnxn2.cursor()        
+            cursor_result = cnxn2.cursor()  
+            raise TypeError(cursor_result)      
             for row in cursor_result:        
                 oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\')
                 oResultItem.validation_status='F'
