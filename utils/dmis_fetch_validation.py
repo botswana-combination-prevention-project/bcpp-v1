@@ -19,7 +19,7 @@ def fetch_validation_from_dmis(**kwargs):
     oResults  = Result.objects.all()
     
     for oResult in oResults:
-        if oResult.objects.filter(resultitem__result_item_source == oPSM_interface):
+        if oResult.objects.filter(resultitem__result_item_source=oPSM_interface):
             #use lab21 information for PSM, Manual, Import
             ResultItem.objects.filter(result=oResult).update(
                 result_item_operator=oResult.user_created.strip('BHP\\bhp\\'),            
@@ -27,7 +27,7 @@ def fetch_validation_from_dmis(**kwargs):
                 validation_datetime=oResult.result_datetime,
                 validation_username='auto',
                 )
-        elif oResult.objects.filter(resultitem__result_item_source == oDirect_interface):
+        elif oResult.objects.filter(resultitem__result_item_source=oDirect_interface):
             #use lab21 information for PSM, Manual, Import
             ResultItem.objects.filter(result=oResult).update(
                 result_item_operator=oResult.user_created.strip('BHP\\bhp\\'),            
