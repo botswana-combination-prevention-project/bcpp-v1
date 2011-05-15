@@ -19,7 +19,7 @@ def fetch_validation_from_dmis(**kwargs):
     oResults  = Result.objects.all()
     
     for oResult in oResults:
-        for oResultItem in oResult.resultitem:
+        for oResultItem in oResult.result_item:
             if oResultItem.result_item_source==oPSM_interface:
                 #use lab21 information for PSM, Manual, Import
                 oResultItem.update(
