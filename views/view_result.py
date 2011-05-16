@@ -30,6 +30,7 @@ def view_result(request, **kwargs):
         'order': oResult.order,
         'aliquot': oResult.order.aliquot,
         'result_items': oResultItems,
+        'action':"view",        
         'section_name': section_name,
         'search_name': search_name,        
         'result_include_file': "detail.html",

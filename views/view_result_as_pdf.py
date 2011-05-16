@@ -48,6 +48,7 @@ def view_result_as_pdf(request, **kwargs):
         'pagesize': 'A4',
         'total_page_number':total_page_number,
         'result': result,
+        'action':"print",
         'receive': result.order.aliquot.receive,
         'order': result.order,
         'aliquot': result.order.aliquot,

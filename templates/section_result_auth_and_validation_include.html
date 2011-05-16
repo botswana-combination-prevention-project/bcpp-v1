@@ -1,6 +1,8 @@
 {% load common_tags%}{% load userprofile_tags%}
+
 <table>
-<tr><td><small>Lab QA Manager: P. Mangwendeza * Lab Manager: S. Moyo * Lab Director: R. Musonda</small></td></tr>
+<tr><td>&nbsp;</td></tr>
+<!--<tr><td><small>Lab QA Manager: P. Mangwendeza * Lab Manager: S. Moyo * Lab Director: R. Musonda</small></td></tr>-->
 {% if result.release_datetime %}
     <tr><td>Authorised and released by: {{ result.release_username|salutation }}{{ result.release_username|user_full_name }} on {{ result.release_datetime|date:"Y-m-d H:i" }}</td></tr>
 {% else %}    

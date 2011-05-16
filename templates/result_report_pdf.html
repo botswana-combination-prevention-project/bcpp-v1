@@ -2,7 +2,6 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head> 
-
 <style type="text/css">
 @page {
     size: {{ pagesize }};
@@ -25,31 +24,27 @@
 }
 
 </style> 
-
 </head>
 <body>
-
     
-<div id="headerContent">
+<div id="headerContent" align="center">
 <table>
 <tr>
     <td>
-    HIV Reference Laboratory - Princess Marina Hospital <br>
+    <B>HIV Reference Laboratory - Princess Marina Hospital</B> <br>
     Private Bag BO 320, Gaborone, Botswana<br> 
     * Tel: 3902671 ext 2003 * Fax: 3901284
-<pdf:barcode value="{{ result.result_identifier }}">
-</td>
-<td width="150" align="top">
-    <img width="80%" height="80%" src="/var/www/images/bhp_logo.jpg" />
-</td>
+<!--<pdf:barcode value="{{ result.result_identifier }}">-->
+<!--    </td>
+    <td width="150" align="top">
+    <img width="80%" height="80%" alt="BHP" src="/media/img/bhp_logo.png" />
+    </td>-->
 
 </tr>
 </table>
-<strong><h5 align="center">{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} on {{ result.result_datetime|date:"Y-m-d" }}</h5></strong>
+<strong><h5 align="center">{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} collected {{ result.order.aliquot.receive.datetime_drawn|date:"Y-m-d" }}</h5></strong>
 <hr />
 </div>
-
-
 
 {% block result %}
     {% if result %}       
@@ -59,12 +54,7 @@
     {% endif %}
 {% endblock %}
 
-<div id="footerContent">
-    Lab QA Manager: P. Mangwendeza * Lab Manager: S. Moyo * Lab Director: R. Musonda  
-    <div align="right">page <pdf:pagenumber> of {{ total_page_number }}</div>
-</div>
-
+<div id="footerContent" align="center">Lab QA Manager: P. Mangwendeza * Lab Manager: S. Moyo * Lab Director: R. Musonda<br>
+{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} collected {{ result.order.aliquot.receive.datetime_drawn|date:"Y-m-d" }} * Page <pdf:pagenumber> of {{ total_page_number }}</div>
 </body>
 </html>
-
-
