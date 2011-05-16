@@ -5,14 +5,18 @@ def batch_print_result_as_pdf(**kwargs):
     from math import ceil,trunc
     from django.template.loader import render_to_string
     from django.shortcuts import get_object_or_404
-    from bhp_lab_core.models import Result, ResultItem
+    from bhp_lab_core.models import Result, ResultItem, Order, Aliquot, Receive
+    from bhp_lab_registration.models import Patient
 
-    template = 'result_report_pdf.html'
-    result_ids = ['1240636-01','1242053-01','1241852-01','1242079-01','1241851-01']
-    #result_ids = ['1240636-01','1242053-01']
+    subject_identifier = kwargs.get('subject_identifier')
+    if subject_identifier is not None:
+        oPatient = get_object_or_404(Patient, subject_identifier=subject_identifier)
+    
+        patient_results = Result.objects.filter(order__aliquot__receive__patient=oPatient)
+        template = 'result_report_pdf.html'
    
-    for result_identifier in result_ids:
-        print_result_as_pdf(result_identifier,template)
+        for result in patient_results:
+            print_result_as_pdf(result.result_identifier,template)
                 
     return 
     
