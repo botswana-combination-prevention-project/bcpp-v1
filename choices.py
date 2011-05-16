@@ -17,6 +17,12 @@ MODIFY_ACTIONS = (
     ('VIEW','Print'),                                                            
     )
 
+ORDER_STATUS = (
+    ('PENDING','Pending'),
+    ('PARTIAL','Partial'),
+    ('COMPLETE','Complete'),
+)
+
 RESULT_RELEASE_STATUS = (
     ('NEW','New'),
     ('RELEASED','Released'),
