@@ -13,7 +13,9 @@ def result_age(born, collection_date):
 
 @register.filter(name='result_clinic_name')
 def result_clinic_name(site_identifier, protocol_identifier):
-    oResearchClinic = ResearchClinic.objects.filter(site__site_identifier__iexact=site_identifier, protocol__protocol_identifier__iexact=protocol_identifier)
+    oResearchClinic = Protocol.objects.filter(site__site_identifier__iexact=site_identifier, protocol__protocol_identifier__iexact=protocol_identifier)
+    
+    
     if oResearchClinic:
         clinic_name = oResearchClinic[0]
     else:

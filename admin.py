@@ -9,9 +9,9 @@ from models import Receive, Result, Order, ResultItem, AliquotMedium, TidPanelMa
 from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
 
 
-class PatientAutocomplete(AutocompleteSettings):
-    search_fields = ('^subject_identifier',)
-autocomplete.register(Receive.patient, PatientAutocomplete)
+#class PatientAutocomplete(AutocompleteSettings):
+#    search_fields = ('^subject_identifier',)
+#autocomplete.register(Receive.patient, PatientAutocomplete)
 
 class AliquotAutocomplete(AutocompleteSettings):
     search_fields = ('^aliquot_identifier',)
@@ -28,6 +28,11 @@ autocomplete.register(ResultItem.result, ResultAutocomplete)
 class PanelAdmin(MyModelAdmin):
     list_display = ('name','panel_group')
     search_fields = ['name']
+    filter_horizontal = (
+        'test_code',
+        'aliquot_type',
+        'account',
+        )
 admin.site.register(Panel, PanelAdmin)
 
 class PanelGroupAdmin(MyModelAdmin):
