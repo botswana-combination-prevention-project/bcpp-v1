@@ -3,20 +3,30 @@ def batch_print_result_as_pdf(**kwargs):
     import ho.pisa as pisa
     import sys, os, subprocess
     from math import ceil,trunc
+    from django.core.mail import send_mail
     from django.template.loader import render_to_string
     from django.shortcuts import get_object_or_404
     from bhp_lab_core.models import Result, ResultItem, Order, Aliquot, Receive
     from bhp_lab_registration.models import Patient
 
     subject_identifier = kwargs.get('subject_identifier')
-    if subject_identifier is not None:
+    if subject_identifier:
         oPatient = get_object_or_404(Patient, subject_identifier=subject_identifier)
     
         patient_results = Result.objects.filter(order__aliquot__receive__patient=oPatient)
         template = 'result_report_pdf.html'
    
         for result in patient_results:
-            print_result_as_pdf(result.result_identifier,template)
+            file_name = print_result_as_pdf(result.result_identifier,template)
+            
+            command = "lp {0}".format( file_name )
+
+            try:
+                p = subprocess.Popen(command, shell = True)
+                pid , sts = os.waitpid(p.pid, 0)
+            except subprocess.CalledProcessError, e:
+                print "Error", e.returncode
+                print e.output
                 
     return 
     
@@ -54,7 +64,7 @@ def print_result_as_pdf(result_identifier,template):
         
             total_page_number = 2
    
-    if result_identifier is not None:
+    if result:
         file_name = "/home/pmotshegwa/sources/printed_results/%s.pdf" % (result_identifier)
         file = open(file_name, "wb")
          
@@ -86,18 +96,52 @@ def print_result_as_pdf(result_identifier,template):
         if pdf.err:
              print "*** %d ERRORS OCCURED" % pdf.err
         else:
-        
             # Write pdf file to disk
             file.write(myfile.getvalue())
             file.close()
-            command = "lp {0}".format( file_name )
-
-            try:
-                p = subprocess.Popen(command, shell = True)
-                pid , sts = os.waitpid(p.pid, 0)
-            except subprocess.CalledProcessError, e:
-                print "Error", e.returncode
-                print e.output
-                
+            return file_name
     return 
     
+#
+# usage: 
+# e.g >>> print_barcode_label (result_identifier='xxxxxxx-xx',num_labels=3,printer='mochudi_id01'   
+def print_barcode_label(**kwargs):
+    from django.template.loader import render_to_string
+    from django.shortcuts import get_object_or_404
+    from bhp_lab_core.models import Result, ResultItem
+    import os
+    
+    tmp_folder = "/home/pmotshegwa/sources/barcode"
+    scp_server = "roche@bartender.bhp.org.bw"
+    
+    #Name of the folder where to dump the *.tmp file
+    barcoder_printer_folder = kwargs.get('printer')
+    
+    result_identifier = kwargs.get('result_identifier')
+    num_of_labels = kwargs.get('num_labels')
+    remote_folder = "/cygdrive/c/dmis/commander/%s/" % (barcoder_printer_folder)
+     
+    if num_of_labels is None or num_of_labels < 1:
+        num_of_labels = 1
+    
+    
+    result = get_object_or_404(Result, result_identifier=result_identifier)
+    
+    file_name = "%s/%s.tmp" % (tmp_folder, result_identifier)
+    
+    file = open(file_name, "wb")
+    
+    file.write("protocolnumber,pat_id,label,seq,seq_total\n")
+    
+    for n in range(0,num_of_labels):
+    
+        data = "Result,%s,BHPLAB,1,35\n" % (result_identifier)
+        
+        file.write(data)
+        
+    command = "scp %s %s:%s" % (file_name, scp_server,remote_folder)
+    
+    #print command
+    file.close()
+    os.system(command)
+    return    
