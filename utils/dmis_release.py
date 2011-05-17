@@ -3,6 +3,12 @@ def release_auto_from_dmis():
     from django.db.models import Avg, Max, Min, Count
     from bhp_lab_core.models import Result, ResultItem
    
+    # update NT AUTHORITY username to 'auto' for any result_item
+    ResultItem.objects.filter(result_item_operator__icontains='AUTHORITY').update(result_item_operator='auto')
+
+    #unrelease everything
+    Result.objects.all().update(release_status='NEW')       
+
     oResults = Result.objects.filter(release_status__exact='NEW')
     
     for oResult in oResults:
