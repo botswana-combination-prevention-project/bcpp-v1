@@ -7,7 +7,7 @@ def release_auto_from_dmis():
     
     for oResult in oResults:
         #get max validation datetime
-        aggr = ResultItem.objects.filter(result=oResult[0], validation_status__exact='F',).aggregate(Max('validation_datetime'),)
+        aggr = ResultItem.objects.filter(result=oResult, validation_status__exact='F',).aggregate(Max('validation_datetime'),)
         if aggr['validation_datetime__max']:
             validation_datetime = aggr['validation_datetime__max']
             #get validation_username for that validation_datetime
