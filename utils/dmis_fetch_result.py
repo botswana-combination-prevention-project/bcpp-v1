@@ -95,7 +95,7 @@ def fetch_or_create_result(**kwargs):
                         )  
                     oTestCode = TestCode.objects.get(code__iexact=test_code)                           
                 # change NT system username to auto
-                if ritem.user_created=='NT AUTHORITY\SYSTEM':
+                if ritem.user_created.strip(' \t\n\r').upper() == 'NT AUTHORITY\SYSTEM':
                     user_created='auto'
                 else:
                     user_created=ritem.user_created
