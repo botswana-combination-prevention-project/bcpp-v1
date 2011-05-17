@@ -11,7 +11,7 @@ def release_auto_from_dmis():
         if aggr['validation_datetime__max']:
             validation_datetime = aggr['validation_datetime__max']
             #get validation_username for that validation_datetime
-            validation_username = ResultItem.objects.filter(result=oResult, validation_datetime__exact=validation_datetime)[0].validation_username        
+            validation_username = ResultItem.objects.get(result=oResult, validation_datetime__exact=validation_datetime)[0].validation_username        
             if validation_username == 'auto':
                 validation_username = 'smoyo'
             # update result    
