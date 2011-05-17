@@ -24,14 +24,14 @@ def fetch_validation_from_dmis(**kwargs):
             #use lab21 information for PSM, Manual, Import
             oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
             oResultItem.validation_status='F'   
-            oResultItem.validation_datetime=oResult.result_datetime
+            oResultItem.validation_datetime=oResultItem.result_item_datetime
             oResultItem.validation_username='auto'
             oResultItem.save()        
         elif oResultItem.result_item_source==oDirect_interface:
             #use lab21 information for Import
             oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
             oResultItem.validation_status='F'
-            oResultItem.validation_datetime=oResult.result_datetime
+            oResultItem.validation_datetime=oResultItem.result_item_datetime
             oResultItem.validation_username='auto'
             oResultItem.save()                        
         elif oResultItem.result_item_source==oCD4_interface:
@@ -60,7 +60,7 @@ def fetch_validation_from_dmis(**kwargs):
             #use lab21 information for PSM, Manual, Import
             oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
             oResultItem.validation_status='F'   
-            oResultItem.validation_datetime=oResult.result_datetime
+            oResultItem.validation_datetime=oResultItem.result_item_datetime
             oResultItem.validation_username='auto'
             oResultItem.save()                        
         elif oResultItem.result_item_source==oManual_interface and oResultItem.validation_reference.lower()=='lab23':
