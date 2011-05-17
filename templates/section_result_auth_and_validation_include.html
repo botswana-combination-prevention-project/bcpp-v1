@@ -9,7 +9,9 @@
     <tr><td>Authorised and released by: <i>this result is NOT authorized for release</i></td></tr>
 {% endif %}
 <tr><td width=50% valign="top">
-<A href="/admin{{result.get_absolute_url }}">Comment</a>: Using normal ranges dated 2010-05-01. Grading according to DAIDS TABLE FOR GRADING THE SEVERITY OF ADULT AND PEDIATRIC AES PUBLISHED:12/2004. {{ result.comment|escape }} 
+<A href="/admin{{result.get_absolute_url }}">Comment</a>: Using normal ranges dated 2010-05-01.<br>
+Grading according to DAIDS TABLE FOR GRADING THE SEVERITY OF ADULT AND PEDIATRIC AES 12/2004.<br>
+{{ result.comment|escape|wordwrap:50 }} 
 </td></tr>
 </table>
 

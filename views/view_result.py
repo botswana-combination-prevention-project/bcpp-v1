@@ -24,7 +24,6 @@ def view_result(request, **kwargs):
         oResult = Result.objects.get(result_identifier__exact=result_identifier)
         oResultItems = ResultItem.objects.filter(result=oResult)
         
-        
         context = {
         'result': oResult,
         'receive': oResult.order.aliquot.receive,
