@@ -16,7 +16,7 @@ class Site(models.Model):
     location = models.ForeignKey(Location)
 
     def __unicode__(self):
-        return '%s %s' % (self.site_identifier, self.name)
+        return '%s' % (self.site_identifier)
         
     class Meta:
         ordering = ['site_identifier']

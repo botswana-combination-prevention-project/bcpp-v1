@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_research_protocol.models import PrincipalInvestigator, SiteLeader, FundingSource
+from bhp_research_protocol.models import PrincipalInvestigator, SiteLeader, FundingSource, Site
 
 class Protocol(models.Model):
 
@@ -11,6 +11,12 @@ class Protocol(models.Model):
     research_title = models.TextField(max_length=250)
 
     short_title = models.CharField(max_length=25)
+    
+    site_name_fragment = models.CharField(max_length=25,
+        help_text = 'Fragment of proper site name not including BHP protocol number or location'
+        )
+
+    site = models.ManyToManyField(Site)
 
     local_title = models.CharField(max_length=25, blank=True)
     
