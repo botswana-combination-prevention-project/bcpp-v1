@@ -2,7 +2,7 @@ from datetime import *
 from dateutil.relativedelta import *
 from django import template
 from bhp_common.utils import formatted_age
-from bhp_research_protocol.models import ResearchClinic
+from bhp_research_protocol.models import Protocol
 register = template.Library()
 
 
@@ -13,14 +13,17 @@ def result_age(born, collection_date):
 
 @register.filter(name='result_clinic_name')
 def result_clinic_name(site_identifier, protocol_identifier):
-    oResearchClinic = Protocol.objects.filter(site__site_identifier__iexact=site_identifier, protocol__protocol_identifier__iexact=protocol_identifier)
+
+    site_name = None
+    if Protocol.objects.filter(protocol_identifier__iexact=protocol_identifier):
+        oProtocol = Protocol.objects.get(protocol_identifier__iexact=protocol_identifier)        
+        for site in oProtocol.site.all():
+            if site.site_identifier == site_identifier:
+                site_name = '%s %s %s' % (site_identifier, oProtocol.site_name_fragment, site.location)
+    if not site_name:
+        site_name = site_identifier        
+    return site_name
     
-    
-    if oResearchClinic:
-        clinic_name = oResearchClinic[0]
-    else:
-        clinic_name = site_identifier    
-    return clinic_name
 
 @register.filter(name='filter_validation_by_status')
 def filter_validation_by_status(value, status):
