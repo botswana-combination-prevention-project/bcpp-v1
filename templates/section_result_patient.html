@@ -1,9 +1,10 @@
 {% load common_tags %}{% load result_tags %}
-<table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
+<div >
+<table width="700" cellspacing="0" cellpadding="2" border='1'>
 <thead>
 <th colspan="2">Patient ID (Initials)</th>   	    	
 <th>Protocol</th> 
-<th>Clinic Site</th> 
+<th colspan="3">Clinic Site</th> 
 <th>Clinician</th> 
 <th>Gender</th> 
 <th>Born</th>
@@ -13,7 +14,7 @@
   <tr class="{% cycle 'row2' 'row1' %}">
      <td colspan="2"><a href="/admin{{ result.order.aliquot.receive.patient.get_absolute_url }}?return_object=result&object_id={{result.pk}}">{{ result.order.aliquot.receive.patient.subject_identifier }}&nbsp;({{ result.order.aliquot.receive.patient.initials|upper }})</A></td>
      <td>{{ result.order.aliquot.receive.protocol }}</td>
-     <td>{{ result.order.aliquot.receive.site.site_identifier|result_clinic_name:result.order.aliquot.receive.protocol.protocol_identifier }}</td>
+     <td colspan="3">{{ result.order.aliquot.receive.site.site_identifier|result_clinic_name:result.order.aliquot.receive.protocol.protocol_identifier }}</td>
      <td>{{ result.order.aliquot.receive.clinician_initials|upper }}</td>
      <td>{{ result.order.aliquot.receive.patient.gender|gender }}</td>
      <td>{{ result.order.aliquot.receive.patient.dob|dob_or_dob_estimated:result.order.aliquot.receive.patient.is_dob_estimated }}</td>
@@ -21,4 +22,4 @@
     </tr>                           
 </tbody>
 </table>
-
+</div>
