@@ -16,7 +16,8 @@ class ResultItem(MyBasicUuidModel):
     result_item_value = models.CharField(
         verbose_name = 'Result',
 	    max_length = 25,
-	    help_text = ''
+	    help_text = '',
+        db_index=True,
 	    )
 
     result_item_quantifier = models.CharField(
@@ -29,12 +30,14 @@ class ResultItem(MyBasicUuidModel):
     
     result_item_datetime = models.DateTimeField(
         verbose_name = 'Assay date and time',
+        db_index=True,        
         )
     result_item_operator = models.CharField(
         verbose_name = 'Operator',
         max_length=50,
 	    null=True,
 	    blank=True,
+        db_index=True,	    
         )
 
     validation_status = models.CharField(
@@ -42,12 +45,14 @@ class ResultItem(MyBasicUuidModel):
         default = 'P',
         choices = RESULT_VALIDATION_STATUS,
 	    max_length = 10,
-	    help_text = 'Default is preliminary'
+	    help_text = 'Default is preliminary',
+        db_index=True,	    
 	    )
 
     validation_datetime = models.DateTimeField(
 	    null=True,
 	    blank=True,
+        db_index=True,	    
 	    )
 	
     validation_username = models.CharField(
@@ -55,6 +60,7 @@ class ResultItem(MyBasicUuidModel):
         max_length=50,
 	    null=True,
 	    blank=True,
+        db_index=True,	    
 	    )
     validation_reference = models.CharField(
         verbose_name = "Validation reference",

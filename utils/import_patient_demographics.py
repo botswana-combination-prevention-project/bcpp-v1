@@ -8,7 +8,21 @@ def import_patient_demographics(csv_filename):
     from datetime import datetime, timedelta
     from bhp_lab_registration.models import SimpleConsent, Patient
     from bhp_research_protocol.models import Protocol, Site
+    
     f = open(csv_filename, 'rb')
+
+    """
+    format of csv file is:
+    SUBJECT_IDENTIFIER , PROTOCOL_NAME, SITE_CODE, CONSENT_STARTDATE, DOB, DOB_ESTIMATED,  GENDER,  STUDY_STATUS,  
+    CONSENT_ENDDATE
+    
+    ALL DATES in YYYY-MM-DD format
+    PROTOCOL_NAME is a valid BHP number (BHP032, etc)
+    SITE_CODE is a valid BHP site code
+    DOB_ESTIMATED is Y/N. If Y (yes), the estimation is assumed MD if the DOB is YYYY-07-01 and D if YYYY-MM-01 
+    GENDER is M/F
+    STUDY_STATUS is ON/OFF
+    """
 
     reader = csv.reader(f)
     

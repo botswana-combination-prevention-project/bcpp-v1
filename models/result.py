@@ -17,24 +17,28 @@ class Result(MyBasicUuidModel):
     result_identifier = models.CharField(
         max_length=25,
         editable=False,
+        db_index=True,        
         )
 
     order = models.ForeignKey(Order)
     
     result_datetime = models.DateTimeField(
         help_text = 'Date result added to system.',
+        db_index=True,        
         )
 
     release_status = models.CharField(
         max_length=25,
         choices=RESULT_RELEASE_STATUS,
         default='NEW',
+        db_index=True,        
         )
 
     release_datetime = models.DateTimeField(
   	    null = True,
         blank = True,	    
         help_text = 'Date result authorized for release. This field will auto-fill if release status is changed',
+        db_index=True,        
         )
     
     release_username = models.CharField(
@@ -43,6 +47,7 @@ class Result(MyBasicUuidModel):
 	    null=True,
 	    blank=True,
         help_text = 'Username of person authorizing result for release. This field will auto-fill if release status is changed',        	    
+        db_index=True,        
 	    )
 
     comment = models.CharField(
@@ -74,4 +79,5 @@ class Result(MyBasicUuidModel):
         return "/laboratory/result/document/%s/" % (self.result_identifier)  	
 
     class Meta:
-        app_label = 'bhp_lab_core'   
+        app_label = 'bhp_lab_core' 
+        ordering =['result_identifier','order','result_datetime',]  
