@@ -24,6 +24,11 @@ def fetch_receive_from_dmis(process_status, **kwargs):
 
     now  = datetime.datetime.today()
     
+    #get last import_datetime
+    agg = DmisImportHistory.objects.aggregate(Max('import_datetime'),)    
+    
+    last_import_datetime = agg['import_datetime__max']
+    
     #insert new record into ImportHistory
     obj = DmisImportHistory.objects.create(
         import_label='fetch_receive'
@@ -38,7 +43,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
     
     #note that some records will not be imported for having>1
-    sql  = 'select top 20000 min(l.id) as dmis_reference, \
+    sql  = 'select min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
             l.tid, \
             l.sample_condition, \
@@ -60,11 +65,12 @@ def fetch_receive_from_dmis(process_status, **kwargs):
             from lab01response as l \
             left join lab21response as l21 on l.pid=l21.pid \
             where l21.pid is %s \
+            and l.datelastmodified >= \'%s\' \
             and l.datelastmodified <= \'%s\' \
             and sample_date_drawn <= \'%s\' \
             group by l.pid, l.tid, l.sample_condition, l.sample_site_id, l.sample_visitid ,l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
             having count(*)=1 \
-            order by min(l.id) desc' % (has_order_sql, import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
+            order by min(l.id) desc' % (has_order_sql, last_import_datetime, import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
 
     #raise TypeError(sql)
 
