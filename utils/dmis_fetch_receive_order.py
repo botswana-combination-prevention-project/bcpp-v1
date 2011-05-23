@@ -1,7 +1,7 @@
 
 
 def fetch_receive_from_dmis(process_status, **kwargs):
-    import datetime import dateitime, timedelta
+    from datetime import dateitime, timedelta
     import pyodbc
     from django.db.models import Avg, Max, Min, Count    
     from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
