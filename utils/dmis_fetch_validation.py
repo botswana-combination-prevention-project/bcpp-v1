@@ -16,7 +16,7 @@ def fetch_validation_from_dmis(**kwargs):
     oDirect_interface = ResultSource.objects.get(name__iexact='direct_import') 
     oManual_interface = ResultSource.objects.get(name__iexact='manual_entry')                           
 
-    oResultItems  = ResultItem.objects.all()
+    oResultItems  = ResultItem.objects.all(validation_status__iexact='P')
     
     for oResultItem in oResultItems:
         oResult=oResultItem.result
