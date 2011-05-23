@@ -29,6 +29,8 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     
     last_import_datetime = agg['import_datetime__max']
     
+    last_import_datetime = datetime.today() - timedelta(days=30)
+    
     #insert new record into ImportHistory
     obj = DmisImportHistory.objects.create(
         import_label='fetch_receive'
@@ -159,6 +161,7 @@ def fetch_or_create_receive( **kwargs ):
 
     if oReceive:
         oReceive = Receive.objects.get(receive_identifier=receive_identifier)    
+        print 'receive found'
     else:
         oProtocol = fetch_or_create_protocol(protocol_identifier)
         oAccount = fetch_or_create_account(protocol_identifier)
@@ -184,7 +187,8 @@ def fetch_or_create_receive( **kwargs ):
             modified = modified,  
             dmis_reference = dmis_reference,
             ) 
-        #oReceive.save()
+        oReceive.save()
+        print 'receive created'
 
 
     return oReceive
