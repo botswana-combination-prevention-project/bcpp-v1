@@ -16,10 +16,11 @@ def fetch_validation_from_dmis(**kwargs):
     oDirect_interface = ResultSource.objects.get(name__iexact='direct_import') 
     oManual_interface = ResultSource.objects.get(name__iexact='manual_entry')                           
 
-    oResultItems  = ResultItem.objects.all(validation_status__iexact='P')
+    oResultItems  = ResultItem.objects.filter(validation_status__iexact='P')
     
     for oResultItem in oResultItems:
         oResult=oResultItem.result
+        print 'result %s %s test_code %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code )
         if oResultItem.result_item_source==oPSM_interface:
             #use lab21 information for PSM, Manual, Import
             oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
