@@ -29,7 +29,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     
     last_import_datetime = agg['import_datetime__max']
     
-    last_import_datetime = datetime.today() - timedelta(days=180)
+    last_import_datetime = datetime.today() - timedelta(days=5)
     
     #insert new record into ImportHistory
     obj = DmisImportHistory.objects.create(
