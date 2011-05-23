@@ -342,7 +342,7 @@ def fetch_or_create_patient( **kwargs ):
         oPatient = Patient.objects.get(subject_identifier__iexact=subject_identifier)
     else:
         initials = kwargs.get('initials').strip(' \t\n\r')
-        account = kwargs.get('account').strip(' \t\n\r')
+        account = kwargs.get('account')
         if not initials:
             initials = 'X0X'
     
