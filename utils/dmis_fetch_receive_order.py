@@ -43,7 +43,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
     
     #note that some records will not be imported for having>1
-    sql  = 'select min(l.id) as dmis_reference, \
+    sql  = 'select top 50 min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
             l.tid, \
             l.sample_condition, \
@@ -77,6 +77,9 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     cursor.execute(sql)
      
     for row in cursor:
+        
+        print '%s patient %s received %s' % (row.receive_identifier, row.subject_identifier, row.receive_datetime)
+        
         oReceive = fetch_or_create_receive( 
             receive_identifier = row.receive_identifier,
             protocol_identifier = row.protocol_identifier,
@@ -136,11 +139,11 @@ def fetch_or_create_receive( **kwargs ):
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
 
-    receive_identifier = kwargs.get('receive_identifier')
-    protocol_identifier = kwargs.get('protocol_identifier')
-    site_identifier = kwargs.get('site_identifier')    
+    receive_identifier = kwargs.get('receive_identifier').strip(' \t\n\r')
+    protocol_identifier = kwargs.get('protocol_identifier').strip(' \t\n\r')
+    site_identifier = kwargs.get('site_identifier').strip(' \t\n\r')    
     visit = kwargs.get('visit')    
-    subject_identifier = kwargs.get('subject_identifier')
+    subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
     initials = kwargs.get('initials')
     gender = kwargs.get('gender')
     dob = kwargs.get('dob')
@@ -326,19 +329,21 @@ def fetch_or_create_patient( **kwargs ):
     from bhp_lab_registration.models import Patient, Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
     from bhp_lab_core.models import DmisImportHistory
-
-    oPatient = Patient.objects.filter(subject_identifier__iexact=kwargs.get('subject_identifier'))
+    
+    subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
+    
+    oPatient = Patient.objects.filter(subject_identifier__iexact=subject_identifier)
     
     if oPatient:
-        oPatient = Patient.objects.get(subject_identifier__iexact=kwargs.get('subject_identifier'))
+        oPatient = Patient.objects.get(subject_identifier__iexact=subject_identifier)
     else:
-        initials = kwargs.get('initials')
-        account = kwargs.get('account')
+        initials = kwargs.get('initials').strip(' \t\n\r')
+        account = kwargs.get('account').strip(' \t\n\r')
         if not initials:
             initials = 'X0X'
     
         oPatient = Patient.objects.create(
-            subject_identifier = kwargs.get('subject_identifier'),
+            subject_identifier = subject_identifier,
             initials = initials,
             gender = kwargs.get('gender'),
             dob = kwargs.get('dob'),
