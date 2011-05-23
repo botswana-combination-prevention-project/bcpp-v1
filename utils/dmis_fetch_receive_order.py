@@ -29,7 +29,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     
     last_import_datetime = agg['import_datetime__max']
     
-    last_import_datetime = datetime.today() - timedelta(days=30)
+    last_import_datetime = datetime.today() - timedelta(days=180)
     
     #insert new record into ImportHistory
     obj = DmisImportHistory.objects.create(
@@ -45,7 +45,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
         raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
     
     #note that some records will not be imported for having>1
-    sql  = 'select top 50 min(l.id) as dmis_reference, \
+    sql  = 'select min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
             l.tid, \
             l.sample_condition, \
