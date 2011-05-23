@@ -54,13 +54,14 @@ def fetch_or_create_result(**kwargs):
                 result_identifier=result_identifier,
                 order = oOrder,
                 result_datetime=row.result_datetime,
-                comment='imported from dmis',
+                comment='',
                 user_created=row.user_created,
                 created=row.created,
                 dmis_result_guid=row.result_guid,
                 )
                 
-
+            print 'order %s %s result %s' % ( oOrder.order_identifier, oOrder.order_datetime, oResult.result_identifier)
+            
             sql ='select l21d.sample_assay_date, \
                   utestid, \
                   result as result_value, \
