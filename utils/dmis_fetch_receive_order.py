@@ -22,7 +22,7 @@ def fetch_receive_from_dmis(process_status, **kwargs):
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
 
-    now  = datetime.datetime.today()
+    now  = datetime.today()
     
     #get last import_datetime
     agg = DmisImportHistory.objects.aggregate(Max('import_datetime'),)    
