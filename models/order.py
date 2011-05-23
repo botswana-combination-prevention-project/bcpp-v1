@@ -9,6 +9,7 @@ class Order(MyBasicUuidModel):
         verbose_name = 'Order number',
         max_length = 25,
         help_text = 'Allocated internally',
+        db_index=True,                
         )
 
     order_datetime =  models.DateTimeField(
@@ -16,6 +17,7 @@ class Order(MyBasicUuidModel):
         validators = [
             datetime_not_future,
         ],
+        db_index=True,                
         )
     
     aliquot = models.ForeignKey(Aliquot)    

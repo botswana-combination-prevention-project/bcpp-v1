@@ -23,18 +23,21 @@ class Receive (MyBasicUuidModel):
         max_length = 25,
         null = True, 
         editable = False,
+        db_index=True,                
         )
 
     patient = models.ForeignKey(Patient)
 
     datetime_drawn = models.DateTimeField("Date and time drawn",
         validators=[
-            datetime_not_future,]
+            datetime_not_future,],
+        db_index=True,                    
             )
   
     receive_datetime = models.DateTimeField("Date and time received",
         validators=[
-            datetime_not_future,]
+            datetime_not_future,],
+        db_index=True,                    
             )
 
     site = models.ForeignKey(Site)

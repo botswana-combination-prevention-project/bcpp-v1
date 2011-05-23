@@ -26,6 +26,7 @@ class Panel(MyBasicModel):
         verbose_name = "Panel Name", 
         max_length=50,  
         unique=True,
+        db_index=True,                
         )
 
     panel_group = models.ForeignKey(PanelGroup)
