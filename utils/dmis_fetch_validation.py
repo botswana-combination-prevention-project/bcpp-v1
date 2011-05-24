@@ -82,7 +82,7 @@ def fetch_validation_from_dmis(**kwargs):
                     from bhplab.dbo.lab23response as l23 \
                     left join bhplab.dbo.lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0 \
                     where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % ( oResultItem.test_code.code, oResult.dmis_result_guid)
-
+            raise TypeError(sql)
             cursor_result = cnxn2.cursor()            
             #try:
             for row in cursor_result:  
