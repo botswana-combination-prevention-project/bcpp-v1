@@ -1,6 +1,7 @@
 def fetch_validation_from_dmis(**kwargs):
 
-    import pyodbc, datetime
+    import pyodbc 
+    from datetime import datetime, time
     from django.db.models import Q
     from bhp_lab_core.models import TestCode, Result, ResultItem, ResultSource
 
@@ -53,17 +54,18 @@ def fetch_validation_from_dmis(**kwargs):
                     left join bhplab.dbo.results_101 as r101 on l5.result_guid=r101.result_guid \
                     where result_accepted=1 and convert(varchar(36),l5.result_guid)='%s'" % oResult.dmis_result_guid 
                     
-            cursor_result = cnxn2.cursor()  
-            try:
-                for row in cursor_result:        
-                    oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\')
-                    oResultItem.validation_status='F'
-                    oResultItem.validation_datetime=row.validation_datetime
-                    oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')
-                    oResultItem.save()                            
-                print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )                    
-            except:
-                pass                    
+            cursor_result = cnxn2.cursor() 
+            cursor_result.execute(sql)  
+            #try:
+            for row in cursor_result:        
+                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\')
+                oResultItem.validation_status='F'
+                oResultItem.validation_datetime=row.validation_datetime
+                oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')
+                oResultItem.save()                            
+            print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )                    
+            #except:
+            #    pass                    
 
         elif oResultItem.result_item_source==oManual_interface and oResultItem.validation_reference.lower()<>'lab23':                
             #use lab21 information for PSM, Manual, Import
@@ -82,19 +84,16 @@ def fetch_validation_from_dmis(**kwargs):
                     from bhplab.dbo.lab23response as l23 \
                     left join bhplab.dbo.lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0 \
                     where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % ( oResultItem.test_code.code, oResult.dmis_result_guid)
-            raise TypeError(sql)
-            cursor_result = cnxn2.cursor()            
-            #try:
+            cursor_result = cnxn2.cursor() 
+            cursor_result.execute(sql)           
             for row in cursor_result:  
-                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\'),
-                oResultItem.validation_reference=row.validation_reference,
-                oResultItem.validation_status='F',
-                oResultItem.validation_datetime=row.validation_datetime,
+                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\')
+                oResultItem.validation_reference=row.validation_reference
+                oResultItem.validation_status='F'
+                oResultItem.validation_datetime=row.validation_datetime
                 oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')                        
                 oResultItem.save()                            
             print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )                    
-            #except:
-            #    pass                    
                     
         else:
             raise TypeError('Unknown case result_item_source in dmis_fetch_validation. Got \'%s\' from result %s.' % (oResult.resultitem.result_item_source, oResult) )
