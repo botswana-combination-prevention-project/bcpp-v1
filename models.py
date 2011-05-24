@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from bhp_common.models import MyBasicModel
+from bhp_common.models import MyBasicModel, MyBasicUuidModel
 
 class Netbook(MyBasicModel):
 
@@ -61,4 +61,25 @@ class NetbookUser(MyBasicModel):
     class Meta:
         unique_together=['netbook', 'user']
         ordering=['netbook']        
+
+
+class NetbookImportError(MyBasicUuidModel):
+
+    netbook = models.CharField(
+        max_length=25, 
+        )
+    object_model_name = models.CharField(
+        max_length=50, 
+        )
+
+    object_unicode = models.CharField(
+        max_length=100, 
+        )
+
+    object_serialized = models.CharField(
+        max_length=4000, 
+        )
+
+    class Meta:
+        app_label="mochudi"
 
