@@ -19,7 +19,7 @@ def fetch_validation_from_dmis(**kwargs):
     qset=Q(validation_status__iexact='P')
 
     if kwargs.get('result_identifier'):
-        qset.add(Q(result__result_identifier__iexact=kwargs.get('result_identifier')))
+        qset.add(Q(result__result_identifier__iexact=kwargs.get('result_identifier')), Q.AND)
     
     oResultItems  = ResultItem.objects.filter(qset)
     
