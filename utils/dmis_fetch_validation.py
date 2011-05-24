@@ -25,7 +25,7 @@ def fetch_validation_from_dmis(**kwargs):
     
     for oResultItem in oResultItems:
         oResult=oResultItem.result
-        print 'result %s %s test_code %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code )
+        
         if oResultItem.result_item_source==oPSM_interface:
             #use lab21 information for PSM, Manual, Import
             oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
@@ -33,6 +33,7 @@ def fetch_validation_from_dmis(**kwargs):
             oResultItem.validation_datetime=oResultItem.result_item_datetime
             oResultItem.validation_username='auto'
             oResultItem.save()        
+            print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )
         elif oResultItem.result_item_source==oDirect_interface:
             #use lab21 information for Import
             oResultItem.result_item_operator=oResult.user_created.strip('BHP\\bhp\\')
@@ -40,6 +41,7 @@ def fetch_validation_from_dmis(**kwargs):
             oResultItem.validation_datetime=oResultItem.result_item_datetime
             oResultItem.validation_username='auto'
             oResultItem.save()                        
+            print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )            
         elif oResultItem.result_item_source==oCD4_interface:
             #this returns only one record per result, only, so update all items as one
             # hmmm ... all imported results are from LAB21 which implies result_accepted=1, add "where result_accepted=1"                
@@ -59,6 +61,7 @@ def fetch_validation_from_dmis(**kwargs):
                     oResultItem.validation_datetime=row.validation_datetime
                     oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')
                     oResultItem.save()                            
+                print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )                    
             except:
                 pass                    
 
@@ -69,6 +72,7 @@ def fetch_validation_from_dmis(**kwargs):
             oResultItem.validation_datetime=oResultItem.result_item_datetime
             oResultItem.validation_username='auto'
             oResultItem.save()                        
+            print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )            
         elif oResultItem.result_item_source==oManual_interface and oResultItem.validation_reference.lower()=='lab23':
             #this returns one record per result, only, so update all items as one
             sql = "select lower(L23.operator) as operator, \
@@ -88,6 +92,7 @@ def fetch_validation_from_dmis(**kwargs):
                     oResultItem.validation_datetime=row.validation_datetime,
                     oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')                        
                     oResultItem.save()                            
+                print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )                    
             except:
                 pass                    
                     
