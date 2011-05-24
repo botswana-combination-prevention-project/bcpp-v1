@@ -84,17 +84,17 @@ def fetch_validation_from_dmis(**kwargs):
                     where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % ( oResultItem.test_code.code, oResult.dmis_result_guid)
 
             cursor_result = cnxn2.cursor()            
-            try:
-                for row in cursor_result:  
-                    oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\'),
-                    oResultItem.validation_reference=row.validation_reference,
-                    oResultItem.validation_status='F',
-                    oResultItem.validation_datetime=row.validation_datetime,
-                    oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')                        
-                    oResultItem.save()                            
-                print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )                    
-            except:
-                pass                    
+            #try:
+            for row in cursor_result:  
+                oResultItem.result_item_operator=row.operator.strip('BHP\\bhp\\'),
+                oResultItem.validation_reference=row.validation_reference,
+                oResultItem.validation_status='F',
+                oResultItem.validation_datetime=row.validation_datetime,
+                oResultItem.validation_username=row.validation_username.strip('BHP\\bhp\\')                        
+                oResultItem.save()                            
+            print 'result %s %s test_code %s ON %s' % (oResult.result_identifier,oResult.result_datetime,oResultItem.test_code, oResultItem.result_item_source )                    
+            #except:
+            #    pass                    
                     
         else:
             raise TypeError('Unknown case result_item_source in dmis_fetch_validation. Got \'%s\' from result %s.' % (oResult.resultitem.result_item_source, oResult) )
