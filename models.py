@@ -80,6 +80,4 @@ class NetbookImportError(MyBasicUuidModel):
         max_length=4000, 
         )
 
-    class Meta:
-        app_label="mochudi"
 
