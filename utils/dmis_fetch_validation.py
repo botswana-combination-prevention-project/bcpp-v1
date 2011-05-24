@@ -15,8 +15,13 @@ def fetch_validation_from_dmis(**kwargs):
     oPSM_interface = ResultSource.objects.get(name__iexact='psm_interface')
     oDirect_interface = ResultSource.objects.get(name__iexact='direct_import') 
     oManual_interface = ResultSource.objects.get(name__iexact='manual_entry')                           
+    
+    qset=Q(validation_status__iexact='P')
 
-    oResultItems  = ResultItem.objects.filter(validation_status__iexact='P')
+    if kwargs.get('result_identifier'):
+        qset.add() = Q(result__result_identifier__iexact=kwargs.get('result_identifier'))
+    
+    oResultItems  = ResultItem.objects.filter(qset)
     
     for oResultItem in oResultItems:
         oResult=oResultItem.result
