@@ -169,8 +169,8 @@ def fetch_lists_from_dmis(**kwargs):
 if __name__ == "__main__":
     
     import sys,os
-    sys.path.append('/home/erikvw/source/')
-    sys.path.append('/home/erikvw/source/bhplab/')
+    sys.path.append('/home/django/source/')
+    sys.path.append('/home/django/source/bhplab/')
     os.environ['DJANGO_SETTINGS_MODULE'] ='bhplab.settings'
     from django.core.management import setup_environ
     from bhplab import settings
