@@ -8,6 +8,7 @@ from bhp_registration.choices import SUBJECT_TYPE
 from bhp_visit.models import Appointment
 
 class VisitTrackingInfoSource (MyBasicListModel):
+    
     subject_type = models.CharField(
         max_length = 25,
         choices=SUBJECT_TYPE,
