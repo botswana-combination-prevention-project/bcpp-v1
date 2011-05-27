@@ -85,6 +85,7 @@ def fetch_or_create_result(**kwargs):
                 try:
                     oTestCode=TestCode.objects.get(code__exact=test_code)
                 except:
+                    raise TypeError('test_code')
                     oTestCodeGroup = TestCodeGroup.objects.filter(code__exact='000')
                     TestCode.objects.create( 
                         code=test_code,
