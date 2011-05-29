@@ -8,69 +8,69 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'WhoClinicalStagingDxAdult'
-        db.create_table('bhp_code_lists_whoclinicalstagingdxadult', (
+        # Adding model 'WcsDxAdult'
+        db.create_table('bhp_code_lists_wcsdxadult', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('list_ref', self.gf('django.db.models.fields.CharField')(max_length=35)),
         ))
-        db.send_create_signal('bhp_code_lists', ['WhoClinicalStagingDxAdult'])
+        db.send_create_signal('bhp_code_lists', ['WcsDxAdult'])
 
-        # Adding model 'WhoClinicalStagingDxPediatric'
-        db.create_table('bhp_code_lists_whoclinicalstagingdxpediatric', (
+        # Adding model 'WcsDxPed'
+        db.create_table('bhp_code_lists_wcsdxped', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('list_ref', self.gf('django.db.models.fields.CharField')(max_length=35)),
         ))
-        db.send_create_signal('bhp_code_lists', ['WhoClinicalStagingDxPediatric'])
+        db.send_create_signal('bhp_code_lists', ['WcsDxPed'])
 
-        # Adding model 'DiagnosisCode'
-        db.create_table('bhp_code_lists_diagnosiscode', (
+        # Adding model 'DxCode'
+        db.create_table('bhp_code_lists_dxcode', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('list_ref', self.gf('django.db.models.fields.CharField')(max_length=35)),
         ))
-        db.send_create_signal('bhp_code_lists', ['DiagnosisCode'])
+        db.send_create_signal('bhp_code_lists', ['DxCode'])
 
-        # Adding model 'SignsSymptomsCode'
-        db.create_table('bhp_code_lists_signssymptomscode', (
+        # Adding model 'SsxCode'
+        db.create_table('bhp_code_lists_ssxcode', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('list_ref', self.gf('django.db.models.fields.CharField')(max_length=35)),
         ))
-        db.send_create_signal('bhp_code_lists', ['SignsSymptomsCode'])
+        db.send_create_signal('bhp_code_lists', ['SsxCode'])
 
         # Adding model 'MedicationCode'
         db.create_table('bhp_code_lists_medicationcode', (
@@ -79,8 +79,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
@@ -95,8 +95,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
@@ -111,8 +111,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
@@ -127,8 +127,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
@@ -143,8 +143,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
@@ -159,8 +159,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='dmc3', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=35)),
             ('long_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
@@ -171,17 +171,17 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         
-        # Deleting model 'WhoClinicalStagingDxAdult'
-        db.delete_table('bhp_code_lists_whoclinicalstagingdxadult')
+        # Deleting model 'WcsDxAdult'
+        db.delete_table('bhp_code_lists_wcsdxadult')
 
-        # Deleting model 'WhoClinicalStagingDxPediatric'
-        db.delete_table('bhp_code_lists_whoclinicalstagingdxpediatric')
+        # Deleting model 'WcsDxPed'
+        db.delete_table('bhp_code_lists_wcsdxped')
 
-        # Deleting model 'DiagnosisCode'
-        db.delete_table('bhp_code_lists_diagnosiscode')
+        # Deleting model 'DxCode'
+        db.delete_table('bhp_code_lists_dxcode')
 
-        # Deleting model 'SignsSymptomsCode'
-        db.delete_table('bhp_code_lists_signssymptomscode')
+        # Deleting model 'SsxCode'
+        db.delete_table('bhp_code_lists_ssxcode')
 
         # Deleting model 'MedicationCode'
         db.delete_table('bhp_code_lists_medicationcode')
@@ -207,8 +207,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'ArvCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -221,8 +221,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'ArvDoseStatus'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -235,8 +235,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'ArvModificationCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -249,8 +249,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'BodySiteCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -259,12 +259,12 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_code_lists.diagnosiscode': {
-            'Meta': {'object_name': 'DiagnosisCode'},
+        'bhp_code_lists.dxcode': {
+            'Meta': {'object_name': 'DxCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -277,8 +277,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'MedicationCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -291,8 +291,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'OrganismCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -301,12 +301,12 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_code_lists.signssymptomscode': {
-            'Meta': {'object_name': 'SignsSymptomsCode'},
+        'bhp_code_lists.ssxcode': {
+            'Meta': {'object_name': 'SsxCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -315,12 +315,12 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_code_lists.whoclinicalstagingdxadult': {
-            'Meta': {'object_name': 'WhoClinicalStagingDxAdult'},
+        'bhp_code_lists.wcsdxadult': {
+            'Meta': {'object_name': 'WcsDxAdult'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -329,12 +329,12 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_code_lists.whoclinicalstagingdxpediatric': {
-            'Meta': {'object_name': 'WhoClinicalStagingDxPediatric'},
+        'bhp_code_lists.wcsdxped': {
+            'Meta': {'object_name': 'WcsDxPed'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'dmc3'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),

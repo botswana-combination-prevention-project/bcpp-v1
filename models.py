@@ -16,19 +16,21 @@ class MyCodeList (MyBasicModel):
 
 #dx and ssx        
 
-class WhoClinicalStagingDxAdult(MyCodeList):
+"""WhoClinicalStagingDxAdult"""
+class WcsDxAdult(MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
 
-class WhoClinicalStagingDxPediatric(MyCodeList):
+"""WhoClinicalStagingDxPediatric"""
+class WcsDxPed(MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
 
-class DiagnosisCode (MyCodeList):
+class DxCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
 
-class SignsSymptomsCode (MyCodeList):
+class SsxCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
 
