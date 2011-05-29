@@ -6,15 +6,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
-    depends_on = (
-        ("bhp_registration", "0001_initial"),
-        ("bhp_code_lists", "0001_initial"),                
-    )
-
     def forwards(self, orm):
         
-        # Adding model 'DeathCauseInfo'
-        db.create_table('bhp_adverse_deathcauseinfo', (
+        # Adding model 'AdverseEventReportType'
+        db.create_table('bhp_adverse_adverseeventreporttype', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -28,10 +23,10 @@ class Migration(SchemaMigration):
             ('field_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
             ('version', self.gf('django.db.models.fields.CharField')(default='1.0', max_length=35)),
         ))
-        db.send_create_signal('bhp_adverse', ['DeathCauseInfo'])
+        db.send_create_signal('bhp_adverse', ['AdverseEventReportType'])
 
-        # Adding model 'DeathCauseCategory'
-        db.create_table('bhp_adverse_deathcausecategory', (
+        # Adding model 'AdverseEventStudyRelation'
+        db.create_table('bhp_adverse_adverseeventstudyrelation', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -45,10 +40,10 @@ class Migration(SchemaMigration):
             ('field_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
             ('version', self.gf('django.db.models.fields.CharField')(default='1.0', max_length=35)),
         ))
-        db.send_create_signal('bhp_adverse', ['DeathCauseCategory'])
+        db.send_create_signal('bhp_adverse', ['AdverseEventStudyRelation'])
 
-        # Adding model 'DeathMedicalResponsibility'
-        db.create_table('bhp_adverse_deathmedicalresponsibility', (
+        # Adding model 'Ae010ReportType'
+        db.create_table('bhp_adverse_ae010reporttype', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -62,10 +57,10 @@ class Migration(SchemaMigration):
             ('field_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
             ('version', self.gf('django.db.models.fields.CharField')(default='1.0', max_length=35)),
         ))
-        db.send_create_signal('bhp_adverse', ['DeathMedicalResponsibility'])
+        db.send_create_signal('bhp_adverse', ['Ae010ReportType'])
 
-        # Adding model 'DeathReasonHospitalized'
-        db.create_table('bhp_adverse_deathreasonhospitalized', (
+        # Adding model 'Ae010AdverseStudyRel'
+        db.create_table('bhp_adverse_ae010adversestudyrel', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -79,10 +74,10 @@ class Migration(SchemaMigration):
             ('field_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
             ('version', self.gf('django.db.models.fields.CharField')(default='1.0', max_length=35)),
         ))
-        db.send_create_signal('bhp_adverse', ['DeathReasonHospitalized'])
+        db.send_create_signal('bhp_adverse', ['Ae010AdverseStudyRel'])
 
-        # Adding model 'DeathForm'
-        db.create_table('bhp_adverse_deathform', (
+        # Adding model 'SimpleAdverseEvent'
+        db.create_table('bhp_adverse_simpleadverseevent', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
@@ -90,46 +85,38 @@ class Migration(SchemaMigration):
             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('register_subject', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['bhp_registration.RegisteredSubject'], unique=True)),
-            ('death_date', self.gf('django.db.models.fields.DateField')()),
-            ('death_cause_info', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_adverse.DeathCauseInfo'])),
-            ('death_cause_info_other', self.gf('django.db.models.fields.CharField')(max_length=35, null=True, blank=True)),
-            ('perform_autopsy', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('death_cause', self.gf('django.db.models.fields.CharField')(max_length=35)),
-            ('death_cause_cat', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_adverse.DeathCauseCategory'])),
-            ('death_cause_other', self.gf('django.db.models.fields.CharField')(max_length=35, null=True, blank=True)),
-            ('death_cause_code', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_code_lists.DiagnosisCode'], max_length=25)),
-            ('illness_duration', self.gf('django.db.models.fields.IntegerField')()),
-            ('medical_responsibility', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_adverse.DeathMedicalResponsibility'])),
-            ('participant_hospitalized', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('reason_hospitalized', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_adverse.DeathReasonHospitalized'])),
-            ('days_hospitalized', self.gf('django.db.models.fields.IntegerField')()),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=35, null=True, blank=True)),
+            ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_registration.RegisteredSubject'])),
+            ('report_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_adverse.Ae010ReportType'])),
+            ('date_onset', self.gf('django.db.models.fields.DateField')()),
+            ('ae_desc', self.gf('django.db.models.fields.TextField')(max_length=250)),
+            ('event_grade', self.gf('django.db.models.fields.IntegerField')()),
+            ('adverse_study_rel', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_adverse.Ae010AdverseStudyRel'])),
+            ('study_coord', self.gf('django.db.models.fields.CharField')(max_length=35)),
         ))
-        db.send_create_signal('bhp_adverse', ['DeathForm'])
+        db.send_create_signal('bhp_adverse', ['SimpleAdverseEvent'])
 
 
     def backwards(self, orm):
         
-        # Deleting model 'DeathCauseInfo'
-        db.delete_table('bhp_adverse_deathcauseinfo')
+        # Deleting model 'AdverseEventReportType'
+        db.delete_table('bhp_adverse_adverseeventreporttype')
 
-        # Deleting model 'DeathCauseCategory'
-        db.delete_table('bhp_adverse_deathcausecategory')
+        # Deleting model 'AdverseEventStudyRelation'
+        db.delete_table('bhp_adverse_adverseeventstudyrelation')
 
-        # Deleting model 'DeathMedicalResponsibility'
-        db.delete_table('bhp_adverse_deathmedicalresponsibility')
+        # Deleting model 'Ae010ReportType'
+        db.delete_table('bhp_adverse_ae010reporttype')
 
-        # Deleting model 'DeathReasonHospitalized'
-        db.delete_table('bhp_adverse_deathreasonhospitalized')
+        # Deleting model 'Ae010AdverseStudyRel'
+        db.delete_table('bhp_adverse_ae010adversestudyrel')
 
-        # Deleting model 'DeathForm'
-        db.delete_table('bhp_adverse_deathform')
+        # Deleting model 'SimpleAdverseEvent'
+        db.delete_table('bhp_adverse_simpleadverseevent')
 
 
     models = {
-        'bhp_adverse.deathcausecategory': {
-            'Meta': {'ordering': "['display_index']", 'object_name': 'DeathCauseCategory'},
+        'bhp_adverse.adverseeventreporttype': {
+            'Meta': {'ordering': "['display_index']", 'object_name': 'AdverseEventReportType'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'display_index': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
             'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -143,8 +130,8 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
         },
-        'bhp_adverse.deathcauseinfo': {
-            'Meta': {'ordering': "['display_index']", 'object_name': 'DeathCauseInfo'},
+        'bhp_adverse.adverseeventstudyrelation': {
+            'Meta': {'ordering': "['display_index']", 'object_name': 'AdverseEventStudyRelation'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'display_index': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
             'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -158,72 +145,50 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
         },
-        'bhp_adverse.deathform': {
-            'Meta': {'object_name': 'DeathForm'},
-            'comment': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
+        'bhp_adverse.ae010adversestudyrel': {
+            'Meta': {'ordering': "['display_index']", 'object_name': 'Ae010AdverseStudyRel'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'days_hospitalized': ('django.db.models.fields.IntegerField', [], {}),
-            'death_cause': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
-            'death_cause_cat': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_adverse.DeathCauseCategory']"}),
-            'death_cause_code': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_code_lists.DiagnosisCode']", 'max_length': '25'}),
-            'death_cause_info': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_adverse.DeathCauseInfo']"}),
-            'death_cause_info_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
-            'death_cause_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
-            'death_date': ('django.db.models.fields.DateField', [], {}),
+            'display_index': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
+            'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
+        },
+        'bhp_adverse.ae010reporttype': {
+            'Meta': {'ordering': "['display_index']", 'object_name': 'Ae010ReportType'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'display_index': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
+            'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
+        },
+        'bhp_adverse.simpleadverseevent': {
+            'Meta': {'object_name': 'SimpleAdverseEvent'},
+            'adverse_study_rel': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_adverse.Ae010AdverseStudyRel']"}),
+            'ae_desc': ('django.db.models.fields.TextField', [], {'max_length': '250'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'date_onset': ('django.db.models.fields.DateField', [], {}),
+            'event_grade': ('django.db.models.fields.IntegerField', [], {}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            'illness_duration': ('django.db.models.fields.IntegerField', [], {}),
-            'medical_responsibility': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_adverse.DeathMedicalResponsibility']"}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'participant_hospitalized': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
-            'perform_autopsy': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
-            'reason_hospitalized': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_adverse.DeathReasonHospitalized']"}),
-            'register_subject': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bhp_registration.RegisteredSubject']", 'unique': 'True'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
-        },
-        'bhp_adverse.deathmedicalresponsibility': {
-            'Meta': {'ordering': "['display_index']", 'object_name': 'DeathMedicalResponsibility'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'display_index': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
-            'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
-            'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
-            'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
-        },
-        'bhp_adverse.deathreasonhospitalized': {
-            'Meta': {'ordering': "['display_index']", 'object_name': 'DeathReasonHospitalized'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'display_index': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
-            'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
-            'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
-            'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
-        },
-        'bhp_code_lists.diagnosiscode': {
-            'Meta': {'object_name': 'DiagnosisCode'},
-            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'list_ref': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
-            'long_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'short_name': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_registration.RegisteredSubject']"}),
+            'report_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_adverse.Ae010ReportType']"}),
+            'study_coord': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },

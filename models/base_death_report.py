@@ -2,23 +2,23 @@ from django.db import models
 from bhp_common.fields import OtherCharField
 from bhp_common.choices import YES_NO
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
-from bhp_code_lists.models import DiagnosisCode
+from bhp_code_lists.models import DxCode
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 
 
 """
     Death form / AF005
 """
-class DeathCauseInfo (MyBasicListModel):
+class CauseInfo (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
-class DeathCauseCategory (MyBasicListModel):
+class CauseCategory (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
-class DeathMedicalResponsibility (MyBasicListModel):
+class MedicalResponsibility (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
-class DeathReasonHospitalized (MyBasicListModel):
+class ReasonHospitalized (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
         
@@ -35,7 +35,7 @@ class BaseDeathReport(MyBasicUuidModel):
             ],
         help_text="",
         )   
-    death_cause_info = models.ForeignKey(DeathCauseInfo, 
+    death_cause_info = models.ForeignKey(CauseInfo, 
         verbose_name="2. What is the primary source of cause of death information? (if multiple source of information, list one with the smallest number closest to the top of the list) ",
         help_text="",
         )   
@@ -55,7 +55,7 @@ class BaseDeathReport(MyBasicUuidModel):
         verbose_name="4.Describe the major cause of death(including pertinent autopsy information if available),starting with the first noticeable illness thought to be related to death,continuing to time of death. ",
         help_text="Note:Cardiac and pulmonary arrest are not major reasons and should not be used to describe major cause)"  
         )    
-    death_cause_category = models.ForeignKey(DeathCauseCategory, 
+    death_cause_category = models.ForeignKey(CauseCategory, 
         verbose_name="4a. Based on the above description, what category best defines the major cause of death? ",
         help_text="",
         )   
@@ -64,7 +64,7 @@ class BaseDeathReport(MyBasicUuidModel):
         blank=True,
         null=True,     
         )   
-    diagnosis_code = models.ForeignKey(DiagnosisCode,
+    dx_code = models.ForeignKey(DxCode,
         max_length=25,
         verbose_name="4c. Please code the cause of death as one of the following:",
         help_text="Use diagnosis code from Diagnosis Reference Listing",
@@ -73,7 +73,7 @@ class BaseDeathReport(MyBasicUuidModel):
         verbose_name="4d. Duration of acute illness directly causing death   ",
         help_text="If unknown enter -1",
         )
-    death_medical_responsibility = models.ForeignKey(DeathMedicalResponsibility, 
+    death_medical_responsibility = models.ForeignKey(MedicalResponsibility, 
         verbose_name="5. Who was responsible for primary medical care of the participant during the month prior to death?",
         help_text="",
         )    
@@ -83,7 +83,7 @@ class BaseDeathReport(MyBasicUuidModel):
         verbose_name="6. Was the participant hospitalised before death?",
         help_text="",
         )
-    death_reason_hospitalized = models.ForeignKey(DeathReasonHospitalized, 
+    death_reason_hospitalized = models.ForeignKey(ReasonHospitalized, 
         verbose_name="6a. if yes,what was the primary reason for hospitalisation? ",
         help_text="",
         )   
@@ -98,11 +98,6 @@ class BaseDeathReport(MyBasicUuidModel):
         blank=True,
         null=True,   
         ) 
-        
-    def form_title (self):
-        return "Death Report" 
-    def form_identifier (self):
-        return "af005" 
         
     class Meta:
         abstract = True
