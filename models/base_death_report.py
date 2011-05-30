@@ -9,16 +9,16 @@ from bhp_common.validators import datetime_not_before_study_start, datetime_not_
 """
     Death form / AF005
 """
-class CauseInfo (MyBasicListModel):
+class DeathCauseInfo (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
-class CauseCategory (MyBasicListModel):
+class DeathCauseCategory (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
-class MedicalResponsibility (MyBasicListModel):
+class DeathMedicalResponsibility (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
-class ReasonHospitalized (MyBasicListModel):
+class DeathReasonHospitalized (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
         
@@ -35,7 +35,7 @@ class BaseDeathReport(MyBasicUuidModel):
             ],
         help_text="",
         )   
-    death_cause_info = models.ForeignKey(CauseInfo, 
+    death_cause_info = models.ForeignKey(DeathCauseInfo, 
         verbose_name="2. What is the primary source of cause of death information? (if multiple source of information, list one with the smallest number closest to the top of the list) ",
         help_text="",
         )   
@@ -55,7 +55,7 @@ class BaseDeathReport(MyBasicUuidModel):
         verbose_name="4.Describe the major cause of death(including pertinent autopsy information if available),starting with the first noticeable illness thought to be related to death,continuing to time of death. ",
         help_text="Note:Cardiac and pulmonary arrest are not major reasons and should not be used to describe major cause)"  
         )    
-    death_cause_category = models.ForeignKey(CauseCategory, 
+    death_cause_category = models.ForeignKey(DeathCauseCategory, 
         verbose_name="4a. Based on the above description, what category best defines the major cause of death? ",
         help_text="",
         )   
@@ -73,7 +73,7 @@ class BaseDeathReport(MyBasicUuidModel):
         verbose_name="4d. Duration of acute illness directly causing death   ",
         help_text="If unknown enter -1",
         )
-    death_medical_responsibility = models.ForeignKey(MedicalResponsibility, 
+    death_medical_responsibility = models.ForeignKey(DeathMedicalResponsibility, 
         verbose_name="5. Who was responsible for primary medical care of the participant during the month prior to death?",
         help_text="",
         )    
@@ -83,7 +83,7 @@ class BaseDeathReport(MyBasicUuidModel):
         verbose_name="6. Was the participant hospitalised before death?",
         help_text="",
         )
-    death_reason_hospitalized = models.ForeignKey(ReasonHospitalized, 
+    death_reason_hospitalized = models.ForeignKey(DeathReasonHospitalized, 
         verbose_name="6a. if yes,what was the primary reason for hospitalisation? ",
         help_text="",
         )   
