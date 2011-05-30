@@ -12,6 +12,7 @@ class MyCodeList (MyBasicModel):
         blank=True)    
     
     class Meta:
+        app_label="bhp_code_lists"
         abstract=True
 
 #dx and ssx        
@@ -20,42 +21,60 @@ class MyCodeList (MyBasicModel):
 class WcsDxAdult(MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
-
+    class Meta:
+        app_label="bhp_code_lists"
 """WhoClinicalStagingDxPediatric"""
 class WcsDxPed(MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
-
+    class Meta:
+        app_label="bhp_code_lists"
 class DxCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
+    class Meta:
+        app_label="bhp_code_lists"
 
 class SsxCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
+    class Meta:
+        app_label="bhp_code_lists"
 
 class MedicationCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
+    class Meta:
+        app_label="bhp_code_lists"
 
 class BodySiteCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
+    class Meta:
+        app_label="bhp_code_lists"
 
 class OrganismCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
+    class Meta:
+        app_label="bhp_code_lists"
 
 #ARV medications
 class ArvCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
+    class Meta:
+        app_label="bhp_code_lists"
 
 class ArvDoseStatus (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
+    class Meta:
+        app_label="bhp_code_lists"
 
 class ArvModificationCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
-    
+    class Meta:
+        app_label="bhp_code_lists"
+
