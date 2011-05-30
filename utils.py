@@ -130,9 +130,9 @@ def AllocateInfantIdentifier(ObjParentForm, registered_mother, live_infants, use
     elif live_infants == 2:
         id_suffix = 25
     elif live_infants == 3:
-        id_suffix = 47
+        id_suffix = 36
     elif live_infants == 4:
-        id_suffix = 48
+        id_suffix = 47
     else:
         raise TypeError('Ensure number of infants is greater than 0 and less than or equal to 4. You wrote %s' % (live_infants))
 
