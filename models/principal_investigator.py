@@ -4,6 +4,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator, Regex
 from bhp_common.validators import datetime_not_future, datetime_is_future
 from bhp_common.choices import YES_NO
 from bhp_common.models import MyBasicUuidModel
+from bhp_common.fields import NameField, InitialsField
 
 class PrincipalInvestigator (MyBasicUuidModel):
     
@@ -23,7 +24,7 @@ class PrincipalInvestigator (MyBasicUuidModel):
     class Meta:
         ordering = ['last_name', 'first_name']
         unique_together = ['last_name', 'first_name']
-        abstract = True
+        #abstract = True
     
     def get_absolute_url(self):
         return "/bhp_lab_registration/principalinvestigator/%s/" % self.id   
