@@ -10,6 +10,11 @@ from bhp_form.models import Entry, EntryBucket
 from bhp_visit.models import Appointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason
 from forms import AppointmentForm
 
+class EntryInline (admin.TabularInline):
+    model = Entry
+    
+
+
 #VisitTrackingReport
 class VisitDefinitionAdmin(MyModelAdmin):
     list_display = ('code', 'title', 'time_point', 'lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit')
