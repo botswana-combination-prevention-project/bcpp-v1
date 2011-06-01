@@ -26,6 +26,7 @@ def fetch_or_create_result(**kwargs):
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
     from bhp_lab_core.models import DmisImportHistory, ResultSource
     from bhp_lab_core.utils import AllocateResultIdentifier
+    from bhp_lab_test_code.utils import TestCode, TestCodeGroup
 
     
     oOrder = kwargs.get('order')
