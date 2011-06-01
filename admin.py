@@ -12,12 +12,28 @@ from forms import AppointmentForm
 
 class EntryInline (admin.TabularInline):
     model = Entry
+    extra =0
+    fields = (
+        'entry_form',
+        'entry_order',
+        'required',
+        'entry_category',
+        'entry_window_calculation',
+        'time_point',
+        'lower_window',
+        'lower_window_unit',
+        'upper_window',
+        'upper_window_unit',
+    )
     
 
 
 #VisitTrackingReport
 class VisitDefinitionAdmin(MyModelAdmin):
     list_display = ('code', 'title', 'time_point', 'lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit')
+    
+    inlines = [EntryInline,]
+        
 admin.site.register(VisitDefinition, VisitDefinitionAdmin)
 
 admin.site.register(VisitTrackingInfoSource)
