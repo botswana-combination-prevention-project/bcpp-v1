@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_visit.choices import VISIT_INTERVAL_UNITS
 from bhp_visit.utils import get_lower_window_days, get_upper_window_days
+from bhp_visit.models import TagForSchedule
 
 class BaseWindowPeriodItem(MyBasicUuidModel):
 
@@ -63,7 +64,7 @@ class VisitDefinition(BaseWindowPeriodItem):
         max_length=35,
         )
 
-    tag_for_schedule = models.ManyToManyField(ContentType)
+    tag_for_schedule = models.ManyToManyField(TagForSchedule)
 
     instruction = models.TextField(
         verbose_name="Instructions",
