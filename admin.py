@@ -7,12 +7,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Avg, Max, Min, Count
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_form.models import Entry, EntryBucket
-from bhp_visit.models import Appointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason, TagForSchedule
+from bhp_visit.models import Appointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason, ScheduleGroup
 from forms import AppointmentForm
 
-class TagForScheduleAdmin(MyModelAdmin):
-    pass
-admin.site.register(TagForSchedule, TagForScheduleAdmin)    
+class ScheduleGroupAdmin(MyModelAdmin):
+    list_display = ('group_name', 'membership_form', 'grouping_key')
+admin.site.register(ScheduleGroup, ScheduleGroupAdmin)    
 
 class EntryInline (admin.TabularInline):
     model = Entry

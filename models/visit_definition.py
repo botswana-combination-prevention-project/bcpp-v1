@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator, MaxValueValidator
-from bhp_common.models import MyBasicListModel, MyBasicUuidModel
+from bhp_common.models import  MyBasicUuidModel
 from bhp_visit.choices import VISIT_INTERVAL_UNITS
 from bhp_visit.utils import get_lower_window_days, get_upper_window_days
-from bhp_visit.models import TagForSchedule
+from bhp_visit.models import ScheduleGroup
 
 class BaseWindowPeriodItem(MyBasicUuidModel):
 
@@ -44,13 +44,7 @@ class BaseWindowPeriodItem(MyBasicUuidModel):
 
 class VisitDefinition(BaseWindowPeriodItem):
 
-    """Model to define a visit code, title, windows, tag_for_schedule, etc.
-    
-       Note: field 'tag_for_schedule' is a list (m2m) of one or more entry forms 
-       that tag this visit definition for a subject's visit schedule. For example, if 
-       Form A is listed and completed for the subject, it implies that the subject's 
-       visit schedule will include all visit definitions tagged with Form A.
-    """
+    """Model to define a visit code, title, windows, schedule_group, etc."""
 
     code = models.IntegerField(
         validators = [
@@ -64,7 +58,7 @@ class VisitDefinition(BaseWindowPeriodItem):
         max_length=35,
         )
 
-    tag_for_schedule = models.ManyToManyField(TagForSchedule)
+    schedule_group = models.ManyToManyField(ScheduleGroup)
 
     instruction = models.TextField(
         verbose_name="Instructions",
@@ -72,6 +66,7 @@ class VisitDefinition(BaseWindowPeriodItem):
         blank=True
         )    
     
+    """
     def get_lower_window_datetime(self, appt_datetime):
         days = get_lower_window_days(self.lower_window, self.lower_window_unit)
         td = timedelta(days=days)
@@ -81,11 +76,11 @@ class VisitDefinition(BaseWindowPeriodItem):
         days = get_upper_window_days(self.upper_window, self.upper_window_unit)
         td = timedelta(days=days)
         return appt_datetime + td
-        
+    """
     def __unicode__(self):
         return '{0}: {1}'.format(self.code, self.title)
     
     class Meta:
-        ordering = ['time_point']  
+        ordering = ['code', 'time_point']  
         app_label = 'bhp_visit'                    
 

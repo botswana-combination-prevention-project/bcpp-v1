@@ -17,7 +17,9 @@ class Migration(SchemaMigration):
             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('entry_form', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
+            ('entry_form', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['contenttypes.ContentType'], unique=True)),
+            ('tag_type', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('grouping_key', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
         ))
         db.send_create_signal('bhp_visit', ['TagForSchedule'])
 
@@ -193,11 +195,13 @@ class Migration(SchemaMigration):
         'bhp_visit.tagforschedule': {
             'Meta': {'object_name': 'TagForSchedule'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'entry_form': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'entry_form': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['contenttypes.ContentType']", 'unique': 'True'}),
+            'grouping_key': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'tag_type': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },

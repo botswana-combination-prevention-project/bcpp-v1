@@ -10,3 +10,8 @@ APPT_STATUS = (
     ('Subject Seen', 'Subject Seen'),
     ('Cancelled', 'Cancelled'),        
     )    
+    
+TAG_TYPE = (
+    ('REGISTRATION', 'Registration'),
+    ('OTHER', 'Other'),    
+)    
