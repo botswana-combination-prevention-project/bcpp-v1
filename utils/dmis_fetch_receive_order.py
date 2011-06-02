@@ -1,6 +1,15 @@
 
 
-def fetch_receive_from_dmis(process_status, **kwargs):
+def fetch_receive_order(process_status, **kwargs):
+    
+    """Fetch receiving (lab01) and order (lab21) records from the mssql/vb version of dmis.
+       
+       Creates a new receive record, primary aliquot and order, if not exist.
+       Needs work on determining the number of days since last import
+       and which records to fetch (perhaps something older has been modeified.
+       Also, call with both process_status (pending and available) to make sure you get everything.
+    """
+
     from datetime import datetime, timedelta
     import pyodbc
     from django.db.models import Avg, Max, Min, Count    
@@ -496,8 +505,8 @@ if __name__ == "__main__":
     
     print 'fetching lab receiving and orders from dmis....'
     print 'fetch pending....'
-    fetch_receive_from_dmis('pending')
+    fetch_receive_order('pending')
     print 'fetch available....'
-    fetch_receive_from_dmis('available')    
+    fetch_receive_order('available')    
     print 'Done'
     sys.exit (0)                  
