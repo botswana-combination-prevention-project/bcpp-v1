@@ -5,11 +5,7 @@ VISIT_INTERVAL_UNITS = (
     ('Y', 'Year'),            
     )
     
-APPT_STATUS = (
-    ('Scheduled', 'Scheduled'),
-    ('Subject Seen', 'Subject Seen'),
-    ('Cancelled', 'Cancelled'),        
-    )    
+   
     
 TAG_TYPE = (
     ('REGISTRATION', 'Registration'),
