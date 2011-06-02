@@ -28,20 +28,19 @@ class VisitTrackingSubjCurrStatus (MyBasicListModel):
         app_label = 'bhp_visit'                    
 
 
-
-
-"""
-    This is the base class for Visit Tracking Form / AF002
-
-    User should only be allowed to select "scheduled" appointments
-"""
 class BaseVisitTracking (MyBasicUuidModel):
     
-    """
-        in admin, the drop down should be limited to scheduled
-        appt for the subject. Also ADD should only allow
-        'scheduled', and CHANGE only allow 'seen'
-        Admin should change the status after ADD.
+    """Base model for Visit Tracking (AF002).
+
+    For entry, requires an appointment be created first, so there
+    is no direct reference to 'registered subject' in this model.
+    
+    List of appointments in admin.py should be limited to scheduled
+    appointments for the current registered subject. 
+    
+    Other ideas: ADD should only allow 'scheduled', and CHANGE only allow 'seen'
+    Admin should change the status after ADD.
+    
     """        
 
     appointment  = models.OneToOneField(Appointment)
@@ -104,30 +103,4 @@ class BaseVisitTracking (MyBasicUuidModel):
         
     class Meta:
         abstract = True 
-        
-        
-"""
-    Sample Visit Tracking Report as would be defined in your applicacation
-"""    
 
-"""
-class VisitTrackingReport (BaseVisitTracking):
-
-    pass
-    
-    def __unicode__(self):
-        return "%s [%s] visit %s" % (self.registered_subject,self.registered_subject.initials, self.appointment.visit_definition.code )
-
-    class Meta:        
-        app_label = 'bhp_visit'                    
-        
-class VisitTrackingModel(MyBasicUuidModel):
-
-    visit_tracking_report = models.OneToOneField(VisitTrackingReport)        
-
-    def __unicode___(self):
-        return "%s" % (self.visit_tracking_report)    
-
-    class Meta:
-        abstract = True 
-"""            

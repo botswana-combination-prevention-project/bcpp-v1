@@ -6,9 +6,10 @@ from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_visit.choices import VISIT_INTERVAL_UNITS
 from bhp_visit.utils import get_lower_window_days, get_upper_window_days
 
-
 class BaseWindowPeriodItem(MyBasicUuidModel):
-    
+
+    """Base Model of fields that define a window period, either for visits or forms."""
+
     time_point = models.IntegerField(
         verbose_name = "Time point",
         default = 0,
@@ -40,10 +41,15 @@ class BaseWindowPeriodItem(MyBasicUuidModel):
     class Meta:
         abstract = True
 
-"""
-List of valid visit codes and their name
-"""
 class VisitDefinition(BaseWindowPeriodItem):
+
+    """Model to define a visit code, title, windows, tag_for_schedule, etc.
+    
+       Note: field 'tag_for_schedule' is a list (m2m) of one or more entry forms 
+       that tag this visit definition for a subject's visit schedule. For example, if 
+       Form A is listed and completed for the subject, it implies that the subject's 
+       visit schedule will include all visit definitions tagged with Form A.
+    """
 
     code = models.IntegerField(
         validators = [
@@ -57,7 +63,7 @@ class VisitDefinition(BaseWindowPeriodItem):
         max_length=35,
         )
 
-    group = models.ManyToManyField(ContentType)
+    tag_for_schedule = models.ManyToManyField(ContentType)
 
     instruction = models.TextField(
         verbose_name="Instructions",
@@ -76,9 +82,9 @@ class VisitDefinition(BaseWindowPeriodItem):
         return appt_datetime + td
         
     def __unicode__(self):
-        return '%s: %s' % (self.code, self.title)
+        return '{0}: {1}'.format(self.code, self.title)
     
     class Meta:
         ordering = ['time_point']  
         app_label = 'bhp_visit'                    
-            
+

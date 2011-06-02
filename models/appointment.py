@@ -8,15 +8,20 @@ from bhp_visit.models import VisitDefinition
 
 class Appointment(BaseAppointment):
 
+    """Model to track appointments for a registered subject's visit.
+        
+    Only one appointment per subject visit_definition+visit_instance.
+    Attribute 'visit_instance' should be populated by the system    
+    """    
+    
     registered_subject = models.ForeignKey(RegisteredSubject) 
         
-    """visit_definition is the visit code plus other information"""    
+
     visit_definition = models.ForeignKey(VisitDefinition,
         verbose_name=_("Visit"),
         help_text = _("For tracking within the window period of a visit, use the decimal convention. Format is NNNN.N. e.g 1000.0, 1000.1, 1000.2, etc)"),
         )
-        
-    """visit_instance should be populated by the system"""    
+
     visit_instance = models.IntegerField(
         verbose_name=_("Instance"),
         validators=[

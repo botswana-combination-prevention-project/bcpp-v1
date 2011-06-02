@@ -7,26 +7,12 @@ from bhp_common.validators import datetime_is_future, date_not_future
 from bhp_registration.models import RegisteredSubject
 from bhp_visit.choices import APPT_STATUS
 
-"""
-    An appointment covers ONE VisitTracking record. 
-    So the user must make an appointment before tracking the visit.
-    
-    Subject must be consented before making an appointment
-    
-"""    
+   
 
 class BaseAppointment (MyBasicUuidModel):
-
-    """
-    subject_identifier = models.CharField(
-        verbose_name = _("Subject identifier"),
-        max_length = 36,
-        editable=False,
-        null=True,
-        help_text = _("Subject identifier"),
-        )
-    """
-            
+    
+    """Base model of appointments. """     
+    
     appt_datetime = models.DateTimeField(
         verbose_name=_("Appointment date and time"),
         help_text="",
@@ -37,17 +23,6 @@ class BaseAppointment (MyBasicUuidModel):
         choices=APPT_STATUS,
         max_length=25,
         )
-    #first_name = NameField(
-    #    verbose_name = _("First name"),
-    #    max_length=25,
-    #    )
-
-    #initials = InitialsField()
-    
-    #dob = DobField(
-    #    validators=[date_not_future,],
-    #    )
-
     appt_reason = models.CharField(
         verbose_name=_("Reason for appointment"), 
         max_length = 25,
