@@ -43,7 +43,7 @@ class Appointment(BaseAppointment):
     class Meta:
         unique_together = [('registered_subject', 'visit_definition', 'visit_instance',),]
         ordering = ['registered_subject','appt_datetime', ]
-        app_label = 'bhp_visit' 
+        app_label = 'bhp_appointment' 
 
 
 
