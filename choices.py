@@ -1,4 +1,6 @@
 # choices
+BLANK_CHOICE_DASH = [('', '---------')]
+
 """ Try to keep this in alphabetical order """
 
 
