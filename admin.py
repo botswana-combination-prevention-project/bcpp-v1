@@ -4,7 +4,7 @@ from models import RegisteredSubject, OffStudyReason, OffStudy, RandomizedSubjec
 
 class RegisteredSubjectAdmin (MyModelAdmin):
 
-  list_display = (
+    list_display = (
         'subject_identifier',
         'subject_consent_id',        
         'first_name',
@@ -13,6 +13,11 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         'user_created',
         'created',        
     )   
+    
+    readonly_fields = (
+        'subject_identifier',
+        )
+    
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
 
 admin.site.register(RandomizedSubject)

@@ -10,7 +10,7 @@ class BaseSubject (MyBasicUuidModel):
         verbose_name = "Subject Identifier",
         max_length=25, 
         unique=True, 
-        editable=False)
+        )
     
     first_name = models.CharField(
         max_length=50,
