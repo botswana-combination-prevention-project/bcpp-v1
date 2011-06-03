@@ -66,7 +66,7 @@ class VisitDefinition(BaseWindowPeriodItem):
         blank=True
         )    
     
-    """
+
     def get_lower_window_datetime(self, appt_datetime):
         days = get_lower_window_days(self.lower_window, self.lower_window_unit)
         td = timedelta(days=days)
@@ -76,7 +76,7 @@ class VisitDefinition(BaseWindowPeriodItem):
         days = get_upper_window_days(self.upper_window, self.upper_window_unit)
         td = timedelta(days=days)
         return appt_datetime + td
-    """
+
     def __unicode__(self):
         return '{0}: {1}'.format(self.code, self.title)
     

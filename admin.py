@@ -6,9 +6,14 @@ from django.utils.encoding import force_unicode
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Avg, Max, Min, Count
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from bhp_form.models import Entry, EntryBucket
-from bhp_visit.models import Appointment, VisitDefinition, VisitTrackingSubjCurrStatus, VisitTrackingInfoSource, VisitTrackingVisitReason, ScheduleGroup
-from forms import AppointmentForm
+from bhp_form.models import Entry, ScheduledEntryBucket
+from bhp_visit.models import  VisitDefinition, ScheduleGroup
+from bhp_visit.models import  Appointment, ApptInfoSource, ApptReason, ApptCurrentStatus
+from bhp_visit.forms import AppointmentForm
+
+admin.site.register(ApptInfoSource)
+admin.site.register(ApptReason)
+admin.site.register(ApptCurrentStatus)
 
 class ScheduleGroupAdmin(MyModelAdmin):
     list_display = ('group_name', 'membership_form', 'grouping_key')
@@ -40,27 +45,6 @@ class VisitDefinitionAdmin(MyModelAdmin):
         
 admin.site.register(VisitDefinition, VisitDefinitionAdmin)
 
-admin.site.register(VisitTrackingInfoSource)
-admin.site.register(VisitTrackingVisitReason)
-admin.site.register(VisitTrackingSubjCurrStatus)
-
-
-"""
-class VisitTrackingReportAdmin(MyModelAdmin):
-    fields = (
-        'registered_subject',
-        'appointment',
-        'visit_datetime',
-        'subject_current_status',
-        'info_source',
-        'info_source_other',        
-        'visit_reason',
-        'visit_reason_missed',        
-        'next_scheduled_visit_datetime',
-    )
-admin.site.register(VisitTrackingReport, VisitTrackingReportAdmin)
-"""
-
 class AppointmentAdmin(MyModelAdmin):
 
     form = AppointmentForm
@@ -81,25 +65,6 @@ class AppointmentAdmin(MyModelAdmin):
                 obj.visit_instance = 0
             obj.save()
                             
-            #fill the entry bucket for this visit
-            if obj.visit_instance == 0:
-                filled_datetime = datetime.today()
-                oEntry = Entry.objects.filter(visit_definition=obj.visit_definition)
-                
-                #due_datetime = obj.visit_definition.get_lower_window_datetime(obj.appt_datetime)
-                
-                for entry in oEntry:
-                    oEntryBucket=EntryBucket(
-                        registered_subject=obj.registered_subject,
-                        appointment = obj,
-                        entry = entry,
-                        current_entry_title = entry.entry_form.model_class()._meta.verbose_name,
-                        #entry_url = entry.entry_form.model_class().get_absolute_url(),
-                        fill_datetime = filled_datetime,
-                        due_datetime = entry.visit_definition.get_upper_window_datetime(obj.appt_datetime),                      
-                        )
-                    oEntryBucket.save()             
-
     #override, to check if non-default redirect 
     def add_view(self, request, form_url='', extra_context=None):
 
@@ -150,4 +115,3 @@ class AppointmentAdmin(MyModelAdmin):
         'visit_instance',
     )
 admin.site.register(Appointment, AppointmentAdmin)
-

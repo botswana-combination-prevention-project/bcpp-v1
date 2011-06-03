@@ -1,9 +1,34 @@
 from datetime import date, datetime, timedelta
 from django import forms
 from django.contrib.admin import widgets   
-from models import Appointment                                    
+from bhp_visit.models import Appointment                                    
 
+class AppointmentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Appointment        
 
+    def clean(self):
+
+        cleaned_data = self.cleaned_data  
+
+        appt_datetime = cleaned_data.get("appt_datetime")
+        appt_status = cleaned_data.get("appt_status")
+
+        t1 = date.today() - appt_datetime.date()
+        if appt_status == 'Cancelled':
+            pass
+        elif appt_status == 'Subject Seen':
+            #cannot be future
+            if t1.days < 0:
+                raise forms.ValidationError("Subject has been 'seen'. Appointment date cannot be a future date. You wrote '%s'" % appt_datetime) 
+        else:
+            #must be future
+            if t1.days >= 0:            
+                raise forms.ValidationError("If subject has not been 'seen', the appointment date must a future date. You wrote '%s'" % appt_datetime)             
+
+        # Always return the full collection of cleaned data.
+        return cleaned_data
 """
 class BaseVisitTrackingForm(forms.ModelForm):
     
@@ -51,30 +76,4 @@ class BaseVisitTrackingForm(forms.ModelForm):
         return cleaned_data
 """
         
-class AppointmentForm(forms.ModelForm):
-    
-    class Meta:
-        model = Appointment        
-
-    def clean(self):
-
-        cleaned_data = self.cleaned_data  
-
-        appt_datetime = cleaned_data.get("appt_datetime")
-        appt_status = cleaned_data.get("appt_status")
-
-        t1 = date.today() - appt_datetime.date()
-        if appt_status == 'Cancelled':
-            pass
-        elif appt_status == 'Subject Seen':
-            #cannot be future
-            if t1.days < 0:
-                raise forms.ValidationError("Subject has been 'seen'. Appointment date cannot be a future date. You wrote '%s'" % appt_datetime) 
-        else:
-            #must be future
-            if t1.days >= 0:            
-                raise forms.ValidationError("If subject has not been 'seen', the appointment date must a future date. You wrote '%s'" % appt_datetime)             
-
-        # Always return the full collection of cleaned data.
-        return cleaned_data        
 
