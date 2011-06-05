@@ -1,5 +1,7 @@
+from datetime import datetime, date
 from django.db import models
 from django.contrib import admin
+from django.core.urlresolvers import reverse
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
@@ -84,7 +86,40 @@ class MyModelAdmin (MyAutoCompleteAdminModel):
             obj.user_created = request.user.username
         if change:
             obj.user_modified = request.user.username
-        obj.save()
+            obj.modified = datetime.today()
+        
+        return super(MyModelAdmin, self).save_model(request, obj, form, change)
+
+    def add_view(self, request, form_url='', extra_context=None):
+
+            result = super(MyModelAdmin, self).add_view(request, form_url='', extra_context=None)
+
+            """ Catch named url from request.GET.get('next') and reverse resolve along with other GET parameters"""
+            if request.GET.get('next'):
+                kwargs={}
+                for k in request.GET.iterkeys():
+                    kwargs[str(k)]=''.join(unicode(i) for i in request.GET.get(k))
+                del kwargs['next']
+                result['Location'] = reverse(request.GET.get('next'),kwargs=kwargs )
+
+            return result
+            
+                
+
+    def change_view(self, request, object_id, extra_context=None):
+
+            result = super(MyModelAdmin, self).change_view(request, object_id, extra_context)
+
+            """ Catch named url from request.GET.get('next') and reverse resolve along with other GET parameters"""
+            if request.GET.get('next'):
+                kwargs={}
+                for k in request.GET.iterkeys():
+                    kwargs[str(k)]=''.join(unicode(i) for i in request.GET.get(k))
+                del kwargs['next']
+                result['Location'] = reverse(request.GET.get('next'),kwargs=kwargs )
+
+            return result
+        
 
 
 class MyStackedInline (admin.StackedInline):

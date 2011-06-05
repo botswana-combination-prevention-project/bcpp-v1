@@ -10,17 +10,38 @@ register = template.Library()
 @register.filter(name='model_verbose_name')
 def model_verbose_name(contenttype):
     return contenttype.model_class()._meta.verbose_name
-    
-@register.filter(name='admin_url_from_contenttype')
-def admin_url_from_contenttype(contenttype, object_id=''):
-    if contenttype.model_class().objects.filter(pk=object_id):
+
+@register.filter(name='admin_url_for_maternal_dashboard')
+def admin_url_for_maternal_dashboard(contenttype, maternal_visit_pk):
+    """Return a url to add or change an admin entry form via the maternal dashboard based on maternal_visit_pk"""
+    if contenttype.model_class().objects.filter(maternal_visit = maternal_visit_pk):
+        model = contenttype.model_class().objects.get(maternal_visit = maternal_visit_pk)
         view = 'admin:%s_%s_change' % (contenttype.app_label, contenttype.model)
         view = str(view)
-        return reverse(view, args=(object_id,))
+        rev_url = reverse(view, args=(model.pk,))
+        rev_url = '%s?%s' % (rev_url, 'next=maternal_dashboard_visit_url&dashboard=maternal')            
+        #else:
+        #    raise TypeError("Maternal_visit_pk is not None but does not exist for model '%s'. Got '%s'" % (contenttype.model, maternal_visit_pk))
     else:
         view = 'admin:%s_%s_add' % (contenttype.app_label, contenttype.model)
         view = str(view)
-        return reverse(view)
+        try:
+            rev_url = reverse(view)
+            rev_url = '%s?maternal_visit=%s&%s' % (rev_url, maternal_visit_pk, 'next=maternal_dashboard_visit_url&dashboard=maternal')            
+        except:
+            raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (contenttype.app_label, contenttype.model))    
+    return rev_url
+
+    
+@register.filter(name='admin_url_from_contenttype')
+def admin_url_from_contenttype(contenttype):
+    view = 'admin:%s_%s_add' % (contenttype.app_label, contenttype.model)
+    view = str(view)
+    try:
+        rev_url = reverse(view)
+    except:
+        raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (contenttype.app_label, contenttype.model))    
+    return rev_url
     
 @register.filter(name='user_full_name')
 def user_full_name(username):
