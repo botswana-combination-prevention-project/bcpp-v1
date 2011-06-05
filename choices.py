@@ -13,9 +13,10 @@ TAG_TYPE = (
 )    
 
 APPT_STATUS = (
-    ('Scheduled', 'Scheduled'),
-    ('Subject Seen', 'Subject Seen'),
-    ('Cancelled', 'Cancelled'),        
+    ('new', 'New'),
+    ('in_progress', 'In Progress'),
+    ('done', 'Done'),
+    ('cancelled', 'Cancelled'),        
     ) 
     
 SUBJECT_TYPE = (

@@ -45,7 +45,7 @@ class BaseAppointmentTracking (MyBasicUuidModel):
 
     appointment  = models.OneToOneField(Appointment)
     
-    appt_datetime = models.DateTimeField(
+    report_datetime = models.DateTimeField(
         verbose_name = "Visit Date and Time",
         validators = [
             datetime_not_before_study_start,

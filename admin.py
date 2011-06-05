@@ -6,7 +6,7 @@ from django.utils.encoding import force_unicode
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Avg, Max, Min, Count
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from bhp_form.models import Entry, ScheduledEntryBucket
+from bhp_form.models import Entry
 from bhp_visit.models import  VisitDefinition, ScheduleGroup
 from bhp_visit.models import  Appointment, ApptInfoSource, ApptReason, ApptCurrentStatus
 from bhp_visit.forms import AppointmentForm
@@ -52,18 +52,20 @@ class AppointmentAdmin(MyModelAdmin):
 
         if change:
             obj.user_modified = request.user
-            obj.save()        
+            #obj.save()        
             
         if not change:
             obj.user_created = request.user
             
             #set the visit instance
             aggr = Appointment.objects.filter(registered_subject=obj.registered_subject,visit_definition=obj.visit_definition).aggregate(Max('visit_instance'))
-            if aggr['visit_instance__max']:
+            if aggr['visit_instance__max'] <> None:
                 obj.visit_instance = aggr['visit_instance__max']+1
             else:
                 obj.visit_instance = 0
-            obj.save()
+                
+        return super(AppointmentAdmin, self).save_model(request, obj, form, change)                
+            #obj.save()
                             
     #override, to check if non-default redirect 
     def add_view(self, request, form_url='', extra_context=None):

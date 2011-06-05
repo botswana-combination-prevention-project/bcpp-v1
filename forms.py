@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 from django import forms
+from django.db.models import Avg, Max, Min, Count
 from django.contrib.admin import widgets   
 from bhp_visit.models import Appointment                                    
 
@@ -14,18 +15,42 @@ class AppointmentForm(forms.ModelForm):
 
         appt_datetime = cleaned_data.get("appt_datetime")
         appt_status = cleaned_data.get("appt_status")
+        registered_subject = cleaned_data.get("registered_subject")
+        visit_definition = cleaned_data.get("visit_definition")    
 
-        t1 = date.today() - appt_datetime.date()
-        if appt_status == 'Cancelled':
+        # check appointment date relative to status    
+        # postive t1.days => is a future date [t1.days > 0]
+        # negative t1.days => is a past date [t1.days < 0]
+        # zero t1.days => now (regardless of time) [t1.days == 0]
+        t1 = appt_datetime.date() - date.today()
+        if appt_status == 'cancelled':
             pass
-        elif appt_status == 'Subject Seen':
-            #cannot be future
-            if t1.days < 0:
-                raise forms.ValidationError("Subject has been 'seen'. Appointment date cannot be a future date. You wrote '%s'" % appt_datetime) 
+        elif appt_status == 'done':
+            # must not be future
+            if t1.days > 0:
+                raise forms.ValidationError("Appointment is 'done'. Date cannot be a future date. You wrote '%s'" % appt_datetime)
+            # cannot be done if no visit report, but how do i get to the visit report??
+                
+        elif appt_status == 'new':
+            # must be future
+            if t1.days < 0:            
+                raise forms.ValidationError("Appointment is 'new', the appointment date must be a future date. You wrote '%s'" % appt_datetime)             
+                
+            # for new appointments, no matter what, appt_datetime must be greater than 
+            # any existing appointment for this subject and visit code
+            aggr = Appointment.objects.filter(
+                registered_subject = registered_subject, 
+                visit_definition__code = visit_definition.code).aggregate(Max('appt_datetime'))
+            if aggr['appt_datetime__max'] <> None:
+                t1 = aggr['appt_datetime__max'] - appt_datetime
+                if t1.days >= 0:
+                    raise forms.ValidationError("An appointment with appointment date greater than or equal to this date already exists'. You wrote '%s'" % appt_datetime)
+    
+        elif appt_status == 'in_progress':
+            pass
         else:
+            raise TypeError("Unknown appt_status passed to clean method in form AppointmentForm. Got %s" % appt_status)
             #must be future
-            if t1.days >= 0:            
-                raise forms.ValidationError("If subject has not been 'seen', the appointment date must a future date. You wrote '%s'" % appt_datetime)             
 
         # Always return the full collection of cleaned data.
         return cleaned_data
