@@ -16,7 +16,8 @@ class AppointmentForm(forms.ModelForm):
         appt_datetime = cleaned_data.get("appt_datetime")
         appt_status = cleaned_data.get("appt_status")
         registered_subject = cleaned_data.get("registered_subject")
-        visit_definition = cleaned_data.get("visit_definition")    
+        visit_definition = cleaned_data.get("visit_definition") 
+        visit_instance =  cleaned_data.get("visit_instance") 
 
         # check appointment date relative to status    
         # postive t1.days => is a future date [t1.days > 0]
@@ -47,7 +48,10 @@ class AppointmentForm(forms.ModelForm):
                     raise forms.ValidationError("An appointment with appointment date greater than or equal to this date already exists'. You wrote '%s'" % appt_datetime)
     
         elif appt_status == 'in_progress':
-            pass
+            # check if any other appointments in progress for this registered_subject
+            if Appointment.objects.filter(registered_subject = registered_subject, appt_status = 'in_progress').exclude(visit_definition__code = visit_definition.code, visit_instance = visit_instance):
+                appointments = Appointment.objects.filter(registered_subject = registered_subject, appt_status = 'in_progress').exclude(visit_definition__code = visit_definition.code, visit_instance = visit_instance)
+                raise forms.ValidationError("Another appointment is 'in progress'. Update appointment %s.%s before changing this scheduled appointment to 'in progress'" % (appointments[0].visit_definition.code, appointments[0].visit_instance))
         else:
             raise TypeError("Unknown appt_status passed to clean method in form AppointmentForm. Got %s" % appt_status)
             #must be future
