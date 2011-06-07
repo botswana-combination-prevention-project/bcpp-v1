@@ -6,25 +6,33 @@ from bhp_code_lists.models import DxCode
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 
 
-"""
-    Death form / AF005
-"""
 class DeathCauseInfo (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
+        app_label = 'bhp_adverse'
+                
 class DeathCauseCategory (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
+        app_label = 'bhp_adverse'
+                
 class DeathMedicalResponsibility (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
+        app_label = 'bhp_adverse'        
+        
 class DeathReasonHospitalized (MyBasicListModel):
     class Meta:
         ordering = ['display_index']  
+        app_label = 'bhp_adverse'
         
 class BaseDeathReport(MyBasicUuidModel):
     
     """add this to your model"""
+    """
+    Death form / AF005
+    """
+    
     #registered_subject = models.OneToOneField(RegisteredSubject)
     
     death_date = models.DateField( 
