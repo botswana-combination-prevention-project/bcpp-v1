@@ -23,7 +23,7 @@ class EntryInline (admin.TabularInline):
     model = Entry
     extra =0
     fields = (
-        'entry_form',
+        'content_type_map',
         'entry_order',
         'required',
         'entry_category',
@@ -39,7 +39,9 @@ class EntryInline (admin.TabularInline):
 
 #VisitTrackingReport
 class VisitDefinitionAdmin(MyModelAdmin):
-    list_display = ('code', 'title', 'time_point', 'lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit')
+    list_display = ('code', 'title', 'grouping', 'time_point', 'lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit','user_modified', 'modified')
+    
+    search_fields = ('code', 'grouping',)
     
     inlines = [EntryInline,]
         

@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.contrib.contenttypes.models import ContentType
 from bhp_common.models import MyBasicUuidModel
+from bhp_common.models import ContentTypeMap
 
 class ScheduleGroup(MyBasicUuidModel):
 
@@ -12,7 +12,7 @@ class ScheduleGroup(MyBasicUuidModel):
         unique=True,
         )
     
-    membership_form = models.ForeignKey(ContentType)
+    membership_form = models.ForeignKey(ContentTypeMap)
         
     grouping_key = models.CharField(
         max_length = 25,

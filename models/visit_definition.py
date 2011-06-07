@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_common.models import  MyBasicUuidModel
 from bhp_visit.choices import VISIT_INTERVAL_UNITS
@@ -38,6 +37,13 @@ class BaseWindowPeriodItem(MyBasicUuidModel):
         choices=VISIT_INTERVAL_UNITS,
         default = 'D'
         )        
+
+    grouping = models.CharField(
+        verbose_name = 'Grouping',
+        max_length = 25,
+        null = True,
+        blank = True,
+        )
 
     class Meta:
         abstract = True
