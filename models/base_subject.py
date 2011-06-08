@@ -4,7 +4,11 @@ from bhp_registration.choices import REGISTRATION_STATUS, SUBJECT_TYPE
 
 class BaseSubject (MyBasicUuidModel):
        
-    subject_consent_id = models.CharField(max_length=100, null=True)
+    subject_consent_id = models.CharField(
+        max_length=100, 
+        null = True,
+        blank = True,
+        )
        
     subject_identifier = models.CharField(
         verbose_name = "Subject Identifier",
@@ -47,6 +51,8 @@ class BaseSubject (MyBasicUuidModel):
         verbose_name = "Current status",
         max_length = 25,
         choices=REGISTRATION_STATUS,
+        null = True,
+        blank = True,
         )
     
     def __unicode__ (self):
