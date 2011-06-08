@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from django.db import models
 from django.contrib import admin
+from django.core.validators import MaxLengthValidator
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
@@ -50,10 +51,27 @@ class BaseReportModel(MyBasicUuidModel):
 
 
 class MyBasicListModel(MyBasicModel):
+
     """Basic List Model. Not intended to be edited in the field (decentralized environment)"""
-    name = models.CharField(max_length=250, unique=True)
-    short_name = models.CharField(max_length=250, unique=True)
-    display_index = models.IntegerField(unique=True)
+
+    name = models.CharField(
+        verbose_name = 'display name', 
+        max_length=250, 
+        #validators = [MaxLengthValidator(40),],
+        unique=True, 
+        help_text = 'This is displayed to the user (40 characters max.)'
+        )
+    short_name = models.CharField(
+        verbose_name = "store name", 
+        max_length=250, 
+        unique=True,
+        help_text = 'This is stored in the field'
+        )
+    display_index = models.IntegerField(
+        verbose_name = "display order index",
+        unique=True,
+        help_text = 'Index to control display order',
+        )
     field_name = models.CharField(max_length=25, null=True, blank=True)
     version = models.CharField(max_length=35, editable=False, default='1.0')
 
@@ -102,6 +120,10 @@ class MyModelAdmin (MyAutoCompleteAdminModel):
                 for k in request.GET.iterkeys():
                     kwargs[str(k)]=''.join(unicode(i) for i in request.GET.get(k))
                 del kwargs['next']
+                try:
+                    del kwargs['csrfmiddlewaretoken']                
+                except:
+                    pass    
                 result['Location'] = reverse(request.GET.get('next'),kwargs=kwargs )
 
             return result
@@ -118,6 +140,7 @@ class MyModelAdmin (MyAutoCompleteAdminModel):
                 for k in request.GET.iterkeys():
                     kwargs[str(k)]=''.join(unicode(i) for i in request.GET.get(k))
                 del kwargs['next']
+                #del kwargs['csrfmiddlewaretoken']
                 result['Location'] = reverse(request.GET.get('next'),kwargs=kwargs )
 
             return result
