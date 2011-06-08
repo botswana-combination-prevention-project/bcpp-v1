@@ -5,20 +5,6 @@ from models import BaseLocator
 
 class SubjectConsentAdminBase(MyModelAdmin):
   
-    #def save_model(self, request, obj, form, change):
-    #    obj.user_created = request.user
-    #    obj.user_modified = request.user            
-    #    obj.save()
-    #    
-    #    new_pk = obj.pk
-    #    
-    #    if not change:
-    #        #allocate subject identifier
-    #        obj = SubjectConsent.objects.get(pk=new_pk)
-    #        obj.subject_identifier = AllocateIdentifier(new_pk, request.user)
-    #        obj.save()
-
-            
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj = None):
         if obj: #In edit mode
