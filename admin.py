@@ -8,7 +8,13 @@ class SubjectConsentAdminBase(MyModelAdmin):
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj = None):
         if obj: #In edit mode
-            return ('subject_identifier','first_name','last_name','study_site','initials','consent_datetime',) + self.readonly_fields
+            return (
+                'subject_identifier',
+                'first_name',
+                'last_name',
+                'study_site',
+                #'initials',
+                'consent_datetime',) + self.readonly_fields
         else:
             return ('subject_identifier',) + self.readonly_fields  
             
