@@ -16,7 +16,8 @@ admin.site.register(ApptReason)
 admin.site.register(ApptCurrentStatus)
 
 class ScheduleGroupAdmin(MyModelAdmin):
-    list_display = ('group_name', 'membership_form', 'grouping_key')
+    #list_display = ('group_name', 'membership_form', 'grouping_key')
+    pass
 admin.site.register(ScheduleGroup, ScheduleGroupAdmin)    
 
 class EntryInline (admin.TabularInline):
