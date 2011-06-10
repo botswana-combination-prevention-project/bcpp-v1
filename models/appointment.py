@@ -3,8 +3,50 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_registration.models import RegisteredSubject
+from schedule_group import ScheduleGroup
 from base_appointment import BaseAppointment
 from visit_definition import VisitDefinition
+
+
+class AppointmentManager(models.Manager):
+    def create_appointments(self, **kwargs):
+
+        """Create appointments based on a list of visit definitions if given model_name is a member of a schedule group.
+    
+        Only create for visit_instance = 0
+        If appointment exists, just update the appt_datetime
+        """
+        
+        registered_subject = kwargs.get("registered_subject")
+        model_name = kwargs.get("model_name")
+        base_appt_datetime = kwargs.get("base_appt_datetime")
+        
+        if ScheduleGroup.objects.filter(membership_form__content_type_map__model = model_name):
+            # get list of visits for scheduled group containing this model
+            visits = VisitDefinition.objects.filter(schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model = model_name))
+            for visit in visits:
+                # if appt exists, update appt_datetime
+                if super(AppointmentManager, self).filter(
+                            registered_subject = registered_subject, 
+                            visit_definition = visit, 
+                            visit_instance = 0):
+                    appt = Appointment.objects.get(
+                                registered_subject = registered_subject, 
+                                visit_definition = visit, 
+                                visit_instance = 0)
+                    appt.app_datetime = base_appt_datetime
+                    appt.save()
+                # else create a new appointment                    
+                else:
+                    super(AppointmentManager, self).create(
+                        registered_subject = registered_subject,
+                        visit_definition = visit,
+                        visit_instance = 0,
+                        appt_datetime = base_appt_datetime,
+                        )
+
+
+
 
 class Appointment(BaseAppointment):
 
@@ -33,6 +75,8 @@ class Appointment(BaseAppointment):
         blank = True,    
         help_text=_("A decimal to represent an additional report to be included with the original visit report. (NNNN.0)"),    
         )     
+
+    objects = AppointmentManager()
 
     def __unicode__(self):
         return "%s for %s.%s [%s - %s]" % (self.registered_subject, self.visit_definition.code, self.visit_instance,self.appt_datetime, self.appt_status) 
