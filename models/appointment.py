@@ -7,7 +7,6 @@ from schedule_group import ScheduleGroup
 from base_appointment import BaseAppointment
 from visit_definition import VisitDefinition
 
-
 class AppointmentManager(models.Manager):
     def create_appointments(self, **kwargs):
 
@@ -44,8 +43,6 @@ class AppointmentManager(models.Manager):
                         visit_instance = 0,
                         appt_datetime = base_appt_datetime,
                         )
-
-
 
 
 class Appointment(BaseAppointment):
@@ -88,7 +85,4 @@ class Appointment(BaseAppointment):
         unique_together = [('registered_subject', 'visit_definition', 'visit_instance',),]
         ordering = ['registered_subject','appt_datetime', ]
         app_label = 'bhp_visit' 
-
-
-
 
