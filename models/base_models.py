@@ -3,12 +3,10 @@ from django.db import models
 from django.contrib import admin
 from django.core.validators import MaxLengthValidator
 from django.core.urlresolvers import reverse
-from django.contrib.contenttypes.models import ContentType
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
 from fields import HostnameCreationField, HostnameModificationField, MyUUIDField, OmangField
-#from validators import datetime_not_before_study_start, datetime_not_future
 
 class MyBasicModel(TimeStampedModel):
     """
@@ -167,37 +165,6 @@ class MyTabularInline (admin.TabularInline):
         obj.save()
     
 
-class ContentTypeMap(MyBasicModel):
-
-    content_type = models.OneToOneField(ContentType)
-
-    app_label = models.CharField(
-        max_length = 50,
-        )
-    
-    name = models.CharField(
-        max_length = 50,
-        unique = True,
-        )
-        
-    model = models.CharField(
-        max_length = 50,
-        unique = True,        
-        )
-    
-    def model_class(self):
-
-        if not self.content_type.name == self.name:
-            raise TypeError('ContentTypeMap is not in sync with ContentType for verbose_name %s' % self.name) 
-        if not self.content_type.model == self.model:
-            raise TypeError('ContentTypeMap is not in sync with ContentType for model %s' % self.model)
-        
-        return self.content_type.model_class()
-    
-    def __unicode__(self):
-        return unicode(self.content_type)        
-    class Meta:
-        app_label = 'bhp_common'
 
 
 
