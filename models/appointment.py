@@ -3,11 +3,11 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_registration.models import RegisteredSubject
-from schedule_group import ScheduleGroup
+from bhp_form.models import VisitDefinition, ScheduleGroup
 from base_appointment import BaseAppointment
-from visit_definition import VisitDefinition
 
 class AppointmentManager(models.Manager):
+    
     def create_appointments(self, **kwargs):
 
         """Create appointments based on a list of visit definitions if given model_name is a member of a schedule group.

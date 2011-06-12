@@ -7,6 +7,7 @@ from bhp_common.fields import OtherCharField
 from bhp_visit.choices import SUBJECT_TYPE, VISIT_REASON, VISIT_INFO_SOURCE
 from bhp_visit.models import Appointment
 
+"""
 class ApptInfoSource (MyBasicListModel):
     
     subject_type = models.CharField(
@@ -27,6 +28,7 @@ class ApptCurrentStatus (MyBasicListModel):
         ordering = ['display_index']   
         app_label = 'bhp_visit'                    
 
+"""
 
 class BaseAppointmentTracking (MyBasicUuidModel):
     

@@ -8,12 +8,12 @@ from django.db.models import Avg, Max, Min, Count
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_form.models import Entry
 from bhp_visit.models import  VisitDefinition, ScheduleGroup
-from bhp_visit.models import  Appointment, ApptInfoSource, ApptReason, ApptCurrentStatus
+from bhp_visit.models import  Appointment #, ApptInfoSource, ApptReason, ApptCurrentStatus
 from bhp_visit.forms import AppointmentForm
 
-admin.site.register(ApptInfoSource)
-admin.site.register(ApptReason)
-admin.site.register(ApptCurrentStatus)
+# admin.site.register(ApptInfoSource)
+# admin.site.register(ApptReason)
+# admin.site.register(ApptCurrentStatus)
 
 class ScheduleGroupAdmin(MyModelAdmin):
     #list_display = ('group_name', 'membership_form', 'grouping_key')

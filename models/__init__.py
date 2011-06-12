@@ -1,8 +1,7 @@
-from schedule_group import *
-from visit_definition import *
-from base_appointment import *
-from appointment import *
-from base_appointment_tracking import *
-from model_admin import *
+# from schedule_group import ScheduleGroup
+# from base_appointment import BaseAppointment
+# from appointment import Appointment
+# from base_appointment_tracking import BaseAppointmentTracking
+
 
 
