@@ -3,8 +3,21 @@ from base_subject import BaseSubject
 
 class RegisteredSubject(BaseSubject):
 
-    pass
-
+    sid = models.CharField(
+        verbose_name = "Randomization SID",
+        max_length = 15,
+        null = True,
+        blank = True,
+        )
+        
+    relative_identifier = models.CharField(        
+        verbose_name = "Identifier of immediate relation",
+        max_length = 25,
+        null = True,
+        blank = True,
+        help_text = "For example, mother's identifier, if available / appropriate"
+        )
+        
     def __unicode__ (self):
         return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)
 
