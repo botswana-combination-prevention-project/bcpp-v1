@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django_extensions.db.models import TimeStampedModel
 from django.contrib import admin
-from fields import HostnameCreationField, HostnameModificationField, MyUUIDField, OmangField
+from bhp_common.fields import HostnameCreationField, HostnameModificationField, MyUUIDField, OmangField
 
 class MyBasicModel(TimeStampedModel):
     """
@@ -97,7 +97,7 @@ class MyBasicCodeListModel(MyBasicListModel):
 class MyAutoCompleteAdminModel(ForeignKeyAutocompleteAdmin):
     pass
 
-class MyModelAdmin (MyAutoCompleteAdminModel):
+class MyModelAdmin (admin.ModelAdmin):
     """Overide ModelAdmin to force username to be saved on add and change""" 
     def save_model(self, request, obj, form, change):
         if not change:

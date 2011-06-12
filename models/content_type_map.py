@@ -1,17 +1,24 @@
 from django.db import models
 from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
+from base_models import MyBasicModel
 
 class ContentTypeMapManager(models.Manager):
 
     def sync(self):
     
+        """Sync content type map foreignkey with django's ContentType id.
+        
+        Schema changes might change the key values for records in django's ContentType table.
+        Update ContentTypeMap field content_type with the new key.
+        
+        """
         content_type_maps = super(ContentTypeMapManager, self).exclude(name = F('content_type__name'))
-
         for content_type_map in content_type_maps:
             content_type = ContentType.objects.get(name = content_type_map.name)
             content_type_map.content_type = content_type
             content_type_map.save()
+            count +=1
 
 class ContentTypeMap(MyBasicModel):
 
