@@ -15,9 +15,12 @@ class ContentTypeMapManager(models.Manager):
         """
         content_type_maps = super(ContentTypeMapManager, self).exclude(name = F('content_type__name'))
         for content_type_map in content_type_maps:
-            content_type = ContentType.objects.get(name = content_type_map.name)
-            content_type_map.content_type = content_type
-            content_type_map.save()
+            try:
+                content_type = ContentType.objects.get(name = content_type_map.name)
+                content_type_map.content_type = content_type
+                content_type_map.save()
+            except:    
+                content_type_map.delete()
 
 class ContentTypeMap(MyBasicModel):
 
