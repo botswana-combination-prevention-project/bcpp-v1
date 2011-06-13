@@ -18,7 +18,6 @@ class ContentTypeMapManager(models.Manager):
             content_type = ContentType.objects.get(name = content_type_map.name)
             content_type_map.content_type = content_type
             content_type_map.save()
-            count +=1
 
 class ContentTypeMap(MyBasicModel):
 
