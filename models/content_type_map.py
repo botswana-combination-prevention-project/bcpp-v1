@@ -41,7 +41,7 @@ class ContentTypeMap(MyBasicModel):
         max_length = 50,
         unique = True,        
         )
-        
+    
     objects =  ContentTypeMapManager()  
     
     def model_class(self):
