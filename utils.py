@@ -91,45 +91,35 @@ def AllocateIdentifier(consent_model, subject_type='SUBJECT', user=''):
     
 def AllocateInfantIdentifier(** kwargs):
 
+    """
+    Allocate infant identifiers for as many live_infants_to_register.
+    
+    Choose an id_suffix based on the value of live_infants. So if 
+    live_infants <> live_infants_to_register, use live_infants to
+    determine the suffix, and live_infants_to_register for the number
+    to register
+    
+    """
+
     registration_model = kwargs.get('registration_model')
     registered_mother = kwargs.get('mother_identifier')
     live_infants = kwargs.get('live_infants')
+    live_infants_to_register = kwargs.get('live_infants_to_register')
     user = kwargs.get('user')
-   
-    """
-    Allocate an identifier at the time of consent
-    
-    generate a mother identifier and save it back to the consent form 
-    and update the identifier audit trail.
-    
-    registration_model is for example, mp005 (delivery form), or the 
-    form that has the live_infants field
-    
-        
-    """
+
+    if live_infants_to_register > live_infants:
+        # Trap this on the form, not here!!
+        raise TypeError("Number of infants to register may not exceed number of live infants.")
     
     subject_identifier = {}
-    
 
-    #rm = RegisteredSubject.objects.get(subject_identifier__exact=registered_mother.subject_identifier)
     subject_identifier['mother'] = registered_mother.subject_identifier   
     
-    #add a new record in the audit trail for this consent and identifier-'to be'
-
-    #audit = SubjectIdentifierAuditTrail(
-    #    subject_consent_id=consent, 
-    #    first_name = consent.first_name,
-    #    initials = consent.initials,
-    #    date_allocated=datetime.now(),
-    #    user_created = user,
-    #    )
-
     # we use the mother's consent as the consent pk to store in 
     # registered subject for this/these infant(s)
 
     first_name=''
     initials=''
-
     id_suffix = 0
 
     if live_infants == 1:
@@ -143,8 +133,7 @@ def AllocateInfantIdentifier(** kwargs):
     else:
         raise TypeError('Ensure number of infants is greater than 0 and less than or equal to 4. You wrote %s' % (live_infants))
 
-    
-    for infant_order in range(0, live_infants):
+    for infant_order in range(0, live_infants_to_register):
         id_suffix += (infant_order) * 10
         subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], id_suffix)            
         RegisterSubject(

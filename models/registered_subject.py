@@ -1,6 +1,11 @@
 from django.db import models
 from base_subject import BaseSubject
 
+
+class RegisteredSubjectManager(models.Manager):
+    pass
+
+
 class RegisteredSubject(BaseSubject):
 
     sid = models.CharField(
@@ -17,6 +22,8 @@ class RegisteredSubject(BaseSubject):
         blank = True,
         help_text = "For example, mother's identifier, if available / appropriate"
         )
+
+    objects = RegisteredSubjectManager()
         
     def __unicode__ (self):
         return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)
