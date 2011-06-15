@@ -83,7 +83,7 @@ class RegisteredSubjectManager(models.Manager):
         audit.subject_identifier = subject_identifier['identifier']
         audit.save()
         
-        RegisterSubject(
+        super(RegisteredSubjectManager, self).create(
             identifier=subject_identifier['identifier'], 
             consent_pk=consent_model.pk, 
             first_name=consent_model.first_name, 
@@ -141,7 +141,7 @@ class RegisteredSubjectManager(models.Manager):
         for infant_order in range(0, live_infants_to_register):
             id_suffix += (infant_order) * 10
             subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], id_suffix)            
-            RegisterSubject(
+            super(RegisteredSubjectManager, self).create(
                 identifier = subject_identifier['id'], 
                 relative_identifier = registered_mother.subject_identifier,
                 consent_pk = registered_mother.pk, 
