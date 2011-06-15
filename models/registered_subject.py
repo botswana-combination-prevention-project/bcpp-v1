@@ -43,7 +43,7 @@ class RegisteredSubjectManager(models.Manager):
 
         # get the auto-increment id for the new audit trail record
         # just created above
-        subject_identifier['audit_id'] = audit.pk
+        # subject_identifier['audit_id'] = audit.pk
 
         # prepare the subject identifier by 
         # getting the seed and prefix and deviceid, modulus
@@ -57,15 +57,14 @@ class RegisteredSubjectManager(models.Manager):
             raise TypeError("Subject_identifier_seed cannot be 99. Did you configure bhp_variables.StudySpecific?")
             
         # get subject identifier sequence, is count of subject_type +1
+        subject_identifier['seq'] = '1'        
         if RegisteredSubject.objects.filter(subject_type__iexact = subject_type):
             agg = RegisteredSubject.objects.filter(subject_type__iexact = subject_type).aggregate(Count('subject_identifier'))
-            subject_identifier['seq'] = agg['subject_identifier__count']
-        else:            
-            subject_identifier['seq'] = '1'
+            subject_identifier['seq'] += agg['subject_identifier__count']
         
 
         # using the seed, device and audit trail id determine the integer segment of the id 
-        subject_identifier['int'] = (((subject_identifier['seed']* subject_identifier['device_id']) + subject_identifier['audit_id'])) 
+        subject_identifier['int'] = (((subject_identifier['seed']* subject_identifier['device_id']) + subject_identifier['seq'])) 
 
         # using the integer segment, calculate the check digit
         check_digit = subject_identifier['int'] % subject_identifier['modulus']
@@ -94,6 +93,9 @@ class RegisteredSubjectManager(models.Manager):
         # update subject_identifier to the audit trail table
         audit.subject_identifier = subject_identifier['identifier']
         audit.save()
+        
+        if RegisteredSubject.objects.filter(subject_identifier_exact = subject_identifier['identifier']):
+            raise TypeError("RegisteredSubjectManager attempted to generate non-unique subject identifier subject type '%s'. Got '%s'" % (subject_type, subject_identifier['identifier']))
         
         super(RegisteredSubjectManager, self).create(    
                 subject_identifier = subject_identifier['identifier'],
