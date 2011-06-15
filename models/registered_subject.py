@@ -57,7 +57,7 @@ class RegisteredSubjectManager(models.Manager):
             raise TypeError("Subject_identifier_seed cannot be 99. Did you configure bhp_variables.StudySpecific?")
             
         # get subject identifier sequence, is count of subject_type +1
-        subject_identifier['seq'] = '1'        
+        subject_identifier['seq'] = 1
         if RegisteredSubject.objects.filter(subject_type__iexact = subject_type):
             agg = RegisteredSubject.objects.filter(subject_type__iexact = subject_type).aggregate(Count('subject_identifier'))
             subject_identifier['seq'] += agg['subject_identifier__count']
