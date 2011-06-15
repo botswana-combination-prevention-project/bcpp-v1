@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from base_subject import BaseSubject
+from bhp_registration.models import SubjectIdentifierAuditTrail
 
 
 class RegisteredSubjectManager(models.Manager):
