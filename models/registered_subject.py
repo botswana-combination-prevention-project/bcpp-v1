@@ -6,7 +6,7 @@ class RegisteredSubjectManager(models.Manager):
     
     """Manager class for RegisteredSubject model."""
     
-    def register_subject(consent_model, subject_type='SUBJECT', user=''):
+    def register_subject(self, consent_model, subject_type='SUBJECT', user=''):
         
         """
         Register a subject by allocating an identifier at the time of consent and storing in model RegisteredSubject.
@@ -94,7 +94,7 @@ class RegisteredSubjectManager(models.Manager):
         # return the new subject identifier to the form currently being save()'d
         return subject_identifier['identifier']
 
-    def register_live_infants(** kwargs):
+    def register_live_infants(self, ** kwargs):
 
         """
         Allocate infant identifiers for as many live_infants_to_register.
