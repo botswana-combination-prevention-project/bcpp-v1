@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from django.db.models import Count
 from base_subject import BaseSubject
 from bhp_variables.models import StudySpecific
 from bhp_registration.models import SubjectIdentifierAuditTrail
@@ -55,6 +56,14 @@ class RegisteredSubjectManager(models.Manager):
         if subject_identifier['seed'] == 99:
             raise TypeError("Subject_identifier_seed cannot be 99. Did you configure bhp_variables.StudySpecific?")
             
+        # get subject identifier sequence, is count of subject_type +1
+        if RegisteredSubject.objects.filter(subject_type__iexact = subject_type):
+            agg = RegisteredSubject.objects.filter(subject_type__iexact = subject_type).aggregate(Count('subject_identifier'))
+            subject_identifier['seq'] = agg['subject_identifier__count']
+        else:            
+            subject_identifier['seq'] = '1'
+        
+
         # using the seed, device and audit trail id determine the integer segment of the id 
         subject_identifier['int'] = (((subject_identifier['seed']* subject_identifier['device_id']) + subject_identifier['audit_id'])) 
 

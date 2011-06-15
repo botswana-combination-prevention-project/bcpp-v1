@@ -17,7 +17,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
     readonly_fields = (
         'subject_identifier',
         )
-    
+    search_fields = ('subject_type', 'first_name', 'initials')    
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
 
 admin.site.register(RandomizedSubject)
