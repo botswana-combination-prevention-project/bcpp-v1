@@ -154,6 +154,7 @@ class RegisteredSubjectManager(models.Manager):
         # audit.subject_identifier = subject_identifier['identifier']
         # audit.save()
         
+        
         return True
 
 
