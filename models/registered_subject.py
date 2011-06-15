@@ -96,7 +96,6 @@ class RegisteredSubjectManager(models.Manager):
                 first_name = consent_model.first_name,
                 initials = consent_model.initials.upper(),
                 registration_status = 'registered',
-                relative_identifier = registered_mother.subject_identifier,        
                 )             
         
         # return the new subject identifier to the form currently being save()'d
