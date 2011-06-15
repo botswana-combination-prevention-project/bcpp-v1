@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from base_subject import BaseSubject
 
@@ -83,13 +84,18 @@ class RegisteredSubjectManager(models.Manager):
         audit.subject_identifier = subject_identifier['identifier']
         audit.save()
         
-        super(RegisteredSubjectManager, self).create(
-            identifier=subject_identifier['identifier'], 
-            consent_pk=consent_model.pk, 
-            first_name=consent_model.first_name, 
-            initials=consent_model.initials, 
-            subject_type=subject_type, 
-            user=user)
+        super(RegisteredSubjectManager, self).create(    
+                subject_identifier = subject_identifier['ididentifier'],
+                registration_datetime = datetime.now(),
+                subject_type = subject_type, 
+                user_created = user,
+                created = datetime.now(),
+                subject_consent_id=consent_model.pk,
+                first_name = consent_model.first_name,
+                initials = consent_model.initials.upper(),
+                registration_status = 'registered',
+                relative_identifier = registered_mother.subject_identifier,        
+                )             
         
         # return the new subject identifier to the form currently being save()'d
         return subject_identifier['identifier']
@@ -141,14 +147,18 @@ class RegisteredSubjectManager(models.Manager):
         for infant_order in range(0, live_infants_to_register):
             id_suffix += (infant_order) * 10
             subject_identifier['id'] = "%s-%s" % (subject_identifier['mother'], id_suffix)            
-            super(RegisteredSubjectManager, self).create(
-                identifier = subject_identifier['id'], 
-                relative_identifier = registered_mother.subject_identifier,
-                consent_pk = registered_mother.pk, 
-                first_name = first_name, 
-                initials = initials, 
+            super(RegisteredSubjectManager, self).create(    
+                subject_identifier = subject_identifier['id'],
+                registration_datetime = datetime.now(),
                 subject_type = 'infant', 
-                user = user)
+                user_created = user,
+                created = datetime.now(),
+                #subject_consent_id=kwargs.get('consent_pk'),
+                first_name = first_name,
+                initials = initials.upper(),
+                registration_status = 'registered',
+                relative_identifier = registered_mother.subject_identifier,        
+                )                
 
         # update subject_identifier to the audit trail table
         # audit.subject_identifier = subject_identifier['identifier']
