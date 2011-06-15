@@ -4,5 +4,6 @@ from base_registration_form import *
 from base_subject import *
 from off_study import *
 from randomized_subject import *
-from registered_subject import *
 from subject_identifier_audit_trail import *
+from registered_subject import *
+
