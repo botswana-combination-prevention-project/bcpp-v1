@@ -87,7 +87,7 @@ class RegisteredSubjectManager(models.Manager):
         audit.save()
         
         super(RegisteredSubjectManager, self).create(    
-                subject_identifier = subject_identifier['ididentifier'],
+                subject_identifier = subject_identifier['identifier'],
                 registration_datetime = datetime.now(),
                 subject_type = subject_type, 
                 user_created = user,
