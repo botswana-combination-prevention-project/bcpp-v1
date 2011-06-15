@@ -94,7 +94,7 @@ class RegisteredSubjectManager(models.Manager):
         audit.subject_identifier = subject_identifier['identifier']
         audit.save()
         
-        if RegisteredSubject.objects.filter(subject_identifier_exact = subject_identifier['identifier']):
+        if RegisteredSubject.objects.filter(subject_identifier__exact = subject_identifier['identifier']):
             raise TypeError("RegisteredSubjectManager attempted to generate non-unique subject identifier subject type '%s'. Got '%s'" % (subject_type, subject_identifier['identifier']))
         
         super(RegisteredSubjectManager, self).create(    
