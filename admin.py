@@ -19,7 +19,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         )
     search_fields = ('first_name', 'initials')    
     
-    list_filter = ('subject_type')
+    list_filter = ('subject_type',)
     
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
 
