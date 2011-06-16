@@ -7,5 +7,7 @@ class ContentTypeMapAdmin(MyModelAdmin):
     
     search_fields = ('name', 'app_label', 'model')
     
+    list_filter = ('app_label',)
+    
 admin.site.register(ContentTypeMap, ContentTypeMapAdmin)
 

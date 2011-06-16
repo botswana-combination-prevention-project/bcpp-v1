@@ -21,6 +21,20 @@ class ContentTypeMapManager(models.Manager):
                 content_type_map.save()
             except:    
                 content_type_map.delete()
+    
+    def populate(self):
+    
+        """Populate ContentTypeMap with django's ContentTypecontent information."""
+        
+        content_types = ContentType.objects.all()        
+        for content_type in content_types:
+            if not super(ContentTypeMapManager, self).filter(content_type = content_type):
+                super(ContentTypeMapManager, self).create(
+                    content_type = content_type,
+                    app_label = content_type.app_label,
+                    name = content_type.name,
+                    model = content_type.model,
+                    )
 
 class ContentTypeMap(MyBasicModel):
 
