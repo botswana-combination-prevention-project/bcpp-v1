@@ -213,6 +213,13 @@ YES_NO_UNKNOWN =(
     ('Unknown', 'Unknown'),
 )    
 
+YES_NO_UNKNOWN_NA =(
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ('Unknown', 'Unknown'),
+    ('N/A', 'Not applicable'),
+)    
+
 YES_NO_UNSURE = (
     ('Yes', 'Yes'),
     ('No', 'No'),
