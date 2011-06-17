@@ -48,7 +48,7 @@ class BaseSubject (MyBasicUuidModel):
 
 
     registration_status = models.CharField(
-        verbose_name = "Current status",
+        verbose_name = "Registration status",
         max_length = 25,
         choices=REGISTRATION_STATUS,
         null = True,

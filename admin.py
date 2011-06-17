@@ -11,13 +11,14 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         'initials',
         'subject_type',
         'user_created',
-        'created',        
+        'created',
+        'sid',        
     )   
     
     readonly_fields = (
         'subject_identifier',
         )
-    search_fields = ('first_name', 'initials')    
+    search_fields = ('subject_identifier', 'first_name', 'initials', 'sid')    
     
     list_filter = ('subject_type',)
     
