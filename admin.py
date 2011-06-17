@@ -6,7 +6,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
 
     list_display = (
         'subject_identifier',
-        'subject_consent_id',        
+        'sid',        
         'first_name',
         'initials',
         'subject_type',
@@ -18,7 +18,9 @@ class RegisteredSubjectAdmin (MyModelAdmin):
     readonly_fields = (
         'subject_identifier',
         )
+
     search_fields = ('subject_identifier', 'first_name', 'initials', 'sid')    
+
     
     list_filter = ('subject_type',)
     

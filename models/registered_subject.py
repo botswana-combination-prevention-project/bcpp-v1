@@ -200,7 +200,7 @@ class RegisteredSubject(BaseSubject):
     objects = RegisteredSubjectManager()
         
     def __unicode__ (self):
-        return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)
+        return "%s %s (%s %s)" % (self.subject_identifier, self.subject_type, self.first_name, self.sid)
 
     class Meta:
         app_label = 'bhp_registration'            
