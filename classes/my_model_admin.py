@@ -15,7 +15,7 @@ class MyRegisteredSubjectModelAdmin (MyModelAdmin):
     
     def save_model(self, request, obj, form, change):
         
-        ScheduledEntryBucket.objects.update_bucket(
+        ScheduledEntryBucket.objects.update_status(
             model = obj,
             )
                         
@@ -23,7 +23,7 @@ class MyRegisteredSubjectModelAdmin (MyModelAdmin):
         
     def delete_model(self, request, obj):
 
-        ScheduledEntryBucket.objects.update_bucket(
+        ScheduledEntryBucket.objects.update_status(
             model = obj,
             action = 'delete',
             )
