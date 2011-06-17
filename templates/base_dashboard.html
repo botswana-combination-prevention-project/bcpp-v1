@@ -1,0 +1,93 @@
+{% extends "section.html"%}
+
+{% block breadcrumbs %}
+
+    {% load tags %}
+    <div class="breadcrumbs">
+        <a href="/mochudi_clinic">Home</a>
+        {% if section_name  %}
+            &rsaquo; <a href="{% url section_url_name section_name %}">{{ section_name|capfirst }}</a>
+        {% endif %}        
+        &rsaquo; <A href="{% url section_search_url_name section_name='register' search_name=search_name %}">{{ dashboard|capfirst }}</A>
+        &rsaquo; Dashboard for {{ subject_identifier }}   
+        
+    </div>
+    
+{% endblock %}
+
+{% block section_title%}{% endblock%}
+
+{% block section_links %}{% endblock %}
+
+{% block content %}
+
+{% block clinic_dashboard_marquee %}{% endblock %}
+
+
+
+{% block clinic_dashboard %}
+
+
+
+<table border=1 width=100%>
+    <tr>
+        <td>
+            <table name="left" border=1 width=100%>
+                <tr name="top left"><td>
+                {% block membership_forms %}{% endblock %}
+                </td></tr>
+                <tr name="top left"><td>
+                <H3>Appointments</H3>
+                <A href="{% url admin:bhp_form_appointment_add %}?next=dashboard_url&dashboard=subject&subject_identifier={{consent.subject_identifier}}">Create new appointment</A>
+                
+                {% block appointments %}
+
+                {% endblock appointments %}
+                </td></tr>
+
+                <tr name="bottom left" ><td>
+                {% block additional_forms %}{% endblock%}
+                </td></tr>
+                <tr name="bottom left" ><td>
+                <H3>Scheduled Forms {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H3>
+
+                {% if not visit_code %}                
+                    select a scheduled visit code above to see scheduled data
+                {% else %}
+                    {% block scheduled_data_collection %}{% endblock scheduled_data_collection %}
+                {% endif %}
+                </td></tr>
+
+            </table>
+        </td>
+
+        <td>
+            <table name="right"  border=1 width=100%>
+
+
+                {% block infants %}
+                {% endblock infants %}                                
+                {% block maternal_consent %}
+                {% endblock maternal_consent %}                                
+
+                <tr name="middle right" ><td>
+                <H3>Laboratory</H3>
+                </td></tr>
+        
+                <tr name="bottom right" ><td>
+                <H3>Data Issues</H3>
+                </td></tr>
+
+            </table>
+        </td>    
+
+    </tr>
+</table>
+{% endblock %}
+
+
+{% endblock content%}
+
+
+{% block other_section_links %}{% endblock %}
+</div>
