@@ -1,0 +1,3 @@
+python manage.py dumpdata bhp_code_lists.wcsdxadult > bhp_code_lists/initial_data/wcsdxadult.json
+python manage.py dumpdata bhp_code_lists.wcsdxped > bhp_code_lists/initial_data/wcsdxped.json
+
