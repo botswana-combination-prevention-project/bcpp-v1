@@ -16,7 +16,8 @@ class MyCodeList (MyBasicModel):
         max_length = 255,
         blank = True,
         )    
-    
+    def __unicode__(self):
+        return "%s" % (self.short_name)
     class Meta:
         abstract = True
 
@@ -26,7 +27,7 @@ class WcsDxAdult(MyCodeList):
     """WhoClinicalStagingDxAdult"""
     
     list_ref = models.CharField("List Reference",
-        max_length = 35,
+        max_length = 100,
         blank = True,        
         )    
 
@@ -39,7 +40,7 @@ class WcsDxPed(MyCodeList):
     """WhoClinicalStagingDxPediatric"""
 
     list_ref = models.CharField("List Reference",
-        max_length = 35,
+        max_length = 100,
         blank = True,
         )    
 
