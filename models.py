@@ -2,33 +2,51 @@ from django.db import models
 from bhp_common.models import MyBasicModel
 
 class MyCodeList (MyBasicModel):
+    
     code = models.CharField("Code",
-        max_length=15,
-        unique=True)
+        max_length = 15,
+        unique = True,
+        )
+    
     short_name = models.CharField("Name",
-        max_length=35)    
+        max_length = 35,
+        )    
+    
     long_name = models.CharField("Long Name",
-        max_length=255,
-        blank=True)    
+        max_length = 255,
+        blank = True,
+        )    
     
     class Meta:
-        app_label="bhp_code_lists"
-        abstract=True
+        abstract = True
 
 #dx and ssx        
-
-"""WhoClinicalStagingDxAdult"""
 class WcsDxAdult(MyCodeList):
+    
+    """WhoClinicalStagingDxAdult"""
+    
     list_ref = models.CharField("List Reference",
-        max_length=35)    
+        max_length = 35,
+        blank = True,        
+        )    
+
     class Meta:
-        app_label="bhp_code_lists"
-"""WhoClinicalStagingDxPediatric"""
+        app_label = "bhp_code_lists"
+
+
 class WcsDxPed(MyCodeList):
+    
+    """WhoClinicalStagingDxPediatric"""
+
     list_ref = models.CharField("List Reference",
-        max_length=35)    
+        max_length = 35,
+        blank = True,
+        )    
+
     class Meta:
-        app_label="bhp_code_lists"
+        app_label = "bhp_code_lists"
+
+
 class DxCode (MyCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
