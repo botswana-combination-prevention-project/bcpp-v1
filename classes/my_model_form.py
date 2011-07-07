@@ -40,24 +40,24 @@ class MyModelForm(forms.ModelForm):
         """
         
         label = kwargs.get('label', 'items to be selected')
-        yesno = kwargs.get('yesno')
+        leading = kwargs.get('leading')
         m2m = kwargs.get('m2m')
         other = kwargs.get('other')
         
-        # if lead question is 'Yes', a m2m item cannot be 'Not applicable'
-        if yesno.lower() == 'yes' and [True for item in m2m if item.name.lower() == 'not applicable']:
+        # if leading question is 'Yes', a m2m item cannot be 'Not applicable'
+        if leading.lower() == 'yes' and [True for item in m2m if item.name.lower() == 'not applicable']:
             raise forms.ValidationError("You stated there ARE " + label + "s, yet you selected '%s'" %  item.name)        
 
-        # if lead question is 'No', ensure the m2m item is 'not applicable'
-        if yesno.lower() == 'no' and not [True for item in m2m if item.name.lower() == 'not applicable']:
+        # if leading question is 'No', ensure the m2m item is 'not applicable'
+        if leading.lower() == 'no' and not [True for item in m2m if item.name.lower() == 'not applicable']:
            raise forms.ValidationError("You stated there are NO " + label + "s. Please correct")                
 
-        # if lead question is 'No', ensure only one m2m item is selected.
-        if yesno.lower() == 'no' and len(m2m) > 1:
+        # if leading question is 'No', ensure only one m2m item is selected.
+        if leading.lower() == 'no' and len(m2m) > 1:
             raise forms.ValidationError("You stated there are NO " + label + "s. Please correct")                
 
-        # if lead question is 'Yes' and an m2m item is 'other, specify', ensure 'other' attribute has a value
-        if yesno.lower() == 'yes' and not other and [True for item in m2m if item.name.lower() == 'other, specify']:        
+        # if leading question is 'Yes' and an m2m item is 'other, specify', ensure 'other' attribute has a value
+        if leading.lower() == 'yes' and not other and [True for item in m2m if item.name.lower() == 'other, specify']:        
             raise forms.ValidationError("You have selected a '" + label + "' as 'Other', please specify.")
 
         # if 'other' has a value but no m2m item is 'Other, specify'
