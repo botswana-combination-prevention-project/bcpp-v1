@@ -24,10 +24,6 @@ def fetch_receive_order(process_status, **kwargs):
     order_identifier = kwargs.get('order_identifier')    
     aliquot_identifier = kwargs.get('aliquot_identifier')
 
-    #Order.objects.all().delete()
-    #Aliquot.objects.all().delete()
-    #Receive.objects.all().delete()
-
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
 
@@ -38,7 +34,7 @@ def fetch_receive_order(process_status, **kwargs):
     
     last_import_datetime = agg['import_datetime__max']
     
-    last_import_datetime = datetime.today() - timedelta(days=10)
+    last_import_datetime = datetime.today() - timedelta(days=90)
     
     #insert new record into ImportHistory
     obj = DmisImportHistory.objects.create(
