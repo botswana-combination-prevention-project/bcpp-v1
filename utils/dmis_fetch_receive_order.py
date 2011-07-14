@@ -85,7 +85,7 @@ def fetch_receive_order(process_status, **kwargs):
      
     for row in cursor:
         
-        print '%s patient %s received %s' % (row.receive_identifier, row.subject_identifier, row.receive_datetime)
+        #print '%s patient %s received %s' % (row.receive_identifier, row.subject_identifier, row.receive_datetime)
         
         oReceive = fetch_or_create_receive( 
             receive_identifier = row.receive_identifier,
@@ -166,7 +166,7 @@ def fetch_or_create_receive( **kwargs ):
 
     if oReceive:
         oReceive = Receive.objects.get(receive_identifier=receive_identifier)    
-        print 'receive found'
+        #print 'receive found'
     else:
         oProtocol = fetch_or_create_protocol(protocol_identifier)
         oAccount = fetch_or_create_account(protocol_identifier)
@@ -193,7 +193,7 @@ def fetch_or_create_receive( **kwargs ):
             dmis_reference = dmis_reference,
             ) 
         oReceive.save()
-        print 'receive created'
+        print 'receive created for sample '+receive_identifier+' protocol '+ protocol_identifier
 
 
     return oReceive
