@@ -6,7 +6,8 @@ from autocomplete.admin import AutocompleteAdmin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, Aliquot, AliquotType, AliquotCondition
 from models import Receive, Result, Order, ResultItem, AliquotMedium, TidPanelMapping, PanelGroup, ResultSource
-from utils import AllocateAliquotIdentifier, AllocateReceiveIdentifier
+# from utils import AllocateAliquotIdentifier, 
+from utils import AllocateReceiveIdentifier
 
 
 #class PatientAutocomplete(AutocompleteSettings):
@@ -133,8 +134,12 @@ class OrderAdmin(AutocompleteAdmin,MyModelAdmin):
 
     def save_model(self, request, obj, form, change):
     
+        if not change:
+            obj.order_identifier = self.model.objects.get_identifier() 
+
         if change:
             obj.user_modified=request.user
+            
     
         save = super(OrderAdmin, self).save_model(request, obj, form, change)
         return save
@@ -176,15 +181,14 @@ class AliquotConditionAdmin(MyModelAdmin):
 admin.site.register(AliquotCondition,AliquotConditionAdmin)
 
 class AliquotAdmin(MyModelAdmin):
+    
     def save_model(self, request, obj, form, change):
         if not change:
-            aliquot_identifier = AllocateAliquotIdentifier(
-                request.user, 
-                request.POST.get('aliquot_type'),
-                )
-            obj.aliquot_identifier = aliquot_identifier['id']
-            obj.id_int = aliquot_identifier['id_int']
-            obj.id_seed = aliquot_identifier['id_seed']
+            obj.aliquot_identifier = self.model.objects.get_identifier(
+                parent_identifier = request.POST.get('parent_identifier'),
+                aliquot_type = request.POST.get('aliquot_type'),
+                ) 
+            
         save = super(AliquotAdmin, self).save_model(request, obj, form, change)
         return save
 

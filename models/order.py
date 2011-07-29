@@ -2,6 +2,7 @@ from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_future
 from bhp_lab_core.models import Aliquot, Panel
+from bhp_lab_core.managers import OrderManager
 
 class Order(MyBasicUuidModel):
 
@@ -20,7 +21,13 @@ class Order(MyBasicUuidModel):
         db_index=True,                
         )
     
-    aliquot = models.ForeignKey(Aliquot)    
+    # allow blank/null so orders may be placed
+    # before a sample is received.
+    # This is the case if clinics place the order.
+    aliquot = models.ForeignKey(Aliquot,
+        blank = True,
+        null = True,
+        )    
     
     panel  = models.ForeignKey(Panel)
 
@@ -35,6 +42,8 @@ class Order(MyBasicUuidModel):
         null=True,
         blank = True,        
         )
+    
+    objects = OrderManager()
     
     def __unicode__(self):
         return '%s %s' % (self.order_identifier, self.panel)

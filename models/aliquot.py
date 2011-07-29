@@ -5,6 +5,7 @@ from bhp_common.models import MyBasicUuidModel, MyBasicListModel, MyBasicModel
 from bhp_lab_core.choices import ALIQUOT_STATUS
 from bhp_lab_core.choices import SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
 from bhp_lab_core.models import Receive
+from bhp_lab_core.managers import AliquotManager
 
 
 class AliquotMedium(MyBasicListModel):
@@ -14,6 +15,7 @@ class AliquotMedium(MyBasicListModel):
     class Meta:
         ordering = ["name"]
         app_label = 'bhp_lab_core'        
+
 
 class AliquotType(MyBasicModel):
 
@@ -64,7 +66,7 @@ class Aliquot (MyBasicUuidModel):
         max_length=25, 
         unique=True, 
         help_text="Aliquot identifier", 
-        editable=False
+        editable=False,
         )
         
     aliquot_datetime = models.DateTimeField(
@@ -72,13 +74,19 @@ class Aliquot (MyBasicUuidModel):
         default = datetime.datetime.today(),
         )
     
-    receive = models. ForeignKey(Receive)
+    receive = models.ForeignKey(Receive)
         
     count = models.IntegerField(
         editable=False,
         null=True
         )
         
+    parent_identifier = models.ForeignKey('self',
+        to_field = 'aliquot_identifier',
+        blank=True,
+        null=True,
+        )
+    
     aliquot_type = models.ForeignKey(AliquotType,
         verbose_name="Aliquot Type",
         )
@@ -127,11 +135,15 @@ class Aliquot (MyBasicUuidModel):
         blank=True,
         )
     
+    objects = AliquotManager()
+
+  
     def __unicode__(self):
-        return '%s[%s]' % (self.aliquot_identifier, self.aliquot_type.alpha_code)
+        return '%s' % (self.aliquot_identifier)
 
     def get_absolute_url(self):
         return "/bhp_lab_core/aliquot/%s/" % self.id   
+        
     def get_search_url(self):
         return "/laboratory/aliquot/search/aliquot/byword/%s/" % self.id   
 
