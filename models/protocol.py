@@ -16,13 +16,13 @@ class Protocol(models.Model):
         help_text = 'Fragment of proper site name not including BHP protocol number or location'
         )
 
-    site = models.ManyToManyField(Site)
+    #site = models.ManyToManyField(Site)
 
     local_title = models.CharField(max_length=25, blank=True)
     
-    prinicipal_investigator = models.ManyToManyField(PrincipalInvestigator)
+    #prinicipal_investigator = models.ManyToManyField(PrincipalInvestigator)
 
-    site_leader = models.ManyToManyField(SiteLeader)
+    #site_leader = models.ManyToManyField(SiteLeader)
 
     funding_source = models.ManyToManyField(FundingSource)
     

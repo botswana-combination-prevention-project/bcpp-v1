@@ -24,8 +24,8 @@ class PrincipalInvestigator (MyBasicUuidModel):
     class Meta:
         ordering = ['last_name', 'first_name']
         unique_together = ['last_name', 'first_name']
-        #abstract = True
-    
+        app_label = 'bhp_research_protocol'
+            
     def get_absolute_url(self):
         return "/bhp_lab_registration/principalinvestigator/%s/" % self.id   
     

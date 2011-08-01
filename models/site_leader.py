@@ -27,7 +27,7 @@ class SiteLeader (MyBasicUuidModel):
     class Meta:
         ordering = ['last_name', 'first_name']
         unique_together = ['last_name', 'first_name']
-        #abstract = True
+        app_label = 'bhp_research_protocol'
 
 
         
