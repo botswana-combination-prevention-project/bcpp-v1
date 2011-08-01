@@ -10,7 +10,7 @@ def export_as_csv_action(description="Export selected objects as CSV file",
     'header' is whether or not to output the column names as the first row
     
     ...in my_app/admin.py add this import:
-    import from bhp_common.action import export_as_csv_action
+    from bhp_common.actions import export_as_csv_action
     
     ...and this to your modeladmin class:        
     actions = [export_as_csv_action("CSV Export", 
