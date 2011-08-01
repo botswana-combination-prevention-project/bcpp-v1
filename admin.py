@@ -6,25 +6,33 @@ from autocomplete.admin import AutocompleteAdmin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from models import Panel, Aliquot, AliquotType, AliquotCondition
 from models import Receive, Result, Order, ResultItem, AliquotMedium, TidPanelMapping, PanelGroup, ResultSource
-# from utils import AllocateAliquotIdentifier, 
 from utils import AllocateReceiveIdentifier
 
+class PatientAutocomplete(AutocompleteSettings):
+    search_fields = ('^subject_identifier',)
 
-#class PatientAutocomplete(AutocompleteSettings):
-#    search_fields = ('^subject_identifier',)
-#autocomplete.register(Receive.patient, PatientAutocomplete)
+class ReceiveAutocomplete(AutocompleteSettings):
+    search_fields = ('^receive_identifier',)
 
 class AliquotAutocomplete(AutocompleteSettings):
     search_fields = ('^aliquot_identifier',)
-autocomplete.register(Order.aliquot, AliquotAutocomplete)
+
+class AliquotTypeAutocomplete(AutocompleteSettings):
+    search_fields = ('^numeric_code', '^alpha_code','^name', )
 
 class OrderAutocomplete(AutocompleteSettings):
     search_fields = ('^order_identifier',)
-autocomplete.register(Result.order, OrderAutocomplete)
 
 class ResultAutocomplete(AutocompleteSettings):
     search_fields = ('^result_identifier',)
+
+
+autocomplete.register(Receive.patient, PatientAutocomplete)
+autocomplete.register(Aliquot.receive, ReceiveAutocomplete)
+autocomplete.register(Aliquot.aliquot_type, AliquotTypeAutocomplete)
+autocomplete.register(Order.aliquot, AliquotAutocomplete)
 autocomplete.register(ResultItem.result, ResultAutocomplete)
+autocomplete.register(Result.order, OrderAutocomplete)
 
 class PanelAdmin(MyModelAdmin):
     list_display = ('name','panel_group')
@@ -43,6 +51,7 @@ admin.site.register(PanelGroup, PanelGroupAdmin)
 class TidPanelMappingAdmin(MyModelAdmin):
     list_display = ('tid','panel')
 admin.site.register(TidPanelMapping, TidPanelMappingAdmin)
+
 
 class ResultItemAdmin(AutocompleteAdmin, MyModelAdmin):
     
@@ -84,6 +93,7 @@ class ResultItemInlineAdmin(MyTabularInline):
 class ResultSourceAdmin(MyModelAdmin):
     pass
 admin.site.register(ResultSource, ResultSourceAdmin)    
+
 
 class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
 
@@ -152,14 +162,10 @@ class OrderAdmin(AutocompleteAdmin,MyModelAdmin):
         else:
             return self.readonly_fields  
     
-    #override, limit dropdown in add_view to id passed in the URL        
-    #def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #    if db_field.name == "aliquot":
-    #        kwargs["queryset"] = Aliquot.objects.filter(id__exact=request.GET.get('aliquot', 0))
-    #    return super(OrderAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
-
-    fields = ('order_identifier', 'order_datetime', 'panel', 'aliquot', 'comment', 'dmis_reference', )
+    fields = ('order_datetime', 'panel', 'aliquot', 'comment', 'dmis_reference', )
+    
     list_display = ('order_identifier', 'order_datetime', 'panel', 'aliquot', 'dmis_reference')
+    
 admin.site.register(Order, OrderAdmin)
 
 class AliquotMediumAdmin(MyModelAdmin):
@@ -180,7 +186,7 @@ class AliquotConditionAdmin(MyModelAdmin):
     ordering = ['display_index']
 admin.site.register(AliquotCondition,AliquotConditionAdmin)
 
-class AliquotAdmin(MyModelAdmin):
+class AliquotAdmin(AutocompleteAdmin, MyModelAdmin):
     
     def save_model(self, request, obj, form, change):
         if not change:
@@ -212,6 +218,7 @@ class AliquotInlineAdmin(MyTabularInline):
     
     model = Aliquot
     extra = 0
+
 
 class ReceiveAdmin(AutocompleteAdmin, MyModelAdmin):
     

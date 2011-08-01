@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
@@ -12,8 +13,7 @@ from bhp_lab_core.models import SpecimenType
     Add the patient key field, for example
     
 """
-    
-            
+     
 class Receive (MyBasicUuidModel):
 
     protocol = models.ForeignKey(Protocol)
@@ -25,7 +25,7 @@ class Receive (MyBasicUuidModel):
         editable = False,
         db_index=True,                
         )
-
+   
     patient = models.ForeignKey(Patient)
 
     datetime_drawn = models.DateTimeField("Date and time drawn",
@@ -34,7 +34,9 @@ class Receive (MyBasicUuidModel):
         db_index=True,                    
             )
   
-    receive_datetime = models.DateTimeField("Date and time received",
+    receive_datetime = models.DateTimeField(
+        verbose_name = "Date and time received",
+        default = datetime.now()
         validators=[
             datetime_not_future,],
         db_index=True,                    
@@ -43,7 +45,7 @@ class Receive (MyBasicUuidModel):
     site = models.ForeignKey(Site)
 
     visit = models.CharField(
-        verbose_name = "Visit",
+        verbose_name = "Visit Code",
         max_length=25,
         )
     
