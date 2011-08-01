@@ -87,8 +87,6 @@ class Order(MyBasicUuidModel):
     
     panel  = models.ForeignKey(Panel)
 
-    requisition = models.ForeignKey(Requisition)
-
     comment = models.CharField(
         verbose_name = 'Comment',
         max_length = 150,
