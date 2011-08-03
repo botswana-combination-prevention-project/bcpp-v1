@@ -19,6 +19,10 @@ class IdentifierTracker(MyBasicModel): #, LockableObject):
     root_number = models.IntegerField(db_index=True)
     
     counter = models.IntegerField(db_index=True)
+
+    identifier_type = models.CharField(
+        max_length = 35
+        )
    
     class Meta:
         app_label = 'bhp_common'        
