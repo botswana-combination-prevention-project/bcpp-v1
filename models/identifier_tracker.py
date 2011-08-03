@@ -5,7 +5,10 @@ from bhp_common.models import MyBasicModel
 class IdentifierTracker(MyBasicModel): #, LockableObject):
 
     """
-    A lockable model to create and track unique order numbers for new order records.
+    A lockable model to create and track unique identifiers for new records such as requsitions, receive, etc.
+    
+    See also, classes/identifier.py
+    
     """
     
     identifier = models.CharField(
