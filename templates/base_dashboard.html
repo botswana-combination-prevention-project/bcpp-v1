@@ -1,10 +1,18 @@
 {% extends "section.html"%}
 
+{% block extra_js %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.results').html( '<I>Contacting lab for results, please wait...<I>' ).load('{% url lab_api_results_url subject_identifier=subject_identifier %}');
+        });
+</script>
+{% endblock %}
+
 {% block breadcrumbs %}
 
     {% load tags %}
     <div class="breadcrumbs">
-        <a href="/mochudi_clinic">Home</a>
+        <a href="/mpepu">Home</a>
         {% if section_name  %}
             &rsaquo; <a href="{% url section_url_name section_name %}">{{ section_name|capfirst }}</a>
         {% endif %}        
@@ -27,8 +35,6 @@
 
 {% block clinic_dashboard %}
 
-
-
 <table border=1 width=100%>
     <tr>
         <td>
@@ -38,7 +44,7 @@
                 </td></tr>
                 <tr name="top left"><td>
                 <H3>Appointments</H3>
-                <A href="{% url admin:bhp_form_appointment_add %}?next=dashboard_url&dashboard=subject&subject_identifier={{consent.subject_identifier}}">Create new appointment</A>
+                <A href="{% url admin:bhp_form_appointment_add %}?next={{dashboard}}_dashboard_url&dashboard={{dashboard}}&registered_subject={{registered_subject.pk}}">Create new appointment</A>
                 
                 {% block appointments %}
 
@@ -54,6 +60,9 @@
                 {% if not visit_code %}                
                     select a scheduled visit code above to see scheduled data
                 {% else %}
+                    {% if appointment.appt_status != 'in_progress' %}
+                        <I> Hint: To edit the forms below, change the selected appointment's status to 'In Progress'</I> 
+                    {% endif %}    
                     {% block scheduled_data_collection %}{% endblock scheduled_data_collection %}
                 {% endif %}
                 </td></tr>
@@ -72,6 +81,7 @@
 
                 <tr name="middle right" ><td>
                 <H3>Laboratory</H3>
+                <span class="results"></span>
                 </td></tr>
         
                 <tr name="bottom right" ><td>
@@ -89,5 +99,6 @@
 {% endblock content%}
 
 
-{% block other_section_links %}{% endblock %}
+{% block other_section_links %}
 </div>
+{% endblock%}
