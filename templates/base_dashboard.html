@@ -12,7 +12,7 @@
 
     {% load tags %}
     <div class="breadcrumbs">
-        <a href="/mpepu">Home</a>
+        <a href="/{{ home }}">Home</a>
         {% if section_name  %}
             &rsaquo; <a href="{% url section_url_name section_name %}">{{ section_name|capfirst }}</a>
         {% endif %}        
