@@ -37,16 +37,16 @@ class MyRegisteredSubjectModelAdmin (MyModelAdmin):
         if db_field.name == "appointment":
             if request.GET.get('appointment'):
                 kwargs["queryset"] = Appointment.objects.filter(id__exact=request.GET.get('appointment'))
-            elif self.model.objects.filter(pk=object_id):
-                kwargs["queryset"] = Appointment.objects.filter(pk=self.model.objects.get(pk=object_id).appointment.pk)
+            #elif self.model.objects.filter(pk=object_id):
+            #    kwargs["queryset"] = Appointment.objects.filter(pk=self.model.objects.get(pk=object_id).appointment.pk)
             else:
                 kwargs["queryset"] = Appointment.objects.none()
 
         if db_field.name == "registered_subject":
             if request.GET.get('registered_subject'):
                 kwargs["queryset"] = RegisteredSubject.objects.filter(pk = request.GET.get('registered_subject'))
-            elif self.model.objects.filter(pk=object_id):
-                kwargs["queryset"] = RegisteredSubject.objects.filter(pk = self.model.objects.get(pk=object_id).appointment.registered_subject.pk)
+            #elif self.model.objects.filter(pk=object_id):
+            #    kwargs["queryset"] = RegisteredSubject.objects.filter(pk = self.model.objects.get(pk=object_id).appointment.registered_subject.pk)
             else:
                 kwargs["queryset"] = RegisteredSubject.objects.none()
 
