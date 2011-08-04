@@ -47,9 +47,4 @@ class BaseOffStudy(MyBasicUuidModel):
         app_label = 'bhp_registration'
         abstract = True
         
-              
-class OffStudy(BaseOffStudy):
-
-    class Meta:
-        app_label = 'bhp_registration'
 
