@@ -19,21 +19,22 @@ class OffStudyReason (MyBasicListModel):
 """
     Basic Off study / AF004
 """
-class OffStudy(MyBasicUuidModel):
+class BaseOffStudy(MyBasicUuidModel):
 
     registered_subject = models.OneToOneField(RegisteredSubject)
 
-    date_off_study=models.DateField(
+    offstudy_date = models.DateField(
         verbose_name="Off-study Date",
         help_text="",
         )
 
-    reason_off_study = models.ForeignKey(OffStudyReason,
-        verbose_name="Please code the primary reason for why the subject is being taken off-study",
-        help_text="",
+    reason = models.CharField(
+        verbose_name = "Please code the primary reason participant taken off-study",
+        max_length = 25,
+        #choices = OFF_STUDY_REASON,
         )
 
-    reason_off_study_other = OtherCharField()
+    reason_other = OtherCharField()
 
     comment = models.CharField(
         max_length=35,
@@ -41,6 +42,14 @@ class OffStudy(MyBasicUuidModel):
         blank=True,
         null=True,   
         ) 
+        
     class Meta:
-        app_label = 'bhp_registration'           
+        app_label = 'bhp_registration'
+        abstract = True
+        
+              
+class OffStudy(BaseOffStudy):
+
+    class Meta:
+        app_label = 'bhp_registration'
 
