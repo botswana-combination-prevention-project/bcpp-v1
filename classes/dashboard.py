@@ -26,6 +26,7 @@ class ContextDescriptor(object):
             "visit": obj.visit,        
             "visit_code": obj.visit_code,
             "visit_instance": obj.visit_instance,                
+            "visit_model_name": obj.visit_model_name,
             "hostname": socket.gethostname(),
             "os_variables":os_variables(),
             }        
@@ -134,7 +135,8 @@ class Dashboard(object):
         
         self.scheduled_crfs = None
         self.additional_crfs = None
-        self.selected_visit = None   
+        self.selected_visit = None 
+        self.visit_model_name = 'Visit'  
 
         self.exclude_from_context = ['template',]        
 

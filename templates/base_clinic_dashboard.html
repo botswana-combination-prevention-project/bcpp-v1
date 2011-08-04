@@ -30,34 +30,9 @@
         <td colspan="4"><i>No appointments scheduled</i></td>
     {% else %}
         {% for appointment in appointments %}
-            <tr>
-            {% if appointment.appt_status == 'in_progress' and appointment.visit%}
-                <td><A href="{% url dashboard_visit_url dashboard=dashboard subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">{{ appointment.visit_definition.code }}.{{ appointment.visit_instance }}</A></td>
-            {% else %}
-                <td>{{ appointment.visit_definition.code }}.{{ appointment.visit_instance }}</td>            
-            {% endif %}                
-            <td>{% if appointment.visit_instance == visit_instance %}{%if appointment.visit_definition.code == visit_code%}<B>{% endif %}{{ appointment.visit_definition.title }}{%if appointment.visit_definition.code == 'visit_code'%}</B>{% endif %}{% endif %}</td>
-            <td>{{ appointment.appt_datetime|date:"Y-m-d" }}</td>
-            <td><A href="{{ appointment.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&registered_subject={{ registered_subject.pk }}">{{ appointment.get_appt_status_display }}</A></td>
-            {% if appointment.visit %}
-                <td><A href="{{ appointment.visit.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">{{appointment.visit.report_datetime|date:"Y-m-d"}}</A></td>
-                <td><A href="{{ appointment.visit.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">{{appointment.visit.reason}}</A></td>
-                <td><A href="{{ appointment.visit.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">{{appointment.visit.info_source}}</A></td>                                
-            {% else %}    
-                <td><A href="/admin/{{app_label}}/visit/add/?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">Add</A></td>            
-                <td></td>
-                <td></td>                
-            {% endif%}
-            {% if  appointment.visit %}
-                {% if appointment.visit_definition.code == visit_code and appointment.visit_instance == visit_instance %}
-                    <td><A href="{% url dashboard_visit_url dashboard=dashboard subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">Showing entry forms for {{ visit_code }}.{{ visit_instance }}</A></td>
-                {% else %}
-                    <td><A href="{% url dashboard_visit_url dashboard=dashboard subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">Show entry forms</A></td>                    
-                {% endif %}
-            {% else %}
-                <td></td>                            
-            {% endif%}
-            </tr>
+        
+            {% appointment_row appointment %}
+
         {% endfor %}
     {% endif %}
     <tbody>
