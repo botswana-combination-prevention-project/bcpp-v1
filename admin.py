@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from models import RegisteredSubject, OffStudyReason, OffStudy, RandomizedSubject, SubjectIdentifierAuditTrail
+from models import RegisteredSubject, RandomizedSubject, SubjectIdentifierAuditTrail
 
 class RegisteredSubjectAdmin (MyModelAdmin):
 
@@ -27,12 +27,6 @@ class RegisteredSubjectAdmin (MyModelAdmin):
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
 
 admin.site.register(RandomizedSubject)
-
-admin.site.register(OffStudyReason)
-
-class OffStudyAdmin (MyModelAdmin):
-    pass
-admin.site.register(OffStudy, OffStudyAdmin)
 
 
 class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):

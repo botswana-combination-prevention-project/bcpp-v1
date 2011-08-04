@@ -5,17 +5,6 @@ from bhp_common.validators import datetime_not_before_study_start, datetime_not_
 from bhp_registration.choices import SUBJECT_TYPE
 from registered_subject import RegisteredSubject
 
-class OffStudyReason (MyBasicListModel):
-
-    subject_type = models.CharField(
-        max_length = 25,
-        choices=SUBJECT_TYPE,
-        )         
-
-    class Meta:
-        ordering = ['display_index']
-        app_label = 'bhp_registration'                    
-
 """
     Basic Off study / AF004
 """
