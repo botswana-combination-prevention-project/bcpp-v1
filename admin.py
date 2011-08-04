@@ -17,6 +17,6 @@ class IdentifierTrackerAdmin(MyModelAdmin):
     
     search_fields = ('identifier', 'root_number')
     
-    list_filter = ('created')
+    list_filter = ('created',)
     
 admin.site.register(IdentifierTracker, IdentifierTrackerAdmin)
