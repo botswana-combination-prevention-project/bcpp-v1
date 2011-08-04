@@ -14,6 +14,7 @@ class ContextDescriptor(object):
         self.context = {
             "search_name": obj.search_name,
             "dashboard": obj.dashboard_type,
+            "app_label": obj.app_label,
             "keyed_membership_forms": obj.membership_forms['keyed'],        
             "unkeyed_membership_forms": obj.membership_forms['unkeyed'],
             "appointments": obj.appointments,
@@ -156,11 +157,11 @@ class Dashboard(object):
         self.visit_model = kwargs.get('visit_model')
         self.visit = self.visit_model.objects.none()
         self.search_name = kwargs.get('search_name')
+        self.app_label = kwargs.get('app_label')
 
         self.dashboard_type = kwargs.get('dashboard_type', self.subject_type.lower())        
         self.template = kwargs.get('template', '%s_dashboard.html' % self.dashboard_type)        
         
-
         # add membership forms for this registered_subject and subject_type
         # these are the KEYED, UNKEYED schedule group membership forms
         self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(

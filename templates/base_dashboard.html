@@ -44,7 +44,7 @@
                 </td></tr>
                 <tr name="top left"><td>
                 <H3>Appointments</H3>
-                <A href="{% url admin:bhp_form_appointment_add %}?next={{dashboard}}_dashboard_url&dashboard={{dashboard}}&registered_subject={{registered_subject.pk}}">Create new appointment</A>
+                <A href="{% url admin:bhp_form_appointment_add %}?next=dashboard_url&dashboard={{dashboard}}&registered_subject={{registered_subject.pk}}">Create new appointment</A>
                 
                 {% block appointments %}
 

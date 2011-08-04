@@ -1,0 +1,136 @@
+{% extends "base_dashboard.html"%}
+{% load common_tags %}{% load dashboard_tags %}
+
+{% block membership_forms %}
+
+    {% for keyed_model_name, keyed_model in keyed_membership_forms.iteritems %}
+        <A href="{{ keyed_model.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&maternal_consent={{ maternal_consent.pk }}">{{ keyed_model_name }} (Complete)</A> |
+    {% endfor %}   
+
+    {% for unkeyed_membership_form in unkeyed_membership_forms %}
+        <A href="{{ unkeyed_membership_form|admin_url_from_contenttype }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&maternal_consent={{ maternal_consent.pk }}">{{ unkeyed_membership_form }} (New)</A> |
+    {% endfor %}  
+
+{% endblock %}
+
+{% block appointments %}
+    <table>
+    <thead>
+    <th>Visit</th>
+    <th>Description</th>
+    <th>Scheduled</th>
+    <th>Status</th>
+    <th>Visit report</th>
+    <th>Reason</th>      
+    <th>Source</th>
+    <th></th>                                    
+    </thead>
+    <tbody>
+    {% if not appointments%}
+        <td colspan="4"><i>No appointments scheduled</i></td>
+    {% else %}
+        {% for appointment in appointments %}
+            <tr>
+            {% if appointment.appt_status == 'in_progress' and appointment.visit%}
+                <td><A href="{% url dashboard_visit_url dashboard=dashboard subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">{{ appointment.visit_definition.code }}.{{ appointment.visit_instance }}</A></td>
+            {% else %}
+                <td>{{ appointment.visit_definition.code }}.{{ appointment.visit_instance }}</td>            
+            {% endif %}                
+            <td>{% if appointment.visit_instance == visit_instance %}{%if appointment.visit_definition.code == visit_code%}<B>{% endif %}{{ appointment.visit_definition.title }}{%if appointment.visit_definition.code == 'visit_code'%}</B>{% endif %}{% endif %}</td>
+            <td>{{ appointment.appt_datetime|date:"Y-m-d" }}</td>
+            <td><A href="{{ appointment.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&registered_subject={{ registered_subject.pk }}">{{ appointment.get_appt_status_display }}</A></td>
+            {% if appointment.visit %}
+                <td><A href="{{ appointment.visit.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">{{appointment.visit.report_datetime|date:"Y-m-d"}}</A></td>
+                <td><A href="{{ appointment.visit.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">{{appointment.visit.reason}}</A></td>
+                <td><A href="{{ appointment.visit.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">{{appointment.visit.info_source}}</A></td>                                
+            {% else %}    
+                <td><A href="/admin/{{app_label}}/visit/add/?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}">Add</A></td>            
+                <td></td>
+                <td></td>                
+            {% endif%}
+            {% if  appointment.visit %}
+                {% if appointment.visit_definition.code == visit_code and appointment.visit_instance == visit_instance %}
+                    <td><A href="{% url dashboard_visit_url dashboard=dashboard subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">Showing entry forms for {{ visit_code }}.{{ visit_instance }}</A></td>
+                {% else %}
+                    <td><A href="{% url dashboard_visit_url dashboard=dashboard subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">Show entry forms</A></td>                    
+                {% endif %}
+            {% else %}
+                <td></td>                            
+            {% endif%}
+            </tr>
+        {% endfor %}
+    {% endif %}
+    <tbody>
+    <table>
+{% endblock appointments %}
+
+
+{% block additional_forms %}
+
+    {% if additional_entry_bucket %}    
+     <H3>Additional/PRN Forms</H3>
+    <table>
+    <thead>
+    <th>Title</th>
+    <th>Status</th>
+    <th>Due</th>
+    <th>Reported</th>        
+    <th>Comment</th>        
+    <th>Close</th>    
+    </thead>
+    {% for f in additional_entry_bucket %}
+        <tr>
+        <td><A href="{{ f.content_type_map.content_type|admin_url_from_contenttype }}?next=dashboard_url&dashboard={{ dashboard }}&registered_subject={{ registered_subject.pk }}">{{ f.content_type_map.content_type|model_verbose_name|title }}</A></td>
+        <td><A href="{{ f.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}">{{ f.get_entry_status_display }}</A></td>
+        <td>{{ f.due_datetime|date:"Y-m-d" }}</td>
+        <td>{{ f.report_datetime|date:"Y-m-d" }}</td>               
+        <td>{{ f.entry_comment }}</td>        
+        <td>{{ f.close_datetime|date:"Y-m-d" }}</td>                                                                           
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    {% endif %}      
+{% endblock %}
+
+
+{% if scheduled_entry_bucket %}   
+    {% block scheduled_data_collection %}
+        <table>
+        <thead>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Due</th>
+        <th>Required</th>
+        <th>Reported</th>
+        <th>User</th>                        
+        <th>Modified</th>                        
+        <th>Comment</th>        
+        <th>Close</th>    
+        </thead>
+        <tbody>
+        {% for f in scheduled_entry_bucket %}
+            <tr>
+            {% if f.entry_status == 'NEW' or f.entry_status == 'KEYED' or f.entry_status == 'QUERY' %}            
+                {% if appointment.appt_status == 'in_progress' %}
+                 <td><A href="{% model_admin_url f.entry.content_type_map.content_type visit.pk dashboard app_label %}">{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</A></td>
+                {% else %}                
+                    <td>{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</td>
+                {% endif %}                                 
+            {% else %}                
+                <td>{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</td>
+            {% endif %}                
+            <td><A href="{{ f.get_absolute_url }}?next=dashboard_visit_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}&visit_code={{f.entry.visit_definition.code}}&visit_instance={{ visit_instance}}">{{ f.get_entry_status_display }}</A></td>
+            <td>{{ f.due_datetime|date:"Y-m-d" }}</td>
+            <td>{{ f.entry.required }}</td>
+            <td>{{ f.report_datetime|date:"Y-m-d" }}</td>
+            <td>{% if not f.user_modified %}{{ f.user_created }}{% else %}{{ f.user_modified }}{% endif %}</td>            
+            <td>{% if not f.entry_status == 'NEW' %}{{ f.modified|date:"Y-m-d H:i" }}{% endif %}</td>                            
+            <td>{{ f.entry_comment }}</td>        
+            <td>{{ f.close_datetime|date:"Y-m-d" }}</td>                                                                           
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% endblock scheduled_data_collection %}
+{% endif %}
