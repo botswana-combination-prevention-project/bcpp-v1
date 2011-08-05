@@ -70,6 +70,7 @@ def appointment_row(context,appointment):
     my_context['dashboard'] = context['dashboard']
     my_context['subject_identifier'] = context['subject_identifier']
     my_context['registered_subject'] = context['registered_subject']
+    my_context['app_label'] = context['app_label']    
     
     visit_model = get_model(context['app_label'], context['visit_model_name'])
     
