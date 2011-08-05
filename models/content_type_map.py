@@ -53,7 +53,6 @@ class ContentTypeMap(MyBasicModel):
         
     model = models.CharField(
         max_length = 50,
-        unique = True,        
         )
     
     objects =  ContentTypeMapManager()  
@@ -72,4 +71,5 @@ class ContentTypeMap(MyBasicModel):
 
     class Meta:
         app_label = 'bhp_common'
+        unique_together = ['app_label', 'model',]
 
