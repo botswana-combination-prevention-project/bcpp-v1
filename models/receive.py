@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from bhp_common.classes import LockableObject, Encoder
+from bhp_common.classes import Identifier
 from bhp_common.models import MyBasicUuidModel, MyBasicModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_common.fields import InitialsField
@@ -23,20 +23,18 @@ class ReceiveManager(models.Manager):
         return identifier.create('99')
 
     def create_from_requisition(self, requisition_identifier):
+        pass
 
+        """
         if Requisition.objects.filter(requisition_identifier = requisition_identifier, receive__isnull=True):
             requisition = Requisition.objects.get(requisition_identifier = requisition_identifier, receive__isnull=True)
 
-            """
             # create Receive
-            super(ReceiveManager, self).create(
-                
-                )    
             
             # create Aliquot
             
             # create Order
-            """
+        """
      
 class Receive (MyBasicUuidModel):
 
