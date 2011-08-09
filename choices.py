@@ -55,6 +55,31 @@ DATE_ESTIMATED = (
     ('YMD', 'Yes, estimated Year, Month and Day'),            
 )
 
+DRUG_FORMULATION = (
+    ('11', 'Tablet'),
+    ('12', 'Capsule'),
+    ('13', 'Liquid'),
+    ('14', 'Powder'),
+    ('15', 'Suspension'),
+    ('16', 'Gel'),
+    ('17', 'Oil'),
+    ('18', 'Lotion'),
+    ('19', 'Cream'),
+    ('20', 'Patch'),
+    ('99', 'Other'),
+)
+    
+DRUG_ROUTE = (
+    ('1', 'Intramuscular'),
+    ('2', 'Intravenous'),
+    ('3', 'Oral'),
+    ('4', 'Topical'),
+    ('5', 'Subcutaneous'),
+    ('6', 'Intravaginal'),
+    ('7', 'Rectal')
+    ('9', 'Other')
+)
+
 FEEDING = (
    ('BF', 'Breast Feed'),
    ('FF', 'Formula Feed'),   
