@@ -76,8 +76,8 @@ DRUG_ROUTE = (
     ('4', 'Topical'),
     ('5', 'Subcutaneous'),
     ('6', 'Intravaginal'),
-    ('7', 'Rectal')
-    ('9', 'Other')
+    ('7', 'Rectal'),
+    ('9', 'Other'),
 )
 
 FEEDING = (
