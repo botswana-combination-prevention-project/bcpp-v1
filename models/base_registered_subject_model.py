@@ -10,11 +10,13 @@ class BaseRegisteredSubjectModel (MyBasicUuidModel):
         editable=False  
         )
     
-    registration_datetime = models.DateTimeField("Today's date",
+    report_datetime = models.DateTimeField("Today's date",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future,])
     
     class Meta:
         abstract=True
-    
+
+
+

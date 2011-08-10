@@ -7,3 +7,4 @@ from off_study import *
 from randomized_subject import *
 from registered_subject import *
 from base_registered_subject_model import BaseRegisteredSubjectModel
+from base_registration_model import BaseRegistrationModel
