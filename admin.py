@@ -18,7 +18,7 @@ class SubjectConsentAdminBase(MyModelAdmin):
         else:
             return ('subject_identifier',) + self.readonly_fields  
             
-    fields = (
+    fields = [
         'subject_identifier',
         'first_name',
         'last_name',
@@ -32,7 +32,7 @@ class SubjectConsentAdminBase(MyModelAdmin):
         'identity_type',
         'may_store_samples',
         'comment',
-        )
+        ]
     radio_fields = {
         "gender":admin.VERTICAL,
         "study_site":admin.VERTICAL,
