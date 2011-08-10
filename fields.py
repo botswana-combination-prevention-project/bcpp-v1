@@ -294,7 +294,7 @@ class OmangField(CharField):
             }
         }
         defaults.update(kwargs)
-        return super(InitialsField, self).formfield(**defaults)
+        return super(OmangField, self).formfield(**defaults)
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.

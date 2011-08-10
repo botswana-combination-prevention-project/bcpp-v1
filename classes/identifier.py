@@ -116,6 +116,7 @@ class Identifier(object):
         self.site_code = kwargs.get('site_code','')
         self.identifier_type = kwargs.get('identifier_type', 'unknown')
         self.identifier_tracker = None
+
     
     def __unicode__(self):
         return self.identifier
