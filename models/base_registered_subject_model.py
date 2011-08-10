@@ -7,7 +7,7 @@ from registered_subject import RegisteredSubject
 class BaseRegisteredSubjectModel (MyBasicUuidModel):
 
     registered_subject = models.OneToOneField(RegisteredSubject,
-        editable=False  
+        #editable=False  
         )
     
     report_datetime = models.DateTimeField("Today's date",
