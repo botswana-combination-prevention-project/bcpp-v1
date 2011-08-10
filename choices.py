@@ -104,10 +104,6 @@ GRADE = (
     ('5', 'Grade 5'),        
 )
 
-HOUSEHOLD_VISIT_STATUS = (
-    (1, 'Complete'),
-    (2, 'No'),
-)
 
 """do not change without inspecting implication to check_omang_field() in utils.py"""
 IDENTITY_TYPE = (
