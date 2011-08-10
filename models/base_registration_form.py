@@ -18,7 +18,7 @@ class BaseRegistrationForm(MyBasicUuidModel):
         abstract=True
         
         
-class BaseRegistrationModel (MyBasicUuidModel):
+class BaseRegisterSubjectModel (MyBasicUuidModel):
 
     registered_subject = models.OneToOneField(RegisteredSubject,
         editable=False  

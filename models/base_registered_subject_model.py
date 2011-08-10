@@ -4,7 +4,7 @@ from bhp_common.validators import datetime_not_before_study_start, datetime_not_
 from registered_subject import RegisteredSubject
 
         
-class BaseRegisterSubjectModel (MyBasicUuidModel):
+class BaseRegisteredSubjectModel (MyBasicUuidModel):
 
     registered_subject = models.OneToOneField(RegisteredSubject,
         editable=False  
