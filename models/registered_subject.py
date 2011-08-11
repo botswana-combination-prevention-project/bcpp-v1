@@ -202,7 +202,13 @@ class RegisteredSubject(BaseSubject):
         blank = True,
         help_text = "For example, mother's identifier, if available / appropriate"
         )
-
+    
+    identity = models.CharField(
+        max_length = 25,
+        null=True,
+        blank=True,
+        )
+    
     objects = RegisteredSubjectManager()
         
     def __unicode__ (self):
