@@ -43,7 +43,7 @@ class ModelAdminUrl(template.Node):
                 rev_url = reverse(view)
                 rev_url = '%s?visit=%s&next=%s&dashboard=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s' % (rev_url, self.visit_pk, next, self.dashboard, visit_model.appointment.registered_subject.subject_identifier, visit_model.appointment.visit_definition.code, visit_model.appointment.visit_instance)            
             except:
-                raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (contenttype.app_label, contenttype.model))    
+                raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (self.contenttype.app_label, self.contenttype.model))    
         return rev_url
 
 @register.tag(name='model_admin_url')
