@@ -9,6 +9,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         'sid',        
         'first_name',
         'initials',
+        'gender',
         'subject_type',
         'user_created',
         'created',

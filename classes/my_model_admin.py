@@ -50,8 +50,6 @@ class MyRegisteredSubjectModelAdmin (MyModelAdmin):
             else:
                 kwargs["queryset"] = RegisteredSubject.objects.none()
 
-
-
         return super(MyRegisteredSubjectModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)                   
 
 

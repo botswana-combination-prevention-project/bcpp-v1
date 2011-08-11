@@ -23,6 +23,13 @@ class BaseSubject (MyBasicUuidModel):
     initials = models.CharField(
         max_length=3,
         )                    
+
+    gender = models.CharField(
+        verbose_name = "Gender",
+        max_length=1, 
+        null = True,
+        blank = True,
+        )
     
     subject_type = models.CharField(
         max_length = 25,
