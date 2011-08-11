@@ -182,6 +182,12 @@ class RegisteredSubjectManager(models.Manager):
 
 class RegisteredSubject(BaseSubject):
 
+    registration_identifier = models.CharField(
+        max_length = 25,
+        null=True,
+        blank=True,
+        )
+        
     sid = models.CharField(
         verbose_name = "Randomization SID",
         max_length = 15,
