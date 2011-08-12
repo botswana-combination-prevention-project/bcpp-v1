@@ -30,6 +30,6 @@ class IdentifierTracker(MyBasicModel): #, LockableObject):
         )
    
     class Meta:
-        app_label = 'bhp_common'        
+        app_label = 'bhp_identifier'        
         ordering = ['root_number', 'counter']
         unique_together = ['root_number', 'counter']
