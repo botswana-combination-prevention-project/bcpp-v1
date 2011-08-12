@@ -16,6 +16,11 @@ class IdentifierTracker(MyBasicModel): #, LockableObject):
         db_index=True,                
         )
     
+    identifier_string = models.CharField(
+        max_length = 50,
+        db_index=True,                
+        )    
+    
     root_number = models.IntegerField(db_index=True)
     
     counter = models.IntegerField(db_index=True)
