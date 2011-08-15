@@ -1,6 +1,8 @@
 from datetime import datetime
 from django.db import models
-from bhp_common.classes import Identifier
+from django.conf import settings
+from bhp_common.classes import LockableObject
+from bhp_identifier.classes import Identifier
 from bhp_common.models import MyBasicUuidModel, MyBasicModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_common.fields import InitialsField
@@ -17,10 +19,8 @@ from bhp_lab_core.models import SpecimenType
 class ReceiveManager(models.Manager):
 
     def get_identifier(self, **kwargs):
-    
-        identifier = Identifier()
-        
-        return identifier.create('99')
+        site_code = kwargs.get('site_code', settings.SITE_CODE)
+        return Identifier(settings.SITE_CODE).create()
 
     def create_from_requisition(self, requisition_identifier):
         pass

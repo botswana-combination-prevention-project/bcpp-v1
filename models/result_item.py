@@ -78,7 +78,8 @@ class ResultItem(MyBasicUuidModel):
 
     result_item_source = models.ForeignKey(ResultSource,
         verbose_name = 'Source',
-	    help_text = 'Reference to source of information, such as interface, manual, outside lab, ...'
+	    help_text = 'Reference to source of information, such as interface, manual, outside lab, ...',
+	    db_index = True,
   	    )
 
     result_item_source_reference = models.CharField(
