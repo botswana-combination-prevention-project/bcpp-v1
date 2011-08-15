@@ -1,4 +1,4 @@
 from allocate_identifier import AllocateIdentifier
 from allocate_infant_identifier import AllocateInfantIdentifier
-from registered_subject import RegisterSubject
+from register_subject import RegisterSubject
 from randomize_subject import RandomizeSubject

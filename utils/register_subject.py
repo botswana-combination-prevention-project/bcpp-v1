@@ -1,7 +1,7 @@
 from datetime import date, timedelta, datetime
 from bhp_registration.models import SubjectIdentifierAuditTrail
 from bhp_variables.models import StudySpecific
-from models import RegisteredSubject, RandomizedSubject
+from bhp_registration.models import RegisteredSubject, RandomizedSubject
 
 
 def RegisterSubject (**kwargs):
