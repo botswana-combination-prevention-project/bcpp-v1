@@ -1,4 +1,5 @@
 import sys, socket
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from bhp_common.utils import os_variables
 from bhp_form.models import ScheduledEntryBucket, AdditionalEntryBucket, Appointment, ScheduleGroup
@@ -23,10 +24,11 @@ class ContextDescriptor(object):
             "subject_identifier": obj.subject_identifier,
             "scheduled_entry_bucket": obj.scheduled_crfs,
             "additional_entry_bucket": obj.additional_crfs,        
-            "visit": obj.visit,        
+            "visit_model": obj.visit_model, # visit model class
+            "visit": obj.visit, # current "instance " of visit model class
             "visit_code": obj.visit_code,
-            "visit_instance": obj.visit_instance,                
-            "visit_model_name": obj.visit_model_name,
+            "visit_instance": obj.visit_instance,  # integer of visit instance, e.g 0,1,2, etc             
+            "visit_model_add_url":obj.visit_model_add_url,                
             "hostname": socket.gethostname(),
             "os_variables":os_variables(),
             }        
@@ -136,19 +138,13 @@ class Dashboard(object):
         self.scheduled_crfs = None
         self.additional_crfs = None
         self.selected_visit = None 
-        self.visit_model_name = 'Visit'  
-
+        self.visit = None
+        self.visit_model = None
         self.exclude_from_context = ['template',]        
 
     def __unicode__(self):
         return self.context
 
-    def add_to_context(self, dct):
-        if isinstance(dct, dict):
-            self.context = dct
-        else:
-            raise AttributeError, "Can't set dashboard context attribute. Add_to_context() expects a dictionary"    
-            
     def create(self, **kwargs):
 
         self.registered_subject = kwargs.get('registered_subject')
@@ -156,38 +152,83 @@ class Dashboard(object):
         self.subject_type = kwargs.get('subject_type', self.registered_subject.subject_type)
         self.visit_code = kwargs.get('visit_code')
         self.visit_instance = kwargs.get("visit_instance")                
+        
         self.visit_model = kwargs.get('visit_model')
-        self.visit = self.visit_model.objects.none()
+        
         self.search_name = kwargs.get('search_name')
         self.app_label = kwargs.get('app_label')
-
         self.dashboard_type = kwargs.get('dashboard_type', self.subject_type.lower())        
         self.template = kwargs.get('template', '%s_dashboard.html' % self.dashboard_type)        
         
-        # add membership forms for this registered_subject and subject_type
-        # these are the KEYED, UNKEYED schedule group membership forms
-        self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(
-            registered_subject = self.registered_subject,
-            membership_form_category = self.subject_type,
-            )
-        
-        # get all appointments for this registered_subject    
-        self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('visit_definition__code', 'visit_instance')
-            
-        # get additional crfs
-        self.additional_crfs = AdditionalEntryBucket.objects.filter(
-            registered_subject = self.registered_subject
-            )
+        if not self.visit_model:
+            raise AttributeError('Dashboard.create() requires attribute \'visit_model\'. Got none.')
+        else:
+            self.visit_model_name = self.visit_model._meta.module_name
+            self.visit_model_app_label = self.visit_model._meta.app_label
+            self.visit_model_add_url = reverse('admin:%s_%s_add' % (self.visit_model_app_label, self.visit_model_name))
 
-        # get the appointment that has focus based on visit_code
+        
+        self.set_membership_forms()
+
+        self.set_appointments()
+            
+        self.set_additional_forms()
+
+        self.set_scheduled_forms()
+        
+        self.set_current_appointment()
+        
+        self.set_current_visit()        
+        
+        
+        # initialize dashboard context with current "self" variables less those listed in self.exclude_from_context
+        self.context = self
+
+
+    def add_to_context(self, dct):
+        
+        if isinstance(dct, dict):
+            self.context = dct
+        else:
+            raise AttributeError, "Can't set dashboard context attribute. Add_to_context() expects a dictionary"    
+    
+    def set_scheduled_forms(self):
+
+        # get list of scheduled crfs
         if self.visit_code:
-            # get list of scheduled crfs
-            # do not filter for visit_instance as this does not apply for scheduled_crfs
+            # filter for appointment with visit_instance=0
+            appointment = Appointment.objects.get(
+                                        registered_subject = self.registered_subject, 
+                                        visit_definition__code = self.visit_code, 
+                                        visit_instance = 0,
+                                        )
             self.scheduled_crfs = ScheduledEntryBucket.objects.get_scheduled_forms_for(
                 registered_subject = self.registered_subject, 
+                appointment = appointment,    
                 visit_code = self.visit_code,
-                )            
+                )                    
             
+    def set_appointments(self):
+
+        # get all appointments for this registered_subject    
+        self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('visit_definition__code', 'visit_instance')
+    
+
+    def set_current_visit(self):
+    
+        if self.appointment:
+            # set the visit
+            if self.visit_model:
+                self.visit = self.visit_model.objects.get(appointment = self.appointment)                    
+            else:
+                raise AttributeError('Cannot determine attribute \'visit_model\' in Dashboard. Got none. Either pass as a attribute or add_to_context')        
+        else:
+            self.visit = self.visit_model.objects.none()
+
+    def set_current_appointment(self):
+    
+        # get the appointment that has focus based on visit_code
+        if self.visit_code:
             # get visit associated with this appointment (in progress) and visit code and instance
             if Appointment.objects.filter(registered_subject=self.registered_subject, 
                                         visit_definition__code = self.visit_code, 
@@ -199,15 +240,27 @@ class Dashboard(object):
                     visit_definition__code = self.visit_code,
                     visit_instance = self.visit_instance,                 
                     )
-
-                # set the visit
-                self.visit = self.visit_model.objects.get(appointment = self.appointment)
-
+                
         else:
             # no appointment selected because there is no visit_code
             self.appointment = Appointment.objects.none()    
-            
         
-        # initialize dashboard context with current "self" variables less those listed in self.exclude_from_context
-        self.context = self
+
+    def set_additional_forms(self):
+
+        # get additional crfs
+        self.additional_crfs = AdditionalEntryBucket.objects.filter(
+            registered_subject = self.registered_subject
+            )
+
+    def set_membership_forms(self):
+
+        # add membership forms for this registered_subject and subject_type
+        # these are the KEYED, UNKEYED schedule group membership forms
+        self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(
+            registered_subject = self.registered_subject,
+            membership_form_category = self.subject_type,
+            )
+        
+            
 

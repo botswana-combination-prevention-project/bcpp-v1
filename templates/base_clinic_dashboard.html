@@ -18,21 +18,20 @@
     <thead>
     <th>Visit</th>
     <th>Description</th>
-    <th>Scheduled</th>
-    <th>Status</th>
-    <th>Visit report</th>
-    <th>Reason</th>      
-    <th>Source</th>
-    <th></th>                                    
+    <th>Appt. Date</th>
+    <th>Appt. Status</th>
+    <th>Visit Report</th>
+    <th>Visit Reason</th>      
+    <th>Action</th>                                    
     </thead>
     <tbody>
     {% if not appointments%}
-        <td colspan="4"><i>No appointments scheduled</i></td>
+        <td colspan="8"><i>No appointments scheduled</i></td>
     {% else %}
         {% for appointment in appointments %}
-        
+            <tr class="{% cycle 'row1' 'row2' %}">
             {% appointment_row appointment %}
-
+            </tr>
         {% endfor %}
     {% endif %}
     <tbody>
@@ -54,7 +53,7 @@
     <th>Close</th>    
     </thead>
     {% for f in additional_entry_bucket %}
-        <tr>
+        <tr class="{% cycle 'row1' 'row2' %}">
         <td><A href="{{ f.content_type_map.content_type|admin_url_from_contenttype }}?next=dashboard_url&dashboard={{ dashboard }}&registered_subject={{ registered_subject.pk }}">{{ f.content_type_map.content_type|model_verbose_name|title }}</A></td>
         <td><A href="{{ f.get_absolute_url }}?next=dashboard_url&dashboard={{ dashboard }}&subject_identifier={{ subject_identifier }}">{{ f.get_entry_status_display }}</A></td>
         <td>{{ f.due_datetime|date:"Y-m-d" }}</td>
@@ -85,10 +84,10 @@
         </thead>
         <tbody>
         {% for f in scheduled_entry_bucket %}
-            <tr>
+            <tr class="{% cycle 'row1' 'row2' %}">
             {% if f.entry_status == 'NEW' or f.entry_status == 'KEYED' or f.entry_status == 'QUERY' %}            
                 {% if appointment.appt_status == 'in_progress' %}
-                 <td><A href="{% model_admin_url f.entry.content_type_map.content_type visit.pk dashboard app_label %}">{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</A></td>
+                 <td><A href="{% model_admin_url f.entry.content_type_map.content_type visit_model appointment dashboard app_label %}">{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</A></td>
                 {% else %}                
                     <td>{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</td>
                 {% endif %}                                 
