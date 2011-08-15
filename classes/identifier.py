@@ -220,15 +220,20 @@ class Identifier(object):
         return number % self.modulus
     
     def is_valid(self, identifier=None, encoded=True):
-        """Returns True if modulus of decoded identifier (less last digit) equals the check_digit (last digit)."""
+        """Returns True if modulus of encoded/decoded identifier (less last digit) equals the check_digit (last digit)."""
 
         if not identifier:
             identifier = self.identifier
+
         if encoded:            
             x = self.decode(identifier)
         else:
+            if not isinstance(identifier, (int, long)):
+                raise TypeError('Identifier must be an integer if encode=False')
             x = identifier     
+            
         check_digit = int(str(x)[-1])
+
         x = int(str(x)[0:-1])
 
         return x % self.modulus == check_digit
@@ -300,6 +305,7 @@ class Identifier(object):
         
         
         if number:
+            self.identifier_string = number            
             # is last digit a check digit?
             if has_check_digit:
                 # ok, but is it valid
@@ -309,9 +315,6 @@ class Identifier(object):
                 else:
                     # no
                     raise ValueError('Invalid identifier. Last digit should be %s which is the modulus %s of %s, Got %s' %  (int(str(number)[0:-1]) % self.modulus, self.modulus, str(number)[0:-1],str(number)[-1]))
-            else:
-                # no, number does not have a check_digit, it's just a number
-                self.identifier_string = number            
 
         # we don't store the check_digit as part of the identifier_string, so add it back
         number = int(self.identifier_string + str(self.check_digit()))                    
