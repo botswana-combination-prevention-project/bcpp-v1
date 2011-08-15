@@ -47,6 +47,9 @@ def export_as_csv_action(description="Export selected objects as CSV file",
         
         Added exra_fields and changed accordingly
         """
+        
+        export_queryset_as_csv(modeladmin, request, queryset)
+        
         opts = modeladmin.model._meta
 
         field_names = [field.name for field in opts.fields]
