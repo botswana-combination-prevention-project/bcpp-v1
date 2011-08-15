@@ -277,6 +277,7 @@ class OmangField(CharField):
                
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
+        kwargs.setdefault('unique', True)        
         kwargs.setdefault('max_length', 9)
         kwargs.setdefault('help_text', _('Format is 9999[12]9999'))
         CharField.__init__(self, *args, **kwargs)
