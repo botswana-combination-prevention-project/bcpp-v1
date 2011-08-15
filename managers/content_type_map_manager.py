@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
-from base_models import MyBasicModel
 
 
 class ContentTypeMapManager(models.Manager):
