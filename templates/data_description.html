@@ -1,0 +1,62 @@
+{% extends "section_statistics.html"%}
+
+{% block content %}
+
+{% include 'describer_form.html' %}
+
+<h3>Model: {{ table }}</h3>
+
+<h4>Summary Fields</h4>
+<table class="result">
+<thead>
+<th>table</th>
+<th>field</th>
+<th>count</th>
+<th>avg</th>
+<th>min</th>
+<th>max</th>
+<th>stddev</th>
+<th>variance</th>
+</thead>
+<tbody>
+<tbody>
+{% for field, aggregates in summary_fields.items %}
+    <tr class="{% cycle 'row1' 'row2'%}">
+    <td>{{table}}</td>
+    <td>{{field}}</td>
+   <td>{{ aggregates.count }}</td>
+   <td>{{ aggregates.avg }}</td>
+    <td>{{ aggregates.min }}</td>
+   <td>{{ aggregates.max }}</td>
+   <td>{{ aggregates.stddev }}</td>
+   <td>{{ aggregates.variance }}</td>   
+      </tr>
+    
+
+{% endfor%}
+</tbody>
+</table>    
+
+
+<h4>Group Fields</h4>
+
+<table class="result">
+<thead>
+<th>table</th>
+<th>field</th>
+<th>label</th>
+<th>count</th>
+</thead>
+<tbody>
+{% for field, aggregates in group_fields.items %}
+
+    {% for aggregate in aggregates %}
+        <tr class="{% cycle 'row1' 'row2'%}"><td>{{table}}</td><td>{{field}}</td><td>{{ aggregate.label }} </td><td>{{ aggregate.count }}</td> </tr>
+    {% endfor%}
+
+{% endfor%}
+</tbody>
+</table>    
+
+
+{% endblock content %}
