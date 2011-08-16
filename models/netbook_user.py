@@ -7,7 +7,10 @@ class NetbookUser(MyBasicModel):
   
     netbook = models.ForeignKey(Netbook)    
     
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User,
+        null=True, 
+        blank=True, 
+        )
     
     start_date = models.DateField("Date assigned", 
         help_text=_("Format is YYYY-MM-DD"),
