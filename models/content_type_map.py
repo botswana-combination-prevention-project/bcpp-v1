@@ -7,7 +7,8 @@ from base_models import MyBasicModel
 class ContentTypeMap(MyBasicModel):
 
     content_type = models.ForeignKey(ContentType,
-        verbose_name = 'Link to content type'
+        verbose_name = 'Link to content type',
+        null = True,
         )
 
     app_label = models.CharField(
