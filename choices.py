@@ -43,6 +43,7 @@ ART_STATUS_CONFIRM = (
     ( 'Pic', '3. Identify Pictorial'),
 )
 
+
 CONFIRMED_SUSPECTED = (
     ('CONFIRMED', 'Confirmed'),
     ('SUSPECTED', 'Suspected'),
@@ -55,6 +56,7 @@ DATE_ESTIMATED = (
     ('YMD', 'Yes, estimated Year, Month and Day'),            
 )
 
+    
 DRUG_FORMULATION = (
     ('11', 'Tablet'),
     ('12', 'Capsule'),
@@ -94,14 +96,6 @@ GENDER_UNDETERMINED = (
     ('M', 'Male'),
     ('F', 'Female'),
     ('U' , 'Undetermined'),
-)
-
-GRADE = (
-    ('1', 'Grade 1'),
-    ('2', 'Grade 2'),
-    ('3', 'Grade 3'),        
-    ('4', 'Grade 4'),
-    ('5', 'Grade 5'),        
 )
 
 
