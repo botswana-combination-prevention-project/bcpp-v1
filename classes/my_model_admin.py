@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
@@ -15,7 +16,14 @@ class MyRegisteredSubjectModelAdmin (MyModelAdmin):
     """ 
     
     def save_model(self, request, obj, form, change):
-        
+    
+         #if model is in a member of a schedule group, create appointments
+        Appointment.objects.create_appointments( 
+            registered_subject = obj.registered_subject, 
+            base_appt_datetime = datetime.today(), 
+            model_name = self.model.__name__.lower(),
+            ) 
+              
         ScheduledEntryBucket.objects.update_status(
             model = obj,
             )
