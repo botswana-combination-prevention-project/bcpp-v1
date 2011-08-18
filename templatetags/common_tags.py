@@ -83,5 +83,11 @@ def gender(value):
 def roundup(d, digits):
     return round_up(d, digits)   
 
+@register.filter
+def divide_by(x, y):
+    if x == 0 or y == 0:
+        return 0
+    else:
+        return x/y
 
 
