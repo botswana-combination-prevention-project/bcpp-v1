@@ -1,11 +1,11 @@
-{% extends "section_statistics.html"%}
+{% extends "base_data_describer.html"%}
+{% load describer_tags %}{% load common_tags %}
 
-{% block content %}
+{% block describer %}
 
-{% include 'describer_form.html' %}
+<h3>Model: {{ model_name }}</h3>
 
-<h3>Model: {{ table }}</h3>
-
+{% if summary_fields %}
 <h4>Summary Fields</h4>
 <table class="result">
 <thead>
@@ -18,7 +18,6 @@
 <th>stddev</th>
 <th>variance</th>
 </thead>
-<tbody>
 <tbody>
 {% for field, aggregates in summary_fields.items %}
     <tr class="{% cycle 'row1' 'row2'%}">
@@ -37,7 +36,9 @@
 </tbody>
 </table>    
 
+{% endif %}
 
+{% if group_fields %}
 <h4>Group Fields</h4>
 
 <table class="result">
@@ -45,18 +46,82 @@
 <th>table</th>
 <th>field</th>
 <th>label</th>
-<th>count</th>
+<th>freq.</th>
+<th>cumulative freq.</th>
 </thead>
 <tbody>
 {% for field, aggregates in group_fields.items %}
-
+    {% cycle 'row1' 'row2' as rowcolors silent %}
     {% for aggregate in aggregates %}
-        <tr class="{% cycle 'row1' 'row2'%}"><td>{{table}}</td><td>{{field}}</td><td>{{ aggregate.label }} </td><td>{{ aggregate.count }}</td> </tr>
+        {% update_cumulative_frequency aggregate.count cumulative_frequency forloop.counter as cumulative_frequency %}  
+        <tr class="{{ rowcolors }}">
+        <td>{{table}}</td>
+        <td>{{field}}</td>
+        <td>{{ aggregate.label }}</td>
+        <td>{{ aggregate.count }}</td>        
+        <td>{% if forloop.last %}<B>{% endif %}{{ cumulative_frequency }}{% if forloop.last %}</B>{% endif %}</td>
+        </tr>
     {% endfor%}
 
 {% endfor%}
 </tbody>
+</table>
+{% endif %}
+{% if group_m2m_fields %}
+<h4>Group Many to Many Fields</h4>
+
+<table class="result">
+<thead>
+<th>table</th>
+<th>field</th>
+<th>label</th>
+<th>freq.</th>
+<th>cumulative freq.</th>
+</thead>
+<tbody>
+{% for field, aggregates in group_m2m_fields.items %}
+    {% cycle 'row1' 'row2' as rowcolors silent %}
+    {% for aggregate in aggregates %}
+        {% if forloop.counter == 1 %}
+            {% update_total aggregates as total %}
+        {% endif %}
+        {% update_cumulative_frequency aggregate.count cumulative_frequency forloop.counter as cumulative_frequency %}
+        <tr class="{{ rowcolors }}">
+        <td>{{table}}</td>
+        <td>{{field}}</td>
+        <td>{{ aggregate.label }}</td>
+        <td>{{ aggregate.count }}</td> 
+        <td>{% if forloop.last %}<B>{% endif %}{{ cumulative_frequency }}{% if forloop.last %}</B>{% endif %}</td>
+        <td>{% if forloop.last %}<B>{% endif %}{{ aggregate.count|divide_by:total|floatformat:3 }}{% if forloop.last %}</B>{% endif %}</td>        
+        </tr>
+    {% endfor%}
+
+{% endfor%}
+
+
+</tbody>
 </table>    
+{% endif %}
 
+{% if fields %}
+<h4>Model</h4>
+<table class="result" width="700px">
+<thead>
+<th>field</th>
+<th>verbose_name</th>
+<th>help_text</th>
+</thead>
+<tbody>
 
-{% endblock content %}
+{% for field in fields %}
+    <tr class="{% cycle 'row1' 'row2'%}">
+    <td><B>{{field.name }}</B></td>
+    <td>{{ field.verbose_name }}</td>
+    <td>{{ field.help_text }}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>    
+{% endif%}
+
+{% endblock %}

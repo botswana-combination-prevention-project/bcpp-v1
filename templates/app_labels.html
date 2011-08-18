@@ -1,0 +1,23 @@
+{% extends "base_data_describer.html"%}
+{% load describer_tags %}{% load common_tags %}
+
+{% block app_labels %}
+<h4>App_labels</h4>
+<table class="result">
+<thead>
+<th>app_label</th>
+</thead>
+<tbody>
+    {% for app_label in app_labels %}
+        <tr class="{% cycle 'row1' 'row2'%}">
+        <td><A href="?app_label={{app_label}}">{{app_label}}</A></td>
+        </tr>
+    {% endfor %}    
+</tbody>
+</table>
+    
+{% endblock %}    
+
+
+
+
