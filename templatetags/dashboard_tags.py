@@ -28,8 +28,8 @@ class ModelAdminUrl(template.Node):
         
 
         #raise TypeError(self.visit_model)
-        if self.visit_model.objects.filter(appointment = self.appointment):
-            self.visit_model = self.visit_model.objects.get(appointment = self.appointment)
+        if self.visit_model.__class__.objects.filter(appointment = self.appointment):
+            self.visit_model = self.visit_model.__class__.objects.get(appointment = self.appointment)
         
 
         if self.contenttype.model_class().objects.filter(visit = self.visit_model.pk):
