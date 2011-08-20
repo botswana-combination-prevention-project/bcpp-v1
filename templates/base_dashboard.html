@@ -13,11 +13,7 @@
     {% load tags %}
     <div class="breadcrumbs">
         <a href="/{{ home }}">Home</a>
-        {% if section_name  %}
-            &rsaquo; <a href="{% url section_url_name section_name %}">{{ section_name|capfirst }}</a>
-        {% endif %}        
-        &rsaquo; <A href="{% url section_search_url_name section_name='register' search_name=search_name %}">{{ dashboard|capfirst }}</A>
-        &rsaquo; Dashboard for {{ subject_identifier }}   
+        &rsaquo; {{ dashboard_type|capfirst }} Dashboard for {{ subject_identifier }}   
         
     </div>
     

@@ -28,8 +28,9 @@ class ModelAdminUrl(template.Node):
         
 
         #raise TypeError(self.visit_model)
-        if self.visit_model.__class__.objects.filter(appointment = self.appointment):
-            self.visit_model = self.visit_model.__class__.objects.get(appointment = self.appointment)
+        # wait ??  what type of obejct is visit_model??
+        if self.visit_model.objects.filter(appointment = self.appointment):
+            self.visit_model = self.visit_model.objects.get(appointment = self.appointment)
         
 
         if self.contenttype.model_class().objects.filter(visit = self.visit_model.pk):
@@ -90,7 +91,7 @@ def appointment_row(context, appointment):
     my_context['visit_code'] = context['visit_code']
     my_context['visit_instance'] = context['visit_instance']
     my_context['appointment_visit_report'] = False
-    my_context['dashboard'] = context['dashboard']
+    my_context['dashboard'] = context['dashboard_type']
     my_context['subject_identifier'] = context['subject_identifier']
     my_context['registered_subject'] = context['registered_subject']
     my_context['app_label'] = context['app_label']
