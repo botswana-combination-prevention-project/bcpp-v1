@@ -27,5 +27,6 @@ class Dashboard(object):
             dashboard_type = self.dashboard_type,
             )        
 
-
-
+    def get_urlpatterns(self, view, regex):
+        
+        raise ValueError("Dashboard.get_urlpatterns() must be overridden")
