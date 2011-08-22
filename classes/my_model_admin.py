@@ -2,7 +2,8 @@ from datetime import datetime
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
-from bhp_form.models import Appointment,ScheduledEntryBucket
+from bhp_appointment.models import Appointment
+from bhp_entry.models import ScheduledEntryBucket
 from bhp_registration.models import  RegisteredSubject
 
 
