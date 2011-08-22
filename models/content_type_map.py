@@ -9,6 +9,7 @@ class ContentTypeMap(MyBasicModel):
     content_type = models.ForeignKey(ContentType,
         verbose_name = 'Link to content type',
         null = True,
+        blank=True,
         )
 
     app_label = models.CharField(
@@ -16,11 +17,13 @@ class ContentTypeMap(MyBasicModel):
         )
     
     name = models.CharField(
+        verbose_name = 'Model verbose_name',
         max_length = 50,
         unique = True,
         )
         
     model = models.CharField(
+        verbose_name = 'Model name (module name)',
         max_length = 50,
         )
     
