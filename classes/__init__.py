@@ -1,0 +1,1 @@
+from base_visit_model_admin import BaseVisitModelAdmin
