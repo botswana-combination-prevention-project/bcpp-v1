@@ -7,8 +7,6 @@ from bhp_common.validators import datetime_is_future, date_not_future
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.choices import APPT_STATUS
 
-   
-
 class BaseAppointment (MyBasicUuidModel):
     
     """Base model of appointments. """     
