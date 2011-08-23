@@ -92,7 +92,7 @@ class ScheduledEntryBucketManager(models.Manager):
         registered_subject = visit_model_instance.appointment.registered_subject
 
         if kwargs.get('subject_visit_model'):
-            raise ValueError('subject_visit_model has been changed to \'visit_model_instance\', please read comment inScheduledEntryBucketManager.add_for_visit() and correct.')
+            raise ValueError('subject_visit_model has been changed to \'visit_model_instance\', please read comment in ScheduledEntryBucketManager.add_for_visit() and correct.')
 
 
         # scheduled entries are only added if visit instance is 0
