@@ -5,3 +5,8 @@ GRADING_SCALE = (
     (4, 'Grade 4'),
     (5, 'Grade 5'),                
 )
+
+GRADING_SCALE_34 = (
+    (3, 'Grade 3'),
+    (4, 'Grade 4'),
+)
