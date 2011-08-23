@@ -5,11 +5,11 @@
 {% block membership_forms %}
 
     {% for keyed_model_name, keyed_model in keyed_membership_forms.iteritems %}
-        <A href="{{ keyed_model.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&maternal_consent={{ maternal_consent.pk }}">{{ keyed_model_name }} (Complete)</A> |
+        <A href="{{ keyed_model.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">{{ keyed_model_name }} (Complete)</A> |
     {% endfor %}   
 
     {% for unkeyed_membership_form in unkeyed_membership_forms %}
-        <A href="{{ unkeyed_membership_form|admin_url_from_contenttype }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&maternal_consent={{ maternal_consent.pk }}">{{ unkeyed_membership_form }} (New)</A> |
+        <A href="{{ unkeyed_membership_form|admin_url_from_contenttype }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">{{ unkeyed_membership_form }} (New)</A> |
     {% endfor %}  
 
 {% endblock %}

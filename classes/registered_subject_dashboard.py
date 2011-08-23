@@ -242,6 +242,8 @@ class RegisteredSubjectDashboard(Dashboard):
     def get_urlpatterns(self, view, regex):
     
         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
+        if 'registration_identifier' not in regex.keys():
+            regex['registration_identifier'] = '[A-Z0-9]{6,8}'             
     
         self.urlpatterns = patterns(view,
 
@@ -281,6 +283,11 @@ class RegisteredSubjectDashboard(Dashboard):
                 ),
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registration_identifier>{registration_identifier})/(?P<registered_subject>{pk})/$'.format(**regex), 
+                'dashboard', 
+                name="dashboard_url"
+                ),
+
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<registered_subject>{pk})/$'.format(**regex), 
                 'dashboard', 
                 name="dashboard_url"
                 ),
