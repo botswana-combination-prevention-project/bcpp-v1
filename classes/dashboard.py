@@ -30,3 +30,6 @@ class Dashboard(object):
     def get_urlpatterns(self, view, regex):
         
         raise ValueError("Dashboard.get_urlpatterns() must be overridden")
+        
+    def get_context(self):
+        return self.context.values        
