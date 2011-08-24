@@ -16,7 +16,7 @@ admin.site.register(ScheduleGroup, ScheduleGroupAdmin)
 
 
 class VisitDefinitionAdmin(MyModelAdmin):
-    list_display = ('code', 'title', 'grouping', 'time_point', 'lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit','user_modified', 'modified')
+    list_display = ('code', 'title', 'grouping', 'time_point', 'base_interval', 'base_interval_unit','lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit','user_modified', 'modified')
     
     search_fields = ('code', 'grouping',)
     

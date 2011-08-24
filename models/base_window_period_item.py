@@ -11,6 +11,19 @@ class BaseWindowPeriodItem(MyBasicUuidModel):
         default = 0,
         )
   
+    base_interval = models.IntegerField(
+        verbose_name = "Base interval",
+        help_text = 'Interval from base timepoint 0 as an integer.',
+        default = 0,        
+        )
+    
+    base_interval_unit = models.CharField(
+        max_length=10,    
+        verbose_name="Base interval unit",
+        choices=VISIT_INTERVAL_UNITS,
+        default = 'D'
+        )        
+  
     lower_window = models.IntegerField(
         verbose_name="Window lower bound",
         default = 0,        
