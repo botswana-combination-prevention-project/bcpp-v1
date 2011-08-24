@@ -18,7 +18,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
         super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
 
     def save_model(self, request, obj, form, change):
-
+    
         ScheduledEntryBucket.objects.update_status(
             model = obj,
             visit_model = self.visit_model,
