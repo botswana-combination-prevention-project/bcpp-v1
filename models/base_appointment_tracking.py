@@ -22,9 +22,7 @@ class BaseAppointmentTracking (MyBasicUuidModel):
     
     """        
     
-    # dont allow backward relation (from appointment to visit, e.g. appointment.visit).
-    # ...because lots of us have a model named Visit)
-    appointment  = models.OneToOneField(Appointment, related_name='+')
+    appointment  = models.OneToOneField(Appointment)
     
     report_datetime = models.DateTimeField(
         verbose_name = "Visit Date and Time",
