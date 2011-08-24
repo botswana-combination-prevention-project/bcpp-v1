@@ -97,8 +97,8 @@ class ModelAdminUrl(template.Node):
             view = str(view)
             try:
                 rev_url = reverse(view)
-                rev_url = '%s?visit=%s&next=%s&dashboard_type=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s' % (
-                                                                        rev_url, 
+                rev_url = '%s?%s=%s&next=%s&dashboard_type=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s' % (
+                                                                        rev_url, this_model_fk[0].name,
                                                                         self.visit_model_instance.pk, next, self.dashboard_type, 
                                                                         self.visit_model_instance.appointment.registered_subject.subject_identifier, 
                                                                         self.visit_model_instance.appointment.visit_definition.code, 
