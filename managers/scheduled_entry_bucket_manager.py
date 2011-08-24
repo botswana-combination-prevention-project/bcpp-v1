@@ -192,9 +192,10 @@ class ScheduledEntryBucketManager(models.Manager):
         visit_fk_name = '%s_id' % visit_fk[0].name 
         # query for the visit model instance
         visit_model_instance = visit_model.objects.get(pk = model_instance.__dict__[visit_fk_name])
-        
+
         default_validation_error_msg = "Entry exists for '%s'. Please correct before updating this form." % model_instance._meta.verbose_name        
-        visit_model_instance = kwargs.get('visit_model_instance')
+
+        #visit_model_instance = kwargs.get('visit_model_instance')
         if kwargs.get('subject_visit_model'):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
         action = kwargs.get('action', 'add_change')
@@ -205,7 +206,7 @@ class ScheduledEntryBucketManager(models.Manager):
         
         # get contenttype for given model_instance
         content_type_map = ContentTypeMap.objects.get(app_label = model_instance._meta.app_label, name = model_instance._meta.verbose_name)
-        
+
         if visit_model_instance:
             # get visit definition for visit_model_instance attached to this model
             visit_definition = visit_model_instance.appointment.visit_definition
