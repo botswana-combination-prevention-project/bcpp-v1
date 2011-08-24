@@ -233,7 +233,7 @@ class RegisteredSubjectDashboard(Dashboard):
             registered_subject = self.registered_subject,
             membership_form_category = self.subject_type,
             )
-            
+
         self.context.add(membership_forms = self.membership_forms)                    
         self.context.add(
             keyed_membership_forms = self.membership_forms['keyed'],        
