@@ -2,7 +2,6 @@ from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
 
-
 class VisitModelAdmin (MyModelAdmin):
    
     """ModelAdmin subclass for models with a ForeignKey to 'visit'.
