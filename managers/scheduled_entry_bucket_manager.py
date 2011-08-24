@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, get_model
 from django.db.models.base import ModelBase
 from bhp_common.models import ContentTypeMap
 from bhp_entry.models import Entry
@@ -199,7 +199,12 @@ class ScheduledEntryBucketManager(models.Manager):
             
         visit_model = kwargs.get('visit_model')                
         if not visit_model:
-            raise AttributeError, 'ScheduledEntryBucketManager.update_status requires attribute \'visit_model\'. Got None'
+            # do you have visit_model_instance? get visit_model from that
+            visit_model_instance = kwargs.get('visit_model_instance')
+            if visit_model_instance:
+                visit_model = get_model(visit_model_instance._meta.app_label, visit_model_instance._meta.module_name)
+            else:    
+                raise AttributeError, 'ScheduledEntryBucketManager.update_status requires attribute \'visit_model\'. Got None'
             
         # in this model_instance find the foreignkey field to the visit_model
         if model:
