@@ -2,7 +2,8 @@ from datetime import *
 from dateutil.relativedelta import *
 from django import template
 from django.core.urlresolvers import reverse
-from django.db.models import get_model
+from django.db.models import get_model, ForeignKey
+from django.core.exceptions import MultipleObjectsReturned
 from django.db.models.base import ModelBase
 
 register = template.Library()
@@ -51,24 +52,36 @@ class ModelAdminUrl(template.Node):
         self.visit_model = self.unresolved_visit_model.resolve(context)
         self.dashboard_type = self.unresolved_dashboard_type.resolve(context)
         self.app_label = self.unresolved_app_label.resolve(context)
-        
+        self.visit_model_instance = None
 
         #raise TypeError(self.visit_model)
         # wait ??  what type of obejct is visit_model??
 
         if self.visit_model.__class__.objects.filter(appointment = self.appointment):
             self.visit_model_instance = self.visit_model.__class__.objects.get(appointment = self.appointment)
-    
-
-        if self.contenttype.model_class().objects.filter(visit = self.visit_model_instance.pk):
+            
+        this_model = self.contenttype.model_class()
+        
+        # find the attribute that in this model that is the foreignkey to the visit_model
+        this_model_fk = [fk for fk in [f for f in this_model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]
+        
+        if this_model_fk:
+            # get the name of the field, e.g. visit or maternal_visit ...
+            fk_fieldname_to_visit_model = '%s_id' % this_model_fk[0].name
+        else:
+            raise AttributeError, 'Cannot reverse for model, Model %s must have a foreignkey to the visit model \'%s\'.'
+                            
+        # query this_model for visit=this_visit, or whatever the fk_fieldname is
+        # i have to use 'extra' because i can only know the fk field name pointing to the visit model at runtime
+        if this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk]):
             #the link is for a change
             # these next two lines would change if for another dashboard and another visit model 
             next = 'dashboard_visit_url'
-            model = self.contenttype.model_class().objects.get(visit = self.visit_model_instance.pk)
+            this_model_instance = this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk])[0]
             # do reverse url
-            view = 'admin:%s_%s_change' % (self.contenttype.app_label, self.contenttype.model)
+            view = 'admin:%s_%s_change' % (this_model._meta.app_label, this_model._meta.module_name)
             view = str(view)
-            rev_url = reverse(view, args=(model.pk,))
+            rev_url = reverse(view, args=(this_model_instance.pk,))
             # add GET string to rev_url so that you will return to the dashboard ...whence you came... assuming you catch "next" in change_view
             rev_url = '%s?next=%s&dashboard_type=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s' % (
                                                                        rev_url, next, self.dashboard_type, 
