@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from django.db.models import ForeignKey
 from bhp_common.models import ContentTypeMap
 from bhp_entry.models import Entry
 
@@ -180,8 +181,19 @@ class ScheduledEntryBucketManager(models.Manager):
         """    
 
         
-        model = kwargs.get('model')    
-        default_validation_error_msg = "Entry exists for '%s'. Please correct before updating this form." % model._meta.verbose_name        
+        model_instance = kwargs.get('model')    
+        visit_model = kwargs.get('visit_model')                
+        if not visit_model:
+            raise AttributeError, 'ScheduledEntryBucketManager.update_status requires attribute \'visit_model\'. Got None'
+            
+        # in this model_instance find the foreignkey field to the visit_model
+        visit_fk = [fk for fk in [f for f in model_instance._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model._meta.module_name]
+        # get the name + _id.
+        visit_fk_name = '%s_id' % visit_fk[0].name 
+        # query for the visit model instance
+        visit_model_instance = visit_model.objects.get(pk = model_instance.__dict__[visit_fk_name])
+        
+        default_validation_error_msg = "Entry exists for '%s'. Please correct before updating this form." % model_instance._meta.verbose_name        
         visit_model_instance = kwargs.get('visit_model_instance')
         if kwargs.get('subject_visit_model'):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
@@ -191,8 +203,8 @@ class ScheduledEntryBucketManager(models.Manager):
         model_filter_validation_error_msg = kwargs.get('model_filter_validation_error_msg', default_validation_error_msg)
         
         
-        # get contenttype for given model
-        content_type_map = ContentTypeMap.objects.get(app_label = model._meta.app_label, name = model._meta.verbose_name)
+        # get contenttype for given model_instance
+        content_type_map = ContentTypeMap.objects.get(app_label = model_instance._meta.app_label, name = model_instance._meta.verbose_name)
         
         if visit_model_instance:
             # get visit definition for visit_model_instance attached to this model
@@ -238,7 +250,7 @@ class ScheduledEntryBucketManager(models.Manager):
                             s.entry_status = 'NOT_REQUIRED'
                             s.entry_comment = comment
                         else:
-                            raise TypeError("ScheduledEntryBucketManager cannot change value of attribute entry_status to 'not required' when entry_status = '%s'. Test the value in the form for model '%s' first." % (model._meta.verbose_name,s.entry_status))    
+                            raise TypeError("ScheduledEntryBucketManager cannot change value of attribute entry_status to 'not required' when entry_status = '%s'. Test the value in the form for model '%s' first." % (model_instance._meta.verbose_name,s.entry_status))    
                 # clear close_datetime
                 s.close_datetime = None
                 s.modified = datetime.today()
