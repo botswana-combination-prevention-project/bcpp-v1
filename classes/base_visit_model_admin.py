@@ -18,9 +18,9 @@ class BaseVisitModelAdmin(MyModelAdmin):
         super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
 
     def save_model(self, request, obj, form, change):
-    
+        
         ScheduledEntryBucket.objects.update_status(
-            model = obj,
+            model_instance = obj,
             visit_model = self.visit_model,
             )
                         
@@ -29,7 +29,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
     def delete_model(self, request, obj):
 
         ScheduledEntryBucket.objects.update_status(
-            model = obj,
+            model_instance = obj,
             visit_model = self.visit_model,
             action = 'delete',
             )
