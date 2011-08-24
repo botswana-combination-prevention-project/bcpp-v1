@@ -1,1 +1,2 @@
-from my_model_admin import MyRegisteredSubjectModelAdmin
+from base_registered_subject_model_admin import BaseRegisteredSubjectModelAdmin
+from my_registered_subject_model_admin import MyRegisteredSubjectModelAdmin
