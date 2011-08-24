@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.db.models import ForeignKey
+from django.db.models.base import ModelBase
 from bhp_common.models import ContentTypeMap
 from bhp_entry.models import Entry
 
@@ -180,33 +181,57 @@ class ScheduledEntryBucketManager(models.Manager):
         
         """    
 
-        
-        model_instance = kwargs.get('model')    
+        # need to determine the visit model instance and the content_type_map value for this Entry 
+        # coming from 'admin' is model instance
+        # coming from 'forms' is a model
+        model = kwargs.get('model')
+        if model:
+            if not isinstance(model, ModelBase):
+                raise ValueError('ScheduledEntryBucketManager.update_status, \'model\' must be type ModelBase, is this an instance?' )
+
+        model_instance = kwargs.get('model_instance')
+        if model_instance:
+            try:
+                getattr(model_instance, '_meta')    
+            except:    
+                raise ValueError('ScheduledEntryBucketManager.update_status, \'model_instance\' must be an instance of a model, not a Model.' )
+
+            
         visit_model = kwargs.get('visit_model')                
         if not visit_model:
             raise AttributeError, 'ScheduledEntryBucketManager.update_status requires attribute \'visit_model\'. Got None'
             
         # in this model_instance find the foreignkey field to the visit_model
-        visit_fk = [fk for fk in [f for f in model_instance._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model._meta.module_name]
+        if model:
+            visit_fk = [fk for fk in [f for f in model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model._meta.module_name]
+            content_type_map = ContentTypeMap.objects.get(app_label = model._meta.app_label, name = model._meta.verbose_name)
+        elif model_instance:    
+            visit_fk = [fk for fk in [f for f in model_instance._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model._meta.module_name]        
+            content_type_map = ContentTypeMap.objects.get(app_label = model_instance._meta.app_label, name = model_instance._meta.verbose_name)            
+
         # get the name + _id.
         visit_fk_name = '%s_id' % visit_fk[0].name 
-        # query for the visit model instance
-        visit_model_instance = visit_model.objects.get(pk = model_instance.__dict__[visit_fk_name])
+        
 
-        default_validation_error_msg = "Entry exists for '%s'. Please correct before updating this form." % model_instance._meta.verbose_name        
-
-        #visit_model_instance = kwargs.get('visit_model_instance')
+        visit_model_instance = kwargs.get('visit_model_instance')
+        #if not model and not visit_model_instance:
+        #    raise ValueError('ScheduledEntryBucketManager.update_status, if you pass \'model\' and not \'model_instance\', you must include the \'visit_model_instance\'?' )        
+        
+        if not visit_model_instance:
+            if model_instance:
+                # query for the visit model instance
+                visit_model_instance = visit_model.objects.get(pk = model_instance.__dict__[visit_fk_name])
+            else:
+                raise ValueError('ScheduledEntryBucketManager.update_status, if \'model_instance\' is not provided, \'visit_mode_instance\' is required. Got None')                
+        
         if kwargs.get('subject_visit_model'):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
+    
         action = kwargs.get('action', 'add_change')
         comment = kwargs.get('comment', '----')
         model_filter_qset = kwargs.get('model_filter_qset')
-        model_filter_validation_error_msg = kwargs.get('model_filter_validation_error_msg', default_validation_error_msg)
         
-        
-        # get contenttype for given model_instance
-        content_type_map = ContentTypeMap.objects.get(app_label = model_instance._meta.app_label, name = model_instance._meta.verbose_name)
-
+        # have content_type_map and visit_mode_instance, so good to go from here...
         if visit_model_instance:
             # get visit definition for visit_model_instance attached to this model
             visit_definition = visit_model_instance.appointment.visit_definition
