@@ -38,7 +38,7 @@ class Appointment(BaseAppointment):
     objects = AppointmentManager()
 
     def __unicode__(self):
-        return "%s for %s.%s [%s - %s]" % (self.registered_subject, self.visit_definition.code, self.visit_instance,self.appt_datetime, self.appt_status) 
+        return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance) 
 
     def get_absolute_url(self):
         return reverse('admin:bhp_appointment_appointment_change', args=(self.id,))
