@@ -10,7 +10,7 @@ class BaseConsentModelAdmin(MyModelAdmin):
         if not change:
             
             consent_fk_name = [fk for fk in [f for f in self.model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.consent_model._meta.module_name][0].name        
-            subject_identifier = self.form.__dict__['base_fields'][consent_fk_name].__dict__['_queryset'][0].registered_subject.subject_identifier
+            subject_identifier = self.form.__dict__['base_fields'][consent_fk_name].__dict__['_queryset'][0].subject_identifier
 
             rs = RegisteredSubject.objects.get(subject_identifier = subject_identifier)
             obj.registered_subject = rs
