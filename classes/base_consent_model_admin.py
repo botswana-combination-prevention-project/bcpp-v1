@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import ForeignKey
 from bhp_common.models import MyModelAdmin
 from bhp_registration.models import RegisteredSubject
+from bhp_appointment.models import Appointment
 
 class BaseConsentModelAdmin(MyModelAdmin):
 
