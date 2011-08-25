@@ -96,17 +96,35 @@ class RegisteredSubjectManager(models.Manager):
         if super(RegisteredSubjectManager,self).filter(subject_identifier__exact = subject_identifier['identifier']):
             raise TypeError("RegisteredSubjectManager attempted to generate non-unique subject identifier subject type '%s'. Got '%s'" % (subject_type, subject_identifier['identifier']))
         
-        super(RegisteredSubjectManager, self).create(    
-                subject_identifier = subject_identifier['identifier'],
-                registration_datetime = datetime.now(),
-                subject_type = subject_type, 
-                user_created = user,
+        #super(RegisteredSubjectManager, self).create(    
+        #        subject_identifier = subject_identifier['identifier'],
+        #        registration_datetime = datetime.now(),
+        #        subject_type = subject_type, 
+        #        user_created = user,
+        #        created = datetime.now(),
+        #        subject_consent_id=consent_model.pk,
+        #        first_name = consent_model.first_name,
+        #        initials = consent_model.initials.upper(),
+        #        registration_status = 'registered',
+        #        )             
+                
+        super(RegisteredSubjectManager, self).create(
                 created = datetime.now(),
-                subject_consent_id=consent_model.pk,
+                user_created = user,
+                subject_consent_id = consent_model.pk,
+                subject_identifier = subject_identifier['identifier'],
                 first_name = consent_model.first_name,
-                initials = consent_model.initials.upper(),
-                registration_status = 'registered',
-                )             
+                initials = consent_model.initials,
+                gender = consent_model.gender,
+                subject_type = subject_type,
+                registration_datetime = datetime.now(),
+                registration_status = 'consented',
+                identity = consent_model.identity,
+                dob = consent_model.dob,
+                is_dob_estimated = consent_model.is_dob_estimated,
+            )
+                
+                
         
         # return the new subject identifier to the form currently being save()'d
         return subject_identifier['identifier']

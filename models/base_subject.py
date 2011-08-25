@@ -30,10 +30,10 @@ class BaseSubject (MyBasicUuidModel):
         null = True,
         blank = True,
         )
-    
+        
     subject_type = models.CharField(
         max_length = 25,
-        choices=SUBJECT_TYPE,
+        #choices=SUBJECT_TYPE,
         )         
     
     screening_datetime=models.DateTimeField(
@@ -57,7 +57,7 @@ class BaseSubject (MyBasicUuidModel):
     registration_status = models.CharField(
         verbose_name = "Registration status",
         max_length = 25,
-        choices=REGISTRATION_STATUS,
+        #choices=REGISTRATION_STATUS,
         null = True,
         blank = True,
         )

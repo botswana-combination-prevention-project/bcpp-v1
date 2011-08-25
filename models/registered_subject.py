@@ -1,10 +1,11 @@
 from datetime import datetime
 from django.db import models
 from django.db.models import Count
+from django.utils.translation import ugettext_lazy as _
 from base_subject import BaseSubject
 from bhp_variables.models import StudySpecific
 from bhp_registration.managers import RegisteredSubjectManager
-
+from bhp_common.fields import IsDateEstimatedField
 
 class RegisteredSubject(BaseSubject):
 
@@ -34,6 +35,19 @@ class RegisteredSubject(BaseSubject):
         null=True,
         blank=True,
         )
+        
+    dob = models.DateField(
+        verbose_name = _("Date of birth"),
+        null=True,
+        blank=True,
+        help_text=_("Format is YYYY-MM-DD"),
+        )
+
+    is_dob_estimated = IsDateEstimatedField( 
+        verbose_name=_("Is date of birth estimated?"),       
+        null=True,
+        blank=True,
+        )    
     
     objects = RegisteredSubjectManager()
         
