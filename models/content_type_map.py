@@ -31,11 +31,14 @@ class ContentTypeMap(MyBasicModel):
     
     def model_class(self):
 
+        """
         if not self.content_type.name == self.name:
-            self.objects.sync()
+            c = ContentTypeMapManager()
+            c.sync()
         if not self.content_type.model == self.model:
-            self.objects.sync()
-                            
+            c = ContentTypeMapManager()
+            c.sync()
+        """                    
         if not self.content_type.name == self.name:
             raise TypeError('ContentTypeMap is not in sync with ContentType for verbose_name %s' % self.name) 
         if not self.content_type.model == self.model:
