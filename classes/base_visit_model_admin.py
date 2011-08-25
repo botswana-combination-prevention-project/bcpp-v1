@@ -31,9 +31,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
             'user_modified',
             )
 
-        
-        # todo: THIS DOES NOT SEEM TO WORK ????
-        self.actions = [export_as_csv_action("CSV Export: ...with visit and demographics", 
+        self.actions.append(export_as_csv_action("CSV Export: ...with visit and demographics", 
             fields=[], 
             exclude=['id',],        
             extra_fields=[
@@ -46,7 +44,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
                 {'visit': self.visit_model_foreign_key+'__appointment__visit_definition__code'},
                 {'visit_instance': self.visit_model_foreign_key+'__appointment__visit_instance'},                                                                    
                 ],
-            )]
+            ))
 
         super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
 
