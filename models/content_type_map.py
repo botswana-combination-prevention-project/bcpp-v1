@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
 from bhp_common.managers import ContentTypeMapManager
-from base_models import MyBasicModel
+from my_basic_model import MyBasicModel
 
 class ContentTypeMap(MyBasicModel):
 
@@ -31,6 +31,11 @@ class ContentTypeMap(MyBasicModel):
     
     def model_class(self):
 
+        if not self.content_type.name == self.name:
+            self.objects.sync()
+        if not self.content_type.model == self.model:
+            self.objects.sync()
+                            
         if not self.content_type.name == self.name:
             raise TypeError('ContentTypeMap is not in sync with ContentType for verbose_name %s' % self.name) 
         if not self.content_type.model == self.model:
