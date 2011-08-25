@@ -2,7 +2,7 @@ from django.db.models import Q, ForeignKey
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
-
+from bhp_export_data.actions import export_as_csv_action
 
 class BaseVisitModelAdmin(MyModelAdmin):
 
@@ -12,6 +12,44 @@ class BaseVisitModelAdmin(MyModelAdmin):
     delete()
     
     """ 
+
+    def __init__(self, *args, **kwargs):
+
+
+        self.search_fields = (self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',) 
+        
+        self.list_display = (self.visit_model_foreign_key, 'created', 'modified', 'user_created', 'user_modified',)    
+        
+        self.list_filter = ( 
+            self.visit_model_foreign_key+'__report_datetime', 
+            self.visit_model_foreign_key+'__reason',
+            self.visit_model_foreign_key+'__appointment__appt_status',
+            self.visit_model_foreign_key+'__appointment__visit_definition__code',
+            'created', 
+            'modified', 
+            'user_created',
+            'user_modified',
+            )
+
+        
+        # todo: THIS DOES NOT SEEM TO WORK ????
+        self.actions = [export_as_csv_action("CSV Export: ...with visit and demographics", 
+            fields=[], 
+            exclude=['id',],        
+            extra_fields=[
+                {'report_datetime': self.visit_model_foreign_key+'__report_datetime'},        
+                {'subject_identifier': self.visit_model_foreign_key+'t__appointment__registered_subject__subject_identifier'},
+                {'gender': self.visit_model_foreign_key+'t__appointment__registered_subject__gender'},
+                {'dob': self.visit_model_foreign_key+'t__appointment__registered_subject__dob'},                                    
+                {'visit_reason': self.visit_model_foreign_key+'__reason'},
+                {'visit_status': self.visit_model_foreign_key+'__appointment__appt_status'},
+                {'visit': self.visit_model_foreign_key+'__appointment__visit_definition__code'},
+                {'visit_instance': self.visit_model_foreign_key+'__appointment__visit_instance'},                                                                    
+                ],
+            )]
+
+        super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
+
 
     def save_model(self, request, obj, form, change):
         
