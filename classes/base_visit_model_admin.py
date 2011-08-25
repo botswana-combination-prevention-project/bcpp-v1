@@ -13,11 +13,10 @@ class BaseVisitModelAdmin(MyModelAdmin):
     
     """ 
 
-    def __init__(self, *args, **kwargs):
-        
-        super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
-
     def save_model(self, request, obj, form, change):
+        
+        if not self.visit_model:
+            raise AttributeError, 'visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
         
         ScheduledEntryBucket.objects.update_status(
             model_instance = obj,
@@ -28,26 +27,53 @@ class BaseVisitModelAdmin(MyModelAdmin):
         
     def delete_model(self, request, obj):
 
+        if not self.visit_model:
+            raise AttributeError, 'visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
+
         ScheduledEntryBucket.objects.update_status(
             model_instance = obj,
             visit_model = self.visit_model,
             action = 'delete',
             )
-            
+
         return super(BaseVisitModelAdmin, self).delete_model(request, obj) 
 
     def delete_view(self, request, object_id, extra_context=None):
 
         """ delete requires knowledge of the model which is not given, so get it from the form.__dict__ and reverse resolve"""
 
+        if not self.visit_model:
+            raise AttributeError, 'visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
+
+        if not self.dashboard_type:
+            raise AttributeError, 'dashboard_type cannot be None. Specify in the ModelAdmin class. e.g. dashboard_type = \'subject\''
+            self.dashboard_type = 'subject'
+
+        # we don't get the url quertstring like in add or change view,
+        # so, we need to get information to prepare a reverse url for the result['Location'] 
+        # 'cause i don't want this going back to admin
+        # the information comes from visit_model as we know this model has a key to the visit
+        # we have the visit_model from the parameter set in the ModelAdmin class in admin.py
+        #
+        #     visit_model = MaternalVisit
+        #
+        # but we do not know the name of the foreignkey field
         # get visit foreignkey field name
         visit_fk_name = [fk for fk in [f for f in self.model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name][0].name        
-        
-        subject_identifier = self.form.__dict__['base_fields'][visit_fk_name].__dict__['_queryset'][0].appointment.registered_subject.subject_identifier
-        visit_code = self.form.__dict__['base_fields'][visit_fk_name].__dict__['_queryset'][0].appointment.visit_definition.code
+        # query the this model for the pk to visit model, returns a dictionary { field: value }
+        pk = self.model.objects.values(visit_fk_name).get(pk=object_id)
+        # this is the correct instance of visit model
+        visit = self.visit_model.objects.get(pk=pk[visit_fk_name])        
+        # get subject_identifier and visit_code for the reverse
+        subject_identifier = visit.appointment.registered_subject.subject_identifier
+        visit_code = visit.appointment.visit_definition.code
 
+        # oh yeah, call super
         result = super(BaseVisitModelAdmin, self).delete_view(request, object_id, extra_context)
-        result['Location'] = reverse('dashboard_visit_url' , kwargs={'dashboard_type':'subject', 'subject_identifier':subject_identifier, 'visit_code': unicode(visit_code)})
+
+        # do the reverse manually
+        # if later wish to decouple from dashboard, perhaps test for dashboard_type, if none/exception skip
+        result['Location'] = reverse('dashboard_visit_url' , kwargs={'dashboard_type':self.dashboard_type, 'subject_identifier':subject_identifier, 'visit_code': unicode(visit_code)})
 
         return result
         
