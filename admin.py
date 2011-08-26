@@ -9,7 +9,11 @@ from bhp_entry.models import Entry, ScheduledEntryBucket, AdditionalEntryBucket
 
 class EntryAdmin(MyModelAdmin):
 
+    search_fields = ('visit_definition__code','content_type_map__model')
+
     list_display = ('content_type_map', 'visit_definition', 'entry_order','required', 'entry_category')
+    
+    list_filter = ('visit_definition__code','default_entry_status', 'created', 'content_type_map__model',)
 
 admin.site.register(Entry, EntryAdmin)
 
@@ -17,9 +21,11 @@ class ScheduledEntryBucketAdmin(MyModelAdmin):
     
     form = ScheduledEntryBucketForm
     
+    search_fields = ('registered_subject__subject_identifier', 'entry__visit_definition__code', 'entry__content_type_map__model')
+
     list_display = ('registered_subject', 'entry', 'entry_status', 'fill_datetime', 'due_datetime', 'close_datetime')
 
-    list_filter = ('entry_status', 'fill_datetime',)
+    list_filter = ('entry_status', 'entry__visit_definition__code', 'fill_datetime',)
     
     #override, limit dropdown in add_view to id passed in the URL        
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

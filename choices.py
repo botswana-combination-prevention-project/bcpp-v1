@@ -3,7 +3,9 @@ ENTRY_CATEGORY = (
     ('LAB','Lab'),
     ('OTHER','Other'),        
     )
-    
+
+
+# careful, this tuple is coupled with the ScheduledEntryBucketManager
 ENTRY_STATUS = (
     ('NEW','New'),
     ('KEYED','Keyed'),    

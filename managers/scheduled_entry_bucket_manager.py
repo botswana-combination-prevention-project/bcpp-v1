@@ -4,8 +4,10 @@ from django.db.models import ForeignKey, get_model
 from django.db.models.base import ModelBase
 from bhp_common.models import ContentTypeMap
 from bhp_entry.models import Entry
+from bhp_entry.managers import BaseEntryBucketManager
 
-class ScheduledEntryBucketManager(models.Manager):
+
+class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
     def get_scheduled_forms_for(self, **kwargs ):
     
@@ -184,50 +186,10 @@ class ScheduledEntryBucketManager(models.Manager):
         # need to determine the visit model instance and the content_type_map value for this Entry 
         # coming from 'admin' is model instance
         # coming from 'forms' is a model
-        model = kwargs.get('model')
-        if model:
-            if not isinstance(model, ModelBase):
-                raise ValueError('ScheduledEntryBucketManager.update_status, \'model\' must be type ModelBase, is this an instance?' )
 
-        model_instance = kwargs.get('model_instance')
-        if model_instance:
-            try:
-                getattr(model_instance, '_meta')    
-            except:    
-                raise ValueError('ScheduledEntryBucketManager.update_status, \'model_instance\' must be an instance of a model, not a Model.' )
-
-            
-        visit_model = kwargs.get('visit_model')                
-        if not visit_model:
-            # do you have visit_model_instance? get visit_model from that
-            visit_model_instance = kwargs.get('visit_model_instance')
-            if visit_model_instance:
-                visit_model = get_model(visit_model_instance._meta.app_label, visit_model_instance._meta.module_name)
-            else:    
-                raise AttributeError, 'ScheduledEntryBucketManager.update_status requires attribute \'visit_model\'. Got None'
-            
-        # in this model_instance find the foreignkey field to the visit_model
-        if model:
-            visit_fk = [fk for fk in [f for f in model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model._meta.module_name]
-            content_type_map = ContentTypeMap.objects.get(app_label = model._meta.app_label, name = model._meta.verbose_name)
-        elif model_instance:    
-            visit_fk = [fk for fk in [f for f in model_instance._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model._meta.module_name]        
-            content_type_map = ContentTypeMap.objects.get(app_label = model_instance._meta.app_label, name = model_instance._meta.verbose_name)            
-
-        # get the name + _id.
-        visit_fk_name = '%s_id' % visit_fk[0].name 
+        self.set_visit_model_instance(**kwargs)  
         
-
-        visit_model_instance = kwargs.get('visit_model_instance')
-        #if not model and not visit_model_instance:
-        #    raise ValueError('ScheduledEntryBucketManager.update_status, if you pass \'model\' and not \'model_instance\', you must include the \'visit_model_instance\'?' )        
-        
-        if not visit_model_instance:
-            if model_instance:
-                # query for the visit model instance
-                visit_model_instance = visit_model.objects.get(pk = model_instance.__dict__[visit_fk_name])
-            else:
-                raise ValueError('ScheduledEntryBucketManager.update_status, if \'model_instance\' is not provided, \'visit_mode_instance\' is required. Got None')                
+        self.set_content_type_map(**kwargs)
         
         if kwargs.get('subject_visit_model'):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
@@ -237,53 +199,37 @@ class ScheduledEntryBucketManager(models.Manager):
         model_filter_qset = kwargs.get('model_filter_qset')
         
         # have content_type_map and visit_mode_instance, so good to go from here...
-        if visit_model_instance:
+        if self.visit_model_instance:
             # get visit definition for visit_model_instance attached to this model
-            visit_definition = visit_model_instance.appointment.visit_definition
+            visit_definition = self.visit_model_instance.appointment.visit_definition
             # get Entry using visit_definition and content_type_map 
-            entry = Entry.objects.filter(visit_definition = visit_definition, content_type_map = content_type_map)        
+            entry = Entry.objects.filter(visit_definition = visit_definition, content_type_map = self.content_type_map)        
             # check if entry.content_type_map.model has been keyed for this registered_subject, timepoint
             # if so, set report date and status accordingly
-            report_datetime = visit_model_instance.report_datetime
-            registered_subject = visit_model_instance.appointment.registered_subject
-            appointment = visit_model_instance.appointment.__class__.objects.get(
+            report_datetime = self.visit_model_instance.report_datetime
+            registered_subject = self.visit_model_instance.appointment.registered_subject
+            appointment = self.visit_model_instance.appointment.__class__.objects.get(
                 registered_subject = registered_subject, 
-                visit_definition__code = visit_model_instance.appointment.visit_definition.code, 
+                visit_definition__code = self.visit_model_instance.appointment.visit_definition.code, 
                 visit_instance = '0')
             # update
 
             if super(ScheduledEntryBucketManager, self).filter(registered_subject = registered_subject, appointment = appointment, entry = entry):
                 # already in bucket, so get bucket entry
                 s = super(ScheduledEntryBucketManager, self).get(registered_subject = registered_subject, appointment = appointment, entry = entry)
-                # update status if NEW no matter what, to indictate perhaps that it was modified
+                # update entry_status if NEW no matter what, to indictate perhaps that it was modified
 
-                if action == 'add_change':
-                    s.report_datetime = report_datetime
-                    s.entry_status = 'KEYED'
-                    s.entry_comment = ''                
-                elif action == 'delete':
-                    s.report_datetime = None
-                    s.entry_status = 'NEW'
-                    s.entry_comment = 'deleted'
-                elif action == 'new':
-                    s.report_datetime = None
-                    s.entry_status = 'NEW'
-                    s.entry_comment = 'required'
-                elif action == 'not_required':
-                    s.report_datetime = None
-                    s.entry_status = 'NOT_REQUIRED'
-                    s.entry_comment = ''
-                    #if content_type_map.model_class().objects.filter(model_filter_qset):
-                        #raise forms.ValidationError(model_filter_validation_error_msg)
-                else:
-                        if s.entry_status == 'MISSED' or s.entry_status == 'NEW' or s.entry_status == 'PENDING' or s.entry_status == 'NOT_REQUIRED':
-                            s.report_datetime = None
-                            s.entry_status = 'NOT_REQUIRED'
-                            s.entry_comment = comment
-                        else:
-                            raise TypeError("ScheduledEntryBucketManager cannot change value of attribute entry_status to 'not required' when entry_status = '%s'. Test the value in the form for model '%s' first." % (model_instance._meta.verbose_name,s.entry_status))    
-                # clear close_datetime
-                s.close_datetime = None
+                status = self.get_status(
+                    action = action, 
+                    report_datetime = report_datetime, 
+                    entry_status = s.entry_status, 
+                    entry_comment = comment
+                    )
+                
+                s.report_datetime = status['report_datetime']
+                s.entry_status = status['entry_status']
+                s.entry_comment = status['entry_comment']                
+                s.close_datetime = status['close_datetime']                
                 s.modified = datetime.today()
                 # save
                 s.save()

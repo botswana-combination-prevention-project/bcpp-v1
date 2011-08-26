@@ -12,7 +12,7 @@ class AdditionalEntryBucket(BaseEntryBucket):
     """List of required but unscheduled entries by registered_subject such as off-study, death, adverse event, etc. (not attached to appointment model)
     
     This model differs from ScheduledEntryBucket in that it is not attached to an
-    appointment. Also, it is not attached to the Entry model and instead refers 
+    appointment/visit_definition. Also, it is not attached to the Entry model and instead refers 
     directly to the ContentType model.
     """
     

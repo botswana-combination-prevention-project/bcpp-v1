@@ -6,7 +6,7 @@ from bhp_entry.choices import ENTRY_CATEGORY, ENTRY_WINDOW, ENTRY_STATUS
 
 class Entry(BaseWindowPeriodItem):
 
-    """Model for each model_class linked to a visit definition.
+    """Model of metadata for each model_class linked to a visit definition.
     
     This model lists entry forms by visit definition used to fill 
     the scheduled entry bucket for a subject once a visit is reported 
