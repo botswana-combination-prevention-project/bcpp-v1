@@ -1,6 +1,4 @@
-"""from http://code.djangoproject.com/wiki/AuditTrail"""
 """https://github.com/LaundroMat/django-AuditTrail/blob/master/audit.py"""
-
 
 from django.dispatch import dispatcher
 from django.db import models
@@ -16,7 +14,7 @@ except ImportError:
 value_error_re = re.compile("^.+'(.+)'$")
 
 class AuditTrail(object):
-    def __init__(self, show_in_admin=True, save_change_type=True, audit_deletes=True,
+    def __init__(self, show_in_admin=False, save_change_type=True, audit_deletes=True,
                  track_fields=None):
         self.opts = {}
         self.opts['show_in_admin'] = show_in_admin
