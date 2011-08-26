@@ -3,8 +3,8 @@ from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_common.choices import YES_NO
 from bhp_code_lists.models import DxCode
-from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
-
+from bhp_common.validators import date_not_before_study_start, date_not_future
+#from bhp_registration.models import RegisteredSubject
 
 class DeathCauseInfo (MyBasicListModel):
     class Meta:
@@ -38,8 +38,8 @@ class BaseDeathReport(MyBasicUuidModel):
     death_date = models.DateField( 
         verbose_name="1. Date of Death:",
         validators = [
-            datetime_not_before_study_start, 
-            datetime_not_future,
+            date_not_before_study_start, 
+            date_not_future,
             ],
         help_text="",
         )   
