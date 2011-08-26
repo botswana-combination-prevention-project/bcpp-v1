@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_appointment.models import Appointment
-from bhp_entry.models import ScheduledEntryBucket
+from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_registration.models import  RegisteredSubject
 
 
@@ -26,18 +26,29 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
             model_name = self.model.__name__.lower(),
             )
         
+        AdditionalEntryBucket.objects.update_status(
+            registered_subject = obj.registered_subject,    
+            model_instance = obj,
+            )
                        
         return super(BaseRegisteredSubjectModelAdmin, self).save_model(request, obj, form, change)
         
     def delete_model(self, request, obj):
 
+        AdditionalEntryBucket.objects.update_status(
+            registered_subject = obj.registered_subject,    
+            model_instance = obj,
+            action = 'delete',
+            )
+
         return super(BaseRegisteredSubjectModelAdmin, self).delete_model(request, obj)        
 
     def delete_view(self, request, object_id, extra_context=None):
         
-        subject_identifier = self.model.objects.get(pk=object_id).appointment.registered_subject.subject_identifier        
+        subject_identifier = self.model.objects.get(pk=object_id).registered_subject.subject_identifier        
 
         result = super(BaseRegisteredSubjectModelAdmin, self).delete_view(request, object_id, extra_context)
+
         result['Location'] = reverse('dashboard_url' , kwargs={'dashboard_type':self.dashboard_type, 'subject_identifier':subject_identifier})
 
         return result
