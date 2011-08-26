@@ -120,4 +120,64 @@ def model_admin_url(parser, token):
 
 
 
+class ModelAdminUrlFromRegisteredSubject(template.Node):
+
+    """return a reverse url to admin + '?dashboard-specific querystring' for 'change' or 'add' for a given contenttype model name"""
+
+    def __init__(self, contenttype, registered_subject, dashboard_type, app_label):
+        self.unresolved_contenttype = template.Variable(contenttype)
+        self.unresolved_registered_subject = template.Variable(registered_subject)
+        self.unresolved_dashboard_type = template.Variable(dashboard_type)
+        self.unresolved_app_label = template.Variable(app_label)
+    def render(self, context):
+        self.contenttype = self.unresolved_contenttype.resolve(context)
+        self.registered_subject = self.unresolved_registered_subject.resolve(context)       
+        self.dashboard_type = self.unresolved_dashboard_type.resolve(context)
+        self.app_label = self.unresolved_app_label.resolve(context)
+
+        this_model = self.contenttype.model_class()
+        
+        if this_model.objects.filter(registered_subject=self.registered_subject):
+            #the link is for a change
+            # these next two lines would change if for another dashboard and another visit model 
+            next = 'dashboard_url'
+            this_model_instance = this_model.objects.get(registered_subject=self.registered_subject)
+            # do reverse url
+            view = 'admin:%s_%s_change' % (this_model._meta.app_label, this_model._meta.module_name)
+            view = str(view)
+            rev_url = reverse(view, args=(this_model_instance.pk,))
+            # add GET string to rev_url so that you will return to the dashboard ...whence you came... assuming you catch "next" in change_view
+            rev_url = '%s?next=%s&dashboard_type=%s&registered_subject=%s' % (
+                                                                       rev_url, next, self.dashboard_type, 
+                                                                       self.registered_subject.pk, 
+                                                                       )
+        else:
+            # the link is for an add
+            next = 'dashboard_url'
+            view = 'admin:%s_%s_add' % (self.contenttype.app_label, self.contenttype.model)
+            view = str(view)
+            #try:
+            rev_url = reverse(view)
+            rev_url = '%s?next=%s&dashboard_type=%s&registered_subject=%s' % (
+                                                                    rev_url,
+                                                                    next, self.dashboard_type, 
+                                                                    self.registered_subject.pk, 
+                                                                    )
+            #except:
+            #    raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (self.contenttype.app_label, self.contenttype.model))    
+        return rev_url
+
+@register.tag(name='model_admin_url_from_registered_subject')
+def model_admin_url_from_registered_subject(parser, token):
+
+    """Compilation function for renderer ModelAdminUrlFromRegisteredSubject """ 
+
+    try:
+        tag_name, contenttype, registered_subject, dashboard_type, app_label = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires exactly 4 arguments" % token.contents.split()[0])
+    return ModelAdminUrlFromRegisteredSubject(contenttype, registered_subject, dashboard_type, app_label)
+
+
+
 
