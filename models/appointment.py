@@ -36,6 +36,7 @@ class Appointment(BaseAppointment):
         )     
 
     objects = AppointmentManager()
+    
 
     def __unicode__(self):
         return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance) 

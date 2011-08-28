@@ -95,8 +95,8 @@ class BaseAppointmentTracking (MyBasicUuidModel):
         max_length=250,
         blank=True,
         null=True,   
-        )    
-
+        ) 
+        
     """
     next_scheduled_visit_datetime = models.DateTimeField(
         verbose_name="Next scheduled visit date and time",
