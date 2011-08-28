@@ -7,5 +7,7 @@ class MyBasicUuidModel(MyBasicModel):
     
     id = MyUUIDField(primary_key=True)
 
+
+
     class Meta:
         abstract = True
