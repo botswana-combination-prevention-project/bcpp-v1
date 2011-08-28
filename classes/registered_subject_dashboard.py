@@ -103,6 +103,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_instance = None                        
         self.visit_model = None
         self.subject_identifier = None
+        self.app_label = None
 
     def create(self, **kwargs):
         
