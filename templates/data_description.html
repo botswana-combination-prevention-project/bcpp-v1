@@ -1,6 +1,15 @@
 {% extends "base_data_describer.html"%}
 {% load describer_tags %}{% load common_tags %}
 
+{% block app_labels %}
+    {% include 'list_apps.html' %}
+{% endblock %}
+
+{% block model_names %}
+    {% include 'list_models.html' %}
+{% endblock %} 
+
+
 {% block describer %}
 
 <h3>Model: {{ model_name }}</h3>
