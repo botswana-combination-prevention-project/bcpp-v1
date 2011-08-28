@@ -1,0 +1,46 @@
+{% extends "base_audit_trail.html"%}
+{% load common_tags %}
+
+{% block app_labels %}
+    {% include 'list_apps.html' %}
+{% endblock %}
+
+{% block model_names %}
+    {% include 'list_models.html' %}
+{% endblock %} 
+
+{% block model_select_form %}
+    {% include 'selector_form.html' %}
+{% endblock%}
+
+{% block audit_subject_identifier_form %}
+    {% include 'audit_trail_form.html' %}
+{% endblock%}
+
+
+{% block history %}
+
+    {% if not display_rows%}
+
+    <p><i>{{ status_message }}</i> </p>
+
+    {% else %}    
+        <table> 
+        <thead> 
+        {% for field_label in field_labels %}   
+        <th>{{ field_label }}</th>
+        {% endfor %}
+        </thead>
+        <tbody>
+        {% for row in display_rows %}
+            <tr>
+            {% for r in row %} 
+                <td>{{ r }}</td>
+            {% endfor %} 
+            </tr>                
+        {% endfor %}     
+        </tbody>
+        </table>
+    {% endif %}
+
+{% endblock %}

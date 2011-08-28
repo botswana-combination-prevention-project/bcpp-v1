@@ -7,6 +7,10 @@ from django.contrib import admin
 import copy
 import re
 import types
+
+from importlib import import_module
+from bhp_common.models import MyModelAdmin
+
 try:
     import settings_audit
 except ImportError:
@@ -37,7 +41,7 @@ class AuditTrail(object):
                 # clsAdmin = type(cls_admin_name, (admin.ModelAdmin,),{})
                 # admin.site.register(cls, clsAdmin)
                 # Otherwise, register class with default ModelAdmin
-                admin.site.register(model)
+                admin.site.register(model, MyModelAdmin)                
             descriptor = AuditTrailDescriptor(model._default_manager, sender._meta.pk.attname)
             setattr(sender, name, descriptor)
 
@@ -68,7 +72,9 @@ class AuditTrail(object):
                             kwargs['_audit_change_type'] = 'U'
                     for field_arr in model._audit_track:
                         kwargs[field_arr[0]] = _audit_track(instance, field_arr)
+
                     model._default_manager.create(**kwargs)
+                    
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
             ## Comment this line for pre r8223 Django builds
@@ -164,6 +170,12 @@ def create_audit_model(cls, **kwargs):
         if isinstance(field, models.AutoField):
             # Audit models have a separate AutoField
             attrs[field.name] = models.IntegerField(db_index=True, editable=False)
+        # erikvw added this as OneToOneField was not handled, causes an IntegrityError
+        elif isinstance(field, models.OneToOneField):
+            rel = copy.copy(field.rel)
+            new_field = models.ForeignKey(rel.to)            
+            new_field.rel.related_name = '_audit_' + field.related_query_name()
+            attrs[field.name] = new_field
         else:
             attrs[field.name] = copy.copy(field)
             # If 'unique' is in there, we need to remove it, otherwise the index
