@@ -236,7 +236,7 @@ class RegisteredSubjectDashboard(Dashboard):
         # these are the KEYED, UNKEYED schedule group membership forms
         self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(
             registered_subject = self.registered_subject,
-            membership_form_category__lower = self.subject_type.lower(),
+            membership_form_category = self.subject_type,
             )
 
         self.context.add(membership_forms = self.membership_forms)                    
