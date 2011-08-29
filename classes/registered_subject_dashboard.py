@@ -177,8 +177,12 @@ class RegisteredSubjectDashboard(Dashboard):
             
     def set_appointments(self):
 
-        # get all appointments for this registered_subject    
-        self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('visit_definition__code', 'visit_instance')
+        # get all appointments for this registered_subject 
+        # if self.visit_code and self.visit_instance, then limit to the one appointment
+        if self.visit_code and self.visit_instance:        
+            self.appointments = Appointment.objects.filter(registered_subject=self.registered_subject, visit_definition__code=self.visit_code, visit_instance=self.visit_instance)            
+        else:
+            self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('visit_definition__code', 'visit_instance')
         self.context.add(appointments = self.appointments)                
     
 
