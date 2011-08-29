@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
 from bhp_lab_result.models import Result, ResultSource
-TestCode, 
-from bhp_lab_core.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
-from audit_trail import audit
+from bhp_lab_test_code.models import TestCode
+from bhp_lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
 
 
 class ResultItem(MyBasicUuidModel):
@@ -100,7 +100,7 @@ class ResultItem(MyBasicUuidModel):
 	    help_text = ''
   	    )
   	    
-    history = audit.AuditTrail()
+    history = AuditTrail()
   	    
     def __unicode__(self):
   	    return '%s %s' % (unicode(self.result), unicode(self.test_code))
