@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicModel, MyBasicListModel
 from bhp_common.choices import GENDER
-from bhp_lab_core.choices import UNITS, ABS_CALC
+from bhp_lab_common.choices import UNITS, ABS_CALC
 from bhp_lab_test_code.models import TestCode
 from bhp_lab_reference.choices import GENDER_OF_REFERENCE
 
