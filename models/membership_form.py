@@ -12,8 +12,9 @@ class MembershipForm(MyBasicUuidModel):
     
     category = models.CharField(
         max_length = 25,
+        default = 'subject',
         null = True,
-        blank = True,
+        help_text = 'In lowercase, this should be a valid subject type (as in registered_subject).'
         )       
     
     hide_from_dashboard = models.BooleanField(
