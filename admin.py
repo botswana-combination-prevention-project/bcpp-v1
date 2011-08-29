@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from bhp_lab_core.models import Result
+from bhp_lab_result.models import Result
 from bhp_lab_patient.models import Patient, SimpleConsent
 from bhp_lab_patient.forms import PatientForm
 
