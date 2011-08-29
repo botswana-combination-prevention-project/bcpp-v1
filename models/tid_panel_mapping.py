@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-from panel import Panel
+from bhp_lab_panel.models import Panel
 
 
 class TidPanelMapping(MyBasicModel):
