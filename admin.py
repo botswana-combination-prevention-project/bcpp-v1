@@ -3,15 +3,16 @@ from django.contrib import admin
 from autocomplete.views import autocomplete, AutocompleteSettings
 from autocomplete.admin import AutocompleteAdmin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
-from models import Result ResultSource
+from models import Result, ResultSource
 
 
-autocomplete.register(Result.order, OrderAutocomplete)
+
+#autocomplete.register(Result.order, OrderAutocomplete)
 
 
-class ResultItemInlineAdmin(MyTabularInline):
-    extra=0
-    model = ResultItem
+#class ResultItemInlineAdmin(MyTabularInline):
+#    extra=0
+#    model = ResultItem
 
 class ResultSourceAdmin(MyModelAdmin):
     pass
