@@ -8,7 +8,7 @@ from models import ResultItem
 
 
 
-autocomplete.register(ResultItem.result, ResultAutocomplete)
+#autocomplete.register(ResultItem.result, ResultAutocomplete)
 
 class ResultItemAdmin(AutocompleteAdmin, MyModelAdmin):
     
