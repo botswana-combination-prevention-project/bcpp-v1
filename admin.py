@@ -1,13 +1,16 @@
 from datetime import *
 from django.contrib import admin
+from bhp_common.models import MyModelAdmin, MyStackedInline
 from autocomplete.views import autocomplete, AutocompleteSettings
 from autocomplete.admin import AutocompleteAdmin
 from bhp_lab_aliquot.models import Aliquot, AliquotCondition, AliquotType
 
 
-class AliquotAutocomplete(AutocompleteSettings):
+class ReceiveAutocomplete(AutocompleteSettings):
 
-    search_fields = ('^aliquot_identifier',)
+    search_fields = ('^receive_identifier',)
+
+
 
 
 class AliquotTypeAutocomplete(AutocompleteSettings):
