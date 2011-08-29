@@ -1,0 +1,46 @@
+  {% load common_tags %}
+  <div class="results">
+      <table  cellspacing="0" id="result_list" border=1>
+    	<thead>
+			<tr>
+    	<th>Order</th>
+    	<th>Panel</th>    	
+    	<th>Order Date</th>    	
+    	<th>Aliquot</th>    	
+    	<th>Result</th>    	
+    	<th>Receive</th>    	
+    	<th>Protocol</th>    	
+    	<th>Drawn</th>    	
+        <th>Subject</th>    	    	
+    	<th>Initials</th>    	        
+    	<th>Dob</th>    	
+    	<th>Gender</th>
+    	<th>User Created</th>
+    	<th>Date Modified</th>    	    	
+    	</thead>	
+        {% for order in search_results.object_list %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+            <td><A href="/admin{{ order.get_absolute_url }}">{{ order.order_identifier|escape}}</A></td>
+            <td>{{ order.panel }} </td>            
+          	<td>{{ order.order_datetime|date:'Y-m-d' }}</td>            
+          	<td>{{order.aliquot }}</td>          	
+            <td>{% if order.result_set.all %}
+                    {% for result in order.result_set.all %}<A href="{{ result.get_document_url }}">{{ result.result_identifier|escape}}</A>&nbsp;{% endfor %}
+                {% else %}      
+                    <A href="/admin/bhp_lab_core/result/add/?order={{ order.pk }}">add result</a>
+                {% endif%}    
+            </td>            
+        	<td><A href="/admin{{ order.aliquot.receive.get_absolute_url }}">{{ order.aliquot.receive }}</td>          	
+            <td><A href="/admin{{ order.aliquot.receive.protocol.get_absolute_url }}">{{ order.aliquot.receive.protocol|escape}}</A></td>        	
+            <td>{{ order.aliquot.receive.datetime_drawn|date:'Y-m-d' }}</td>                      	            
+        	  <td><A href="/admin{{ order.aliquot.receive.patient.get_absolute_url }}">{{ order.aliquot.receive.patient }}</td>
+         	  <td>{{ order.aliquot.receive.patient.initials|escape }}</td>
+         	  <td>{{ order.aliquot.receive.patient.dob|dob_or_dob_estimated:order.aliquot.receive.patient.is_dob_estimated }}</td>         	  
+         	  <td>{{ order.aliquot.receive.patient.gender }}</td>         	  
+         	  <td>{{ order.user_created }}</td>
+          	  <td>{{ order.modified|date:"Y-m-d" }}</td>         	  
+            </tr>
+        {% endfor %}
+    </table>    
+    </div>
+
