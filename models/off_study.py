@@ -25,8 +25,8 @@ class BaseOffStudy(MyBasicUuidModel):
 
     reason_other = OtherCharField()
 
-    comment = models.CharField(
-        max_length=35,
+    comment = models.TextField(
+        max_length=250,
         verbose_name="Comments:",
         blank=True,
         null=True,   
