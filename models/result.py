@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab_order.models import Order
-from bhp_lab_result.choices import RESULT_RELEASE_STATUS
+from lab_order.models import Order
+from lab_result.choices import RESULT_RELEASE_STATUS
 
 
 class Result(MyBasicUuidModel):
@@ -63,7 +63,7 @@ class Result(MyBasicUuidModel):
         return '%s' % (self.result_identifier)
 
     def get_absolute_url(self):
-        return "/bhp_lab_result/result/%s/" % self.id   
+        return "/lab_result/result/%s/" % self.id   
         
     def get_search_url(self):
         return "/laboratory/result/search/result/%s/" % self.result_identifier   
@@ -72,6 +72,6 @@ class Result(MyBasicUuidModel):
         return "/laboratory/result/document/%s/" % (self.result_identifier)  	
 
     class Meta:
-        app_label = 'bhp_lab_result' 
+        app_label = 'lab_result' 
         db_table = 'bhp_lab_core_result'
         ordering =['result_identifier','order','result_datetime',]  

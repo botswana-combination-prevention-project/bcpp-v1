@@ -5,7 +5,7 @@ class ResultSource(MyBasicListModel):
     pass
 
     class Meta:
-        app_label = 'bhp_lab_result' 
+        app_label = 'lab_result' 
         db_table = 'bhp_lab_core_resultsource'
 
 
