@@ -1,7 +1,7 @@
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
-from bhp_lab_test_code.utils import calculate_reference_range_comment, get_reference_range
+from lab_test_code.utils import calculate_reference_range_comment, get_reference_range
 
 register = template.Library()
 
