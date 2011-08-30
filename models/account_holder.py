@@ -25,10 +25,10 @@ class AccountHolder(MyBasicUuidModel):
         return '%s, %s' % (self.last_name, self.first_name)
            
     def get_absolute_url(self):
-        return "/bhp_lab_account/accountholder/%s/" % self.id   
+        return "/lab_account/accountholder/%s/" % self.id   
 
     class Meta:
         ordering = ['last_name', 'first_name']
         unique_together = ['last_name', 'first_name']
-        app_label = 'bhp_lab_account'
+        app_label = 'lab_account'
         db_table = 'bhp_lab_registration_accountholder'  

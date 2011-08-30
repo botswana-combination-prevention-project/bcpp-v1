@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab_account.models import AccountHolder
+from lab_account.models import AccountHolder
 
 class Account (MyBasicUuidModel):
     
@@ -26,13 +26,13 @@ class Account (MyBasicUuidModel):
         )        
                
     def get_absolute_url(self):
-        return "/bhp_lab_account/account/%s/" % self.id   
+        return "/lab_account/account/%s/" % self.id   
 
     def __unicode__(self):
         return self.account_name
         
     class Meta:
         ordering = ["account_name"]
-        app_label = 'bhp_lab_account'
+        app_label = 'lab_account'
         db_table = 'bhp_lab_registration_account'                        
 

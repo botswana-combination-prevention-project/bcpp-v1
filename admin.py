@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from bhp_lab_account.models import Account
+from lab_account.models import Account
 
 class AccountAdmin(MyModelAdmin):
 
