@@ -11,9 +11,9 @@ from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_fu
 from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
 from bhp_common.validators import BWCellNumber, BWTelephoneNumber
 from bhp_variables.models import StudySite
-from mpepu_maternal.models import BaseScheduledVisitModel
 
-class BaseLocator(BaseScheduledVisitModel): 
+
+class BaseLocator(MyBasicUuidModel): 
 
     date_signed = models.DateField( 
         verbose_name = "1.Date Locator Form signed ",
