@@ -1,6 +1,6 @@
 from django.db import models
-from bhp_lab_reference.models import BaseReferenceListItem
-from bhp_lab_reference.utils import get_lower_range_days, get_upper_range_days
+from lab_reference.models import BaseReferenceListItem
+from lab_reference.utils import get_lower_range_days, get_upper_range_days
 from lab_test_code.models import TestCodeReferenceList
 from audit_trail import audit
 

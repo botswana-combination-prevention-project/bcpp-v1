@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_lab_reference.models import BaseReferenceList
+from lab_reference.models import BaseReferenceList
 
 class TestCodeReferenceList(BaseReferenceList):
     
