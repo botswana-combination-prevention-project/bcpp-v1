@@ -2,7 +2,7 @@
 {% load result_tags %}
 {% load reference_tags %}
 {% load grading_tags %}
-<table width="700" cellspacing="0" cellpadding="0"><tr><td><div align="right">{% if action == "view" %}<A href="/admin/bhp_lab_core/resultitem/add?result={{ result.pk  }}">add result item</A>{% else %}&nbsp;{% endif %}</td></tr></table>
+<table width="700" cellspacing="0" cellpadding="0"><tr><td><div align="right">{% if action == "view" %}<A href="/admin/lab_result_item/resultitem/add/?result={{ result.pk  }}">add result item</A>{% else %}&nbsp;{% endif %}</td></tr></table>
 <div class="results">
   <table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
     <thead>

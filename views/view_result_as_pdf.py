@@ -11,8 +11,8 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.template import Context
 from django import http
-from bhp_lab_result.models import Result
-from bhp_lab_result_item.models import ResultItem
+from lab_result.models import Result
+from lab_result_item.models import ResultItem
 
 
 
