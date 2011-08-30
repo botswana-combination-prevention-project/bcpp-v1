@@ -1,6 +1,6 @@
 from bhp_common.utils import round_up, get_age_in_days
-from bhp_lab_grading.models import GradingListItem
-from bhp_lab_grading.utils import calculate_grade
+from lab_grading.models import GradingListItem
+from lab_grading.utils import calculate_grade
 
 def get_grading_range(**kwargs):
 

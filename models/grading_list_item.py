@@ -1,7 +1,7 @@
 from django.db import models
-from bhp_lab_reference.models import BaseReferenceListItem
-from bhp_lab_reference.utils import get_lower_range_days, get_upper_range_days
-from bhp_lab_grading.models import GradingList
+from lab_reference.models import BaseReferenceListItem
+from lab_reference.utils import get_lower_range_days, get_upper_range_days
+from lab_grading.models import GradingList
 from bhp_common.choices import POS_NEG_ANY
 
 class GradingListItem(BaseReferenceListItem):
@@ -33,5 +33,5 @@ class GradingListItem(BaseReferenceListItem):
         return "%s" % ( unicode(self.test_code) )
     
     class Meta:
-        app_label = 'bhp_lab_grading'  
+        app_label = 'lab_grading'  
         ordering = ['test_code', 'age_low', 'age_low_unit']   

@@ -1,7 +1,7 @@
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
-from bhp_lab_grading.utils import calculate_grade, get_grading_range
+from lab_grading.utils import calculate_grade, get_grading_range
 
 register = template.Library()
 
