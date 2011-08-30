@@ -18,7 +18,7 @@ class OrderIdentifierTracker(MyBasicModel):
     counter = models.IntegerField(db_index=True,)
    
     class Meta:
-        app_label = 'bhp_lab_order'        
+        app_label = 'lab_order'        
         db_table = 'bhp_lab_core_orderidentifiertracker'
         ordering = ['yyyymm', 'counter']
         unique_together = ['yyyymm', 'counter']

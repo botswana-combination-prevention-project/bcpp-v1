@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from bhp_lab_order.models import OrderIdentifierTracker
+from lab_order.models import OrderIdentifierTracker
 
 
 class OrderManager(models.Manager):

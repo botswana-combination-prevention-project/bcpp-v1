@@ -3,7 +3,7 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from autocomplete.views import autocomplete, AutocompleteSettings
 from autocomplete.admin import AutocompleteAdmin
-from bhp_lab_order.models import Order
+from lab_order.models import Order
 
 class AliquotAutocomplete(AutocompleteSettings):
 

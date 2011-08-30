@@ -2,9 +2,9 @@ from datetime import datetime
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_future
-from bhp_lab_aliquot.models import Aliquot
-from bhp_lab_panel.models import Panel
-from bhp_lab_order.managers import OrderManager
+from lab_aliquot.models import Aliquot
+from lab_panel.models import Panel
+from lab_order.managers import OrderManager
 
 
 class Order(MyBasicUuidModel):
@@ -47,12 +47,12 @@ class Order(MyBasicUuidModel):
         return '%s %s' % (self.order_identifier, self.panel)
         
     def get_absolute_url(self):
-        return "/bhp_lab_order/order/%s/" % self.id   
+        return "/lab_order/order/%s/" % self.id   
     def get_search_url(self):
         return "/laboratory/order/search/order/byword/%s/" % self.id   
 
     class Meta:
-        app_label = 'bhp_lab_order'    
+        app_label = 'lab_order'    
         db_table = 'bhp_lab_core_order'
         
 
