@@ -2,9 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab_result.models import Result, ResultSource
-from bhp_lab_test_code.models import TestCode
-from bhp_lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
+from lab_result.models import Result, ResultSource
+from lab_test_code.models import TestCode
+from lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
 
 
 class ResultItem(MyBasicUuidModel):
@@ -105,10 +105,10 @@ class ResultItem(MyBasicUuidModel):
     def __unicode__(self):
   	    return '%s %s' % (unicode(self.result), unicode(self.test_code))
     def get_absolute_url(self):
-        return "bhp_lab_result_item/resultitem/%s/" % (self.id)
+        return "lab_result_item/resultitem/%s/" % (self.id)
     def get_result_document_url(self):
         return "/laboratory/result/document/%s/" % (self.result.result_identifier)  	
     class Meta:
-        app_label = 'bhp_lab_result_item'    
+        app_label = 'lab_result_item'    
         db_table = 'bhp_lab_core_resultitem'            
        
