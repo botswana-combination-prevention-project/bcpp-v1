@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-from bhp_lab_panel.models import Panel
+from lab_panel.models import Panel
 
 
 class TidPanelMapping(MyBasicModel):
@@ -17,5 +17,5 @@ class TidPanelMapping(MyBasicModel):
         
     class Meta:
         unique_together=(('tid','panel'),)
-        app_label = 'bhp_lab_panel'        
+        app_label = 'lab_panel'        
         db_table = 'bhp_lab_core_tidpanelmapping'

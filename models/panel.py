@@ -1,9 +1,9 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-from bhp_lab_account.models import Account
-from bhp_lab_test_code.models import TestCode
-from bhp_lab_aliquot.models import AliquotType
-from bhp_lab_panel.models import PanelGroup
+from lab_account.models import Account
+from lab_test_code.models import TestCode
+from lab_aliquot.models import AliquotType
+from lab_panel.models import PanelGroup
 
 
 class Panel(MyBasicModel):
@@ -43,7 +43,7 @@ class Panel(MyBasicModel):
         return self.name
         
     class Meta:
-        app_label = 'bhp_lab_panel'        
+        app_label = 'lab_panel'        
         db_table = 'bhp_lab_core_panel'
 
 

@@ -14,5 +14,5 @@ class PanelGroup (MyBasicModel):
         return self.name
         
     class Meta:
-        app_label = 'bhp_lab_panel'  
+        app_label = 'lab_panel'  
         db_table = 'bhp_lab_core_panelgroup'        
