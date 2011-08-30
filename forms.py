@@ -4,6 +4,9 @@ from bhp_lab_registration.models import SimpleConsent
 
 class PatientForm(forms.ModelForm): 
     
+    pass
+    
+    """
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
         qset = (
@@ -16,3 +19,4 @@ class PatientForm(forms.ModelForm):
         for choice in wtf:
             choices.append((choice.id, choice))
         w.choices = choices
+    """        
