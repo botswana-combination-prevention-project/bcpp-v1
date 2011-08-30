@@ -4,8 +4,8 @@ from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_common.fields import InitialsField
 from bhp_research_protocol.models import Protocol, Site
-from bhp_lab_patient.models import Patient
-from bhp_lab_receive.managers import ReceiveManager
+from lab_patient.models import Patient
+from lab_receive.managers import ReceiveManager
      
 class Receive (MyBasicUuidModel):
 
@@ -58,9 +58,9 @@ class Receive (MyBasicUuidModel):
         return '%s' % (self.receive_identifier)
 
     def get_absolute_url(self):
-        return "/bhp_lab_core/receive/%s/" % self.id   
+        return "/lab_receive/receive/%s/" % self.id   
 
     class Meta:
-        app_label = 'bhp_lab_receive'   
+        app_label = 'lab_receive'   
         verbose_name_plural='Receive'
         db_table = 'bhp_lab_core_receive'

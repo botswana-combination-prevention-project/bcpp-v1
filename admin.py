@@ -3,8 +3,8 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from autocomplete.views import autocomplete, AutocompleteSettings
 from autocomplete.admin import AutocompleteAdmin
-from bhp_lab_receive.models import Receive
-#from bhp_lab_receiveutils import AllocateReceiveIdentifier
+from lab_receive.models import Receive
+#from lab_receiveutils import AllocateReceiveIdentifier
 
 class ReceiveAutocomplete(AutocompleteSettings):
     search_fields = ('^receive_identifier',)
