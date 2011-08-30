@@ -37,7 +37,7 @@ class Migration(SchemaMigration):
 
 
     models = {
-        'bhp_lab_test_code.testcode': {
+        'lab_test_code.testcode': {
             'Meta': {'ordering': "['name']", 'object_name': 'TestCode'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -49,12 +49,12 @@ class Migration(SchemaMigration):
             'is_absolute': ('django.db.models.fields.CharField', [], {'default': "'absolute'", 'max_length': "'15'"}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'test_code_group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_lab_test_code.TestCodeGroup']"}),
+            'test_code_group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_test_code.TestCodeGroup']"}),
             'units': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_lab_test_code.testcodegroup': {
+        'lab_test_code.testcodegroup': {
             'Meta': {'object_name': 'TestCodeGroup'},
             'code': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -66,19 +66,19 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_lab_test_code.testcodeinterfacemapping': {
+        'lab_test_code.testcodeinterfacemapping': {
             'Meta': {'object_name': 'TestCodeInterfaceMapping'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'foreign_test_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'local_test_code': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_lab_test_code.TestCode']"}),
+            'local_test_code': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_test_code.TestCode']"}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_lab_test_code.testcodereferencelist': {
+        'lab_test_code.testcodereferencelist': {
             'Meta': {'ordering': "['name']", 'object_name': 'TestCodeReferenceList'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'description': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
@@ -91,7 +91,7 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_lab_test_code.testcodereferencelistitem': {
+        'lab_test_code.testcodereferencelistitem': {
             'Meta': {'ordering': "['test_code', 'age_low', 'age_low_unit']", 'object_name': 'TestCodeReferenceListItem'},
             'age_high': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'age_high_quantifier': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
@@ -109,13 +109,13 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'panic_value_high': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '4', 'blank': 'True'}),
             'panic_value_low': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '4', 'blank': 'True'}),
-            'test_code': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_lab_test_code.TestCode']"}),
-            'test_code_reference_list': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_lab_test_code.TestCodeReferenceList']"}),
+            'test_code': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_test_code.TestCode']"}),
+            'test_code_reference_list': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_test_code.TestCodeReferenceList']"}),
             'uln': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '4', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_lab_test_code.testcodereferencelistitemaudit': {
+        'lab_test_code.testcodereferencelistitemaudit': {
             'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'TestCodeReferenceListItemAudit', 'db_table': "'bhp_lab_test_code_testcodereferencelistitem_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -136,12 +136,12 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'panic_value_high': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '4', 'blank': 'True'}),
             'panic_value_low': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '4', 'blank': 'True'}),
-            'test_code': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_testcodereferencelistitem'", 'to': "orm['bhp_lab_test_code.TestCode']"}),
-            'test_code_reference_list': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_testcodereferencelistitem'", 'to': "orm['bhp_lab_test_code.TestCodeReferenceList']"}),
+            'test_code': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_testcodereferencelistitem'", 'to': "orm['lab_test_code.TestCode']"}),
+            'test_code_reference_list': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_testcodereferencelistitem'", 'to': "orm['lab_test_code.TestCodeReferenceList']"}),
             'uln': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '4', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         }
     }
 
-    complete_apps = ['bhp_lab_test_code']
+    complete_apps = ['lab_test_code']

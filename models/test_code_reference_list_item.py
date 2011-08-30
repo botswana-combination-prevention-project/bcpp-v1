@@ -1,7 +1,7 @@
 from django.db import models
 from bhp_lab_reference.models import BaseReferenceListItem
 from bhp_lab_reference.utils import get_lower_range_days, get_upper_range_days
-from bhp_lab_test_code.models import TestCodeReferenceList
+from lab_test_code.models import TestCodeReferenceList
 from audit_trail import audit
 
 class TestCodeReferenceListItem(BaseReferenceListItem):
@@ -20,5 +20,6 @@ class TestCodeReferenceListItem(BaseReferenceListItem):
         return "%s" % (self.test_code)
     
     class Meta:
-        app_label = 'bhp_lab_test_code'  
+        app_label = 'lab_test_code'  
+        db_table = 'bhp_lab_test_code_testcodereferencelistitem'        
         ordering = ['test_code', 'age_low', 'age_low_unit']   

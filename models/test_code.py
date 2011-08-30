@@ -2,8 +2,8 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicModel, MyBasicListModel
 from bhp_common.choices import GENDER
-from bhp_lab_common.choices import UNITS, ABS_CALC
-from bhp_lab_test_code.models import TestCodeGroup
+from lab_common.choices import UNITS, ABS_CALC
+from lab_test_code.models import TestCodeGroup
     
 class TestCode(MyBasicModel):
 
@@ -54,7 +54,9 @@ class TestCode(MyBasicModel):
         
     class Meta:
         ordering = ['name']
-        app_label = 'bhp_lab_test_code'     
+        app_label = 'lab_test_code'    
+        db_table = 'bhp_lab_test_code_testcode'
+         
         
 
         

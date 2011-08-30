@@ -1,6 +1,6 @@
 from datetime import *
 from bhp_common.utils import round_up, get_age_in_days
-from bhp_lab_test_code.models import TestCodeReferenceListItem
+from lab_test_code.models import TestCodeReferenceListItem
                     
 def calculate_reference_range_comment(value, oResultItem):
     """ 

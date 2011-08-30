@@ -15,5 +15,6 @@ class TestCodeGroup(MyBasicModel):
     def __unicode__(self):
         return self.code    
     class Meta:
-        app_label = 'bhp_lab_test_code'
+        app_label = 'lab_test_code'
+        db_table = 'bhp_lab_test_code_testcodegroup'
         ordering = ['code',]

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
-from bhp_lab_test_code.models import TestCode, TestCodeGroup, TestCodeReferenceList, TestCodeReferenceListItem, TestCodeInterfaceMapping
+from lab_test_code.models import TestCode, TestCodeGroup, TestCodeReferenceList, TestCodeReferenceListItem, TestCodeInterfaceMapping
 
 class TestCodeAdmin(MyModelAdmin):
     list_display = ('code', 'name', 'test_code_group', 'units', 'display_decimal_places')

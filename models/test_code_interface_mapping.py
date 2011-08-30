@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-from bhp_lab_test_code.models import TestCode
+from lab_test_code.models import TestCode
 
 class TestCodeInterfaceMapping(MyBasicModel):
 
@@ -18,6 +18,7 @@ class TestCodeInterfaceMapping(MyBasicModel):
         return "%s maps to %s" % (self.foreign_test_code,self.local_test_code)
 
     class Meta:
-        app_label = 'bhp_lab_test_code'            
+        app_label = 'lab_test_code'
+        db_table = 'bhp_lab_test_code_testcodeinterfacemapping'                    
 
            

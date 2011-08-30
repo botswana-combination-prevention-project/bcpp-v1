@@ -1,5 +1,5 @@
 from bhp_common.utils import get_age_in_days
-from bhp_lab_test_code.models import TestCodeReferenceListItem
+from lab_test_code.models import TestCodeReferenceListItem
 
 def get_reference_range(**kwargs):
     
