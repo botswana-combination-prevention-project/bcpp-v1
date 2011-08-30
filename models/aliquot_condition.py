@@ -8,5 +8,5 @@ class AliquotCondition(MyBasicListModel):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
     class Meta:
         ordering = ["short_name"]
-        app_label = 'bhp_lab_aliquot' 
+        app_label = 'lab_aliquot' 
         db_table = 'bhp_lab_core_aliquotcondition'        

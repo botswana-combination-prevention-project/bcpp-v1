@@ -33,5 +33,5 @@ class AliquotType(MyBasicModel):
 
     class Meta:
         ordering = ["name"]
-        app_label = 'bhp_lab_aliquot'   
+        app_label = 'lab_aliquot'   
         db_table = 'bhp_lab_core_aliquottype'        

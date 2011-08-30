@@ -1,10 +1,10 @@
 import datetime
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
-from bhp_lab_receive.models import Receive
-from bhp_lab_aliquot.models import AliquotCondition, AliquotType
-from bhp_lab_aliquot.managers import AliquotManager
-from bhp_lab_aliquot.choices import ALIQUOT_STATUS, SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
+from lab_receive.models import Receive
+from lab_aliquot.models import AliquotCondition, AliquotType
+from lab_aliquot.managers import AliquotManager
+from lab_aliquot.choices import ALIQUOT_STATUS, SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
        
 
 
@@ -91,13 +91,13 @@ class Aliquot (MyBasicUuidModel):
         return '%s' % (self.aliquot_identifier)
 
     def get_absolute_url(self):
-        return "/bhp_lab_aliquot/aliquot/%s/" % self.id   
+        return "/lab_aliquot/aliquot/%s/" % self.id   
         
     def get_search_url(self):
         return "/laboratory/aliquot/search/aliquot/byword/%s/" % self.id   
 
     class Meta:
-        app_label = 'bhp_lab_aliquot'
+        app_label = 'lab_aliquot'
         db_table = 'bhp_lab_core_aliquot'
 
   
