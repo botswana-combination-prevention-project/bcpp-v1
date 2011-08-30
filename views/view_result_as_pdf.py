@@ -81,7 +81,8 @@ def batch_print_result_as_pdf(**kwargs):
     from math import ceil,trunc
     from django.template.loader import render_to_string
     from django.shortcuts import get_object_or_404
-    from bhp_lab_core.models import Result, ResultItem
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem    
 
     template = 'result_report_pdf.html'
     #result_ids = ['1240636-01','1242053-01','1241852-01','1242079-01','1241851-01']
@@ -99,7 +100,8 @@ def print_result_as_pdf(result_identifier,template):
     from math import ceil,trunc
     from django.template.loader import render_to_string
     from django.shortcuts import get_object_or_404
-    from bhp_lab_core.models import Result, ResultItem
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem    
 
     section_name = 'result'
     search_name = 'result'

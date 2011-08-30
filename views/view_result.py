@@ -7,7 +7,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from bhp_common.utils import os_variables
 from lab_result.models import Result
 from lab_result_item.models import ResultItem
-from bhp_lab_result_report.forms import ResultSearchForm
+from lab_result_report.forms import ResultSearchForm
 from laboratory.classes import get_my_limit_queryset
 
 

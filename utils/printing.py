@@ -6,8 +6,11 @@ def batch_print_result_as_pdf(**kwargs):
     from django.core.mail import send_mail
     from django.template.loader import render_to_string
     from django.shortcuts import get_object_or_404
-    from bhp_lab_core.models import Result, ResultItem, Order, Aliquot, Receive
-    from bhp_lab_registration.models import Patient
+    from lab_result.models import Result, ResultItem
+    from lab_order.models import Order
+    from lab_aliquot.models import Aliquot
+    from lab_receive.models import Receive
+    from lab_patient.models import Patient
 
     subject_identifier = kwargs.get('subject_identifier')
     if subject_identifier:
