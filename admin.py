@@ -1,8 +1,8 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
-from bhp_lab_result.models import Result
-from bhp_lab_patient.models import Patient, SimpleConsent
-from bhp_lab_patient.forms import PatientForm
+from lab_result.models import Result
+from lab_patient.models import Patient, SimpleConsent
+from lab_patient.forms import PatientForm
 
 
 class PatientAdmin(MyModelAdmin):

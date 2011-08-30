@@ -5,9 +5,9 @@ from bhp_common.validators import dob_not_future
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.choices import GENDER, YES_NO, ART_STATUS_UNKNOWN, POS_NEG_UNKNOWN
 from bhp_common.fields import InitialsField, IsDateEstimatedField
-from bhp_lab_account.models import Account
-from bhp_lab_patient.managers import PatientManager
-from bhp_lab_patient.models import SimpleConsent
+from lab_account.models import Account
+from lab_patient.managers import PatientManager
+from lab_patient.models import SimpleConsent
         
 class Patient(MyBasicUuidModel):
 
@@ -69,7 +69,7 @@ class Patient(MyBasicUuidModel):
     objects = PatientManager()
                
     def get_absolute_url(self):
-        return "/bhp_lab_patient/patient/%s/" % self.id   
+        return "/lab_patient/patient/%s/" % self.id   
     
     def __unicode__(self):
         return "%s" % (self.subject_identifier)
@@ -78,6 +78,6 @@ class Patient(MyBasicUuidModel):
     class Meta:
         ordering = ["subject_identifier"]
         unique_together=['subject_identifier', ]
-        app_label = 'bhp_lab_patient'  
+        app_label = 'lab_patient'  
         db_table = 'bhp_lab_registration_patient'              
 

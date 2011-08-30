@@ -1,6 +1,6 @@
 from django import forms
 from django.db.models import Q
-from bhp_lab_registration.models import SimpleConsent
+from lab_patient.models import SimpleConsent
 
 class PatientForm(forms.ModelForm): 
     

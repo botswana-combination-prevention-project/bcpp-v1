@@ -34,12 +34,12 @@ class SimpleConsent (MyBasicUuidModel):
         )
     
     def get_absolute_url(self):
-        return "/bhp_lab_patientn/simpleconsent/%s/" % self.id   
+        return "/lab_patient/simpleconsent/%s/" % self.id   
     
     def __unicode__(self):
         return "%s from %s to %s" % (self.protocol, self.consent_startdate, self.consent_enddate)
         
     class Meta:
         ordering = ["consent_startdate"]
-        app_label = 'bhp_lab_patient'  
+        app_label = 'lab_patient'  
         db_table = 'bhp_lab_registration_simpleconsent'        
