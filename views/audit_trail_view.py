@@ -65,12 +65,18 @@ def audit_trail_view(request, **kwargs):
                                 fld.name for fld in history[0]._meta.fields if fld.column[-3:]=='_id' and fld.name<>'_audit_id'] + [
                                 fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
                                 fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']
+
+                field_labels.remove('rx')                                
+                                
                 field_labels = [' '.join(name.split('_')) for name in field_labels]                    
                 
                 field_names = ['_audit_id','_audit_change_type', '_audit_timestamp', 'user_modified'] + [
                                 fld.name for fld in history[0]._meta.fields if fld.column[-3:]=='_id' and fld.name<>'_audit_id'] + [
                                 fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
                                 fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']
+                
+                field_names.remove(x)                                
+                                
 
                 # store values in a ordered list
                 display_rows = []
@@ -83,11 +89,12 @@ def audit_trail_view(request, **kwargs):
                 for row in history_rows:
                     this_row = []
                     for field_name in field_names:
-                        try:
-                            # try if the field has a choices tuple, use get_FOO_display(), or fail
-                            this_row.append(eval('row.get_'+field_name+'_display()'))                
-                        except:
-                            this_row.append(getattr(row, field_name))
+                        if not field_name == 'rx':
+                            try:
+                                # try if the field has a choices tuple, use get_FOO_display(), or fail
+                                this_row.append(eval('row.get_'+field_name+'_display()'))                
+                            except:
+                                this_row.append(getattr(row, field_name))
                         
                     display_rows.append(this_row)
             else:
