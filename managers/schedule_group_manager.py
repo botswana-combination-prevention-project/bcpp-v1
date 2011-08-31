@@ -20,8 +20,9 @@ class ScheduleGroupManager(models.Manager):
         membership_form_category = kwargs.get("membership_form_category")        
 
         if membership_form_category:
+            #  membership form 'category' should be a valid subject type found in registered_subject ... and definitely not blank.
             if not super(ScheduleGroupManager, self).filter(membership_form__category__icontains = membership_form_category):
-                raise ValueError('Membership form category does not exist. Got \'%s\'' % membership_form_category)            
+                raise ValueError('The given membership_form_category is not valid for attribute \'category\ in model membership form. Attribute \'category\' should be based on a valid subject type. Got \'%s\'.' % membership_form_category)            
 
         # a list of "keys" that link like membership forms together. If they share this 
         # key it means that only one form should be KEYED per subject. 

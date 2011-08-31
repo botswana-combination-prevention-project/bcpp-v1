@@ -5,7 +5,9 @@ from bhp_visit.models import MembershipForm, ScheduleGroup, VisitDefinition
 
 
 class MembershipFormAdmin (MyModelAdmin):
-    pass
+
+    list_display = ('content_type_map', 'category', 'user_created', 'user_modified', 'created', 'modified')
+
 admin.site.register(MembershipForm, MembershipFormAdmin)
 
 
