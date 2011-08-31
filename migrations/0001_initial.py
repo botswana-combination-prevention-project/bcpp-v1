@@ -8,6 +8,23 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
+        # Adding model 'SpecimenType'
+        db.create_table('bhp_lab_core_specimentype', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=250)),
+            ('short_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=250)),
+            ('display_index', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('field_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('version', self.gf('django.db.models.fields.CharField')(default='1.0', max_length=35)),
+        ))
+        db.send_create_signal('lab_aliquot', ['SpecimenType'])
+
         # Adding model 'AliquotType'
         db.create_table('bhp_lab_core_aliquottype', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -15,8 +32,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('alpha_code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
             ('numeric_code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=2)),
@@ -31,8 +48,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=250)),
             ('short_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=250)),
             ('display_index', self.gf('django.db.models.fields.IntegerField')(default=0)),
@@ -41,17 +58,34 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('lab_aliquot', ['AliquotCondition'])
 
+        # Adding model 'AliquotMedium'
+        db.create_table('bhp_lab_core_aliquotmedium', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=250)),
+            ('short_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=250)),
+            ('display_index', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('field_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('version', self.gf('django.db.models.fields.CharField')(default='1.0', max_length=35)),
+        ))
+        db.send_create_signal('lab_aliquot', ['AliquotMedium'])
+
         # Adding model 'Aliquot'
         db.create_table('bhp_lab_core_aliquot', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='home', max_length=50, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s007', max_length=50, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('aliquot_identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=25)),
-            ('aliquot_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2011, 8, 30, 13, 9, 48, 309238))),
+            ('aliquot_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2011, 8, 31, 8, 16, 29, 689685))),
             ('receive', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lab_receive.Receive'])),
             ('count', self.gf('django.db.models.fields.IntegerField')(null=True)),
             ('parent_identifier', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lab_aliquot.Aliquot'], to_field='aliquot_identifier', null=True, blank=True)),
@@ -69,11 +103,17 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         
+        # Deleting model 'SpecimenType'
+        db.delete_table('bhp_lab_core_specimentype')
+
         # Deleting model 'AliquotType'
         db.delete_table('bhp_lab_core_aliquottype')
 
         # Deleting model 'AliquotCondition'
         db.delete_table('bhp_lab_core_aliquotcondition')
+
+        # Deleting model 'AliquotMedium'
+        db.delete_table('bhp_lab_core_aliquotmedium')
 
         # Deleting model 'Aliquot'
         db.delete_table('bhp_lab_core_aliquot')
@@ -115,13 +155,13 @@ class Migration(SchemaMigration):
         'lab_account.account': {
             'Meta': {'ordering': "['account_name']", 'object_name': 'Account', 'db_table': "'bhp_lab_registration_account'"},
             'account_closedate': ('django.db.models.fields.DateField', [], {}),
-            'account_holder': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_account.AccountHolder']"}),
+            'account_holder': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_account.AccountHolder']", 'null': 'True'}),
             'account_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25'}),
             'account_opendate': ('django.db.models.fields.DateField', [], {}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
@@ -132,8 +172,8 @@ class Migration(SchemaMigration):
             'comment': ('django.db.models.fields.TextField', [], {'max_length': '100', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'initials': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
@@ -143,7 +183,7 @@ class Migration(SchemaMigration):
         },
         'lab_aliquot.aliquot': {
             'Meta': {'object_name': 'Aliquot', 'db_table': "'bhp_lab_core_aliquot'"},
-            'aliquot_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2011, 8, 30, 13, 9, 48, 309238)'}),
+            'aliquot_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2011, 8, 31, 8, 16, 29, 689685)'}),
             'aliquot_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25'}),
             'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_aliquot.AliquotType']"}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
@@ -151,8 +191,8 @@ class Migration(SchemaMigration):
             'count': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'current_measure': ('django.db.models.fields.DecimalField', [], {'default': "'5.00'", 'max_digits': '10', 'decimal_places': '2'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'measure_units': ('django.db.models.fields.CharField', [], {'default': "'mL'", 'max_length': '25'}),
             'medium': ('django.db.models.fields.CharField', [], {'default': "'TUBE'", 'max_length': '25'}),
@@ -169,8 +209,23 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
+        },
+        'lab_aliquot.aliquotmedium': {
+            'Meta': {'ordering': "['name']", 'object_name': 'AliquotMedium', 'db_table': "'bhp_lab_core_aliquotmedium'"},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
@@ -184,14 +239,29 @@ class Migration(SchemaMigration):
             'alpha_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dmis_reference': ('django.db.models.fields.IntegerField', [], {}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'numeric_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '2'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
+        },
+        'lab_aliquot.specimentype': {
+            'Meta': {'object_name': 'SpecimenType', 'db_table': "'bhp_lab_core_specimentype'"},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '250'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
         },
         'lab_patient.patient': {
             'Meta': {'ordering': "['subject_identifier']", 'unique_together': "(['subject_identifier'],)", 'object_name': 'Patient', 'db_table': "'bhp_lab_registration_patient'"},
@@ -202,8 +272,8 @@ class Migration(SchemaMigration):
             'dob': ('django.db.models.fields.DateField', [], {}),
             'gender': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'hiv_status': ('django.db.models.fields.CharField', [], {'default': "'UNKNOWN'", 'max_length': '10'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'initials': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'is_dob_estimated': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -219,8 +289,8 @@ class Migration(SchemaMigration):
             'consent_site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_research_protocol.Site']"}),
             'consent_startdate': ('django.db.models.fields.DateField', [], {}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'may_store_samples': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -234,13 +304,13 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'datetime_drawn': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
             'dmis_reference': ('django.db.models.fields.IntegerField', [], {}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'home'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s007'", 'max_length': '50', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_patient.Patient']"}),
             'protocol': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_research_protocol.Protocol']"}),
-            'receive_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2011, 8, 30, 13, 9, 48, 301443)', 'db_index': 'True'}),
+            'receive_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2011, 8, 31, 8, 16, 29, 687259)', 'db_index': 'True'}),
             'receive_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'db_index': 'True'}),
             'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_research_protocol.Site']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),

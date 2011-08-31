@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
+from bhp_common.models import MyBasicListModel
 
 class AliquotMedium(MyBasicListModel):
 
