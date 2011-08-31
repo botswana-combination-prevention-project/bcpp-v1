@@ -34,6 +34,61 @@ def appointment_row(context, appointment):
 register.inclusion_tag('appointment_row.html', takes_context=True)(appointment_row)        
 
 
+class ModelPk(template.Node):
+    def __init__(self, contenttype, visit_model, appointment, dashboard_type, app_label):
+        self.unresolved_contenttype = template.Variable(contenttype)
+        self.unresolved_appointment = template.Variable(appointment)
+        self.unresolved_visit_model = template.Variable(visit_model)  
+        self.unresolved_dashboard_type = template.Variable(dashboard_type)                              
+        self.unresolved_app_label = template.Variable(app_label)
+    def render(self, context):
+        self.contenttype = self.unresolved_contenttype.resolve(context)
+        self.appointment = self.unresolved_appointment.resolve(context)        
+        self.visit_model = self.unresolved_visit_model.resolve(context)
+        self.dashboard_type = self.unresolved_dashboard_type.resolve(context)        
+        self.app_label = self.unresolved_app_label.resolve(context)
+        self.visit_model_instance = None
+
+        pk = None
+
+        if self.visit_model.__class__.objects.filter(appointment = self.appointment):
+            self.visit_model_instance = self.visit_model.__class__.objects.get(appointment = self.appointment)
+            
+        this_model = self.contenttype.model_class()
+        
+        # find the attribute that in this model that is the foreignkey to the visit_model
+        this_model_fk = [fk for fk in [f for f in this_model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]
+        
+        if this_model_fk:
+            # get the name of the field, e.g. visit or maternal_visit ...
+            fk_fieldname_to_visit_model = '%s_id' % this_model_fk[0].name
+        else:
+            raise AttributeError, 'Cannot determine pk with this templatetag, Model %s must have a foreignkey to the visit model \'%s\'.'
+                            
+        # query this_model for visit=this_visit, or whatever the fk_fieldname is
+        # i have to use 'extra' because i can only know the fk field name pointing to the visit model at runtime
+        if this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk]):
+            #the link is for a change
+            # these next two lines would change if for another dashboard and another visit model 
+            next = 'dashboard_visit_url'
+            this_model_instance = this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk])[0] 
+            pk = this_model_instance.pk            
+
+        return pk
+        
+@register.tag(name='model_pk')
+def model_pk(parser, token):
+
+    """return pk for model instance""" 
+
+    try:
+        tag_name, contenttype, visit_model, appointment, dashboard_type, app_label = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires exactly 5 arguments" % token.contents.split()[0])
+    return ModelPk(contenttype, visit_model, appointment, dashboard_type, app_label)
+        
+
+
 class ModelAdminUrl(template.Node):
 
     """return a reverse url to admin + '?dashboard-specific querystring' for 'change' or 'add' for a given contenttype model name"""
