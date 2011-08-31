@@ -49,6 +49,13 @@ class RegisteredSubject(BaseSubject):
         blank=True,
         )    
     
+    comment = models.TextField(
+        verbose_name = 'Comment',
+        max_length = 250,
+        null = True,
+        blank = True,
+        )
+    
     objects = RegisteredSubjectManager()
         
     def __unicode__ (self):
