@@ -18,7 +18,8 @@ class Account (MyBasicUuidModel):
         verbose_name = 'Closed date',
         )    
 
-    account_holder = models.ForeignKey(AccountHolder)
+    account_holder = models.ForeignKey(AccountHolder,
+    	null=True)
 
     comment = models.CharField("Comment", 
         max_length=250, 
