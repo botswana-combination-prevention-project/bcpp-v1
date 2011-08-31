@@ -75,7 +75,7 @@ def audit_trail_view(request, **kwargs):
                                 fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
                                 fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']
                 
-                field_names.remove(x)                                
+                field_names.remove('rx')                                
                                 
 
                 # store values in a ordered list
