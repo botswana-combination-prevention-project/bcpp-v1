@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db import models
 from django.db.models import ForeignKey, get_model
 from django.db.models.base import ModelBase
-from bhp_common.models import ContentTypeMap
+from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.models import Entry
 from bhp_entry.managers import BaseEntryBucketManager
 

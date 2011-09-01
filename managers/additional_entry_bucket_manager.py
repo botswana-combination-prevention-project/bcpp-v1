@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from bhp_common.models import ContentTypeMap
+from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.managers import BaseEntryBucketManager
 
 

@@ -40,5 +40,6 @@ class BaseEntryBucket(MyBasicUuidModel):
     
     fill_datetime = models.DateTimeField()
     
+    
     class Meta:
         abstract = True
