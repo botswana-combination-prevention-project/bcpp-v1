@@ -2,10 +2,10 @@ from datetime import datetime
 from django.db import models
 from django.db.models import get_model, get_models
 from django.db.models import DateTimeField, DateField, IntegerField, DecimalField, CharField
-from django.db.models import Count, Avg, Max, Min, StdDev, Variance
+from django.db.models import Count, Sum, Avg, Max, Min, StdDev, Variance
 from django.conf import settings
 from bhp_model_selector.classes import ModelSelector
-from bhp_describer.models import Related
+from bhp_describer.models import Related, GroupingHint
 
 """
 from bhp_describer.classes import DataDescriber
@@ -45,7 +45,7 @@ class DataDescriber(ModelSelector):
                     q = new_aggregates     
                         
                 elif isinstance(field, (IntegerField, DecimalField)):
-                    aggregates = self.model.objects.all().aggregate(Count(field.name), Avg(field.name), Max(field.name), Min(field.name), StdDev(field.name), Variance(field.name))    
+                    aggregates = self.model.objects.all().aggregate(Count(field.name), Sum(field.name), Avg(field.name), Max(field.name), Min(field.name), StdDev(field.name), Variance(field.name))    
                     new_aggregates = {}                
                     for key, value in aggregates.items():
                         k = key.split('__')
@@ -75,8 +75,16 @@ class DataDescriber(ModelSelector):
             for field in self.opts.fields:
                 if isinstance(field, CharField):
                     new_aggregates = []
-                    #group on choices tuple
-                    if field.choices:
+                    #group on choices tuple or if listed in GroupingHint
+                    grouping_hint = GroupingHint.objects.filter(app_label = self.app_label, model_name = self.model_name, field_name = field.name)
+                    if grouping_hint:
+                        aggregates = self.model.objects.values(field.name).annotate(count=Count(field.name))
+                        new_aggregates = []
+                        agg = {}
+                        for aggregate in aggregates:
+                            new_aggregates.append({ 'count': aggregate['count'], 'label':aggregate[field.name] })
+                        self.grouping[field.name] = new_aggregates
+                    elif field.choices:
                         for choice in field.choices:
                             aggregates = self.model.objects.values(field.name).annotate(count=Count(field.name))
                             new_aggregates = []
@@ -84,6 +92,8 @@ class DataDescriber(ModelSelector):
                             for aggregate in aggregates:
                                 new_aggregates.append({ 'count': aggregate['count'], 'label':aggregate[field.name] })
                             self.grouping[field.name] = new_aggregates
+                    else:
+                        pass                            
 
                 #group on foreignkey if related table has field 'name'
                 elif isinstance(field, models.ForeignKey):
