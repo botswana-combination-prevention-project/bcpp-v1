@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyBasicUuidModel
-from bhp_common.models import ContentTypeMap
+from bhp_content_type_map.models import ContentTypeMap
 from bhp_visit.models import MembershipForm
 from bhp_visit.managers import ScheduleGroupManager
 
