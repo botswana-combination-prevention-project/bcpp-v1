@@ -1,9 +1,9 @@
 from django.db import models
 from bhp_common.models import MyBasicModel
-from lab_account.models import Account
+#from lab_account.models import Account
 from lab_test_code.models import TestCode
-from lab_aliquot.models import AliquotType
-from lab_panel.models import PanelGroup
+from lab_aliquot_list.models import AliquotType
+from panel_group import PanelGroup
 
 
 class Panel(MyBasicModel):
