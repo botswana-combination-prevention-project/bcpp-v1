@@ -3,42 +3,20 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from autocomplete.views import autocomplete, AutocompleteSettings
 from autocomplete.admin import AutocompleteAdmin
-from lab_aliquot.models import Aliquot, AliquotCondition, AliquotType
+from lab_aliquot.models import Aliquot
 
 
 class ReceiveAutocomplete(AutocompleteSettings):
 
     search_fields = ('^receive_identifier',)
 
-
-
-
 class AliquotTypeAutocomplete(AutocompleteSettings):
 
     search_fields = ('^numeric_code', '^alpha_code','^name', )
 
-
 autocomplete.register(Aliquot.receive, ReceiveAutocomplete)
 
 autocomplete.register(Aliquot.aliquot_type, AliquotTypeAutocomplete)
-
-
-class AliquotTypeAdmin(MyModelAdmin):
-
-    list_display = ('alpha_code', 'numeric_code', 'name', 'created', 'modified')
-    
-    ordering = ['name']
-    
-admin.site.register(AliquotType,AliquotTypeAdmin)
-
-
-class AliquotConditionAdmin(MyModelAdmin):
-
-    list_display = ('display_index', 'name', 'short_name', 'field_name', 'created', 'modified')
-
-    ordering = ['display_index']
-
-admin.site.register(AliquotCondition,AliquotConditionAdmin)
 
 
 class AliquotAdmin(AutocompleteAdmin, MyModelAdmin):

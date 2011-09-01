@@ -2,7 +2,7 @@ import datetime
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from lab_receive.models import Receive
-from lab_aliquot.models import AliquotCondition, AliquotType
+from lab_aliquot_list.models import AliquotCondition, AliquotType
 from lab_aliquot.managers import AliquotManager
 from lab_aliquot.choices import ALIQUOT_STATUS, SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
        
