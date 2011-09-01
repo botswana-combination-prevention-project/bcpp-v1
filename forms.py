@@ -14,10 +14,10 @@ class ScheduledEntryBucketForm (forms.ModelForm):
             raise forms.ValidationError("Entry status has been set to 'QUERY', Please provide a short comment to describe the query")
             
         # if record exists, do not allow 'New':
-        if cleaned_data['entry_status'] == 'NEW' cleaned_data['entry_status'] == 'NOT_REQUIRED':
-            #query for record
-            entry = cleaned_data['entry']                    
-            entry.content_type_map.
+        #if cleaned_data['entry_status'] == 'NEW' cleaned_data['entry_status'] == 'NOT_REQUIRED':
+        #    #query for record
+        #    entry = cleaned_data['entry']                    
+        #    entry.content_type_map.
         
         return cleaned_data
         
