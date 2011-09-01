@@ -15,7 +15,7 @@ class PanelAdmin(MyModelAdmin):
     filter_horizontal = (
         'test_code',
         'aliquot_type',
-        'account',
+        #'account',
         )
         
 admin.site.register(Panel, PanelAdmin)
