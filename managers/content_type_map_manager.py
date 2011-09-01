@@ -36,4 +36,3 @@ class ContentTypeMapManager(models.Manager):
                     model = content_type.model,
                     )
 
-
