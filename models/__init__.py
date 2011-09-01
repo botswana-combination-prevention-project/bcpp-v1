@@ -6,5 +6,5 @@ from my_model_admin import MyModelAdmin
 from my_tabular_inline_admin import MyTabularInline
 from my_stacked_inline_admin import MyStackedInline
 from my_autocomplete_admin import MyAutoCompleteAdminModel
-from content_type_map import ContentTypeMap
+
 
