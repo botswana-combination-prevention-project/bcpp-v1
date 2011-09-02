@@ -3,7 +3,11 @@ from bhp_common.models import MyBasicUuidModel
 
 class GroupingHint (MyBasicUuidModel):
 
-    """A model to refer to when the 'option' or 'choice' field name (related_to_field_name) of the foreignkey is not obvious, e.g. not = 'name'.  """
+    """A model to list a field_name that should be grouped on but has no choices tuple.
+    
+    Fields with choices tuples do not need to be listed here as they are automatically 
+    grouped on by the describer object.
+    """
 
     app_label =  models.CharField(
         max_length = 50,
