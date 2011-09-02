@@ -4,6 +4,7 @@ from django.conf.urls.defaults import patterns, include, url
 from django.db.models.base import ModelBase
 from bhp_common.utils import os_variables
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
+from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_appointment.models import Appointment
 from bhp_visit.models import ScheduleGroup
 from bhp_registration.models import RegisteredSubject
@@ -97,6 +98,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 
         self.scheduled_entry_bucket = None
         self.additional_entry_bucket= None
+        self.scheduled_lab_bucket = None        
         self.selected_visit = None 
         self.visit = None
         self.visit_code = None
@@ -151,12 +153,15 @@ class RegisteredSubjectDashboard(Dashboard):
 
         self.set_scheduled_entry_bucket()
         
+        self.set_scheduled_lab_bucket()        
+        
         self.set_current_appointment()
         
         self.set_current_visit()        
 
-    def set_scheduled_entry_bucket(self):
 
+    def set_scheduled_entry_bucket(self):
+    
         # get list of scheduled crfs
         if self.visit_code:
             # filter for appointment with visit_instance=0
@@ -170,10 +175,28 @@ class RegisteredSubjectDashboard(Dashboard):
                 appointment = appointment,    
                 visit_code = self.visit_code,
                 )  
-        
+
+
         self.context.add(scheduled_entry_bucket = self.scheduled_entry_bucket)
 
-                                                  
+    
+    def set_scheduled_lab_bucket(self):
+
+        # get list of scheduled crfs
+        if self.visit_code:
+            # filter for appointment with visit_instance=0
+            appointment = Appointment.objects.get(
+                                        registered_subject = self.registered_subject, 
+                                        visit_definition__code = self.visit_code, 
+                                        visit_instance = 0,
+                                        )
+            self.scheduled_lab_bucket = ScheduledLabEntryBucket.objects.get_scheduled_labs_for(
+                registered_subject = self.registered_subject, 
+                appointment = appointment,    
+                visit_code = self.visit_code,
+                )  
+
+        self.context.add(scheduled_lab_bucket = self.scheduled_lab_bucket)                                                      
             
     def set_appointments(self):
 
@@ -257,6 +280,11 @@ class RegisteredSubjectDashboard(Dashboard):
 
         self.urlpatterns = patterns(view,
 
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<panel>\d+)/$'.format(**regex), 
+                'dashboard', 
+                name="dashboard_visit_url"
+                ),
+
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/$'.format(**regex), 
                 'dashboard', 
                 name="dashboard_visit_url"
@@ -272,6 +300,10 @@ class RegisteredSubjectDashboard(Dashboard):
             regex['visit_field_name'] = visit_field_name
             self.urlpatterns += patterns(view,
             
+                url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<{visit_field_name}>{pk})/(?P<panel>\d+)/$'.format(**regex), 
+                    'dashboard', 
+                    name="dashboard_visit_add_url"
+                    ),
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<{visit_field_name}>{pk})/$'.format(**regex), 
                     'dashboard', 
                     name="dashboard_visit_add_url"
