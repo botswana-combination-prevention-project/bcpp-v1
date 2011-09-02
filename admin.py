@@ -1,6 +1,7 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from bhp_entry.admin import EntryInline
+from bhp_lab_entry.admin import LabEntryInline
 from bhp_visit.models import MembershipForm, ScheduleGroup, VisitDefinition
 
 
@@ -22,7 +23,7 @@ class VisitDefinitionAdmin(MyModelAdmin):
     
     search_fields = ('code', 'grouping',)
     
-    inlines = [EntryInline,]
+    inlines = [EntryInline,LabEntryInline,]
         
 admin.site.register(VisitDefinition, VisitDefinitionAdmin)
 
