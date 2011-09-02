@@ -66,7 +66,11 @@ def audit_trail_view(request, **kwargs):
                                 fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
                                 fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']
 
-                field_labels.remove('rx')                                
+                # for now, manually remove rando field rx, develop a better mechanism later...
+                try:
+                    field_labels.remove('rx')  
+                except:
+                    pass                                  
                                 
                 field_labels = [' '.join(name.split('_')) for name in field_labels]                    
                 
@@ -74,8 +78,10 @@ def audit_trail_view(request, **kwargs):
                                 fld.name for fld in history[0]._meta.fields if fld.column[-3:]=='_id' and fld.name<>'_audit_id'] + [
                                 fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
                                 fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']
-                
-                field_names.remove('rx')                                
+                try:
+                    field_names.remove('rx')                                
+                except:
+                    pass                                  
                                 
 
                 # store values in a ordered list
