@@ -63,6 +63,16 @@
                 {% endif %}
                 </td></tr>
 
+                <tr name="bottom left" ><td>
+                <H4>Scheduled Labs {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H4>
+
+                {% if visit_code %}                
+                    {% if appointment.appt_status != 'in_progress' %}
+                        <I> Hint: To edit the labs below, change the selected appointment's status to 'In Progress'</I> 
+                    {% endif %}    
+                    {% block scheduled_lab_bucket %}{% endblock scheduled_lab_bucket %}
+                {% endif %}
+                </td></tr>
             </table>
         </td>
 
