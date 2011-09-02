@@ -88,15 +88,16 @@ class BaseRequisition (MyBasicUuidModel):
         )
 
     item_type = models.CharField(
-        verbose_name = 'Collection type'
+        verbose_name = 'Collection type',
+        max_length = 25,
         choices = ITEM_TYPE,
-        default = 'tube,
+        default = 'tube',
         ) 
 
     item_count = models.IntegerField(
-        verbose_name = 'Number of tubes'
+        verbose_name = 'Number of tubes',
         default = 1,
-        help_text = 'Number of tubes, samples, etc being sent for this test/order only. Determines number of labels to print'
+        help_text = 'Number of tubes, samples, etc being sent for this test/order only. Determines number of labels to print',
         ) 
     
     estimated_volume = models.DecimalField(
