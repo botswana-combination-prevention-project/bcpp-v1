@@ -16,6 +16,8 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         Note that ScheduledEntryBucket objects are linked to a subject's appointment 
         for visit_instance = '0'; that is, the first appointment for 
         a timepoint/visit. """
+        
+        entry_category = kwargs.get("entry_category", 'clinic')
 
         registered_subject = kwargs.get("registered_subject")
         if not registered_subject:
@@ -49,6 +51,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
             scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).filter(
                                                 registered_subject = registered_subject, 
                                                 appointment = appt_0,
+                                                entry__entry_category = entry_category,
                                                 ).order_by('entry__entry_order')
         else:
             scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).none()         

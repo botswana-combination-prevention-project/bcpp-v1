@@ -13,7 +13,7 @@ class EntryAdmin(MyModelAdmin):
 
     list_display = ('content_type_map', 'visit_definition', 'entry_order','required', 'entry_category')
     
-    list_filter = ('visit_definition__code','default_entry_status', 'created', 'content_type_map__model',)
+    list_filter = ('entry_category', 'visit_definition__code','default_entry_status', 'created', 'content_type_map__model',)
 
 admin.site.register(Entry, EntryAdmin)
 
