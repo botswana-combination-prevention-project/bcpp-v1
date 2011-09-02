@@ -3,12 +3,13 @@ from django.conf import settings
 from bhp_identifier.classes import Identifier
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.fields import InitialsField
+from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from bhp_registration.models import RegisteredSubject
 from bhp_variables.models import StudySite, StudySpecific
 from lab_panel.models import Panel
 from lab_test_code.models import TestCode
-from bhp_lab_api.choices import PRIORITY
+from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
 
 class BaseRequisitionManager(models.Manager):
 
@@ -32,17 +33,12 @@ class BaseRequisition (MyBasicUuidModel):
         max_length = 25,
         )
 
-    #registered_subject = models.ForeignKey(RegisteredSubject,
-    ##    #editable = False,
-    #   )
+    requisition_datetime =  models.DateTimeField(
+        verbose_name='Requisition Date / Time'
+        )    
     
-    drawn_datetime =  models.DateTimeField()
-    
-    # visit should be limited to those that exist for this patient
-    # visit_definition = models.ForeignKey(VisitDefinition)
-
     protocol = models.CharField(
-        verbose_name = "BHP Protocol Number",
+        verbose_name = "Protocol Number",
         max_length=10,
         null = True,
         blank = True,
@@ -50,10 +46,13 @@ class BaseRequisition (MyBasicUuidModel):
 
     site = models.ForeignKey(StudySite)    
     
+    clinician_initials = InitialsField()
+
     panel = models.ForeignKey(Panel)
     
     # populate this one based on the selected panel at the dashboard
     test_code = models.ManyToManyField(TestCode,
+        verbose_name = 'Additional tests',
         null = True,
         blank = True,
         )
@@ -65,7 +64,49 @@ class BaseRequisition (MyBasicUuidModel):
         default = 'normal',
         )
     
-    clinician_initials = InitialsField()
+    is_drawn = models.CharField(
+        verbose_name = 'Was a specimen drawn?',
+        max_length = 3,
+        choices = YES_NO,
+        default = 'Yes',
+        help_text = 'If No, provide a reason below'
+        )
+        
+    reason_not_drawn = models.CharField(
+        verbose_name = 'If not drawn, please explain',
+        max_length = 25,
+        choices = REASON_NOT_DRAWN,
+        null = True,
+        blank = True,
+        )            
+
+    drawn_datetime =  models.DateTimeField(
+        verbose_name = 'Date / Time Specimen Drawn',
+        null = True,
+        blank = True,
+        help_text = 'If not drawn, leave blank',
+        )
+
+    item_type = models.CharField(
+        verbose_name = 'Collection type'
+        choices = ITEM_TYPE,
+        default = 'tube,
+        ) 
+
+    item_count = models.IntegerField(
+        verbose_name = 'Number of tubes'
+        default = 1,
+        help_text = 'Number of tubes, samples, etc being sent for this test/order only. Determines number of labels to print'
+        ) 
+    
+    estimated_volume = models.DecimalField(
+        verbose_name = 'Estimated volume in mL',
+        max_digits = 7,
+        decimal_places = 1,
+        default = 5.0,
+        help_text = 'If applicable, estimated volume of sample for this test/order. This is the total volume if number of "tubes" above is greater than 1'
+        )
+        
     
     comments = models.TextField(
         max_length=25,
