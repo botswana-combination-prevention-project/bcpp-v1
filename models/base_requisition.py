@@ -8,8 +8,11 @@ from bhp_variables.models import StudySite
 from bhp_registration.models import RegisteredSubject
 from bhp_variables.models import StudySite, StudySpecific
 from lab_panel.models import Panel
+from lab_aliquot_list.models import AliquotType
 from lab_test_code.models import TestCode
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
+from lab_requisition.classes import ClinicRequisitionLabel
+
 
 class BaseRequisitionManager(models.Manager):
 
@@ -47,6 +50,8 @@ class BaseRequisition (MyBasicUuidModel):
     site = models.ForeignKey(StudySite)    
     
     clinician_initials = InitialsField()
+    
+    aliquot_type = models.ForeignKey(AliquotType)
 
     panel = models.ForeignKey(Panel)
     
@@ -94,8 +99,8 @@ class BaseRequisition (MyBasicUuidModel):
         default = 'tube',
         ) 
 
-    item_count = models.IntegerField(
-        verbose_name = 'Number of tubes',
+    item_count_total = models.IntegerField(
+        verbose_name = 'Total Number of tubes',
         default = 1,
         help_text = 'Number of tubes, samples, etc being sent for this test/order only. Determines number of labels to print',
         ) 
@@ -122,17 +127,20 @@ class BaseRequisition (MyBasicUuidModel):
 
     def save(self, *args, **kwargs):
     
-        #self.registered_subject = self.visit.appointment.registered_subject   
+        if not self.requisition_identifier:
+            self.requisition_identifier = self.__class__.objects.get_identifier(site_code=self.site.site_code)
         
-        #if not self.panel:
-        #    self.panel = self.__class__._meta.module_name
         
-        self.requisition_identifier = self.__class__.objects.get_identifier(site_code=self.site.site_code)
-        
+        for cnt in range(self.item_count_total, 0, -1):
+            label = ClinicRequisitionLabel(
+                            item_count = cnt, 
+                            requisition = self,
+                            )
+            label.print_label() 
+                                       
         return super(BaseRequisition, self).save(*args, **kwargs)
 
 
     class Meta:
         abstract = True 
-        
-
+       
