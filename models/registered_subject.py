@@ -6,6 +6,7 @@ from base_subject import BaseSubject
 from bhp_variables.models import StudySpecific
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_common.fields import IsDateEstimatedField
+from bhp_common.choices import YES_NO
 
 class RegisteredSubject(BaseSubject):
 
@@ -48,6 +49,15 @@ class RegisteredSubject(BaseSubject):
         null=True,
         blank=True,
         )    
+    
+    may_store_samples = models.CharField(
+        verbose_name = _("Sample storage"),
+        max_length = 3, 
+        choices = YES_NO,
+        default = '?', 
+        help_text = _("Does the subject agree to have samples stored after the study has ended")
+        )
+
     
     comment = models.TextField(
         verbose_name = 'Comment',
