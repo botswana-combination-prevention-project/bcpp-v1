@@ -7,7 +7,7 @@ class StudySite(MyBasicUuidModel):
     
     site_code = models.CharField(max_length=4)        
     
-    site_name = models.CharField(max_length=35)    
+    site_name = models.CharField(max_length=35)
     
     def __unicode__(self):
         return "%s %s" % (self.site_code, self.site_name)
