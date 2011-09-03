@@ -29,7 +29,7 @@ class AliquotType(MyBasicModel):
     dmis_reference = models.IntegerField()        
     
     def __unicode__(self):
-        return "%s: %s" % ( self.numeric_code, self.name.lower())
+        return "%s %s: %s" % ( self.alpha_code, self.numeric_code, self.name.lower())
 
     class Meta:
         ordering = ["name"]
