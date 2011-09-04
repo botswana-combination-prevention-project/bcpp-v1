@@ -1,11 +1,13 @@
 {% extends "section.html"%}
 
 {% block extra_js %}
+{% comment %}begin - script added from base_dashboard.html {% endcomment %}
 <script type="text/javascript">
     $(document).ready(function(){
         $('.results').html( '<I>Contacting lab for results, please wait...<I>' ).load('{% url lab_api_results_url subject_identifier=subject_identifier %}');
         });
 </script>
+{% comment %}end - script added from base_dashboard.html {% endcomment %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -87,7 +89,10 @@
 
                 <tr name="middle right" ><td>
                 <H3>Laboratory</H3>
+                
+                {% comment %} this is for the lab_ajax_api above {% endcomment %}
                 <span class="results"></span>
+                
                 </td></tr>
         
                 <tr name="bottom right" ><td>
