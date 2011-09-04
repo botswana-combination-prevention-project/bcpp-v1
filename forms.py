@@ -1,0 +1,11 @@
+from django import forms
+
+
+class LocalResultForm(forms.ModelForm):
+
+    def clean(self):
+    
+        cleaned_data = self.cleaned_data 
+    
+        return cleaned_data
+
