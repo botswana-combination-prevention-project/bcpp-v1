@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from bhp_common.models import MyBasicUuidModel
 from lab_result.models import Result
-from lab_clinic_api.utils import PollMySQL
+from bhp_poll_mysql.poll_mysql import PollMySQL
 
 
 class LocalResultManager(models.Manager):
