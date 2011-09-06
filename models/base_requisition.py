@@ -51,7 +51,9 @@ class BaseRequisition (MyBasicUuidModel):
     
     clinician_initials = InitialsField()
     
-    aliquot_type = models.ForeignKey(AliquotType)
+    aliquot_type = models.ForeignKey(AliquotType,
+        default = AliquotType.objects.filter(alpha_code='WB')[0],
+        )
 
     panel = models.ForeignKey(Panel)
     
