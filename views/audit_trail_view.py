@@ -5,6 +5,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from bhp_common.models import MyBasicModel
 from bhp_model_selector.classes import ModelSelector
+from audit_trail.models import AuditComment
 from audit_trail.forms import AuditTrailForm
 
 @login_required
@@ -15,6 +16,13 @@ def audit_trail_view(request, **kwargs):
     section_name = kwargs.get('section_name')
     app_label = kwargs.get('app_label')
     model_name = kwargs.get('model_name')
+    audit_subject_identifier = request.GET.get('audit_subject_identifier', kwargs.get('audit_subject_identifier'))
+    
+    if audit_subject_identifier:
+        audit_comments = AuditComment.objects.filter(audit_subject_identifier=audit_subject_identifier)
+        
+    dashboard_type = request.GET.get('dashboard_type', kwargs.get('dashboard_type'))
+    back_url_name = request.GET.get('back_url_name', kwargs.get('back_url_name')) 
 
     field_labels = []
     field_names = []
@@ -28,7 +36,7 @@ def audit_trail_view(request, **kwargs):
     template = 'audit_trail.html'     
     err_message = ''
     status_message = ''    
-    audit_subject_identifier = None    
+
 
 
     if request.method == 'POST':
@@ -94,6 +102,11 @@ def audit_trail_view(request, **kwargs):
                                     
                 for row in history_rows:
                     this_row = []
+                    #append a comment pk (send comment as first item for convenience of template)
+                    if AuditComment.objects.filter(app_label=app_label, model_name=model_name, audit_id=row.pk, audit_subject_identifier=row._audit_subject_identifier):
+                        this_row.append(AuditComment.objects.get(app_label=app_label, model_name=model_name, audit_id=row.pk, audit_subject_identifier=row._audit_subject_identifier).pk)
+                    else:    
+                        this_row.append('add')                    
                     for field_name in field_names:
                         if not field_name == 'rx':
                             try:
@@ -101,24 +114,33 @@ def audit_trail_view(request, **kwargs):
                                 this_row.append(eval('row.get_'+field_name+'_display()'))                
                             except:
                                 this_row.append(getattr(row, field_name))
-                        
+  
                     display_rows.append(this_row)
             else:
                 status_message = 'There are no entries in the audit trail for this model.'                    
                 
     else:
     
-        form = AuditTrailForm(request.GET)
         app_label = request.GET.get('app_label', kwargs.get('app_label'))
         model_name = request.GET.get('model_name', kwargs.get('model_name'))
         audit_subject_identifier = request.GET.get('audit_subject_identifier', kwargs.get('audit_subject_identifier'))
+
+        form = AuditTrailForm()
+        #raise TypeError()
+        form.fields['app_label'].initial = app_label
+        form.fields['model_name'].initial = model_name
+        form.fields['audit_subject_identifier'].initial = audit_subject_identifier
+        
         model_selector = ModelSelector(app_label, model_name)
         
         # these parameters are ugly, they couple to bhp_dashboard! Same in form and template
-        back_url_name = request.GET.get('back_url_name', kwargs.get('back_url_name'))                                        
         dashboard_type = request.GET.get('dashboard_type', kwargs.get('dashboard_type'))
         visit_code = request.GET.get('visit_code', kwargs.get('visit_code'))
         visit_instance = request.GET.get('visit_instance', kwargs.get('visit_instance'))
+        back_url_name = request.GET.get('back_url_name', kwargs.get('back_url_name'))                                        
+        
+        if not back_url_name and visit_code and visit_instance:
+            back_url_name = 'dashboard_visit_url'
 
                
 
@@ -136,6 +158,7 @@ def audit_trail_view(request, **kwargs):
         'app_label':app_label,
         'model_name': model_name,
         'audit_subject_identifier': audit_subject_identifier,
+        'audit_comments':audit_comments,
         'dashboard_type': dashboard_type,
         'visit_code':visit_code,
         'visit_instance': visit_instance,
