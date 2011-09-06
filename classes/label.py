@@ -1,4 +1,4 @@
-import os, subprocess, platform, tempfile
+import os, sys, subprocess, platform, tempfile
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client
 
 class Label(object):
@@ -100,9 +100,17 @@ class Label(object):
                     self.message = 'Cannot print label. No printers defined'  
                 else:
                     #send lpr command
+                    if sys.version_info.major == 2 and sys.version_info.minor < 7:
+                        subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'],shell=False)
+                    else:
+                        subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
                     try:
                         # note -r will delete the file after printing ...
-                        subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)
+                        subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'],shell=False)
+                        #if sys.version_info.major == 2 and sys.version_info.minor < 7:
+                        #    subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'],shell=False)
+                        #else:
+                        #    subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
                         self.message = "Label printed successfully"
                         self.printer_error = False            
                     except subprocess.CalledProcessError, e:
