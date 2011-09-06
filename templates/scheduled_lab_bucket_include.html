@@ -31,7 +31,7 @@
             {% else %}                
                 <td>{{ f.lab_entry.panel.name|title }}</td>
             {% endif %}  
-            <td>{% get_requisition_value 'requisition_identifier' requisition_model f.lab_entry.panel registered_subject appointment visit_model %}<A href="">re-print</A></td>
+            <td>{% get_requisition_value 'requisition_identifier' requisition_model f.lab_entry.panel registered_subject appointment visit_model %}</td>
             <td>{% get_requisition_value 'drawn_datetime' requisition_model f.lab_entry.panel registered_subject appointment visit_model %}</td>            
             <td><A href="{{ f.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&visit_code={{f.lab_entry.visit_definition.code}}&visit_instance={{ visit_instance}}&panel={{f.lab_entry.panel.pk}}">{{ f.get_entry_status_display }}</A></td>
             <td>{{ f.due_datetime|date:"Y-m-d" }}</td>
@@ -40,7 +40,7 @@
             <td>{% if not f.entry_status == 'NEW' %}{{ f.modified|date:"Y-m-d H:i" }}{% endif %}</td>                            
             <td>{{ f.entry_comment }}</td>        
             <td>{{ f.close_datetime|date:"Y-m-d" }}</td>
-            <td><A href="/audit_trail/?app_label={{ app_label }}&model_name={{ requisition_model }}&audit_subject_identifier={{ subject_identifier }}&visit_code={{f.lab_entry.visit_definition.code}}&visit_instance={{ visit_instance }}&back_url_name=dashboard_visit_url&dashboard_type={{ dashboard_type }}">audit trail</a></td>            
+            <td><A href="/audit_trail/{{ app_label }}/{{ requisition_model }}/{{ subject_identifier }}/?visit_code={{f.lab_entry.visit_definition.code}}&visit_instance={{ visit_instance }}&back_url_name=dashboard_visit_url&dashboard_type={{ dashboard_type }}">audit trail</a></td>            
             <td></td>                                                                                                                                                                  
             </tr>
         {% endfor %}

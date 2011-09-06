@@ -52,7 +52,7 @@ class ModelPk(template.Node):
         pk = None
 
         if self.visit_model.__class__.objects.filter(appointment = self.appointment):
-            self.visit_model_instance = self.visit_model.__class__.objects.get(appointment = self.appointment)
+            self.visit_model_instance = self.visit_model.__class__.objects.filter(appointment = self.appointment)[0]
             
         this_model = self.contenttype.model_class()
         
