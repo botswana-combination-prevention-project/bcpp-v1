@@ -20,6 +20,8 @@ def audit_trail_view(request, **kwargs):
     
     if audit_subject_identifier:
         audit_comments = AuditComment.objects.filter(audit_subject_identifier=audit_subject_identifier)
+    else:
+        audit_comments = AuditComment.objects.none()
         
     dashboard_type = request.GET.get('dashboard_type', kwargs.get('dashboard_type'))
     back_url_name = request.GET.get('back_url_name', kwargs.get('back_url_name')) 
