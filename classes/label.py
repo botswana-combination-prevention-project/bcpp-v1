@@ -1,4 +1,5 @@
 import os, sys, subprocess, platform, tempfile
+from bhp_common.utils import get_ip_address, get_iface_list
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client
 
 class Label(object):
@@ -15,8 +16,6 @@ class Label(object):
         self.label_printer = None
         self.item_count = 1
         self.item_count_total = 1
-        
-        self.client_ip = kwargs.get('client_ip', 'localhost')
         
         # take either the template name or the template object
         template_name = kwargs.get("template_name")
@@ -77,13 +76,26 @@ class Label(object):
     def set_label_printer(self):
 
         # TODO ask cups for default printer
-                
-        client = Client.objects.filter(ip=self.client_ip)
+
+        #get interfaces and then ip
+        client_ips  = []
+        ifaces = get_iface_list()
+        for iface in [i for i in ifaces if 'eth' in i]:
+            client_ips.append(get_ip_address(iface))
+        
+        #search table and take first hit
+        for client_ip in client_ips:
+            if Client.objects.filter(ip=client_ip):
+                client = Client.objects.get(ip=client_ip)
+                break
+        
         if client:
-            self.label_printer = client[0].label_printer
+            self.label_printer = client.label_printer
         else:
             self.label_printer = LabelPrinter.objects.filter(default=True)[0]
             
+        if not self.label_printer:
+            raise ValueError, 'Cannot print label. Label printer has no client with your ip address OR no default label printer defined'
         
     def print_label(self):
 
@@ -100,10 +112,10 @@ class Label(object):
                     self.message = 'Cannot print label. No printers defined'  
                 else:
                     #send lpr command
-                    if sys.version_info.major == 2 and sys.version_info.minor < 7:
-                        subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'],shell=False)
-                    else:
-                        subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
+                    #if sys.version_info.major == 2 and sys.version_info.minor < 7:
+                    #    subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'],shell=False)
+                    #else:
+                    #    subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
                     try:
                         # note -r will delete the file after printing ...
                         subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'],shell=False)
