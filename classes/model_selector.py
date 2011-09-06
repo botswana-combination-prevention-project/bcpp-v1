@@ -60,4 +60,5 @@ class ModelSelector(object):
             else:
                 #self.error_message = 'Model does not exist in application %s.' % self.app_label    
                 self.model_name = None
-                self.error_type = 'model_name'          
+                self.error_type = 'model_name' 
+                         
