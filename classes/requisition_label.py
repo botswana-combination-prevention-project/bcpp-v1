@@ -18,6 +18,13 @@ class RequisitionLabel(Label):
         
         registered_subject = RegisteredSubject.objects.get(subject_identifier = subject_identifier)
         
+        if registered_subject.may_store_samples.lower() == 'Yes':
+            may_store_samples = 'Y'
+        elif registered_subject.may_store_samples.lower() == 'No':            
+            may_store_samples = 'N'        
+        else:
+            may_store_samples = '?'                    
+        
         super(RequisitionLabel, self).__init__(
             template = template,
             requisition_identifier = requisition.requisition_identifier,
@@ -29,7 +36,7 @@ class RequisitionLabel(Label):
             gender = registered_subject.gender,
             dob = registered_subject.dob,
             initials = registered_subject.initials,
-            may_store_samples = registered_subject.may_store_samples,
+            may_store_samples = may_store_samples,
             aliquot_type = requisition.aliquot_type.alpha_code.upper(),
             item_count = item_count,
             item_count_total = requisition.item_count_total,
