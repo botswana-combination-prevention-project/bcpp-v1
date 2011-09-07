@@ -31,14 +31,15 @@ class LabelTestCase(unittest.TestCase):
 ^XZ'
 
         self.test_cups_server_ip = '192.168.1.90'
-        self.test_client_ip = '192.168.1.90'       
+        self.test_client_ip = '192.168.1.90' 
+      
     
         # create a lable template 
         ZplTemplate.objects.filter(name='test_label').delete()
         ZplTemplate.objects.create(
             name = 'test_label',
             template = self.test_template_template,
-            default = True
+            default = False
             )
             
         if LabelPrinter.objects.filter(cups_printer_name='test_printer'):
