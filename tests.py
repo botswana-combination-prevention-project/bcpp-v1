@@ -30,6 +30,9 @@ class LabelTestCase(unittest.TestCase):
 ^FO250,160^ADN,18,10^FDDrawn: %(drawn_datetime)s^FS\n\
 ^XZ'
 
+        self.test_cups_server_ip = '192.168.1.90'
+        self.test_client_ip = '192.168.1.90'        
+    
         # create a lable template 
         ZplTemplate.objects.filter(name='test_label').delete()
         ZplTemplate.objects.create(
@@ -38,28 +41,39 @@ class LabelTestCase(unittest.TestCase):
             default = True
             )
             
-        LabelPrinter.objects.filter(cups_printer_name='test_printer').delete()
+        if LabelPrinter.objects.filter(cups_printer_name='test_printer'):
+            LabelPrinter.objects.filter(cups_printer_name='test_printer').delete()
         label_printer = LabelPrinter(
             cups_printer_name = 'test_printer',
-            cups_server_ip = '192.168.157.2',
+            cups_server_ip = self.test_cups_server_ip,
             default = False,
         )            
         label_printer.save()
 
 
-        LabelPrinter.objects.filter(cups_printer_name='default_test_printer').delete()
+        if LabelPrinter.objects.filter(cups_printer_name='default_test_printer'):
+            LabelPrinter.objects.filter(cups_printer_name='default_test_printer').delete()
         LabelPrinter.objects.create(
             cups_printer_name = 'default_test_printer',
             cups_server_ip = '192.168.157.10',
             default = True,
-        )            
+            )            
         
-        Client.objects.filter(name='test_client').delete()        
+        if Client.objects.filter(name='test_client'):
+            Client.objects.filter(name='test_client').delete()        
         Client.objects.create(
-            ip = '192.168.157.2',
+            ip = self.test_client_ip,
             name = 'test_client',
             label_printer = label_printer,
             )    
+
+        self.zpl_template = ZplTemplate.objects.get(name='test_label')
+        
+        
+        # set label with no values other that template
+        # self.label = Label(template=self.zpl_template, client_ip=self.test_client_ip) 
+           
+        self.label = Label(template=self.zpl_template, client_ip=self.test_client_ip)    
                 
     def testSetTemplate(self):
 
@@ -75,18 +89,37 @@ class LabelTestCase(unittest.TestCase):
             self.assertTrue(error_occured)
         self.assertEqual(self.zpl_template[0].template, self.test_template_template)                              
 
-    def testLabel(self):
+    def testSetClient(self):
+        self.label.set_client()
+        if self.label.client:
+            self.assertEqual(self.label.client.ip, self.test_client_ip)             
+        else:
+            self.assertEqual(self.label.client_ip, self.test_client_ip)                             
 
-        self.zpl_template = ZplTemplate.objects.get(name='test_label')
-
-        # set label with no values other that template
-        self.label = Label(template=self.zpl_template, client_ip='192.168.157.2')    
+    def testSetLabel(self):
         
         self.label.set_label()
-        self.assertEqual(self.label, self.zpl_template[0].template)
-        self.assertEqual(self.label_formatted, self.zpl_template.template)          
+        self.assertEqual(self.label.unformatted_label, self.zpl_template.template)
+        self.assertEqual(self.label.formatted_label, self.zpl_template.template)          
+
+    def testLabelToFile(self):
 
         self.label.label_to_file()
-        self.label.set_label_printer()        
-        self.assertEqual(self.label.label_printer.cups_server_ip, '192.168.157.2')             
+        self.assertRaises(self.label.file_name, None)             
 
+        self.label.set_label_printer()        
+        self.assertEqual(self.label.label_printer.cups_server_ip, self.test_cups_server_ip)  
+    
+    def testLabelPrinter(self):
+
+        self.label.set_label_printer()
+        self.assertRaises(self.label.label_printer, None)             
+            
+    def testCupsPrinterName(self):
+        pass
+                    
+    def testPrintLabel(self):
+
+        self.label.print_label()
+        
+                           

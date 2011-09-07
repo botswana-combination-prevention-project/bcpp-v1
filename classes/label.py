@@ -16,6 +16,9 @@ class Label(object):
         self.label_printer = None
         self.item_count = 1
         self.item_count_total = 1
+        self.client_ip = kwargs.get('client_ip', None)
+        self.client = None        
+        
         
         # take either the template name or the template object
         template_name = kwargs.get("template_name")
@@ -41,7 +44,7 @@ class Label(object):
                 raise ValueError('No valid template or template_name specified and a default template does not exist. Cannot continue.')                
                 
         
-        self.set_client(client_ip=kwargs.get('client_ip', None))
+        self.set_client()
 
         self.set_label(**kwargs)
 
@@ -49,15 +52,15 @@ class Label(object):
 
         """ format label given a dictionary of key/value pairs"""        
 
-        self.label = self.zpl_template.template
+        self.unformatted_label = self.zpl_template.template
         #self.label.format(**kwargs) 
         # try to format
         #self.formatted_label = self.label % kwargs        
         try:
-            self.formatted_label = self.label % kwargs
+            self.formatted_label = self.unformatted_label % kwargs
         except KeyError, e:
             # silently fail, label will print with placeholder which should imply that all the placeholder values were not provided
-            self.formatted_label = self.label
+            self.formatted_label = self.unformatted_label
             #elf.message = Cannot print label. with data, e           
        
     def label_to_file(self):
@@ -75,11 +78,12 @@ class Label(object):
             self.message = 'Cannot print label. Unable to create/open temporary file %s.' % self.file_name
             self.file_name = None            
 
-    def set_client(self, client_ip=None):
+    def set_client(self):
     
         self.client = None
-        if client_ip:
-            client = Client.objects.filter(ip=client_ip)
+        if self.client_ip:
+            if Client.objects.filter(ip=self.client_ip):
+                self.client = Client.objects.filter(ip=self.client_ip)[0]
         else:
             #get interfaces and then ip
             client_ips  = []
@@ -94,8 +98,8 @@ class Label(object):
                 if Client.objects.filter(ip=client_ip):
                     client = Client.objects.filter(ip=client_ip)
                     break
-        if client:
-            self.client = client[0]
+            if client:
+                self.client = client[0]
         
 
     def set_label_printer(self):
@@ -103,7 +107,7 @@ class Label(object):
         # TODO ask cups for default printer
 
         if self.client:
-            self.label_printer = client.label_printer
+            self.label_printer = self.client.label_printer
         else:
             self.label_printer = LabelPrinter.objects.filter(default=True)[0]
             
@@ -114,7 +118,7 @@ class Label(object):
 
         # TODO : handle printing in windows
         
-        if not self.label:
+        if not self.formatted_label:
             raise ValueError, 'Cannot print label. Label has not been defined.'
         else:    
             self.label_to_file()
@@ -124,6 +128,7 @@ class Label(object):
                 if not self.label_printer:
                     self.message = 'Cannot print label. No printers defined'  
                 else:
+                    # raise TypeError(self.label_printer.cups_printer_name)
                     #send lpr command
                     #if sys.version_info.major == 2 and sys.version_info.minor < 7:
                     subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)
