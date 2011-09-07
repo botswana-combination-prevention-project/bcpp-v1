@@ -7,6 +7,15 @@ from bhp_common.utils import formatted_age, round_up
 
 register = template.Library()
 
+@register.simple_tag
+def get_model_name(model):
+    return model._meta.module_name
+
+@register.simple_tag
+def get_app_label(model):
+    return model._meta.app_label
+
+
 @register.filter(name='model_verbose_name')
 def model_verbose_name(contenttype):
     return contenttype.model_class()._meta.verbose_name
