@@ -41,6 +41,8 @@ class Label(object):
                 raise ValueError('No valid template or template_name specified and a default template does not exist. Cannot continue.')                
                 
         
+        self.set_client(client_ip=kwargs.get('client_ip', None))
+
         self.set_label(**kwargs)
 
     def set_label(self, **kwargs ):
@@ -73,23 +75,34 @@ class Label(object):
             self.message = 'Cannot print label. Unable to create/open temporary file %s.' % self.file_name
             self.file_name = None            
 
+    def set_client(self, client_ip=None):
+    
+        self.client = None
+        if client_ip:
+            client = Client.objects.filter(ip=client_ip)
+        else:
+            #get interfaces and then ip
+            client_ips  = []
+
+
+            ifaces = get_iface_list()
+            for iface in [i for i in ifaces if 'eth' in i]:
+                client_ips.append(get_ip_address(iface))
+            
+            #search table and take first hit
+            for client_ip in client_ips:
+                if Client.objects.filter(ip=client_ip):
+                    client = Client.objects.filter(ip=client_ip)
+                    break
+        if client:
+            self.client = client[0]
+        
+
     def set_label_printer(self):
 
         # TODO ask cups for default printer
 
-        #get interfaces and then ip
-        client_ips  = []
-        ifaces = get_iface_list()
-        for iface in [i for i in ifaces if 'eth' in i]:
-            client_ips.append(get_ip_address(iface))
-        
-        #search table and take first hit
-        for client_ip in client_ips:
-            if Client.objects.filter(ip=client_ip):
-                client = Client.objects.get(ip=client_ip)
-                break
-        
-        if client:
+        if self.client:
             self.label_printer = client.label_printer
         else:
             self.label_printer = LabelPrinter.objects.filter(default=True)[0]
