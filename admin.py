@@ -80,15 +80,6 @@ class AppointmentAdmin(MyModelAdmin):
         return super(AppointmentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
 
 
-    #override to disallow subject to be changed
-    def get_readonly_fields(self, request, obj = None):
-
-        self.readonly_fields = super(AppointmentAdmin, self).get_readonly_fields(request, obj)
-
-        if obj: #In edit mode
-            return ('visit_definition',) + self.readonly_fields
-        else:
-            return self.readonly_fields  
 
         
     fields = (
