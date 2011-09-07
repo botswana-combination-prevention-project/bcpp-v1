@@ -2,12 +2,15 @@
 {% load registered_subject_dashboard_tags %}
 {% load requisition_tags %}
 
+        <span name="print_message" id="print_message"></span>
+
         <table>
         <thead>
         <th>#</th>
-        <th>Title</th>
-        <th>Specimen ID</th>
+        <th>Requisition</th>
+        <th>Specimen</th>
         <th>Drawn</th>                        
+        <th>Label</th>                        
         <th>Status</th>
         <th>Due</th>
         <th>Reported</th>
@@ -33,6 +36,9 @@
             {% endif %}  
             <td>{% get_requisition_value 'requisition_identifier' requisition_model f.lab_entry.panel registered_subject appointment visit_model %}</td>
             <td>{% get_requisition_value 'drawn_datetime' requisition_model f.lab_entry.panel registered_subject appointment visit_model %}</td>            
+            <td>
+                <input name="print" id="print" value="Print" type="button" class="default" onclick="Dajaxice.lab_requisition.print_label(Dajax.process, {'app_label':'{% get_app_label requisition_model %}', 'model_name':'{% get_model_name requisition_model %}','requisition_identifier':'{% get_requisition_value 'requisition_identifier' requisition_model f.lab_entry.panel registered_subject appointment visit_model %}'});	;">
+            </td>            
             <td><A href="{{ f.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&visit_code={{f.lab_entry.visit_definition.code}}&visit_instance={{ visit_instance}}&panel={{f.lab_entry.panel.pk}}">{{ f.get_entry_status_display }}</A></td>
             <td>{{ f.due_datetime|date:"Y-m-d" }}</td>
             <td>{{ f.report_datetime|date:"Y-m-d" }}</td>
@@ -41,7 +47,7 @@
             <td>{{ f.entry_comment }}</td>        
             <td>{{ f.close_datetime|date:"Y-m-d" }}</td>
             <td><A href="/audit_trail/{{ app_label }}/{{ requisition_model }}/{{ subject_identifier }}/?visit_code={{f.lab_entry.visit_definition.code}}&visit_instance={{ visit_instance }}&back_url_name=dashboard_visit_url&dashboard_type={{ dashboard_type }}">audit trail</a></td>            
-            <td></td>                                                                                                                                                                  
+                                                                                                                                                                             
             </tr>
         {% endfor %}
         </tbody>
