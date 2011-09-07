@@ -94,6 +94,7 @@ class Label(object):
                 client_ips.append(get_ip_address(iface))
             
             #search table and take first hit
+            client = None
             for client_ip in client_ips:
                 if Client.objects.filter(ip=client_ip):
                     client = Client.objects.filter(ip=client_ip)
