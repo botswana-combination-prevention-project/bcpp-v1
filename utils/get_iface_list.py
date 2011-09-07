@@ -10,7 +10,20 @@ BYTES = 4096          # Simply define the byte size
 # this function will return array of all 'up' interfaces 
 def get_iface_list():
 
-    """ http://coderstalk.blogspot.com/2010/02/create-network-interfaces-list-using.html 
+    """ try accessing /proc/net/dev instead..."""
+    
+    interfaces = []
+
+    for line in open("/proc/net/dev", "r"):
+        data = filter(None,line.split(' '))
+        interfaces.append(data[0].split(':')[0])
+        
+    return interfaces   
+
+
+
+    """ 
+        http://coderstalk.blogspot.com/2010/02/create-network-interfaces-list-using.html 
     
         # now, use the function to get the 'up' interfaces array
         ifaces = get_iface_list()
@@ -19,7 +32,6 @@ def get_iface_list():
         for iface in ifaces:
             print iface
     
-    """
     
     # create the socket object to get the interface list
     sck = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -35,5 +47,6 @@ def get_iface_list():
 
     # return the interfaces as array
     return [namestr[i:i+32].split('\0', 1)[0] for i in range(0, bytelen, 32)]
-
+    
+    """
 
