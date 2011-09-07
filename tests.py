@@ -114,6 +114,7 @@ class LabelTestCase(unittest.TestCase):
     def testLabelPrinter(self):
 
         self.label.set_label_printer()
+        print self.label.label_printer
         self.assertRaises(self.label.label_printer, None)             
             
     def testCupsPrinterName(self):
