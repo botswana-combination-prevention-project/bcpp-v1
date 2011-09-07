@@ -31,7 +31,7 @@ class LabelTestCase(unittest.TestCase):
 ^XZ'
 
         self.test_cups_server_ip = '192.168.1.90'
-        self.test_client_ip = '192.168.1.90'        
+        self.test_client_ip = '192.168.1.90'       
     
         # create a lable template 
         ZplTemplate.objects.filter(name='test_label').delete()
@@ -73,7 +73,8 @@ class LabelTestCase(unittest.TestCase):
         # set label with no values other that template
         # self.label = Label(template=self.zpl_template, client_ip=self.test_client_ip) 
            
-        self.label = Label(template=self.zpl_template, client_ip=self.test_client_ip)    
+        self.label = Label(template=self.zpl_template)    
+
                 
     def testSetTemplate(self):
 
@@ -121,5 +122,12 @@ class LabelTestCase(unittest.TestCase):
     def testPrintLabel(self):
 
         self.label.print_label()
+        
+    def testGetClientIps(self):
+
+        self.label.get_client_ips()
+        print self.label.client_ips
+        print self.label.ifaces
+        self.assertRaises(self.label.client_ips, None)             
         
                            

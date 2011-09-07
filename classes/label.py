@@ -78,30 +78,26 @@ class Label(object):
             self.message = 'Cannot print label. Unable to create/open temporary file %s.' % self.file_name
             self.file_name = None            
 
+    def get_client_ips(self):
+        
+        #get interfaces and then ips
+        self.client_ips  = []
+        self.ifaces = get_iface_list()
+        for iface in [i for i in self.ifaces if 'eth' in i]:
+            self.client_ips.append(get_ip_address(iface))
+
     def set_client(self):
     
         self.client = None
-        if self.client_ip:
-            if Client.objects.filter(ip=self.client_ip):
-                self.client = Client.objects.filter(ip=self.client_ip)[0]
-        else:
-            #get interfaces and then ip
-            client_ips  = []
+        client = None
+        self.get_client_ips()
 
-
-            ifaces = get_iface_list()
-            for iface in [i for i in ifaces if 'eth' in i]:
-                client_ips.append(get_ip_address(iface))
-            
-            #search table and take first hit
-            client = None
-            for client_ip in client_ips:
-                if Client.objects.filter(ip=client_ip):
-                    client = Client.objects.filter(ip=client_ip)
-                    break
-            if client:
-                self.client = client[0]
-        
+        for client_ip in self.client_ips:
+            if Client.objects.filter(ip=client_ip):
+                client = Client.objects.filter(ip=client_ip)
+                break
+        if client:
+            self.client = client[0]
 
     def set_label_printer(self):
 
