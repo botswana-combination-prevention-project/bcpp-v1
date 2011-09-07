@@ -113,17 +113,17 @@ class Label(object):
                 else:
                     #send lpr command
                     #if sys.version_info.major == 2 and sys.version_info.minor < 7:
-                    subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'],shell=False)
+                    subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)
                     #else:
                     #    subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
                     try:
                         # note -r will delete the file after printing ...
                         #subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name],shell=False)
                         #raise TypeError()
-                        if sys.version_info.major == 2 and sys.version_info.minor < 7:
-                            subprocess.check_call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
-                        else:
-                            subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
+                        #if sys.version_info.major == 2 and sys.version_info.minor < 7:
+                        #    subprocess.check_call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
+                        #else:
+                        #    subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
                         self.message = "Label printed successfully"
                         self.printer_error = False            
                     except subprocess.CalledProcessError, e:
