@@ -1,4 +1,4 @@
-from bhp_lab_core.models import Aliquot
+from lab_aliquot.models import Aliquot
 from bhp_variables.models import StudySpecific
 
 def AllocateAliquotIdentifier(user, aliquot_type): 

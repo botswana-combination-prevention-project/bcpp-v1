@@ -1,4 +1,6 @@
-from bhp_lab_core.models import Result, Order
+from lab_order.models import Order
+from lab_result.models import Result
+
 
 def AllocateResultIdentifier(oOrder): 
 
