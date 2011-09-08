@@ -89,27 +89,30 @@ class Label(object):
     def set_client(self):
     
         self.client = None
-        client = None
-        self.get_client_ips()
 
-        for client_ip in self.client_ips:
-            if Client.objects.filter(ip=client_ip):
-                client = Client.objects.filter(ip=client_ip)
-                break
+        #self.get_client_ips()
+        client = None
+        #for client_ip in self.client_ips:
+        #    if Client.objects.filter(ip=client_ip):
+        #        client = Client.objects.filter(ip=client_ip)
+        #        break
+        client = Client.objects.filter(ip=self.client_ip)        
         if client:
             self.client = client[0]
-
+        
     def set_label_printer(self):
 
         # TODO ask cups for default printer
-
+        self.label_printer = None
         if self.client:
             self.label_printer = self.client.label_printer
         else:
-            self.label_printer = LabelPrinter.objects.filter(default=True)[0]
+            if LabelPrinter.objects.filter(default=True):
+                self.label_printer = LabelPrinter.objects.filter(default=True)[0]
+                
             
-        if not self.label_printer:
-            raise ValueError, 'Cannot print label. Label printer has no client with your ip address OR no default label printer defined'
+        #if not self.label_printer:
+        #    raise ValueError, 'Cannot print label. Label printer has no client with your ip address OR no default label printer defined'
         
     def print_label(self):
 
@@ -123,17 +126,21 @@ class Label(object):
                 # get printer
                 self.set_label_printer()
                 if not self.label_printer:
-                    self.message = 'Cannot print label. No printers defined'  
+                    self.message = 'Cannot print label. No printers found for host \'%s\'' % self.client_ip  
+                    self.printer_error = True                    
                 else:
                     # raise TypeError(self.label_printer.cups_printer_name)
                     #send lpr command
                     #if sys.version_info.major == 2 and sys.version_info.minor < 7:
-                    #subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)
+
                     #else:
                     #    subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
                     try:
                         # note -r will delete the file after printing ...
-                        #subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name],shell=False)
+
+                        subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                        
+                        #subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-H', self.label_printer.cups_printer_ip, '-r'], shell=False)                                                #subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name],shell=False)
+
                         #raise TypeError()
                         #if sys.version_info.major == 2 and sys.version_info.minor < 7:
                         #    subprocess.check_call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
