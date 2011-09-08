@@ -24,22 +24,22 @@ class RequisitionLabel(Label):
             may_store_samples = 'N'        
         else:
             may_store_samples = '?'                    
+
+        kwargs['template'] = template
+        kwargs['requisition_identifier'] = requisition.requisition_identifier
+        kwargs['protocol'] = study_specific.protocol_number
+        kwargs['site'] = requisition.site.site_code
+        kwargs['panel']= requisition.panel.name[0:21]
+        kwargs['drawn_datetime'] = requisition.drawn_datetime
+        kwargs['subject_identifier'] = subject_identifier
+        kwargs['gender'] = registered_subject.gender
+        kwargs['dob'] = registered_subject.dob
+        kwargs['initials'] = registered_subject.initials
+        kwargs['may_store_samples'] = may_store_samples
+        kwargs['aliquot_type'] = requisition.aliquot_type.alpha_code.upper()
+        kwargs['item_count'] = item_count
+        kwargs['item_count_total'] = requisition.item_count_total
         
-        super(RequisitionLabel, self).__init__(
-            template = template,
-            requisition_identifier = requisition.requisition_identifier,
-            protocol = study_specific.protocol_number,
-            site = requisition.site.site_code,
-            panel= requisition.panel.name[0:21],
-            drawn_datetime = requisition.drawn_datetime,
-            subject_identifier = subject_identifier,
-            gender = registered_subject.gender,
-            dob = registered_subject.dob,
-            initials = registered_subject.initials,
-            may_store_samples = may_store_samples,
-            aliquot_type = requisition.aliquot_type.alpha_code.upper(),
-            item_count = item_count,
-            item_count_total = requisition.item_count_total,
-            )
+        super(RequisitionLabel, self).__init__(**kwargs)
     
                

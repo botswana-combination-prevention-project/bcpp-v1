@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.db.models import get_model
 from dajax.core import Dajax
@@ -22,14 +23,24 @@ def print_label(request, app_label, model_name, requisition_identifier):
                             )
                 label.print_label() 
                 
-            #print_message = 'Label for specimen %s has been sent to the printer' % requisition_identifier                   
-            print_message = '<ul class="messagelist"><li class="info">%s for specimen %s at %s</li></ul>' % (label.message, requisition_identifier, datetime.today().strftime('%H:%M'))
+            if not label.printer_error:
+                print_message = '%s for specimen %s at %s from host %s' % (label.message, requisition_identifier, datetime.today().strftime('%H:%M'), request.META['REMOTE_ADDR'])
+                li_class = "info"
+            else:
+                print_message = '%s' % (label.message)
+                li_class = "error"
+                
         else:
-            print_message = '<ul class="messagelist"><li class="error">Label did not print, complete the requisition first.</li></ul>'           
+            print_message = 'Label did not print, complete the requisition first.'           
+            li_class = "error"            
     else:            
         print_message = "Label did not print."
+        li_class = "error"            
 
 
-    dajax.assign('#print_message','innerHTML',print_message)
+    rendered = render_to_string('print_message.html', { 'print_message': print_message, 'li_class': li_class })
+
+
+    dajax.assign('#print_message','innerHTML',rendered)
     return dajax.json()
   

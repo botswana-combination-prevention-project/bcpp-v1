@@ -10,6 +10,6 @@ class ClinicRequisitionLabel(RequisitionLabel):
             raise ValueError, 'Requisition requires a zpl_template named \'clinic specimen label\'. Please define a template named \'clinic specimen label\' in model ZplTemplate.'
         else:        
             kwargs['template'] = ZplTemplate.objects.get(name='clinic specimen label')
-            kwargs['reprint'] = 'reprint'        
+            kwargs['reprint'] = 'reprint'
 
         super(ClinicRequisitionLabel, self).__init__(**kwargs)

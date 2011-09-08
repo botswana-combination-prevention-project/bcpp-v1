@@ -130,12 +130,12 @@ class BaseRequisition (MyBasicUuidModel):
         if not self.requisition_identifier:
             self.requisition_identifier = self.__class__.objects.get_identifier(site_code=self.site.site_code)
         
-        for cnt in range(self.item_count_total, 0, -1):
-            label = ClinicRequisitionLabel(
-                            item_count = cnt, 
-                            requisition = self,
-                            )
-            label.print_label() 
+        #for cnt in range(self.item_count_total, 0, -1):
+        #    label = ClinicRequisitionLabel(
+        #                    item_count = cnt, 
+        #                    requisition = self,
+        #                    )
+        #    label.print_label() 
                                        
         return super(BaseRequisition, self).save(*args, **kwargs)
 
