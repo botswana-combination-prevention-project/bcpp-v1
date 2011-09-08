@@ -1,15 +1,5 @@
 {% extends "section.html"%}
 
-{% block extra_js %}
-{% comment %}begin - script added from base_dashboard.html {% endcomment %}
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('.results').html( '<I>Contacting lab for results, please wait...<I>' ).load('{% url lab_api_results_url subject_identifier=subject_identifier %}');
-        });
-</script>
-{% comment %}end - script added from base_dashboard.html {% endcomment %}
-{% endblock %}
-
 {% block breadcrumbs %}
 
     {% load tags %}
@@ -32,6 +22,14 @@
 
 
 {% block clinic_dashboard %}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.results').html( '<I>Contacting lab for results, please wait...<I>' ).load("Dajaxice.lab_clinic_api.update_result_status(Dajax.process,{'subject_identifier':'{{subject_identifier}}'});");
+        });
+</script>
+
+
 
 <table border=1 width=100%>
     <tr>
@@ -89,10 +87,11 @@
 
                 <tr name="middle right" ><td>
                 <H3>Laboratory</H3>
-                
-                {% comment %} this is for the lab_ajax_api above {% endcomment %}
-                <span class="results"></span>
-                
+
+
+                <span name="results" id="results">{{ local_results }}</span>
+                <input name="fetch" id="fetch" value="Update" type="button" onclick="Dajaxice.lab_clinic_api.updating(Dajax.process);Dajaxice.lab_clinic_api.update_result_status(Dajax.process, {'subject_identifier': '{{ subject_identifier }}'});">                
+
                 </td></tr>
         
                 <tr name="bottom right" ><td>
