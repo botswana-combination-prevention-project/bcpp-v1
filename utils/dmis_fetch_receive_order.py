@@ -49,6 +49,7 @@ def fetch_receive_order(process_status, **kwargs):
         )
     import_datetime = obj.import_datetime
     """
+    import_datetime = datetime.today()
     
     if process_status == 'pending':
         has_order_sql = 'null'
