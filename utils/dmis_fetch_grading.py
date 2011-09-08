@@ -2,9 +2,9 @@
 def fetch_grading_from_dmis(**kwargs):
     import datetime
     import pyodbc
-    from bhp_lab_test_code.models import TestCode, TestCodeGroup
-    from bhp_lab_grading.models import GradingList, GradingListItem    
-    from bhp_lab_core.models import DmisImportHistory
+    from lab_test_code.models import TestCode, TestCodeGroup
+    from lab_grading.models import GradingList, GradingListItem    
+
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()

@@ -3,7 +3,9 @@ def fetch_validation_from_dmis(**kwargs):
     import pyodbc 
     from datetime import datetime, time
     from django.db.models import Q
-    from bhp_lab_core.models import TestCode, Result, ResultItem, ResultSource
+    from lab_result.models import Result, ResultSource
+    from lab_result_item.models import ResultItem
+    from lab_test_code.models import TestCode
 
 
     cnxn2 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
@@ -110,7 +112,9 @@ if __name__ == "__main__":
     setup_environ(settings)
     
     import pyodbc, datetime
-    from bhp_lab_core.models import TestCode, Result, ResultItem
+    from lab_result.models import Result, ResultSource
+    from lab_result_item.models import ResultItem
+    from lab_test_code.models import TestCode
 
     print 'fetching lab results validation information from dmis....'
     fetch_validation_from_dmis()

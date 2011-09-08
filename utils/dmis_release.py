@@ -1,7 +1,8 @@
 def release_auto_from_dmis():
     import pyodbc, datetime
     from django.db.models import Avg, Max, Min, Count
-    from bhp_lab_core.models import Result, ResultItem
+    from lab_result.models import Result, ResultSource
+    from lab_result_item.models import ResultItem
    
     # update NT AUTHORITY username to 'auto' for any result_item
     ResultItem.objects.filter(result_item_operator__icontains='AUTHORITY').update(result_item_operator='auto')

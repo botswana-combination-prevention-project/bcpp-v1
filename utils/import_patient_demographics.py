@@ -6,7 +6,7 @@ def import_patient_demographics(csv_filename):
     import csv
     import time
     from datetime import datetime, timedelta
-    from bhp_lab_registration.models import SimpleConsent, Patient
+    from lab_patient.models import SimpleConsent, Patient
     from bhp_research_protocol.models import Protocol, Site
     
     f = open(csv_filename, 'rb')

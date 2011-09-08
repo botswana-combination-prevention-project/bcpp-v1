@@ -5,11 +5,17 @@ import results for orders already in the system
 def fetch_results_from_dmis(**kwargs):
 
     import pyodbc, datetime
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result, ResultSource
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
-    from bhp_lab_core.models import DmisImportHistory, ResultSource
-    from bhp_lab_core.utils import AllocateResultIdentifier
+    from lab_common.utils import AllocateResultIdentifier
     
     #Result.objects.all().delete()
 
@@ -21,12 +27,18 @@ def fetch_results_from_dmis(**kwargs):
 def fetch_or_create_result(**kwargs):
 
     import pyodbc, datetime, re
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result, ResultSource
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
-    from bhp_lab_core.models import DmisImportHistory, ResultSource
-    from bhp_lab_core.utils import AllocateResultIdentifier
-    from bhp_lab_test_code.models import TestCode, TestCodeGroup
+    from lab_common.utils import AllocateResultIdentifier
+    from lab_test_code.models import TestCode, TestCodeGroup
 
     
     oOrder = kwargs.get('order')
@@ -168,7 +180,7 @@ def fetch_or_create_result(**kwargs):
     return None
     
 def fetch_or_create_resultsource( **kwargs ):
-    from bhp_lab_core.models import ResultSource
+    from lab_result.models import ResultSource
     from django.db.models import Avg, Max, Min, Count        
 
     interfaces = ['psm_interface', 'cd4_interface','auto', 'manual_entry', 'direct_import',]
@@ -215,11 +227,17 @@ if __name__ == "__main__":
     setup_environ(settings)
     
     import pyodbc, datetime
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TestCode, AliquotMedium, AliquotType, AliquotCondition, TidPanelMapping, Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result, ResultSource
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
-    from bhp_lab_core.models import DmisImportHistory, ResultSource
-    from bhp_lab_core.utils import AllocateResultIdentifier
+    from lab_common.utils import AllocateResultIdentifier
 
     
     print 'fetching lab results from dmis....'

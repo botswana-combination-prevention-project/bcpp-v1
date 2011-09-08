@@ -13,11 +13,17 @@ def fetch_receive_order(process_status, **kwargs):
     from datetime import datetime, timedelta
     import pyodbc
     from django.db.models import Avg, Max, Min, Count    
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
     
     subject_identifier = kwargs.get('subject_identifier')
     receive_identifier = kwargs.get('receive_identifier')
@@ -30,17 +36,19 @@ def fetch_receive_order(process_status, **kwargs):
     now  = datetime.today()
     
     #get last import_datetime
-    agg = DmisImportHistory.objects.aggregate(Max('import_datetime'),)    
+    #agg = DmisImportHistory.objects.aggregate(Max('import_datetime'),)    
     
-    last_import_datetime = agg['import_datetime__max']
+    #last_import_datetime = agg['import_datetime__max']
     
     last_import_datetime = datetime.today() - timedelta(days=90)
     
+    """
     #insert new record into ImportHistory
     obj = DmisImportHistory.objects.create(
         import_label='fetch_receive'
         )
     import_datetime = obj.import_datetime
+    """
     
     if process_status == 'pending':
         has_order_sql = 'null'
@@ -140,11 +148,17 @@ def fetch_or_create_receive( **kwargs ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
 
     receive_identifier = kwargs.get('receive_identifier').strip(' \t\n\r')
     protocol_identifier = kwargs.get('protocol_identifier').strip(' \t\n\r')
@@ -202,11 +216,17 @@ def fetch_or_create_order( **kwargs ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
 
     order_identifier = kwargs.get('order_identifier')
     oPanel = kwargs.get('panel')
@@ -239,11 +259,17 @@ def fetch_or_create_order( **kwargs ):
 def fetch_or_create_site( site_identifier ):
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
 
     if site_identifier == None or site_identifier == '' or site_identifier == '-9':
         site_identifier = '00'
@@ -274,11 +300,17 @@ def fetch_or_create_protocol( protocol_identifier ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
 
     oProtocol = Protocol.objects.filter(protocol_identifier__iexact=protocol_identifier)
     
@@ -306,11 +338,17 @@ def fetch_or_create_account( account_name ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
 
     oAccount = Account.objects.filter(account_name__iexact=account_name)
     
@@ -333,11 +371,17 @@ def fetch_or_create_patient( **kwargs ):
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
     
     subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
     
@@ -370,11 +414,17 @@ def fetch_or_create_aliquot( **kwargs ):
     import datetime
     import pyodbc
     from django.db.models import Avg, Max, Min, Count    
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium, Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
 
     oReceive = kwargs.get('receive')
     
@@ -456,11 +506,17 @@ def fetch_or_create_aliquotcondition( **kwargs ):
     import datetime
     import pyodbc
     from django.db.models import Avg, Max, Min, Count    
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,AliquotMedium, Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
 
     if AliquotCondition.objects.filter(short_name__exact=kwargs.get('condition')):
         oCondition = AliquotCondition.objects.get(short_name__exact=kwargs.get('condition'))
@@ -493,11 +549,17 @@ if __name__ == "__main__":
 
     import datetime
     import pyodbc
-    from bhp_lab_core.models import Receive, Aliquot, Order, Result, ResultItem, TidPanelMapping
-    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
-    from bhp_lab_registration.models import Patient, Account
+    from lab_receive.models import Receive
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_order.models import Order
+    from lab_result.models import Result
+    from lab_result_item.models import ResultItem
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_patient.models import Patient
+    from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    from bhp_lab_core.models import DmisImportHistory
+
     
     print 'fetching lab receiving and orders from dmis....'
     print 'fetch pending....'

@@ -1,6 +1,6 @@
 import pyodbc
 from bhp_lab_temptables.models import LabSimpleResult, LabError
-from bhp_lab_core.models import TestCode, TestGroup
+from lab_test_code.models import TestCode, TestGroup
 
 
 def fetch_labs_from_dmis():

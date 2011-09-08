@@ -2,16 +2,18 @@
 def fetch_lists_from_dmis(**kwargs):
     import datetime
     import pyodbc
-    from bhp_lab_core.models import AliquotType, AliquotCondition,Panel, PanelGroup
-    from bhp_lab_test_code.models import TestCode, TestCodeGroup, TestCodeReferenceList, TestCodeReferenceListItem
-    from bhp_lab_core.models import DmisImportHistory
-    from bhp_lab_core.utils import fetch_grading_from_dmis
+    from lab_aliquot.models import Aliquot
+    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+    from lab_test_code.models import TestCode, TestCodeGroup, TestCodeReferenceList, TestCodeReferenceListItem
+    from lab_import_dmis.utils import fetch_grading_from_dmis
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
 
     now  = datetime.datetime.today()
     
+    """
     #insert new record into ImportHistory
     obj = DmisImportHistory.objects.create(
         import_label='fetch_lists'
@@ -19,6 +21,7 @@ def fetch_lists_from_dmis(**kwargs):
     import_datetime = obj.import_datetime
     
     import_datetime = obj.import_datetime
+    """
 
     #aliquot types (WB, PL, etc)    
     sql  = 'select id, substring(PID_name,1,50) as name, \
