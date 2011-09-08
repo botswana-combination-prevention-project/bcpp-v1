@@ -6,15 +6,10 @@
 
         {% if result %}
 
-            <table ><tr><td>
-            <h5>{{ result.order.panel }} for {{ result.order.aliquot.receive.patient }} collected {{ result.order.aliquot.receive.datetime_drawn|date:"Y-m-d" }}</h5>
-            
-            {% include "section_result_all.html" %}
-            
-            {% include "section_result_history.html" %}
-            </td></tr></table>
+            {% include "result_report_single.html" %}
             
         {% endif %}
+        
     {% endblock %}
 
 {% endblock%}
