@@ -7,4 +7,4 @@ from randomized_subject import *
 from registered_subject import *
 from base_registered_subject_model import BaseRegisteredSubjectModel
 from base_registration_model import BaseRegistrationModel
-from base_registered_subject_registration_model import BaseRegisteredSubjectRegistrationModel, BaseRegistrationForm
+from base_registered_subject_registration_model import BaseRegisteredSubjectRegistrationModel #, BaseRegistrationForm

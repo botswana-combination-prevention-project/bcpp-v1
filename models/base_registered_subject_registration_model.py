@@ -21,9 +21,9 @@ class BaseRegisteredSubjectRegistrationModel (MyBasicUuidModel):
         abstract=True
 
 
-class BaseRegistrationForm(BaseRegisteredSubjectRegistrationModel):
-    
-    pass
+#class BaseRegistrationForm(BaseRegisteredSubjectRegistrationModel):
+#    
+#    pass
         
         
     
