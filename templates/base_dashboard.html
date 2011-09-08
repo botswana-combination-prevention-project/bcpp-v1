@@ -54,7 +54,7 @@
                 <H3>Scheduled Forms {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H3>
 
                 {% if not visit_code %}                
-                    To see scheduled forms for a visit, select above the appointment with the correct visit report and click 'show entry forms' in the Action column.
+                    To see scheduled forms for a visit, select the appointment with the correct visit report and click 'show entry forms' in the Action column.
                 {% else %}
                     {% if appointment.appt_status != 'in_progress' %}
                         <I> Hint: To edit the forms below, change the selected appointment's status to 'In Progress'</I> 
@@ -64,15 +64,17 @@
                 </td></tr>
 
                 <tr name="bottom left" ><td>
-                <H4>Scheduled Labs {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H4>
+                <H3>Scheduled Labs {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H3>
 
-                {% if visit_code %}                
+                {% if not visit_code %}                
+                    To see scheduled forms for a visit, select the appointment with the correct visit report and click 'show entry forms' in the Action column.
+                {% else %}
                     {% if appointment.appt_status != 'in_progress' %}
                         <I> Hint: To edit the labs below, change the selected appointment's status to 'In Progress'</I> 
                     {% endif %}    
                     {% block scheduled_lab_bucket %}{% endblock scheduled_lab_bucket %}
                 {% endif %}
-                </td></tr>
+               </td></tr>
             </table>
         </td>
 
