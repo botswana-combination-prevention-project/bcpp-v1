@@ -11,7 +11,16 @@ from bhp_poll_mysql.poll_mysql import PollMySQL
 class LocalResultManager(models.Manager):
 
     def connected(self):
-        poll = PollMySQL(settings.DATABASES['lab_api']['HOST'], int(settings.DATABASES['lab_api']['PORT']))
+        host = settings.DATABASES['lab_api']['HOST']
+        if not host:
+            host = 'localhost'
+            
+        port = settings.DATABASES['lab_api']['PORT']
+        if not port:
+            port = '3306'
+            
+        poll = PollMySQL(host, int(port))
+        
         return poll.is_server_active()
     
     def update(self, **kwargs ):
