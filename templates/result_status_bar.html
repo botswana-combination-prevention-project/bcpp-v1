@@ -1,0 +1,18 @@
+{% if results|length %}
+    Require Review
+    <UL>
+    {% for result in results %}
+        <li><A href="">{{ result.panel }}</A><BR>ref: {{ result.order_identifier }}<BR>
+            drawn: {{ result.drawn_datetime|date:"Y-m-d" }}<BR>
+            received: {{ result.receive_datetime|date:"Y-m-d" }}<BR>
+            released: {{ result.release_datetime|date:"Y-m-d" }}<BR>
+            status: {{ result.release_status }}<BR>        
+            reviewed: {{ result.review_status}}
+    {% endfor %}
+    </UL>
+{% else %}
+    <div class="note">
+    No results available
+    </div>
+{% endif %}
+
