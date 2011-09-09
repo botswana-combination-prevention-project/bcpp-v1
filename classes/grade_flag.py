@@ -1,17 +1,34 @@
+from bhp_common.utils import round_up, get_age_in_days
 from lab_flag.classes import Flag
 from lab_grading.models import GradingListItem
 
 
 class GradeFlag(Flag):
 
+    """
+from datetime import datetime, date
+from lab_grading.classes import GradeFlag
+flag = GradeFlag()
+flag
+flag.__dict__
+flag.flag
+flag.flag = 'pp'
+flag.dob=datetime.today()
+flag.gender='F'
+flag.hiv_status='POS'
+test_code = TestCode.objects.get(code='HGB')
+flag.test_code=test_code
+flag.drawn_datetime=datetime.today()
+flag.result_item_value = 9
+flag.flag
+flag.result_item_value = 90
+flag.flag
+    """
+
     def get_flag(self):
 
         grade = {'grade':0}
-        
         self.REFLIST = 'DAIDS_2004'
-
-        hiv_status=kwargs.get('hiv_status')            
-
         #get age in days using the collection date as a reference
         age_in_days = get_age_in_days(self.drawn_datetime, self.dob)
         
