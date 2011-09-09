@@ -53,7 +53,8 @@ class LocalResult(MyBasicUuidModel):
         )
     
     release_datetime = models.DateTimeField(
-        default = datetime(1,1,1)
+        blank = True,
+        null = True
         )
 
     objects = LocalResultManager()
