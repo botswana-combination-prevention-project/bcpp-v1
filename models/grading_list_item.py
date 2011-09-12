@@ -35,4 +35,4 @@ class GradingListItem(BaseReferenceListItem):
     class Meta:
         app_label = 'lab_grading'  
         ordering = ['test_code', 'age_low', 'age_low_unit']   
-        db_table = 'bhp_lab_grading_gradinglistitem'
+        db_table = 'lab_grading_gradinglistitem'

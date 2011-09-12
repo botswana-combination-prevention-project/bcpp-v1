@@ -8,6 +8,6 @@ class GradingList(BaseReferenceList):
 
     class Meta:
         app_label = "lab_grading"
-        db_table = 'bhp_lab_grading_gradinglist'
+        db_table = 'lab_grading_gradinglist'
         ordering = ['name']
 
