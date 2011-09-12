@@ -1,13 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from lab_test_code.models import TestCode
 from lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
 
 
 class BaseResultItem(MyBasicUuidModel):
-
-    test_code = models.ForeignKey(TestCode)
 
     result_item_value = models.CharField(
         verbose_name = 'Result',
@@ -36,6 +33,31 @@ class BaseResultItem(MyBasicUuidModel):
         db_index=True,	    
         )
 
+    grade_range = models.CharField(
+        max_length = 25,
+        null = True,
+        blank = True,
+        )
+
+    grade_flag = models.CharField(
+        max_length = 5,
+        null = True,
+        blank = True,
+        )
+
+    reference_flag = models.CharField(
+        max_length = 5,
+        null = True,
+        blank = True,
+        )  
+    
+    reference_range = models.CharField(
+        max_length = 25,
+        null = True,
+        blank = True,
+        )
+    
+    
     validation_status = models.CharField(
         verbose_name = 'Status',
         default = 'P',
@@ -80,6 +102,7 @@ class BaseResultItem(MyBasicUuidModel):
         blank = True,	    
 	    help_text = ''
   	    )
+
   	    
     class Meta:
         abstract = True       

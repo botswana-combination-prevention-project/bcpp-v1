@@ -1,11 +1,16 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
+from lab_reference.classes import ReferenceFlag
+from lab_grading.classes import GradeFlag
 from lab_result.models import Result, ResultSource
+from lab_test_code.models import TestCode
 from base_result_item import BaseResultItem
 
 
 class ResultItem(BaseResultItem):
+
+    test_code = models.ForeignKey(TestCode)
 
     result = models.ForeignKey(Result)
 
@@ -25,15 +30,40 @@ class ResultItem(BaseResultItem):
 
 
     history = AuditTrail()
-  	    
+    
+    def save(self, *args, **kwargs):
+        
+        reference = ReferenceFlag()
+        reference.dob = self.result.order.aliquot.receive.patient.dob
+        reference.gender = self.result.order.aliquot.receive.patient.gender
+        reference.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
+        reference.test_code = self.test_code
+        self.reference_range = reference.flag['range']
+        self.reference_flag = reference.flag['flag']        
+
+        grade = GradeFlag()
+        grade.dob = self.result.order.aliquot.receive.patient.dob
+        grade.gender = self.result.order.aliquot.receive.patient.gender
+        grade.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
+        grade.test_code = self.test_code
+        self.grade_range = grade.flag['range']
+        self.grade_flag = grade.flag['flag']        
+                
+        return super(BaseResultItem, self).save(*args, **kwargs)
+    
     def __unicode__(self):
   	    return '%s %s' % (unicode(self.result), unicode(self.test_code))
+    
     def get_absolute_url(self):
         return "lab_result_item/resultitem/%s/" % (self.id)
+    
     def get_result_document_url(self):
         return "/laboratory/result/document/%s/" % (self.result.result_identifier)  	
+    
     class Meta:
         app_label = 'lab_result_item'    
         db_table = 'bhp_lab_core_resultitem'            
             
        
+       
+
