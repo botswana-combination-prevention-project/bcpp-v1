@@ -6,7 +6,7 @@ class ReferenceFlag(Flag):
 
     """
 from datetime import datetime, date
-from lab_flag.classes import ReferenceFlag
+from lab_reference.classes import ReferenceFlag
 flag = ReferenceFlag()
 flag
 flag.__dict__
@@ -23,6 +23,11 @@ flag.result_item_value = 90
 flag.flag
     """
 
+    def __init__(self, **kwargs):
+
+        self.REFLIST = 'BHPLAB_NORMAL_RANGES_201005'               
+        super(ReferenceFlag, self).__init__(**kwargs)
+        
     def get_flag(self):
         """ Calculate the reference range comment for a given test_code, value,
         gender and date of birth. Response comment is LO, HI, or PANIC
