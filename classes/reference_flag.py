@@ -42,11 +42,11 @@ flag.flag
                                         gender__icontains=self.gender,
                                         )    
         reference_flag={}
-        reference_flag['low']=''
-        reference_flag['high']=''
-        reference_flag['range']=''
-        reference_flag['panic_low']=''        
-        reference_flag['panic_high']=''        
+        #reference_flag['flag']=''
+        #reference_flag['high']=''
+        #reference_flag['range']=''
+        #reference_flag['panic_low']=''        
+        #reference_flag['panic_high']=''        
         if reference_list_items:
             for reference_list_item in reference_list_items:
                 #find the record for this age 
@@ -54,11 +54,11 @@ flag.flag
                     #see if value is out of range
                     #low? compare with correct decimal places
                     if round_up(self.result_item_value, self.test_code.display_decimal_places) < round_up(reference_list_item.lln, self.test_code.display_decimal_places):
-                        reference_flag['low']='LO'
+                        reference_flag['flag']='LO'
                         reference_flag['range'] = '%s - %s'% (reference_list_item.lln, reference_list_item.uln)                       
                     #high? compare with correct decimal places
                     if round_up(self.result_item_value, self.test_code.display_decimal_places) > round_up(reference_list_item.uln, self.test_code.display_decimal_places):
-                        reference_flag['high']='HI'
+                        reference_flag['flag']='HI'
                         reference_flag['range'] = '%s - %s'% (reference_list_item.lln, reference_list_item.uln)                       
         return reference_flag
         
