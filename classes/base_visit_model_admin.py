@@ -36,9 +36,9 @@ class BaseVisitModelAdmin(MyModelAdmin):
             exclude=['id',],        
             extra_fields=[
                 {'report_datetime': self.visit_model_foreign_key+'__report_datetime'},        
-                {'subject_identifier': self.visit_model_foreign_key+'t__appointment__registered_subject__subject_identifier'},
-                {'gender': self.visit_model_foreign_key+'t__appointment__registered_subject__gender'},
-                {'dob': self.visit_model_foreign_key+'t__appointment__registered_subject__dob'},                                    
+                {'subject_identifier': self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier'},
+                {'gender': self.visit_model_foreign_key+'__appointment__registered_subject__gender'},
+                {'dob': self.visit_model_foreign_key+'__appointment__registered_subject__dob'},                                    
                 {'visit_reason': self.visit_model_foreign_key+'__reason'},
                 {'visit_status': self.visit_model_foreign_key+'__appointment__appt_status'},
                 {'visit': self.visit_model_foreign_key+'__appointment__visit_definition__code'},
