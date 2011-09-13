@@ -4,7 +4,7 @@ from models import RegisteredSubject, RandomizedSubject, SubjectIdentifierAuditT
 
 class RegisteredSubjectAdmin (MyModelAdmin):
 
-    list_filter = ('registration_datetime','gender',)
+
 
     list_display = (
         'subject_identifier',
@@ -25,7 +25,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
     search_fields = ('subject_identifier', 'first_name', 'initials', 'sid')    
 
     
-    list_filter = ('subject_type',)
+    list_filter = ('subject_type', 'registration_datetime','gender',)
     
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
 
