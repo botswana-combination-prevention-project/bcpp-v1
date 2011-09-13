@@ -8,7 +8,8 @@ def get_reference_range(**kwargs):
     ref_range_value = ''
 
     #get age in days using the collection date as a reference
-    age_in_days = get_age_in_days(kwargs.get('datetime_drawn'), kwargs.get('dob'))
+    drawn_datetime = kwargs.get('datetime_drawn', 'drawn_datetime')
+    age_in_days = get_age_in_days(drawn_datetime, kwargs.get('dob'))
 
     #filter for the reference items for this list and this testcode, gender
     oTestCodeReferenceListItem = TestCodeReferenceListItem.objects.filter(

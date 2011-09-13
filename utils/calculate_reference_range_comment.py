@@ -3,8 +3,8 @@ from bhp_common.utils import round_up, get_age_in_days
 from lab_test_code.models import TestCodeReferenceListItem
                     
 def calculate_reference_range_comment(value, oResultItem):
-    """ 
-    calculate the reference range comment for a given test_code, value,
+    
+    """ Calculate the reference range comment for a given test_code, value,
     gender and date of birth. Response comment is LO, HI, or PANIC
     Return a dictionary of comments
     """
