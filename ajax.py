@@ -1,8 +1,10 @@
+from datetime import date, datetime
+from django.db.models import Max
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from dajax.core import Dajax
 from dajaxice.decorators import dajaxice_register
-from lab_clinic_api.models import Lab, Result, ResultItem
+from lab_clinic_api.models import Lab, Result, ResultItem, UpdateLog
 
 @dajaxice_register
 def updating(request):
@@ -24,10 +26,14 @@ def update_result_status(request, subject_identifier):
             results = Result.objects.fetch(subject_identifier=subject_identifier, labs=labs)
             if results:
                 ResultItem.objects.fetch(subject_identifier=subject_identifier, results=results)        
-        
-        context = {'results': labs}
-        
-        rendered = render_to_string('result_status_bar.html', context)
+                
+        aggr = UpdateLog.objects.filter(subject_identifier=subject_identifier).aggregate(Max('update_datetime'))
+        if isinstance(aggr['update_datetime__max'], (date,datetime,)):
+            lab_last_updated = aggr['update_datetime__max']
+        else:    
+            lab_last_updated = None
+                
+        rendered = render_to_string('result_status_bar.html', {'results': labs, 'lab_last_updated': lab_last_updated})
 
         dajax.assign('#x_results','innerHTML',rendered)
     
