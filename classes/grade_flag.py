@@ -43,15 +43,18 @@ flag.flag
 
                 
         #filter for the reference items for this list and this testcode, gender
+        if self.hiv_status:
+            qset = (Q(hiv_status__iexact=self.hiv_status.lower()) | Q(hiv_status__iexact='any'))
+        else:
+            qset = (Q(hiv_status__iexact='any'))                
         grading_list_items = GradingListItem.objects.filter(
-                                        (Q(hiv_status=self.hiv_status) | Q(hiv_status='ANY')),
-                                        grading_list__name__iexact=self.REFLIST,
-                                        test_code=self.test_code, 
-                                        gender__icontains=self.gender,
-                                        )    
-        grade = {'grade':0}        
+                                qset,
+                                grading_list__name__iexact=self.REFLIST,
+                                test_code=self.test_code, 
+                                gender__icontains=self.gender,
+                                )    
+        grade = {}        
         if grading_list_items:
-
             for reference_list_item in grading_list_items:
                 #find the record for this age 
                 if reference_list_item.age_low_days() <= age_in_days and reference_list_item.age_high_days() >= age_in_days:
