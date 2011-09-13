@@ -4,6 +4,8 @@ from models import RegisteredSubject, RandomizedSubject, SubjectIdentifierAuditT
 
 class RegisteredSubjectAdmin (MyModelAdmin):
 
+    list_filter = ('registration_datetime','gender',)
+
     list_display = (
         'subject_identifier',
         'sid',        
