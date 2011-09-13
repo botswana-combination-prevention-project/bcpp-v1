@@ -3,10 +3,11 @@ from django.db import models
 from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from base_subject import BaseSubject
-from bhp_variables.models import StudySpecific
+from bhp_variables.models import StudySpecific, StudySite
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_common.fields import IsDateEstimatedField
 from bhp_common.choices import YES_NO
+
 
 class RegisteredSubject(BaseSubject):
 
@@ -21,6 +22,11 @@ class RegisteredSubject(BaseSubject):
         max_length = 15,
         null = True,
         blank = True,
+        )
+
+    study_site = models.ForeignKey(StudySite,
+        verbose_name = 'Site',
+        help_text=""
         )
         
     relative_identifier = models.CharField(        
