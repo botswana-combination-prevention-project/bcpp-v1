@@ -4,14 +4,27 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from datetime import date, timedelta, datetime
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
-from forms import LocalResultForm, LocalResultItemForm, ReviewForm
-from models import LocalResult, LocalResultItem, Review
+from forms import LabForm, ResultForm, ResultItemForm, ReviewForm
+from models import Lab, Result, ResultItem, Review, UpdateLog
 
 
-# LocalResult
-class LocalResultAdmin(MyModelAdmin): 
+class UpdateLogAdmin(MyModelAdmin): 
+    list_display = ('subject_identifier', 'update_datetime')
+    fields = ('subject_identifier', 'update_datetime')
+    list_filter = ('update_datetime',)
+    search_fields = ('subject_identifier',)
+admin.site.register(UpdateLog, UpdateLogAdmin)
 
-    form = LocalResultForm
+# Lab
+class LabAdmin(MyModelAdmin): 
+
+    form = LabForm
+
+    list_display = ('subject_identifier', 'panel', "drawn_datetime", 'result_identifier',"release_datetime")
+    
+    list_filter = ('drawn_datetime','panel')
+
+    search_fields = ('subject_identifier', 'panel', 'receive_identifier', 'result_identifier')
 
     fields = (
         "subject_identifier",
@@ -35,26 +48,74 @@ class LocalResultAdmin(MyModelAdmin):
 
     """"""
 
-admin.site.register(LocalResult, LocalResultAdmin)
+admin.site.register(Lab, LabAdmin)
 
-# LocalResultItem
-class LocalResultItemAdmin(MyModelAdmin): 
+# Result
+class ResultAdmin(MyModelAdmin): 
 
-    form = LocalResultItemForm
-
+    form = ResultForm
+    
     fields = (
+        #"result_identifier",
+        "result_datetime",
+        "release_status",
+        "release_datetime",
+        "release_username",
+        "comment",
+        "dmis_result_guid",
+        "lab"
+    )
+
+    radio_fields = {
+        "release_status":admin.VERTICAL
+    }
+
+    filter_horizontal = (
+        
+    )
+
+    """lab"""
+
+admin.site.register(Result, ResultAdmin)
+
+# ResultItem
+class ResultItemAdmin(MyModelAdmin): 
+
+    form = ResultItemForm
+
+    list_display = (
         "test_code",
+        "result",
         "result_item_value",
         "result_item_quantifier",
         "result_item_datetime",
         "result_item_operator",
+        "grade_range",
+        "grade_flag",
+        "reference_flag",
+        "reference_range",    
+        )
+    
+    list_filter = ('grade_flag', 'reference_flag',)    
+    search_fields = ('test_code__code',)    
+
+    fields = (
+        "result_item_value",
+        "result_item_quantifier",
+        "result_item_datetime",
+        "result_item_operator",
+        "grade_range",
+        "grade_flag",
+        "reference_flag",
+        "reference_range",
         "validation_status",
         "validation_datetime",
         "validation_username",
         "validation_reference",
         "comment",
         "error_code",
-        "local_result"
+        "test_code",
+        "result"
     )
 
     radio_fields = {
@@ -66,9 +127,9 @@ class LocalResultItemAdmin(MyModelAdmin):
         
     )
 
-    """testcode, localresult"""
+    """testcode, result"""
 
-admin.site.register(LocalResultItem, LocalResultItemAdmin)
+admin.site.register(ResultItem, ResultItemAdmin)
 
 # Review
 class ReviewAdmin(MyModelAdmin): 
@@ -76,7 +137,7 @@ class ReviewAdmin(MyModelAdmin):
     form = ReviewForm
 
     fields = (
-        "local_result",
+        "lab",
         "review_status",
         "review_datetime"
     )
@@ -89,6 +150,6 @@ class ReviewAdmin(MyModelAdmin):
         
     )
 
-    """localresult"""
+    """lab"""
 
 admin.site.register(Review, ReviewAdmin)

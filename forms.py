@@ -1,7 +1,6 @@
 from django import forms
 
-
-class LocalResultForm(forms.ModelForm):
+class LabForm(forms.ModelForm):
 
     def clean(self):
     
@@ -9,7 +8,16 @@ class LocalResultForm(forms.ModelForm):
     
         return cleaned_data
 
-class LocalResultItemForm(forms.ModelForm):
+
+class ResultForm(forms.ModelForm):
+
+    def clean(self):
+    
+        cleaned_data = self.cleaned_data 
+    
+        return cleaned_data
+
+class ResultItemForm(forms.ModelForm):
 
     def clean(self):
     
