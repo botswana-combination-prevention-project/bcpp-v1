@@ -200,7 +200,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         action = kwargs.get('action', 'add_change')
         comment = kwargs.get('comment', '----')
         model_filter_qset = kwargs.get('model_filter_qset')
-        
+
         # have content_type_map and visit_mode_instance, so good to go from here...
         if self.visit_model_instance:
             # get visit definition for visit_model_instance attached to this model
@@ -216,7 +216,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                 visit_definition__code = self.visit_model_instance.appointment.visit_definition.code, 
                 visit_instance = '0')
             # update
-
+            raise TypeError()
             if super(ScheduledEntryBucketManager, self).filter(registered_subject = registered_subject, appointment = appointment, entry = entry):
                 # already in bucket, so get bucket entry
                 s = super(ScheduledEntryBucketManager, self).get(registered_subject = registered_subject, appointment = appointment, entry = entry)
