@@ -49,7 +49,7 @@ class ResultItem(BaseResultItem):
         self.grade_range = grade.flag['range']
         self.grade_flag = grade.flag['flag']        
                 
-        return super(BaseResultItem, self).save(*args, **kwargs)
+        return super(ResultItem, self).save(*args, **kwargs)
     
     def __unicode__(self):
   	    return '%s %s' % (unicode(self.result), unicode(self.test_code))
