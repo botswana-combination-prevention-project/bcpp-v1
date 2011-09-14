@@ -59,6 +59,8 @@ class BaseConsentModel(MyBasicUuidModel):
         max_length=250, 
         blank=True
         )        
+
+
     class Meta:
        abstract = True
        unique_together = (("first_name", "last_name"),)
