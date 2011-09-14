@@ -27,6 +27,8 @@ class RegisteredSubject(BaseSubject):
     study_site = models.ForeignKey(StudySite,
         verbose_name = 'Site',
         help_text=""
+        null = True,
+        blank = True,
         )
         
     relative_identifier = models.CharField(        
