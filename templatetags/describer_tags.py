@@ -4,7 +4,7 @@ register = template.Library()
 
     
 @register.assignment_tag
-def update_cumulative_frequency(this_value, running_total, forloop_counter):
+def update_cumulative_frequency(this_value, running_total, forloop_counter=0):
     if forloop_counter == 1:
         running_total = this_value
     else:    
@@ -19,3 +19,5 @@ def update_total(aggregates):
     for aggregate in aggregates:
         my_total = my_total + aggregate['count']
     return my_total 
+    
+
