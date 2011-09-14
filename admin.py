@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from datetime import date, timedelta, datetime
+from bhp_export_data.actions import export_as_csv_action
 from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from forms import LabForm, ResultForm, ResultItemForm, ReviewForm
 from models import Lab, Result, ResultItem, Review, UpdateLog
@@ -126,6 +127,17 @@ class ResultItemAdmin(MyModelAdmin):
     filter_horizontal = (
         
     )
+    
+    
+    actions = [export_as_csv_action("CSV Export: ...with basic demographics", 
+        fields=[], 
+        exclude=['id',],        
+        extra_fields=[
+            {'subject_identifier': 'result__lab__subject_identifier'},
+            {'gender': 'result__lab__gender'},
+            {'dob': 'result__lab__dob'},                                    
+            ]),]
+    
 
     """testcode, result"""
 
