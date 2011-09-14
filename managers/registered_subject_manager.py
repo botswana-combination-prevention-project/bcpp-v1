@@ -115,6 +115,7 @@ class RegisteredSubjectManager(models.Manager):
                 subject_identifier = subject_identifier['identifier'],
                 first_name = consent_model.first_name,
                 study_site = consent_model.study_site,
+                may_store_samples = consent_model.may_store_samples,
                 initials = consent_model.initials,
                 gender = consent_model.gender,
                 subject_type = subject_type,
