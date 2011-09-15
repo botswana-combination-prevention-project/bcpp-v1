@@ -55,10 +55,10 @@ flag.flag
                     #low? compare with correct decimal places
                     if round_up(self.result_item_value, self.test_code.display_decimal_places) < round_up(reference_list_item.lln, self.test_code.display_decimal_places):
                         reference_flag['flag']='LO'
-                        reference_flag['range'] = '%s - %s'% (reference_list_item.lln, reference_list_item.uln)                       
+                        reference_flag['range'] = '%s - %s'% (round_up(reference_list_item.lln, self.test_code.display_decimal_places), round_up(reference_list_item.uln, self.test_code.display_decimal_places))                       
                     #high? compare with correct decimal places
                     if round_up(self.result_item_value, self.test_code.display_decimal_places) > round_up(reference_list_item.uln, self.test_code.display_decimal_places):
                         reference_flag['flag']='HI'
-                        reference_flag['range'] = '%s - %s'% (reference_list_item.lln, reference_list_item.uln)                       
+                        reference_flag['range'] = '%s - %s'% (round_up(reference_list_item.lln, self.test_code.display_decimal_places), round_up(reference_list_item.uln, self.test_code.display_decimal_places))                       
         return reference_flag
         
