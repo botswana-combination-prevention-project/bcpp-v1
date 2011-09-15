@@ -99,6 +99,14 @@ class LabManager(models.Manager):
                 update_log.save()
             else:
                 UpdateLog.objects.create(subject_identifier=subject_identifier, update_datetime=datetime.today())                
+                
+                
+            # requisition
+            # check that the requisition information in scheduled_lab_entry is up-to-date
+            # update status of requisition based on specimen identifier and panel and drawn-datetime    
+            # create the requisition if it does not exist (e.g specimen identifier was determined at the lab)
+            
+                           
         # return super(LabManager, self).filter(subject_identifier = subject_identifier)                
 
     def fetch(self, **kwargs):

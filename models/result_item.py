@@ -29,7 +29,7 @@ class ResultItem(BaseResultItem):
             reference.drawn_datetime = self.result.lab.drawn_datetime
             reference.test_code = self.test_code
             if reference.flag:
-                self.reference_range = reference.flag['range']
+                self.reference_range = '%s - %s' % (reference.flag['range']['lln'], reference.flag['range']['uln'])
                 self.reference_flag = reference.flag['flag']        
 
             grade = GradeFlag()
@@ -39,7 +39,7 @@ class ResultItem(BaseResultItem):
             grade.drawn_datetime = self.result.lab.drawn_datetime
             grade.test_code = self.test_code
             if grade.flag:
-                self.grade_range = grade.flag['range']
+                self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])
                 self.grade_flag = grade.flag['grade']        
                 
         return super(ResultItem, self).save(*args, **kwargs)
