@@ -38,17 +38,19 @@ class ResultItem(BaseResultItem):
         reference.gender = self.result.order.aliquot.receive.patient.gender
         reference.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
         reference.test_code = self.test_code
-        self.reference_range = reference.flag['range']
-        self.reference_flag = reference.flag['flag']        
+        if reference.flag:
+            self.reference_range = '%s - %s' % (reference.flag['range']['lln'], reference.flag['range']['uln'])
+            self.reference_flag = reference.flag['flag']        
 
         grade = GradeFlag()
         grade.dob = self.result.order.aliquot.receive.patient.dob
         grade.gender = self.result.order.aliquot.receive.patient.gender
         grade.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
         grade.test_code = self.test_code
-        self.grade_range = grade.flag['range']
-        self.grade_flag = grade.flag['flag']        
-                
+        if grade.flag:
+            self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])
+            self.grade_flag = grade.flag['grade']        
+
         return super(ResultItem, self).save(*args, **kwargs)
     
     def __unicode__(self):
