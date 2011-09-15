@@ -63,5 +63,5 @@ flag.flag
                     #see if value is in the of range of a grade
                     if round_up(self.result_item_value, self.test_code.display_decimal_places) >= round_up(reference_list_item.lln, self.test_code.display_decimal_places) and round_up(self.result_item_value, self.test_code.display_decimal_places) <= round_up(reference_list_item.uln, self.test_code.display_decimal_places):
                         grade['grade'] = reference_list_item.grade        
-                        grade['range'] = '%s - %s'% (reference_list_item.lln, reference_list_item.uln)                                               
+                        grade['range'] = '%s - %s'% (round_up(reference_list_item.lln,self.test_code.display_decimal_places), round_up(reference_list_item.uln,self.test_code.display_decimal_places))                                               
         return grade
