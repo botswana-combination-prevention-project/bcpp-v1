@@ -73,7 +73,7 @@ def fetch_receive_order(process_status, **kwargs):
             l.keyopcreated as user_created, \
             l.keyoplastmodified as user_modified, \
             min(l.headerdate) as receive_datetime, \
-            min(l.sample_date_drawn) as datetime_drawn, \
+            min(l.sample_date_drawn) as drawn_datetime, \
             min(l.datecreated) as created, \
             min(l.datelastmodified) as modified, \
             l21.id as order_identifier, \
@@ -105,7 +105,7 @@ def fetch_receive_order(process_status, **kwargs):
             gender = row.gender,
             dob = row.dob,
             initials = row.initials,
-            datetime_drawn = row.datetime_drawn,
+            drawn_datetime = row.drawn_datetime,
             receive_datetime = row.receive_datetime,
             user_created = row.user_created,
             user_modified = row.user_modified,
@@ -169,7 +169,7 @@ def fetch_or_create_receive( **kwargs ):
     initials = kwargs.get('initials')
     gender = kwargs.get('gender')
     dob = kwargs.get('dob')
-    datetime_drawn = kwargs.get('datetime_drawn')
+    drawn_datetime = kwargs.get('drawn_datetime')
     receive_datetime = kwargs.get('receive_datetime')
     user_created = kwargs.get('user_created')
     user_modified = kwargs.get('user_modified')    
@@ -199,7 +199,7 @@ def fetch_or_create_receive( **kwargs ):
             patient = oPatient,
             site=oSite,
             visit=visit,
-            datetime_drawn = datetime_drawn,
+            drawn_datetime = drawn_datetime,
             receive_datetime = receive_datetime,
             user_created = user_created,
             user_modified = user_modified,
