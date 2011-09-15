@@ -35,20 +35,20 @@ class LabManager(models.Manager):
         subject_identifier = kwargs.get('subject_identifier')
 
         if self.connected():
-            qset = Q(order__aliquot__receive__patient__subject_identifier = subject_identifier)
+            qset = Q(order__aliquot__receive__patient__subject_identifier=subject_identifier)
             
-            aggr = super(LabManager, self).filter(subject_identifier = subject_identifier).aggregate(Max('release_datetime'))
+            aggr = super(LabManager, self).filter(subject_identifier=subject_identifier).aggregate(Max('release_datetime'))
             last_release_datetime = aggr['release_datetime__max']
             
-            if last_release_datetime:
-                qset.add(Q(release_datetime__gt = last_release_datetime), Q.AND)
+            #if last_release_datetime:
+            #    qset.add(Q(release_datetime__gt=last_release_datetime), Q.AND)
 
             lis_results = LisResult.objects.using('lab_api').filter(qset)
 
             # check release_datetime and create new or update modified records            
             for lis_result in lis_results:         
-                if super(LabManager, self).filter(subject_identifier = subject_identifier, order_identifier = lis_result.order.order_identifier):
-                    lab = super(LabManager, self).get(subject_identifier = subject_identifier, order_identifier = lis_result.order.order_identifier)
+                if super(LabManager, self).filter(subject_identifier=subject_identifier, order_identifier=lis_result.order.order_identifier):
+                    lab = super(LabManager, self).get(subject_identifier=subject_identifier, order_identifier=lis_result.order.order_identifier)
                     lab.modified = datetime.today()
                     lab.user_created = 'auto'
                     lab.user_modified = 'auto'
@@ -56,16 +56,17 @@ class LabManager(models.Manager):
                     lab.hostname_modified = 'auto'
                     lab.subject_identifier = subject_identifier
                     lab.clinician_initials = lis_result.order.aliquot.receive.clinician_initials
-                    lab.protocol_identifier = lis_result.order.aliquot.receive.protocol
+                    lab.protocol_identifier = lis_result.order.aliquot.receive.protocol.protocol_identifier
                     lab.release_status = lis_result.release_status
-                    lab.panel = lis_result.order.panel
+                    lab.panel = lis_result.order.panel.name
                     lab.aliquot_identifier = lis_result.order.aliquot.aliquot_identifier
-                    lab.condition = lis_result.order.aliquot.condition
+                    lab.condition = lis_result.order.aliquot.condition.name
                     lab.receive_datetime = lis_result.order.aliquot.receive.receive_datetime
                     lab.receive_identifier = lis_result.order.aliquot.receive.receive_identifier
                     lab.order_identifier = lis_result.order.order_identifier                
+                    lab.order_datetime = lis_result.order.order_datetime                                            
                     lab.result_identifier = lis_result.result_identifier                                    
-                    lab.drawn_datetime = lis_result.order.aliquot.receive.datetime_drawn
+                    lab.drawn_datetime = lis_result.order.aliquot.receive.drawn_datetime
                     lab.release_datetime = lis_result.release_datetime
                     lab.save()
             
@@ -79,16 +80,17 @@ class LabManager(models.Manager):
                         hostname_modified = 'auto',
                         subject_identifier = subject_identifier,
                         clinician_initials = lis_result.order.aliquot.receive.clinician_initials,                        
-                        protocol_identifier = lis_result.order.aliquot.receive.protocol,                        
+                        protocol_identifier = lis_result.order.aliquot.receive.protocol.protocol_identifier,                        
                         release_status = lis_result.release_status,
-                        panel = lis_result.order.panel,
+                        panel = lis_result.order.panel.name,
                         aliquot_identifier = lis_result.order.aliquot.aliquot_identifier,
-                        condition = lis_result.order.aliquot.condition,
+                        condition = lis_result.order.aliquot.condition.name,
                         receive_datetime = lis_result.order.aliquot.receive.receive_datetime,
                         receive_identifier = lis_result.order.aliquot.receive.receive_identifier,
                         order_identifier = lis_result.order.order_identifier,  
+                        order_datetime = lis_result.order.order_datetime,                        
                         result_identifier = lis_result.result_identifier,
-                        drawn_datetime = lis_result.order.aliquot.receive.datetime_drawn,
+                        drawn_datetime = lis_result.order.aliquot.receive.drawn_datetime,
                         release_datetime = lis_result.release_datetime,
                         )
             if UpdateLog.objects.filter(subject_identifier=subject_identifier):

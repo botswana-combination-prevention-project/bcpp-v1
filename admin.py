@@ -56,6 +56,15 @@ class ResultAdmin(MyModelAdmin):
 
     form = ResultForm
     
+    search_fields = ("result_identifier", "lab__receive_identifier")
+    
+    list_display = (
+        "result_identifier",
+        "result_datetime",
+        "release_status",
+        "release_datetime",
+    )
+    
     fields = (
         #"result_identifier",
         "result_datetime",
