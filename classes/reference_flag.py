@@ -41,7 +41,7 @@ flag.flag
                                         test_code=self.test_code, 
                                         gender__icontains=self.gender,
                                         )    
-        reference_flag={}
+        reference_flag={'flag':'', 'range':''}
         #reference_flag['flag']=''
         #reference_flag['high']=''
         #reference_flag['range']=''
@@ -52,6 +52,7 @@ flag.flag
                 #find the record for this age 
                 if reference_list_item.age_low_days() <= age_in_days and reference_list_item.age_high_days() >= age_in_days:
                     #see if value is out of range
+                    reference_flag['range'] = '%s - %s'% (round_up(reference_list_item.lln, self.test_code.display_decimal_places), round_up(reference_list_item.uln, self.test_code.display_decimal_places))                                           
                     #low? compare with correct decimal places
                     if round_up(self.result_item_value, self.test_code.display_decimal_places) < round_up(reference_list_item.lln, self.test_code.display_decimal_places):
                         reference_flag['flag']='LO'
