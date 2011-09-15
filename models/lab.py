@@ -11,6 +11,14 @@ class Lab(MyBasicUuidModel):
         max_length = 50,
         )
 
+    protocol_identifier = models.CharField(
+        max_length = 50,
+        )
+        
+    clinician_initials = models.CharField(
+        max_length = 3,
+        )
+
     release_status = models.CharField( 
         max_length = 25, 
         blank = True,
@@ -22,12 +30,12 @@ class Lab(MyBasicUuidModel):
         blank = True,
         null = True
         )
-    aliquot_identifier = models.CharField( 
-        max_length = 25, 
+
+    drawn_datetime = models.DateTimeField(
         blank = True,
         null = True
         )
-    
+
     receive_datetime = models.DateTimeField(
         blank = True,
         null = True
@@ -39,13 +47,24 @@ class Lab(MyBasicUuidModel):
         null = True
         )
 
-    drawn_datetime = models.DateTimeField(
+    aliquot_identifier = models.CharField( 
+        max_length = 25, 
         blank = True,
         null = True
         )
 
+    condition = models.CharField( 
+        max_length = 50, 
+        blank = True,
+        null = True
+        )
+    
     order_identifier = models.CharField( 
         max_length = 25, 
+        blank = True,
+        null = True
+        )
+    order_datetime = models.DateTimeField(
         blank = True,
         null = True
         )

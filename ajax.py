@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from dajax.core import Dajax
 from dajaxice.decorators import dajaxice_register
 from lab_clinic_api.models import Lab, Result, ResultItem, UpdateLog
+from lab_clinic_api.classes import ResultContext
+
 
 @dajaxice_register
 def updating(request):
@@ -51,4 +53,18 @@ for registered_subject in registered_subjects:
             x= ResultItem.objects.fetch(subject_identifier=subject_identifier, results=results)
     print subject_identifier            
 """                    
+  
+  
+@dajaxice_register
+def view_result_ajax(request, result_identifier):
+    
+    dajax = Dajax()
+
+    result_context = ResultContext(result_identifier=result_identifier)
+    
+    rendered = render_to_string('clinic_result_report.html', result_context.context )
+    
+    dajax.assign('#left_table','innerHTML',rendered)
+    
+    return dajax.json()
   

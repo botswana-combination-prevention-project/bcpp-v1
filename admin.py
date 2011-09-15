@@ -98,7 +98,7 @@ class ResultItemAdmin(MyModelAdmin):
         )
     
     list_filter = ('grade_flag', 'reference_flag',)    
-    search_fields = ('test_code__code',)    
+    search_fields = ('test_code__code','result__result_identifier',)    
 
     fields = (
         "result_item_value",
@@ -149,9 +149,9 @@ class ReviewAdmin(MyModelAdmin):
     form = ReviewForm
 
     fields = (
-        "lab",
         "review_status",
-        "review_datetime"
+        "comment",
+        "clinician_initials",
     )
 
     radio_fields = {

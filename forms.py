@@ -1,4 +1,5 @@
 from django import forms
+from lab_clinic_api.models import Review
 
 class LabForm(forms.ModelForm):
 
@@ -42,4 +43,9 @@ class ResultSearchForm(forms.Form):
         help_text="enter all or part of a order number, sample identifier, patient identifier, etc",
         error_messages={'required': 'Please enter a search term.'},
         )
+
+class ReviewForm(forms.ModelForm):
+
+    class Meta:
+        model = Review
 

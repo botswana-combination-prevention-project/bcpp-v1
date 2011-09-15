@@ -55,9 +55,12 @@ class LabManager(models.Manager):
                     lab.hostname_created = 'auto'
                     lab.hostname_modified = 'auto'
                     lab.subject_identifier = subject_identifier
+                    lab.clinician_initials = lis_result.order.aliquot.receive.clinician_initials
+                    lab.protocol_identifier = lis_result.order.aliquot.receive.protocol
                     lab.release_status = lis_result.release_status
                     lab.panel = lis_result.order.panel
                     lab.aliquot_identifier = lis_result.order.aliquot.aliquot_identifier
+                    lab.condition = lis_result.order.aliquot.condition
                     lab.receive_datetime = lis_result.order.aliquot.receive.receive_datetime
                     lab.receive_identifier = lis_result.order.aliquot.receive.receive_identifier
                     lab.order_identifier = lis_result.order.order_identifier                
@@ -75,9 +78,12 @@ class LabManager(models.Manager):
                         hostname_created = 'auto',
                         hostname_modified = 'auto',
                         subject_identifier = subject_identifier,
+                        clinician_initials = lis_result.order.aliquot.receive.clinician_initials,                        
+                        protocol_identifier = lis_result.order.aliquot.receive.protocol,                        
                         release_status = lis_result.release_status,
                         panel = lis_result.order.panel,
                         aliquot_identifier = lis_result.order.aliquot.aliquot_identifier,
+                        condition = lis_result.order.aliquot.condition,
                         receive_datetime = lis_result.order.aliquot.receive.receive_datetime,
                         receive_identifier = lis_result.order.aliquot.receive.receive_identifier,
                         order_identifier = lis_result.order.order_identifier,  
