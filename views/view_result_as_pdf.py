@@ -13,7 +13,7 @@ from django.template import Context
 from django import http
 from lab_result.models import Result
 from lab_result_item.models import ResultItem
-
+from lab_result_report.classes import ResultContext
 
 
 @login_required
@@ -45,25 +45,17 @@ def view_result_as_pdf(request, **kwargs):
         else:
         
             total_page_number = 2
+
+    if result_identifier:
+        result_context = ResultContext(result_identifier)
+        context = result_context.context
+    else:
+        context = {}
     
-    payload = {
-        'pagesize': 'A4',
-        'total_page_number':total_page_number,
-        'result': result,
-        'action':"print",
-        'receive': result.order.aliquot.receive,
-        'order': result.order,
-        'aliquot': result.order.aliquot,
-        'result_items': items,
-        'section_name': section_name,
-        'result_include_file': "detail.html",
-        'receiving_include_file':"receiving.html",
-        'orders_include_file': "orders.html",
-        'result_items_include_file': "result_items.html",
-        'top_result_include_file': "result_include.html",
-    }
-    
-    file_data = render_to_string(template, payload, RequestContext(request))
+    context['pagesize'] = 'A4',
+    context['total_page_number'] = total_page_number
+    context['action'] = "print"            
+    file_data = render_to_string(template, context, RequestContext(request))
     myfile = StringIO.StringIO()
     pisa.CreatePDF(file_data, myfile)
     myfile.seek(0)
@@ -131,21 +123,15 @@ def print_result_as_pdf(result_identifier,template):
         
                 total_page_number = 2
         
-        payload = {
-            'pagesize': 'A4',
-            'total_page_number':total_page_number,
-            'result': result,
-            'receive': result.order.aliquot.receive,
-            'order': result.order,
-            'aliquot': result.order.aliquot,
-            'result_items': items,
-            'section_name': section_name,
-            'result_include_file': "detail.html",
-            'receiving_include_file':"receiving.html",
-            'orders_include_file': "orders.html",
-            'result_items_include_file': "result_items.html",
-            'top_result_include_file': "result_include.html",
-        }
+        if result_identifier:
+            result_context = ResultContext(result_identifier)
+            context = result_context.context
+        else:
+            context = {}
+        
+        context['pagesize'] = 'A4',
+        context['total_page_number'] = total_page_number
+        context['action'] = "print"            
         
         file_data = render_to_string(template, payload,)
         myfile = StringIO.StringIO()

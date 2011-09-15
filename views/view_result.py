@@ -9,7 +9,7 @@ from lab_result.models import Result
 from lab_result_item.models import ResultItem
 from lab_result_report.forms import ResultSearchForm
 from laboratory.classes import get_my_limit_queryset
-
+from lab_result_report.classes import ResultContext
 
 @login_required
 def view_result(request, **kwargs):
@@ -25,86 +25,13 @@ def view_result(request, **kwargs):
         result = Result.objects.get(result_identifier__exact=result_identifier)
         result_items = ResultItem.objects.filter(result=result)
         
-        context = {
-        'result': result,
-        'protocol_identifier': result.order.aliquot.receive.protocol.protocol_identifier
-        'subject_identifier': result.order.aliquot.receive.patient.subject_identifier,
-        'dob': result.order.aliquot.receive.patient.dob,
-        'is_dob_estimated': result.order.aliquot.receive.patient.is_dob_estimated,
-        'gender': result.order.aliquot.receive.patient.gender,
-        'initials': result.order.aliquot.receive.patient.initials,
-        'site_identifier':result.order.aliquot.receive.site.site_identifier,
-        #'clinicians_initials': result.order.aliquot.receive.patient.initials,        
-        'drawn_datetime': result.order.aliquot.receive.datetime_drawn,
-        'panel_name': result.order.panel.name,
-        'receive': result.order.aliquot.receive,
-        'order': result.order,
-        'aliquot': result.order.aliquot,
-        'result_items': result_items,
-        'action':"view",        
-        'section_name': section_name,
-        'search_name': search_name,        
-        'result_include_file': "detail.html",
-        'receiving_include_file':"receiving.html",
-        'orders_include_file': "orders.html",
-        'result_items_include_file': "result_items.html",
-        'top_result_include_file': "result_include.html",
-        }
+        result_context = ResultContext(result_identifier)
         
         return render_to_response(template, 
-            context, 
+            result_context.context, 
             context_instance=RequestContext(request)
             )  
             
-@login_required
-def xxxview_result(request, **kwargs):
-
-    section_name = kwargs.get('section_name')
-    search_name = "result"
-    result_identifier = kwargs.get('result_identifier')
-    limit = 20
-    template = 'result_report.html'
-                  
-    if result_identifier is not None:
-        result = get_object_or_404(Result, result_identifier=result_identifier)
-        items = ResultItem.objects.filter(result=result)
-        
-        payload = {
-        'result': result,
-        'receive': result.order.aliquot.receive,
-        'order': result.order,
-        'aliquot': result.order.aliquot,
-        'result_items': items,
-        'section_name': section_name,
-        'result_include_file': "detail.html",
-        'receiving_include_file':"receiving.html",
-        'orders_include_file': "orders.html",
-        'result_items_include_file': "result_items.html",
-        'top_result_include_file': "result_include.html",
-        }
-        
-        return render_to_response(template, payload, context_instance=RequestContext(request))   
-    
-            
-    #raise TypeError(form)    
-    paginator = Paginator(search_results, 150)                                    
-    try:
-        page = int(request.GET.get('page', '1'))
-    except ValueError:
-        page = 1
-    try:
-        search_results = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        search_results = paginator.page(paginator.num_pages)              
-   
-        
-    return render_to_response(template, { 
-        'section_name': section_name, 
-        'report': 'Recent Results',
-        'search_results': search_results,
-        'report_name': kwargs.get('report_name'),  
-        'top_result_include_file': "result_include.html",       
-        }, context_instance=RequestContext(request))
         
 def render_search(**kwargs):
     return Result.objects.filter(result_identifier=kwargs['search_term'])
