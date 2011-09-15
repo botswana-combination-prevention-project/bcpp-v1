@@ -20,6 +20,11 @@ def get_app_label(model):
 def model_verbose_name(contenttype):
     return contenttype.model_class()._meta.verbose_name
 
+@register.filter(name='add_nbsp')
+def add_nbsp(value):
+    if value:
+        return value.replace(' ', '&nbsp;')
+    return ''    
     
 @register.filter(name='admin_url_from_contenttype')
 def admin_url_from_contenttype(contenttype):
