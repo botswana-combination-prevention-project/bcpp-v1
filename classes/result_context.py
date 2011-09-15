@@ -16,7 +16,7 @@ class ContextDescriptor(object):
         self.value = {
             'last_updated': instance.result.modified,
             'result': instance.result,
-            'protocol_identifier': instance.result.order.aliquot.receive.protocol.protocol_identifier
+            'protocol_identifier': instance.result.order.aliquot.receive.protocol.protocol_identifier,
             'subject_identifier': instance.result.order.aliquot.receive.patient.subject_identifier,
             'dob': instance.result.order.aliquot.receive.patient.dob,
             'is_dob_estimated': instance.result.order.aliquot.receive.patient.is_dob_estimated,
