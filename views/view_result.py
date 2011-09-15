@@ -22,15 +22,25 @@ def view_result(request, **kwargs):
     template = 'result_report.html'
                   
     if result_identifier is not None:
-        oResult = Result.objects.get(result_identifier__exact=result_identifier)
-        oResultItems = ResultItem.objects.filter(result=oResult)
+        result = Result.objects.get(result_identifier__exact=result_identifier)
+        result_items = ResultItem.objects.filter(result=result)
         
         context = {
-        'result': oResult,
-        'receive': oResult.order.aliquot.receive,
-        'order': oResult.order,
-        'aliquot': oResult.order.aliquot,
-        'result_items': oResultItems,
+        'result': result,
+        'protocol_identifier': result.order.aliquot.receive.protocol.protocol_identifier
+        'subject_identifier': result.order.aliquot.receive.patient.subject_identifier,
+        'dob': result.order.aliquot.receive.patient.dob,
+        'is_dob_estimated': result.order.aliquot.receive.patient.is_dob_estimated,
+        'gender': result.order.aliquot.receive.patient.gender,
+        'initials': result.order.aliquot.receive.patient.initials,
+        'site_identifier':result.order.aliquot.receive.site.site_identifier,
+        #'clinicians_initials': result.order.aliquot.receive.patient.initials,        
+        'drawn_datetime': result.order.aliquot.receive.datetime_drawn,
+        'panel_name': result.order.panel.name,
+        'receive': result.order.aliquot.receive,
+        'order': result.order,
+        'aliquot': result.order.aliquot,
+        'result_items': result_items,
         'action':"view",        
         'section_name': section_name,
         'search_name': search_name,        

@@ -12,13 +12,13 @@
 </thead>
 <tbody>
   <tr class="{% cycle 'row2' 'row1' %}">
-     <td colspan="2"><a href="/admin{{ result.order.aliquot.receive.patient.get_absolute_url }}?return_object=result&object_id={{result.pk}}">{{ result.order.aliquot.receive.patient.subject_identifier }}&nbsp;({{ result.order.aliquot.receive.patient.initials|upper }})</A></td>
-     <td>{{ result.order.aliquot.receive.protocol }}</td>
-     <td colspan="3">{{ result.order.aliquot.receive.site.site_identifier|result_clinic_name:result.order.aliquot.receive.protocol.protocol_identifier }}</td>
-     <td>{{ result.order.aliquot.receive.clinician_initials|upper }}</td>
-     <td>{{ result.order.aliquot.receive.patient.gender|gender }}</td>
-     <td>{{ result.order.aliquot.receive.patient.dob|dob_or_dob_estimated:result.order.aliquot.receive.patient.is_dob_estimated }}</td>
-     <td>{{ result.order.aliquot.receive.patient.dob|result_age:result.order.aliquot.receive.datetime_drawn }}</td>                                                     
+     <td colspan="2">{{ subject_identifier }}&nbsp;({{ initials|upper }})</td>
+     <td>{{ protocol_identifier }}</td>
+     <td colspan="3">{{ site_identifier|result_clinic_name:protocol_identifier }}</td>
+     <td>{{ clinician_initials|upper }}</td>
+     <td>{{ gender|gender }}</td>
+     <td>{{ dob|dob_or_dob_estimated:is_dob_estimated }}</td>
+     <td>{{ dob|result_age:drawn_datetime }}</td>                                                     
     </tr>                           
 </tbody>
 </table>

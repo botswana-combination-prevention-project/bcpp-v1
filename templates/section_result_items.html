@@ -2,9 +2,8 @@
 {% load result_tags %}
 {% load reference_tags %}
 {% load grading_tags %}
-<table width="700" cellspacing="0" cellpadding="0"><tr><td><div align="right">{% if action == "view" %}<A href="/admin/lab_result_item/resultitem/add/?result={{ result.pk  }}">add result item</A>{% else %}&nbsp;{% endif %}</td></tr></table>
 <div class="results">
-  <table width="700" cellspacing="0" cellpadding="2" id="result_list" border='1'>
+  <table width="100%" cellspacing="0" cellpadding="2" id="result_list" border='1'>
     <thead>
     <th colspan="2">Test</th>
     <th>Result</th>
@@ -16,24 +15,31 @@
     <th>Comment</th>
     </thead>
     <tbody>
-    {% for item in result_items %}
-      <tr class="{% cycle 'row2' 'row1' %}">
-        <td colspan="2"><A href="/admin/{{ item.get_absolute_url }}">{{ item.test_code.code }}</A>:&nbsp;{{ item.test_code }} </td> 
-        <td>{{ item.result_item_quantifier|quantifier }}&nbsp;{{ item.result_item_value|roundup:item.test_code.display_decimal_places|hide_not_final:item.validation_status }}</td>
-        <td>{{ item.test_code.units }}</td>
-        <td>{{ item.test_code|lln:item|roundup:item.test_code.display_decimal_places }}&nbsp;-&nbsp;{{ item.test_code|uln:item|roundup:item.test_code.display_decimal_places }}
-            {{ item.test_code|grading_limit:item }}
-        </td>
-        <td>
-            {{ item.result_item_value|reference_range_flag:item}}
-            {{ item.result_item_value|grade_flag:item}}&nbsp;
-            {{ item.validation_status|status_flag }}
-        </td>
-        <td>{{ item.result_item_datetime|date:"Y-m-d H:i" }}&nbsp;{{ item.result_item_operator|user_initials }}</td>                
-        <td>{{ item.validation_datetime|date:"Y-m-d H:i"|filter_validation_by_status:item.validation_status }}&nbsp;{{ item.validation_username|user_initials }}</td>                
-        <td>{{ item.comment }}</td>     
-      </tr>
-     {% endfor %}      
+    
+    {% if result_items %}
+        {% for item in result_items %}
+          <tr class="{% cycle 'row2' 'row1' %}">
+            <td colspan="2">{{ item.test_code.code }}:&nbsp;{{ item.test_code }} </td> 
+            <td>{{ item.result_item_quantifier|quantifier }}&nbsp;{{ item.result_item_value|roundup:item.test_code.display_decimal_places|hide_not_final:item.validation_status }}</td>
+            <td>{{ item.test_code.units }}</td>
+            <td>{% if item.reference_range %}{{ item.reference_range }}{% else %}{%endif%}
+                {% if item.grade_range %}{% if item.reference_range %}<BR>{% endif %}{{ item.grade_range }}{% else %}{%endif%}
+            </td>
+            <td>
+                {% if item.reference_flag%}{{ item.reference_flag }}{% else %}{%endif%}
+                {% if item.grade_flag%}G{{ item.grade_flag }}{% else %}{% endif %}&nbsp;
+                {{ item.validation_status|status_flag }}
+            </td>
+            <td>{{ item.result_item_datetime|date:"Y-m-d H:i" }}&nbsp;{{ item.result_item_operator|user_initials }}</td>                
+            <td>{{ item.validation_datetime|date:"Y-m-d H:i"|filter_validation_by_status:item.validation_status }}&nbsp;{{ item.validation_username|user_initials }}</td>                
+            <td>{{ item.comment }}</td>     
+          </tr>
+         {% endfor %}      
+    {% else %}         
+        <tr class="{% cycle 'row2' 'row1' %}">
+            <td colspan="9">No result items to show</td>
+        </tr>    
+    {% endif %}
   </tbody>
   </table>
   </div>

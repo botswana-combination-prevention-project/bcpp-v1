@@ -10,11 +10,11 @@
 </thead>
 <tbody>
   <tr class="{% cycle 'row2' 'row1' %}">
-     <td>{{ result.order.aliquot.receive.visit }}</td>             
-     <td>{{ result.order.aliquot.receive.datetime_drawn|date:"Y-m-d H:i" }}</td>             
-     <td><A href="/admin{{ result.order.aliquot.receive.get_absolute_url }}?return_object=result&object_id={{result.pk}}">{{ result.order.aliquot.receive.receive_identifier }}</A></td>
-     <td>{{ result.order.aliquot.receive.receive_datetime|date:"Y-m-d" }}</td>
-     <td>{{ result.order.aliquot.condition }}</td>
+     <td>{{ visit }}</td>             
+     <td>{{ drawn_datetime|date:"Y-m-d H:i" }}</td>             
+     <td>{{ receive_identifier }}</A></td>
+     <td>{{ receive_datetime|date:"Y-m-d" }}</td>
+     <td>{{ condition }}</td>
     </tr>                           
 </tbody>
 </table>

@@ -11,10 +11,10 @@
 </thead>
 <tbody>
 <tr>
-     <td colspan="2">{{ result.order.aliquot.aliquot_identifier }}</td>                    
-     <td><A href="/admin{{result.order.get_absolute_url }}">{{ result.order.order_identifier }}</A></td>
-	 <td>{{ result.order.order_datetime|date:"Y-m-d" }}</td>
-     <td><A href="/admin{{result.get_absolute_url }}">{{ result.result_identifier }}</a></td>
+     <td colspan="2">{{ aliquot_identifier }}</td>                    
+     <td>{{ order_identifier }}</td>
+	 <td>{{ order_datetime|date:"Y-m-d" }}</td>
+     <td>{{ result.result_identifier }}</td>
      <td>{{ result.result_datetime|date:"Y-m-d H:i" }}</td>
      <td>{{ result.release_datetime|date:"Y-m-d H:i" }} {{result.release_username|user_initials }}&nbsp; {{ result.release_status|lower }}</td>                            
     </tr>
