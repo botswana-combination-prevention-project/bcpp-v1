@@ -216,7 +216,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                 visit_definition__code = self.visit_model_instance.appointment.visit_definition.code, 
                 visit_instance = '0')
             # update
-            raise TypeError()
+
             if super(ScheduledEntryBucketManager, self).filter(registered_subject = registered_subject, appointment = appointment, entry = entry):
                 # already in bucket, so get bucket entry
                 s = super(ScheduledEntryBucketManager, self).get(registered_subject = registered_subject, appointment = appointment, entry = entry)
