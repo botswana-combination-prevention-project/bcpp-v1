@@ -45,7 +45,7 @@ class ReceiveAdmin(AutocompleteAdmin, MyModelAdmin):
                 pass
         return result        
             
-    list_display = ('patient', 'datetime_drawn', 'receive_datetime')        
+    list_display = ('patient', 'drawn_datetime', 'receive_datetime')        
     
     #inlines = [AliquotInlineAdmin]
 

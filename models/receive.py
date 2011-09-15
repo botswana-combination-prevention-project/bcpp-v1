@@ -27,7 +27,7 @@ class Receive (MyBasicUuidModel):
    
     patient = models.ForeignKey(Patient)
 
-    datetime_drawn = models.DateTimeField("Date and time drawn",
+    drawn_datetime = models.DateTimeField("Date and time drawn",
         validators=[
             datetime_not_future,],
         db_index=True,                    
