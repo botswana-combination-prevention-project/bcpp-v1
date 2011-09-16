@@ -178,6 +178,11 @@ REFUSAL_STATUS = (
     ('NOT_REFUSED','No longer refusing'),    
 )    
 
+SEVERITY_LEVEL = (
+    ('mild', 'Mild'),
+    ('moderate', 'Moderate'),
+    ('severe', 'Severe'),
+)    
 
 SEXUAL_DEBUT = (
     ('<=14','14 or under'),
