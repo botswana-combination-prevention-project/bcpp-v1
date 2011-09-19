@@ -31,14 +31,6 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
         else:
             pass            
                                 
-        # visit_model_instance_field is required to update Scheduled(Entry/Lab)Bucket
-        if not hasattr(self, 'visit_model_instance_field'): 
-            raise AttributeError, '%s attribute \'visit_model_instance_field\' is required but has not been defined. ' % self                           
-        elif not self.visit_model_instance_field:
-            raise ValueError, '%s attribute \'visit_model_instance_field\' cannot be None.' % self    
-        else:
-            pass
-
         # requisition_model is required to update ScheduledLabEntryBucket, but if not defined will pass
         if hasattr(self, 'requisition_model'):
             from lab_requisition.models import BaseRequisition
