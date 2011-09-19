@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import ForeignKey, get_model
+from django.db.models import ForeignKey, get_model, Q
 from django.db.models.base import ModelBase
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.models import Entry
@@ -74,8 +74,6 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
                 ScheduledEntryBucket.objects.add_for_visit(
                     visit_model_instance = obj,
-                    visit_model_instance_field = 'visit',                
-                    qset = Q(visit=obj),
                     )                
                     
                 return super(VisitAdmin, self).save_model(request, obj, form, change)                                                
@@ -85,12 +83,6 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         """
 
         visit_model_instance = kwargs.get('visit_model_instance')
-        visit_model_instance_field = kwargs.get('visit_model_instance_field')
-        qset = kwargs.get('qset')                
-        
-        # scheduled forms have a foreign key to a visit_model_instance
-        # qset, in this case, is a filter on the visit_model_instance for each entry model
-        #   for example for entry model maternal_arv_preg qset = Q(maternal_visit=obj) where obj was current model instance (obj) in save_model in admin.py
 
         # confirm visit_model_instance has a "appointment" field/model attribute
         if 'appointment' not in [f.name for f in visit_model_instance._meta.fields if f.name=='appointment']:
@@ -118,9 +110,14 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
                 # check if entry.entry_form.model has been keyed for this registered_subject, timepoint
                 # if so, set report date and status accordingly
+
+                # scheduled forms have a foreign key to a visit_model_instance
                 # model must have field of value visit_model_instance_field, otherwise ignore
+                visit_model_instance_field = [fk for fk in [f for f in entry.content_type_map.model_class()._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model_instance._meta.module_name][0].name                        
                 if visit_model_instance_field in [f.name for f in entry.content_type_map.model_class()._meta.fields]:
-                
+
+                    qset = Q(**{visit_model_instance_field:visit_model_instance})
+
                     if not super(ScheduledEntryBucketManager, self).filter(
                                     registered_subject = registered_subject, 
                                     appointment = visit_model_instance.appointment, 
@@ -136,9 +133,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                                 )
                 
                     if entry.content_type_map.model_class().objects.filter(qset):
-                        #entry_model = entry.content_type_map.model_class().objects.get(qset)
                         report_datetime = visit_model_instance.report_datetime
-
                         # add to bucket, if not already added, or update
                         if super(ScheduledEntryBucketManager, self).filter(
                                     registered_subject = registered_subject, 
