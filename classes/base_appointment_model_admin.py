@@ -2,19 +2,78 @@ from django.db.models import Q, ForeignKey
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
+from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_appointment.models import Appointment
+
 
 class BaseAppointmentModelAdmin(MyModelAdmin):
 
-    """ModelAdmin subclass for models with a ForeignKey to 'appointment'. """ 
+    """ModelAdmin subclass for models with a ForeignKey to 'appointment', such as your visit model(s). 
+    
+    In the child ModelAdmin class set the following attributes, for example
+
+        visit_model_foreign_key = 'maternal_visit'
+        dashboard_type = 'maternal'    
+        
+    if you are tracking labs, also include a model that inherets from lab_requisition.models.BaseRequisition, e.g.:
+    
+        requisition_model = MaternalRequisition            
+
+    """ 
 
     def __init__(self, *args, **kwargs):
         
+        # dashboard_type is required to reverse url back to dashboard
+        if not hasattr(self, 'dashboard_type'): 
+            raise AttributeError, '%s attribute \'dashboard_type\' is required but has not been defined.' % self               
+        elif not self.dashboard_type:
+            raise ValueError, '%s attribute \'dashboard_type\' cannot be None. ' % self    
+        else:
+            pass            
+                                
+        # visit_model_instance_field is required to update Scheduled(Entry/Lab)Bucket
+        if not hasattr(self, 'visit_model_instance_field'): 
+            raise AttributeError, '%s attribute \'visit_model_instance_field\' is required but has not been defined. ' % self                           
+        elif not self.visit_model_instance_field:
+            raise ValueError, '%s attribute \'visit_model_instance_field\' cannot be None.' % self    
+        else:
+            pass
+
+        # requisition_model is required to update ScheduledLabEntryBucket, but if not defined will pass
+        if hasattr(self, 'requisition_model'):
+            from lab_requisition.models import BaseRequisition
+            if not BaseRequisition in self.requisition_model.__bases__:
+                raise ValueError, '%s attribute \'requisition_model\' must be an instance of lab_requisition.models.BaseRequisition.' % self                                            
+
         super(BaseAppointmentModelAdmin, self).__init__(*args, **kwargs)
 
-    def save_model(self, request, obj, form, change):
+        # appointment key should exist, if not, maybe sent the wrong model
+        if not [f.name for f in self.model._meta.fields if f.name=='appointment']:
+            raise AttributeError, 'The model for BaseAppointmentModelAdmin child class %s requires model attribute \'appointment\'. Not found in model %s.' % (self, self.model._meta.object_name)
+        
 
-        return super(BaseAppointmentModelAdmin, self).save_model(request, obj, form, change)
+    def save_model(self, request, obj, form, change):
+        
+        qset_string = "Q(%s=obj)" % self.visit_model_instance_field
+        qset = eval(qset_string)
+        
+        ScheduledEntryBucket.objects.add_for_visit(
+            visit_model_instance = obj,
+            visit_model_instance_field = self.visit_model_instance_field,
+            qset = qset,
+            )           
+                 
+        # if requisition_model has been defined, assume scheduled labs otherwise pass
+        if hasattr(self, 'requisition_model'):
+            ScheduledLabEntryBucket.objects.add_for_visit(
+                visit_model_instance = obj,
+                visit_model_instance_field = self.visit_model_instance_field,
+                requisition_model = self.requisition_model,
+                qset = qset,
+                )  
+
+        return super(BaseAppointmentModelAdmin, self).save_model(request, obj, form, change)                                                
+
         
     def delete_model(self, request, obj):
 
