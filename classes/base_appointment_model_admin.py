@@ -22,9 +22,9 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
 
     def delete_view(self, request, object_id, extra_context=None):
 
-        subject_identifier = self.form.appointment.registered_subject.subject_identifier
+        subject_identifier = self.model.objects.get(pk=object_id).appointment.registered_subject.subject_identifier
         result = super(BaseAppointmentModelAdmin, self).delete_view(request, object_id, extra_context)
-        result['Location'] = reverse('dashboard_url' , kwargs={'dashboard_type':'subject', 'subject_identifier':subject_identifier})
+        result['Location'] = reverse('dashboard_url' , kwargs={'dashboard_type':self.dashboard_type, 'subject_identifier':subject_identifier})
 
         return result
         
