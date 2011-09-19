@@ -6,7 +6,7 @@ from bhp_export_data.actions import export_as_csv_action
 
 class BaseVisitModelAdmin(MyModelAdmin):
 
-    """ModelAdmin subclass for models with a ForeignKey to 'visit'
+    """ModelAdmin subclass for models with a ForeignKey to your visit model(s)
     
     Takes care of updating the bucket and redirecting back to the dashboard after
     delete()
@@ -15,6 +15,10 @@ class BaseVisitModelAdmin(MyModelAdmin):
 
     def __init__(self, *args, **kwargs):
 
+        model = args[0]
+        self.visit_model_foreign_key = [fk for fk in [f for f in model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name][0].name                        
+        if not self.visit_model_foreign_key:
+            raise ValueError, "The model for %s requires a foreign key to visit model %s. None found. Either correct the model or change the ModelAdmin class." % (self, self.visit_model)
 
         self.search_fields = (self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',) 
         

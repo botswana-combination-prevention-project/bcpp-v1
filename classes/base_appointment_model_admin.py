@@ -54,22 +54,13 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
 
     def save_model(self, request, obj, form, change):
         
-        qset_string = "Q(%s=obj)" % self.visit_model_instance_field
-        qset = eval(qset_string)
-        
-        ScheduledEntryBucket.objects.add_for_visit(
-            visit_model_instance = obj,
-            visit_model_instance_field = self.visit_model_instance_field,
-            qset = qset,
-            )           
+        ScheduledEntryBucket.objects.add_for_visit(visit_model_instance = obj)           
                  
         # if requisition_model has been defined, assume scheduled labs otherwise pass
         if hasattr(self, 'requisition_model'):
             ScheduledLabEntryBucket.objects.add_for_visit(
                 visit_model_instance = obj,
-                visit_model_instance_field = self.visit_model_instance_field,
                 requisition_model = self.requisition_model,
-                qset = qset,
                 )  
 
         return super(BaseAppointmentModelAdmin, self).save_model(request, obj, form, change)                                                
