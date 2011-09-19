@@ -56,8 +56,9 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
         
         """ Add entries to the scheduled_entry_bucket for a given visit_model. 
         
+        Normally called from Base model admin class BaseAppointmentModelAdmin
         
-        for example, 
+        otherwise, for example, 
         
         class VisitAdmin(MyRegisteredSubjectModelAdmin):
 
@@ -65,9 +66,9 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
 
             def save_model(self, request, obj, form, change):
 
-                ScheduledEntryBucket.objects.add_for_visit(
+                ScheduledLabEntryBucket.objects.add_for_visit(
                     visit_model_instance = obj,
-                    visit_model_instance_field = 'visit',                
+                    requisition_model = requisition_model,                    
                     qset = Q(visit=obj),
                     )                
                     
@@ -79,7 +80,6 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
         
         requisition_model = kwargs.get('requisition_model')
         visit_model_instance = kwargs.get('visit_model_instance')
-        visit_model_instance_field = kwargs.get('visit_model_instance_field')
         qset = kwargs.get('qset')                
         
         # scheduled forms have a foreign key to a visit_model_instance
@@ -93,6 +93,8 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
 
         if kwargs.get('subject_visit_model'):
             raise ValueError('subject_visit_model has been changed to \'visit_model_instance\', please read comment in ScheduledLabEntryBucketManager.add_for_visit() and correct.')
+        if kwargs.get('visit_model_instance_field'):
+            raise AttributeError('Attribute visit_model_instance_field is not required when calling ScheduledLabEntryBucketManager.add_for_visit(). Please remove.')
 
 
         # scheduled lab_entrys are only added if visit instance is 0
