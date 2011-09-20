@@ -2,6 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from audit_trail.audit import AuditTrail
 from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition
 from bhp_appointment.managers import AppointmentManager
@@ -37,7 +38,8 @@ class Appointment(BaseAppointment):
 
     objects = AppointmentManager()
     
-
+    history = AuditTrail()
+    
     def __unicode__(self):
         return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance) 
 
