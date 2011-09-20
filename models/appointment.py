@@ -36,7 +36,7 @@ class Appointment(BaseAppointment):
         help_text=_("A decimal to represent an additional report to be included with the original visit report. (NNNN.0)"),    
         )     
 
-    objects = AppointmentManager(True)
+    objects = AppointmentManager()
     
     history = AuditTrail()
     
