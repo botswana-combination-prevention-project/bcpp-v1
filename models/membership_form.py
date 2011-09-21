@@ -17,9 +17,9 @@ class MembershipForm(MyBasicUuidModel):
         help_text = 'In lowercase, this should be a valid subject type (as in registered_subject).'
         )       
     
-    hide_from_dashboard = models.BooleanField(
-        default = False,
-        help_text = 'If you hide this form from the dashboard, you must write code to populate it yourself.',
+    visible = models.BooleanField(
+        default = True,
+        help_text = 'If not visible on the dashboard, you have to write code to populate it yourself.',
         )
     
     def get_absolute_url(self):

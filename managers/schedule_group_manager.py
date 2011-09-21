@@ -9,7 +9,7 @@ class ScheduleGroupManager(models.Manager):
         """ Return dict of keyed and unkeyed schedule group membership forms for registered_subject
         
         Specify the registered_subject and the membership_form_category. Include forms
-        of the specified membership_form__category and those that have no category (null) or blank.
+        of the specified membership_form__category AND those that have no category (null) or blank.
         """
 
         registered_subject = kwargs.get("registered_subject")        
@@ -21,8 +21,9 @@ class ScheduleGroupManager(models.Manager):
 
         if membership_form_category:
             #  membership form 'category' should be a valid subject type found in registered_subject ... and definitely not blank.
-            if not super(ScheduleGroupManager, self).filter(membership_form__category__icontains = membership_form_category):
-                raise ValueError('The given membership_form_category is not valid for attribute \'category\ in model membership form. Attribute \'category\' should be based on a valid subject type. Got \'%s\'.' % membership_form_category)            
+            if super(ScheduleGroupManager, self).all():
+                if not super(ScheduleGroupManager, self).filter(membership_form__category__icontains = membership_form_category):
+                    raise ValueError('The given membership_form_category is not valid for attribute \'category\' in model membership form. Got \'%s\'.' % membership_form_category)            
 
         # a list of "keys" that link like membership forms together. If they share this 
         # key it means that only one form should be KEYED per subject. 
@@ -59,10 +60,6 @@ class ScheduleGroupManager(models.Manager):
         schedule_groups = super(ScheduleGroupManager, self).filter(qset)
         unkeyed_membership_forms = [schedule_group.membership_form.content_type_map 
                                     for schedule_group in schedule_groups 
-                                    if schedule_group.grouping_key not in grouping_keys and schedule_group.membership_form.content_type_map.name not in keyed_membership_forms]
-        
-        
+                                        if schedule_group.grouping_key not in grouping_keys and schedule_group.membership_form.content_type_map.name not in keyed_membership_forms]
         return {'keyed': keyed_membership_forms, 'unkeyed':unkeyed_membership_forms}
-        
-        
-        
+            
