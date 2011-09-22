@@ -53,16 +53,17 @@ flag.flag
                                 test_code=self.test_code, 
                                 gender__icontains=self.gender,
                                 )    
-        grade = {'grade':'', 'range':{'lln':'', 'uln':''}}        
+        grade = {'flag':'', 'range':{'lln':'', 'uln':''}}        
         if grading_list_items:
             for reference_list_item in grading_list_items:
                 #find the record for this age 
                 if reference_list_item.age_low_days() <= age_in_days and reference_list_item.age_high_days() >= age_in_days:
-                    if not grade['grade']:
-                        grade['grade'] = '0'
+                    if not grade['flag']:
+                        grade['flag'] = '0'
                     #see if value is in the of range of a grade
                     if round_up(self.result_item_value, self.test_code.display_decimal_places) >= round_up(reference_list_item.lln, self.test_code.display_decimal_places) and round_up(self.result_item_value, self.test_code.display_decimal_places) <= round_up(reference_list_item.uln, self.test_code.display_decimal_places):
-                        grade['grade'] = reference_list_item.grade        
+                        grade['flag'] = reference_list_item.grade        
                         grade['range']['lln'] = round_up(reference_list_item.lln,self.test_code.display_decimal_places)
                         grade['range']['uln'] = round_up(reference_list_item.uln,self.test_code.display_decimal_places)
         return grade
+        
