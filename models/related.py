@@ -31,6 +31,7 @@ class Related (MyBasicUuidModel):
         return '%s__%s' % (self.model_name, self.field_name)
         
     class Meta:
-        app_label = "bhp_describer"
+        app_label = "bhp_model_describer"
+        db_table = "bhp_describer_related"        
         unique_together = ['app_label', 'model_name', 'field_name']
                 

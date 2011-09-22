@@ -5,20 +5,18 @@ from django.contrib.auth.decorators import login_required
 from bhp_common.utils import os_variables
 from bhp_model_selector.classes import ModelSelector
 from bhp_model_selector.forms import ModelSelectorForm
-from bhp_describer.classes import DataDescriber
+from bhp_model_describer.classes import ModelDescriber
 
 @login_required
-def data_describer(request, **kwargs):
+def model_describer(request, **kwargs):
 
     section_name = kwargs.get('section_name')
-    report_title  = 'Data Describer'
-    template = 'data_description.html' 
+    report_title  = 'Model Data Summary and Description'
+    template = 'model_describer.html' 
 
     if request.method == 'POST':
 
         form = ModelSelectorForm(request.POST)
-    
-
 
         if form.is_valid():
 
@@ -26,10 +24,9 @@ def data_describer(request, **kwargs):
             model_name = form.cleaned_data['model_name']   
             model_selector = ModelSelector(app_label, model_name)             
     
-            dd = DataDescriber(form.cleaned_data['app_label'], form.cleaned_data['model_name'])
+            dd = ModelDescriber(form.cleaned_data['app_label'], form.cleaned_data['model_name'])
     
             if dd.model:
-                template = 'data_description.html'            
                 summary = dd.summarize()
                 group = dd.group()
                 group_m2m = dd.group_m2m()   
@@ -48,7 +45,6 @@ def data_describer(request, **kwargs):
                 'cumulative_frequency': 0,
                 }
             elif dd.error_type == 'app_label':
-                template = 'data_description.html'            
                 context = {
                 'form': form,
                 'error_message': dd.error_message,
@@ -60,7 +56,6 @@ def data_describer(request, **kwargs):
                 #'report_title': report_title,                                  
                 }
             elif dd.error_type == 'model_name':
-                template = 'data_description.html'            
                 context = {
                 'form': form,
                 'error_message': dd.error_message,

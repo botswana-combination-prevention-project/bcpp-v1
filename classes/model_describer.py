@@ -5,11 +5,11 @@ from django.db.models import DateTimeField, DateField, IntegerField, DecimalFiel
 from django.db.models import Count, Sum, Avg, Max, Min, StdDev, Variance
 from django.conf import settings
 from bhp_model_selector.classes import ModelSelector
-from bhp_describer.models import Related, GroupingHint
+from bhp_model_describer.models import Related, GroupingHint
 
 """
 from bhp_describer.classes import DataDescriber
-d = DataDescriber('mochudi_subject', 'qn002sectionone')
+d = ModelDescriber('mochudi_subject', 'qn002sectionone')
 d.summarize()
 d.group()
 d.group_m2m()
@@ -17,11 +17,11 @@ d.export_as_csv()
 """
 
 
-class DataDescriber(ModelSelector):
+class ModelDescriber(ModelSelector):
 
     def __init__(self, app_label, model_name):
         
-        super(DataDescriber, self).__init__(app_label, model_name)
+        super(ModelDescriber, self).__init__(app_label, model_name)
         
         self.summary = {} 
         self.grouping = {}           
