@@ -17,12 +17,13 @@ class ResultItem(BaseResultItem):
 
     def save(self, *args, **kwargs):
         
-        reference = ReferenceFlag()
+
         subject_identifier = self.result.lab.subject_identifier
         if RegisteredSubject.objects.filter(subject_identifier=subject_identifier):
             dob = RegisteredSubject.objects.get(subject_identifier = subject_identifier).dob
             gender = RegisteredSubject.objects.get(subject_identifier = subject_identifier).gender
             
+            reference = ReferenceFlag()            
             reference.result_item_value = self.result_item_value
             reference.dob = dob
             reference.gender = gender
@@ -40,7 +41,7 @@ class ResultItem(BaseResultItem):
             grade.test_code = self.test_code
             if grade.flag:
                 self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])
-                self.grade_flag = grade.flag['grade']        
+                self.grade_flag = grade.flag['flag']        
                 
         return super(ResultItem, self).save(*args, **kwargs)
 
