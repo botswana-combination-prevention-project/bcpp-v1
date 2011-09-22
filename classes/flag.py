@@ -3,6 +3,9 @@ from datetime import datetime, date
 from lab_test_code.models import TestCode
 
 class FlagDescriptor(object):
+
+    """Get/Set a dictionary with keys 'flag' and 'range' where key 'range has keys 'uln' and 'lln'""" 
+
     def __init__(self):
         self.value = None
     def __get__(self, instance, owner):
@@ -10,7 +13,6 @@ class FlagDescriptor(object):
             self.__set__(instance)
         return self.value
     def __set__(self, instance):
-
         if instance.result_item_value and instance.dob and instance.gender and instance.drawn_datetime and instance.test_code and instance.hiv_status:    
             # set reference_flag dictionary
             value = instance.get_flag()
@@ -19,7 +21,7 @@ class FlagDescriptor(object):
             instance.dirty = False                
             self.value = value
         else:
-            self.value = {}
+            self.value = {'flag':'', 'range':{'lln':'', 'uln':''}}
 
 class BaseDescriptor(object):
     def __init__(self):
@@ -78,7 +80,11 @@ class DrawnDatetimeDescriptor(BaseDescriptor):
 
 
 class Flag(object):
+
+    """ A base class to handle reference and grade flags. Child class must define get_flag method"""
+
     flag = FlagDescriptor()
+    
     hiv_status = HivStatusDescriptor()
     dob = DobDescriptor()
     gender = GenderDescriptor()
@@ -96,9 +102,5 @@ class Flag(object):
         self.hiv_status = kwargs.get('hiv_status', 'ANY')                
         
     def get_flag(self):
-        pass        
-        
-
-
-
-
+        """ override this method to calculate the values need to set self.flag. See flag descriptor """
+        return self.flag        
