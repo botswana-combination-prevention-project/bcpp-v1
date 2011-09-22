@@ -49,7 +49,7 @@ class ResultItem(BaseResultItem):
         grade.test_code = self.test_code
         if grade.flag:
             self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])
-            self.grade_flag = grade.flag['grade']        
+            self.grade_flag = grade.flag['flag']        
 
         return super(ResultItem, self).save(*args, **kwargs)
     
