@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from bhp_common.utils import os_variables
 from bhp_registration.models import RegisteredSubject
 from bhp_variables.models import StudySite
-from mpepu_infant.models import InfantBirth
 from django.db import models
 from bhp_model_describer.forms import DateRangeForm
 
@@ -83,8 +82,6 @@ def base_model_group_describer(request, **kwargs):
                     
             # get data for each model  
             for key,model_report in model_reports.items():
-                if key == 'infantbirth': 
-                    model_report['date_grouping_field'] = 'dob'
                 data = model_report['model'].objects.filter(
                     Q((model_report['date_grouping_field']+'__gte', start_date)),
                     Q((model_report['date_grouping_field']+'__lte', 

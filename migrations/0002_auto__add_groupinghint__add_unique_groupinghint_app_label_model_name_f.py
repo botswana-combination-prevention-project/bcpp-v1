@@ -21,7 +21,7 @@ class Migration(SchemaMigration):
             ('model_name', self.gf('django.db.models.fields.CharField')(max_length=50, db_index=True)),
             ('field_name', self.gf('django.db.models.fields.CharField')(max_length=50, db_index=True)),
         ))
-        db.send_create_signal('bhp_describer', ['GroupingHint'])
+        db.send_create_signal('bhp_model_describer', ['GroupingHint'])
 
         # Adding unique constraint on 'GroupingHint', fields ['app_label', 'model_name', 'field_name']
         db.create_unique('bhp_describer_groupinghint', ['app_label', 'model_name', 'field_name'])
@@ -37,7 +37,7 @@ class Migration(SchemaMigration):
 
 
     models = {
-        'bhp_describer.groupinghint': {
+        'bhp_model_describer.groupinghint': {
             'Meta': {'unique_together': "(['app_label', 'model_name', 'field_name'],)", 'object_name': 'GroupingHint'},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -50,7 +50,7 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-        'bhp_describer.related': {
+        'bhp_model_describer.related': {
             'Meta': {'unique_together': "(['app_label', 'model_name', 'field_name'],)", 'object_name': 'Related'},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -67,4 +67,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['bhp_describer']
+    complete_apps = ['bhp_model_describer']

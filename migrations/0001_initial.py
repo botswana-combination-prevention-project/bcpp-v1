@@ -23,7 +23,7 @@ class Migration(SchemaMigration):
             ('related_to_model', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('related_to_field_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
-        db.send_create_signal('bhp_describer', ['Related'])
+        db.send_create_signal('bhp_model_describer', ['Related'])
 
         # Adding unique constraint on 'Related', fields ['app_label', 'model_name', 'field_name']
         db.create_unique('bhp_describer_related', ['app_label', 'model_name', 'field_name'])
@@ -39,7 +39,7 @@ class Migration(SchemaMigration):
 
 
     models = {
-        'bhp_describer.related': {
+        'bhp_model_describer.related': {
             'Meta': {'unique_together': "(['app_label', 'model_name', 'field_name'],)", 'object_name': 'Related'},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -56,4 +56,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['bhp_describer']
+    complete_apps = ['bhp_model_describer']
