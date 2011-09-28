@@ -18,36 +18,15 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         a timepoint/visit. """
         
         entry_category = kwargs.get("entry_category", 'clinic')
-
         registered_subject = kwargs.get("registered_subject")
         if not registered_subject:
             raise TypeError("Manager get_schedule_forms_for expected registered_subject. Got None.") 
-
         appt_0 = kwargs.get("appointment")
-        #if not visit_code:
-        #    raise TypeError("Manager get_schedule_forms_for expected appointment of visit instance 0. Got None.")
-
         visit_code = kwargs.get("visit_code")        
         if not visit_code:
             raise TypeError("Manager get_schedule_forms_for expected visit_code. Got None.")
-             
-        #appointment = Appointment.objects.get(
-        #    registered_subject = registered_subject, 
-        #    visit_definition__code = visit_code,
-        #    visit_instance = '0'            
-        #    )
-
         if appt_0:    
-            # scheduled_entry_bucket lists records based on appointment at visit instance 0
-            # get the the appointment for visit_instance = '0'
-
-            #appt = Appointment.objects.filter(
-            #    registered_subject = registered_subject, 
-            #    visit_definition__code = appointment.visit_definition.code, 
-            #    visit_instance = '0'
-            #    )
             # get the scheduled crfs based on the appt for visit_instance = '0'   
-            
             scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).filter(
                                                 registered_subject = registered_subject, 
                                                 appointment = appt_0,
