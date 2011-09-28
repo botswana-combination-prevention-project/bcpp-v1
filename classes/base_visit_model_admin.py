@@ -19,7 +19,6 @@ class BaseVisitModelAdmin(MyModelAdmin):
         self.visit_model_foreign_key = [fk for fk in [f for f in model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name][0].name                        
         if not self.visit_model_foreign_key:
             raise ValueError, "The model for %s requires a foreign key to visit model %s. None found. Either correct the model or change the ModelAdmin class." % (self, self.visit_model)
-
         self.search_fields = (self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',) 
         
         self.list_display = (self.visit_model_foreign_key, 'created', 'modified', 'user_created', 'user_modified',)    
