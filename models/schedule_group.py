@@ -8,7 +8,7 @@ from bhp_visit.managers import ScheduleGroupManager
     
 class ScheduleGroup(MyBasicUuidModel):
 
-    """Model for entry_forms tagged for listing in the visit definition 'tag_for_schedule'."""
+    """Model that groups membership forms"""
     
     group_name = models.CharField(
         max_length=25,
@@ -21,7 +21,7 @@ class ScheduleGroup(MyBasicUuidModel):
         max_length = 25,
         null=True,
         blank=True,
-        help_text = "may specify a common value to group a number of tagged forms, not required."        
+        help_text = "may specify a common value to group a number of membership forms so that when one of the group is keyed, the others are no longer shown."        
         )        
 
     objects = ScheduleGroupManager()

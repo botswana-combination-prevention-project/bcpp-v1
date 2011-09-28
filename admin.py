@@ -13,8 +13,8 @@ admin.site.register(MembershipForm, MembershipFormAdmin)
 
 
 class ScheduleGroupAdmin(MyModelAdmin):
-    #list_display = ('group_name', 'membership_form', 'grouping_key')
-    pass
+    list_display = ('group_name', 'membership_form', 'grouping_key')
+
 admin.site.register(ScheduleGroup, ScheduleGroupAdmin)    
 
 
