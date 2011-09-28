@@ -1,12 +1,10 @@
 from django.db import models
-from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_common.choices import YES_NO
-from bhp_visit.models import BaseWindowPeriodItem, VisitDefinition
-from lab_panel.models import Panel
-from bhp_entry.choices import ENTRY_CATEGORY, ENTRY_WINDOW, ENTRY_STATUS
+from bhp_visit.models import VisitDefinition
+from base_lab_entry import BaseLabEntry
 
-class LabEntry(BaseWindowPeriodItem):
+
+class LabEntry(BaseLabEntry):
 
     """Model of metadata for each model_class linked to a visit definition.
     
@@ -18,35 +16,6 @@ class LabEntry(BaseWindowPeriodItem):
 
     visit_definition = models.ForeignKey(VisitDefinition)
        
-    panel = models.ForeignKey(Panel)
-    
-    entry_order = models.IntegerField()
-    
-    required = models.CharField(
-        max_length = 10,
-        choices = YES_NO,
-        default = 'YES',
-        )
-
-    entry_category = models.CharField(
-        max_length = 25,
-        choices = ENTRY_CATEGORY,
-        default = 'CLINIC',
-        )    
-
-    entry_window_calculation = models.CharField(
-        max_length = 25,
-        choices = ENTRY_WINDOW,
-        default = 'VISIT',
-        help_text = 'Base the entry window period on the visit window period or specify a form specific window period', 
-        )    
-
-    default_entry_status = models.CharField(
-        max_length = 25,
-        choices = ENTRY_STATUS,
-        default = 'NEW',
-        ) 
-    
     def form_title(self):
         self.content_type_map.content_type.model_class()._meta.verbose_name
     

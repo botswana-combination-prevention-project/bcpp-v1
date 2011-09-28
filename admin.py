@@ -4,7 +4,7 @@ from django.db.models import Max
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 from forms import ScheduledLabEntryBucketForm
-from bhp_lab_entry.models import LabEntry, ScheduledLabEntryBucket, AdditionalLabEntryBucket
+from bhp_lab_entry.models import LabEntry, LabEntryUnscheduled, ScheduledLabEntryBucket, AdditionalLabEntryBucket
 
 class LabEntryAdmin(MyModelAdmin):
 
@@ -15,6 +15,22 @@ class LabEntryAdmin(MyModelAdmin):
     list_filter = ('entry_category', 'visit_definition__code','default_entry_status', 'created', 'panel__name',)
 
 admin.site.register(LabEntry, LabEntryAdmin)
+
+class LabEntryUnscheduledAdmin(MyModelAdmin):
+
+    search_fields = ('panel__name',)
+
+    list_display = ('panel', 'entry_order','required', 'entry_category')
+    
+    list_filter = ('entry_category', 'default_entry_status', 'created', 'panel__name',)
+
+admin.site.register(LabEntryUnscheduled, LabEntryUnscheduledAdmin)
+
+
+class AdditionalLabEntryBucketAdmin(MyModelAdmin):
+    pass
+admin.site.register(AdditionalLabEntryBucket, AdditionalLabEntryBucketAdmin)
+
 
 class ScheduledLabEntryBucketAdmin(MyModelAdmin):
     

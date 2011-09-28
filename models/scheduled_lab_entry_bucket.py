@@ -21,7 +21,7 @@ class ScheduledLabEntryBucket(BaseEntryBucket):
     objects = ScheduledLabEntryBucketManager()
     
     def get_absolute_url(self):
-        return reverse('admin:bhp_entry_scheduledlabbucket_change', args=(self.id,))
+        return reverse('admin:bhp_lab_entry_scheduledlabentrybucket_change', args=(self.id,))
 
     def __unicode__(self):        
         return '%s: %s' % (self.registered_subject.subject_identifier, self.lab_entry.panel.name)    

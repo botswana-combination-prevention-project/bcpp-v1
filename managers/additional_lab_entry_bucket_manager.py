@@ -1,26 +1,60 @@
 from datetime import datetime
 from django.db import models
 from bhp_entry.managers import BaseEntryBucketManager
+from bhp_lab_entry.models import LabEntryUnscheduled
 
 
 class AdditionalLabEntryBucketManager(BaseEntryBucketManager):
 
-    def add_for(self, registered_subject, requisition_model, qset):
+
+    def get_labs_for(self, **kwargs ):
+    
+        """Return a queryset of ScheduledLabEntryBucket objects for the given subject and appointment.
         
-        lab_entry = kwargs.get('lab_entry')
-        if not self.requisition_instance:            
-           
-            if not super(AdditionalLabEntryBucketManager, self).filter(
-                    registered_subject = registered_subject, 
-                    panel = panel):            
-                # add to bucket                                    
-                super(AdditionalLabEntryBucketManager, self).create(
-                    registered_subject = registered_subject,
-                    lab_entry__panel = panel,
-                    current_entry_title = model._meta.verbose_name,
-                    fill_datetime = datetime.today(),
-                    due_datetime = datetime.today(),                      
-                    )
+        Note that ScheduledLabEntryBucket objects are linked to a subject's appointment 
+        for visit_instance = '0'; that is, the first appointment for 
+        a timepoint/visit. """
+        
+        registered_subject = kwargs.get("registered_subject")
+        if not registered_subject:
+            raise TypeError("Manager get_lab_entries_for expected registered_subject. Got None.") 
+        appt_0 = kwargs.get("appointment")
+             
+        if appt_0:    
+            # get the scheduled crfs based on the appt for visit_instance = '0'   
+            additional_lab_entry_bucket = super(AdditionalLabEntryBucketManager, self).filter(
+                                                registered_subject = registered_subject, 
+                                                appointment = appt_0,
+                                                ).order_by('lab_entry_unscheduled__panel__name')
+        else:
+            additional_lab_entry_bucket = super(AdditionalLabEntryBucketManager, self).none()         
+
+        return additional_lab_entry_bucket
+
+
+    def add_for(self, **kwargs):
+        
+        panel = kwargs.get('panel')
+        requisition_model = kwargs.get('requisition_model')
+        visit_model_instance = kwargs.get('visit_model_instance')
+        if 'appointment' not in [f.name for f in visit_model_instance._meta.fields if f.name=='appointment']:
+            raise AttributeError, "AdditionalLabEntryBucketManager expects model %s to have attribute \'appointment\'." % visit_model_instance._meta.object_name  
+
+        registered_subject = visit_model_instance.appointment.registered_subject
+        lab_entry_unscheduled = LabEntryUnscheduled.objects.get(panel=panel)
+        
+        if not super(AdditionalLabEntryBucketManager, self).filter(
+                registered_subject = registered_subject, 
+                appointment = visit_model_instance.appointment,
+                lab_entry_unscheduled = lab_entry_unscheduled):            
+            # add to bucket                                    
+            super(AdditionalLabEntryBucketManager, self).create(
+                registered_subject = registered_subject,
+                appointment = visit_model_instance.appointment,                
+                lab_entry_unscheduled = lab_entry_unscheduled,
+                fill_datetime = datetime.today(),
+                due_datetime = datetime.today(),                      
+                )
                     
     def update_status(self, **kwargs):
     
@@ -38,8 +72,8 @@ class AdditionalLabEntryBucketManager(BaseEntryBucketManager):
 
             report_datetime = datetime.today()
 
-            if super(AdditionalLabEntryBucketManager, self).filter(registered_subject = self.registered_subject, lab_entry__panel = self.requisition_instance.panel):
-                s = super(AdditionalLabEntryBucketManager, self).get(registered_subject = self.registered_subject, lab_entry__panel = self.requisition_instance.panel)
+            if super(AdditionalLabEntryBucketManager, self).filter(registered_subject = self.registered_subject, lab_entry_unscheduled__panel = self.requisition_instance.panel):
+                s = super(AdditionalLabEntryBucketManager, self).get(registered_subject = self.registered_subject, lab_entry_unscheduled__panel = self.requisition_instance.panel)
                 status = self.get_status(
                     action = action, 
                     report_datetime = report_datetime, 

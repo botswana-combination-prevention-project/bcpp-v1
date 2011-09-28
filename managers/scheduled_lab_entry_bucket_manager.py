@@ -17,31 +17,16 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
         for visit_instance = '0'; that is, the first appointment for 
         a timepoint/visit. """
         
-        #entry_category = kwargs.get("entry_category", 'lab')
-
         registered_subject = kwargs.get("registered_subject")
         if not registered_subject:
             raise TypeError("Manager get_schedule_lab_entries_for expected registered_subject. Got None.") 
-
         appt_0 = kwargs.get("appointment")
-        #if not visit_code:
-        #    raise TypeError("Manager get_schedule_forms_for expected appointment of visit instance 0. Got None.")
-
         visit_code = kwargs.get("visit_code")        
         if not visit_code:
             raise TypeError("Manager get_schedule_lab_entries_for expected visit_code. Got None.")
              
         if appt_0:    
-            # scheduled_entry_bucket lists records based on appointment at visit instance 0
-            # get the the appointment for visit_instance = '0'
-
-            #appt = Appointment.objects.filter(
-            #    registered_subject = registered_subject, 
-            #    visit_definition__code = appointment.visit_definition.code, 
-            #    visit_instance = '0'
-            #    )
             # get the scheduled crfs based on the appt for visit_instance = '0'   
-            
             scheduled_lab_entry_bucket = super(ScheduledLabEntryBucketManager, self).filter(
                                                 registered_subject = registered_subject, 
                                                 appointment = appt_0,
@@ -88,7 +73,7 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
         # confirm visit_model_instance has a "appointment" field/model attribute
         if 'appointment' not in [f.name for f in visit_model_instance._meta.fields if f.name=='appointment']:
             raise AttributeError, "ScheduledLabEntryBucketManager expects model %s to have attribute \'appointment\'." % visit_model_instance._meta.object_name  
-        
+
         registered_subject = visit_model_instance.appointment.registered_subject
 
         if kwargs.get('subject_visit_model'):
