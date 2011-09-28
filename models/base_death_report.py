@@ -28,7 +28,6 @@ class DeathReasonHospitalized (MyBasicListModel):
         
 class BaseDeathReport(MyBasicUuidModel):
     
-    """add this to your model"""
     """
     Death form / AF005
     """
