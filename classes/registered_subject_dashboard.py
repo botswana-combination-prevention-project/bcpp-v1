@@ -98,7 +98,8 @@ class RegisteredSubjectDashboard(Dashboard):
                 
         self.scheduled_entry_bucket = None
         self.additional_entry_bucket= None
-        self.scheduled_lab_bucket = None        
+        self.scheduled_lab_bucket = None 
+        self.additional_lab_bucket = None       
         self.selected_visit = None 
         self.visit = None
         self.visit_code = None
@@ -154,6 +155,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self.set_scheduled_entry_bucket()
         
         self.set_scheduled_lab_bucket()        
+
+        self.set_additional_lab_bucket()        
         
         self.set_current_appointment()
         
@@ -197,6 +200,23 @@ class RegisteredSubjectDashboard(Dashboard):
                 )  
 
         self.context.add(scheduled_lab_bucket = self.scheduled_lab_bucket)                                                      
+
+    def set_additional_lab_bucket(self):
+
+        # get list of scheduled crfs
+        if self.visit_code:
+            # filter for appointment with visit_instance=0
+            appointment = Appointment.objects.get(
+                                        registered_subject = self.registered_subject, 
+                                        visit_definition__code = self.visit_code, 
+                                        visit_instance = 0,
+                                        )
+            self.additional_lab_bucket = AdditionalLabEntryBucket.objects.get_labs_for(
+                registered_subject = self.registered_subject, 
+                appointment = appointment,    
+                )  
+
+        self.context.add(additional_lab_bucket = self.additional_lab_bucket)                                                      
             
     def set_appointments(self):
 
@@ -273,8 +293,9 @@ class RegisteredSubjectDashboard(Dashboard):
         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
         regex['content_type_map'] = '\w+'
         
-        visit_field_names =  kwargs.get('visit_field_names', ['visit'])
         
+        visit_field_names =  kwargs.get('visit_field_names', ['visit'])
+
         if 'registration_identifier' not in regex.keys():
             regex['registration_identifier'] = '[A-Z0-9]{6,8}'             
 
@@ -297,6 +318,7 @@ class RegisteredSubjectDashboard(Dashboard):
             )                
 
         for visit_field_name in visit_field_names:
+
             regex['visit_field_name'] = visit_field_name
             self.urlpatterns += patterns(view,
             

@@ -66,5 +66,12 @@
     {% endblock scheduled_lab_bucket %}
 {% endif %}
 
+{% if additional_lab_bucket %}   
+    {% block additional_lab_bucket %}
+
+        {% include 'additional_lab_bucket_include.html' %}
+        
+    {% endblock additional_lab_bucket %}
+{% endif %}
 
 
