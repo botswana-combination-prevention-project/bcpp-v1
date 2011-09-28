@@ -26,7 +26,10 @@ class Panel(MyBasicModel):
         help_text = 'Choose all that apply',
         )        
 
-    account = models.ManyToManyField(Account)
+    account = models.ManyToManyField(Account, 
+        null=True,
+        blank=True
+        )
         
     comment = models.CharField(
         verbose_name = "Comment", 
