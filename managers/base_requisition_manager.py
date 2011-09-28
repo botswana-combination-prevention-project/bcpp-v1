@@ -7,6 +7,8 @@ class BaseRequisitionManager(models.Manager):
 
     def get_identifier(self, **kwargs):
 
+        """Generate and return a locally unique requisition identifier"""        
+        
         site_code = kwargs.get('site_code')        
 
         if not site_code:
@@ -18,7 +20,7 @@ class BaseRequisitionManager(models.Manager):
         if not len(site_code) == 1:
             site_code = site_code + '0'
         
-        identifier_length = 7
+        #identifier_length = 8
             
         return Identifier(subject_type = 'requisition', site_code=site_code).create()
 
