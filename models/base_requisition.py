@@ -12,23 +12,8 @@ from lab_aliquot_list.models import AliquotType
 from lab_test_code.models import TestCode
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
 from lab_requisition.classes import ClinicRequisitionLabel
+from lab_requisition.managers import BaseRequisitionManager
 
-
-class BaseRequisitionManager(models.Manager):
-
-    def get_identifier(self, **kwargs):
-
-        site_code = kwargs.get('site_code')        
-
-        if not site_code:
-            try:
-                site_code = settings.SITE_CODE
-            except AttributeError:
-                raise AttributeError('Requisition needs a \'site_code\'. Got None. Either pass as a parameter or set SITE_CODE= in settings.py')
-
-        if len(site_code) == 1:
-            site_code = site_code + '0'
-        return Identifier(subject_type = 'requisition', site_code=site_code).create()
 
 class BaseRequisition (MyBasicUuidModel):
     
@@ -130,13 +115,6 @@ class BaseRequisition (MyBasicUuidModel):
         if not self.requisition_identifier:
             self.requisition_identifier = self.__class__.objects.get_identifier(site_code=self.site.site_code)
         
-        #for cnt in range(self.item_count_total, 0, -1):
-        #    label = ClinicRequisitionLabel(
-        #                    item_count = cnt, 
-        #                    requisition = self,
-        #                    )
-        #    label.print_label() 
-                                       
         return super(BaseRequisition, self).save(*args, **kwargs)
 
 

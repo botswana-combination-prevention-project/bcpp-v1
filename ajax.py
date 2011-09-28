@@ -7,7 +7,7 @@ from dajaxice.decorators import dajaxice_register
 from lab_requisition.classes import ClinicRequisitionLabel
 
 @dajaxice_register
-def print_label(request, app_label, model_name, requisition_identifier):
+def print_label(request, app_label, model_name, requisition_identifier, message_label='print_message'):
 
     dajax = Dajax()
     requisition_model = get_model(app_label, model_name)
@@ -41,6 +41,6 @@ def print_label(request, app_label, model_name, requisition_identifier):
     rendered = render_to_string('print_message.html', { 'print_message': print_message, 'li_class': li_class })
 
 
-    dajax.assign('#print_message','innerHTML',rendered)
+    dajax.assign('#'+message_label,'innerHTML',rendered)
     return dajax.json()
   
