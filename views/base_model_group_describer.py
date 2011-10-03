@@ -98,8 +98,18 @@ def base_model_group_describer(request, **kwargs):
                                                  gender, 
                                                  site_name
                                         ).annotate(frequency=Count(model_report['date_grouping_field'])
-                                    )
-
+                                    ).order_by()
+                # rename gender and site_name keys for template                    
+                for d in data:
+                    for key, value in d.iteritems():
+                        if key == gender:
+                            d['gender'] = value
+                        if key == site_name:
+                            d['site_name'] = value
+                            
+                        
+                                        
+                #raise TypeError()
                 model_reports[model_report['name']]['data'] = data
                 total = 0
                 for year in years:
@@ -132,7 +142,3 @@ def base_model_group_describer(request, **kwargs):
         'report_name': kwargs.get('report_name'),         
         }, context_instance=RequestContext(request))
 
-
-
-# 294-0 rando'ed at 2 days
-# 201-5-10 rando at time to be off-study (hiv+)

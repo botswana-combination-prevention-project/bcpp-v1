@@ -78,7 +78,7 @@ class ModelDescriber(ModelSelector):
                     #group on choices tuple or if listed in GroupingHint
                     grouping_hint = GroupingHint.objects.filter(app_label = self.app_label, model_name = self.model_name, field_name = field.name)
                     if grouping_hint:
-                        aggregates = self.model.objects.values(field.name).annotate(count=Count(field.name))
+                        aggregates = self.model.objects.values(field.name).annotate(count=Count(field.name)).order_by()
                         new_aggregates = []
                         agg = {}
                         for aggregate in aggregates:
@@ -86,7 +86,7 @@ class ModelDescriber(ModelSelector):
                         self.grouping[field.name] = new_aggregates
                     elif field.choices:
                         for choice in field.choices:
-                            aggregates = self.model.objects.values(field.name).annotate(count=Count(field.name))
+                            aggregates = self.model.objects.values(field.name).annotate(count=Count(field.name)).order_by()
                             new_aggregates = []
                             agg = {}
                             for aggregate in aggregates:
@@ -107,7 +107,7 @@ class ModelDescriber(ModelSelector):
                                                   
                         if fld.name == related_to_field_name:
                             fld_string = '%s__%s' % (field.name, fld.name)                        
-                            aggregates = self.model.objects.values(fld_string).annotate(count=Count(fld_string))
+                            aggregates = self.model.objects.values(fld_string).annotate(count=Count(fld_string)).order_by()
                             new_aggregates = []
                             #self.grouping[fld_string] = q
                             for aggregate in aggregates:
@@ -131,7 +131,7 @@ class ModelDescriber(ModelSelector):
                                           
                 if fld.name == related_to_field_name:
                     fld_string = '%s__%s' % (field.name, fld.name)                        
-                    aggregates = self.model.objects.values(fld_string).annotate(count=Count(fld_string))
+                    aggregates = self.model.objects.values(fld_string).annotate(count=Count(fld_string)).order_by()
                     new_aggregates = []
                     for aggregate in aggregates:
                         new_aggregates.append({ 'count': aggregate['count'], 'label':aggregate[fld_string] })
