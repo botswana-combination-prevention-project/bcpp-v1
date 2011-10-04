@@ -105,14 +105,14 @@ def base_model_group_describer(request, **kwargs):
                                                  site_name
                                         ).annotate(frequency=Count(model_report['date_grouping_field'])
                                     ).order_by()
-                # rename gender and site_name keys for template                    
+                # rename gender and site_name keys for template
+                new_data = []                    
                 for d in data:
-                    # for key, value in d.iteritems():
                     if gender in d:
                         d['gender'] = d[gender]
                     if site_name in d:
                         d['site_name'] = d[site_name]
-                            
+                    new_data.append(d)        
 
                 model_reports[model_report['name']]['data'] = new_data
                 total = 0
