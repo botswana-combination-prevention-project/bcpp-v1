@@ -92,11 +92,9 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
                 # scheduled forms have a foreign key to a visit_model_instance
                 # model must have field of value visit_model_instance_field, otherwise ignore
-                visit_model_instance_field = [fk for fk in [f for f in entry.content_type_map.model_class()._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model_instance._meta.module_name][0].name                        
-                if visit_model_instance_field in [f.name for f in entry.content_type_map.model_class()._meta.fields]:
-
-                    qset = Q(**{visit_model_instance_field:visit_model_instance})
-
+                visit_model_instance_field = [fk for fk in [f for f in entry.content_type_map.model_class()._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model_instance._meta.module_name]                        
+                if visit_model_instance_field:
+                    qset = Q(**{visit_model_instance_field[0].name:visit_model_instance})
                     if not super(ScheduledEntryBucketManager, self).filter(
                                     registered_subject = registered_subject, 
                                     appointment = visit_model_instance.appointment, 
