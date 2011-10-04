@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import ForeignKey, get_model
+from django.db.models import ForeignKey, get_model, Q
 from django.db.models.base import ModelBase
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.managers import BaseEntryBucketManager
@@ -64,6 +64,9 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
         """
         
         requisition_model = kwargs.get('requisition_model')
+        if not requisition_model:
+            raise AttributeError('Attribute requisition_model cannot be None for ScheduledLabEntryBucketManager.add_for_visit().')
+        
         visit_model_instance = kwargs.get('visit_model_instance')
         qset = kwargs.get('qset')                
         
@@ -110,28 +113,34 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
                             fill_datetime = filled_datetime,
                             due_datetime = due_datetime,                      
                             )
-                # has it been keyed, if so update status            
-                if requisition_model.objects.filter(qset):
-
-                    report_datetime = visit_model_instance.report_datetime
-
-                    # add to bucket, if not already added, or update
-                    if super(ScheduledLabEntryBucketManager, self).filter(
-                                registered_subject = registered_subject, 
-                                appointment = visit_model_instance.appointment, 
-                                lab_entry = lab_entry):
-                        # already in bucket, so get bucket entry
-                        s = super(ScheduledLabEntryBucketManager, self).get(
+                            
+                # scheduled forms have a foreign key to a visit_model_instance
+                # model must have field of value visit_model_instance_field, otherwise ignore
+                visit_model_instance_field = [fk for fk in [f for f in requisition_model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == visit_model_instance._meta.module_name][0].name                        
+                if not visit_model_instance_field:
+                    raise AttributeError, 'Requisition model %s must have a foreignkey attribute to the visit model %s' % (requisition_model._meta.verbose_name, visit_model_instance._meta.verbose_name)
+                else:
+                    qset = Q(**{visit_model_instance_field:visit_model_instance})
+                    # has it been keyed, if so update status            
+                    if requisition_model.objects.filter(qset):
+                        report_datetime = visit_model_instance.report_datetime
+                        # add to bucket, if not already added, or update
+                        if super(ScheduledLabEntryBucketManager, self).filter(
                                     registered_subject = registered_subject, 
                                     appointment = visit_model_instance.appointment, 
-                                    lab_entry = lab_entry)
-                        # update report_date
-                        s.report_datetime = report_datetime
-                        # update status if NEW only, (may be queried or something)
-                        if s.entry_status == 'NEW':
-                            s.entry_status = 'KEYED'
-                        # save
-                        s.save()
+                                    lab_entry = lab_entry):
+                            # already in bucket, so get bucket entry
+                            s = super(ScheduledLabEntryBucketManager, self).get(
+                                        registered_subject = registered_subject, 
+                                        appointment = visit_model_instance.appointment, 
+                                        lab_entry = lab_entry)
+                            # update report_date
+                            s.report_datetime = report_datetime
+                            # update status if NEW only, (may be queried or something)
+                            if s.entry_status == 'NEW':
+                                s.entry_status = 'KEYED'
+                            # save
+                            s.save()
 
     def update_status(self, **kwargs):
 
