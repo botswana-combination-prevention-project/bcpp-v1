@@ -188,7 +188,8 @@ class RegisteredSubjectManager(models.Manager):
                 first_name = first_name,
                 initials = initials.upper(),
                 registration_status = 'registered',
-                relative_identifier = registered_mother.subject_identifier,        
+                relative_identifier = registered_mother.subject_identifier, 
+                study_site = registered_mother.study_site,       
                 )                
 
         # update subject_identifier to the audit trail table
