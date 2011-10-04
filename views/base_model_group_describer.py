@@ -69,8 +69,10 @@ def base_model_group_describer(request, **kwargs):
             model_reports_ordered_keys.sort()
 
             start_date = form.cleaned_data['start_date']
+            start_date = datetime.combine(start_date, time.min)
             end_date = form.cleaned_data['end_date']       
-
+            end_date = datetime.combine(end_date, time.max)
+            
             # prepare ordered lists of years, months and sites
             years = range(start_date.year,end_date.year)                    
             if not years:
@@ -101,15 +103,13 @@ def base_model_group_describer(request, **kwargs):
                                     ).order_by()
                 # rename gender and site_name keys for template                    
                 for d in data:
-                    for key, value in d.iteritems():
-                        if key == gender:
-                            d['gender'] = value
-                        if key == site_name:
-                            d['site_name'] = value
+                    # for key, value in d.iteritems():
+                    if gender in d:
+                        d['gender'] = d[gender]
+                    if site_name in d:
+                        d['site_name'] = d[site_name]
                             
-                        
-                                        
-                #raise TypeError()
+
                 model_reports[model_report['name']]['data'] = data
                 total = 0
                 for year in years:

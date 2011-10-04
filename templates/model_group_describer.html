@@ -32,7 +32,7 @@
 {% for ordered_key in model_reports_ordered_keys %}
     {% for key, model_report in model_reports.items %}
     {% if key == ordered_key %}
-    <h4>{{ model_report.verbose_name }}<h4>
+    <h4>{{ model_report.verbose_name }}</h4>
     <table id=result">
     <thead>
     <th>Month</th>
@@ -51,9 +51,9 @@
                     {% if forloop.first %}
                         <td align="right">
                     {% endif %}    
-                    {% if data.registered_subject__study_site__site_name == site and data.month == month %} 
+                    {% if data.site_name == site and data.month == month %} 
                         {% update_cumulative_frequency data.frequency cumulative_frequency as cumulative_frequency %}                
-                        {{ data.frequency }}{{ data.registered_subject__gender }}
+                        {{ data.frequency }}{{ data.gender }}
                     {% endif %}
                     {% if forloop.last%}
                         {% if not cumulative_frequency == 0 %}={% endif %}
@@ -75,7 +75,8 @@
             {% endif %}                  
         {% endfor %}                    
     {% endfor %}    
-    <tr><td colspan=5>TOTAL</td><td align="right">{{ model_report.total|rjust:"30" }}</td></tr>             
+    <tr><td colspan=5>TOTAL</td><td align="right">{{ model_report.total|rjust:"30" }}</td></tr>
+    <tr><td><small>({{ model_report.date_grouping_field }})</small></td><td colspan=5></td></tr>                              
     </tbody>
     </table>
 {% endif %}                      
