@@ -14,16 +14,20 @@ from bhp_model_describer.forms import DateRangeForm
 
 @login_required
 def base_model_group_describer(request, **kwargs):
+
+    """"Given an app and a foreignkey field, such as visit, select a list of models and caluclate basic frequencies by gender and site"""
+    
     app_list = kwargs.get('app_list')
     section_name = kwargs.get('section_name')
-    report_title  = 'Model Group Data Summary'
+    common_foreign_key_field_name = kwargs.get('common_foreign_key_field_name')
+    report_title  = 'Data Summary by Gender and Site for Models with Key Field \'%s\'' % common_foreign_key_field_name
     template = 'model_group_describer.html' 
     months = []
     years = []
     sites = []
     model_reports = {}
     model_reports_ordered_keys = []
-    common_foreign_key_field_name = kwargs.get('common_foreign_key_field_name')
+    
     
     # to group on gender and site...    
     gender = 'registered_subject__gender'
@@ -110,7 +114,7 @@ def base_model_group_describer(request, **kwargs):
                         d['site_name'] = d[site_name]
                             
 
-                model_reports[model_report['name']]['data'] = data
+                model_reports[model_report['name']]['data'] = new_data
                 total = 0
                 for year in years:
                     year_total = 0
