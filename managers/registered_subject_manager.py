@@ -150,7 +150,7 @@ class RegisteredSubjectManager(models.Manager):
         user = kwargs.get('user')
 
         if live_infants_to_register == 0:
-            raise TypeError("Number of live_infants to register is 0! Test for this in admin before calling register_live_infants().")
+            raise TypeError("Number of live_infants_to_register cannot be 0! Test for this in admin before calling register_live_infants().")
         
         if live_infants_to_register > live_infants:
             # Trap this on the form, not here!!
