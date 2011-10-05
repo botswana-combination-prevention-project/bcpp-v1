@@ -1,28 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
-
-class MyCodeList (MyBasicModel):
-    
-    code = models.CharField("Code",
-        max_length = 15,
-        unique = True,
-        )
-    
-    short_name = models.CharField("Name",
-        max_length = 35,
-        )    
-    
-    long_name = models.CharField("Long Name",
-        max_length = 255,
-        blank = True,
-        )    
-    def __unicode__(self):
-        return "%s" % (self.short_name)
-    class Meta:
-        abstract = True
+from base_code_list import BaseCodeList
 
 #dx and ssx        
-class WcsDxAdult(MyCodeList):
+class WcsDxAdult(BaseCodeList):
     
     """WhoClinicalStagingDxAdult"""
     
@@ -34,8 +14,7 @@ class WcsDxAdult(MyCodeList):
     class Meta:
         app_label = "bhp_code_lists"
 
-
-class WcsDxPed(MyCodeList):
+class WcsDxPed(BaseCodeList):
     
     """WhoClinicalStagingDxPediatric"""
 
@@ -47,51 +26,38 @@ class WcsDxPed(MyCodeList):
     class Meta:
         app_label = "bhp_code_lists"
 
-
-class DxCode (MyCodeList):
+class MedicationCode (BaseCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
     class Meta:
         app_label="bhp_code_lists"
 
-class SsxCode (MyCodeList):
+class BodySiteCode (BaseCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
     class Meta:
         app_label="bhp_code_lists"
 
-class MedicationCode (MyCodeList):
-    list_ref = models.CharField("List Reference",
-        max_length=35)    
-    class Meta:
-        app_label="bhp_code_lists"
-
-class BodySiteCode (MyCodeList):
-    list_ref = models.CharField("List Reference",
-        max_length=35)    
-    class Meta:
-        app_label="bhp_code_lists"
-
-class OrganismCode (MyCodeList):
+class OrganismCode (BaseCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
     class Meta:
         app_label="bhp_code_lists"
 
 #ARV medications
-class ArvCode (MyCodeList):
+class ArvCode (BaseCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
     class Meta:
         app_label="bhp_code_lists"
 
-class ArvDoseStatus (MyCodeList):
+class ArvDoseStatus (BaseCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
     class Meta:
         app_label="bhp_code_lists"
 
-class ArvModificationCode (MyCodeList):
+class ArvModificationCode (BaseCodeList):
     list_ref = models.CharField("List Reference",
         max_length=35)    
     class Meta:
