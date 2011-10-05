@@ -149,6 +149,9 @@ class RegisteredSubjectManager(models.Manager):
         live_infants_to_register = kwargs.get('live_infants_to_register')
         user = kwargs.get('user')
 
+        if live_infants_to_register == 0:
+            raise TypeError("Number of live_infants to register is 0! Test for this in admin before calling register_live_infants().")
+        
         if live_infants_to_register > live_infants:
             # Trap this on the form, not here!!
             raise TypeError("Number of infants to register may not exceed number of live infants.")
@@ -195,6 +198,4 @@ class RegisteredSubjectManager(models.Manager):
         # update subject_identifier to the audit trail table
         # audit.subject_identifier = subject_identifier['identifier']
         # audit.save()
-        
-        
         return True
