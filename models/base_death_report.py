@@ -91,16 +91,15 @@ class BaseDeathReport(MyBasicUuidModel):
         help_text="",
         )
     death_reason_hospitalized = models.ForeignKey(DeathReasonHospitalized, 
-        verbose_name="6a. if yes,what was the primary reason for hospitalisation? ",
+        verbose_name="6a. if yes, hospitalized, what was the primary reason for hospitalisation? ",
         help_text="",
         blank=True,
         null=True,
         )   
     days_hospitalized = models.IntegerField(
-        verbose_name="6b. For how many days was the participant hospitalised during the illness immediately before death? ",
+        verbose_name="6b. if yes, hospitalized, for how many days was the participant hospitalised during the illness immediately before death? ",
         help_text="",
-        blank=True,
-        null=True,
+        default = 0,
         )
     
     comment = models.TextField(
