@@ -70,6 +70,7 @@ def fetch_receive_order(process_status, **kwargs):
             min(dob) as dob, \
             l.pat_id as subject_identifier, \
             l.pinitials as initials, \
+            l.cinitials as clinicians_initials, \
             l.keyopcreated as user_created, \
             l.keyoplastmodified as user_modified, \
             min(l.headerdate) as receive_datetime, \
@@ -93,10 +94,7 @@ def fetch_receive_order(process_status, **kwargs):
     cursor.execute(sql)
      
     for row in cursor:
-        
-        #print '%s patient %s received %s' % (row.receive_identifier, row.subject_identifier, row.receive_datetime)
-        
-        oReceive = fetch_or_create_receive( 
+        receive = create_or_update_receive( 
             receive_identifier = row.receive_identifier,
             protocol_identifier = row.protocol_identifier,
             site_identifier = row.site_identifier,            
@@ -112,10 +110,10 @@ def fetch_receive_order(process_status, **kwargs):
             created = row.created,
             modified = row.modified,
             dmis_reference=row.dmis_reference,
+            clinicians_initials = row.clinicians_initials,
             )
-            
         #create an aliquot record, will guess specimen type by tid    
-        oAliquot = fetch_or_create_aliquot( receive=oReceive , condition=row.sample_condition, primary=True, tid=row.tid )
+        aliquot = create_or_update_aliquot( receive=receive , condition=row.sample_condition, primary=True, tid=row.tid, modified=row.modified )
         
         if process_status == 'available':
             #get panel using TID or l21.panel_id
@@ -127,7 +125,7 @@ def fetch_receive_order(process_status, **kwargs):
             oOrder = fetch_or_create_order( 
                 order_identifier = row.order_identifier,
                 order_datetime = row.receive_datetime,
-                aliquot = oAliquot,
+                aliquot = aliquot,
                 panel=oPanel,
                 user_created = row.user_created,
                 user_modified = row.user_modified,
@@ -145,7 +143,7 @@ def fetch_receive_order(process_status, **kwargs):
         
     return None        
 
-def fetch_or_create_receive( **kwargs ):
+def create_or_update_receive( **kwargs ):
 
     import datetime
     import pyodbc
@@ -175,17 +173,30 @@ def fetch_or_create_receive( **kwargs ):
     user_modified = kwargs.get('user_modified')    
     created = kwargs.get('created')
     modified = kwargs.get('modified')
-    dmis_reference = kwargs.get('dmis_reference')                    
+    dmis_reference = kwargs.get('dmis_reference')        
+    clinicians_initials = kwargs.get('clinicians_initials')
 
-    oReceive = Receive.objects.filter(receive_identifier=receive_identifier)
+    receive = Receive.objects.filter(receive_identifier=receive_identifier)
 
-    if oReceive:
-        oReceive = Receive.objects.get(receive_identifier=receive_identifier)    
-        #print 'receive found'
+    if receive:
+        receive = Receive.objects.get(receive_identifier=receive_identifier)
+        if not receive.modified == modified:
+            protocol = fetch_or_create_protocol(protocol_identifier)        
+            site = fetch_or_create_site(site_identifier)                    
+            receive.modified = modified
+            receive.user_modified = user_modified
+            receive.protocol = protocol
+            receive.datetime_drawn = datetime_drawn
+            receive.receive_datetime = receive_datetime
+            receive.site = site
+            receive.visit = visit
+            receive.clinician_initials = clinician_initials
+            receive.dmis_reference = dmis_reference
+            receive.save()
     else:
-        oProtocol = fetch_or_create_protocol(protocol_identifier)
+        protocol = fetch_or_create_protocol(protocol_identifier)
         oAccount = fetch_or_create_account(protocol_identifier)
-        oSite = fetch_or_create_site(site_identifier)        
+        site = fetch_or_create_site(site_identifier)        
         oPatient = fetch_or_create_patient(
                                     account = oAccount, 
                                     subject_identifier = subject_identifier, 
@@ -193,12 +204,12 @@ def fetch_or_create_receive( **kwargs ):
                                     dob=dob, 
                                     initials=initials,
                                     )
-        oReceive = Receive.objects.create(
-            protocol = oProtocol,
+        receive = Receive.objects.create(
+            protocol = protocol,
             receive_identifier = receive_identifier,
             patient = oPatient,
-            site=oSite,
-            visit=visit,
+            site = site,
+            visit = visit,
             drawn_datetime = drawn_datetime,
             receive_datetime = receive_datetime,
             user_created = user_created,
@@ -206,12 +217,13 @@ def fetch_or_create_receive( **kwargs ):
             created = created,                                    
             modified = modified,  
             dmis_reference = dmis_reference,
+            clinicians_initials = clinicians_initials            
             ) 
-        oReceive.save()
+        receive.save()
         print 'receive created for sample '+receive_identifier+' protocol '+ protocol_identifier
 
 
-    return oReceive
+    return receive
     
 def fetch_or_create_order( **kwargs ):
 
@@ -231,7 +243,7 @@ def fetch_or_create_order( **kwargs ):
 
     order_identifier = kwargs.get('order_identifier')
     oPanel = kwargs.get('panel')
-    oAliquot = kwargs.get('aliquot')    
+    aliquot = kwargs.get('aliquot')    
     order_datetime = kwargs.get('order_datetime')
     comment = '',
     created = kwargs.get('created')
@@ -246,7 +258,7 @@ def fetch_or_create_order( **kwargs ):
         oOrder = Order(
             order_identifier = order_identifier,
             order_datetime = order_datetime,
-            aliquot = oAliquot,
+            aliquot = aliquot,
             panel = oPanel,
             comment = '',
             created = created,
@@ -275,10 +287,10 @@ def fetch_or_create_site( site_identifier ):
     if site_identifier == None or site_identifier == '' or site_identifier == '-9':
         site_identifier = '00'
         
-    oSite = Site.objects.filter(site_identifier__iexact=site_identifier)
+    site = Site.objects.filter(site_identifier__iexact=site_identifier)
 
-    if oSite:
-        oSite = Site.objects.get(site_identifier__iexact=site_identifier)
+    if site:
+        site = Site.objects.get(site_identifier__iexact=site_identifier)
     else:
         oLocation = Location.objects.filter(name__exact='UNKNOWN')
         if oLocation:
@@ -289,13 +301,13 @@ def fetch_or_create_site( site_identifier ):
                 )
             oLocation.save()
 
-        oSite = Site(
+        site = Site(
             site_identifier = site_identifier,
             name = site_identifier,
             location=oLocation,
             )
-        oSite.save()
-    return oSite        
+        site.save()
+    return site        
 
 def fetch_or_create_protocol( protocol_identifier ):
 
@@ -313,16 +325,16 @@ def fetch_or_create_protocol( protocol_identifier ):
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
 
 
-    oProtocol = Protocol.objects.filter(protocol_identifier__iexact=protocol_identifier)
+    protocol = Protocol.objects.filter(protocol_identifier__iexact=protocol_identifier)
     
-    if oProtocol:
-        oProtocol = Protocol.objects.get(protocol_identifier__iexact=protocol_identifier)
+    if protocol:
+        protocol = Protocol.objects.get(protocol_identifier__iexact=protocol_identifier)
     else:
         oPI = PrincipalInvestigator.objects.get(last_name='UNKNOWN')
         oSL = SiteLeader.objects.get(last_name='UNKNOWN')                
         oFS = FundingSource.objects.get(name='UNKNOWN')                
 
-        oProtocol = Protocol(
+        protocol = Protocol(
             protocol_identifier = protocol_identifier,
             research_title = 'unknown',
             short_title = 'unknown',
@@ -331,9 +343,9 @@ def fetch_or_create_protocol( protocol_identifier ):
             date_opened = datetime.datetime.today(),
             description = 'auto created / imported from DMIS',                        
             )
-        oProtocol.save()
+        protocol.save()
     
-    return oProtocol    
+    return protocol    
 
 def fetch_or_create_account( account_name ):
 
@@ -410,8 +422,7 @@ def fetch_or_create_patient( **kwargs ):
     return oPatient    
 
 
-def fetch_or_create_aliquot( **kwargs ):
-    
+def create_or_update_aliquot( **kwargs ):
     import datetime
     import pyodbc
     from django.db.models import Avg, Max, Min, Count    
@@ -427,11 +438,14 @@ def fetch_or_create_aliquot( **kwargs ):
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
 
 
-    oReceive = kwargs.get('receive')
-    
-    oCondition = fetch_or_create_aliquotcondition( condition=kwargs.get('condition') )
-    
+    receive = kwargs.get('receive')
+    condition = kwargs.get('condition')
     tid = kwargs.get('tid')
+    modified = kwargs.get('modified')    
+    
+    aliquot_condition = create_or_update_aliquotcondition( condition=condition )
+    
+
 
     #create primary
     create = {}
@@ -442,26 +456,33 @@ def fetch_or_create_aliquot( **kwargs ):
         create['type'] = '02' #WB
         create['medium'] = 'TUBE'
     
-    aliquot_identifier = '%s0000%s01' % (oReceive.receive_identifier, create['type'])    
+    aliquot_identifier = '%s0000%s01' % (receive.receive_identifier, create['type'])    
     
-    oAliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
+    aliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
     
-    if oAliquot:
-        oAliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
+    if aliquot:
+        aliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
+        if not aliquot.modified == modified:        
+            aliquot_type = AliquotType.objects.get(numeric_code__exact=create['type'])        
+            aliquot.modified = modified
+            aliquot.aliquot_type = aliquot_type
+            aliquot.condition = aliquot_condition
+            aliquot.save()
+        
     else:
         create['comment'] = 'auto created on import from DMIS'
-        oAliquotType = AliquotType.objects.get(numeric_code__exact=create['type'])
+        aliquot_type = AliquotType.objects.get(numeric_code__exact=create['type'])
         oAliquotMedium = AliquotMedium.objects.get(short_name__iexact=create['medium'])            
-        oAliquot = Aliquot.objects.create(
+        aliquot = Aliquot.objects.create(
             aliquot_identifier = aliquot_identifier,
-            receive = oReceive,
+            receive = receive,
             count = 1,
-            aliquot_type = oAliquotType,
+            aliquot_type = aliquot_type,
             medium = oAliquotMedium,
-            condition=oCondition,
+            condition = aliquot_condition,
             comment = create['comment'],            
             )
-        #oAliquot.account.add(account)        
+        #aliquot.account.add(account)        
 
     #if order is not placed against primary, create child
     if tid[0]=='1':
@@ -481,28 +502,28 @@ def fetch_or_create_aliquot( **kwargs ):
 
 
     if create:
-        aliquot_identifier = '%s0201%s02' % (oReceive.receive_identifier, create['type'])    
+        aliquot_identifier = '%s0201%s02' % (receive.receive_identifier, create['type'])    
         create['comment'] = 'auto created on import from DMIS'
-        oAliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
-        if oAliquot:
-            oAliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
+        aliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
+        if aliquot:
+            aliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
         else:
-            oAliquotType = AliquotType.objects.get(numeric_code__exact=create['type'])
+            aliquot_type = AliquotType.objects.get(numeric_code__exact=create['type'])
             oAliquotMedium = AliquotMedium.objects.get(short_name__iexact=create['medium'])   
-            oCondition = AliquotCondition.objects.get(short_name__iexact=create['condition'])            
-            oAliquot = Aliquot.objects.create(
+            aliquot_condition = AliquotCondition.objects.get(short_name__iexact=create['condition'])            
+            aliquot = Aliquot.objects.create(
                 aliquot_identifier = aliquot_identifier,
-                receive = oReceive,
+                receive = receive,
                 count = 2,
-                aliquot_type = oAliquotType,
+                aliquot_type = aliquot_type,
                 medium = oAliquotMedium,
-                condition=oCondition,
+                condition=aliquot_condition,
                 comment = create['comment'],            
                 )
 
-    return oAliquot
+    return aliquot
 
-def fetch_or_create_aliquotcondition( **kwargs ):
+def create_or_update_aliquotcondition( **kwargs ):
 
     import datetime
     import pyodbc
@@ -520,7 +541,7 @@ def fetch_or_create_aliquotcondition( **kwargs ):
 
 
     if AliquotCondition.objects.filter(short_name__exact=kwargs.get('condition')):
-        oCondition = AliquotCondition.objects.get(short_name__exact=kwargs.get('condition'))
+        aliquot_condition = AliquotCondition.objects.get(short_name__exact=kwargs.get('condition'))
     else:        
         agg = AliquotCondition.objects.aggregate(Max('display_index'),)
         if not agg:
@@ -528,14 +549,14 @@ def fetch_or_create_aliquotcondition( **kwargs ):
         else:
             display_index = agg['display_index__max'] + 10
                 
-        oCondition = AliquotCondition(
+        aliquot_condition = AliquotCondition(
             name = kwargs.get('condition'),
             short_name = kwargs.get('condition'),
             display_index = display_index,
             )    
-        oCondition.save()
+        aliquot_condition.save()
         
-    return oCondition        
+    return aliquot_condition        
 
 if __name__ == "__main__":
     
