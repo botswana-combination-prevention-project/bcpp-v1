@@ -57,8 +57,8 @@ class BaseDeathReport(MyBasicUuidModel):
         verbose_name="3. Will an autopsy be performed later  ",
         help_text="",
         )
-    death_cause = models.CharField(
-        max_length=35,
+    death_cause = models.TextField(
+        max_length=500,
         verbose_name="4. Describe the major cause of death(including pertinent autopsy information if available),starting with the first noticeable illness thought to be related to death,continuing to time of death. ",
         help_text = "Note: Cardiac and pulmonary arrest are not major reasons and should not be used to describe major cause)"  
         )    
