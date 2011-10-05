@@ -53,6 +53,10 @@ admin.site.register(ScheduledEntryBucket, ScheduledEntryBucketAdmin)
 class AdditionalEntryBucketAdmin(MyModelAdmin):
     
     list_display = ('registered_subject', 'content_type_map', 'entry_status', 'fill_datetime', 'due_datetime', 'close_datetime')
+    
+    list_filter = ('entry_status', 'fill_datetime',)    
+    
+    search_fields = ('registered_subject__subject_identifier', 'content_type_map__model')    
 
 admin.site.register(AdditionalEntryBucket, AdditionalEntryBucketAdmin)
 
