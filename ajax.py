@@ -9,6 +9,13 @@ from lab_clinic_api.classes import ResultContext
 
 
 @dajaxice_register
+def plot_longitudinal_results(request, subject_identifier, test_code):
+    dajax = Dajax()
+    rendered = render_to_string('plot_result.html', {'subject_identifier': subject_identifier, 'test_code': test_code })    
+    dajax.assign('#left_table','innerHTML',rendered)
+    return dajax.json()
+    
+@dajaxice_register
 def updating(request):
     
     dajax = Dajax()

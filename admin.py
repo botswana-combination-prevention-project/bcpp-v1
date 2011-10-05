@@ -21,9 +21,9 @@ class LabAdmin(MyModelAdmin):
 
     form = LabForm
 
-    list_display = ('subject_identifier', 'panel', "drawn_datetime", 'result_identifier',"release_datetime")
+    list_display = ('subject_identifier', "receive_identifier", 'panel', "drawn_datetime", 'result_identifier',"release_datetime")
     
-    list_filter = ('drawn_datetime','panel')
+    list_filter = ('drawn_datetime',"receive_datetime", 'panel')
 
     search_fields = ('subject_identifier', 'panel', 'receive_identifier', 'result_identifier')
 

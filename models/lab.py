@@ -54,7 +54,7 @@ class Lab(MyBasicUuidModel):
         )
 
     condition = models.CharField( 
-        max_length = 50, 
+        max_length = 250, 
         blank = True,
         null = True
         )

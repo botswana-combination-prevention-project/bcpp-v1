@@ -7,7 +7,9 @@ urlpatterns = patterns('lab_clinic_api.views',
         'view_result', 
         name="lab_clinic_api_result_report"
         ),
-    
+
+    url(r'^charts/(?P<subject_identifier>[0-9A-Z\-]+)/(?P<test_code>\w+)/chart.png$', 'longitudinal_result'),    
+
     url(r'^', 
         'index', 
         name="lab_clinic_api_index_url"
