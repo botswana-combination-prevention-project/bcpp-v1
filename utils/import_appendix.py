@@ -4,6 +4,9 @@ from bhp_actg_reference.models import Appendix40
 
 
 def ImportAppendix(**kwargs):
+    
+    """Import records in old dmis for appendix 40
+    After this, go to bhp_code_lists.utils """
 
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHP")
     cursor = cnxn.cursor()
