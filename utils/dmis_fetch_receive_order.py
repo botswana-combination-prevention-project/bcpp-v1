@@ -565,7 +565,7 @@ if __name__ == "__main__":
     sys.path.append('/home/django/source/bhplab/')
     os.environ['DJANGO_SETTINGS_MODULE'] ='bhplab.settings'
     from django.core.management import setup_environ
-    from bhplab import settings
+    from django.conf import settings
 
     setup_environ(settings)
 
