@@ -105,12 +105,13 @@
         </td>
 
         <td>
-            <table name="right"  border=1 width=100%>
+            <table name="right"  border=0 width=100%>
                 {% block infants %}{% endblock infants %}                                
-                {% block maternal_consent %}{% endblock maternal_consent %}                                
-                <tr name="middle right" >
-                    <td>
-                        <H3>Laboratory</H3>
+                {% block maternal_consent %}{% endblock maternal_consent %}  
+                {% block clinic_plots %}{% endblock %}
+                <tr name="middle right" ><td><H4>Laboratory</H4></td></tr>                
+                {% block lab_plots %}{% endblock %}
+                <tr name="middle right" ><td>                
                         <span name="x_results" id="x_results">{{ local_results }}</span>
                         <input name="fetch" id="fetch" value="Update" type="button" onclick="Dajaxice.lab_clinic_api.updating(Dajax.process);Dajaxice.lab_clinic_api.update_result_status(Dajax.process,{'subject_identifier':'{{ subject_identifier }}'});">                
                     </td>
