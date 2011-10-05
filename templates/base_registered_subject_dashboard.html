@@ -74,4 +74,12 @@
     {% endblock additional_lab_bucket %}
 {% endif %}
 
+{% block lab_plots %}
+{% for show_lab_plot in show_lab_plots %}
+    <tr name="{{ show_lab_plot.url_arg }}" ><td>{{ show_lab_plot.title }}</img></td></tr>                
+    <tr name="{{ show_lab_plot.url_arg }}" ><td><img src="/mpepu/specimens/charts/{{ subject_identifier }}/{{ show_lab_plot.url_arg }}/chart.png" width="200" height="100" onclick="Dajaxice.lab_clinic_api.plot_longitudinal_results(Dajax.process,{'subject_identifier':'{{ subject_identifier }}', 'test_code':'{{ show_lab_plot.url_arg }}'});"></img></td></tr>
+    <tr name="{{ show_lab_plot.url_arg }}" ><td><small>click to enlarge</small></td></tr>                
+{% endfor %}
+{% endblock %}
+
 
