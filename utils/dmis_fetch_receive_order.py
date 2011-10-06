@@ -1,3 +1,23 @@
+import sys,os
+sys.path.append('/home/erikvw/source/')
+sys.path.append('/home/erikvw/source/bhplab/')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'bhplab.settings'
+from django.core.management import setup_environ
+from bhplab import settings
+setup_environ(settings)
+from datetime import datetime, timedelta
+import pyodbc
+from django.db.models import Avg, Max, Min, Count    
+from lab_receive.models import Receive
+from lab_aliquot.models import Aliquot
+from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+from lab_order.models import Order
+from lab_result.models import Result
+from lab_result_item.models import ResultItem
+from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+from lab_patient.models import Patient
+from lab_account.models import Account
+from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
 
 
 def fetch_receive_order(process_status, **kwargs):
@@ -10,21 +30,6 @@ def fetch_receive_order(process_status, **kwargs):
        Also, call with both process_status (pending and available) to make sure you get everything.
     """
 
-    from datetime import datetime, timedelta
-    import pyodbc
-    from django.db.models import Avg, Max, Min, Count    
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
-    
     subject_identifier = kwargs.get('subject_identifier')
     receive_identifier = kwargs.get('receive_identifier')
     order_identifier = kwargs.get('order_identifier')    
@@ -165,20 +170,6 @@ def fetch_receive_order(process_status, **kwargs):
 
 def create_or_update_receive( **kwargs ):
 
-    import datetime
-    import pyodbc
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
-
     receive_identifier = kwargs.get('receive_identifier').strip(' \t\n\r')
     protocol_identifier = kwargs.get('protocol_identifier').strip(' \t\n\r')
     site_identifier = kwargs.get('site_identifier').strip(' \t\n\r')    
@@ -256,20 +247,6 @@ def create_or_update_receive( **kwargs ):
     
 def fetch_or_create_order( **kwargs ):
 
-    import datetime
-    import pyodbc
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
-
     order_identifier = kwargs.get('order_identifier')
     panel = kwargs.get('panel')
     aliquot = kwargs.get('aliquot')    
@@ -299,19 +276,6 @@ def fetch_or_create_order( **kwargs ):
     return order
 
 def fetch_or_create_site( site_identifier ):
-    import datetime
-    import pyodbc
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
 
     if site_identifier == None or site_identifier == '' or site_identifier == '-9':
         site_identifier = '00'
@@ -340,20 +304,6 @@ def fetch_or_create_site( site_identifier ):
 
 def fetch_or_create_protocol( protocol_identifier ):
 
-    import datetime
-    import pyodbc
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
-
     protocol = Protocol.objects.filter(protocol_identifier__iexact=protocol_identifier)
     
     if protocol:
@@ -378,20 +328,6 @@ def fetch_or_create_protocol( protocol_identifier ):
 
 def fetch_or_create_account( account_name ):
 
-    import datetime
-    import pyodbc
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
-
     account = Account.objects.filter(account_name__iexact=account_name)
     
     if account:
@@ -411,19 +347,6 @@ def fetch_or_create_account( account_name ):
     
 def create_or_update_patient( **kwargs ):
 
-    import datetime
-    import pyodbc
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-    
     subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
     initials = kwargs.get('initials').strip(' \t\n\r')
     if not initials:
@@ -455,20 +378,6 @@ def create_or_update_patient( **kwargs ):
 
 
 def create_or_update_aliquot( **kwargs ):
-    import datetime
-    import pyodbc
-    from django.db.models import Avg, Max, Min, Count    
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
 
     receive = kwargs.get('receive')
     condition = kwargs.get('condition')
@@ -554,21 +463,6 @@ def create_or_update_aliquot( **kwargs ):
     return aliquot
 
 def create_or_update_aliquotcondition( **kwargs ):
-
-    import datetime
-    import pyodbc
-    from django.db.models import Avg, Max, Min, Count    
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
 
     if AliquotCondition.objects.filter(short_name__exact=kwargs.get('condition')):
         aliquot_condition = AliquotCondition.objects.get(short_name__exact=kwargs.get('condition'))
