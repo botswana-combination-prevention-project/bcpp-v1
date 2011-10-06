@@ -56,7 +56,7 @@ class ResultContext(object):
         self.search_name = kwargs.get('search_name')        
         self.result_identifier = kwargs.get('result_identifier')
         if self.result_identifier:
-            self.result = Result.objects.get(lab__result_identifier__exact=self.result_identifier)
+            self.result = Result.objects.get(result_identifier__exact=self.result_identifier)
             self.result_items = ResultItem.objects.filter(result=self.result)
             #self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.result.lab.subject_identifier)        
 
