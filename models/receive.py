@@ -49,7 +49,19 @@ class Receive (MyBasicUuidModel):
         )
     
     clinician_initials = InitialsField()
+    
+    receive_condition = models.CharField(
+        verbose_name = 'Condition of primary tube',
+        max_length = 50,
+        null=True,
+        )        
             
+    dmis_panel_name = models.CharField(
+        verbose_name = 'Panel name on dmis receive record',
+        max_length = 50,
+        null=True,
+        )
+
     dmis_reference = models.IntegerField()
     
     objects = ReceiveManager()
