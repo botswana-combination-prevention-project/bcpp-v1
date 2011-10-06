@@ -484,29 +484,6 @@ def create_or_update_aliquotcondition( **kwargs ):
 
 if __name__ == "__main__":
     
-    import sys,os
-    sys.path.append('/home/erikvw/source/')
-    sys.path.append('/home/erikvw/source/bhplab/')
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'bhplab.settings'
-    from django.core.management import setup_environ
-    from bhplab import settings
-
-    setup_environ(settings)
-
-    import datetime
-    import pyodbc
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
-    
     print 'fetching lab receiving and orders from dmis....'
     print 'fetch pending....'
     fetch_receive_order('pending')
