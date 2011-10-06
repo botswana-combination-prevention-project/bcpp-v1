@@ -25,7 +25,7 @@ def view_result(request, **kwargs):
         result = Result.objects.get(result_identifier__exact=result_identifier)
         result_items = ResultItem.objects.filter(result=result)
         
-        result_context = ResultContext(result_identifier)
+        result_context = ResultContext(result_identifier=result_identifier)
         
         return render_to_response(template, 
             result_context.context, 

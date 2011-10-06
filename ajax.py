@@ -15,15 +15,15 @@ def print_result_report(request, result_identifier):
 
     if result_identifier is not None:
 
-        oResult = Result.objects.using('lab_api').get(result_identifier__exact=result_identifier)
-        oResultItems = ResultItem.objects.using('lab_api').filter(result=oResult)
+        result = Result.objects.using('lab_api').get(result_identifier__exact=result_identifier)
+        result_items = ResultItem.objects.using('lab_api').filter(result=result)
         
         context = {
-        'result': oResult,
-        'receive': oResult.order.aliquot.receive,
-        'order': oResult.order,
-        'aliquot': oResult.order.aliquot,
-        'result_items': oResultItems,
+        'result': result,
+        'receive': result.order.aliquot.receive,
+        'order': result.order,
+        'aliquot': result.order.aliquot,
+        'result_items': result_items,
         'result_include_file': "detail.html",
         'receiving_include_file':"receiving.html",
         'orders_include_file': "orders.html",
