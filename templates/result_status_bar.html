@@ -6,14 +6,25 @@
     <tbody>
     {% for result in results %}
         <tr class="{% cycle 'row2' 'row1' %}">    
-        <td><input type="button" name="" id="" value="{{ result.panel|truncatechars:17 }}" onclick="Dajaxice.lab_clinic_api.view_result_ajax(Dajax.process,{'result_identifier':'{{result.result_identifier}}'});"><BR>
-            specimen: {{ result.receive_identifier }}<BR>
-            drawn: {{ result.drawn_datetime|date:"Y-m-d" }}<BR>
-            received: {{ result.receive_datetime|date:"Y-m-d" }}<BR>
-            result_identifier: {{result.result_identifier}}<BR>
-            released: {{ result.release_datetime|date:"Y-m-d" }}<BR>
-            status: {{ result.release_status }}<BR>        
-            reviewed: {{ result.review_status}}
+        <td>
+            {% if result.result_identifier %}
+                <input type="button" name="" id="" value="{{ result.panel|truncatechars:17 }}" onclick="Dajaxice.lab_clinic_api.view_result_ajax(Dajax.process,{'result_identifier':'{{result.result_identifier}}'});"><BR>
+                specimen: {{ result.receive_identifier }}<BR>
+                drawn: {{ result.drawn_datetime|date:"Y-m-d" }}<BR>
+                received: {{ result.receive_datetime|date:"Y-m-d" }}<BR>
+                result_identifier: {{result.result_identifier}}<BR>
+                released: {{ result.release_datetime|date:"Y-m-d" }}<BR>
+                status: {{ result.release_status }}<BR>        
+                reviewed: {{ result.review_status}}
+            {% else%}
+                <input type="button" name="" id="" value="{{ result.panel|truncatechars:17 }}" onclick="Dajaxice.lab_clinic_api.view_receive_ajax(Dajax.process,{'result_identifier':'{{result.result_identifier}}'});"><BR>
+                specimen: {{ result.receive_identifier }}<BR>
+                drawn: {{ result.drawn_datetime|date:"Y-m-d" }}<BR>
+                received: {{ result.receive_datetime|date:"Y-m-d" }}<BR>
+                {% if not 'OK' in result.condition %}condition: <font color="red">{{ result.condition }}</font><BR> {% endif %}       
+                status: {{ result.release_status }}<BR>        
+                reviewed: {{ result.review_status}}
+            {% endif %}                
         </td></tr>    
     {% endfor %}
     </tbody>
