@@ -70,7 +70,7 @@ def fetch_receive_order(process_status, **kwargs):
             min(dob) as dob, \
             l.pat_id as subject_identifier, \
             l.pinitials as initials, \
-            l.cinitials as clinicians_initials, \
+            l.cinitials as clinician_initials, \
             l.keyopcreated as user_created, \
             l.keyoplastmodified as user_modified, \
             min(l.headerdate) as receive_datetime, \
@@ -85,7 +85,7 @@ def fetch_receive_order(process_status, **kwargs):
             and l.datelastmodified >= \'%s\' \
             and l.datelastmodified <= \'%s\' \
             and sample_date_drawn <= \'%s\' \
-            group by l.pid, l.tid, l.sample_condition, l.sample_site_id, l.sample_visitid ,l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
+            group by l.pid, l.tid, l.sample_condition, l.sample_site_id, l.sample_visitid ,l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.cinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
             having count(*)=1 \
             order by min(l.id) desc' % (has_order_sql, last_import_datetime.strftime('%Y-%m-%d %H:%M'), import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
 
@@ -94,6 +94,29 @@ def fetch_receive_order(process_status, **kwargs):
     cursor.execute(sql)
      
     for row in cursor:
+
+        #get panel using TID or l21.panel_id
+        if not row.panel_id == None and not row.panel_id == '-9':
+            panel = Panel.objects.get(dmis_panel_identifier__exact=row.panel_id)
+        else:
+        
+        
+            panel = Panel.objects.filter(panel_group__name__exact=row.tid)
+            if not panel:
+                panel_group = PanelGroup.objects.create(name = row.tid,)
+                panel = Panel.objects.create(
+                                        name = row.tid,
+                                        panel_group = panel_group,
+                                        comment = 'temp',
+                                        #dmis_panel_identifier = row.dmis_panel_identifier,
+                                        #test_code = row.test_code,
+                                        #aliquot_type = row.aliquot_type,
+                                        #account = row.account,
+                                        )
+            else:
+                panel = panel[0]    
+
+
         receive = create_or_update_receive( 
             receive_identifier = row.receive_identifier,
             protocol_identifier = row.protocol_identifier,
@@ -110,23 +133,20 @@ def fetch_receive_order(process_status, **kwargs):
             created = row.created,
             modified = row.modified,
             dmis_reference=row.dmis_reference,
-            clinicians_initials = row.clinicians_initials,
+            clinician_initials = row.clinician_initials,
+            dmis_panel_name = panel.name,
+            receive_condition = row.sample_condition,
             )
         #create an aliquot record, will guess specimen type by tid    
         aliquot = create_or_update_aliquot( receive=receive , condition=row.sample_condition, primary=True, tid=row.tid, modified=row.modified )
         
         if process_status == 'available':
-            #get panel using TID or l21.panel_id
-            if not row.panel_id == None and not row.panel_id == '-9':
-                oPanel = Panel.objects.get(dmis_panel_identifier__exact=row.panel_id)
-            else:                                
-                oPanel = Panel.objects.filter(panel_group__name__exact=row.tid)[0]
             #create new order
-            oOrder = fetch_or_create_order( 
+            order = fetch_or_create_order( 
                 order_identifier = row.order_identifier,
                 order_datetime = row.receive_datetime,
                 aliquot = aliquot,
-                panel=oPanel,
+                panel = panel,
                 user_created = row.user_created,
                 user_modified = row.user_modified,
                 created = row.created,
@@ -134,7 +154,7 @@ def fetch_receive_order(process_status, **kwargs):
                 dmis_reference=row.dmis_reference,
                 )
             
-            #oResult = fetch_or_create_result(order=oOrder)
+            #oResult = fetch_or_create_result(order=order)
                                
     try:
         cursor.close()          
@@ -174,31 +194,38 @@ def create_or_update_receive( **kwargs ):
     created = kwargs.get('created')
     modified = kwargs.get('modified')
     dmis_reference = kwargs.get('dmis_reference')        
-    clinicians_initials = kwargs.get('clinicians_initials')
+    clinician_initials = kwargs.get('clinician_initials')
+    dmis_panel_name = kwargs.get('dmis_panel_name')
+    receive_condition = kwargs.get('receive_condition')
+
 
     receive = Receive.objects.filter(receive_identifier=receive_identifier)
 
     if receive:
         receive = Receive.objects.get(receive_identifier=receive_identifier)
         if not receive.modified == modified:
+            print 'updating receive %s' % receive_identifier
             protocol = fetch_or_create_protocol(protocol_identifier)        
             site = fetch_or_create_site(site_identifier)                    
             receive.modified = modified
             receive.user_modified = user_modified
             receive.protocol = protocol
-            receive.datetime_drawn = datetime_drawn
+            receive.drawn_datetime = drawn_datetime
             receive.receive_datetime = receive_datetime
             receive.site = site
             receive.visit = visit
             receive.clinician_initials = clinician_initials
             receive.dmis_reference = dmis_reference
+            receive.dmis_panel_name = dmis_panel_name
+            receive.receive_condition = receive_condition
+            
             receive.save()
     else:
         protocol = fetch_or_create_protocol(protocol_identifier)
-        oAccount = fetch_or_create_account(protocol_identifier)
+        account = fetch_or_create_account(protocol_identifier)
         site = fetch_or_create_site(site_identifier)        
-        oPatient = fetch_or_create_patient(
-                                    account = oAccount, 
+        patient = create_or_update_patient(
+                                    account = account, 
                                     subject_identifier = subject_identifier, 
                                     gender=gender, 
                                     dob=dob, 
@@ -207,7 +234,7 @@ def create_or_update_receive( **kwargs ):
         receive = Receive.objects.create(
             protocol = protocol,
             receive_identifier = receive_identifier,
-            patient = oPatient,
+            patient = patient,
             site = site,
             visit = visit,
             drawn_datetime = drawn_datetime,
@@ -217,7 +244,9 @@ def create_or_update_receive( **kwargs ):
             created = created,                                    
             modified = modified,  
             dmis_reference = dmis_reference,
-            clinicians_initials = clinicians_initials            
+            clinician_initials = clinician_initials,            
+            dmis_panel_name = dmis_panel_name,
+            receive_condition = receive_condition,
             ) 
         receive.save()
         print 'receive created for sample '+receive_identifier+' protocol '+ protocol_identifier
@@ -242,7 +271,7 @@ def fetch_or_create_order( **kwargs ):
 
 
     order_identifier = kwargs.get('order_identifier')
-    oPanel = kwargs.get('panel')
+    panel = kwargs.get('panel')
     aliquot = kwargs.get('aliquot')    
     order_datetime = kwargs.get('order_datetime')
     comment = '',
@@ -250,24 +279,24 @@ def fetch_or_create_order( **kwargs ):
     modified = kwargs.get('modified')
     dmis_reference = kwargs.get('dmis_reference')                    
  
-    oOrder = Order.objects.filter(order_identifier = order_identifier )
+    order = Order.objects.filter(order_identifier = order_identifier )
             
-    if oOrder:
-        oOrder = Order.objects.get(order_identifier = order_identifier )    
+    if order:
+        order = Order.objects.get(order_identifier = order_identifier )    
     else:
-        oOrder = Order(
+        order = Order(
             order_identifier = order_identifier,
             order_datetime = order_datetime,
             aliquot = aliquot,
-            panel = oPanel,
+            panel = panel,
             comment = '',
             created = created,
             modified = modified,
             dmis_reference = dmis_reference,
             ) 
-        oOrder.save()
+        order.save()
 
-    return oOrder
+    return order
 
 def fetch_or_create_site( site_identifier ):
     import datetime
@@ -363,12 +392,12 @@ def fetch_or_create_account( account_name ):
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
 
 
-    oAccount = Account.objects.filter(account_name__iexact=account_name)
+    account = Account.objects.filter(account_name__iexact=account_name)
     
-    if oAccount:
-        oAccount = Account.objects.get(account_name__iexact=account_name)
+    if account:
+        account = Account.objects.get(account_name__iexact=account_name)
     else:
-        oAccount = Account(
+        account = Account(
             account_name = account_name,
             account_opendate = datetime.datetime.today(),
             account_closedate = datetime.datetime.today(),            
@@ -376,11 +405,11 @@ def fetch_or_create_account( account_name ):
             created = datetime.datetime.today(),                                    
             comment = 'auto created / imported from DMIS',            
             )
-        oAccount.save()
+        account.save()
 
-    return oAccount    
+    return account    
     
-def fetch_or_create_patient( **kwargs ):
+def create_or_update_patient( **kwargs ):
 
     import datetime
     import pyodbc
@@ -394,32 +423,35 @@ def fetch_or_create_patient( **kwargs ):
     from lab_patient.models import Patient
     from lab_account.models import Account
     from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
     
     subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
-    
-    oPatient = Patient.objects.filter(subject_identifier__iexact=subject_identifier)
-    
-    if oPatient:
-        oPatient = Patient.objects.get(subject_identifier__iexact=subject_identifier)
+    initials = kwargs.get('initials').strip(' \t\n\r')
+    if not initials:
+        initials = 'X0X'
+    account = kwargs.get('account')
+    gender = kwargs.get('gender')
+    dob = kwargs.get('dob')
+    is_dob_estimated = '-'
+
+    patient = Patient.objects.filter(subject_identifier__iexact=subject_identifier)
+    if patient:
+        patient = Patient.objects.get(subject_identifier__iexact=subject_identifier)
+        patient.dob = dob
+        patient.gender = gender
+        patient.is_dob_estimated = is_dob_estimated
+        patient.initials = initials
+        patient.save()
     else:
-        initials = kwargs.get('initials').strip(' \t\n\r')
-        account = kwargs.get('account')
-        if not initials:
-            initials = 'X0X'
-    
-        oPatient = Patient.objects.create(
+        patient = Patient.objects.create(
             subject_identifier = subject_identifier,
             initials = initials,
-            gender = kwargs.get('gender'),
-            dob = kwargs.get('dob'),
-            is_dob_estimated = '-',
+            gender = gender,
+            dob = dob,
+            is_dob_estimated = is_dob_estimated,
             comment = 'auto created / imported from DMIS',            
             )
-        oPatient.account.add(account)        
-
-    
-    return oPatient    
+        patient.account.add(account)        
+    return patient    
 
 
 def create_or_update_aliquot( **kwargs ):
@@ -444,8 +476,6 @@ def create_or_update_aliquot( **kwargs ):
     modified = kwargs.get('modified')    
     
     aliquot_condition = create_or_update_aliquotcondition( condition=condition )
-    
-
 
     #create primary
     create = {}
@@ -561,11 +591,11 @@ def create_or_update_aliquotcondition( **kwargs ):
 if __name__ == "__main__":
     
     import sys,os
-    sys.path.append('/home/django/source/')
-    sys.path.append('/home/django/source/bhplab/')
-    os.environ['DJANGO_SETTINGS_MODULE'] ='bhplab.settings'
+    sys.path.append('/home/erikvw/source/')
+    sys.path.append('/home/erikvw/source/bhplab/')
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'bhplab.settings'
     from django.core.management import setup_environ
-    from django.conf import settings
+    from bhplab import settings
 
     setup_environ(settings)
 
