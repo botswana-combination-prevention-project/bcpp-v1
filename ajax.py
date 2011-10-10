@@ -78,7 +78,8 @@ def view_result_ajax(request, result_identifier):
 
 @dajaxice_register
 def view_receive_ajax(request, receive_identifier):
-    
+
+    print  receive_identifier   
     dajax = Dajax()
 
     lab_context = LabContext(receive_identifier=receive_identifier)

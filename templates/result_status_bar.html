@@ -17,7 +17,7 @@
                 status: {{ result.release_status }}<BR>        
                 reviewed: {{ result.review_status}}
             {% else%}
-                <input type="button" name="" id="" value="{{ result.panel|truncatechars:17 }}" onclick="Dajaxice.lab_clinic_api.view_receive_ajax(Dajax.process,{'result_identifier':'{{result.result_identifier}}'});"><BR>
+                <input type="button" name="" id="" value="{{ result.panel|truncatechars:17 }}" onclick="Dajaxice.lab_clinic_api.view_receive_ajax(Dajax.process,{'receive_identifier':'{{result.receive_identifier}}'});"><BR>
                 specimen: {{ result.receive_identifier }}<BR>
                 drawn: {{ result.drawn_datetime|date:"Y-m-d" }}<BR>
                 received: {{ result.receive_datetime|date:"Y-m-d" }}<BR>
