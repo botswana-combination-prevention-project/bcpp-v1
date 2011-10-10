@@ -87,7 +87,7 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
             ],
         )]
         
-    search_fields = ('subject_identifier',) 
+    search_fields = ('registered_subject__subject_identifier',) 
     
     list_display = ('registered_subject', 'created', 'modified', 'user_created', 'user_modified',)    
     
