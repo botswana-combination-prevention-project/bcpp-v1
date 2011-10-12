@@ -1,27 +1,27 @@
 import sys,os
-sys.path.append('/home/erikvw/source/')
-sys.path.append('/home/erikvw/source/bhplab/')
+sys.path.append('/home/django/source/')
+sys.path.append('/home/django/source/bhplab/')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bhplab.settings'
 from django.core.management import setup_environ
 from bhplab import settings
 
 setup_environ(settings)
 
-    import pyodbc, datetime, re
-    from lab_result.models import ResultSource
-    from django.db.models import Avg, Max, Min, Count        
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result, ResultSource
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
-    from lab_common.utils import AllocateResultIdentifier
-    from lab_test_code.models import TestCode, TestCodeGroup
+import pyodbc, datetime, re
+from lab_result.models import ResultSource
+from django.db.models import Avg, Max, Min, Count        
+from lab_receive.models import Receive
+from lab_aliquot.models import Aliquot
+from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+from lab_order.models import Order
+from lab_result.models import Result, ResultSource
+from lab_result_item.models import ResultItem
+from lab_panel.models import Panel, PanelGroup, TidPanelMapping
+from lab_patient.models import Patient
+from lab_account.models import Account
+from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
+from lab_common.utils import AllocateResultIdentifier
+from lab_test_code.models import TestCode, TestCodeGroup
 
 
 """
