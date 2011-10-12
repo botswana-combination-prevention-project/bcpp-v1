@@ -55,6 +55,7 @@ def create_or_update_result(**kwargs):
     if Result.objects.filter(order=order):
         # get the existing result
         result = Result.objects.get(order=order)
+        print 'result exists'
     else:
         # create new result        
         # fetch the order/result from DMIS (note in DMIS orders are generated when a result is available so orders always have results)
@@ -80,8 +81,7 @@ def create_or_update_result(**kwargs):
                 dmis_result_guid=row.result_guid,
                 )
                 
-            print 'order %s %s result %s' % ( order.order_identifier, order.order_datetime, result.result_identifier)
-        
+            print 'created order %s %s result %s' % ( order.order_identifier, order.order_datetime, result.result_identifier)
         fetch_or_create_resultsource()
         
     # create or update the result items for this result
@@ -130,6 +130,7 @@ def create_or_update_resultitem(**kwargs):
             result_item.result_item_operator=user                
             comment=''
             result_item.save()
+        print '----updated %s' % (code)
     else:
         # create
         test_code = fetch_or_create_testcode(code)
@@ -150,7 +151,7 @@ def create_or_update_resultitem(**kwargs):
             result_item_operator=user,                
             comment='',
             )
-        
+        print '----added %s' % (code)        
         
 def get_ritem_user(dmis_user):
     # change NT system username to auto
