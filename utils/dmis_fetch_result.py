@@ -39,7 +39,7 @@ def fetch_results_from_dmis(**kwargs):
         orders  = Order.objects.all()
     
     for order in orders:
-        create_or_update_result(order=orders)
+        create_or_update_result(order=order)
 
 def create_or_update_result(**kwargs):
 
