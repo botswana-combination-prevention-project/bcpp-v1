@@ -96,7 +96,9 @@ def create_or_update_result(**kwargs):
               l21d.validation_ref as validation_reference, \
               l21d.datelastmodified as result_item_datetime, \
               l21d.keyopcreated as user_created, \
-              l21.datecreated as created \
+              l21d.keyoplastmodified as user_modified, \
+              l21.datecreated as created, \
+              l21.datelastmodified as modified \
               from BHPLAB.DBO.LAB21Response as L21 \
               left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
               where l21.id=\'%s\' and l21d.id is not null'  % result.order.order_identifier
