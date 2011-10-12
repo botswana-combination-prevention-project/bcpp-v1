@@ -4,7 +4,9 @@ sys.path.append('/home/erikvw/source/bhplab/')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bhplab.settings'
 from django.core.management import setup_environ
 from bhplab import settings
+
 setup_environ(settings)
+
 from datetime import datetime, timedelta
 import pyodbc
 from django.db.models import Avg, Max, Min, Count    
@@ -104,8 +106,6 @@ def fetch_receive_order(process_status, **kwargs):
         if not row.panel_id == None and not row.panel_id == '-9':
             panel = Panel.objects.get(dmis_panel_identifier__exact=row.panel_id)
         else:
-        
-        
             panel = Panel.objects.filter(panel_group__name__exact=row.tid)
             if not panel:
                 panel_group = PanelGroup.objects.create(name = row.tid,)

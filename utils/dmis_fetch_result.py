@@ -1,32 +1,15 @@
-"""
-import results for orders already in the system
-"""
+import sys,os
+sys.path.append('/home/erikvw/source/')
+sys.path.append('/home/erikvw/source/bhplab/')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'bhplab.settings'
+from django.core.management import setup_environ
+from bhplab import settings
 
-def fetch_results_from_dmis(**kwargs):
-
-    import pyodbc, datetime
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result, ResultSource
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
-    from lab_common.utils import AllocateResultIdentifier
-    
-    #Result.objects.all().delete()
-
-    oOrders  = Order.objects.all()
-    
-    for oOrder in oOrders:
-        fetch_or_create_result(order=oOrder)
-
-def fetch_or_create_result(**kwargs):
+setup_environ(settings)
 
     import pyodbc, datetime, re
+    from lab_result.models import ResultSource
+    from django.db.models import Avg, Max, Min, Count        
     from lab_receive.models import Receive
     from lab_aliquot.models import Aliquot
     from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
@@ -40,8 +23,27 @@ def fetch_or_create_result(**kwargs):
     from lab_common.utils import AllocateResultIdentifier
     from lab_test_code.models import TestCode, TestCodeGroup
 
+
+"""
+import results for orders already in the system
+"""
+
+def fetch_results_from_dmis(**kwargs):
+    subject_identifier = kwargs('subject_identifier')
+    #imported = kwargs('imported')    
+    if subject_identifier:
+        orders  = Order.objects.filter(aliquot__receive__patient__subject_identifier=subject_identifier)    
+    #elif:
+    #    orders  = Order.objects.filter(imported=imported)        
+    else:
+        orders  = Order.objects.all()
     
-    oOrder = kwargs.get('order')
+    for order in orders:
+        create_or_update_result(order=orders)
+
+def create_or_update_result(**kwargs):
+
+    order = kwargs.get('order')
         
     cnxn2 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor_result = cnxn2.cursor()
@@ -49,23 +51,32 @@ def fetch_or_create_result(**kwargs):
     cnxn3 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor_resultitem = cnxn3.cursor()
 
-    if not Result.objects.filter(order=oOrder):
+    if Result.objects.filter(order=order):
+        # update
+        
+        pass
+    else:
+
+        # create new result
+        # fetch list of orders from DMIS (note in DMIS orders are generated when a result is available so orders always have results)
         sql ='select headerdate as result_datetime, \
               l21.keyopcreated as user_created, \
               l21.datecreated as created, \
               convert(varchar(36), l21.result_guid) as result_guid \
               from BHPLAB.DBO.LAB21Response as L21 \
-              where l21.id=\'%s\' '  % oOrder.order_identifier
+              where l21.id=\'%s\' '  % order.order_identifier
         
         cursor_result.execute(sql)
          
         for row in cursor_result:
+            
+            # allocate a result identifier for this result
+            result_identifier=AllocateResultIdentifier(order)    
 
-            result_identifier=AllocateResultIdentifier(oOrder)    
-
-            oResult = Result.objects.create(
+            # create the rsult record
+            result = Result.objects.create(
                 result_identifier=result_identifier,
-                order = oOrder,
+                order = order,
                 result_datetime=row.result_datetime,
                 comment='',
                 user_created=row.user_created,
@@ -73,8 +84,9 @@ def fetch_or_create_result(**kwargs):
                 dmis_result_guid=row.result_guid,
                 )
                 
-            print 'order %s %s result %s' % ( oOrder.order_identifier, oOrder.order_datetime, oResult.result_identifier)
+            print 'order %s %s result %s' % ( order.order_identifier, order.order_datetime, result.result_identifier)
             
+            # get list of result items for this result from DMIS (LAB21ResponseQ001X0)
             sql ='select l21d.sample_assay_date, \
                   utestid, \
                   result as result_value, \
@@ -87,28 +99,19 @@ def fetch_or_create_result(**kwargs):
                   l21.datecreated as created \
                   from BHPLAB.DBO.LAB21Response as L21 \
                   left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
-                  where l21.id=\'%s\' and l21d.id is not null'  % oResult.order.order_identifier
+                  where l21.id=\'%s\' and l21d.id is not null'  % result.order.order_identifier
             
             cursor_resultitem.execute(sql)
             
             fetch_or_create_resultsource()
             
+            # loop thru result items and create
             for ritem in cursor_resultitem:
-                test_code = ritem.utestid.strip(' \t\n\r')
-                try:
-                    oTestCode=TestCode.objects.get(code__exact=test_code)
-                except:
-                    #raise TypeError(test_code)
-                    oTestCodeGroup = TestCodeGroup.objects.get(code__exact='000')
-                    TestCode.objects.create( 
-                        code=test_code,
-                        name=test_code,
-                        units='%',
-                        test_code_group=oTestCodeGroup,
-                        display_decimal_places=0,  
-                        is_absolute='absolute',
-                        )  
-                    oTestCode = TestCode.objects.get(code__iexact=test_code)                           
+                
+                code = ritem.utestid.strip(' \t\n\r')
+                
+                test_code = fetch_or_create_testcode(code)
+                
                 # change NT system username to auto
                 if ritem.user_created.strip(' \t\n\r').upper() == 'NT AUTHORITY\SYSTEM':
                     user_created='auto'
@@ -162,8 +165,8 @@ def fetch_or_create_result(**kwargs):
                 # create a new result item. set validation to 'P', we'll import 
                 # full validation information later 
                 ResultItem.objects.create(
-                    result=oResult,
-                    test_code=oTestCode,
+                    result=result,
+                    test_code=test_code,
                     result_item_datetime=ritem.result_item_datetime,                
                     result_item_value=ritem.result_value,
                     result_item_quantifier=ritem.result_quantifier,
@@ -174,14 +177,9 @@ def fetch_or_create_result(**kwargs):
                     result_item_operator=user_created,                
                     comment='',
                     )
-                
-                
-                
     return None
     
 def fetch_or_create_resultsource( **kwargs ):
-    from lab_result.models import ResultSource
-    from django.db.models import Avg, Max, Min, Count        
 
     interfaces = ['psm_interface', 'cd4_interface','auto', 'manual_entry', 'direct_import',]
     agg = ResultSource.objects.aggregate(Max('display_index'),)
@@ -193,52 +191,45 @@ def fetch_or_create_resultsource( **kwargs ):
     # populate if not already ...
     for interface in interfaces:
         if not ResultSource.objects.filter(name__iexact=interface):
-            oResultSource=ResultSource.objects.create(
+            result_source=ResultSource.objects.create(
                 name=interface,
                 short_name=interface,                
                 display_index=display_index+10,
                 )
-            oResultSource.save()  
+            result_source.save()  
     # create a new one if given argument and does not exist already
     if kwargs.get('interface'):        
         if not ResultSource.objects.filter(name__iexact=kwargs.get('interface')):
-            oResultSource=ResultSource.objects.create(
+            result_source=ResultSource.objects.create(
                 name=kwargs.get('interface'),
                 short_name=kwargs.get('interface'),                
                 display_index=display_index+11,
                 )
-            oResultSource.save()  
+            result_source.save()  
         else:
-            oResultSource=ResultSource.objects.get(name__iexact=kwargs.get('interface'))                        
+            result_source=ResultSource.objects.get(name__iexact=kwargs.get('interface'))                        
     else:
-        oResultSource = None
+        result_source = None
             
-    return oResultSource         
+    return result_source         
+
+def fetch_or_create_testcode(code):
+    try:
+        test_code = TestCode.objects.get(code__exact=code)
+    except:
+        test_code_group = TestCodeGroup.objects.get(code__exact='000')
+        TestCode.objects.create( 
+            code=code,
+            name=code,
+            units='-',
+            test_code_group=test_code_group,
+            display_decimal_places=0,  
+            is_absolute='absolute',
+            )  
+        test_code = TestCode.objects.get(code__iexact=code)                           
+    return test_code
 
 if __name__ == "__main__":
-    
-    import sys,os
-    sys.path.append('/home/django/source/')
-    sys.path.append('/home/django/source/bhplab/')
-    os.environ['DJANGO_SETTINGS_MODULE'] ='bhplab.settings'
-    from django.core.management import setup_environ
-    from bhplab import settings
-
-    setup_environ(settings)
-    
-    import pyodbc, datetime
-    from lab_receive.models import Receive
-    from lab_aliquot.models import Aliquot
-    from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-    from lab_order.models import Order
-    from lab_result.models import Result, ResultSource
-    from lab_result_item.models import ResultItem
-    from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-    from lab_patient.models import Patient
-    from lab_account.models import Account
-    from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
-    from lab_common.utils import AllocateResultIdentifier
-
     
     print 'fetching lab results from dmis....'
     fetch_results_from_dmis()
