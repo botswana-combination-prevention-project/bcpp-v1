@@ -130,7 +130,7 @@ def create_or_update_resultitem(**kwargs):
             result_item.result_item_operator=user                
             comment=''
             result_item.save()
-        print '----updated %s %s' % (code, ritem.modified)
+        print '----updated %s %s %s' % (code, ritem.modified, result_item.modified)
     else:
         # create
         test_code = fetch_or_create_testcode(code)
