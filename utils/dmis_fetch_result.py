@@ -88,7 +88,7 @@ def create_or_update_result(**kwargs):
     if result:
         # get list of result items for this result from DMIS (LAB21ResponseQ001X0)
         sql ='select l21d.sample_assay_date, \
-              utestid, \
+              utestid as code, \
               result as result_value, \
               result_quantifier, \
               status, \
@@ -114,12 +114,12 @@ def create_or_update_resultitem(**kwargs):
 
     result = kwargs.get('result')
     ritem = kwargs.get('ritem')    
-    code = ritem.utestid.strip(' \t\n\r')
+    code = ritem.code.strip(' \t\n\r')
     if ResultItem.objects.filter(result=result, test_code__code=code):
         # update
         user = get_ritem_user(ritem.user_modified)            
         validation = get_ritem_validation(ritem)
-        for result_item in ResultItem.objects.filter(result=result, test_code__code=ritem.code):
+        for result_item in ResultItem.objects.filter(result=result, test_code__code=code):
             result_item.result_item_datetime=ritem.result_item_datetime
             result_item.result_item_value=ritem.result_value
             result_item.result_item_quantifier=ritem.result_quantifier
