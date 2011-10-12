@@ -108,8 +108,10 @@ def create_or_update_result(**kwargs):
 
     return None
     
-def create_or_update_resultitem(result=result, ritem=ritem):
+def create_or_update_resultitem(**kwargs):
 
+    result = kwargs.get('result')
+    ritem = kwargs.get('ritem')    
     code = ritem.utestid.strip(' \t\n\r')
     if ResultItem.objects.filter(result=result, test_code__code=code):
         # update
