@@ -22,7 +22,7 @@ from lab_account.models import Account
 from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
 
 
-def fetch_receive_order(process_status, **kwargs):
+def fetch_receive_and_order(process_status, **kwargs):
     
     """Fetch receiving (lab01) and order (lab21) records from the mssql/vb version of dmis.
        
@@ -40,31 +40,17 @@ def fetch_receive_order(process_status, **kwargs):
     cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor = cnxn.cursor()
 
-    now  = datetime.today()
-    
-    #get last import_datetime
-    #agg = DmisImportHistory.objects.aggregate(Max('import_datetime'),)    
-    
-    #last_import_datetime = agg['import_datetime__max']
-    
-    last_import_datetime = datetime.today() - timedelta(days=90)
-    
-    """
-    #insert new record into ImportHistory
-    obj = DmisImportHistory.objects.create(
-        import_label='fetch_receive'
-        )
-    import_datetime = obj.import_datetime
-    """
-    import_datetime = datetime.today()
-    
     if process_status == 'pending':
         has_order_sql = 'null'
     elif process_status == 'available':
         has_order_sql = 'not null'
     else:
         raise TypeError('process_status must be \'pending\' or \'available\'. You wrote %s' % process_status)    
-    
+
+    now  = datetime.today()
+    last_import_datetime = now - timedelta(days=90)
+    import_datetime = now
+
     #note that some records will not be imported for having>1
     sql  = 'select min(l.id) as dmis_reference, \
             l.pid as receive_identifier, \
@@ -101,27 +87,33 @@ def fetch_receive_order(process_status, **kwargs):
     cursor.execute(sql)
      
     for row in cursor:
-
         #get panel using TID or l21.panel_id
-        if not row.panel_id == None and not row.panel_id == '-9':
-            panel = Panel.objects.get(dmis_panel_identifier__exact=row.panel_id)
-        else:
-            panel = Panel.objects.filter(panel_group__name__exact=row.tid)
-            if not panel:
+        panel = None
+        if row.panel_id and not row.panel_id == '-9':
+            # try to get using row.panel_id
+            try:
+                panels = Panel.objects.filter(dmis_panel_identifier__exact=row.panel_id)
+            except:
+                pass    
+        if not panels:
+            # try using row.tid
+            try:
+                panels = Panel.objects.filter(panel_group__name__exact=row.tid)
+            except:
+                pass    
+            if not panels:
                 panel_group = PanelGroup.objects.create(name = row.tid,)
                 panel = Panel.objects.create(
                                         name = row.tid,
                                         panel_group = panel_group,
                                         comment = 'temp',
-                                        #dmis_panel_identifier = row.dmis_panel_identifier,
+                                        dmis_panel_identifier = row.panel_id,
                                         #test_code = row.test_code,
                                         #aliquot_type = row.aliquot_type,
                                         #account = row.account,
                                         )
             else:
-                panel = panel[0]    
-
-
+                panel = panels[0]    
         receive = create_or_update_receive( 
             receive_identifier = row.receive_identifier,
             protocol_identifier = row.protocol_identifier,
@@ -167,6 +159,7 @@ def fetch_receive_order(process_status, **kwargs):
         pass
         
     return None        
+    
 
 def create_or_update_receive( **kwargs ):
 
@@ -486,8 +479,8 @@ if __name__ == "__main__":
     
     print 'fetching lab receiving and orders from dmis....'
     print 'fetch pending....'
-    fetch_receive_order('pending')
+    fetch_receive_and_order('pending')
     print 'fetch available....'
-    fetch_receive_order('available')    
+    fetch_receive_and_order('available')    
     print 'Done'
     sys.exit (0)                  
