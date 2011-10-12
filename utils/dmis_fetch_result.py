@@ -29,7 +29,7 @@ import results for orders already in the system
 """
 
 def fetch_results_from_dmis(**kwargs):
-    subject_identifier = kwargs('subject_identifier')
+    subject_identifier = kwargs.get('subject_identifier')
     #imported = kwargs('imported')    
     if subject_identifier:
         orders  = Order.objects.filter(aliquot__receive__patient__subject_identifier=subject_identifier)    
