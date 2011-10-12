@@ -52,21 +52,21 @@ def create_or_update_result(**kwargs):
     cnxn3 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor_resultitem = cnxn3.cursor()
 
-    for row in cursor_result:
-        if Result.objects.filter(order=order):
-            # get the existing result
-            result = Result.objects.get(order=order)
-        else:
-            # create new result        
-            # fetch the order/result from DMIS (note in DMIS orders are generated when a result is available so orders always have results)
-            sql ='select distinct headerdate as result_datetime, \
-                  l21.keyopcreated as user_created, \
-                  l21.datecreated as created, \
-                  convert(varchar(36), l21.result_guid) as result_guid \
-                  from BHPLAB.DBO.LAB21Response as L21 \
-                  left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
-                  where l21.id=\'%s\' and l21d.id is not null'  % order.order_identifier
-            cursor_result.execute(sql) # should return 0 or 1 row because l21.id is a primary key
+    if Result.objects.filter(order=order):
+        # get the existing result
+        result = Result.objects.get(order=order)
+    else:
+        # create new result        
+        # fetch the order/result from DMIS (note in DMIS orders are generated when a result is available so orders always have results)
+        sql ='select distinct headerdate as result_datetime, \
+              l21.keyopcreated as user_created, \
+              l21.datecreated as created, \
+              convert(varchar(36), l21.result_guid) as result_guid \
+              from BHPLAB.DBO.LAB21Response as L21 \
+              left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
+              where l21.id=\'%s\' and l21d.id is not null'  % order.order_identifier
+        cursor_result.execute(sql) # should return 0 or 1 row because l21.id is a primary key
+        for row in cursor_result:
             # allocate a result identifier for this new result
             result_identifier=AllocateResultIdentifier(order)    
             # create the result record
@@ -81,30 +81,30 @@ def create_or_update_result(**kwargs):
                 )
                 
             print 'order %s %s result %s' % ( order.order_identifier, order.order_datetime, result.result_identifier)
-            
-            fetch_or_create_resultsource()
         
-        # create or update the result items for this result
-        if result:
-            # get list of result items for this result from DMIS (LAB21ResponseQ001X0)
-            sql ='select l21d.sample_assay_date, \
-                  utestid, \
-                  result as result_value, \
-                  result_quantifier, \
-                  status, \
-                  mid,\
-                  l21d.validation_ref as validation_reference, \
-                  l21d.datelastmodified as result_item_datetime, \
-                  l21d.keyopcreated as user_created, \
-                  l21.datecreated as created \
-                  from BHPLAB.DBO.LAB21Response as L21 \
-                  left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
-                  where l21.id=\'%s\' and l21d.id is not null'  % result.order.order_identifier
-            
-            cursor_resultitem.execute(sql)
-            # loop thru result items
-            for ritem in cursor_resultitem:
-                create_or_update_resultitem(ritem)                
+        fetch_or_create_resultsource()
+        
+    # create or update the result items for this result
+    if result:
+        # get list of result items for this result from DMIS (LAB21ResponseQ001X0)
+        sql ='select l21d.sample_assay_date, \
+              utestid, \
+              result as result_value, \
+              result_quantifier, \
+              status, \
+              mid,\
+              l21d.validation_ref as validation_reference, \
+              l21d.datelastmodified as result_item_datetime, \
+              l21d.keyopcreated as user_created, \
+              l21.datecreated as created \
+              from BHPLAB.DBO.LAB21Response as L21 \
+              left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 \
+              where l21.id=\'%s\' and l21d.id is not null'  % result.order.order_identifier
+        
+        cursor_resultitem.execute(sql)
+        # loop thru result items
+        for ritem in cursor_resultitem:
+            create_or_update_resultitem(ritem)                
 
     return None
     
