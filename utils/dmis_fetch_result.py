@@ -119,7 +119,7 @@ def create_or_update_resultitem(**kwargs):
         # update
         user = get_ritem_user(ritem.user_modified)            
         validation = get_ritem_validation(ritem)
-        for result_item in ResultItem.objects.filter(result=result, test_code__code=code):
+        for result_item in ResultItem.objects.filter(result=result, test_code__code=code).exclude(modified__gt=ritem.modified):
             result_item.result_item_datetime=ritem.result_item_datetime
             result_item.result_item_value=ritem.result_value
             result_item.result_item_quantifier=ritem.result_quantifier
@@ -130,7 +130,8 @@ def create_or_update_resultitem(**kwargs):
             result_item.result_item_operator=user                
             comment=''
             result_item.save()
-        print '----updated %s %s %s' % (code, ritem.modified, result_item.modified)
+            print '----updated %s' % (code)
+            
     else:
         # create
         test_code = fetch_or_create_testcode(code)
