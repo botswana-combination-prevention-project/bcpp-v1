@@ -60,7 +60,11 @@ def create_or_update_result(**kwargs):
             print '....duplicates found for %s' % (result[0].result_identifier,)
             dups = Result.objects.filter(order=order).exclude(pk=result[0].pk)
             for dup in dups:
+                ritems = ResultItem.objects.filter(result=dup)
+                for ri in ritems:
+                    ri.delete()
                 dup.delete()            
+                print '........deleted'
         result = Result.objects.get(order=order)
         print 'Result exists (%s)' % (result.result_identifier,)
     else:
