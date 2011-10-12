@@ -111,7 +111,7 @@ def create_or_update_result(**kwargs):
 def create_or_update_resultitem(result=result, ritem=ritem):
 
     code = ritem.utestid.strip(' \t\n\r')
-    if ResultItem.objects.filter(result=result, test_code__code=code)
+    if ResultItem.objects.filter(result=result, test_code__code=code):
         # update
         user = get_ritem_user(ritem.user_modified)            
         validation = get_ritem_validation(ritem)
