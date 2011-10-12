@@ -33,7 +33,7 @@ def fetch_results_from_dmis(**kwargs):
     #imported = kwargs('imported')    
     if subject_identifier:
         print subject_identifier
-        orders  = Order.objects.filter(aliquot__receive__patient__subject_identifier=subject_identifier)    
+        orders  = Order.objects.filter(aliquot__receive__patient__subject_identifier__icontains=subject_identifier)    
     #elif:
     #    orders  = Order.objects.filter(imported=imported)        
     else:
