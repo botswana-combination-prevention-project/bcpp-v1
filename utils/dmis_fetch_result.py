@@ -104,7 +104,7 @@ def create_or_update_result(**kwargs):
         cursor_resultitem.execute(sql)
         # loop thru result items
         for ritem in cursor_resultitem:
-            create_or_update_resultitem(ritem)                
+            create_or_update_resultitem(result=result, ritem=ritem)                
 
     return None
     
