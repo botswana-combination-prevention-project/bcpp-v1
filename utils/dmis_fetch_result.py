@@ -280,6 +280,9 @@ def fetch_or_create_testcode(code):
 
 if __name__ == "__main__":
     print 'fetching lab results from dmis....'
-    fetch_results_from_dmis(subject_identifier=sys.argv[1])
+    if len(sys.argv) > 1:
+        fetch_results_from_dmis(subject_identifier=sys.argv[1])
+    else:
+        fetch_results_from_dmis()
     print 'Done'
     sys.exit (0)                  

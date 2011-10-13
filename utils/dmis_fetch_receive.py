@@ -1,6 +1,6 @@
 import sys,os
-sys.path.append('/home/erikvw/source/')
-sys.path.append('/home/erikvw/source/bhplab/')
+sys.path.append('/home/django/source/')
+sys.path.append('/home/django/source/bhplab/')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bhplab.settings'
 from django.core.management import setup_environ
 from bhplab import settings
@@ -36,6 +36,8 @@ def fetch_receive(**kwargs):
     if subject_identifier:
         where_subject_identifier = 'and l.pat_id like \'%'+subject_identifier+'%\'' 
         print where_subject_identifier
+    else:
+        where_subject_identifier = ''
         
     receive_identifier = kwargs.get('receive_identifier')
     order_identifier = kwargs.get('order_identifier')    
@@ -366,6 +368,9 @@ def create_or_update_aliquotcondition( **kwargs ):
 if __name__ == "__main__":
     
     print 'fetching lab receiving from dmis....'
-    fetch_receive(subject_identifier=sys.argv[1])
+    if len(sys.argv)>1:
+        fetch_receive(subject_identifier=sys.argv[1])
+    else:
+        fetch_receive()
     print 'Done'
     sys.exit (0)                  
