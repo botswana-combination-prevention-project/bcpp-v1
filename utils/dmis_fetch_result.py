@@ -51,7 +51,7 @@ def create_or_update_result(**kwargs):
 
     cnxn3 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
     cursor_resultitem = cnxn3.cursor()
-
+    result = None
     if Result.objects.filter(order=order):
         # get the existing result
         result = Result.objects.filter(order=order)
