@@ -46,42 +46,40 @@ def fetch_receive(**kwargs):
 
     now  = datetime.today()
     last_import_datetime = now - timedelta(days=90)
-    import_datetime = now
+    import_datetime = datetime(datetime.today().year, datetime.today().month, datetime.today().day, 23, 59)
 
     #note that some records will not be imported for having>1
     sql  = 'select min(l.id) as dmis_reference, \
-            l.pid as receive_identifier, \
-            l.tid, \
-            l.sample_condition, \
-            l.sample_site_id as site_identifier, \
-            l.sample_visitid as visit, \
-            l.sample_protocolnumber as protocol_identifier, \
-            l.gender, \
-            min(dob) as dob, \
-            l.pat_id as subject_identifier, \
-            l.pinitials as initials, \
-            l.cinitials as clinician_initials, \
-            l.keyopcreated as user_created, \
-            l.keyoplastmodified as user_modified, \
-            min(l.headerdate) as receive_datetime, \
-            min(l.sample_date_drawn) as drawn_datetime, \
-            min(l.datecreated) as created, \
-            min(l.datelastmodified) as modified, \
-            l21.id as order_identifier, \
-            l21.panel_id \
-            from lab01response as l \
-            left join lab21response as l21 on l.pid=l21.pid \
-            where l.datelastmodified >= \'%s\' \
-            and l.datelastmodified <= \'%s\' \
-            and sample_date_drawn <= \'%s\' \
-            %s\
-            group by l.pid, l.tid, l.sample_condition, l.sample_site_id, l.sample_visitid ,l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.cinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
-            having count(*)=1 \
-            order by min(l.id) desc' % (last_import_datetime.strftime('%Y-%m-%d %H:%M'), import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'), where_subject_identifier)
+l.pid as receive_identifier, \
+l.tid, \
+l.sample_condition, \
+l.sample_site_id as site_identifier, \
+l.sample_visitid as visit, \
+l.sample_protocolnumber as protocol_identifier, \
+l.gender, \
+min(dob) as dob, \
+l.pat_id as subject_identifier, \
+l.pinitials as initials, \
+l.cinitials as clinician_initials, \
+l.keyopcreated as user_created, \
+l.keyoplastmodified as user_modified, \
+min(l.headerdate) as receive_datetime, \
+min(l.sample_date_drawn) as drawn_datetime, \
+min(l.datecreated) as created, \
+min(l.datelastmodified) as modified, \
+l21.id as order_identifier, \
+l21.panel_id \
+from lab01response as l \
+left join lab21response as l21 on l.pid=l21.pid \
+where l.datelastmodified >= \'%s\' \
+and l.datelastmodified <= \'%s\' \
+and sample_date_drawn <= \'%s\' \
+%s\
+group by l.pid, l.tid, l.sample_condition, l.sample_site_id, l.sample_visitid ,l.sample_protocolnumber, l.pat_id, l.gender, l.pinitials, l.cinitials, l.keyopcreated, l.keyoplastmodified, l21.id, l21.panel_id  \
+having count(*)=1 \
+order by min(l.id) desc' % (last_import_datetime.strftime('%Y-%m-%d %H:%M'), import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'), where_subject_identifier)
 
-    #raise TypeError(sql)
-
-    cursor.execute(sql)
+    cursor.execute(str(sql))
      
     for row in cursor:
         #get panel using TID or l21.panel_id
@@ -143,7 +141,7 @@ def create_or_update_receive( **kwargs ):
 
     if receive:
         receive = Receive.objects.get(receive_identifier=receive_identifier)
-        if not receive.modified == modified:
+        if receive.modified < modified:
             print 'updating receive %s' % receive_identifier
             protocol = fetch_or_create_protocol(protocol_identifier)        
             site = fetch_or_create_site(site_identifier)                    
@@ -158,8 +156,9 @@ def create_or_update_receive( **kwargs ):
             receive.dmis_reference = dmis_reference
             receive.dmis_panel_name = dmis_panel_name
             receive.receive_condition = receive_condition
-            
             receive.save()
+        else:
+            print 'no change for receive %s' % receive_identifier                        
     else:
         protocol = fetch_or_create_protocol(protocol_identifier)
         account = fetch_or_create_account(protocol_identifier)
@@ -342,7 +341,7 @@ def create_or_update_aliquot( **kwargs ):
 
     
 
-    return aliquot
+    return primary_aliquot
 
 def create_or_update_aliquotcondition( **kwargs ):
 
