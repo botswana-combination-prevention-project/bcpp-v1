@@ -43,48 +43,29 @@ def fetch_order(**kwargs):
     now  = datetime.today()
     last_import_datetime = now - timedelta(days=90)
     import_datetime = now
-
-    #note that some records will not be imported for having>1
-    sql  = 'select min(l.id) as dmis_reference, \
-            l21.keyopcreated as user_created, \
-            l21.keyoplastmodified as user_modified, \
-            min(l21.datecreated) as created, \
-            min(l21.datelastmodified) as modified, \
-            l21.id as order_identifier, \
-            l21.panel_id \
-            from lab01response as l \
-            left join lab21response as l21 on l.pid=l21.pid \
-            where l21.id is not null \
-            and l.datelastmodified >= \'%s\' \
-            and l.datelastmodified <= \'%s\' \
-            and sample_date_drawn <= \'%s\' \
-            group by l21.keyoplastmodified, l21.id, l21.panel_id  \
-            having count(*)=1 \
-            order by min(l.id) desc' % (last_import_datetime.strftime('%Y-%m-%d %H:%M'), import_datetime.strftime('%Y-%m-%d %H:%M'), now.strftime('%Y-%m-%d %H:%M'))
-
-    #raise TypeError(sql)
-
-    cursor.execute(sql)
-
-    receives = Receive.objects.filter(modified__gte=last_import_datetime)     
+    
+    subject_identifier = kwargs.get('subject_identifier')
+    if subject_identifier:
+        receives = Receive.objects.filter(patient__subject_identifier__icontains=subject_identifier)         
+    else:
+        receives = Receive.objects.filter(modified__gte=last_import_datetime)     
     
     for receive in receives:
-        panel = Panel.objects.get(name=receive.dmis_panel_name)
-        sql  = 'select l21.id as order_identifier, \
-                l21.headerdate as order_datetime,\
-                l21.keyopcreated as user_created, \
-                l21.keyoplastmodified as user_modified, \
-                l21.datecreated) as created, \
-                l21.datelastmodified) as modified, \
-                l21.panel_id, \
+        print receive.receive_identifier
+        sql = 'select l21.id as order_identifier, l21.headerdate as order_datetime, l21.keyopcreated as user_created,\
+                l21.keyoplastmodified as user_modified, l21.datecreated as created, l21.datelastmodified as modified,\
+                convert(varchar(50), l21.result_guid) as result_guid, \
+                l21.id as dmis_reference, \
+                l21.panel_id as panel_id \
                 from lab21response as l21 \
-                left join (select pid from lab01response where pid=\'%s\' group by pid) as l on l.pid=l21.pid \
-                where l.pid is not null \
-                order by l21.id desc' % (receive.receive_identifier,)
-        cursor.execute(sql)
-     
+                where l21.pid=\'%s\'' % (receive.receive_identifier)
+        
+        cursor.execute(str(sql))
+        
         for row in cursor:
-            panel = fetch_or_create_panel(panel_id=row.panel_id)
+            panel = fetch_or_create_panel(panel_id=row.panel_id, receive_identifier = receive.receive_identifier)
+            aliquot = fetch_or_create_aliquot(receive=receive, panel=panel)
+            # result_guid = row.result_guid.strip(' \t\n\r')
             order = create_or_update_order( 
                 order_identifier = row.order_identifier,
                 order_datetime = row.order_datetime,
@@ -96,10 +77,10 @@ def fetch_order(**kwargs):
                 modified = row.modified,
                 dmis_reference=row.dmis_reference,
                 )
-        try:
-            cursor.close()          
-        except:
-            pass
+    try:
+        cursor.close()          
+    except:
+        pass
         
     return None        
     
@@ -112,6 +93,8 @@ def create_or_update_order( **kwargs ):
     comment = '',
     created = kwargs.get('created')
     modified = kwargs.get('modified')
+    user_created = kwargs.get('user_created')
+    user_modified = kwargs.get('user_modified')
     dmis_reference = kwargs.get('dmis_reference')                    
  
     orders = Order.objects.filter(order_identifier = order_identifier )
@@ -127,26 +110,41 @@ def create_or_update_order( **kwargs ):
             comment = '',
             created = created,
             modified = modified,
+            user_created = user_created,
+            user_modified = user_modified,
             dmis_reference = dmis_reference,
             ) 
-
+        print 'created order'
     return order
 
 def fetch_or_create_panel(**kwargs):
+
     panel_id = kwargs.get('panel_id')
+    receive_identifier = kwargs.get('receive_identifier')
     panel = None
-    if row.panel_id and not panel_id == '-9':
+    panel_group_name = None
+    # use either panel_id or panel_group_name to either get or create a panel
+    # if you have receive_identifier, this may help
+    if panel_id and not panel_id == '-9':
         # try to get using row.panel_id
-        panels = Panel.objects.filter(dmis_panel_identifier__exact=panel_id)
+        panels = Panel.objects.filter(dmis_panel_identifier=panel_id)
         if panels:
             panel = panels[0]
-    if not panel:    
-        # try using row.tid
-        panels = Panel.objects.filter(panel_group__name__exact=tid)
-        if panels:
-            panel = panels[0]
+    if not panel and receive_identifier:
+        # go back to the receving record and get the TID of the first record, usually only one record returned, but not always...
+        cnxn1 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+        cursor_panel = cnxn1.cursor()
+        sql = 'select top 1 tid as panel_group_name from lab01response where pid=\'%s\' order by datecreated'  % (receive_identifier,)
+        cursor_panel.execute(str(sql))
+        for row in cursor_panel:
+            panel_group_name = row.panel_group_name
+            panels = Panel.objects.filter(panel_group__name__exact=panel_group_name)
+            if panels:
+                panel = panels[0]
+
     if not panel:
-        # fetch or create a panel group
+        #raise TypeError(panel_id)
+        # hmmm. still nothing, so just create a dummy panel and move on
         panel_groups = PanelGroup.objects.filter(name=panel_id)
         if not panel_groups:
             panel_group = PanelGroup.objects.create(name=panel_id,)
@@ -159,72 +157,39 @@ def fetch_or_create_panel(**kwargs):
                                 comment = 'temp',
                                 dmis_panel_identifier = panel_id,
                                 )
+        print '....created panel for %s ' % (panel_id,)
     return panel
 
-def create_or_update_aliquot( **kwargs ):
+def fetch_or_create_aliquot( **kwargs ):
 
     receive = kwargs.get('receive')
-    condition = kwargs.get('condition')
-    tid = kwargs.get('tid')
-    modified = kwargs.get('modified')    
+    panel = kwargs.get('panel')
+    tid = panel.panel_group.name
     
-    aliquot_condition = create_or_update_aliquotcondition( condition=condition )
-
-    #create primary
-    create = {}
-    if tid == '411':
-        create['type'] = '02' #WB
-        create['medium'] = 'DBS'
-    else:
-        create['type'] = '02' #WB
-        create['medium'] = 'TUBE'
-    
-    aliquot_identifier = '%s0000%s01' % (receive.receive_identifier, create['type'])    
-    
-    aliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
-    
-    if aliquot:
-        aliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
-        if not aliquot.modified == modified:        
-            aliquot_type = AliquotType.objects.get(numeric_code__exact=create['type'])        
-            aliquot.modified = modified
-            aliquot.aliquot_type = aliquot_type
-            aliquot.condition = aliquot_condition
-            aliquot.save()
-        
-    else:
-        create['comment'] = 'auto created on import from DMIS'
-        aliquot_type = AliquotType.objects.get(numeric_code__exact=create['type'])
-        oAliquotMedium = AliquotMedium.objects.get(short_name__iexact=create['medium'])            
-        aliquot = Aliquot.objects.create(
-            aliquot_identifier = aliquot_identifier,
-            receive = receive,
-            count = 1,
-            aliquot_type = aliquot_type,
-            medium = oAliquotMedium,
-            condition = aliquot_condition,
-            comment = create['comment'],            
-            )
-        #aliquot.account.add(account)        
+    primary_aliquot_identifier_stub = '%s0000' % (receive.receive_identifier)    
+    primary_aliquot = Aliquot.objects.get(aliquot_identifier__icontains=primary_aliquot_identifier_stub)
 
     #if order is not placed against primary, create child
-    if tid[0]=='1':
+    # TODO: need more detail here for sample types other than the ones listed here...    
+    create = {}
+    if tid[0]=='1': #CD4
         create = {}
-    elif tid[0]=='2':    
+    elif tid[0]=='2':  
         create['type'] = '06' #WB
         create['medium'] = 'TUBE'
         create['condition'] = '10'                
-    elif tid[0]=='3':    
+    elif tid[0]=='3': # CHEM, HAEM    
         create = {}
-    elif tid[0]=='4':    
+    elif tid[0]=='4': #VL, RNA   
         create['type'] = '32' #WB
         create['medium'] = 'TUBE'
         create['condition'] = '10'        
     else:
         create = {}        
 
-
-    if create:
+    if not create:
+        aliquot = primary_aliquot
+    else:    
         aliquot_identifier = '%s0201%s02' % (receive.receive_identifier, create['type'])    
         create['comment'] = 'auto created on import from DMIS'
         aliquot = Aliquot.objects.filter(aliquot_identifier__iexact=aliquot_identifier)
@@ -232,17 +197,19 @@ def create_or_update_aliquot( **kwargs ):
             aliquot = Aliquot.objects.get(aliquot_identifier__iexact=aliquot_identifier)
         else:
             aliquot_type = AliquotType.objects.get(numeric_code__exact=create['type'])
-            oAliquotMedium = AliquotMedium.objects.get(short_name__iexact=create['medium'])   
+            aliquot_medium = AliquotMedium.objects.get(short_name__iexact=create['medium'])   
             aliquot_condition = AliquotCondition.objects.get(short_name__iexact=create['condition'])            
             aliquot = Aliquot.objects.create(
                 aliquot_identifier = aliquot_identifier,
                 receive = receive,
                 count = 2,
                 aliquot_type = aliquot_type,
-                medium = oAliquotMedium,
-                condition=aliquot_condition,
+                parent_aliquot = primary_aliquot,
+                medium = aliquot_medium,
+                condition=primary_aliquot.condition,
                 comment = create['comment'],            
                 )
+        print '....created aliquot from %s ' % (primary_aliquot.aliquot_identifier,)                
 
     return aliquot
 
@@ -270,6 +237,6 @@ if __name__ == "__main__":
     
     print 'fetching lab orders from dmis....'
     print 'fetching orders....'
-    fetch_order()
+    fetch_order(subject_identifier=sys.argv[1])
     print 'Done'
     sys.exit (0)                  
