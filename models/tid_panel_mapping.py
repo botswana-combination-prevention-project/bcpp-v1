@@ -16,6 +16,6 @@ class TidPanelMapping(MyBasicModel):
         return '%s->%s' % (self.tid, self.panel)
         
     class Meta:
-        unique_together=(('tid','panel'),)
+        #unique_together=(('tid','panel'),)
         app_label = 'lab_panel'        
         db_table = 'bhp_lab_core_tidpanelmapping'
