@@ -5,7 +5,7 @@
     {% load tags %}
     <div class="breadcrumbs">
         <a href="/{{ home }}">Home</a>
-        &rsaquo; {{ dashboard_type|capfirst }} Dashboard for {{ subject_identifier }}   
+        &rsaquo; {{ dashboard_type|capfirst }} Dashboard for {{ dashboard_identifier }}   
         
     </div>
     
@@ -16,123 +16,8 @@
 {% block section_links %}{% endblock %}
 
 {% block content %}
-
-{% block clinic_dashboard_marquee %}{% endblock %}
-
-{% block clinic_dashboard %}
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('.results').html( '<I>Contacting lab for results, please wait...<I>' ).load("Dajaxice.lab_clinic_api.update_result_status(Dajax.process,{'subject_identifier':'{{subject_identifier}}'});");
-        });
-</script>
-
-
-
-<table border=1 width=100%>
-<thead></thead>
-<tbody>
-    <tr>
-        <td name="left_table" id="left_table">
-            
-            <table name="left" id="left" border=1 width=100%>
-                <tr name="top left">
-                    <td>
-                    {% block membership_forms %}{% endblock %}
-                    </td>
-                </tr>
-                <tr name="top left">
-                    <td>
-                        <H5>Appointments</H5>
-                        <A href="{% url admin:bhp_appointment_appointment_add %}?next=dashboard_url&dashboard_type={{dashboard_type}}&registered_subject={{registered_subject.pk}}">Create new appointment</A>
-                        
-                        {% block appointments %}
-
-                        {% endblock appointments %}
-                    </td>
-                </tr>
-
-                <tr name="bottom left" >
-                    <td>
-                        {% block additional_forms %}{% endblock%}
-                    </td>
-                </tr>
-                <tr name="bottom left" >
-                    <td>
-                        <H5>Scheduled Forms {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H5>
-
-                        {% if not visit_code %}                
-                            To see scheduled forms for a visit, select the appointment with the correct visit report and click 'show entry forms' in the Action column.
-                        {% else %}
-                            {% if appointment.appt_status != 'in_progress' %}
-                                <I> Hint: To edit the forms below, change the selected appointment's status to 'In Progress'</I> 
-                            {% endif %}    
-                            {% block scheduled_data_collection %}{% endblock scheduled_data_collection %}
-                        {% endif %}
-                    </td>
-                </tr>
-
-                <tr name="bottom left" >
-                    <td>
-                        <H5>Scheduled Labs {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H5>
-
-                        {% if not visit_code %}                
-                            To see scheduled labs for a visit, select the appointment with the correct visit report and click 'show entry forms' in the Action column.
-                        {% else %}
-                            {% if appointment.appt_status != 'in_progress' %}
-                                <I> Hint: To edit the labs below, change the selected appointment's status to 'In Progress'</I> 
-                            {% endif %}    
-                            {% block scheduled_lab_bucket %}{% endblock scheduled_lab_bucket %}
-                        {% endif %}
-                   </td>
-               </tr>
-                <tr name="bottom left" >
-                    <td>
-                        <H5>Additional Labs {% if visit_code %} for Visit {{ visit_code }}{% endif %}</H5>
-
-                        {% if not visit_code %}                
-                            To see additional labs for a visit, select the appointment with the correct visit report and click 'show entry forms' in the Action column.
-                        {% else %}
-                            {% if appointment.appt_status != 'in_progress' %}
-                                <I> Hint: To edit the labs below, change the selected appointment's status to 'In Progress'</I> 
-                            {% endif %}    
-                            {% block additional_lab_bucket %}{% endblock additional_lab_bucket %}
-                        {% endif %}
-                   </td>
-               </tr>
-            </table>
-
-        </td>
-
-        <td>
-            <table name="right"  border=0 width=100%>
-                {% block infants %}{% endblock infants %}                                
-                {% block maternal_consent %}{% endblock maternal_consent %}  
-                {% block clinic_plots %}{% endblock %}
-                <tr name="middle right" ><td><H4>Laboratory</H4></td></tr>                
-                {% block lab_plots %}{% endblock %}
-                <tr name="middle right" ><td>                
-                        <span name="x_results" id="x_results">{{ local_results }}</span>
-                        <input name="fetch" id="fetch" value="Update" type="button" onclick="Dajaxice.lab_clinic_api.updating(Dajax.process);Dajaxice.lab_clinic_api.update_result_status(Dajax.process,{'subject_identifier':'{{ subject_identifier }}'});">                
-                    </td>
-                </tr>
-                <tr name="bottom right" >
-                    <td>
-                        <H3>Data Issues</H3>
-                    </td>
-                </tr>
-
-            </table>
-        </td>    
-
-    </tr>
-</tbody>    
-</table>
+    {% block dashboard_main %}{% endblock dashboard_main %}
 {% endblock %}
-
-
-{% endblock content%}
-
 
 {% block other_section_links %}
 </div>

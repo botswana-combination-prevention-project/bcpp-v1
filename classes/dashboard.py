@@ -9,7 +9,8 @@ class Dashboard(object):
         self.search_name = None    
         self.dashboard_type = None
         self.template = None
-
+        self.dashboard_identifier = None
+        
         self.search_name = kwargs.get('search_name', self.search_name)
         self.context.add(search_name = self.search_name ) 
         
@@ -25,6 +26,7 @@ class Dashboard(object):
             search_name = self.search_name,
             template = self.template,        
             dashboard_type = self.dashboard_type,
+            dashboard_identifier = self.dashboard_identifier,
             )        
 
     def get_urlpatterns(self, view, regex):
