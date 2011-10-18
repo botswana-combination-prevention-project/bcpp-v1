@@ -4,7 +4,7 @@ from django.db.models import Q, Max
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from bhp_common.models import MyBasicUuidModel
-from lab_test_code.models import TestCode
+from lab_test_code.models import TestCode, TestCodeGroup
 from lab_result_item.models import ResultItem as LisResultItem
 from bhp_poll_mysql.poll_mysql import PollMySQL
 from lab_clinic_api.models import UpdateLog
@@ -54,6 +54,7 @@ class ResultItemManager(models.Manager):
                             test_code  = TestCode.objects.get(code = lis_result_item.test_code.code)
                         else:
                             #add test_code to local listing if it does not exist
+                            
                             if not TestCodeGroup.objects.filter(code=lis_result_item.test_code.test_code_group.code):
                                 test_code_group = TestCodeGroup.objects.create(code=lis_result_item.test_code.test_code_group.code, name=lis_result_item.test_code.test_code_group.name)
                             else:
