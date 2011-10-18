@@ -3,6 +3,8 @@ from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_export_data.actions import export_as_csv_action
+from bhp_appointment.classes import VisitModelHelper
+
 
 class BaseVisitModelAdmin(MyModelAdmin):
 
@@ -12,13 +14,23 @@ class BaseVisitModelAdmin(MyModelAdmin):
     delete()
     
     """ 
+    
+    visit_model = None
 
     def __init__(self, *args, **kwargs):
 
         model = args[0]
-        self.visit_model_foreign_key = [fk for fk in [f for f in model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name][0].name                        
+        #if 'visit_model' in kwargs:
+        #    self.visit_model = kwargs.get('visit_model')
+        #    del kwargs['visit_model'] 
+        if not self.visit_model:
+            raise ValueError, "BaseVisitModelAdmin for %s needs a visit model. None found. Please correct." % (model,)
+        self.visit_model_foreign_key = [fk for fk in [f for f in model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]
         if not self.visit_model_foreign_key:
             raise ValueError, "The model for %s requires a foreign key to visit model %s. None found. Either correct the model or change the ModelAdmin class." % (self, self.visit_model)
+        else:
+            self.visit_model_foreign_key = self.visit_model_foreign_key[0].name
+                
         self.search_fields = (self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',) 
         
         self.list_display = (self.visit_model_foreign_key, 'created', 'modified', 'user_created', 'user_modified',)    
@@ -51,6 +63,8 @@ class BaseVisitModelAdmin(MyModelAdmin):
 
         super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
 
+
+    
 
     def save_model(self, request, obj, form, change):
         
@@ -115,15 +129,19 @@ class BaseVisitModelAdmin(MyModelAdmin):
         result['Location'] = reverse('dashboard_visit_url' , kwargs={'dashboard_type':self.dashboard_type, 'subject_identifier':subject_identifier, 'visit_code': unicode(visit_code)})
 
         return result
+
+                                                                                                        
         
     #override, limit dropdown in add_view to id passed in the URL        
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         
-        visit_fk = [fk for fk in [f for f in self.model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]        
-        if db_field.name == visit_fk[0].name:
-            kwargs["queryset"] = self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=request.GET.get('subject_identifier', 0), 
-                                                        appointment__visit_definition__code=request.GET.get('visit_code', 0),
-                                                        appointment__visit_instance=request.GET.get('visit_instance', 0),
-                                                        )                                                        
+        visit_model_helper = VisitModelHelper()
+        if db_field.name == visit_model_helper.get_visit_field(model=self.model, visit_model=self.visit_model):
+            kwargs["queryset"] = visit_model_helper.set_visit_queryset(
+                                                            subject_identifier = request.GET.get('subject_identifier', 0),
+                                                            visit_code = request.GET.get('visit_code', 0),
+                                                            visit_instance = request.GET.get('visit_instance', 0),
+                                                            )
+        
         return super(BaseVisitModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
 
