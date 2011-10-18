@@ -17,8 +17,8 @@ class ContentTypeMapManager(models.Manager):
         for content_type_map in content_type_maps:
 
             if get_model(content_type_map.app_label, content_type_map.model):
-                name = get_model(content_type_map.app_label, content_type_map.model)._meta.module_name
-                content_type = ContentType.objects.get(model = name)
+                model = get_model(content_type_map.app_label, content_type_map.model)
+                content_type = ContentType.objects.get(app_label=model._meta.app_label, model=model._meta.module_name)
                 content_type_map.content_type = content_type
                 content_type_map.save()
             else:    
@@ -31,8 +31,8 @@ class ContentTypeMapManager(models.Manager):
         content_types = ContentType.objects.all()        
         for content_type in content_types:
             if not super(ContentTypeMapManager, self).filter(content_type = content_type):
-                #if super(ContentTypeMapManager, self).filter(content_type__name = content_type.name):
-                #    super(ContentTypeMapManager, self).filter(content_type__name = content_type.name).delete()
+                if not super(ContentTypeMapManager, self).filter(content_type__name = content_type.name).count() == 1:
+                    super(ContentTypeMapManager, self).filter(content_type__name = content_type.name).delete()
 
                 if get_model(content_type.app_label, content_type.model):
                     verbose_name = get_model(content_type.app_label, content_type.model)._meta.verbose_name
@@ -46,10 +46,12 @@ class ContentTypeMapManager(models.Manager):
                         name = verbose_name,
                         model = content_type.model,
                         )
-                except IntegrityError:   
-                    if verbose_name <> 'content type map' and verbose_name <> 'identifier tracker':   
-                        raise TypeError(verbose_name)
-                    pass                  
+                except:
+                    pass        
+                #except IntegrityError:   
+                #    if verbose_name <> 'content type map' and verbose_name <> 'identifier tracker':   
+                #        raise TypeError(verbose_name)
+                #    pass                  
         
         #content_type_maps = super(ContentTypeMapManager, self).__dict__['model'].objects.all()        
         #for content_type_map in content_type_maps:
