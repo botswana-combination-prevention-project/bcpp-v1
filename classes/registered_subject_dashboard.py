@@ -110,17 +110,20 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def create(self, **kwargs):
         
-        super(RegisteredSubjectDashboard, self).create(**kwargs)
+
         
         self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if self.registered_subject:
             self.subject_type = kwargs.get('subject_type', self.registered_subject.subject_type)
-            self.subject_identifier = self.registered_subject.subject_identifier            
+            self.subject_identifier = self.registered_subject.subject_identifier
+            self.dashboard_identifier = self.subject_identifier            
             self.context.add(
                         registered_subject = self.registered_subject,
                         subject_identifier = self.subject_identifier,
                         subject_type = self.subject_type,
                         )            
+
+        super(RegisteredSubjectDashboard, self).create(**kwargs)
                 
         self.visit_code = kwargs.get('visit_code', self.visit_code)
         self.visit_instance = kwargs.get("visit_instance", self.visit_instance)                
@@ -141,8 +144,11 @@ class RegisteredSubjectDashboard(Dashboard):
             
             self.visit_model_app_label = self.visit_model._meta.app_label
             self.context.add(visit_model_app_label = self.visit_model_app_label)                    
-            
-            self.visit_model_add_url = reverse('admin:%s_%s_add' % (self.visit_model_app_label, self.visit_model_name))
+            try:
+                self.visit_model_add_url = reverse('admin:%s_%s_add' % (self.visit_model_app_label, self.visit_model_name))
+            except:
+                # model must be registered in admin
+                raise ValueError, 'NoReverseMatch: Reverse for \'%s_%s_add\'. Check model is registered in admin' % (self.visit_model_app_label, self.visit_model_name)   
             self.context.add(visit_model_add_url = self.visit_model_add_url)                    
 
         

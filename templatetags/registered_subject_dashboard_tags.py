@@ -124,7 +124,7 @@ class ModelAdminUrl(template.Node):
             # get the name of the field, e.g. visit or maternal_visit ...
             fk_fieldname_to_visit_model = '%s_id' % this_model_fk[0].name
         else:
-            raise AttributeError, 'Cannot reverse for model, Model %s must have a foreignkey to the visit model \'%s\'.'
+            raise AttributeError, 'Cannot reverse for model, Model %s must have a foreignkey to the visit model \'%s\'. Check the model for the foreignkey and check the ModelAdmin class for line (visit_model=%s). Also check if this model is incorrectly referenced in bhp_visit.Entry.' % (this_model._meta.object_name, self.visit_model._meta.object_name, self.visit_model._meta.object_name)
                             
         # query this_model for visit=this_visit, or whatever the fk_fieldname is
         # i have to use 'extra' because i can only know the fk field name pointing to the visit model at runtime
