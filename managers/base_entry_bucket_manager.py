@@ -117,6 +117,8 @@ class BaseEntryBucketManager(models.Manager):
             visit_fk = [fk for fk in [f for f in self.scheduled_model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]            
         elif self.scheduled_model_instance:
             visit_fk = [fk for fk in [f for f in self.scheduled_model_instance._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]                                
+            if not visit_fk:            
+                raise AttributeError, 'EntryBucketManager.update_status model instance \'%s\' does not have a key to the visit_model \'%s\'. Correct the model instance passed to the manager.' % (self.scheduled_model_instance._meta.module_name, self.visit_model._meta.module_name,)                                        
         else:
             raise AttributeError, 'To set visit_fk_name, EntryBucketManager.update_status requires attribute \'scheduled_model\' or \'scheduled_model_instance\'. Got neither'            
 
