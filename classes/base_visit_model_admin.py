@@ -81,7 +81,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
     def delete_model(self, request, obj):
 
         if not self.visit_model:
-            raise AttributeError, 'visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
+            raise AttributeError, 'delete_model(): visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
 
         ScheduledEntryBucket.objects.update_status(
             model_instance = obj,

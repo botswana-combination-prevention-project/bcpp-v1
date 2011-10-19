@@ -25,6 +25,7 @@ class AppointmentManager(models.Manager):
         if ScheduleGroup.objects.filter(membership_form__content_type_map__model = model_name):
             # get list of visits for scheduled group containing this model
             visits = VisitDefinition.objects.filter(schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model = model_name))
+            #raise TypeError()
             for visit in visits:
                 # if appt exists, update appt_datetime
                 if super(AppointmentManager, self).filter(
