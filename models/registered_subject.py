@@ -12,9 +12,10 @@ from bhp_common.choices import YES_NO
 class RegisteredSubject(BaseSubject):
 
     registration_identifier = models.CharField(
-        max_length = 25,
+        max_length = 36,
         null=True,
         blank=True,
+        db_index=True,                       
         )
         
     sid = models.CharField(
@@ -75,6 +76,11 @@ class RegisteredSubject(BaseSubject):
         )
     
     objects = RegisteredSubjectManager()
+    
+    def save(self, *args, **kwargs):
+        # important: go to save() of super() FIRST to enforce unique subject_identifier
+        super(RegisteredSubject, self).save(*args, **kwargs)
+        # now you can add something below...
         
     def __unicode__ (self):
         return "%s %s (%s %s)" % (self.subject_identifier, self.subject_type, self.first_name, self.sid)
