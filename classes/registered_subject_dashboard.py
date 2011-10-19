@@ -107,16 +107,25 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_model = None
         self.subject_identifier = None
         self.app_label = None
+        self.requisition_model = None
 
     def create(self, **kwargs):
-        
-
         
         self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if self.registered_subject:
             self.subject_type = kwargs.get('subject_type', self.registered_subject.subject_type)
+
+            # subject identifier is almost always available
             self.subject_identifier = self.registered_subject.subject_identifier
             self.dashboard_identifier = self.subject_identifier            
+            if not self.subject_identifier:
+                # but if not, check for registration_identifier
+                self.subject_identifier = self.registered_subject.registration_identifier                
+                self.dashboard_identifier = "%s [%s] %s" % (self.registered_subject.first_name, self.registered_subject.initials, self.registered_subject.gender,)
+            if not self.subject_identifier:                        
+                raise AttributeError, "RegisteredSubjectDashboard requires a subject_identifier. RegisteredSubject has no identifier for this subject." 
+            
+            
             self.context.add(
                         registered_subject = self.registered_subject,
                         subject_identifier = self.subject_identifier,
@@ -133,6 +142,12 @@ class RegisteredSubjectDashboard(Dashboard):
                     visit_instance = self.visit_instance,
                     visit_code = self.visit_code,
                     )            
+
+        if not self.requisition_model:
+            raise AttributeError('RegisteredSubjectDashboard.create() requires attribute \'requisition_model\'. Got none.')
+            #elif not isinstance(self.visit_model, ModelBase):
+            #    raise AttributeError('RegisteredSubjectDashboard.create() requires attribute \'visit_model\' be type ModelBase. Got %s.' % type(self.visit_model))            
+
 
         if not self.visit_model:
             raise AttributeError('RegisteredSubjectDashboard.create() requires attribute \'visit_model\'. Got none.')
@@ -166,8 +181,19 @@ class RegisteredSubjectDashboard(Dashboard):
         
         self.set_current_appointment()
         
-        self.set_current_visit()        
-
+        self.set_current_visit()
+        
+        # update / add to entries in ScheduledEntryBucket, ScheduledLabEntryBucket
+        if self.visit:
+            ScheduledEntryBucket.objects.add_for_visit(visit_model_instance = self.visit)           
+                     
+            # if requisition_model has been defined, assume scheduled labs otherwise pass
+            if hasattr(self, 'requisition_model'):
+                ScheduledLabEntryBucket.objects.add_for_visit(
+                    visit_model_instance = self.visit,
+                    requisition_model = self.requisition_model,
+                    )
+        
 
     def set_scheduled_entry_bucket(self):
     
@@ -295,6 +321,19 @@ class RegisteredSubjectDashboard(Dashboard):
             )
 
     def get_urlpatterns(self, view, regex, **kwargs):
+    
+        """ generate urls, add this to your urls.py of your local dashboard app
+        
+            regex = {}
+            regex['dashboard_type'] = 'subject'
+            regex['subject_identifier'] = 'S[0-9]{6}\-[0-9]{2}\-[A-Z]{3}[0-9]{2}'
+            regex['visit_code'] = '\w+'
+            regex['visit_instance'] = '[0-9]{1}'
+            subject_dashboard = SubjectDashboard()
+            urlpatterns = subject_dashboard.get_urlpatterns('mochudi_survey_dashboard.views', regex, visit_field_names=['subject_visit',])
+            
+            
+        """        
     
         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
         regex['content_type_map'] = '\w+'
