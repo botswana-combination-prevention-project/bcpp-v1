@@ -13,11 +13,8 @@ class AppointmentAdmin(MyModelAdmin):
 
         if change:
             obj.user_modified = request.user
-            #obj.save()        
-            
         if not change:
             obj.user_created = request.user
-            
             #set the visit instance
             aggr = Appointment.objects.filter(registered_subject=obj.registered_subject,visit_definition=obj.visit_definition).aggregate(Max('visit_instance'))
             if aggr['visit_instance__max'] <> None:
@@ -26,7 +23,6 @@ class AppointmentAdmin(MyModelAdmin):
                 obj.visit_instance = '0'
                 
         return super(AppointmentAdmin, self).save_model(request, obj, form, change)                
-            #obj.save()
                             
     #override, to check if non-default redirect 
     def add_view(self, request, form_url='', extra_context=None):

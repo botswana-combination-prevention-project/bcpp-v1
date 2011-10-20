@@ -3,7 +3,5 @@ APPT_STATUS = (
     ('in_progress', 'In Progress'),
     ('incomplete', 'Incomplete'),    
     ('done', 'Done'),
-    ('cancelled', 'Cancelled'),        
+    ('cancelled', 'Cancelled'),      
     ) 
-
-

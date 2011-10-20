@@ -1,4 +1,4 @@
-
+{% load appointment_tags %}
 <td>
         {%if appointment.visit_definition.code == visit_code%}
             <B>
@@ -28,7 +28,7 @@
     {{ appointment.get_appt_status_display }}
     {% if appointment.appt_status == 'incomplete'%}<font color="red">*</font>{% endif %}
     {% if appointment.appt_status == 'in_progress'%}<font color="green">*</font>{% endif %}    
-</A>
+</A> {% if appointment.appt_status == 'incomplete'%}&nbsp;{% continuation_appointment_anchor appointment dashboard_type %}{% endif %}
 </td>
 
 {% if appointment_visit_report %}

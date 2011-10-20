@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from audit_trail.audit import AuditTrail
 from bhp_registration.models import RegisteredSubject
@@ -39,6 +40,23 @@ class Appointment(BaseAppointment):
     objects = AppointmentManager()
     
     history = AuditTrail()
+    
+    def save(self, *args, **kwargs):
+        
+        save = True
+        if not self.pk:
+            if self.__class__.objects.filter(
+                    registered_subject = self.registered_subject, 
+                    visit_definition = self.visit_definition,
+                    appt_datetime__day = self.appt_datetime.day,
+                    appt_datetime__month = self.appt_datetime.month,
+                    appt_datetime__year = self.appt_datetime.year,                                                
+                    ):                    
+                #raise ValidationError, 'An appointment for this visit already exists on this date. You wrote %s.' % (self.appt_datetime,)                
+                save = False                
+        
+        if save:
+            super(Appointment, self).save(*args, **kwargs)
     
     def __unicode__(self):
         return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance) 
