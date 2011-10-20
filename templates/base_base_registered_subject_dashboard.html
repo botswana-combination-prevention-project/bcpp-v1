@@ -29,13 +29,25 @@
                 <tr name="top left">
                     <td>
                         <H5>Appointments</H5>
-                        <A href="{% url admin:bhp_appointment_appointment_add %}?next=dashboard_url&dashboard_type={{dashboard_type}}&registered_subject={{registered_subject.pk}}">Create new appointment</A>
+                        <A href="{% url admin:bhp_appointment_appointment_add %}?next=dashboard_url&dashboard_type={{dashboard_type}}&registered_subject={{registered_subject.pk}}">add continuation appointment</A>
                         
                         {% block appointments %}
 
                         {% endblock appointments %}
                     </td>
                 </tr>
+
+
+
+                {% if visit_code %}                
+                <tr name="bottom left" >
+                    <td>
+                        {% block visit_instructions %}
+                            <PRE>{{ appointment.visit_definition.instruction|wordwrap:80 }}</PRE>
+                        {% endblock visit_instructions %}
+                    </td>
+                </tr>
+                {% endif %}
 
                 {% if visit_code %}                
                 <tr name="bottom left" >
