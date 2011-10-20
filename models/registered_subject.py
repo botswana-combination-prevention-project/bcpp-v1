@@ -83,7 +83,10 @@ class RegisteredSubject(BaseSubject):
         # now you can add something below...
         
     def __unicode__ (self):
-        return "%s %s (%s %s)" % (self.subject_identifier, self.subject_type, self.first_name, self.sid)
+        if self.sid:
+            return "%s %s (%s %s)" % (self.subject_identifier, self.subject_type, self.first_name, self.sid)
+        else:
+            return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)                    
 
     class Meta:
         app_label = 'bhp_registration'            
