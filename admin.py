@@ -8,7 +8,7 @@ class DxCodeAdmin(MyModelAdmin):
     
     search_fields = ('code', 'short_name', 'long_name')
     
-    readonly_fields = ('code', 'short_name', 'long_name')
+    #readonly_fields = ('code', 'short_name', 'long_name')
    
 admin.site.register(DxCode, DxCodeAdmin)
 
