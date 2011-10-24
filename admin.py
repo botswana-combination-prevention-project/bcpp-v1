@@ -9,6 +9,7 @@ from bhp_appointment.forms import AppointmentForm
 class AppointmentAdmin(MyModelAdmin):
 
     form = AppointmentForm
+    
     def save_model(self, request, obj, form, change):
 
         if change:

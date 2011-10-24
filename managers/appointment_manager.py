@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import get_model
 from bhp_visit.models import VisitDefinition, ScheduleGroup
 
 class AppointmentManager(models.Manager):
@@ -47,4 +48,73 @@ class AppointmentManager(models.Manager):
                         appt_datetime = base_appt_datetime,
                         )
 
+        #return visits
 
+    def delete_appointments_for_model(self, **kwargs):        
+        
+        """ delete created appointments for this registered_subject for this model_name if visit report not yet submitted """
+        
+        registered_subject = kwargs.get("registered_subject")
+        if not registered_subject:
+            raise TypeError('AppointmentManager.delete_appointments requires registered_subject. Got None')
+        model_name = kwargs.get("model_name")
+        if not model_name:
+            raise TypeError('AppointmentManager.delete_appointments requires a model_name. Got None')
+        visit_model_name = kwargs.get("visit_model_name")
+        if not model_name:
+            raise TypeError('AppointmentManager.delete_appointments requires a visit_model_name. Got None')
+        visit_model_app_label = kwargs.get("visit_model_app_label")
+        if not model_name:
+            raise TypeError('AppointmentManager.delete_appointments requires a visit_model_app_label. Got None')
+
+        visit_definitions = self.list_visit_definitions_for_model(registered_subject=registered_subject, model_name=model_name)            
+        
+        # only delete appointments without a visit model 
+        visit_model = get_model( visit_model_app_label, visit_model_name)
+        appointments = super(AppointmentManager, self).filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)    
+        count = 0
+        for appointment in appointments:
+            if not visit_model.objects.filter(appointment=appointment):
+                appointment.delete()   
+                count += 1
+        
+        return count
+
+    def list_appointments_for_model(self, **kwargs):        
+        
+        """ list created appointments for this registered_subject for this model_name """
+        
+        registered_subject = kwargs.get("registered_subject")
+        if not registered_subject:
+            raise TypeError('AppointmentManager.list_appointments requires registered_subject. Got None')
+        model_name = kwargs.get("model_name")
+        if not model_name:
+            raise TypeError('AppointmentManager.list_appointments requires a model_name. Got None')
+
+        visit_definitions = self.list_visit_definitions_for_model(registered_subject=registered_subject, model_name=model_name)            
+            
+        appointments = super(AppointmentManager, self).filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)    
+
+        return appointments            
+            
+
+    def list_visit_definitions_for_model(self, **kwargs):        
+        
+        """ list visit_definitions for which appointments would be created or updated for this model_name"""
+        
+        registered_subject = kwargs.get("registered_subject")
+        if not registered_subject:
+            raise TypeError('AppointmentManager.list_visit_deinitions requires registered_subject. Got None')
+            
+        model_name = kwargs.get("model_name")
+        if not model_name:
+            raise TypeError('AppointmentManager.list_visit_deinitions requires a model_name. Got None')
+        if ScheduleGroup.objects.filter(membership_form__content_type_map__model = model_name): 
+            # get list of visits for scheduled group containing this model
+            visit_definitions = VisitDefinition.objects.filter(schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model = model_name))
+        else:
+            visit_definitions = None
+
+        return visit_definitions            
+            
+                        

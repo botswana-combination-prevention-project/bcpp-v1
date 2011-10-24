@@ -9,7 +9,7 @@ from appointment import Appointment
 
 class BaseAppointmentTracking (MyBasicUuidModel):
     
-    """Base model for Appt Tracking (AF002).
+    """Base model for Appt/Visit Tracking (AF002).
 
     For entry, requires an appointment be created first, so there
     is no direct reference to 'registered subject' in this model.

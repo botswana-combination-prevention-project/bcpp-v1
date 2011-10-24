@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_appointment.models import Appointment
 
-
 class AppointmentForm(forms.ModelForm):
     
     class Meta:
@@ -48,6 +47,7 @@ class AppointmentForm(forms.ModelForm):
             if t1.days > 0:
                 raise forms.ValidationError("Status is 'done' so the appointment date cannot be a future date. You wrote '%s'" % appt_datetime)
             # cannot be done if no visit report, but how do i get to the visit report??
+
 
             # cannot be done if bucket entries exist that are 'new'
             if Appointment.objects.filter(

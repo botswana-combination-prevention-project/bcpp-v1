@@ -43,6 +43,7 @@ class Appointment(BaseAppointment):
     
     def save(self, *args, **kwargs):
         
+        """
         save = True
         if not self.pk:
             if self.__class__.objects.filter(
@@ -57,6 +58,8 @@ class Appointment(BaseAppointment):
         
         if save:
             super(Appointment, self).save(*args, **kwargs)
+        """    
+        super(Appointment, self).save(*args, **kwargs)            
     
     def __unicode__(self):
         return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance) 
