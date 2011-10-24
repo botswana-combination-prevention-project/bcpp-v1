@@ -8,7 +8,7 @@ from bhplab import settings
 
 setup_environ(settings)
 
-import pyodbc, datetime, re
+import pyodbc, re
 from lab_result.models import ResultSource
 from django.db.models import Avg, Max, Min, Count        
 from lab_receive.models import Receive
