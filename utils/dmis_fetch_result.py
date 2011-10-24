@@ -36,7 +36,7 @@ def fetch_results_from_dmis(**kwargs):
         try:
             import_tdelta = int(days)
         except:
-            import_tdelta = None
+            import_tdelta = 90
 
     if subject_identifier:
         print subject_identifier
@@ -58,7 +58,7 @@ def fetch_results_from_dmis(**kwargs):
     for order in orders:
         create_or_update_result(order=order)
         order_count -= 1
-        print '%s/%s' % (order_count, tot)
+        print '%s %s/%s' % (order.order_identifier, order_count, tot)
 
 def create_or_update_result(**kwargs):
 
