@@ -9,7 +9,7 @@ class RegisteredSubjectManager(models.Manager):
     
     """Manager class for RegisteredSubject model."""
     
-    def register_subject(self, consent_model, subject_type='SUBJECT', user=''):
+    def register_subject(self, consent_model, subject_type='SUBJECT', user='', **kwargs):
         
         """
         Register a subject by allocating an identifier at the time of consent and storing in model RegisteredSubject.
@@ -107,24 +107,44 @@ class RegisteredSubjectManager(models.Manager):
         #        initials = consent_model.initials.upper(),
         #        registration_status = 'registered',
         #        )             
-                
-        super(RegisteredSubjectManager, self).create(
-                created = datetime.now(),
-                user_created = user,
-                subject_consent_id = consent_model.pk,
-                subject_identifier = subject_identifier['identifier'],
-                first_name = consent_model.first_name,
-                study_site = consent_model.study_site,
-                may_store_samples = consent_model.may_store_samples,
-                initials = consent_model.initials,
-                gender = consent_model.gender,
-                subject_type = subject_type,
-                registration_datetime = datetime.now(),
-                registration_status = 'consented',
-                identity = consent_model.identity,
-                dob = consent_model.dob,
-                is_dob_estimated = consent_model.is_dob_estimated,
-            )
+
+        # you may pass the RegisteredSubject object and update instead of creating a new one
+        # pass when calling this manager (for example, from save_model in admin)
+
+        if 'registered_subject' in kwargs:
+            registered_subject =  kwargs['registered_subject']               
+            registered_subject.subject_consent_id = consent_model.pk
+            registered_subject.subject_identifier = subject_identifier['identifier']
+            registered_subject.first_name = consent_model.first_name
+            registered_subject.study_site = consent_model.study_site
+            registered_subject.may_store_samples = consent_model.may_store_samples
+            registered_subject.initials = consent_model.initials
+            registered_subject.gender = consent_model.gender
+            registered_subject.subject_type = subject_type
+            registered_subject.registration_datetime = datetime.now()
+            registered_subject.registration_status = 'consented'
+            registered_subject.identity = consent_model.identity
+            registered_subject.dob = consent_model.dob
+            registered_subject.is_dob_estimated = consent_model.is_dob_estimated
+            registered_subject.save()
+        else:        
+            super(RegisteredSubjectManager, self).create(
+                    created = datetime.now(),
+                    user_created = user,
+                    subject_consent_id = consent_model.pk,
+                    subject_identifier = subject_identifier['identifier'],
+                    first_name = consent_model.first_name,
+                    study_site = consent_model.study_site,
+                    may_store_samples = consent_model.may_store_samples,
+                    initials = consent_model.initials,
+                    gender = consent_model.gender,
+                    subject_type = subject_type,
+                    registration_datetime = datetime.now(),
+                    registration_status = 'consented',
+                    identity = consent_model.identity,
+                    dob = consent_model.dob,
+                    is_dob_estimated = consent_model.is_dob_estimated,
+                )
                 
                 
         
