@@ -65,7 +65,7 @@ def fetch_order(**kwargs):
     tot=receive_count
     for receive in receives:
         print '%s %s/%s' % (receive.receive_identifier, receive_count, tot)
-        receive_count -= receive_count
+        receive_count -= 1
         sql = 'select l21.id as order_identifier, l21.headerdate as order_datetime, l21.keyopcreated as user_created,\
                 l21.keyoplastmodified as user_modified, l21.datecreated as created, l21.datelastmodified as modified,\
                 convert(varchar(50), l21.result_guid) as result_guid, \
