@@ -40,18 +40,24 @@ def fetch_results_from_dmis(**kwargs):
     if subject_identifier:
         print subject_identifier
         orders  = Order.objects.filter(aliquot__receive__patient__subject_identifier__icontains=subject_identifier)    
+        order_count = orders.count()        
     #elif:
     #    orders  = Order.objects.filter(imported=imported)        
     elif import_tdelta:
         now  = datetime.today()
         import_datetime_cutoff = now - timedelta(days=import_tdelta) 
         order_pks = Result.objects.values('order__pk').filter(order__modified__lte=import_datetime_cutoff)
-        orders = Order.objects.exclude(pk__in=order_pks)
+        orders = Order.objects.exclude(pk__in=order_pks).order_by('-created')
+        order_count = orders.count()        
     else:
-        orders  = Order.objects.all()
+        orders  = Order.objects.all().order_by('-created')
+        order_count = orders.count()
     
+    tot = order_count
     for order in orders:
         create_or_update_result(order=order)
+        order_count -= 1
+        print '%s/%s' % (order_count, tot)
 
 def create_or_update_result(**kwargs):
 
