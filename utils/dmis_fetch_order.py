@@ -42,6 +42,7 @@ def fetch_order(**kwargs):
 
     now  = datetime.today()
     import_datetime = now
+    import_delta = None
     days = kwargs.get("days")
     if days:
         try:
