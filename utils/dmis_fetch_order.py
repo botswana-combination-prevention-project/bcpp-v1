@@ -204,7 +204,7 @@ def fetch_or_create_aliquot( **kwargs ):
                 receive = receive,
                 count = 2,
                 aliquot_type = aliquot_type,
-                parent_identifier = primary_aliquot.aliquot_identifier,
+                parent_identifier = primary_aliquot,
                 medium = aliquot_medium,
                 condition=primary_aliquot.condition,
                 comment = create['comment'],            

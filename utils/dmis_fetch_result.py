@@ -30,14 +30,22 @@ import results for orders already in the system
 
 def fetch_results_from_dmis(**kwargs):
     subject_identifier = kwargs.get('subject_identifier')
-    #imported = kwargs('imported')    
+    days = kwargs.get("days")
+    try:
+        import_tdelta = int(days)
+    except:
+        import_tdelta = None
+
     if subject_identifier:
         print subject_identifier
         orders  = Order.objects.filter(aliquot__receive__patient__subject_identifier__icontains=subject_identifier)    
     #elif:
     #    orders  = Order.objects.filter(imported=imported)        
-    #elif: kwargs.get("new") = "new":
-    #    results = Result.objects.values('order').all()
+    elif import_tdelta:
+        now  = datetime.today()
+        import_datetime_cutoff = now - timedelta(days=import_tdelta)        
+        order_pks = Result.objects.values('order__pk').filter(order__order_datetime__gte=import_datetime_cutoff)
+        orders = Order.objects.filter(pk__in=order_pks)
     else:
         orders  = Order.objects.all()
     
