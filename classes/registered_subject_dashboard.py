@@ -257,7 +257,7 @@ class RegisteredSubjectDashboard(Dashboard):
         if self.visit_code and self.visit_instance:        
             self.appointments = Appointment.objects.filter(registered_subject=self.registered_subject, visit_definition__code=self.visit_code, visit_instance=self.visit_instance)            
         else:
-            self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('visit_definition__code', 'visit_instance')
+            self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('appt_datetime', 'visit_definition__code', 'visit_instance')
         self.context.add(appointments = self.appointments)                
     
 
@@ -347,6 +347,11 @@ class RegisteredSubjectDashboard(Dashboard):
         self.urlpatterns = patterns(view,
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<panel>\d+)/$'.format(**regex), 
+                'dashboard', 
+                name="dashboard_visit_url"
+                ),
+
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<appointment>{pk})/$'.format(**regex), 
                 'dashboard', 
                 name="dashboard_visit_url"
                 ),
