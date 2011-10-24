@@ -8,6 +8,7 @@ from bhplab import settings
 setup_environ(settings)
 
 import pyodbc, datetime
+from django.db.models import Q
 from lab_result.models import Result, ResultSource
 from lab_result_item.models import ResultItem
 from lab_test_code.models import TestCode
