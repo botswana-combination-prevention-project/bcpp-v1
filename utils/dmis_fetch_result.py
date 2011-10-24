@@ -31,6 +31,7 @@ import results for orders already in the system
 def fetch_results_from_dmis(**kwargs):
     subject_identifier = kwargs.get('subject_identifier')
     days = kwargs.get("days")
+    import_tdelta = None
     if days:
         try:
             import_tdelta = int(days)

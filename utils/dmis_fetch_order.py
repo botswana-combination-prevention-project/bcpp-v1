@@ -56,11 +56,11 @@ def fetch_order(**kwargs):
     
     subject_identifier = kwargs.get('subject_identifier')
     if subject_identifier:
-        receives = Receive.objects.filter(patient__subject_identifier__icontains=subject_identifier)         
-        receive_count = receives.count()        
+        receives = Receive.objects.filter(patient__subject_identifier__icontains=subject_identifier)
+        receive_count = receives.count()
     else:
-        receives = Receive.objects.filter(modified__gte=last_import_datetime).order_by('-modified')    
-        receive_count = receives.count()                
+        receives = Receive.objects.filter(modified__gte=last_import_datetime).order_by('-modified')
+        receive_count = receives.count()
 
     tot=receive_count
     for receive in receives:
