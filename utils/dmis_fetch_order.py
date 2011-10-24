@@ -42,7 +42,7 @@ def fetch_order(**kwargs):
 
     now  = datetime.today()
     import_datetime = now
-    import_tdelta = None
+    import_tdelta = 7
     days = kwargs.get("days")
     if days:
         try:
@@ -52,7 +52,7 @@ def fetch_order(**kwargs):
     if import_tdelta:
         last_import_datetime = now - timedelta(days=import_tdelta)        
     else:        
-        last_import_datetime = now - timedelta(days=90)
+        last_import_datetime = now - timedelta(days=7)
     
     subject_identifier = kwargs.get('subject_identifier')
     if subject_identifier:
