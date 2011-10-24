@@ -41,8 +41,17 @@ def fetch_order(**kwargs):
     cursor = cnxn.cursor()
 
     now  = datetime.today()
-    last_import_datetime = now - timedelta(days=90)
     import_datetime = now
+    days = kwargs.get("days")
+    if days:
+        try:
+            import_tdelta = int(days)
+        except:
+            import_tdelta = None
+    if import_tdelta:
+        last_import_datetime = now - timedelta(days=import_tdelta)        
+    else:        
+        last_import_datetime = now - timedelta(days=90)
     
     subject_identifier = kwargs.get('subject_identifier')
     if subject_identifier:

@@ -43,9 +43,9 @@ def fetch_results_from_dmis(**kwargs):
     #    orders  = Order.objects.filter(imported=imported)        
     elif import_tdelta:
         now  = datetime.today()
-        import_datetime_cutoff = now - timedelta(days=import_tdelta)        
-        order_pks = Result.objects.values('order__pk').filter(order__order_datetime__gte=import_datetime_cutoff)
-        orders = Order.objects.filter(pk__in=order_pks)
+        import_datetime_cutoff = now - timedelta(days=import_tdelta) 
+        order_pks = Result.objects.values('order__pk').filter(order__modified__lte=import_datetime_cutoff)
+        orders = Order.objects.exclude(pk__in=order_pks)
     else:
         orders  = Order.objects.all()
     
