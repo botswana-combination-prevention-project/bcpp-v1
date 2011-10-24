@@ -36,6 +36,8 @@ def fetch_results_from_dmis(**kwargs):
         orders  = Order.objects.filter(aliquot__receive__patient__subject_identifier__icontains=subject_identifier)    
     #elif:
     #    orders  = Order.objects.filter(imported=imported)        
+    #elif: kwargs.get("new") = "new":
+    #    results = Result.objects.values('order').all()
     else:
         orders  = Order.objects.all()
     

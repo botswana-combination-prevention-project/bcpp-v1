@@ -204,12 +204,12 @@ def fetch_or_create_aliquot( **kwargs ):
                 receive = receive,
                 count = 2,
                 aliquot_type = aliquot_type,
-                parent_aliquot = primary_aliquot,
+                parent_identifier = primary_aliquot.aliquot_identifier,
                 medium = aliquot_medium,
                 condition=primary_aliquot.condition,
                 comment = create['comment'],            
                 )
-        print '....created aliquot from %s ' % (primary_aliquot.aliquot_identifier,)                
+            print '....created aliquot from %s ' % (primary_aliquot.aliquot_identifier,)                
 
     return aliquot
 
