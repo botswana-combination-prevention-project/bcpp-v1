@@ -47,7 +47,17 @@ def fetch_receive(**kwargs):
     cursor = cnxn.cursor()
 
     now  = datetime.today()
-    last_import_datetime = now - timedelta(days=90)
+    import_tdelta = None
+    days = kwargs.get("days")
+    if days:
+        try:
+            import_tdelta = int(days)
+        except:
+            import_tdelta = None
+    if import_tdelta:
+        last_import_datetime = now - timedelta(days=import_tdelta)        
+    else:        
+        last_import_datetime = now - timedelta(days=7)
     import_datetime = datetime(datetime.today().year, datetime.today().month, datetime.today().day, 23, 59)
 
     #note that some records will not be imported for having>1
