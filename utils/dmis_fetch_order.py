@@ -57,11 +57,15 @@ def fetch_order(**kwargs):
     subject_identifier = kwargs.get('subject_identifier')
     if subject_identifier:
         receives = Receive.objects.filter(patient__subject_identifier__icontains=subject_identifier)         
+        receive_count = receives.count()        
     else:
         receives = Receive.objects.filter(modified__gte=last_import_datetime)     
-    
+        receive_count = receives.count()                
+
+    tot=receive_count
     for receive in receives:
-        print receive.receive_identifier
+        print '%s %s/%s' % (receive.receive_identifier, receive_count, tot)
+        receive_count -= receive_count
         sql = 'select l21.id as order_identifier, l21.headerdate as order_datetime, l21.keyopcreated as user_created,\
                 l21.keyoplastmodified as user_modified, l21.datecreated as created, l21.datelastmodified as modified,\
                 convert(varchar(50), l21.result_guid) as result_guid, \
