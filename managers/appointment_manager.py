@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import get_model
+from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
 
 class AppointmentManager(models.Manager):
@@ -79,6 +79,32 @@ class AppointmentManager(models.Manager):
                 count += 1
         
         return count
+
+    def create_next_appointment_instance(self, **kwargs):
+    
+        """ create the next instance of an appointment given the base appointment instance (.0) and the next appt_datetime """
+    
+        appointment = kwargs.get('base_appointment')
+        next_appt_datetime = kwargs.get('next_appt_datetime')
+
+        if not super(AppointmentManager, self).filter(
+                                                registered_subject=appointment.registered_subject, 
+                                                visit_definition=appointment.visit_definition, 
+                                                appt_datetime=next_appt_datetime): 
+            
+            # what was the last instance created?
+            aggr = super(AppointmentManager, self).filter(
+                                                    registered_subject=appointment.registered_subject, 
+                                                    visit_definition=appointment.visit_definition
+                                                    ).values('visit_instance').annotate(Max('visit_instance')).order_by()
+            if aggr:
+                next_visit_instance = int(aggr[0]['visit_instance__max'] + 1)
+                super(AppointmentManager, self).create(
+                    registered_subject = appointment.registered_subject,
+                    visit_definition = appointment.visit_definition,
+                    visit_instance = next_visit_instance,
+                    appt_datetime = next_appt_datetime,
+                    )
 
     def list_appointments_for_model(self, **kwargs):        
         
