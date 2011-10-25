@@ -105,6 +105,8 @@ class Identifier(object):
         True        
         
         parts of Encode(), Decode() from http://en.wikipedia.org/wiki/Base_36
+        
+        
     """
 
     # counter padding character
