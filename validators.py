@@ -134,15 +134,15 @@ def datetime_not_before_study_start (value):
 
 def eligible_if_yes (value):        
     if value != 'Yes':
-        raise ValidationError('If No, Participant is NOT ELIGIBLE and registration cannot continue.')
+        raise ValidationError('Participant is NOT ELIGIBLE. Registration cannot continue.')
         
 def eligible_if_no (value):        
     if value != 'No':
-        raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')
+        raise ValidationError('Participant is NOT ELIGIBLE. Registration cannot continue.')
           
 def eligible_if_unknown (value):        
     if value != 'Unknown':
-        raise ValidationError('If Yes, Participant is NOT ELIGIBLE and registration cannot continue.')              
+        raise ValidationError('Participant is NOT ELIGIBLE. Registration cannot continue.')              
         
 def eligible_if_female (value):        
     if value != 'F':
