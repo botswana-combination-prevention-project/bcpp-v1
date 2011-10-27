@@ -39,8 +39,6 @@ def audit_trail_view(request, **kwargs):
     err_message = ''
     status_message = ''    
 
-
-
     if request.method == 'POST':
         
         # form to select the app and model
@@ -55,7 +53,6 @@ def audit_trail_view(request, **kwargs):
             visit_code = form.cleaned_data['visit_code']
             visit_instance = form.cleaned_data['visit_instance']
             back_url_name = form.cleaned_data['back_url_name']            
-            
 
             model_selector = ModelSelector(app_label, model_name)             
             
@@ -93,7 +90,6 @@ def audit_trail_view(request, **kwargs):
                 except:
                     pass                                  
                                 
-
                 # store values in a ordered list
                 display_rows = []
                 
@@ -118,6 +114,9 @@ def audit_trail_view(request, **kwargs):
                                 this_row.append(getattr(row, field_name))
   
                     display_rows.append(this_row)
+                if not display_rows:
+                    status_message = 'There are no entries in the audit trail for this model.'                    
+                                    
             else:
                 status_message = 'There are no entries in the audit trail for this model.'                    
                 
