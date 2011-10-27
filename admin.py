@@ -89,6 +89,14 @@ class AppointmentAdmin(MyModelAdmin):
     
     search_fields = ('registered_subject__subject_identifier',)
     
+    list_display = (
+        'registered_subject',
+        'appt_datetime',
+        'appt_status',
+        'visit_definition',        
+        'visit_instance',        
+        )
+    
     list_filter = (
         'appt_datetime',
         'appt_status',
