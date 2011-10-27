@@ -257,7 +257,7 @@ class RegisteredSubjectDashboard(Dashboard):
         if self.visit_code and self.visit_instance:        
             self.appointments = Appointment.objects.filter(registered_subject=self.registered_subject, visit_definition__code=self.visit_code, visit_instance=self.visit_instance)            
         else:
-            self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('appt_datetime', 'visit_definition__code', 'visit_instance')
+            self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
         self.context.add(appointments = self.appointments)                
     
 
