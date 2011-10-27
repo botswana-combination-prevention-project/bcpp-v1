@@ -115,8 +115,11 @@ def audit_trail_view(request, **kwargs):
   
                     display_rows.append(this_row)
                 if not display_rows:
-                    status_message = 'There are no entries in the audit trail of this model for this subject_identifier.'                    
-                                    
+                    if audit_subject_identifier:
+                        status_message = 'There are no entries in the audit trail of this model for %s.' % (audit_subject_identifier,)                    
+                    else:
+                        status_message = 'There are no entries in the audit trail for this model.'                    
+                                                        
             else:
                 status_message = 'There are no entries in the audit trail for this model.'                    
                 
