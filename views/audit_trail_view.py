@@ -94,7 +94,10 @@ def audit_trail_view(request, **kwargs):
                 display_rows = []
                 
                 if audit_subject_identifier:
-                    history_rows = model.history.filter(_audit_subject_identifier__icontains = audit_subject_identifier).order_by('_audit_timestamp')                
+                    try:
+                        history_rows = model.history.filter(_audit_subject_identifier__icontains = audit_subject_identifier).order_by('_audit_timestamp')                
+                    except:                        
+                        raise AttributeError, 'Audit field _audit_subject_identifier does not exists. Did you create settings_audit.y and set \'GLOBAL_TRACK_FIELDS\'?'
                 else:    
                     history_rows = model.history.all().order_by('_audit_timestamp')
                                     
