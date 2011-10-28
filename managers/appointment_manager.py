@@ -1,8 +1,12 @@
 from django.db import models
 from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
+from bhp_appointment.classes import ApptDateHelper
+
 
 class AppointmentManager(models.Manager):
+    
+    
     
     def create_appointments(self, **kwargs):
 
@@ -28,6 +32,11 @@ class AppointmentManager(models.Manager):
             visits = VisitDefinition.objects.filter(schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model = model_name))
             #raise TypeError()
             for visit in visits:
+                
+                # calculate the appointment date based on the 
+                
+                
+            
                 # if appt exists, update appt_datetime
                 if super(AppointmentManager, self).filter(
                             registered_subject = registered_subject, 
@@ -37,7 +46,9 @@ class AppointmentManager(models.Manager):
                                 registered_subject = registered_subject, 
                                 visit_definition = visit, 
                                 visit_instance = 0)
+                                
                     appt.appt_datetime = base_appt_datetime
+
                     appt.save()
                 # else create a new appointment                    
                 else:
