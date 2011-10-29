@@ -35,7 +35,7 @@ class BaseLocator(MyBasicUuidModel):
         verbose_name="2. Has the participant given her permission for study staff to make home visits for follow-up purposes before and during the study?",
         help_text="if 'No' go to Question 3, otherwise continue",
         )
-    physical_address = OtherCharField(
+    physical_address = models.TextField(
         max_length=350,
         verbose_name="2a. If yes, please provide physical address with detailed description",
         help_text="",
@@ -84,7 +84,7 @@ class BaseLocator(MyBasicUuidModel):
         verbose_name="4. Has the participant given her permission for study staff to contact her at work for follow up purposes before and during the study?", 
         help_text=" if 'No' go to section B, otherwise continue"
     )
-    subject_work_place = OtherCharField(
+    subject_work_place = models.TextField(
         max_length=35,
         verbose_name="4a. Name and location of work place",
         help_text="",
@@ -116,7 +116,7 @@ class BaseLocator(MyBasicUuidModel):
         help_text="",
         
         )
-    contact_physical_address = OtherCharField(
+    contact_physical_address = models.TextField(
         max_length=350,
         verbose_name="5c.Full physical address ",
         help_text="",
