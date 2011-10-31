@@ -1,9 +1,22 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
+from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
 from django.db.models import Max
 from bhp_registration.models import RegisteredSubject
-from bhp_appointment.models import Appointment
+from bhp_appointment.models import Appointment, Holiday, Configuration
 from bhp_appointment.forms import AppointmentForm
+
+
+
+class HolidayAdmin(MyModelAdmin):
+    pass
+admin.site.register(Holiday, HolidayAdmin)    
+
+class HolidayInlineAdmin(MyTabularInline):
+    model = Holiday
+    extra = 0
+class ConfigurationAdmin(MyModelAdmin):
+    inlines = [HolidayInlineAdmin,]
+admin.site.register(Configuration, ConfigurationAdmin)    
 
 
 class AppointmentAdmin(MyModelAdmin):
@@ -98,6 +111,7 @@ class AppointmentAdmin(MyModelAdmin):
         )
     
     list_filter = (
+        'registered_subject__subject_type',    
         'appt_datetime',
         'appt_status',
         'visit_definition',        

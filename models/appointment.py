@@ -43,22 +43,17 @@ class Appointment(BaseAppointment):
     
     def save(self, *args, **kwargs):
         
+
+        self.appt_datetime = self.__class__.objects.best_appointment_datetime(appt_datetime=self.appt_datetime)
         """
-        save = True
-        if not self.pk:
-            if self.__class__.objects.filter(
-                    registered_subject = self.registered_subject, 
-                    visit_definition = self.visit_definition,
-                    appt_datetime__day = self.appt_datetime.day,
-                    appt_datetime__month = self.appt_datetime.month,
-                    appt_datetime__year = self.appt_datetime.year,                                                
-                    ):                    
-                #raise ValidationError, 'An appointment for this visit already exists on this date. You wrote %s.' % (self.appt_datetime,)                
-                save = False                
-        
-        if save:
-            super(Appointment, self).save(*args, **kwargs)
-        """    
+        if not self.visit_instance == 0:
+            # this is a continuation visit
+            # get .0 appt_datetime
+            if self.__class__.objects.filter(registered_subject=self.registered_subject, visit_definition=self.visit_definition, visit_instance=0):
+                appt_datetime = self.__class__.objects.filter(registered_subject=self.registered_subject, visit_definition=self.visit_definition, visit_instance=0).appt_datetime
+                appt_datetime += timedelta(days=+1)
+                self.appt_datetime = self.__class__.objects.best_appointment_datetime(appt_datetime=appt_datetime)
+        """        
         super(Appointment, self).save(*args, **kwargs)            
     
     def __unicode__(self):

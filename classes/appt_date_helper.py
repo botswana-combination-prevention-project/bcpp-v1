@@ -1,8 +1,9 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from bhp_visit.models import VisitDefinition
 
 
-class DateTimeDescriptor(object):
+class ApptDateTimeDescriptor(object):
     """For a registered_subject instance only"""
     def __init__(self):
         self.value = None
@@ -45,14 +46,26 @@ class ApptDateHelper(object):
     
     def __init__(self, **kwargs):
 
+        self.next_appt_datetime = None
         #base_appt_datetime = kwargs.get('base_appt_datetime')
         #visit_definition = kwargs.get('visit_definition')
                 
     def set_next_appt_datetime(self, **kwargs):    
-        
-        next_appt_datetime = self.appt_datetime
-                
-        
+        self.next_appt_datetime = None
+        interval = self.visit_definition.base_interval
+        unit = self.visit_definition.base_interval_unit
+        if not interval == 0:
+            if unit == 'Y':
+                next_appt_datetime = self.appt_datetime+relativedelta(years=interval)
+            elif unit == 'M':
+                next_appt_datetime = self.appt_datetime+relativedelta(months=interval)        
+            elif unit == 'D':
+                next_appt_datetime = self.appt_datetime+relativedelta(days=interval)        
+            elif unit == 'H':        
+                next_appt_datetime = self.appt_datetime+relativedelta(hours=interval)
+            else:
+                raise AttributeError, "Cannot calculate net appointment date, visit_definition.base_interval_unit must be Y,M,D or H. Got %s" % (unit,)       
+        return self.next_appt_datetime        
     
                 
         

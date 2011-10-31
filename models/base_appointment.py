@@ -20,7 +20,7 @@ class BaseAppointment (MyBasicUuidModel):
         verbose_name = _("Status"),
         choices=APPT_STATUS,
         max_length=25,
-        default='NEW',
+        default='new',
         )
     appt_reason = models.CharField(
         verbose_name=_("Reason for appointment"), 

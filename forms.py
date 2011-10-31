@@ -15,6 +15,8 @@ class AppointmentForm(forms.ModelForm):
         cleaned_data = self.cleaned_data  
 
         appt_datetime = cleaned_data.get("appt_datetime")
+        if not appt_datetime:
+            raise forms.ValidationError('Appointment date and time are required')
         appt_status = cleaned_data.get("appt_status")
         registered_subject = cleaned_data.get("registered_subject")
         visit_definition = cleaned_data.get("visit_definition") 

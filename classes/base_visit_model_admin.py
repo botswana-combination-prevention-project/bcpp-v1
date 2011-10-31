@@ -75,7 +75,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
             model_instance = obj,
             visit_model = self.visit_model,
             )
-                        
+
         return super(BaseVisitModelAdmin, self).save_model(request, obj, form, change)
         
     def delete_model(self, request, obj):
