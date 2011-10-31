@@ -23,6 +23,8 @@ class VisitDefinitionAdmin(MyModelAdmin):
 
     list_display = ('code', 'title', 'grouping', 'time_point', 'base_interval', 'base_interval_unit','lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit','user_modified', 'modified')
     
+    list_filter = ('code', 'grouping', 'time_point', )
+    
     search_fields = ('code', 'grouping',)
     
     list_filter = ('grouping',)

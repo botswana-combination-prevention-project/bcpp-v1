@@ -5,6 +5,8 @@ from bhp_common.models import  MyBasicUuidModel
 from bhp_visit.utils import get_lower_window_days, get_upper_window_days
 from bhp_visit.models import ScheduleGroup
 from bhp_visit.models import BaseWindowPeriodItem
+from bhp_visit.managers import VisitDefinitionManager
+
 
 class VisitDefinition(BaseWindowPeriodItem):
 
@@ -20,7 +22,8 @@ class VisitDefinition(BaseWindowPeriodItem):
         max_length=35,
         )
 
-    schedule_group = models.ManyToManyField(ScheduleGroup)
+    schedule_group = models.ManyToManyField(ScheduleGroup,
+        help_text = "Visit definition may be used in more than one schedule_group")
 
     instruction = models.TextField(
         verbose_name="Instructions",
@@ -28,6 +31,7 @@ class VisitDefinition(BaseWindowPeriodItem):
         blank=True
         )    
 
+    objects = VisitDefinitionManager()
 
     def get_lower_window_datetime(self, appt_datetime):
         days = get_lower_window_days(self.lower_window, self.lower_window_unit)
