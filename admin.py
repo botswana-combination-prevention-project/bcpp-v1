@@ -104,9 +104,11 @@ class ResultItemAdmin(MyModelAdmin):
         "grade_flag",
         "reference_flag",
         "reference_range",    
+        "created",
+        "modified",
         )
     
-    list_filter = ('grade_flag', 'reference_flag',)    
+    list_filter = ('grade_flag', 'reference_flag',"result_item_datetime", "created", "modified")    
     search_fields = ('test_code__code','result__result_identifier',)    
 
     fields = (
