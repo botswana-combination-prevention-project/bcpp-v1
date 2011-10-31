@@ -28,6 +28,7 @@ class LabManager(models.Manager):
         return poll.is_server_active()
     
     def update(self, **kwargs ):
+
         """
         Using the 'lab_api' DATABASE connection defined in settings, update the local copy of lab data and return nothing.
         
