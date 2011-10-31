@@ -44,7 +44,6 @@ class BaseStudySpecific (MyBasicUuidModel):
         choices=GENDER_OF_CONSENT,
         )
 
-    
     subject_identifier_seed = models.IntegerField(
         verbose_name = _("Subject Identifier Seed (Integer)"),
         default=1000,
