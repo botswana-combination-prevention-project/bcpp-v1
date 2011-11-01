@@ -240,6 +240,12 @@ YES_NO_NOT_EVALUATED_NA = (
     ('N/A', 'Not applicable'),    
 )
 
+YES_NO_DOESNT_WORK =(
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ('DontWork', 'Doesn\'t work'),
+)    
+
 YES_NO_UNKNOWN =(
     ('Yes', 'Yes'),
     ('No', 'No'),
