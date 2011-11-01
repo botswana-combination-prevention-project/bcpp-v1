@@ -5,7 +5,7 @@ from bhp_common.fields import MyUUIDField
 from bhp_common.fields import NameField, InitialsField, IdentityTypeField, IsDateEstimatedField
 from bhp_common.models import MyBasicUuidModel, MyBasicModel
 from bhp_common.fields import OmangField
-from bhp_common.choices import GENDER, YES_NO
+from bhp_common.choices import GENDER, YES_NO, YES_NO_DOESNT_WORK
 from bhp_common.fields import OtherCharField
 from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_future, date_not_future, datetime_not_before_study_start
 from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
@@ -80,7 +80,7 @@ class BaseLocator(MyBasicUuidModel):
         )  
     may_call_work = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_DOESNT_WORK,
         verbose_name="4. Has the participant given her permission for study staff to contact her at work for follow up purposes before and during the study?", 
         help_text=" if 'No' go to section B, otherwise continue"
     )
@@ -137,35 +137,6 @@ class BaseLocator(MyBasicUuidModel):
         blank=True,
         null=True,   
         )
-    has_caretaker_alt = models.CharField(
-        max_length=25,
-        choices=YES_NO,
-        verbose_name="6.Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?", 
-        help_text="",        
-        )
-    caretaker_name = OtherCharField(
-        max_length=35,
-        verbose_name="6a. Full Name of the responsible person",
-        help_text="include firstname and surname",
-        blank=True,
-        null=True,
-        )
-    caretaker_cell = models.IntegerField(
-        max_length=8,
-        verbose_name="6b. Cell number",
-        validators = [BWCellNumber,],
-        help_text="",
-        blank=True,
-        null=True,
-        )
-    caretaker_tel = models.IntegerField(
-        max_length=8,
-        verbose_name="6c. Telephone number",
-        validators = [BWTelephoneNumber,],
-        help_text="",
-        blank=True,
-        null=True,
-        ) 
 
     class Meta:
         abstract=True
