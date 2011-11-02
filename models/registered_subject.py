@@ -15,7 +15,7 @@ class RegisteredSubject(BaseSubject):
         max_length = 36,
         null=True,
         blank=True,
-        db_index=True,                       
+        #db_index=True,                       
         )
         
     sid = models.CharField(

@@ -16,6 +16,7 @@ class BaseSubject (MyBasicUuidModel):
     subject_identifier = models.CharField(
         verbose_name = "Subject Identifier",
         max_length=36, 
+        # unique = True,
         null = True, 
         blank = True,
         db_index=True,               

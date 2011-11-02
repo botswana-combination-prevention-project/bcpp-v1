@@ -34,6 +34,7 @@ admin.site.register(RandomizedSubject)
 
 
 class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
+    
     list_display = (
         'subject_identifier',
         'first_name',
