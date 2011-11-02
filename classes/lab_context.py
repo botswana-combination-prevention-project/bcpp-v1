@@ -58,4 +58,7 @@ class LabContext(object):
             if Lab.objects.filter(receive_identifier__exact=self.receive_identifier):
                 self.lab = Lab.objects.filter(receive_identifier__exact=self.receive_identifier)[0]
                 self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.lab.subject_identifier)        
+            else:
+                self.lab = None
+                self.registered_subject = None                
 
