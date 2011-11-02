@@ -23,7 +23,7 @@
         <td>{{ f.entry_comment }}</td>        
         <td>{{ f.close_datetime|date:"Y-m-d" }}</td>  
         <td></td>
-        <td><A href="/audit_trail/{{ f.entry.content_type_map.app_label }}/{{ f.entry.content_type_map.model }}/{{ subject_identifier }}/?visit_code={{f.entry.visit_definition.code}}&visit_instance={{ visit_instance}}&back_url_name=dashboard_visit_url&dashboard_type={{ dashboard_type }}">audit trail</a></td>                                                                                 
+        <td><A href="/audit_trail/{{ f.content_type_map.app_label }}/{{ f.content_type_map.model }}/{{ subject_identifier }}/?visit_code={{ visit_code }}&visit_instance={{ visit_instance}}&back_url_name=dashboard_visit_url&dashboard_type={{ dashboard_type }}">audit trail</a></td>                                                                                 
         </tr>
     {% endfor %}
     </tbody>
