@@ -51,8 +51,16 @@ class ModelPk(template.Node):
 
         pk = None
 
+        # make sure appointment is the visit_instance 0 appointment
+        # the data is linked to the visit of visit_instance 0
+        appointment_0 = self.appointment.__class__.objects.get(
+                    registered_subject = self.appointment.registered_subject, 
+                    visit_definition = self.appointment.visit_definition,
+                    visit_instance = 0,
+                    )
+
         if self.visit_model.__class__.objects.filter(appointment = self.appointment):
-            self.visit_model_instance = self.visit_model.__class__.objects.filter(appointment = self.appointment)[0]
+            self.visit_model_instance = self.visit_model.__class__.objects.filter(appointment = appointment_0)[0]
             
         this_model = self.contenttype.model_class()
         
