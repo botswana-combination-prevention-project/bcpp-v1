@@ -55,6 +55,7 @@ class LabContext(object):
         self.search_name = kwargs.get('search_name')        
         self.receive_identifier = kwargs.get('receive_identifier')
         if self.receive_identifier:
-            self.lab = Lab.objects.get(receive_identifier__exact=self.receive_identifier)
-            self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.lab.subject_identifier)        
+            if Lab.objects.filter(receive_identifier__exact=self.receive_identifier):
+                self.lab = Lab.objects.filter(receive_identifier__exact=self.receive_identifier)[0]
+                self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.lab.subject_identifier)        
 
