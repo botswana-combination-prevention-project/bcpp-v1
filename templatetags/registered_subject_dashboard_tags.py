@@ -243,3 +243,33 @@ def model_admin_url_from_registered_subject(parser, token):
 
 
 
+class ModelPkFromRegisteredSubject(template.Node):
+    def __init__(self, contenttype, registered_subject, dashboard_type, app_label):
+        self.unresolved_contenttype = template.Variable(contenttype)
+        self.unresolved_registered_subject = template.Variable(registered_subject)  
+        self.unresolved_dashboard_type = template.Variable(dashboard_type)                              
+        self.unresolved_app_label = template.Variable(app_label)
+    def render(self, context):
+        self.contenttype = self.unresolved_contenttype.resolve(context)
+        self.registered_subject = self.unresolved_registered_subject.resolve(context)
+        self.dashboard_type = self.unresolved_dashboard_type.resolve(context)        
+        self.app_label = self.unresolved_app_label.resolve(context)
+        pk = None
+        this_model = self.contenttype.model_class()
+        if this_model.objects.filter(registered_subject=self.registered_subject):
+            this_model_instance = this_model.objects.get(registered_subject=self.registered_subject)        
+            pk = this_model_instance.pk            
+        return pk
+        
+@register.tag(name='model_pk_from_registered_subject')
+def model_pk_from_registered_subject(parser, token):
+
+    """return pk for model instance""" 
+
+    try:
+        tag_name, contenttype, registered_subject, dashboard_type, app_label = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires exactly 4 arguments" % token.contents.split()[0])
+    return ModelPkFromRegisteredSubject(contenttype, registered_subject, dashboard_type, app_label)
+
+
