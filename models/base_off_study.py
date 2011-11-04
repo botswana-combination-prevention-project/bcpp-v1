@@ -3,14 +3,14 @@ from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_registration.choices import SUBJECT_TYPE
-from registered_subject import RegisteredSubject
+from base_registered_subject_model import BaseRegisteredSubjectModel
 
 """
     Basic Off study / AF004
 """
-class BaseOffStudy(MyBasicUuidModel):
+class BaseOffStudy(BaseRegisteredSubjectModel):
 
-    registered_subject = models.OneToOneField(RegisteredSubject)
+    #registered_subject = models.OneToOneField(RegisteredSubject)
 
     offstudy_date = models.DateField(
         verbose_name="Off-study Date",

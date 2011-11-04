@@ -4,6 +4,8 @@ from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_appointment.models import Appointment
+from bhp_adverse.models import BaseDeathReport
+from bhp_registration.models import BaseRegisteredSubjectModel, BaseOffStudy
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_registration.models import  RegisteredSubject
 
@@ -18,19 +20,15 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
     """ 
     
     def save_model(self, request, obj, form, change):
-    
-        #if model is in a member of a schedule group, create appointments
-        Appointment.objects.create_appointments( 
-            registered_subject = obj.registered_subject, 
-            base_appt_datetime = datetime.today(), 
-            model_name = self.model.__name__.lower(),
-            )
         
-        AdditionalEntryBucket.objects.update_status(
-            registered_subject = obj.registered_subject,    
-            model_instance = obj,
-            )
-                       
+        # i am explicitly listing valid subclasses for now. in future when code has stabilized
+        # might be able to remove this ... i just want to know who's coming in here.
+        if not issubclass(obj.__class__, (BaseRegisteredSubjectModel, BaseOffStudy, BaseDeathReport)):
+            raise TypeError('%s is using BaseRegisteredSubjectModelAdmin but is not a subclasses of BaseRegisteredSubjectModel.' % (obj, ))
+
+        # note: appointments are create in the base model's save() method
+        # as long as it inherets from BaseRegisteredSubjectModel() 
+                               
         return super(BaseRegisteredSubjectModelAdmin, self).save_model(request, obj, form, change)
         
     def delete_model(self, request, obj):
