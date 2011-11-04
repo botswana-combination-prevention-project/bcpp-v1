@@ -123,6 +123,7 @@ class BaseEntryBucketManager(models.Manager):
             raise AttributeError, 'To set visit_fk_name, EntryBucketManager.update_status requires attribute \'scheduled_model\' or \'scheduled_model_instance\'. Got neither'            
 
         self.visit_fk_name = '%s_id' % visit_fk[0].name     
+    
 
 
 
