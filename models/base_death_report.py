@@ -4,7 +4,8 @@ from bhp_common.fields import OtherCharField
 from bhp_common.choices import YES_NO
 from bhp_code_lists.models import DxCode
 from bhp_common.validators import date_not_before_study_start, date_not_future
-#from bhp_registration.models import RegisteredSubject
+from bhp_registration.models import BaseRegisteredSubjectModel
+
 
 class DeathCauseInfo (MyBasicListModel):
     class Meta:
@@ -26,7 +27,7 @@ class DeathReasonHospitalized (MyBasicListModel):
         ordering = ['display_index']  
         app_label = 'bhp_adverse'
         
-class BaseDeathReport(MyBasicUuidModel):
+class BaseDeathReport(BaseRegisteredSubjectModel):
     
     """
     Death form / AF005
