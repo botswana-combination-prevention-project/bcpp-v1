@@ -241,7 +241,20 @@ def model_admin_url_from_registered_subject(parser, token):
         raise template.TemplateSyntaxError("%r tag requires exactly 4 arguments" % token.contents.split()[0])
     return ModelAdminUrlFromRegisteredSubject(contenttype, registered_subject, dashboard_type, app_label)
 
+class ModelPkFromRegisteredSubject(template.Node):
+    def __init__(self, contenttype, visit_model, appointment, dashboard_type, app_label):
+        self.unresolved_contenttype = template.Variable(contenttype)
+        self.unresolved_registered_subject = template.Variable(registered_subject)
+        self.unresolved_dashboard_type = template.Variable(dashboard_type)                              
+        self.unresolved_app_label = template.Variable(app_label)
+    def render(self, context):
+        self.contenttype = self.unresolved_contenttype.resolve(context)
+        self.registered_subject = self.unresolved_appointment.resolve(context)        
+        self.dashboard_type = self.unresolved_dashboard_type.resolve(context)        
+        self.app_label = self.unresolved_app_label.resolve(context)
+        self.visit_model_instance = None
 
+        pk = None
 
 class ModelPkFromRegisteredSubject(template.Node):
     def __init__(self, contenttype, registered_subject, dashboard_type, app_label):
