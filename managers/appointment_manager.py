@@ -42,10 +42,22 @@ class AppointmentManager(models.Manager):
                 membership_form = membership_form_model.objects.get(registered_subject=registered_subject)
                 # determine base_appt_datetime using the membership_form instance
                 base_appt_datetime = membership_form.get_registration_datetime()
+            elif kwargs.get('base_appt_datetime'):
+                # i guess you could pass the base_appt_datetime from the call    
+                base_appt_datetime = kwargs.get('base_appt_datetime')
             else: 
                 # we may be calling this method as a new membership for is being inserted   
                 # once the instance is saved, the created attribute will = datetime.today()
-                base_appt_datetime = datetime.today()            
+                #base_appt_datetime = datetime.today()            
+                                
+                # i have decided that it is safer for the model_instance to return the
+                # base_appt_datetime instead of assuming datetime.today(), 
+                # thus, the model save() method must have been called already.
+                # ...see BaseRegisteredSubjectModel.save() 
+                # so if you get here throw an error.
+                raise AttributeError, '%s method %s cannot determine the registration model_instance. This is needed to call get_registration_datetime().' % (self, inspect.stack()[0][3], )
+                
+
             
             visit_definitions = VisitDefinition.objects.filter(schedule_group=schedule_group)
             
