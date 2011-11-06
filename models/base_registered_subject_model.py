@@ -1,4 +1,6 @@
 from datetime import datetime
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
@@ -53,5 +55,18 @@ class BaseRegisteredSubjectModel (MyBasicUuidModel):
     class Meta:
         abstract=True
 
+
+def delete_unused_appointments(sender, **kwargs):
+    
+    """ delete unused appointments created upon INSERT of sender model """
+    
+    instance = kwargs.get('instance')
+    visit_model_name = kwargs.get('visit_model_name')
+    Appointment.objects.delete_appointments_for_model(
+                            registered_subject = instance.registered_subject, 
+                            model_name = instance._meta.module_name,
+                            visit_model_app_label = instance._meta.app_label,
+                            visit_model_name = visit_model_name,
+                            )    
 
 

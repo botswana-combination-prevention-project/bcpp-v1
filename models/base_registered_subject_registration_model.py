@@ -20,10 +20,4 @@ class BaseRegisteredSubjectRegistrationModel (MyBasicUuidModel):
     class Meta:
         abstract=True
 
-
-#class BaseRegistrationForm(BaseRegisteredSubjectRegistrationModel):
-#    
-#    pass
-        
-        
-    
+   
