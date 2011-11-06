@@ -190,7 +190,7 @@ class AppointmentManager(models.Manager):
 
         return visit_definitions     
         
-        
+
     def next_appointment_datetime(self, **kwargs):
 
         """ return the appt_datetime given the visit_definition and base_appt_datetime"""
