@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_appointment.models import Appointment
-from bhp_adverse.models import BaseDeathReport
+#from bhp_adverse.models.base_death_report import BaseDeathReport
 from bhp_registration.models import BaseRegisteredSubjectModel, BaseOffStudy
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_registration.models import  RegisteredSubject
@@ -23,8 +23,11 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
         
         # i am explicitly listing valid subclasses for now. in future when code has stabilized
         # might be able to remove this ... i just want to know who's coming in here.
-        if not issubclass(obj.__class__, (BaseRegisteredSubjectModel, BaseOffStudy, BaseDeathReport)):
-            raise TypeError('%s is using BaseRegisteredSubjectModelAdmin but is not a subclasses of BaseRegisteredSubjectModel.' % (obj, ))
+        #if not issubclass(obj.__class__, (BaseRegisteredSubjectModel, BaseOffStudy, BaseDeathReport)):
+        #    raise TypeError('%s is using BaseRegisteredSubjectModelAdmin but is not a subclasses of BaseRegisteredSubjectModel.' % (obj, ))
+
+        if not 'registered_subject' in [fld.name for fld in self.model._meta.fields]:
+            raise TypeError('%s is using BaseRegisteredSubjectModelAdmin but does not have a key to RegisteredSubject.' % (obj, ))
 
         # note: appointments are create in the base model's save() method
         # as long as it inherets from BaseRegisteredSubjectModel() 
