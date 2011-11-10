@@ -24,6 +24,12 @@ class ScheduleGroup(MyBasicUuidModel):
         help_text = "may specify a common value to group a number of membership forms so that when one of the group is keyed, the others are no longer shown."        
         )        
 
+    comment = models.CharField(
+        max_length = 25,
+        null = True,
+        blank = True,
+        )
+
     objects = ScheduleGroupManager()
     
     def __unicode__(self):

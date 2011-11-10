@@ -35,10 +35,12 @@ class ScheduleGroupManager(models.Manager):
         keyed_membership_forms = {}
         
         #get KEYED schedule group membership forms
-        for schedule_group in super(ScheduleGroupManager, self).all():
+        for schedule_group in super(ScheduleGroupManager, self).filter(membership_form__category__iexact=membership_form_category,):
             membership_form_model = schedule_group.membership_form.content_type_map.model_class()
             if 'registered_subject' in [f.name for f in membership_form_model._meta.fields]:
-                if membership_form_model.objects.filter(registered_subject = registered_subject):
+                if membership_form_model.objects.filter(
+                                    registered_subject = registered_subject,
+                                    ):
                     # append grouping key for schedule groups 
                     # where the membership_form is KEYED and the schedule group 
                     # has more than one membership_form
@@ -53,7 +55,7 @@ class ScheduleGroupManager(models.Manager):
         #get UNKEYED schedule group membership forms            
         # ...use the grouping key to eliminate membership forms related to a KEYED membership form from above
         qset = (
-            Q(membership_form__category__icontains = membership_form_category) |
+            Q(membership_form__category__iexact = membership_form_category) |
             Q(membership_form__category__isnull = True) |
             Q(membership_form__category__exact = '')
             )

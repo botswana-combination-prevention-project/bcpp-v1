@@ -9,12 +9,16 @@ class MembershipFormAdmin (MyModelAdmin):
 
     list_display = ('content_type_map', 'category', 'visible', 'user_created', 'user_modified', 'created', 'modified')
 
+    list_filter = ( 'category', )    
+
 admin.site.register(MembershipForm, MembershipFormAdmin)
 
 
 class ScheduleGroupAdmin(MyModelAdmin):
 
-    list_display = ('group_name', 'membership_form', 'grouping_key')
+    list_display = ('group_name', 'membership_form', 'grouping_key', 'comment')
+    
+    list_filter = ('grouping_key', 'comment')
 
 admin.site.register(ScheduleGroup, ScheduleGroupAdmin)    
 

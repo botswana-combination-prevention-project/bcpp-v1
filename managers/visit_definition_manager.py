@@ -2,7 +2,7 @@ import inspect
 from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.db.models import Q
-
+from bhp_visit.models import MembershipForm
 
 class VisitDefinitionManager(models.Manager):
     
@@ -65,7 +65,19 @@ VisitDefinition.objects.next_visit_definition(visit_definition=visit_definition)
                 rdelta = relativedelta(hours=interval)
             else:
                 raise AttributeError, "Cannot calculate relativedelta, visit_definition.base_interval_unit must be Y,M,D or H. Got %s" % (unit,)  
-        return rdelta                     
+        return rdelta 
+        
+    def codes_for_membership_form_category(self, **kwargs):
+        
+        if not kwargs.get('membership_form_category'):
+            raise AttributeError, '%s method %s requires attribute \'membership_form_category\'. Got None' % (self.__name__, inspect.stack()[0][3], )
+        membership_forms = MembershipForm.objects.filter(category=kwargs.get('membership_form_category'))
+        visit_definition_codes = set()
+        for membership_form in membership_forms:
+            for visit_definition in super(VisitDefinitionManager, self).filter(schedule_group__membership_form=membership_form):
+                visit_definition_codes.add(visit_definition.code)
+
+        return list(visit_definition_codes)
 
         
         
