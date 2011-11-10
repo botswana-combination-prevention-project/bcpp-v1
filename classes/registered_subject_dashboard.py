@@ -6,7 +6,7 @@ from bhp_common.utils import os_variables
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_appointment.models import Appointment
-from bhp_visit.models import ScheduleGroup
+from bhp_visit.models import ScheduleGroup, VisitDefinition
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
 
@@ -108,7 +108,12 @@ class RegisteredSubjectDashboard(Dashboard):
         self.subject_identifier = None
         self.app_label = None
         self.requisition_model = None
+
+        # limit the membership forms to those of this category
         self.membership_form_category = None
+
+        # add extra contect key/valu pairs for the urls in the dashboard template
+        self.extra_url_context = {'erik':'erik'}
 
     def create(self, **kwargs):
         
@@ -258,7 +263,19 @@ class RegisteredSubjectDashboard(Dashboard):
         if self.visit_code and self.visit_instance:        
             self.appointments = Appointment.objects.filter(registered_subject=self.registered_subject, visit_definition__code=self.visit_code, visit_instance=self.visit_instance)            
         else:
-            self.appointments = Appointment.objects.filter(registered_subject = self.registered_subject).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
+            # or filter appointments for the current membership category
+
+            # Note: previously, the membership_form_category was defaulted to the subject_type
+            # and this method returned ALL appointment for a registered subject.
+            # I am now filtering all for a registered_subject with
+            # appointments associated with the membership_form_category.
+
+            # get list visit_definition__code for this membership_form_category
+            codes = VisitDefinition.objects.codes_for_membership_form_category(membership_form_category=self.membership_form_category)
+            self.appointments = Appointment.objects.filter(
+                                            registered_subject = self.registered_subject,
+                                            visit_definition__code__in=codes,
+                                            ).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
         self.context.add(appointments = self.appointments)                
     
 
@@ -311,6 +328,7 @@ class RegisteredSubjectDashboard(Dashboard):
         # you may specify the membership_form_category, otherwise just use subject type
         if not self.membership_form_category:
             self.membership_form_category = self.subject_type
+
         # add membership forms for this registered_subject and subject_type
         # these are the KEYED, UNKEYED schedule group membership forms
         self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(
