@@ -32,7 +32,7 @@
 </td>
 
 {% if appointment_visit_report %}
-    <td><A href="{{ visit_model_instance.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}&visit_code={{ appointment.visit_definition.code }}&visit_instance={{appointment.visit_instance}}">{{visit_model_instance.report_datetime|date:"Y-m-d D"}}</A></td>
+    <td><A href="{{ visit_model_instance.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&appointment={{ appointment.pk }}&visit_code={{ appointment.visit_definition.code }}&visit_instance={{appointment.visit_instance}}{{ extra_url_context }}">{{visit_model_instance.report_datetime|date:"Y-m-d D"}}</A></td>
     <td>{%if appointment.visit_definition.code == visit_code%}
         <B>
     {% endif %}
