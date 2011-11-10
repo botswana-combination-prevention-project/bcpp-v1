@@ -21,16 +21,7 @@ class BaseRegisteredSubjectModel (MyBasicUuidModel):
     
     """
 
-    registered_subject = models.OneToOneField(RegisteredSubject,
-        #editable=False  
-        )
-    
-    #report_datetime = models.DateTimeField("Today's date",
-    #    validators=[
-    #        datetime_not_before_study_start,
-    #        datetime_not_future,],
-    #    default = datetime.today(),
-    #    )            
+    registered_subject = models.OneToOneField(RegisteredSubject)            
     
     
     def save(self, *args, **kwargs):

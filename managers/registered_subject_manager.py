@@ -20,6 +20,10 @@ class RegisteredSubjectManager(models.Manager):
         The consent_model is the selected and new consent. Count=1
             
         """
+        
+        if kwargs.get('registered_subject'):
+            raise TypeError()
+        
         subject_identifier = {}
         
         #get the consent just created
