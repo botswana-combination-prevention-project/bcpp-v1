@@ -108,6 +108,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.subject_identifier = None
         self.app_label = None
         self.requisition_model = None
+        self.membership_form_category = None
 
     def create(self, **kwargs):
         
@@ -307,11 +308,14 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def set_membership_forms(self):
 
+        # you may specify the membership_form_category, otherwise just use subject type
+        if not self.membership_form_category:
+            self.membership_form_category = self.subject_type
         # add membership forms for this registered_subject and subject_type
         # these are the KEYED, UNKEYED schedule group membership forms
         self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(
             registered_subject = self.registered_subject,
-            membership_form_category = self.subject_type,
+            membership_form_category = self.membership_form_category,
             )
 
         self.context.add(
