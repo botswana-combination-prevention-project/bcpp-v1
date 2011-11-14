@@ -15,9 +15,6 @@
 {% endblock %}
 
 {% block appointments %}
-
-    {{ extra_url_context }}
-
     {% if scheduled_entry_bucket %} <I>(Hint: to see all appointments, click 'show appointments' in the Action column below)</I>{% endif%}
     <table>
     <thead>
@@ -36,7 +33,7 @@
         {% for appointment in appointments %}
             <tr class="{% cycle 'row1' 'row2' %}">
             {% appointment_row appointment %}
-            
+            </tr>
         {% endfor %}
     {% endif %}
     </tbody>

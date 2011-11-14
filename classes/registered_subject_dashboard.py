@@ -108,15 +108,20 @@ class RegisteredSubjectDashboard(Dashboard):
         self.subject_identifier = None
         self.app_label = None
         self.requisition_model = None
+        self.appointment_row_template = 'appointment_row.html'
 
         # limit the membership forms to those of this category
         self.membership_form_category = None
 
-        # add extra contect key/valu pairs for the urls in the dashboard template
-        self.extra_url_context = {'erik':'erik'}
 
     def create(self, **kwargs):
         
+        super(RegisteredSubjectDashboard, self).create(**kwargs)
+        
+        if not self.appointment_row_template: 
+            self.appointment_row_template = 'appointment_row.html'   
+            self.context.add(appointment_row_template=self.appointment_row_template)
+            
         self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if self.registered_subject:
             self.subject_type = kwargs.get('subject_type', self.registered_subject.subject_type)
@@ -130,15 +135,11 @@ class RegisteredSubjectDashboard(Dashboard):
                 self.dashboard_identifier = "%s [%s] %s" % (self.registered_subject.first_name, self.registered_subject.initials, self.registered_subject.gender,)
             if not self.subject_identifier:                        
                 raise AttributeError, "RegisteredSubjectDashboard requires a subject_identifier. RegisteredSubject has no identifier for this subject." 
-            
-            
             self.context.add(
                         registered_subject = self.registered_subject,
                         subject_identifier = self.subject_identifier,
                         subject_type = self.subject_type,
                         )            
-
-        super(RegisteredSubjectDashboard, self).create(**kwargs)
                 
         self.visit_code = kwargs.get('visit_code', self.visit_code)
         self.visit_instance = kwargs.get("visit_instance", self.visit_instance)                
@@ -147,6 +148,7 @@ class RegisteredSubjectDashboard(Dashboard):
                     visit_model = self.visit_model,
                     visit_instance = self.visit_instance,
                     visit_code = self.visit_code,
+                    extra_url_context = self.extra_url_context                    
                     )            
 
         if not self.requisition_model:
@@ -267,15 +269,16 @@ class RegisteredSubjectDashboard(Dashboard):
 
             # Note: previously, the membership_form_category was defaulted to the subject_type
             # and this method returned ALL appointment for a registered subject.
-            # I am now filtering all for a registered_subject with
-            # appointments associated with the membership_form_category.
+            # I now return only the registered_subject's appointments filtered for a given membership_form_category.
 
-            # get list visit_definition__code for this membership_form_category
+            # get list visit_definition__code for this membership_form_category to filter the appointments by
             codes = VisitDefinition.objects.codes_for_membership_form_category(membership_form_category=self.membership_form_category)
+            # select the appointments
             self.appointments = Appointment.objects.filter(
                                             registered_subject = self.registered_subject,
                                             visit_definition__code__in=codes,
                                             ).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
+        # add to the context                                            
         self.context.add(appointments = self.appointments)                
     
 
@@ -325,6 +328,8 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def set_membership_forms(self):
 
+        # membership forms can also be proxy models ... see mochudi_subject.models
+
         # you may specify the membership_form_category, otherwise just use subject type
         if not self.membership_form_category:
             self.membership_form_category = self.subject_type
@@ -342,6 +347,7 @@ class RegisteredSubjectDashboard(Dashboard):
             unkeyed_membership_forms = self.membership_forms['unkeyed'],
             )
 
+    
     def get_urlpatterns(self, view, regex, **kwargs):
     
         """ generate urls, add this to your urls.py of your local dashboard app
@@ -354,6 +360,10 @@ class RegisteredSubjectDashboard(Dashboard):
             subject_dashboard = SubjectDashboard()
             urlpatterns = subject_dashboard.get_urlpatterns('mochudi_survey_dashboard.views', regex, visit_field_names=['subject_visit',])
             
+            
+            you may need to add a few at your app level.
+            
+            TODO: this needs to be cleaned up..
             
         """        
     

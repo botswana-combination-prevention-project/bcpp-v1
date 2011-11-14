@@ -1,12 +1,14 @@
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
+from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from django.db.models import get_model, ForeignKey
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models.base import ModelBase
 
 register = template.Library()
+
 
 def appointment_row(context, appointment):
 
@@ -24,14 +26,15 @@ def appointment_row(context, appointment):
     my_context['app_label'] = context['app_label']
     my_context['visit_model'] = context['visit_model']
     my_context['visit_model_add_url']= context['visit_model_add_url']
+    my_context['extra_url_context']= context['extra_url_context']    
 
     visit_model = my_context['visit_model']    
     if visit_model.objects.filter(appointment = appointment):
         my_context['visit_model_instance'] = visit_model.objects.get(appointment = appointment)
         my_context['appointment_visit_report'] = True
-
-    return my_context        
-register.inclusion_tag('appointment_row.html', takes_context=True)(appointment_row)        
+        
+    return my_context
+register.inclusion_tag('appointment_row.html', takes_context=True)(appointment_row)
 
 
 class ModelPk(template.Node):
@@ -101,13 +104,14 @@ class ModelAdminUrl(template.Node):
 
     """return a reverse url to admin + '?dashboard-specific querystring' for 'change' or 'add' for a given contenttype model name"""
 
-    def __init__(self, contenttype, visit_model, appointment, dashboard_type, app_label):
+    def __init__(self, contenttype, visit_model, appointment, dashboard_type, app_label, extra_url_context):
         self.unresolved_contenttype = template.Variable(contenttype)
         #self.unresolved_visit_pk = template.Variable(visit_pk)
         self.unresolved_appointment = template.Variable(appointment)
         self.unresolved_visit_model = template.Variable(visit_model)                        
         self.unresolved_dashboard_type = template.Variable(dashboard_type)
         self.unresolved_app_label = template.Variable(app_label)
+        self.unresolved_extra_url_context = template.Variable(extra_url_context)        
     def render(self, context):
         self.contenttype = self.unresolved_contenttype.resolve(context)
         #self.visit_pk = self.unresolved_visit_pk.resolve(context)
@@ -115,6 +119,7 @@ class ModelAdminUrl(template.Node):
         self.visit_model = self.unresolved_visit_model.resolve(context)
         self.dashboard_type = self.unresolved_dashboard_type.resolve(context)
         self.app_label = self.unresolved_app_label.resolve(context)
+        self.extra_url_context = self.unresolved_extra_url_context.resolve(context)        
         self.visit_model_instance = None
 
         #raise TypeError(self.visit_model)
@@ -146,11 +151,13 @@ class ModelAdminUrl(template.Node):
             view = str(view)
             rev_url = reverse(view, args=(this_model_instance.pk,))
             # add GET string to rev_url so that you will return to the dashboard ...whence you came... assuming you catch "next" in change_view
-            rev_url = '%s?next=%s&dashboard_type=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s' % (
+            rev_url = '%s?next=%s&dashboard_type=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s%s' % (
                                                                        rev_url, next, self.dashboard_type, 
                                                                        self.visit_model_instance.appointment.registered_subject.subject_identifier, 
                                                                        self.visit_model_instance.appointment.visit_definition.code, 
-                                                                       self.visit_model_instance.appointment.visit_instance )            
+                                                                       self.visit_model_instance.appointment.visit_instance,
+                                                                       self.extra_url_context,
+                                                                       )            
         else:
             # the link is for an add
             next = 'dashboard_visit_add_url'
@@ -160,14 +167,18 @@ class ModelAdminUrl(template.Node):
             view = str(view)
             try:
                 rev_url = reverse(view)
-                rev_url = '%s?%s=%s&next=%s&dashboard_type=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s' % (
+                rev_url = '%s?%s=%s&next=%s&dashboard_type=%s&subject_identifier=%s&visit_code=%s&visit_instance=%s%s' % (
                                                                         rev_url, this_model_fk[0].name,
                                                                         self.visit_model_instance.pk, next, self.dashboard_type, 
                                                                         self.visit_model_instance.appointment.registered_subject.subject_identifier, 
                                                                         self.visit_model_instance.appointment.visit_definition.code, 
-                                                                        self.visit_model_instance.appointment.visit_instance)            
+                                                                        self.visit_model_instance.appointment.visit_instance,
+                                                                        self.extra_url_context,
+                                                                        )            
+                                                                                        
             except:
                 raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (self.contenttype.app_label, self.contenttype.model))    
+        
         return rev_url
 
 @register.tag(name='model_admin_url')
@@ -176,10 +187,10 @@ def model_admin_url(parser, token):
     """Compilation function for renderer ModelAdminUrl""" 
 
     try:
-        tag_name, contenttype, visit_model, appointment, dashboard_type, app_label = token.split_contents()
+        tag_name, contenttype, visit_model, appointment, dashboard_type, app_label, extra_url_context = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError("%r tag requires exactly 5 arguments" % token.contents.split()[0])
-    return ModelAdminUrl(contenttype, visit_model, appointment, dashboard_type, app_label)
+        raise template.TemplateSyntaxError("%r tag requires exactly 6 arguments" % token.contents.split()[0])
+    return ModelAdminUrl(contenttype, visit_model, appointment, dashboard_type, app_label, extra_url_context)
 
 
 
