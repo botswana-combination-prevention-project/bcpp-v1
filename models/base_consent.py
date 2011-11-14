@@ -11,56 +11,52 @@ from bhp_common.validators import dob_not_future, dob_not_today, datetime_not_fu
 from bhp_common.validators import MinConsentAge,MaxConsentAge, GenderOfConsent
 from bhp_common.validators import BWCellNumber, BWTelephoneNumber
 from bhp_variables.models import StudySite
+from bhp_consent.models import BaseBaseConsentModel
 
-class BaseConsentModel(MyBasicUuidModel):
+class BaseConsentModel(BaseBaseConsentModel):
 
-    """infants consent models may wish to start here as they would not need the identity fields
-       and the dob validators would be different from those reading values from StudySpecific
-    """
-     
-    subject_identifier = models.CharField('Subject Identifier', 
-        max_length=25, 
-        unique=True, 
-        help_text='', 
-        )
-        
-    first_name = NameField(
-        verbose_name = _("First name")
-        )
-        
-    last_name = NameField(
-        verbose_name = _("Last name")
-    )
-    
-    initials = InitialsField()
-    
-    study_site = models.ForeignKey(StudySite,
-        verbose_name = 'Site',
-        help_text="This refers to the site or 'clinic area' where the subject is being consented."
-        )
-    consent_datetime = models.DateTimeField("Consent date and time",
-        validators=[
-            datetime_not_before_study_start,
-            datetime_not_future,],
-        )
-        
-    guardian_name = models.CharField(
-        verbose_name = _("Guardian\'s Last and first name (minors only)"),
-        max_length = 150,
+    dob = models.DateField(
+        verbose_name = _("Date of birth"),
         validators = [
-            RegexValidator('^[A-Z]{1-50}\,[A-Z]{1-50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+            dob_not_future, 
+            dob_not_today,
+            MinConsentAge,
+            MaxConsentAge,            
             ],
-        blank=True,
-        null=True,    
-        help_text = _('Required only if subject  a minor. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+        help_text=_("Format is YYYY-MM-DD"),
         )
-            
-    comment = models.CharField("Comment", 
-        max_length=250, 
-        blank=True
-        )        
+
+    identity = models.CharField(
+        verbose_name=_("Identity number (OMANG, etc)"), 
+        max_length=25, 
+        unique=True,
+        help_text=_("Use Omang, Passport number, driver's license number or Omang receipt number")
+        )
+
+    identity_type = IdentityTypeField()
+    
+    may_store_samples = models.CharField(
+        verbose_name = _("Sample storage"),
+        max_length=3, 
+        choices=YES_NO, 
+        help_text=_("Does the subject agree to have samples stored after the study has ended")
+        )
+
+    gender = models.CharField(
+        verbose_name = _("Gender"),
+        max_length=1, 
+        choices=GENDER,
+        validators=[
+            GenderOfConsent,
+            ]
+        )
+        
+    is_dob_estimated = IsDateEstimatedField( 
+        verbose_name=_("Is the subject's date of birth estimated?"),       
+        )    
+
 
 
     class Meta:
        abstract = True
-       unique_together = (("first_name", "last_name"),)
+
