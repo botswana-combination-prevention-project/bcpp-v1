@@ -20,9 +20,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
     def __init__(self, *args, **kwargs):
 
         model = args[0]
-        #if 'visit_model' in kwargs:
-        #    self.visit_model = kwargs.get('visit_model')
-        #    del kwargs['visit_model'] 
+
         if not self.visit_model:
             raise ValueError, "BaseVisitModelAdmin for %s needs a visit model. None found. Please correct." % (model,)
         self.visit_model_foreign_key = [fk for fk in [f for f in model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]
@@ -31,11 +29,11 @@ class BaseVisitModelAdmin(MyModelAdmin):
         else:
             self.visit_model_foreign_key = self.visit_model_foreign_key[0].name
                 
-        self.search_fields = (self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',) 
+        self.search_fields = [self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',] 
         
-        self.list_display = (self.visit_model_foreign_key, 'created', 'modified', 'user_created', 'user_modified',)    
+        self.list_display = [self.visit_model_foreign_key, 'created', 'modified', 'user_created', 'user_modified',]    
         
-        self.list_filter = ( 
+        self.list_filter = [
             self.visit_model_foreign_key+'__report_datetime', 
             self.visit_model_foreign_key+'__reason',
             self.visit_model_foreign_key+'__appointment__appt_status',
@@ -44,7 +42,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
             'modified', 
             'user_created',
             'user_modified',
-            )
+            ]
 
         self.actions.append(export_as_csv_action("CSV Export: ...with visit and demographics", 
             fields=[], 
@@ -63,8 +61,6 @@ class BaseVisitModelAdmin(MyModelAdmin):
 
         super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
 
-
-    
 
     def save_model(self, request, obj, form, change):
         
