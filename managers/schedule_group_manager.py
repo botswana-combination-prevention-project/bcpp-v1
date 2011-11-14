@@ -20,7 +20,7 @@ class ScheduleGroupManager(models.Manager):
         membership_form_category = kwargs.get("membership_form_category")        
 
         if membership_form_category:
-            #  membership form 'category' should be a valid subject type found in registered_subject ... and definitely not blank.
+            #  membership form 'category' should appear in the category field of membership_form.
             if super(ScheduleGroupManager, self).all():
                 if not super(ScheduleGroupManager, self).filter(membership_form__category__icontains = membership_form_category):
                     raise ValueError('The given membership_form_category is not valid for attribute \'category\' in model membership form. Got \'%s\'.' % membership_form_category)            
