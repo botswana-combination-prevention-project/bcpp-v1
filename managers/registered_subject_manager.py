@@ -21,8 +21,8 @@ class RegisteredSubjectManager(models.Manager):
             
         """
         
-        if kwargs.get('registered_subject'):
-            raise TypeError()
+        #if kwargs.get('registered_subject'):
+        #    raise TypeError()
         
         subject_identifier = {}
         
