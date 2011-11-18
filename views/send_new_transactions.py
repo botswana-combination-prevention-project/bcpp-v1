@@ -1,8 +1,8 @@
+import urllib2, base64, socket
 import simplejson as json
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-import socket
-import urllib2 #import urlopen
+from django.core import serializers
 from bhp_sync.models import Transaction
 
 
@@ -10,9 +10,8 @@ def send_new_transactions(request, **kwargs):
 
     timeout = 5
     url = 'http://localhost:8001/bhp_sync/api/transaction/'
-
-
     socket_default_timeout = socket.getdefaulttimeout()
+
     if timeout is not None:
         try:
             socket_timeout = float(timeout)
@@ -38,14 +37,24 @@ def send_new_transactions(request, **kwargs):
         content = ''        
     """
 
-    for transaction in Transaction.objects.filter(is_sent=False):
-        for data in transaction.tx:
-            data = json.dumps(data)
-            req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
-            f = urllib2.urlopen(req)
-            response = f.read()
-            f.close()
-            raise TypeError(response)
+    f = urllib2.urlopen(url)
+    response = f.read()
+    json_response =  json.loads(response)   
+    for data in json_response['objects']:
+        for json_data in json.loads(data['tx']):
+            obj = serializers.deserialize("json", json_data)    
+            raise TypeError(obj)
+    
+
+    #for transaction in Transaction.objects.filter(is_sent=False):
+    #    for data in transaction.tx:
+    #        data = json.dumps(data)
+    #        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+    #        req.add_header("Authorization", "Basic %s" % base64string)
+    #        f = urllib2.urlopen(req)
+    #        response = f.read()
+    #        f.close()
+    #        raise TypeError(response)
 
     
     raise TypeError()    

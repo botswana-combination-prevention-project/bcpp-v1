@@ -1,4 +1,5 @@
 from tastypie import fields
+from tastypie.serializers import Serializer
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie.authorization import Authorization
@@ -22,5 +23,5 @@ class TransactionResource(ModelResource):
         #filtering = {
         #    'subject_identifier': ALL,
         #}            
-
+        serializer = Serializer()
 

@@ -15,7 +15,9 @@ class Transaction(MyBasicUuidModel):
         max_length = 36,
         )
     
-    tx = jsonfield.JSONField()
+    # tx = jsonfield.JSONField()
+    
+    tx = models.TextField()
     
     timestamp = models.CharField(
         max_length = 50,    
