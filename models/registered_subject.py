@@ -2,6 +2,7 @@ from datetime import datetime
 from django.db import models
 from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
+from audit_trail.audit import AuditTrail
 from base_subject import BaseSubject
 from bhp_variables.models import StudySpecific, StudySite
 from bhp_registration.managers import RegisteredSubjectManager
@@ -76,6 +77,11 @@ class RegisteredSubject(BaseSubject):
         )
     
     objects = RegisteredSubjectManager()
+    
+    history = AuditTrail()            
+
+    def is_serialized(self):
+        return super(RegisteredSubject, self).is_serialized(True)
     
     def save(self, *args, **kwargs):
         # important: go to save() of super() FIRST to enforce unique subject_identifier
