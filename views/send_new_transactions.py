@@ -9,7 +9,7 @@ from bhp_sync.models import Transaction
 def send_new_transactions(request, **kwargs):
 
     timeout = 5
-    url = 'http://localhost:8000/bhp_sync/transaction/?format=json'
+    url = 'http://localhost:8001/bhp_sync/api/transaction/'
 
 
     socket_default_timeout = socket.getdefaulttimeout()
