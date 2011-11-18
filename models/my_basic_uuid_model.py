@@ -12,7 +12,11 @@ class MyBasicUuidModel(MyBasicModel):
     
     id = MyUUIDField(primary_key=True)
 
-    def is_serialized(self):
+    def is_serialized(self, serialize=False):
+
+        if 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
+            if settings.ALLOW_MODEL_SERIALIZATION:
+                return serialize
         return False
         
     def save(self, *args, **kwargs):
