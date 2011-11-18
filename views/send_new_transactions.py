@@ -41,9 +41,10 @@ def send_new_transactions(request, **kwargs):
     response = f.read()
     json_response =  json.loads(response)   
     for data in json_response['objects']:
-        for json_data in json.loads(data['tx']):
-            obj = serializers.deserialize("json", json_data)    
-            raise TypeError(obj)
+        for obj in serializers.deserialize("json",data['tx']):
+            obj.save()
+            obj.object.save()
+
     
 
     #for transaction in Transaction.objects.filter(is_sent=False):
@@ -57,8 +58,6 @@ def send_new_transactions(request, **kwargs):
     #        raise TypeError(response)
 
     
-    raise TypeError()    
-    
     return render_to_response('send_new_transactions.html', { 
-        'content': content,
+        'content': '',
     },context_instance=RequestContext(request))
