@@ -7,14 +7,14 @@ class Netbook(MyBasicModel):
 
     name = models.CharField(
         verbose_name = _("Netbook Name"), 
-        unique=True,        
-        max_length=10)
+        unique = True,        
+        max_length = 10)
 
     db_name = models.CharField(
         verbose_name = _("Database Name"), 
-        blank=True,
-        null=True,
-        max_length=10,
+        blank = True,
+        null = True,
+        max_length = 10,
         )
 
 
@@ -24,16 +24,21 @@ class Netbook(MyBasicModel):
 
     make = models.CharField(
         verbose_name = _("Make"), 
-        max_length=25)
+        max_length = 25)
 
     model = models.CharField(
         verbose_name = _("Model"), 
-        max_length=25)
+        max_length = 25)
 
     serial_number = models.CharField(
         verbose_name = _("Serial Number"), 
-        unique=True,
-        max_length=25)
+        unique = True,
+        max_length = 25)
+        
+    ip_address = models.IPAddressField(
+        null = True,
+        blank = True,
+        )        
 
     class Meta:
         ordering = ["name"]
