@@ -7,7 +7,11 @@ transaction_resource = TransactionResource()
 
 urlpatterns = patterns('',
     (r'^api/', include(transaction_resource.urls)),
-    url(r'^', 'tx_to_response', name="tx"),
+    )
+
+urlpatterns += patterns('bhp_sync.views',    
+    url(r'^send/', 'send_new_transactions',),
+    #url(r'^', 'tx_to_response', name="tx"),
     )    
     
 

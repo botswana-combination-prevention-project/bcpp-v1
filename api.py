@@ -14,7 +14,7 @@ class TransactionResource(ModelResource):
         queryset = Transaction.objects.filter(is_sent=False)
         resource_name = 'transaction'
         #authentication = ApiKeyAuthentication()
-        authorization = DjangoAuthorization()        
+        #authorization = DjangoAuthorization()        
         #excludes = ['email', 'password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get','post','put',]        
         #filtering = {
