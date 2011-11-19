@@ -1,11 +1,11 @@
 # requires django-extensions 0.7
 # from django_extensions.db.fields import json as jsonfield
-import socket
-import settings
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_sync.managers import TransactionManager
+from bhp_sync.classes import TransactionProducer
 
+transaction_producer = TransactionProducer()
 
 class Transaction(MyBasicUuidModel):
     
@@ -23,7 +23,7 @@ class Transaction(MyBasicUuidModel):
     
     producer = models.CharField(
         max_length = 15,
-        default = '%s-%s' % ( socket.gethostname().lower(),settings.DATABASES['default']['NAME'].lower()),
+        default = str(transaction_producer),
         )
 
     action = models.CharField(

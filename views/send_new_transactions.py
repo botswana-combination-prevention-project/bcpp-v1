@@ -48,13 +48,17 @@ def send_new_transactions(request, **kwargs):
             if data['action'] == 'I' or data['tx'] == 'U':
                 obj.save()
                 obj.object.save(transaction_producer=data['producer'])
+                messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
             elif data['action'] == 'D':
-                if obj.object.__class__.objects.filter(pk=data['tx_pk']):
-                    obj.object.__class__.objects.get(pk=data['tx_pk']).delete(transaction_producer=data['producer'])
+                if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
+                    if settings.ALLOW_DELETE_MODEL_FROM_SERIALIZATION:
+                        if obj.object.__class__.objects.filter(pk=data['tx_pk']):
+                            obj.object.__class__.objects.get(pk=data['tx_pk']).delete(transaction_producer=data['producer'])
+                            messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(unicode(obj.object),))                                            
             else:
                 raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (data['action'],)
             consumed.append(unicode(obj.object))
-            messages.add_message(request, messages.SUCCESS, 'Import suceeded for %s' %(unicode(obj.object),))                
+
             #except IntegrityError:
             #    try:
             #        o = unicode(obj.object)
