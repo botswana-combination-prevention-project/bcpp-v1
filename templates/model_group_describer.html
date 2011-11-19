@@ -3,10 +3,12 @@
 
 {% block content %}
 
+<A name="top"></A>
 <form action="." method="POST">
 <div style='display:none'>  
   {% csrf_token %}
 </div>
+
 <table>
 <tr>
 {% for f in form %}
@@ -29,10 +31,25 @@
     </table>
 </form>
 
+{% if model_list %}
+    <H4>{{ model_list_title }}</H4>
+
+    <OL>
+    {%for model in model_list %}
+    <LI>{% if model_reports %}<A href="#{{model.module_name}}">{% endif %}{{ model.verbose_name|capfirst }}</A></LI>
+    {% endfor %}
+    </OL>
+{% endif %}
+
+{% if model_reports %}
+    <H4>Data Summaries by Site and Gender</H4>
+{% endif %}
+
 {% for ordered_key in model_reports_ordered_keys %}
     {% for key, model_report in model_reports.items %}
     {% if key == ordered_key %}
-    <h4>{{ model_report.verbose_name }}</h4>
+    <P><A name="{{model_report.name}}"></A></P>
+    <B>{{ model_report.verbose_name }}</B>&nbsp;[<A href="#top">top</A>]
     <table id=result">
     <thead>
     <th>Month</th>

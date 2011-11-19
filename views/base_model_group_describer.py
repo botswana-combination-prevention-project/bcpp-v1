@@ -15,7 +15,7 @@ from bhp_model_describer.forms import DateRangeForm
 @login_required
 def base_model_group_describer(request, **kwargs):
 
-    """"Given an app and a foreignkey field, such as visit, select a list of models and caluclate basic frequencies by gender and site"""
+    """"Given an app and a foreignkey field, such as visit, select a list of models and calculate basic frequencies by gender and site"""
     
     app_list = kwargs.get('app_list')
     section_name = kwargs.get('section_name')
@@ -26,16 +26,29 @@ def base_model_group_describer(request, **kwargs):
     years = []
     sites = []
     model_reports = {}
+    model_list = []
     model_reports_ordered_keys = []
     
     
     # to group on gender and site...    
     gender = 'registered_subject__gender'
     site_name = 'registered_subject__study_site__site_name'
+    model_list_title = "Membership Form and Additional Entry Models (w/ RegisteredSubject FK)"
     # but, to group on gender and site for models with a visit model foreignkey...
     if not common_foreign_key_field_name == 'registered_subject' and 'visit' in common_foreign_key_field_name:
         gender = common_foreign_key_field_name + '__appointment__' + gender
         site_name = common_foreign_key_field_name + '__appointment__' + site_name             
+        model_list_title = "Scheduled Entry Models (w/ Subject Visit FK)"
+    # get all models with a registered_subject fk
+    model_list = [{'name': model._meta.module_name, 'model':model} 
+                for model in models.get_models() 
+                if (model._meta.app_label in app_list) 
+                and common_foreign_key_field_name in 
+                [field.name for field in model._meta.fields] 
+                and '_audit_id' not in 
+                [field.name for field in model._meta.fields]
+               ]
+
 
     if request.method == 'POST':
         form = DateRangeForm(request.POST)
@@ -88,21 +101,18 @@ def base_model_group_describer(request, **kwargs):
                     
             # get data for each model  
             for key,model_report in model_reports.items():
+            
+                # note reference to actual db_table name ...mysql dependent??
+                extra_select = {'year': 'extract(year from '+model_report['model']._meta.db_table+'.'+
+                                  model_report['date_grouping_field']+')', 
+                                  'month': 'extract(month from '+model_report['model']._meta.db_table+'.'+
+                                  model_report['date_grouping_field']+')'
+                                  }
+            
                 data = model_report['model'].objects.filter(
                     Q((model_report['date_grouping_field']+'__gte', start_date)),
                     Q((model_report['date_grouping_field']+'__lte', 
-                        end_date))).extra(
-                                          select={
-                                                  'year': 'extract(year from '+model_report['model']._meta.app_label+'_'+
-                                                  model_report['model']._meta.module_name+'.'+
-                                                  model_report['date_grouping_field']+')', 
-                                                  'month': 'extract(month from '+model_report['model']._meta.app_label+'_'+
-                                                  model_report['model']._meta.module_name+'.'+
-                                                  model_report['date_grouping_field']+')'
-                                                  }
-                                        ).values('year', 'month', 
-                                                 gender, 
-                                                 site_name
+                        end_date))).extra(select=extra_select).values('year', 'month', gender, site_name
                                         ).annotate(frequency=Count(model_report['date_grouping_field'])
                                     ).order_by()
                 # rename gender and site_name keys for template
@@ -131,13 +141,18 @@ def base_model_group_describer(request, **kwargs):
     else:
         form = DateRangeForm(request.POST)            
     
-
+    
+    ordered_model_list = [ {"verbose_name":model['model']._meta.verbose_name, "module_name":model['model']._meta.module_name} for model in model_list]
+    ordered_model_list.sort()
+    
     return render_to_response(template, { 
         'form': form,
         'years': years,
         'months': months,
         'sites': sites,                
         'cumulative_frequency':0,
+        'model_list': ordered_model_list,
+        'model_list_title': model_list_title,
         'model_reports': model_reports,
         'model_reports_ordered_keys':model_reports_ordered_keys,
         'section_name': section_name, 
