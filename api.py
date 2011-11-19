@@ -22,5 +22,6 @@ class TransactionResource(ModelResource):
         allowed_methods = ['get','post','put',]        
         filtering = {
             'producer': ['exact',],
-        }        serializer = Serializer()
+        }        
+        serializer = Serializer()
 
