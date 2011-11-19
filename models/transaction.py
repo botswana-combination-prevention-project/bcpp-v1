@@ -25,6 +25,12 @@ class Transaction(MyBasicUuidModel):
         max_length = 15,
         default = '%s-%s' % ( socket.gethostname().lower(),settings.DATABASES['default']['NAME'].lower()),
         )
+
+    action = models.CharField(
+        max_length = 1,
+        default='I',
+        choices = (('I', 'Insert'), ('U', 'Update'),('D', 'Delete')), 
+        )
     
     timestamp = models.CharField(
         max_length = 50,    

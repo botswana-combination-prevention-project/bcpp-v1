@@ -1,5 +1,7 @@
 import urllib2, base64, socket
 import simplejson as json
+from django.db import IntegrityError
+from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core import serializers
@@ -36,16 +38,31 @@ def send_new_transactions(request, **kwargs):
     except:
         content = ''        
     """
-
+    consumed = []
     f = urllib2.urlopen(url)
     response = f.read()
     json_response =  json.loads(response)   
     for data in json_response['objects']:
         for obj in serializers.deserialize("json",data['tx']):
-            obj.save()
-            obj.object.save()
-
-    
+            #try:
+            if data['action'] == 'I' or data['tx'] == 'U':
+                obj.save()
+                obj.object.save(transaction_producer=data['producer'])
+            elif data['action'] == 'D':
+                if obj.object.__class__.objects.filter(pk=data['tx_pk']):
+                    obj.object.__class__.objects.get(pk=data['tx_pk']).delete(transaction_producer=data['producer'])
+            else:
+                raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (data['action'],)
+            consumed.append(unicode(obj.object))
+            messages.add_message(request, messages.SUCCESS, 'Import suceeded for %s' %(unicode(obj.object),))                
+            #except IntegrityError:
+            #    try:
+            #        o = unicode(obj.object)
+            #    except:
+            #        o = obj.object._meta.object_name    
+            #    messages.add_message(request, messages.ERROR, 'Import failed. Integrity Error for %s' %(o,))
+            #except:
+            #    messages.add_message(request, messages.ERROR, 'Import failed. Unhandled Error for %s' %(obj,))    
 
     #for transaction in Transaction.objects.filter(is_sent=False):
     #    for data in transaction.tx:
@@ -59,5 +76,5 @@ def send_new_transactions(request, **kwargs):
 
     
     return render_to_response('send_new_transactions.html', { 
-        'content': '',
+        'consumed': consumed,
     },context_instance=RequestContext(request))
