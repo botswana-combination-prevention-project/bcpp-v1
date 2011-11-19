@@ -1,12 +1,12 @@
 from datetime import datetime
+#from django.db.models.signals import pre_delete
+#from django.dispatch import receiver
 from django.conf import settings
 from django.core import serializers
 from django.db.models import get_model
 from bhp_common.models import MyBasicModel
 from bhp_common.fields import MyUUIDField
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-
+from bhp_sync.classes import TransactionProducer
 
 class MyBasicUuidModel(MyBasicModel):
 
@@ -26,6 +26,7 @@ class MyBasicUuidModel(MyBasicModel):
         # sneek in the transaction_producer, if called from 
         # view in bhp_sync.
         # get value and delete from kwargs before calling super
+        transaction_producer = TransactionProducer()
         if 'transaction_producer' in kwargs:
             transaction_producer = kwargs.get('transaction_producer')            
             del kwargs['transaction_producer']
@@ -45,17 +46,16 @@ class MyBasicUuidModel(MyBasicModel):
                 tx_pk = self.pk,
                 tx = json,
                 timestamp = datetime.today().strftime('%Y%m%d%H%M%S%f'),
-                producer = transaction_producer,
+                producer = str(transaction_producer),
                 action = action,                
                 )
  
     def delete(self, *args, **kwargs):
-    
+
+        transaction_producer = TransactionProducer()    
         if 'transaction_producer' in kwargs:
             transaction_producer = kwargs.get('transaction_producer')            
             del kwargs['transaction_producer']
-
-        super(MyBasicUuidModel, self).delete(*args, **kwargs)
 
         if self.is_serialized() and not self._meta.proxy:
 
@@ -66,10 +66,10 @@ class MyBasicUuidModel(MyBasicModel):
                 tx_pk = self.pk,
                 tx = json,
                 timestamp = datetime.today().strftime('%Y%m%d%H%M%S%f'),
-                producer = transaction_producer,
+                producer = str(transaction_producer),
                 action = 'D',
                 )
-
+        super(MyBasicUuidModel, self).delete(*args, **kwargs)
     
     class Meta:
         abstract = True
