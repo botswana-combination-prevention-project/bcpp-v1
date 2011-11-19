@@ -1,8 +1,10 @@
 # requires django-extensions 0.7
-from django_extensions.db.fields import json as jsonfield
+# from django_extensions.db.fields import json as jsonfield
+import socket
+import settings
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
-
+from bhp_sync.managers import TransactionManager
 
 
 class Transaction(MyBasicUuidModel):
@@ -19,6 +21,11 @@ class Transaction(MyBasicUuidModel):
     
     tx = models.TextField()
     
+    source = models.CharField(
+        max_length = 15,
+        default = '%s-%s' % ( socket.gethostname().lower(),settings.DATABASES['default']['NAME'].lower()),
+        )
+    
     timestamp = models.CharField(
         max_length = 50,    
         null = True,
@@ -31,6 +38,8 @@ class Transaction(MyBasicUuidModel):
     sent_datetime = models.DateTimeField(
         null = True,
         )
+
+    objects = TransactionManager()
     
     class Meta:
         app_label = 'bhp_sync'   
