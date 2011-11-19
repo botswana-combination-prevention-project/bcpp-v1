@@ -21,7 +21,7 @@ class Transaction(MyBasicUuidModel):
     
     tx = models.TextField()
     
-    source = models.CharField(
+    producer = models.CharField(
         max_length = 15,
         default = '%s-%s' % ( socket.gethostname().lower(),settings.DATABASES['default']['NAME'].lower()),
         )
