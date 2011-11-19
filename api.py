@@ -20,8 +20,7 @@ class TransactionResource(ModelResource):
         #authorization = Authorization()         
         #excludes = ['email', 'password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get','post','put',]        
-        #filtering = {
-        #    'subject_identifier': ALL,
-        #}            
-        serializer = Serializer()
+        filtering = {
+            'producer': ['exact',],
+        }        serializer = Serializer()
 

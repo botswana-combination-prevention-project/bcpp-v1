@@ -1,4 +1,4 @@
-{% extends "section.html"%}
+{% extends "base_site_mochudi_survey.html"%}
 
 {% if messages %}
 <ul class="messages">
@@ -7,3 +7,5 @@
     {% endfor %}
 </ul>
 {% endif %}
+
+{{ error_response }}
