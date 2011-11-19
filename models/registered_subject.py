@@ -20,7 +20,7 @@ class RegisteredSubject(BaseSubject):
         )
         
     sid = models.CharField(
-        verbose_name = "Randomization SID",
+        verbose_name = "SID",
         max_length = 15,
         null = True,
         blank = True,

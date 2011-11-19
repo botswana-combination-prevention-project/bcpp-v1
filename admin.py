@@ -8,15 +8,15 @@ class RegisteredSubjectAdmin (MyModelAdmin):
 
     list_display = (
         'subject_identifier',
-        'sid',        
         'first_name',
         'initials',
         'gender',
         'subject_type',
+        'sid',                
         'study_site',
         'user_created',
         'created',
-        'sid',        
+
     )   
     
     readonly_fields = (
