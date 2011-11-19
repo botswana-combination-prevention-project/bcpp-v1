@@ -14,6 +14,9 @@ class ScheduleGroupManager(models.Manager):
 
         registered_subject = kwargs.get("registered_subject")        
 
+        # if this model is keyed, exclude all other UNKEYED models LIKE this from the list
+        exclude_others_if_keyed_model_name = kwargs.get("exclude_others_if_keyed_model_name", None) 
+               
         # category of the membership form. Can be any value as long as 
         # it helps link membership forms in some way. For example, 
         # to distinguish 'maternal' from 'infant' forms. Specified at the form level
@@ -55,10 +58,15 @@ class ScheduleGroupManager(models.Manager):
         #get UNKEYED schedule group membership forms            
         # ...use the grouping key to eliminate membership forms related to a KEYED membership form from above
         qset = (
-            Q(membership_form__category__iexact = membership_form_category) |
+            (Q(membership_form__category__iexact = membership_form_category) |
             Q(membership_form__category__isnull = True) |
-            Q(membership_form__category__exact = '')
+            Q(membership_form__category__exact = ''))
             )
+
+        if exclude_others_if_keyed_model_name:
+            qset.add(Q(membership_form__content_type_map__name__icontains=exclude_others_if_keyed_model_name ), Q.AND)
+
+           
         schedule_groups = super(ScheduleGroupManager, self).filter(qset)
         unkeyed_membership_forms = [schedule_group.membership_form.content_type_map 
                                     for schedule_group in schedule_groups 
