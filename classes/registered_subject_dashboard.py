@@ -112,6 +112,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         # limit the membership forms to those of this category
         self.membership_form_category = None
+        self.exclude_others_if_keyed_model_name = None
 
 
     def create(self, **kwargs):
@@ -339,6 +340,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(
             registered_subject = self.registered_subject,
             membership_form_category = self.membership_form_category,
+            exclude_others_if_keyed_model_name = self.exclude_others_if_keyed_model_name,
             )
 
         self.context.add(
