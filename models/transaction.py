@@ -1,5 +1,6 @@
 # requires django-extensions 0.7
 # from django_extensions.db.fields import json as jsonfield
+from datetime import datetime
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
 from bhp_sync.managers import TransactionManager
@@ -51,6 +52,12 @@ class Transaction(MyBasicUuidModel):
         )
 
     objects = TransactionManager()
+    
+    def save(self, *args, **kwargs):
+        
+        if self.is_consumed is True and not self.consumed_datetime:
+            self.consumed_datetime = datetime.today()
+        super(Transaction, self).save(*args, **kwargs)
     
     class Meta:
         app_label = 'bhp_sync'   

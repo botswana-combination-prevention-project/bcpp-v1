@@ -1,5 +1,6 @@
 import urllib2, base64, socket
 import simplejson as json
+from datetime import datetime
 from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -68,7 +69,7 @@ def get_new_transactions(request, **kwargs):
             for transaction in json_response['objects']:
                 for obj in serializers.deserialize("json",transaction['tx']):
                     #try:
-                    if transaction['action'] == 'I' or transaction['tx'] == 'U':
+                    if transaction['action'] == 'I' or transaction['action'] == 'U':
                         # deserialiser save() method
                         obj.save()
                         # call the object's save() method to trigger AuditTrail
@@ -77,7 +78,6 @@ def get_new_transactions(request, **kwargs):
                         obj.object.save(transaction_producer=transaction['producer'])
                         # POST success back to to the producer
                         transaction['is_consumed'] = True
-                        transaction['consumed_datetime'] = datetime.today()
                         transaction['consumer'] = str(TransactionProducer())
                         req = urllib2.Request(url, json.dumps(transaction), {'Content-Type': 'application/json'})
                         f = urllib2.urlopen(req)
@@ -89,9 +89,11 @@ def get_new_transactions(request, **kwargs):
                         if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
                             if settings.ALLOW_DELETE_MODEL_FROM_SERIALIZATION:
                                 if obj.object.__class__.objects.filter(pk=transaction['tx_pk']):
+                                    obj_name = unicode(obj.object) 
                                     obj.object.__class__.objects.get(pk=transaction['tx_pk']).delete(transaction_producer=transaction['producer'])
-                                    messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(unicode(obj.object),))                                            
+                                    messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(obj_name,))                                            
                             else:
+                                messages.add_message(request, messages.WARNING, 'Delete not allowed. %s' %(obj.object._meta.object_name,))
                                 messages.add_message(request, messages.WARNING, 'Delete from imported serialized objects not allowed. See ALLOW_DELETE_MODEL_FROM_SERIALIZATION in settings.')                                                                                            
                         else:
                             msg = 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION global boolean not found in settings.'
@@ -107,7 +109,11 @@ def get_new_transactions(request, **kwargs):
                     #        o = obj.object._meta.object_name    
                     #    messages.add_message(request, messages.ERROR, 'Import failed. Integrity Error for %s' %(o,))
                     #except:
-                    #    messages.add_message(request, messages.ERROR, 'Import failed. Unhandled Error for %s' %(obj,))    
+                    #    try:
+                    #        o = unicode(obj.object)
+                    #    except:
+                    #        o = obj.object._meta.object_name    
+                    #    messages.add_message(request, messages.ERROR, 'Import failed. Unhandled Error for %s' %(o,))    
 
     
     return render_to_response('new_transactions.html', { 
