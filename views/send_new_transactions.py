@@ -1,5 +1,7 @@
 import urllib2, base64, socket
 import simplejson as json
+from tastypie.models import ApiKey
+from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import IntegrityError
 from django.contrib import messages
@@ -15,6 +17,9 @@ def send_new_transactions(request, **kwargs):
     if not 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
         messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')                                                                                            
     
+    if not request.user.api_key:
+        raise ValueError, 'ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,)
+                
     timeout = 5
     socket_default_timeout = socket.getdefaulttimeout()        
     #if timeout is not None:
@@ -28,10 +33,16 @@ def send_new_transactions(request, **kwargs):
     #        raise ValueError, "timeout argument of geturl, if provided, cannot be less than zero"
 
     consumed = []
-    for producer in Producer.objects.all():
+    
+    if kwargs.get('producer'):
+        producers = Producer.objects.filter(name__iexact=kwargs.get('producer'))
+        if not producers:
+            messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
+    else:
+        producers = Producer.objects.all()
 
-        url = 'http://localhost:8001/bhp_sync/api/transaction/?producer=%s' % (producer.url, producer.name)
-
+    for producer in producers:
+        url = '%s?producer=%s&username=%s&api_key=%s' % (producer.url, producer.name, request.user.username, request.user.api_key.key)
         request_log = RequestLog()
         request_log.producer = producer
         request_log.save()
@@ -42,11 +53,11 @@ def send_new_transactions(request, **kwargs):
         try:
             json_response =  json.loads(response)   
         except:   
-            messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,url))  
+            messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))  
 
         if json_response:
             error_list = []
-            messages.add_message(request, messages.INFO, 'Fetching from producer %s URL %s.' % (producer.name,url))                                                                                                    
+            messages.add_message(request, messages.INFO, 'Fetching %s transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
             for data in json_response['objects']:
                 for obj in serializers.deserialize("json",data['tx']):
                     #try:
@@ -90,5 +101,5 @@ def send_new_transactions(request, **kwargs):
 
     
     return render_to_response('send_new_transactions.html', { 
-        'consumed': consumed,
+        'producers': producers,
     },context_instance=RequestContext(request))

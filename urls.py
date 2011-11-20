@@ -10,7 +10,8 @@ urlpatterns = patterns('',
     )
 
 urlpatterns += patterns('bhp_sync.views',    
-    url(r'^send/', 'send_new_transactions',),
+    url(r'^send/(?P<producer>[a-z0-9\-\_]+)/', 'send_new_transactions',),
+    url(r'^send/$', 'send_new_transactions',),    
     #url(r'^', 'tx_to_response', name="tx"),
     )    
     

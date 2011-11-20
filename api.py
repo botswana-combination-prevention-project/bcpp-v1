@@ -6,16 +6,22 @@ from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
 from models import Transaction
 
+
 """
-TODO : ApiKeyAuthentication
-"""
+from django.contrib.auth.models import User
+from django.db import models
+from tastypie.models import create_api_key
+for user in User.objects.all():
+    if not ApiKey.objects.filter(user=user):
+        create_api_key(instance=user, created=True)
+"""    
 
 
 class TransactionResource(ModelResource):
     class Meta:
         queryset = Transaction.objects.filter(is_sent=False)
         resource_name = 'transaction'
-        #authentication = ApiKeyAuthentication()
+        authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()       
         #authorization = Authorization()         
         #excludes = ['email', 'password', 'is_active', 'is_staff', 'is_superuser']

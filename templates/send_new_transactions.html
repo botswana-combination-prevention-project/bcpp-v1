@@ -1,5 +1,24 @@
 {% extends "base_site_mochudi_survey.html"%}
 
+
+{% block before_messages %}
+
+<table>
+<tr>
+<td>
+<P>Fetching transactions from the following producers:</P>
+<UL>
+{% for producer in producers %}
+<LI>{{ producer }}
+{% endfor %}
+</UL>
+<BR>
+<P>The messages below appear in the order they were processed.<p>
+{% endblock before_messages %}
+</td>
+</tr>
+</table>
+
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
