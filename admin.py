@@ -116,4 +116,9 @@ class AppointmentAdmin(MyModelAdmin):
         'appt_status',
         'visit_definition',        
         )
+        
+    radio_fields = { 
+        "appt_status":admin.VERTICAL,
+        }
+                
 admin.site.register(Appointment, AppointmentAdmin)
