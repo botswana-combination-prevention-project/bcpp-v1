@@ -94,27 +94,17 @@ class RegisteredSubjectManager(models.Manager):
         subject_identifier['identifier'] = "%s-%s%s-%s" % (subject_identifier['prefix'], subject_identifier['site'],subject_identifier['int'],  subject_identifier['check_digit'] )
        
         # update subject_identifier to the audit trail table
+        # unless registered subject was passed in kwargs
+        # if registered_subject was passed implies the 
+        # subject is being re-consented or re-registered. 
         audit.subject_identifier = subject_identifier['identifier']
-        audit.save()
-        
-        if super(RegisteredSubjectManager,self).filter(subject_identifier__exact = subject_identifier['identifier']):
-            raise TypeError("RegisteredSubjectManager attempted to generate non-unique subject identifier subject type '%s'. Got '%s'" % (subject_type, subject_identifier['identifier']))
-        
-        #super(RegisteredSubjectManager, self).create(    
-        #        subject_identifier = subject_identifier['identifier'],
-        #        registration_datetime = datetime.now(),
-        #        subject_type = subject_type, 
-        #        user_created = user,
-        #        created = datetime.now(),
-        #        subject_consent_id=consent_model.pk,
-        #        first_name = consent_model.first_name,
-        #        initials = consent_model.initials.upper(),
-        #        registration_status = 'registered',
-        #        )             
-
+        if 'registered_subject' not in kwargs:
+            audit.save()
+            if super(RegisteredSubjectManager,self).filter(subject_identifier__exact = subject_identifier['identifier']):
+                raise TypeError("RegisteredSubjectManager attempted to generate non-unique subject identifier subject type '%s'. Got '%s'" % (subject_type, subject_identifier['identifier']))
+            
         # you may pass the RegisteredSubject object and update instead of creating a new one
         # pass when calling this manager (for example, from save_model in admin)
-
         if 'registered_subject' in kwargs:
             registered_subject =  kwargs['registered_subject']               
             registered_subject.subject_consent_id = consent_model.pk
@@ -150,8 +140,6 @@ class RegisteredSubjectManager(models.Manager):
                     is_dob_estimated = consent_model.is_dob_estimated,
                 )
                 
-                
-        
         # return the new subject identifier to the form currently being save()'d
         return subject_identifier['identifier']
 
