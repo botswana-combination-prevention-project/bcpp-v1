@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.db.models import Q
 
@@ -62,12 +63,16 @@ class ScheduleGroupManager(models.Manager):
             Q(membership_form__category__isnull = True) |
             Q(membership_form__category__exact = ''))
             )
-
-        if exclude_others_if_keyed_model_name:
+        
+        # if 'exclude_others_if_keyed_model_name' is set it might contain the exact or part of
+        # the module name. For example, subjectconsent should match subjectconsentyearzero
+        # If True, add this to the filter for the list of UNKEYED membership forms
+        if exclude_others_if_keyed_model_name and [re.search(exclude_others_if_keyed_model_name, v) for v in [v._meta.module_name for k,v in keyed_membership_forms.items()]]:
             qset.add(Q(membership_form__content_type_map__name__icontains=exclude_others_if_keyed_model_name ), Q.AND)
 
            
         schedule_groups = super(ScheduleGroupManager, self).filter(qset)
+
         unkeyed_membership_forms = [schedule_group.membership_form.content_type_map 
                                     for schedule_group in schedule_groups 
                                         if schedule_group.grouping_key not in grouping_keys and schedule_group.membership_form.content_type_map.name not in keyed_membership_forms]
