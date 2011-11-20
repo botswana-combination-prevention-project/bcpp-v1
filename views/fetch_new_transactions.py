@@ -12,7 +12,7 @@ from bhp_sync.models import Transaction, Producer, RequestLog
 from bhp_sync.classes import TransactionProducer
 
 
-def send_new_transactions(request, **kwargs):
+def fetch_new_transactions(request, **kwargs):
 
     if not 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
         messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')                                                                                            
@@ -22,18 +22,10 @@ def send_new_transactions(request, **kwargs):
                 
     timeout = 5
     socket_default_timeout = socket.getdefaulttimeout()        
-    #if timeout is not None:
-    #    try:
-    #        socket_timeout = float(timeout)
-    #    except ValueError:
-    #        raise ValueError, "timeout argument of geturl, if provided, must be convertible to a float"
-    #    try:
-    #        socket.setdefaulttimeout(socket_timeout)
-    #    except ValueError:
-    #        raise ValueError, "timeout argument of geturl, if provided, cannot be less than zero"
-
     consumed = []
     
+    # specify producer "name" of the server you are connecting to 
+    # as you only want transactions created by that server.
     if kwargs.get('producer'):
         producers = Producer.objects.filter(name__iexact=kwargs.get('producer'))
         if not producers:
@@ -41,7 +33,9 @@ def send_new_transactions(request, **kwargs):
     else:
         producers = Producer.objects.all()
 
+    # producers is usually only one producer instance
     for producer in producers:
+        # url to producer, add in the producer, username and api_key of the current user
         url = '%s?producer=%s&username=%s&api_key=%s' % (producer.url, producer.name, request.user.username, request.user.api_key.key)
         request_log = RequestLog()
         request_log.producer = producer
@@ -50,10 +44,13 @@ def send_new_transactions(request, **kwargs):
         try:
             f = urllib2.urlopen(url)
         except urllib2.HTTPError, err:
-            #if err.code == 404:
-            #    <whatever>
-            #else:
-            raise TypeError(url)    
+            if err.code == 404:
+                messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
+                break
+            else:
+                raise urllib2.HTTPError(err) 
+        
+        # read response from url and decode          
         response = f.read()
         json_response = None
         try:
@@ -63,19 +60,34 @@ def send_new_transactions(request, **kwargs):
 
         if json_response:
             error_list = []
-            messages.add_message(request, messages.INFO, 'Fetching %s transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
-            for data in json_response['objects']:
-                for obj in serializers.deserialize("json",data['tx']):
+            messages.add_message(request, messages.INFO, 'Fetching %s unsent transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
+
+            # 'transaction' is the serialized Transaction object from the producer. 
+            # Recall that the Transaction's object field 'tx' has the serialized 
+            # instance of the data model we are looking for
+            for transaction in json_response['objects']:
+                for obj in serializers.deserialize("json",transaction['tx']):
                     #try:
-                    if data['action'] == 'I' or data['tx'] == 'U':
+                    if transaction['action'] == 'I' or transaction['tx'] == 'U':
+                        # deserialiser save() method
                         obj.save()
-                        obj.object.save(transaction_producer=data['producer'])
+                        # call the object's save() method to trigger AuditTrail
+                        # pass the producer so that new transactions on the
+                        # consumer (self) correctly appear to come from the producer.
+                        obj.object.save(transaction_producer=transaction['producer'])
+                        # POST success back to to the producer
+                        transaction['is_sent'] = True
+                        req = urllib2.Request(url, json.dumps(transaction), {'Content-Type': 'application/json'})
+                        f = urllib2.urlopen(req)
+                        response = f.read()
+                        f.close()                        
+                        # display a message on the consumer (self)
                         messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
-                    elif data['action'] == 'D':
+                    elif transaction['action'] == 'D':
                         if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
                             if settings.ALLOW_DELETE_MODEL_FROM_SERIALIZATION:
-                                if obj.object.__class__.objects.filter(pk=data['tx_pk']):
-                                    obj.object.__class__.objects.get(pk=data['tx_pk']).delete(transaction_producer=data['producer'])
+                                if obj.object.__class__.objects.filter(pk=transaction['tx_pk']):
+                                    obj.object.__class__.objects.get(pk=transaction['tx_pk']).delete(transaction_producer=transaction['producer'])
                                     messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(unicode(obj.object),))                                            
                             else:
                                 messages.add_message(request, messages.WARNING, 'Delete from imported serialized objects not allowed. See ALLOW_DELETE_MODEL_FROM_SERIALIZATION in settings.')                                                                                            
@@ -83,7 +95,7 @@ def send_new_transactions(request, **kwargs):
                             msg = 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION global boolean not found in settings.'
                             messages.add_message(request, messages.ERROR, msg)                                                                                            
                     else:
-                        raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (data['action'],)
+                        raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (transaction['action'],)
                     #consumed.append(unicode(obj.object))
 
                     #except IntegrityError:
@@ -94,16 +106,6 @@ def send_new_transactions(request, **kwargs):
                     #    messages.add_message(request, messages.ERROR, 'Import failed. Integrity Error for %s' %(o,))
                     #except:
                     #    messages.add_message(request, messages.ERROR, 'Import failed. Unhandled Error for %s' %(obj,))    
-
-            #for transaction in Transaction.objects.filter(is_sent=False):
-            #    for data in transaction.tx:
-            #        data = json.dumps(data)
-            #        req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
-            #        req.add_header("Authorization", "Basic %s" % base64string)
-            #        f = urllib2.urlopen(req)
-            #        response = f.read()
-            #        f.close()
-            #        raise TypeError(response)
 
     
     return render_to_response('send_new_transactions.html', { 
