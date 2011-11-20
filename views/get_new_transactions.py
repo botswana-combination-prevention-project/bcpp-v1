@@ -12,7 +12,7 @@ from bhp_sync.models import Transaction, Producer, RequestLog
 from bhp_sync.classes import TransactionProducer
 
 
-def fetch_new_transactions(request, **kwargs):
+def get_new_transactions(request, **kwargs):
 
     if not 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
         messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')                                                                                            
