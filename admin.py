@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin
-from models import Transaction
+from models import Transaction, RequestLog, Producer
 
 
 class TransactionAdmin (MyModelAdmin):
@@ -12,4 +12,14 @@ class TransactionAdmin (MyModelAdmin):
     
 admin.site.register(Transaction, TransactionAdmin)
 
+class Producer(MyModelAdmin):
 
+    list_display = ('name', 'url', 'is_active')
+    
+admin.site.register(Producer, ProducerAdmin)
+
+class RequestLog(MyModelAdmin):
+
+    list_display = ('producer', 'request_datetime', 'status', 'comment')
+
+admin.site.register(RequestLog, RequestLogAdmin)
