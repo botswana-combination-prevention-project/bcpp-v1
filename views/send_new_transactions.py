@@ -47,7 +47,13 @@ def send_new_transactions(request, **kwargs):
         request_log.producer = producer
         request_log.save()
         
-        f = urllib2.urlopen(url)
+        try:
+            f = urllib2.urlopen(url)
+        except urllib2.HTTPError, err:
+            #if err.code == 404:
+            #    <whatever>
+            #else:
+            raise TypeError(url)    
         response = f.read()
         json_response = None
         try:

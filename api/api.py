@@ -23,7 +23,6 @@ class TransactionResource(ModelResource):
         resource_name = 'transaction'
         authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()       
-        #authorization = Authorization()         
         #excludes = ['email', 'password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get','post','put',]        
         filtering = {
