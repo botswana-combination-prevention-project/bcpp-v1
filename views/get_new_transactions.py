@@ -108,6 +108,6 @@ def get_new_transactions(request, **kwargs):
                     #    messages.add_message(request, messages.ERROR, 'Import failed. Unhandled Error for %s' %(obj,))    
 
     
-    return render_to_response('send_new_transactions.html', { 
+    return render_to_response('new_transactions.html', { 
         'producers': producers,
     },context_instance=RequestContext(request))
