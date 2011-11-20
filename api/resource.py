@@ -4,7 +4,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
-from models import Transaction
+from bhp_sync.models import Transaction
 
 
 """
