@@ -19,7 +19,7 @@ for user in User.objects.all():
 
 class TransactionResource(ModelResource):
     class Meta:
-        queryset = Transaction.objects.filter(is_sent=False)
+        queryset = Transaction.objects.filter(is_consumed=False)
         resource_name = 'transaction'
         authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()       

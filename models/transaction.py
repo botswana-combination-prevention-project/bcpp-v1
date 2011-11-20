@@ -37,11 +37,16 @@ class Transaction(MyBasicUuidModel):
         null = True,
         )
     
-    is_sent = models.BooleanField(
+    is_consumed = models.BooleanField(
         default = False
         )
     
-    sent_datetime = models.DateTimeField(
+    consumed_datetime = models.DateTimeField(
+        null = True,
+        )
+
+    consumer = models.CharField(
+        max_length = 15,
         null = True,
         )
 

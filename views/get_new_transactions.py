@@ -76,7 +76,9 @@ def get_new_transactions(request, **kwargs):
                         # consumer (self) correctly appear to come from the producer.
                         obj.object.save(transaction_producer=transaction['producer'])
                         # POST success back to to the producer
-                        transaction['is_sent'] = True
+                        transaction['is_consumed'] = True
+                        transaction['consumed_datetime'] = datetime.today()
+                        transaction['consumer'] = str(TransactionProducer())
                         req = urllib2.Request(url, json.dumps(transaction), {'Content-Type': 'application/json'})
                         f = urllib2.urlopen(req)
                         response = f.read()
