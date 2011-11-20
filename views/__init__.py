@@ -1,2 +1,3 @@
 #from tx_to_response import tx_to_response
 from get_new_transactions import get_new_transactions
+from post_new_transactions import post_new_transactions
