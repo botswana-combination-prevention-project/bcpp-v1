@@ -24,4 +24,5 @@ class TransactionResource(ModelResource):
             'producer': ['exact',],
         }        
         serializer = Serializer()
+        
 
