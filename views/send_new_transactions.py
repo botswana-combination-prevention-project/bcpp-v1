@@ -17,15 +17,15 @@ def send_new_transactions(request, **kwargs):
     
     timeout = 5
     socket_default_timeout = socket.getdefaulttimeout()        
-        if timeout is not None:
-            try:
-                socket_timeout = float(timeout)
-            except ValueError:
-                raise ValueError, "timeout argument of geturl, if provided, must be convertible to a float"
-            try:
-                socket.setdefaulttimeout(socket_timeout)
-            except ValueError:
-                raise ValueError, "timeout argument of geturl, if provided, cannot be less than zero"
+    #if timeout is not None:
+    #    try:
+    #        socket_timeout = float(timeout)
+    #    except ValueError:
+    #        raise ValueError, "timeout argument of geturl, if provided, must be convertible to a float"
+    #    try:
+    #        socket.setdefaulttimeout(socket_timeout)
+    #    except ValueError:
+    #        raise ValueError, "timeout argument of geturl, if provided, cannot be less than zero"
 
     consumed = []
     for producer in Producer.objects.all()
