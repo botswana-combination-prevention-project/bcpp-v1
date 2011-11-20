@@ -28,7 +28,7 @@ def send_new_transactions(request, **kwargs):
     #        raise ValueError, "timeout argument of geturl, if provided, cannot be less than zero"
 
     consumed = []
-    for producer in Producer.objects.all()
+    for producer in Producer.objects.all():
 
         url = 'http://localhost:8001/bhp_sync/api/transaction/?producer=%s' % (producer.url, producer.name)
 
