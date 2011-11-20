@@ -12,13 +12,13 @@ class TransactionAdmin (MyModelAdmin):
     
 admin.site.register(Transaction, TransactionAdmin)
 
-class Producer(MyModelAdmin):
+class ProducerAdmin(MyModelAdmin):
 
     list_display = ('name', 'url', 'is_active')
     
 admin.site.register(Producer, ProducerAdmin)
 
-class RequestLog(MyModelAdmin):
+class RequestLogAdmin(MyModelAdmin):
 
     list_display = ('producer', 'request_datetime', 'status', 'comment')
 
