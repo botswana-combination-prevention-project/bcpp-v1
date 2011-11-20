@@ -67,7 +67,11 @@ class ScheduleGroupManager(models.Manager):
         # if 'exclude_others_if_keyed_model_name' is set it might contain the exact or part of
         # the module name. For example, subjectconsent should match subjectconsentyearzero
         # If True, add this to the filter for the list of UNKEYED membership forms
-        if exclude_others_if_keyed_model_name and [re.search(exclude_others_if_keyed_model_name, v) for v in [v._meta.module_name for k,v in keyed_membership_forms.items()]]:
+        exclude = False
+        for boolean in [re.search(exclude_others_if_keyed_model_name, v) is not None for v in [v._meta.module_name for k,v in keyed_membership_forms.items()]]:
+            if boolean:
+                exclude = True
+        if exclude_others_if_keyed_model_name and exclude :
             qset.add(Q(membership_form__content_type_map__name__icontains=exclude_others_if_keyed_model_name ), Q.AND)
 
            
