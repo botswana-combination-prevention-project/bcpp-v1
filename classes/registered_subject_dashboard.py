@@ -113,6 +113,7 @@ class RegisteredSubjectDashboard(Dashboard):
         # limit the membership forms to those of this category
         self.membership_form_category = None
         self.exclude_others_if_keyed_model_name = None
+        self.include_after_exclusion_model_keyed = []
 
 
     def create(self, **kwargs):
@@ -341,6 +342,7 @@ class RegisteredSubjectDashboard(Dashboard):
             registered_subject = self.registered_subject,
             membership_form_category = self.membership_form_category,
             exclude_others_if_keyed_model_name = self.exclude_others_if_keyed_model_name,
+            include_after_exclusion_model_keyed = self.include_after_exclusion_model_keyed,           
             )
 
         self.context.add(
