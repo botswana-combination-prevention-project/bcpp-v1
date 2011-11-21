@@ -16,7 +16,17 @@ class ScheduleGroupManager(models.Manager):
         registered_subject = kwargs.get("registered_subject")        
 
         # if this model is keyed, exclude all other UNKEYED models LIKE this from the list
+        # for example, if consented, no other membership forms apply and
+        # the links need not show on the dashboard
         exclude_others_if_keyed_model_name = kwargs.get("exclude_others_if_keyed_model_name", None) 
+
+        # TODO: implement 'include_after_exclusion_model_keyed'
+        # ...not working yet because the query would be complicated
+        # if the "exclude" model (above) is keyed, remove all unkeyed models, except those listed here
+        # for example, if the model in 'exclude_others_if_keyed_model_name' is KEYED,
+        # still show links to the models listed here
+        # (naming needs work ...)            
+        include_after_exclusion_model_keyed = kwargs.get("include_after_exclusion_model_keyed", None)          
                
         # category of the membership form. Can be any value as long as 
         # it helps link membership forms in some way. For example, 
