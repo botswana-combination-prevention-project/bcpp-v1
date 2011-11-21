@@ -27,6 +27,11 @@ class AppointmentManager(models.Manager):
         if not model_name:
             raise TypeError('AppointmentManager.create_appointments requires a model_name. Got None')
 
+        # this is the model of the membership_form
+        dashboard_type = kwargs.get("dashboard_type", None)
+        if not model_name:
+            raise TypeError('AppointmentManager.create_appointments requires dashboard_type. Got None')
+            
         # base_appt_datetime must come from the membership_form model and not from the appt_datetime
         # of the first appointment as the user may change this. 
         # base_appt_datetime = kwargs.get("base_appt_datetime")
@@ -38,15 +43,22 @@ class AppointmentManager(models.Manager):
             # get membership_form of this schedule_group for this registered_subject
             membership_form_model = get_model(app_label=schedule_group.membership_form.content_type_map.app_label, model_name=model_name)
             if membership_form_model.objects.filter(registered_subject=registered_subject):
-                # for an existing membership form
-                membership_form = membership_form_model.objects.get(registered_subject=registered_subject)
-                # determine base_appt_datetime using the membership_form instance
-                base_appt_datetime = membership_form.get_registration_datetime()
+                # in some cases, send the base_appt_datetime, such as when
+                # the visit_datetime is a next appt datetime.
+                # But ideally, it is better to get this from
+                # get_registration_datetime() on the model.
+                base_appt_datetime = kwargs.get('base_appt_datetime', None)
+                if not base_appt_datetime:
+                    # determine base_appt_datetime using the membership_form instance
+                    # for an existing membership form
+                    membership_form = membership_form_model.objects.get(registered_subject=registered_subject)
+                    base_appt_datetime = membership_form.get_registration_datetime()
             elif kwargs.get('base_appt_datetime'):
+                # ??? can you get here??
                 # i guess you could pass the base_appt_datetime from the call    
                 base_appt_datetime = kwargs.get('base_appt_datetime')
             else: 
-                # we may be calling this method as a new membership for is being inserted   
+                # we may be calling this method as a new membership form is being inserted   
                 # once the instance is saved, the created attribute will = datetime.today()
                 #base_appt_datetime = datetime.today()            
                                 
@@ -90,6 +102,7 @@ class AppointmentManager(models.Manager):
                         visit_definition = visit_definition,
                         visit_instance = 0,
                         appt_datetime = appt_datetime,
+                        dashboard_type = dashboard_type,
                         )
 
         #return visits
@@ -190,7 +203,7 @@ class AppointmentManager(models.Manager):
             # get list of visits for scheduled group containing this model
             visit_definitions = VisitDefinition.objects.filter(schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model = model_name))
         else:
-            visit_definitions = None
+            visit_definitions = []
 
         return visit_definitions     
         

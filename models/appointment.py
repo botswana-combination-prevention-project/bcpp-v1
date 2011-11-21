@@ -37,6 +37,14 @@ class Appointment(BaseAppointment):
         help_text=_("A decimal to represent an additional report to be included with the original visit report. (NNNN.0)"),    
         )     
 
+    dashboard_type = models.CharField(
+        max_length = 25,
+        editable = False,
+        null = True,
+        blank = True,
+        help_text = 'hold dashboard_type variable, set by dashbaord'
+        )
+
     objects = AppointmentManager()
     
     history = AuditTrail()

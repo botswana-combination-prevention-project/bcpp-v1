@@ -80,6 +80,20 @@ class AppointmentAdmin(MyModelAdmin):
                     pass                    
         return result  
 
+    # if you can find a way to get dashboard type here, then you can use this
+    #def delete_view(self, request, object_id, extra_context=None):
+    #
+    #    appointment = self.model.objects.get(pk=object_id)
+    #    subject_identifier = self.model.objects.get(pk=object_id).registered_subject.subject_identifier
+    #    result = super(AppointmentAdmin, self).delete_view(request, object_id, extra_context)
+    #    context = {'dashboard_type':appointment.dashboard_type, 'appointment': appointment.pk, 'subject_identifier':subject_identifier}
+    #    if extra_context:
+    #        for k,v in extra_context.items():
+    #            context[k] = v
+    #    result['Location'] = reverse('dashboard_url' , kwargs=context)
+    #    return result
+        
+
     #override, limit dropdown in add_view to id passed in the URL        
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "registered_subject":

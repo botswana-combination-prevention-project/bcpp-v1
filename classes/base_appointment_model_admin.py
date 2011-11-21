@@ -35,8 +35,8 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
                                 
         # requisition_model is required to update ScheduledLabEntryBucket, but if not defined will pass
         if hasattr(self, 'requisition_model'):
-            from lab_requisition.models import BaseRequisition
-            if not BaseRequisition in self.requisition_model.__bases__:
+            from lab_requisition.models import BaseRequisition, BaseBaseRequisition
+            if not set([BaseRequisition, BaseBaseRequisition]).intersection(set(self.requisition_model.__bases__)):
                 raise ValueError, '%s attribute \'requisition_model\' must be an instance of lab_requisition.models.BaseRequisition.' % self                                            
 
         super(BaseAppointmentModelAdmin, self).__init__(*args, **kwargs)
