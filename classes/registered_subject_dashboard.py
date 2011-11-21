@@ -438,6 +438,11 @@ class RegisteredSubjectDashboard(Dashboard):
                 name="dashboard_url"
                 ),
 
+            url(r'^(?P<dashboard_type>{dashboard_type})(?P<appointment>{pk})/(?P<subject_identifier>{subject_identifier})/$'.format(**regex), 
+                'dashboard', 
+                name="dashboard_url"
+                ),
+
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/$'.format(**regex), 
                 'dashboard', 
