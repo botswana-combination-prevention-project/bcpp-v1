@@ -108,10 +108,6 @@ IDENTITY_TYPE = (
     ('OTHER', 'Other'),                        
 )
 
-LOCATIONS = (
-    ('CLINIC', 'Clinic'),
-    ('HOUSEHOLD', 'Household'),
-)
 
 NORMAL_ABNORMAL =(
     ('NORMAL', 'Normal'),
