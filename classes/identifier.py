@@ -279,8 +279,11 @@ class Identifier(object):
         self.identifier_tracker.save()
     
     def set_root_segment(self):
-        """Set root_segment, un-encoded root_segment, as site_code + protocol_code + 2digitmonth + 2digityear"""
-        self.root_segment = "%s%s%s%s" % (self.site_code, self.protocol_code, str(datetime.now().strftime('%m')), str(datetime.now().strftime('%y')).rjust(2,'0'))
+        if self.given_root_segment:
+            self.root_segment = self.given_root_segment
+        else:    
+            """Set root_segment, un-encoded root_segment, as site_code + protocol_code + 2digitmonth + 2digityear"""
+            self.root_segment = "%s%s%s%s" % (self.site_code, self.protocol_code, str(datetime.now().strftime('%m')), str(datetime.now().strftime('%y')).rjust(2,'0'))
 
     def set_counter_segment(self):
         if self.counter_length == 0:  
