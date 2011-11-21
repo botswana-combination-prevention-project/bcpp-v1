@@ -8,7 +8,8 @@ class Netbook(MyBasicModel):
     name = models.CharField(
         verbose_name = _("Netbook Name"), 
         unique = True,        
-        max_length = 10)
+        max_length = 10,
+        )
 
     db_name = models.CharField(
         verbose_name = _("Database Name"), 
@@ -16,7 +17,6 @@ class Netbook(MyBasicModel):
         null = True,
         max_length = 10,
         )
-
 
     date_purchased = models.DateField(
         verbose_name = _("Date Purchased"), 
