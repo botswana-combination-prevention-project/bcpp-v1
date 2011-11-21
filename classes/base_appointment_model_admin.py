@@ -92,10 +92,15 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
 
     def delete_view(self, request, object_id, extra_context=None):
 
+        appointment = self.model.objects.get(pk=object_id).appointment.pk
         subject_identifier = self.model.objects.get(pk=object_id).appointment.registered_subject.subject_identifier
         result = super(BaseAppointmentModelAdmin, self).delete_view(request, object_id, extra_context)
-        result['Location'] = reverse('dashboard_url' , kwargs={'dashboard_type':self.dashboard_type, 'subject_identifier':subject_identifier})
 
+        context = {'dashboard_type':self.dashboard_type, 'appointment': appointment, 'subject_identifier':subject_identifier}
+        if extra_context:
+            for k,v in extra_context.items():
+                context[k] = v
+        result['Location'] = reverse('dashboard_url' , kwargs=context)
         return result
         
     #override, limit dropdown in add_view to id passed in the URL        

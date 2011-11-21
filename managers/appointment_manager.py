@@ -140,12 +140,16 @@ class AppointmentManager(models.Manager):
                                                 appt_datetime=next_appt_datetime): 
             
             # what was the last instance created?
-            aggr = super(AppointmentManager, self).filter(
-                                                    registered_subject=appointment.registered_subject, 
-                                                    visit_definition=appointment.visit_definition
-                                                    ).values('visit_instance').annotate(Max('visit_instance')).order_by()
+            #aggr = super(AppointmentManager, self).filter(
+            #                                        registered_subject=appointment.registered_subject, 
+            #                                        visit_definition=appointment.visit_definition
+            #                                        ).values('visit_instance').annotate(Max('visit_instance')).order_by()
+            aggr = super(AppointmentManager, self).filter(registered_subject=appointment.registered_subject,
+                                                          visit_definition=appointment.visit_definition
+                                                          ).aggregate(Max('visit_instance'))                                                    
+            
             if aggr:
-                next_visit_instance = int(aggr[0]['visit_instance__max'] + 1)
+                next_visit_instance = int(aggr['visit_instance__max'] + 1.0)
                 super(AppointmentManager, self).create(
                     registered_subject = appointment.registered_subject,
                     visit_definition = appointment.visit_definition,
