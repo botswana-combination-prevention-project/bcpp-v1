@@ -17,7 +17,7 @@ class BaseRequisitionManager(models.Manager):
             except AttributeError:
                 raise AttributeError('Requisition needs a \'site_code\'. Got None. Either pass as a parameter or set SITE_CODE= in settings.py')
 
-        if not len(site_code) == 1:
+        if len(site_code) == 1:
             site_code = site_code + '0'
         
         #identifier_length = 8

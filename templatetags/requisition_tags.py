@@ -127,7 +127,7 @@ class GetRequisitionValue(template.Node):
         if req:        
             return getattr(req[0], self.field_name)
         else:
-            return 'not drawn'
+            return ''
 
 @register.tag(name='get_requisition_value')
 def get_requisition_value(parser, token):
