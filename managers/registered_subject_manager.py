@@ -40,9 +40,9 @@ class RegisteredSubjectManager(models.Manager):
             date_allocated=datetime.now(),
             user_created = user,
             )
-            
-        audit.save()    
-
+         
+        # saving here will cause integrity error if from a proxy model    
+        #audit.save()    
 
         # get the auto-increment id for the new audit trail record
         # just created above
