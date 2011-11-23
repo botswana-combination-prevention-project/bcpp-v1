@@ -18,6 +18,13 @@ class Netbook(MyBasicModel):
         max_length = 10,
         )
 
+    is_active = models.BooleanField(
+        default=True
+        )
+        
+    last_seen = models.DateField(
+        null=True)   
+
     date_purchased = models.DateField(
         verbose_name = _("Date Purchased"), 
         )

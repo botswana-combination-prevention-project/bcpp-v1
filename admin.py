@@ -4,7 +4,8 @@ from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_netbook.models import Netbook, NetbookUser
 
 class NetbookAdmin (MyModelAdmin):
-    list_display = ('name', 'db_name','make', 'model', 'serial_number')
+
+    list_display = ('name', 'db_name','make', 'model', 'ip_address', 'is_active', 'last_seen', 'serial_number')
     list_per_page = 25
 
 admin.site.register(Netbook, NetbookAdmin)
