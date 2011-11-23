@@ -50,24 +50,32 @@ class RegisteredSubjectManager(models.Manager):
 
         # prepare the subject identifier by 
         # getting the seed and prefix and deviceid, modulus
-        settings = StudySpecific.objects.all()[0]
+        settings = StudySpecific.objects.all()
         subject_identifier['modulus'] = settings.subject_identifier_modulus
         subject_identifier['seed'] = settings.subject_identifier_seed
         subject_identifier['prefix']= settings.subject_identifier_prefix
-        subject_identifier['device_id']= settings.device_id
         
-        if subject_identifier['seed'] == 99:
-            raise TypeError("Subject_identifier_seed cannot be 99. Did you configure bhp_variables.StudySpecific?")
-            
+        subject_identifier['device_id'] = kwargs.get('device_id', None)
+
+             
+        if not subject_identifier['device_id']:
+            subject_identifier['device_id'] = settings.device_id          
+        
+        if subject_identifier['device_id'] == '98':
+            raise TypeError("Subject_identifier_device_id cannot be \'%s\'. Configure bhp_variables.StudySpecific or set hostname to end in a 2 digit number?", (subject_identifier['device_id'],))
         # get subject identifier sequence, is count of subject_type +1
         subject_identifier['seq'] = 1
         if super(RegisteredSubjectManager,self).filter(subject_type__iexact = subject_type):
             agg = super(RegisteredSubjectManager,self).filter(subject_type__iexact = subject_type).aggregate(Count('subject_identifier'))
             subject_identifier['seq'] += agg['subject_identifier__count']
-        
 
         # using the seed, device and audit trail id determine the integer segment of the id 
-        subject_identifier['int'] = (((subject_identifier['seed']* subject_identifier['device_id']) + subject_identifier['seq'])) 
+        # subject_identifier['int'] = (((subject_identifier['seed'] * subject_identifier['device_id']) + subject_identifier['seq'])) 
+        # changed this, i want the device ID to appear in the number. the above would 
+        # not result in this. For example (seed*device_id)+seq  (10000*98)+4024 = 102024
+        # TODO: allow device_id to be an alpha numeric ?? or 3 digits might be better...
+        subject_identifier['int'] = int(str(subject_identifier['device_id'])+str(subject_identifier['seq']))
+
 
         # using the integer segment, calculate the check digit
         check_digit = subject_identifier['int'] % subject_identifier['modulus']
@@ -92,7 +100,7 @@ class RegisteredSubjectManager(models.Manager):
 
         #create the formatted identifier
         subject_identifier['identifier'] = "%s-%s%s-%s" % (subject_identifier['prefix'], subject_identifier['site'],subject_identifier['int'],  subject_identifier['check_digit'] )
-       
+
         # update subject_identifier to the audit trail table
         # unless registered subject was passed in kwargs
         # if registered_subject was passed implies the 

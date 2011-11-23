@@ -73,7 +73,7 @@ class BaseSubject (MyBasicUuidModel):
         # for new instances, enforce unique subject_identifier if not null
         if not self.pk and self.subject_identifier:
             if self.__class__.objects.filter(subject_identifier=self.subject_identifier):
-                raise IntegrityError, 'Duplicate value for subject_identifier %s.' % (self.subject_identifier,)
+                raise IntegrityError, 'Attempt to insert duplicate value for subject_identifier %s when saving %s.' % (self.subject_identifier,self,)
         super(BaseSubject, self).save(*args, **kwargs)
 
     def __unicode__ (self):
