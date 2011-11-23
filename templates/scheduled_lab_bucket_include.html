@@ -6,6 +6,7 @@
 
 <table>
 <thead>
+<th></th>
 <th>#</th>
 <th>Requisition</th>
 <th>Specimen</th>
@@ -22,10 +23,11 @@
 </thead>
 <tbody>
 {% if not scheduled_lab_bucket %}
-    <tr class="{% cycle 'row1' 'row2' %}"><td colsapn="13"></td></tr>
+    <tr class="{% cycle 'row1' 'row2' %}"><td colsapn="14"></td></tr>
 {% else %}                
     {% for f in scheduled_lab_bucket %}
         <tr class="{% cycle 'row1' 'row2' %}">
+        <td><span {% if f.entry_status == 'NEW'%}style="background:red;"{% endif %}>&nbsp;</span></td>        
         <td>{{ forloop.counter }}</td>
         {% if f.entry_status == 'NEW' or f.entry_status == 'KEYED' or f.entry_status == 'QUERY' %}            
             {% if appointment.appt_status == 'in_progress' %}
