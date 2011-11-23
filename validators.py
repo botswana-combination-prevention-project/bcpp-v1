@@ -67,7 +67,7 @@ def date_not_future (value):
 
 def MinConsentAge (value):
     now  = date.today()
-    ss = StudySpecific.objects.all()[0]
+    ss = StudySpecific.objects.all()
     
     min_consent_age_years = ss.minimum_age_of_consent
     min_consent_age_days = 365*min_consent_age_years
@@ -77,7 +77,7 @@ def MinConsentAge (value):
 
 def MaxConsentAge (value):
     now  = date.today()
-    ss = StudySpecific.objects.all()[0]
+    ss = StudySpecific.objects.all()
     max_consent_age_years = ss.maximum_age_of_consent
     max_consent_age_days = 365*max_consent_age_years
     age_in_days = timedelta(days=max_consent_age_days)
@@ -86,7 +86,7 @@ def MaxConsentAge (value):
 
 
 def GenderOfConsent (value):
-    ss = StudySpecific.objects.all()[0]
+    ss = StudySpecific.objects.all()
     
     gender_allowed = ss.gender_of_consent
     
@@ -118,7 +118,7 @@ def datetime_is_after_consent (value):
         raise ValidationError(u'Date and time cannot be prior to consent date. You entered %s' % (value,))
 
 def date_not_before_study_start (value):
-    dte = StudySpecific.objects.all()[0]
+    dte = StudySpecific.objects.all()
     value_datetime = datetime(value.year, value.month, value.day, 0,0)
     started  = dte.study_start_datetime
     protocol_number = dte.protocol_number
@@ -126,7 +126,7 @@ def date_not_before_study_start (value):
         raise ValidationError(u'Date cannot be before the study started. %s started on %s. You entered %s.' % (protocol_number, started, value,))
 
 def datetime_not_before_study_start (value):
-    dte = StudySpecific.objects.all()[0]
+    dte = StudySpecific.objects.all()
     started  = dte.study_start_datetime
     protocol_number = dte.protocol_number
     if value < started:
