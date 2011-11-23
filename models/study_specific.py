@@ -3,6 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from bhp_common.models import MyBasicUuidModel
 from bhp_variables.choices import GENDER_OF_CONSENT, SETTINGS_KEYWORD, MACHINE_TYPE
+from bhp_variables.managers import StudySpecificManager
+
 
 class BaseStudySpecific (MyBasicUuidModel):
 
@@ -89,6 +91,8 @@ class BaseStudySpecific (MyBasicUuidModel):
             RegexValidator("^[0]{1}$|^[1-9]{1}[0-9]{1}$", "Ensure value between 10 and 99 (or 0, if override).")
             ]
         )    
+        
+    objects = StudySpecificManager()        
 
     class Meta:
         abstract=True
