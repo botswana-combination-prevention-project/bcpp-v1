@@ -11,6 +11,10 @@ class Netbook(MyBasicModel):
         max_length = 10,
         )
 
+    is_active = models.BooleanField(
+        default=False
+        )
+
     db_name = models.CharField(
         verbose_name = _("Database Name"), 
         blank = True,
@@ -18,8 +22,8 @@ class Netbook(MyBasicModel):
         max_length = 10,
         )
 
-    is_active = models.BooleanField(
-        default=True
+    is_alive = models.BooleanField(
+        default=False
         )
         
     last_seen = models.DateField(
