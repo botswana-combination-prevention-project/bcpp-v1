@@ -7,8 +7,9 @@ from actions import netbook_uphosts
 
 class NetbookAdmin (MyModelAdmin):
 
-    list_display = ('name', 'db_name','make', 'model', 'ip_address', 'is_active', 'last_seen', 'serial_number')
+    list_display = ('name', 'is_active', 'db_name','make', 'model', 'ip_address', 'is_alive', 'last_seen', 'serial_number')
     list_per_page = 25
+    list_filter = ('is_active', 'is_alive')
 
     actions = [netbook_uphosts,]
 
