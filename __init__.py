@@ -19,6 +19,8 @@ class MyModel(models.Model):
     _index_together = (('field_1', 'field_2'), ('field3', 'field4'))
 
 """
+
+"""
 from django.db import connection
 from django.conf import settings
 
@@ -87,3 +89,4 @@ def create_all_indices(sender, *args, **kwds):
 from django.db.models import signals
 signals.post_syncdb.connect(create_all_indices)
 
+"""

@@ -18,7 +18,7 @@ def os_variables():
 
     #netbook checks
     if StudySpecific.objects.all():
-        sp = StudySpecific.objects.all()    
+        sp = StudySpecific.objects.all()[0]    
 
         if sp.machine_type == 'NETBOOK':
             try:
