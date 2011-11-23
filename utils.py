@@ -8,7 +8,7 @@ def all_uphosts(**kwargs):
     """return a list of up hosts/port in the specified network"""
     
     network = kwargs.get('network', None)
-    if not netwook:
+    if not network:
         variables = os_variables()
         network = variables['wlan_network']
     if not network or network == '0.0.0.0/24':
