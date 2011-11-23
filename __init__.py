@@ -27,10 +27,11 @@ def create_index(model):
     meta = getattr(model, '_meta', None)
     if not meta: return 0
     
-    if settings.DATABASE_ENGINE == 'mysql':
+    #if settings.DATABASE_ENGINE == 'mysql':
+    if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':    
         func = create_index_mysql
-    elif settings.DATABASE_ENGINE == 'sqlite3':
-        func = create_index_sqlite3
+    #elif settings.DATABASE_ENGINE == 'sqlite3':
+    #    func = create_index_sqlite3
     else:
         return 0
     
