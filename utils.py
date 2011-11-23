@@ -7,12 +7,12 @@ def all_uphosts(**kwargs):
 
     """return a list of up hosts/port in the specified network"""
     
-    variables = os_variables()
-    
-    hosts = variables['wlan_network']
-
-    if not hosts or hosts == '0.0.0.0/24':
-        hosts='192.168.1.0/24'
+    network = kwargs.get('network', None)
+    if not netwook:
+        variables = os_variables()
+        network = variables['wlan_network']
+    if not network or network == '0.0.0.0/24':
+        network='192.168.1.0/24'
 
     hostname_prefix = kwargs.get('hostname_prefix')
     if not hostname_prefix:
@@ -20,10 +20,10 @@ def all_uphosts(**kwargs):
 
     app_name = kwargs.get('app_name')
     if not app_name:
-        app_name = 'myapp'
+        app_name = ''
    
     nm = nmap.PortScanner()
-    nm.scan( hosts=hosts, arguments='-n -sP' )
+    nm.scan( hosts=network, arguments='-n -sP' )
     
     uphosts = {}
 
