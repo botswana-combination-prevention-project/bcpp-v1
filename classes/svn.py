@@ -42,7 +42,8 @@ class Svn(object):
                             svn_history.last_revision_date = svn[0].date                    
                             svn_history.save()
                             if svn[0].number == -1:
-                                raise ValueError, 'Cannot update repo %s' % (fld,)
+                                pass
+                                #raise ValueError, 'Cannot update repo %s' % (fld,)
                 
 
 
