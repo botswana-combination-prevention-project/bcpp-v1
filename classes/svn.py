@@ -7,6 +7,7 @@ class Svn(object):
     def update_svn(self, **kwargs):
 
         client = pysvn.Client()
+        request = kwargs.get('request', None)
         folders = os.listdir('/home/django/source/bhp041_new')
         
         # update mochudi
@@ -22,26 +23,26 @@ class Svn(object):
                     else:
                         svn_history = SvnHistory.objects.create(netbook=netbook, repo=fld)    
                     svn  = client.update(fld)
-                    if not svn[0].number == -1:
+                    if request and not svn[0].number == -1:
                         messages.add_message(request, messages.SUCCESS, '%s revision %s', (fld, svn[0].number))                                              
                     svn_history.last_revision_number = svn[0].number
                     svn_history.last_revision_date = svn[0].date                    
                     svn_history.save()
                     if svn[0].number == -1:
                         svn  = client.update(fld)                
-                        if not svn[0].number == -1:
+                        if request and not svn[0].number == -1:
                             messages.add_message(request, messages.SUCCESS, '%s revision %s', (fld, svn[0].number))                                              
                         svn_history.last_revision_number = svn[0].number
                         svn_history.last_revision_date = svn[0].date                                            
                         svn_history.save()
                         if svn[0].number == -1:
                             svn  = client.update(fld)                
-                            if not svn[0].number == -1:
+                            if request and not svn[0].number == -1:
                                 messages.add_message(request, messages.SUCCESS, '%s revision %s', (fld, svn[0].number))                                              
                             svn_history.last_revision_number = svn[0].number
                             svn_history.last_revision_date = svn[0].date                    
                             svn_history.save()
-                            if svn[0].number == -1:
+                            if request and svn[0].number == -1:
                                 messages.add_message(request, messages.ERROR, 'Failed to update %s revision %s', (fld, svn[0].number))                                              
                                 #raise ValueError, 'Cannot update repo %s' % (fld,)
                 
