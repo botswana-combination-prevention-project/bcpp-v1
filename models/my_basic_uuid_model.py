@@ -16,12 +16,12 @@ class MyBasicUuidModel(MyBasicModel):
     
     id = MyUUIDField(primary_key=True)
 
-    def is_serialized(self, serialize=False):
+    def is_serialized(self, serialize=False, use_natural_keys=False):
 
         if 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
             if settings.ALLOW_MODEL_SERIALIZATION:
-                return serialize
-        return False
+                return {'serialize':serialize, 'use_natural_keys':use_natural_keys}
+        return {'serialize':False, 'use_natural_keys':False}
         
     def save(self, *args, **kwargs):
     
@@ -38,14 +38,18 @@ class MyBasicUuidModel(MyBasicModel):
         # note that i do not want both the proxy model and its parent model to 
         # trigger a transaction, but make sure the parent "model" has
         # is_serialized=True, otherwise no transaction will be created.
-        if self.pk and self.is_serialized(): #and not self._meta.proxy:
+        is_serialized = self.is_serialized()['serialize']
+        use_natural_keys =  self.is_serialized()['use_natural_keys']
+        if self.pk and is_serialized: #and not self._meta.proxy:
 
             action = 'I'
             if self.pk:
                 action = 'U'
                 
             transaction = get_model('bhp_sync', 'transaction')
-            json = serializers.serialize("json", self.__class__.objects.filter(pk=self.pk), )            
+            json = serializers.serialize("json", 
+                            self.__class__.objects.filter(pk=self.pk), 
+                            use_natural_keys=use_natural_keys)            
             transaction.objects.create(
                 tx_name = self._meta.object_name,
                 tx_pk = self.pk,
