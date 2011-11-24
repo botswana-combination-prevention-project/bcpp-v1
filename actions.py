@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from django.contrib import messages
 from bhp_common.models import MyModelAdmin
@@ -20,9 +21,10 @@ def netbook_uphosts(modeladmin, request, queryset):
 netbook_uphosts.short_description = "Refresh list of active netbooks"
 
 def netbook_update_svn(modeladmin, request, queryset):
-
+    
+    netbook_name = os.gethostname()
     svn = Svn()
-    svn.update_svn(request=request)
+    svn.update_svn(request=request, netbook_name=netbook_name)
     messages.add_message(request, messages.SUCCESS, 'Local svn repositories have been updated')                      
 
 netbook_update_svn.short_description = "Update local svn repositories"

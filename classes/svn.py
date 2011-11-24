@@ -8,11 +8,15 @@ class Svn(object):
 
         client = pysvn.Client()
         request = kwargs.get('request', None)
+        netbook_name = kwargs.get('netbook_name, None)
         folders = os.listdir('/home/django/source/bhp041_new')
         
         # update mochudi
 
-        netbooks = Netbook.objects.filter(name='s014')
+        if netbook_name:
+            netbooks = Netbook.objects.filter(name=netbook_name)
+        else:
+            netbooks = None
         for netbook in netbooks:
             for prefix in ['mochudi_', 'bhp_', 'lab_']:
                 retries = 3    
