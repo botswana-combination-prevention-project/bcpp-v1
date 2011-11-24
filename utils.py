@@ -12,7 +12,7 @@ def all_uphosts(**kwargs):
         variables = os_variables()
         network = variables['wlan_network']
     if not network or network == '0.0.0.0/24':
-        network='192.168.1.0/24'
+        network='192.168.11.0/24'
 
     hostname_prefix = kwargs.get('hostname_prefix')
     if not hostname_prefix:

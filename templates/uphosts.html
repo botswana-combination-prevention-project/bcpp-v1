@@ -35,15 +35,9 @@
 <H3>{{report_title|capfirst}}</H3>
 
 <p><i>To join another HBC netbook, click on one of the links below:</i></p>
-<table>
-{% for host, v in uphosts.iteritems %}
-    {% if v.host == os_variables.wlan_ipaddr %}
-        <tr><td><B>{{ host }}</A></td><td><a href="{{ v.url }}">{{ v.url }}</A><td></tr>
-    {% else %}
-        <tr><td>{{ host }}</td><td><a href="{{ v.url }}">{{ v.url }}</A> <td></tr>
-    {% endif %}    
-{% endfor %}    
-</table>
 
+<input type="button" name="" id="" value="Search" onclick="Dajaxice.bhp_netbook.list_netbooks(Dajax.process);">
+
+<span name="netbook_list" id="netbook_list"></span>
 {% endblock %}
 
