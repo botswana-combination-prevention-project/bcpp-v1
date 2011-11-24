@@ -44,11 +44,13 @@ class Transaction(MyBasicUuidModel):
     
     consumed_datetime = models.DateTimeField(
         null = True,
+        blank = True,
         )
 
     consumer = models.CharField(
         max_length = 15,
         null = True,
+        blank = True,
         )
 
     objects = TransactionManager()

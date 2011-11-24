@@ -37,7 +37,8 @@ def get_new_transactions(request, **kwargs):
     # producers is usually only one producer instance
     for producer in producers:
         # url to producer, add in the producer, username and api_key of the current user
-        url = '%s?producer=%s&username=%s&api_key=%s' % (producer.url, producer.name, request.user.username, request.user.api_key.key)
+        url = '%s/bhp_sync/api/transaction/?producer=%s&username=%s&api_key=%s' % (producer.url, producer.name, request.user.username, request.user.api_key.key)
+        #raise TypeError(url)
         request_log = RequestLog()
         request_log.producer = producer
         request_log.save()
@@ -57,7 +58,9 @@ def get_new_transactions(request, **kwargs):
         try:
             json_response =  json.loads(response)   
         except:   
-            messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))  
+            messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % \
+                                                                                   (producer.name,producer.url))  
+    
 
         if json_response:
             error_list = []
