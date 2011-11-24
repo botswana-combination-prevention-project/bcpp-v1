@@ -1,4 +1,4 @@
-import os
+import socket
 from datetime import datetime
 from django.contrib import messages
 from bhp_common.models import MyModelAdmin
@@ -22,7 +22,7 @@ netbook_uphosts.short_description = "Refresh list of active netbooks"
 
 def netbook_update_svn(modeladmin, request, queryset):
     
-    netbook_name = os.gethostname()
+    netbook_name = socket.gethostname()
     svn = Svn()
     svn.update_svn(request=request, netbook_name=netbook_name)
     messages.add_message(request, messages.SUCCESS, 'Local svn repositories have been updated')                      
