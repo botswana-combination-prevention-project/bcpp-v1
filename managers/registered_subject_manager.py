@@ -50,7 +50,7 @@ class RegisteredSubjectManager(models.Manager):
 
         # prepare the subject identifier by 
         # getting the seed and prefix and deviceid, modulus
-        settings = StudySpecific.objects.all()
+        settings = StudySpecific.objects.all()[0]
         subject_identifier['modulus'] = settings.subject_identifier_modulus
         subject_identifier['seed'] = settings.subject_identifier_seed
         subject_identifier['prefix']= settings.subject_identifier_prefix
