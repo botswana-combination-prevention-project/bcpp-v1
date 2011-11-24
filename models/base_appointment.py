@@ -38,6 +38,9 @@ class BaseAppointment (MyBasicUuidModel):
         max_length=250, 
         blank=True,
         )        
+
+    def is_serialized(self):
+        return super(BaseAppointment, self).is_serialized(True)
         
     class Meta:
         abstract=True  
