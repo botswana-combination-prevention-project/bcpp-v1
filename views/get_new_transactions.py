@@ -75,6 +75,7 @@ def get_new_transactions(request, **kwargs):
                     if transaction['action'] == 'I' or transaction['action'] == 'U':
                         # deserialiser save() method
                         obj.save()
+                           
                         # call the object's save() method to trigger AuditTrail
                         # pass the producer so that new transactions on the
                         # consumer (self) correctly appear to come from the producer.
