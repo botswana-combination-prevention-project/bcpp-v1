@@ -1,4 +1,5 @@
 import os, pysvn
+from django.contrib import messages
 from bhp_netbook.models import Netbook, SvnHistory
 
 class Svn(object):
@@ -20,23 +21,23 @@ class Svn(object):
                         svn_history = SvnHistory.objects.get(netbook=netbook, repo=fld)
                     else:
                         svn_history = SvnHistory.objects.create(netbook=netbook, repo=fld)    
-                    print 'updating ' + fld
                     svn  = client.update(fld)
-                    print '...%s' % (svn[0].number,)
+                    if not svn[0].number == -1:
+                        messages.add_message(request, messages.SUCCESS, '%s revision %s', (fld, svn[0].number))                                              
                     svn_history.last_revision_number = svn[0].number
                     svn_history.last_revision_date = svn[0].date                    
                     svn_history.save()
                     if svn[0].number == -1:
-                        print 'updating ' + fld + '. second attempt'
                         svn  = client.update(fld)                
-                        print '...%s' % (svn[0].number,)
+                        if not svn[0].number == -1:
+                            messages.add_message(request, messages.SUCCESS, '%s revision %s', (fld, svn[0].number))                                              
                         svn_history.last_revision_number = svn[0].number
                         svn_history.last_revision_date = svn[0].date                                            
                         svn_history.save()
                         if svn[0].number == -1:
-                            print 'updating ' + fld + '. third attempt'
                             svn  = client.update(fld)                
-                            print '...%s' % (svn[0].number,)
+                            if not svn[0].number == -1:
+                                messages.add_message(request, messages.SUCCESS, '%s revision %s', (fld, svn[0].number))                                              
                             svn_history.last_revision_number = svn[0].number
                             svn_history.last_revision_date = svn[0].date                    
                             svn_history.save()
