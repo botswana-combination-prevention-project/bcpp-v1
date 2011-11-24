@@ -8,7 +8,7 @@ class Svn(object):
 
         client = pysvn.Client()
         request = kwargs.get('request', None)
-        netbook_name = kwargs.get('netbook_name, None)
+        netbook_name = kwargs.get('netbook_name', None)
         folders = os.listdir('/home/django/source/bhp041_new')
         
         # update mochudi
