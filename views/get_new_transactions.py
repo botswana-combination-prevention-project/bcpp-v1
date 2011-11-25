@@ -51,7 +51,7 @@ def get_new_transactions(request, **kwargs):
                 messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
                 break
             else:
-                raise urllib2.HTTPError(err) 
+                raise urllib2.HTTPError, err 
         
         # read response from url and decode          
         response = f.read()

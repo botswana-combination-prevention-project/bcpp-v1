@@ -1,0 +1,15 @@
+{% extends "base_site_mochudi_survey.html"%}
+
+
+{% block content %}
+
+
+<table>
+{% for producer in producers %}
+
+    <tr><td>{{ producer.name }}</td><td><A href="/bhp_sync/get/{{ producer.name }}/">synchronize with community server</A></td></tr> 
+
+{% endfor %}
+<table>
+
+{% endblock content %}
