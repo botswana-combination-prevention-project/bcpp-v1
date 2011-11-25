@@ -6,7 +6,6 @@ from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
 from bhp_sync.models import Transaction
 
-
 """
 from django.contrib.auth.models import User
 from django.db import models

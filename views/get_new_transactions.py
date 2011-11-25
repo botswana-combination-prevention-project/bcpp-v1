@@ -1,5 +1,6 @@
 import urllib2, base64, socket
 import simplejson as json
+#from django.core.serializers import json
 from datetime import datetime
 from tastypie.models import ApiKey
 from django.contrib.auth.models import User
@@ -56,7 +57,7 @@ def get_new_transactions(request, **kwargs):
         response = f.read()
         json_response = None
         try:
-            json_response =  json.loads(response)   
+            json_response =  json.loads(response)
         except:   
             messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % \
                                                                                    (producer.name,producer.url))  
@@ -73,8 +74,22 @@ def get_new_transactions(request, **kwargs):
                 for obj in serializers.deserialize("json",transaction['tx']):
                     #try:
                     if transaction['action'] == 'I' or transaction['action'] == 'U':
+                        
                         # deserialiser save() method
-                        obj.save()
+                        # need to check if the model instance does not already exist as it may have been
+                        # auto-created by the CONSUMER on the save of the previous transaction.
+                        # Note that some transactions trigger the creation of new model instances on the consumer when their save() 
+                        # methods are called. (for example, saving a membership form triggers the creation of appointments)
+                        # this will cause an integrity error as the consumer will auto-create a model instance 
+                        # and the next transaction to be consumed will be that same model instance with a different pk.
+                        if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
+                            obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
+                            obj.save()
+                            #raise TypeError()                            
+                        else:    
+                            obj.save()
+                        
+                        #raise TypError()
                            
                         # call the object's save() method to trigger AuditTrail
                         # pass the producer so that new transactions on the
@@ -83,7 +98,7 @@ def get_new_transactions(request, **kwargs):
                         # POST success back to to the producer
                         transaction['is_consumed'] = True
                         transaction['consumer'] = str(TransactionProducer())
-                        req = urllib2.Request(url, json.dumps(transaction), {'Content-Type': 'application/json'})
+                        req = urllib2.Request(url, json.dumps(transaction, cls=json.DjangoJSONEncoder), {'Content-Type': 'application/json'})
                         f = urllib2.urlopen(req)
                         response = f.read()
                         f.close()                        
