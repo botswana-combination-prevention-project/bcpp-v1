@@ -40,7 +40,6 @@ def get_new_transactions(request, **kwargs):
         # url to producer, add in the producer, username and api_key of the current user
         url = '%s/bhp_sync/api/transaction/?producer=%s&username=%s&api_key=%s' % (producer.url, producer.name, request.user.username, request.user.api_key.key)
         url = url.replace('//', '/')
-        raise TypeError(url)
         request_log = RequestLog()
         request_log.producer = producer
         request_log.save()
