@@ -3,7 +3,6 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.conf import settings
 from django.core import serializers
-#from django.contrib import messages
 from django.db.models import get_model
 from bhp_common.models import MyBasicModel
 from bhp_common.fields import MyUUIDField
@@ -16,12 +15,12 @@ class MyBasicUuidModel(MyBasicModel):
     
     id = MyUUIDField(primary_key=True)
 
-    def is_serialized(self, serialize=False, use_natural_keys=False):
+    def is_serialized(self, serialize=False):
 
         if 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
             if settings.ALLOW_MODEL_SERIALIZATION:
-                return {'serialize':serialize, 'use_natural_keys':use_natural_keys}
-        return {'serialize':False, 'use_natural_keys':False}
+                return serialize
+        return False
         
     def save(self, *args, **kwargs):
     
@@ -38,22 +37,25 @@ class MyBasicUuidModel(MyBasicModel):
         # note that i do not want both the proxy model and its parent model to 
         # trigger a transaction, but make sure the parent "model" has
         # is_serialized=True, otherwise no transaction will be created.
-        is_serialized = self.is_serialized()['serialize']
-        use_natural_keys =  self.is_serialized()['use_natural_keys']
-        if self.pk and is_serialized: #and not self._meta.proxy:
+
+        if self.pk and self.is_serialized(): #and not self._meta.proxy:
 
             action = 'I'
             if self.pk:
                 action = 'U'
-                
+            
             transaction = get_model('bhp_sync', 'transaction')
-            json = serializers.serialize("json", 
-                            self.__class__.objects.filter(pk=self.pk), 
+            use_natural_keys = False
+            if 'natural_key' in dir(self):
+                use_natural_keys = True
+            json_tx = serializers.serialize("json", 
+                            self.__class__.objects.filter(pk=self.pk),
+                            ensure_ascii=False, 
                             use_natural_keys=use_natural_keys)            
             transaction.objects.create(
                 tx_name = self._meta.object_name,
                 tx_pk = self.pk,
-                tx = json,
+                tx = json_tx,
                 timestamp = datetime.today().strftime('%Y%m%d%H%M%S%f'),
                 producer = str(transaction_producer),
                 action = action,                
@@ -71,11 +73,11 @@ class MyBasicUuidModel(MyBasicModel):
         if self.is_serialized() and not self._meta.proxy:
 
             transaction = get_model('bhp_sync', 'transaction')
-            json = serializers.serialize("json", self.__class__.objects.filter(pk=self.pk), )            
+            json_obj = serializers.serialize("json", self.__class__.objects.filter(pk=self.pk), )            
             transaction.objects.create(
                 tx_name = self._meta.object_name,
                 tx_pk = self.pk,
-                tx = json,
+                tx = json_obj,
                 timestamp = datetime.today().strftime('%Y%m%d%H%M%S%f'),
                 producer = str(transaction_producer),
                 action = 'D',
