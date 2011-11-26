@@ -11,6 +11,8 @@ class TransactionAdmin (MyModelAdmin):
     
     list_filter = ('is_consumed', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name','hostname_modified')
     
+    search_fields = ('tx_pk', 'tx')
+    
     actions = [reset_transaction, ]
     
 admin.site.register(Transaction, TransactionAdmin)
