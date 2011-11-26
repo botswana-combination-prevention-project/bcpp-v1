@@ -50,8 +50,6 @@ def get_new_transactions(request, **kwargs):
             if err.code == 404:
                 messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
                 break
-            else:
-                raise urllib2.HTTPError, err 
         
         # read response from url and decode          
         response = f.read()
@@ -72,6 +70,7 @@ def get_new_transactions(request, **kwargs):
             # instance of the data model we are looking for
             for transaction in json_response['objects']:
                 for obj in serializers.deserialize("json",transaction['tx']):
+                    # if you get an error deserializing a datetime, confirm dev version of json.py
                     #try:
                     if transaction['action'] == 'I' or transaction['action'] == 'U':
                         
@@ -82,10 +81,12 @@ def get_new_transactions(request, **kwargs):
                         # methods are called. (for example, saving a membership form triggers the creation of appointments)
                         # this will cause an integrity error as the consumer will auto-create a model instance 
                         # and the next transaction to be consumed will be that same model instance with a different pk.
-                        if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
-                            obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
-                            obj.save()
-                            #raise TypeError()                            
+                        if 'get_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
+                            if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
+                                obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
+                                obj.save()
+                            else:
+                                raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,) )
                         else:    
                             obj.save()
                         
