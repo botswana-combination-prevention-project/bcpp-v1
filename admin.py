@@ -2,6 +2,7 @@ from datetime import datetime
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from models import Transaction, RequestLog, Producer
+from actions import reset_transaction
 
 
 class TransactionAdmin (MyModelAdmin):
@@ -9,6 +10,8 @@ class TransactionAdmin (MyModelAdmin):
     list_display = ('tx_name', 'producer', 'is_consumed', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
     
     list_filter = ('is_consumed', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name','hostname_modified')
+    
+    actions = [reset_transaction, ]
     
 admin.site.register(Transaction, TransactionAdmin)
 
