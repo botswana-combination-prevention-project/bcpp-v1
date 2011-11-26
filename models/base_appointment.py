@@ -40,7 +40,7 @@ class BaseAppointment (MyBasicUuidModel):
         )        
 
     def is_serialized(self):
-        return super(BaseAppointment, self).is_serialized(True, use_natural_keys=True)
+        return super(BaseAppointment, self).is_serialized(True)
 
        
     class Meta:

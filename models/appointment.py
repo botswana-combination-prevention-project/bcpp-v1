@@ -70,8 +70,8 @@ class Appointment(BaseAppointment):
     def natural_key(self):
         return (self.registered_subject, self.visit_definition, self.visit_instance)
 
-    def get_by_natural_key(self, registered_subject, visit_definition, visit_instance):
-        return self.get(registered_subject=registered_subject, visit_definition=visit_definition, visit_instance=visit_instance)
+    def natural_key_as_dict(self):
+        return {'registered_subject':self.registered_subject, 'visit_definition':self.visit_definition, 'visit_instance':self.visit_instance}
 
     def get_absolute_url(self):
         return reverse('admin:bhp_appointment_appointment_change', args=(self.id,))
