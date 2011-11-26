@@ -1,32 +1,38 @@
-{% extends "base_site_mochudi_survey.html"%}
+{% extends "section.html"%}
+
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; <a href="/bhp_sync/">Synchronize with Community Server</A>
+        &rsaquo; Producer {{ producer|capfirst }}        
+    </div>
+    
+{% endblock %}
 
 
 {% block before_messages %}
 
-
-
 <table>
-<tr>
-<td>
-<P>Fetching transactions from the following producers:</P>
-<UL>
-{% for producer in producers %}
-<LI>{{ producer }}
-{% endfor %}
-</UL>
-<BR>
-<P>The messages below appear in the order they were processed.<p>
-{% endblock before_messages %}
-</td>
-</tr>
+<tr><TD><H4>Fetch Transactions from Producer </H4></TD></TR>
+<tr><td>Fetching transactions from producer "{{ producer }}"</td></tr>
+<tr><td>Producer URL: <A href="/bhp_sync/get/{{ producer.name }}/">/bhp_sync/get/{{ producer.name }}/</A></td></tr> 
+<tr><td>(go to <A href="/admin/bhp_sync/">Synchronization models</A>)
+<tr><td>The messages below appear in the order they were processed by the Comunity Server</td></tr>
 </table>
+{% endblock before_messages %}
+
 
 {% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
+    <table>
+        {% for message in messages %}
+            <tr><td>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</td></tr>
+        {% endfor %}
+    </table>
 {% endif %}
 
 {{ error_response }}
+
+
+{% block section_buttons %}{% endblock section_buttons %}
+{% block section_title %}{% endblock section_title %}
