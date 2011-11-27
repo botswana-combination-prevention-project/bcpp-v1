@@ -67,8 +67,8 @@ class Appointment(BaseAppointment):
     def __unicode__(self):
         return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance) 
 
-    def natural_key(self):
-        return (self.registered_subject, self.visit_definition, self.visit_instance)
+    #def natural_key(self):
+    #    return (self.registered_subject.pk, self.visit_definition.pk, self.visit_instance)
 
     def natural_key_as_dict(self):
         return {'registered_subject':self.registered_subject, 'visit_definition':self.visit_definition, 'visit_instance':self.visit_instance}
