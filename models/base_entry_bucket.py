@@ -40,6 +40,9 @@ class BaseEntryBucket(MyBasicUuidModel):
     
     fill_datetime = models.DateTimeField()
     
+
+    def is_serialized(self):
+        return super(BaseEntryBucket, self).is_serialized(True)
     
     class Meta:
         abstract = True

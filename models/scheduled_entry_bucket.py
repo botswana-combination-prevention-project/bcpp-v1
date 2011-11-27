@@ -26,7 +26,6 @@ class ScheduledEntryBucket(BaseEntryBucket):
     def __unicode__(self):        
         return '%s: %s' % (self.registered_subject.subject_identifier, self.entry)    
 
-    
     class Meta:
         app_label = 'bhp_entry'
         db_table = 'bhp_form_scheduledentrybucket'
