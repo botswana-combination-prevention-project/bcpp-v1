@@ -11,7 +11,7 @@ class TransactionAdmin (MyModelAdmin):
     
     list_filter = ('is_consumed', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name','hostname_modified')
     
-    search_fields = ('tx_pk', 'tx')
+    search_fields = ('tx_pk', 'tx', 'timestamp')
     
     actions = [reset_transaction, ]
     
