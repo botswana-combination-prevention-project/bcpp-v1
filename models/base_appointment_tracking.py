@@ -4,7 +4,9 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 from bhp_common.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future, datetime_is_after_consent
 from bhp_common.models import MyBasicListModel, MyBasicUuidModel
 from bhp_common.fields import OtherCharField
+from bhp_appointment.managers import VisitManager
 from appointment import Appointment
+
 
 
 class BaseAppointmentTracking (MyBasicUuidModel):
@@ -106,6 +108,11 @@ class BaseAppointmentTracking (MyBasicUuidModel):
             ],       
         )            
     """
+
+    objects = VisitManager()
+
+    def natural_key_as_dict(self):
+        return {'appointment':self.appointment, }
         
     class Meta:
         abstract = True 

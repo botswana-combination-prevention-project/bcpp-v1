@@ -77,7 +77,7 @@ class Appointment(BaseAppointment):
         return reverse('admin:bhp_appointment_appointment_change', args=(self.id,))
 
     class Meta:
-        unique_together = [('registered_subject', 'visit_definition', 'visit_instance',),]
+        #unique_together = [('registered_subject', 'visit_definition', 'visit_instance',),]
         ordering = ['registered_subject','appt_datetime', ]
         app_label = 'bhp_appointment' 
         db_table = 'bhp_form_appointment'
