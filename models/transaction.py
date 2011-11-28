@@ -54,7 +54,10 @@ class Transaction(MyBasicUuidModel):
         )
 
     objects = TransactionManager()
-    
+
+    def is_serialized(self):
+        return False
+        
     def save(self, *args, **kwargs):
         
         if self.is_consumed is True and not self.consumed_datetime:
