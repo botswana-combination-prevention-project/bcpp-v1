@@ -96,7 +96,10 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
         subject_identifier = self.model.objects.get(pk=object_id).appointment.registered_subject.subject_identifier
         result = super(BaseAppointmentModelAdmin, self).delete_view(request, object_id, extra_context)
 
-        context = {'dashboard_type':self.dashboard_type, 'appointment': appointment, 'subject_identifier':subject_identifier}
+        context = {'dashboard_type':self.dashboard_type, 'appointment': appointment }
+        if subject_identifier:
+            context['subject_identifier'] = subject_identifier
+            
         if extra_context:
             for k,v in extra_context.items():
                 context[k] = v
