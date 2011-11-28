@@ -34,9 +34,9 @@ class BaseRequisitionManager(models.Manager):
         if re.match(r'[0-9]{2}', hostname[len(hostname)-2:]):
             device_id = hostname[len(hostname)-2:]
         else:
-            device_id = StudySpecific.objects.all().device_id    
+            device_id = StudySpecific.objects.all()[0].device_id    
         
-        given_root_segment = str(device_id) + date.today().strftime('%d')
+        given_root_segment = str(device_id) + date.today().strftime('%m%d')
             
-        return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, counter_length=3)
+        return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, counter_length=2)
 
