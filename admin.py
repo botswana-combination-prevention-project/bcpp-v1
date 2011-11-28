@@ -112,8 +112,6 @@ class AppointmentAdmin(MyModelAdmin):
         'appt_status',
         'visit_definition',        
         'visit_instance',
-        'created',
-        'hostname_created',
     )
     
     search_fields = ('registered_subject__subject_identifier',)
@@ -124,6 +122,8 @@ class AppointmentAdmin(MyModelAdmin):
         'appt_status',
         'visit_definition',        
         'visit_instance',        
+        'created',
+        'hostname_created',
         )
     
     list_filter = (
@@ -131,6 +131,8 @@ class AppointmentAdmin(MyModelAdmin):
         'appt_datetime',
         'appt_status',
         'visit_definition',        
+        'created',
+        'hostname_created',
         )
         
     radio_fields = { 
