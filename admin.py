@@ -112,6 +112,8 @@ class AppointmentAdmin(MyModelAdmin):
         'appt_status',
         'visit_definition',        
         'visit_instance',
+        'created',
+        'hostname_created',
     )
     
     search_fields = ('registered_subject__subject_identifier',)
