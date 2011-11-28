@@ -15,7 +15,7 @@ class MyBasicUuidModel(MyBasicModel):
     
     id = MyUUIDField(primary_key=True)
 
-    def is_serialized(self, serialize=False):
+    def is_serialized(self, serialize=True):
 
         if 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
             if settings.ALLOW_MODEL_SERIALIZATION:
@@ -32,29 +32,33 @@ class MyBasicUuidModel(MyBasicModel):
             transaction_producer = kwargs.get('transaction_producer')            
             del kwargs['transaction_producer']
 
+        action = 'I'
+        if self.pk:
+            action = 'U'
+
         super(MyBasicUuidModel, self).save(*args, **kwargs)
         
         # note that i do not want both the proxy model and its parent model to 
         # trigger a transaction, but make sure the parent "model" has
         # is_serialized=True, otherwise no transaction will be created.
 
-        if self.pk and self.is_serialized(): #and not self._meta.proxy:
-
-            action = 'I'
-            if self.pk:
-                action = 'U'
-            
+        if self.pk and self.is_serialized():
             transaction = get_model('bhp_sync', 'transaction')
             use_natural_keys = False
             if 'natural_key' in dir(self):
                 use_natural_keys = True
+            #if this is a proxy model, get to the main model
+            if self._meta.proxy_for_model:
+                obj = self._meta.proxy_for_model.objects.get(pk=self.pk)
+            else:
+                obj = self    
             json_tx = serializers.serialize("json", 
-                            self.__class__.objects.filter(pk=self.pk),
+                            obj.__class__.objects.filter(pk=obj.pk),
                             ensure_ascii=False, 
                             use_natural_keys=use_natural_keys)            
             transaction.objects.create(
-                tx_name = self._meta.object_name,
-                tx_pk = self.pk,
+                tx_name = obj._meta.object_name,
+                tx_pk = obj.pk,
                 tx = json_tx,
                 timestamp = datetime.today().strftime('%Y%m%d%H%M%S%f'),
                 producer = str(transaction_producer),
