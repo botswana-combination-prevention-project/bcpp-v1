@@ -13,10 +13,17 @@
 {% block content %}
 
 
+<A href="/admin/bhp_sync/producer/">Producers</A>
+
 <table>
 {% for producer in producers %}
 
-    <tr><td>{{ producer.name }}</td><td><A href="/bhp_sync/get/{{ producer.name }}/">synchronize with community server</A></td></tr> 
+    <tr>
+    <td>{{ producer.name }}</td>
+    <td><A href="/bhp_sync/get/{{ producer.name }}/">synchronize with community server</A></td>
+    <td>&nbsp;|&nbsp;</td>
+    <td><A href="{{ producer.url }}admin/bhp_sync/transaction/">producer transactions</A></td>    
+    </tr> 
 
 {% endfor %}
 <table>
