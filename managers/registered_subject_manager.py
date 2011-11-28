@@ -50,19 +50,17 @@ class RegisteredSubjectManager(models.Manager):
 
         # prepare the subject identifier by 
         # getting the seed and prefix and deviceid, modulus
-        settings = StudySpecific.objects.all()[0]
-        subject_identifier['modulus'] = settings.subject_identifier_modulus
-        subject_identifier['seed'] = settings.subject_identifier_seed
-        subject_identifier['prefix']= settings.subject_identifier_prefix
+        study_variables = StudySpecific.objects.all()[0]
+        subject_identifier['modulus'] = study_variables.subject_identifier_modulus
+        subject_identifier['seed'] = study_variables.subject_identifier_seed
+        subject_identifier['prefix']= study_variables.subject_identifier_prefix
         
         subject_identifier['device_id'] = kwargs.get('device_id', None)
-
-             
         if not subject_identifier['device_id']:
-            subject_identifier['device_id'] = settings.device_id          
-        
-        if subject_identifier['device_id'] == '98':
+            subject_identifier['device_id'] = study_variables.device_id          
+        if subject_identifier['device_id'] == '98' or subject_identifier['device_id'] == '99':
             raise TypeError("Subject_identifier_device_id cannot be \'%s\'. Configure bhp_variables.StudySpecific or set hostname to end in a 2 digit number?", (subject_identifier['device_id'],))
+
         # get subject identifier sequence, is count of subject_type +1
         subject_identifier['seq'] = 1
         if super(RegisteredSubjectManager,self).filter(subject_type__iexact = subject_type):
