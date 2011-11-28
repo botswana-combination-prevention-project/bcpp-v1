@@ -180,7 +180,8 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
         if kwargs.get('subject_visit_model'):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
     
-        self.requisition_model = kwargs.get('model_instance')
+        self.requisition_model = kwargs.get('model_instance', None)
+        panel = kwargs.get('panel', None)
         action = kwargs.get('action', 'add_change')
         comment = kwargs.get('comment', '----')
         model_filter_qset = kwargs.get('model_filter_qset')
@@ -190,7 +191,10 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
             # get visit definition for visit_model_instance attached to this model
             visit_definition = self.visit_model_instance.appointment.visit_definition
             # get Entry using visit_definition and content_type_map 
-            lab_entry = LabEntry.objects.filter(visit_definition = visit_definition, panel = self.requisition_model.panel)        
+            if panel:
+                lab_entry = LabEntry.objects.filter(visit_definition=visit_definition, panel=panel)
+            else:
+                lab_entry = LabEntry.objects.filter(visit_definition=visit_definition, panel=self.requisition_model.panel)                                
             # check if entry.content_type_map.model has been keyed for this registered_subject, timepoint
             # if so, set report date and status accordingly
             report_datetime = self.visit_model_instance.report_datetime
