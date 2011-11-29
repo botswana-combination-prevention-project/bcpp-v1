@@ -23,7 +23,7 @@ class MyBasicUuidModel(MyBasicModel):
         return False
         
     def save(self, *args, **kwargs):
-    
+
         # sneek in the transaction_producer, if called from 
         # view in bhp_sync.
         # get value and delete from kwargs before calling super
