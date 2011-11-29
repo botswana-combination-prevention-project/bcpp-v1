@@ -32,15 +32,18 @@ class BaseRegisteredSubjectModel (MyBasicUuidModel):
         # this has been moved here from the admin save_model() method as the
         # create_appointments() method needs to access the saved model
         # for the base_appt_datetime, see Appointment.objects.create_appointments()
-        Appointment.objects.create_appointments( 
-            registered_subject = self.registered_subject, 
-            model_name = self.__class__.__name__.lower(),
-            )
-        
-        AdditionalEntryBucket.objects.update_status(
-            registered_subject = self.registered_subject,    
-            model_instance = self,
-            )
+
+        if not kwargs.get('suppress_autocreate_on_deserialize', False):
+            
+            Appointment.objects.create_appointments( 
+                registered_subject = self.registered_subject, 
+                model_name = self.__class__.__name__.lower(),
+                )
+            
+            AdditionalEntryBucket.objects.update_status(
+                registered_subject = self.registered_subject,    
+                model_instance = self,
+                )
 
 
     class Meta:
