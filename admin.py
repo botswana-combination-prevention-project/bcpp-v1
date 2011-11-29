@@ -23,9 +23,9 @@ class ScheduledEntryBucketAdmin(MyModelAdmin):
     
     search_fields = ('registered_subject__subject_identifier', 'entry__visit_definition__code', 'entry__content_type_map__model')
 
-    list_display = ('registered_subject', 'entry', 'entry_status', 'fill_datetime', 'due_datetime', 'close_datetime')
+    list_display = ('registered_subject', 'entry', 'entry_status', 'fill_datetime', 'due_datetime', 'close_datetime', 'created', 'hostname_created')
 
-    list_filter = ('entry_status', 'entry__visit_definition__code', 'fill_datetime',)
+    list_filter = ('entry_status', 'entry__visit_definition__code', 'fill_datetime','created', 'hostname_created')
     
     #override, limit dropdown in add_view to id passed in the URL        
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
