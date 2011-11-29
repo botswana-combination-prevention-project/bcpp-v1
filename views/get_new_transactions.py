@@ -113,7 +113,8 @@ def get_new_transactions(request, **kwargs):
                                                 # call the object's save() method to trigger AuditTrail
                                                 # pass the producer so that new transactions on the
                                                 # consumer (self) correctly appear to come from the producer.
-                                                obj.object.save(transaction_producer=transaction['producer'])
+                                                obj.object.save(transaction_producer=transaction['producer'], suppress_autocreate_on_deserialize=True)
+                                                
                                                 # POST success back to to the producer
                                                 transaction['is_consumed'] = True
                                                 transaction['consumer'] = str(TransactionProducer())
