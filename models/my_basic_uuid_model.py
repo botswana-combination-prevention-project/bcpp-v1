@@ -31,7 +31,12 @@ class MyBasicUuidModel(MyBasicModel):
         if 'transaction_producer' in kwargs:
             transaction_producer = kwargs.get('transaction_producer')            
             del kwargs['transaction_producer']
-
+        # use 'suppress_autocreate_on_deserialize' to not allow save methods
+        # to create new model instances such as appointments, ScheduledEntry, etc
+        # as these will be serialized on the producer
+        if 'suppress_autocreate_on_deserialize' in kwargs:
+            del kwargs['suppress_autocreate_on_deserialize']
+            
         action = 'I'
         if self.pk:
             action = 'U'
