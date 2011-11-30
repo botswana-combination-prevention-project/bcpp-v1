@@ -16,6 +16,17 @@ class Producer(MyBasicUuidModel):
         default=True
         )
     
+    sync_datetime = models.DateTimeField(
+        null = True
+        )
+
+    sync_status = models.CharField(
+        max_length = 25,
+        default = 'Complete',
+        null = True,
+        )
+        
+    
     def __unicode__(self):
         return self.name
             

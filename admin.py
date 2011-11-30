@@ -19,7 +19,8 @@ admin.site.register(Transaction, TransactionAdmin)
 
 class ProducerAdmin(MyModelAdmin):
 
-    list_display = ('name', 'url', 'is_active')
+    list_display = ('name', 'url', 'is_active', 'sync_datetime', 'sync_status')
+    list_filter = ('is_active', 'sync_datetime', 'sync_status',)
     
 admin.site.register(Producer, ProducerAdmin)
 

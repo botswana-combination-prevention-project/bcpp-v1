@@ -49,6 +49,10 @@ def get_new_transactions(request, **kwargs):
                     request_log.producer = producer
                     request_log.save()
                     
+                    producer.sync_datetime = request_log.request_datetime
+                    producer.sync_status = 'Error'
+                    producer.save()
+                    
                     err = None
                     req = urllib2.Request(url=url)
                     while req:
@@ -56,11 +60,19 @@ def get_new_transactions(request, **kwargs):
                             f = urllib2.urlopen(req)
                             req = None
                         except urllib2.HTTPError, err:
+                            request_log.status = 'error'
+                            request_log.save()
                             req = None            
                             if err.code == 404:
                                 messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
+                        except urllib2.URLError, err:
+                            request_log.status = 'error'
+                            request_log.save()
+                            messages.add_message(request, messages.ERROR, err)                                       
+                        
                         if err:
-                            #req = None
+                            request_log.status = 'error'
+                            request_log.save()
                             raise TypeError()
                         else:    
                             # read response from url and decode          
@@ -154,7 +166,10 @@ def get_new_transactions(request, **kwargs):
                                             #        o = obj.object._meta.object_name    
                                             #    messages.add_message(request, messages.ERROR, 'Import failed. Unhandled Error for %s' %(o,))    
 
+        producer.sync_status = 'OK'
+        producer.save()
         
+    
         return render_to_response('new_transactions.html', { 
             'producer': producer,
         },context_instance=RequestContext(request))
