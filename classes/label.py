@@ -139,14 +139,15 @@ class Label(object):
                         # note -r will delete the file after printing ...
 
                         #subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                        
-                        subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-H', self.label_printer.cups_printer_ip, '-r'], shell=False)                                                #subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name],shell=False)
-
+                        #subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-H', self.label_printer.cups_server_ip, '-r'], shell=False)
+                        subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-H', self.label_printer.cups_server_ip], shell=False)                        
+                        #subprocess.Popen(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name],shell=False)
                         #raise TypeError()
                         #if sys.version_info.major == 2 and sys.version_info.minor < 7:
                         #    subprocess.check_call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
                         #else:
                         #    subprocess.check_output(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-r'], shell=False)                                        
-                        self.message = "Label was sent to printer %s" % self.label_printer.cups_printer_name
+                        self.message = "Label sent to printer %s" % self.label_printer.cups_printer_name
                         self.printer_error = False            
                     except subprocess.CalledProcessError, e:
                         self.message = "Printer error. Unable to print test label. Check the printer is defined in LabelPrinter and ready. %s" % e.output

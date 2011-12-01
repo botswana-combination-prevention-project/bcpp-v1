@@ -15,6 +15,8 @@ class ZplTemplateAdmin(MyModelAdmin):
         "default",        
     )
 
+    list_display = ('name', 'default',)
+    
     radio_fields = {
         
     }
