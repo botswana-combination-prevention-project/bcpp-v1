@@ -1,8 +1,8 @@
 from django.db import models
 #from bhp_common.classes import LockableObject
-from bhp_common.models import MyBasicModel
+from bhp_common.models import MyBasicUuidModel
 
-class IdentifierTracker(MyBasicModel): #, LockableObject):
+class IdentifierTracker(MyBasicUuidModel): #, LockableObject):
 
     """
     A lockable model to create and track unique identifiers for new records such as requsitions, receive, etc.
@@ -28,6 +28,18 @@ class IdentifierTracker(MyBasicModel): #, LockableObject):
     identifier_type = models.CharField(
         max_length = 35
         )
+        
+    device_id = models.CharField(
+        max_length = 10,
+        null = True,
+        blank = True,
+        )       
+
+    def is_serialized(self):
+        return super(IdentifierTracker, self).is_serialized(True)
+   
+    def __unicode__(self):
+        return self.identifier   
    
     class Meta:
         app_label = 'bhp_identifier'        
