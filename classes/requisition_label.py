@@ -2,6 +2,7 @@ from bhp_variables.models import StudySpecific
 from bhp_registration.models import RegisteredSubject
 from lab_barcode.classes import Label
 
+
 class RequisitionLabel(Label):
 
     def __init__(self, **kwargs):
@@ -27,6 +28,7 @@ class RequisitionLabel(Label):
 
         kwargs['template'] = template
         kwargs['requisition_identifier'] = requisition.requisition_identifier
+        kwargs['specimen_identifier'] = requisition.specimen_identifier
         kwargs['protocol'] = study_specific.protocol_number
         kwargs['site'] = requisition.site.site_code
         kwargs['panel']= requisition.panel.name[0:21]

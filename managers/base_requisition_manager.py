@@ -12,7 +12,8 @@ class BaseRequisitionManager(models.Manager):
 
         """Generate and return a locally unique requisition identifier"""        
         
-        site_code = kwargs.get('site_code')        
+        site_code = kwargs.get('site_code')
+        protocol_code = kwargs.get('protocol_code', '')                        
 
         if not site_code:
             try:
@@ -23,7 +24,14 @@ class BaseRequisitionManager(models.Manager):
         if len(site_code) == 1:
             site_code = site_code + '0'
         
-        return Identifier(subject_type = 'requisition', site_code = site_code).create()
+        identifier = Identifier(subject_type = 'specimen', 
+                            site_code = site_code, 
+                            protocol_code = protocol_code,
+                            counter_length = 4,
+                            )
+        identifier.create()
+                                    
+        return identifier.decode()                   
 
 
     def get_identifier_for_device(self, **kwargs):

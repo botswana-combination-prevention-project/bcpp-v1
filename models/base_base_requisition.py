@@ -27,6 +27,13 @@ class BaseBaseRequisition (MyBasicUuidModel):
         verbose_name='Requisition Date / Time'
         )    
     
+    specimen_identifier = models.CharField(
+        max_length = 25,
+        null = True,
+        blank = True,
+        editable = False
+        )
+
     protocol = models.CharField(
         verbose_name = "Protocol Number",
         max_length=10,
