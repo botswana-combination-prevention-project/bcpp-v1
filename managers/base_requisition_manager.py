@@ -37,12 +37,16 @@ class BaseRequisitionManager(models.Manager):
     def get_identifier_for_device(self, **kwargs):
 
         """Generate and return a locally unique requisition identifier if created on a device / netbook"""        
-        
-        hostname = socket.gethostname()
-        if re.match(r'[0-9]{2}', hostname[len(hostname)-2:]):
-            device_id = hostname[len(hostname)-2:]
+
+        # mostly will get device_id from hostname
+        if kwargs.get('device_id'):
+            device_id = kwargs.get('device_id')
         else:
-            device_id = StudySpecific.objects.all()[0].device_id    
+            hostname = socket.gethostname()
+            if re.match(r'[0-9]{2}', hostname[len(hostname)-2:]):
+                device_id = hostname[len(hostname)-2:]
+            else:
+                device_id = StudySpecific.objects.all()[0].device_id    
         
         given_root_segment = str(device_id) + date.today().strftime('%m%d')
             
