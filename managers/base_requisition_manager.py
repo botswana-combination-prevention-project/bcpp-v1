@@ -1,9 +1,11 @@
 import socket, re
-from datetime import date
+from datetime import date, datetime
 from django.db import models
 from django.conf import settings
+from django.contrib import messages
 from bhp_variables.models import StudySpecific
 from bhp_identifier.classes import Identifier
+from lab_requisition.classes import ClinicRequisitionLabel
 
 
 class BaseRequisitionManager(models.Manager):
@@ -31,7 +33,7 @@ class BaseRequisitionManager(models.Manager):
                             )
         identifier.create()
                                     
-        return identifier.decode()                   
+        return identifier                   
 
 
     def get_identifier_for_device(self, **kwargs):
@@ -51,4 +53,30 @@ class BaseRequisitionManager(models.Manager):
         given_root_segment = str(device_id) + date.today().strftime('%m%d')
             
         return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, counter_length=2)
+        
+    def print_label(self, **kwargs):
+        
+        requisition = kwargs.get('requisition')
+        remote_addr = kwargs.get('remote_addr')
+        if requisition.specimen_identifier:    
+            for cnt in range(requisition.item_count_total, 0, -1):
+                try:
+                    label = ClinicRequisitionLabel(
+                                            client_ip = remote_addr,
+                                            item_count = cnt, 
+                                            requisition = requisition,
+                                            )
+                    label.print_label()                                             
+                except ValueError, err:
+                    messages.add_message(request, messages.ERROR, err)
+                if not label.printer_error:
+                    print_message = '%s for specimen %s at %s from host %s' % (label.message, requisition.requisition_identifier, datetime.today().strftime('%H:%M'), remote_addr)
+                    li_class = "info"
+                else:
+                    print_message = '%s' % (label.message)
+                    li_class = "error"
+                    
+        else:            
+            print_message = "Label did not print."
+            li_class = "error"            
 

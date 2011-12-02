@@ -29,6 +29,10 @@ class RequisitionLabel(Label):
         kwargs['template'] = template
         kwargs['requisition_identifier'] = requisition.requisition_identifier
         kwargs['specimen_identifier'] = requisition.specimen_identifier
+        if 'hiv_status_code' in dir(requisition):
+            kwargs['hiv_status_code'] = str(requisition.hiv_status_code())
+        if 'art_status_code' in dir(requisition):
+            kwargs['art_status_code'] = str(requisition.art_status_code())
         kwargs['protocol'] = study_specific.protocol_number
         kwargs['site'] = requisition.site.site_code
         kwargs['panel']= requisition.panel.name[0:21]
