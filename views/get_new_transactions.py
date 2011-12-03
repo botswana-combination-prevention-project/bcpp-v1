@@ -41,6 +41,7 @@ def get_new_transactions(request, **kwargs):
                         producer = Producer.objects.get(name__iexact=kwargs.get('producer'))
 
                 if producer:
+                
                     # url to producer, add in the producer, username and api_key of the current user
                     data = {'host': producer.url, 'producer':producer.name, 'username':request.user.username, 'api_key':request.user.api_key.key}
                     url = '{host}bhp_sync/api/transaction/?format=json&limit=100&producer={producer}&username={username}&api_key={api_key}'.format(**data)
@@ -66,15 +67,13 @@ def get_new_transactions(request, **kwargs):
                             if err.code == 404:
                                 messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
                         except urllib2.URLError, err:
+                            producer.sync_status = 'error'                                                
                             request_log.status = 'error'
                             request_log.save()
                             messages.add_message(request, messages.ERROR, err)                                       
-                        
-                        if err:
-                            request_log.status = 'error'
-                            request_log.save()
-                            raise TypeError()
-                        else:    
+                            break
+
+                        if not err:
                             # read response from url and decode          
                             response = f.read()
                             json_response = None
@@ -88,6 +87,8 @@ def get_new_transactions(request, **kwargs):
                                         req = urllib2.Request(url=json_response['meta']['next'])
                                     if not json_response['meta']['total_count'] == 0:    
                                         messages.add_message(request, messages.INFO, 'Fetching. Limit is %s. Starting at %s of %s' % (json_response['meta']['limit'], json_response['meta']['offset'], json_response['meta']['total_count']) )                              
+                                    producer.json_limit = json_response['meta']['limit']                                       
+                                    producer.json_total_count = json_response['meta']['total_count']                                        
                                 #except:
                                 #    messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))  
 

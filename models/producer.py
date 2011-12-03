@@ -25,7 +25,14 @@ class Producer(MyBasicUuidModel):
         default = 'Complete',
         null = True,
         )
-        
+    
+    json_limit = models.IntegerField(
+        default = 0
+        )
+    
+    json_total_count = models.IntegerField(
+        default = 0
+        )
     
     def __unicode__(self):
         return self.name
