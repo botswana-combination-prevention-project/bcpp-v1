@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.query import QuerySet
-from mochudi_survey.models import Survey
+
 
 class StudySpecificManager(models.Manager):
 
