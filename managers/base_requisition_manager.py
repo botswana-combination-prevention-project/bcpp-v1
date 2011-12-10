@@ -66,7 +66,10 @@ class BaseRequisitionManager(models.Manager):
                                             item_count = cnt, 
                                             requisition = requisition,
                                             )
-                    label.print_label()                                             
+                    label.print_label()
+                    requisition.is_labelled = True
+                    requisition.modified = datetime.today()
+                    requisition.save()                                             
                 except ValueError, err:
                     messages.add_message(request, messages.ERROR, err)
                 if not label.printer_error:
