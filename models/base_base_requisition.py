@@ -20,14 +20,16 @@ class BaseBaseRequisition (MyBasicUuidModel):
     """ does not include additional tests """
     
     requisition_identifier = models.CharField(
+        verbose_name = 'Requisition Id',
         max_length = 25,
         )
 
     requisition_datetime =  models.DateTimeField(
-        verbose_name='Requisition Date / Time'
+        verbose_name='Requisition Date'
         )    
     
     specimen_identifier = models.CharField(
+        verbose_name = 'Specimen Id',    
         max_length = 25,
         null = True,
         blank = True,
