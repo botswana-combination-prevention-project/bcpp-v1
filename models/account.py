@@ -7,7 +7,7 @@ class Account (MyBasicUuidModel):
     
     account_name = models.CharField(
         max_length = 25,
-        unique=True,
+        unique = True,
         )
         
     account_opendate = models.DateField(
@@ -19,11 +19,13 @@ class Account (MyBasicUuidModel):
         )    
 
     account_holder = models.ForeignKey(AccountHolder,
-    	null=True)
+    	null = True,
+    	blank = True,
+    	)
 
     comment = models.CharField("Comment", 
-        max_length=250, 
-        blank=True,
+        max_length = 250, 
+        blank = True,
         )        
                
     def get_absolute_url(self):
