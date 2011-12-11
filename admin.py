@@ -64,7 +64,7 @@ class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
     
     search_fields = ('result_identifier', 'release_status')    
     
-    list_filter = ('result_datetime', 'release_status')
+    list_filter = ('release_status', 'result_datetime', 'release_status')
 
     
 admin.site.register(Result, ResultAdmin)
