@@ -12,7 +12,8 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         'initials',
         'gender',
         'subject_type',
-        'sid',                
+        'sid',     
+        'registration_status',           
         'study_site',
         'user_created',
         'created',
@@ -23,10 +24,10 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         'subject_identifier',
         )
 
-    search_fields = ('subject_identifier', 'first_name', 'initials', 'sid')    
+    search_fields = ('subject_identifier', 'first_name', 'initials', 'sid', 'identity')    
 
     
-    list_filter = ('subject_type', 'registration_datetime','gender','study_site',)
+    list_filter = ('subject_type', 'registration_status', 'registration_datetime','gender','study_site',)
     
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
 
