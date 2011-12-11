@@ -26,7 +26,7 @@ def get_new_transactions(request, **kwargs):
             if not request.user.api_key:
                 raise ValueError, 'ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,)
             else:            
-                timeout = 5
+                timeout = 10
                 socket_default_timeout = socket.getdefaulttimeout()        
                 consumed = []
                 
@@ -44,7 +44,7 @@ def get_new_transactions(request, **kwargs):
                 
                     # url to producer, add in the producer, username and api_key of the current user
                     data = {'host': producer.url, 'producer':producer.name, 'username':request.user.username, 'api_key':request.user.api_key.key}
-                    url = '{host}bhp_sync/api/transaction/?format=json&limit=100&producer={producer}&username={username}&api_key={api_key}'.format(**data)
+                    url = '{host}bhp_sync/api/transaction/?format=json&limit=2000&producer={producer}&username={username}&api_key={api_key}'.format(**data)
 
                     request_log = RequestLog()
                     request_log.producer = producer
@@ -121,8 +121,6 @@ def get_new_transactions(request, **kwargs):
                                                 else:    
                                                     obj.save()
 
-                                                #raise TypError()
-                                                   
                                                 # call the object's save() method to trigger AuditTrail
                                                 # pass the producer so that new transactions on the
                                                 # consumer (self) correctly appear to come from the producer.
@@ -137,6 +135,7 @@ def get_new_transactions(request, **kwargs):
                                                 f.close()                        
                                                 # display a message on the consumer (self)
                                                 messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
+
                                             elif transaction['action'] == 'D':
                                                 if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
                                                     if settings.ALLOW_DELETE_MODEL_FROM_SERIALIZATION:
@@ -152,20 +151,6 @@ def get_new_transactions(request, **kwargs):
                                                     messages.add_message(request, messages.ERROR, msg)                                                                                            
                                             else:
                                                 raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (transaction['action'],)
-                                            #consumed.append(unicode(obj.object))
-
-                                            #except IntegrityError:
-                                            #    try:
-                                            #        o = unicode(obj.object)
-                                            #    except:
-                                            #        o = obj.object._meta.object_name    
-                                            #    messages.add_message(request, messages.ERROR, 'Import failed. Integrity Error for %s' %(o,))
-                                            #except:
-                                            #    try:
-                                            #        o = unicode(obj.object)
-                                            #    except:
-                                            #        o = obj.object._meta.object_name    
-                                            #    messages.add_message(request, messages.ERROR, 'Import failed. Unhandled Error for %s' %(o,))    
 
         producer.sync_status = 'OK'
         producer.save()
