@@ -130,6 +130,7 @@ class AppointmentAdmin(MyModelAdmin):
         'registered_subject__subject_type',    
         'appt_datetime',
         'appt_status',
+        'visit_instance',
         'visit_definition',        
         'created',
         'hostname_created',
