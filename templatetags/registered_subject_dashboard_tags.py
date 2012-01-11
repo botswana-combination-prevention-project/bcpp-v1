@@ -121,6 +121,9 @@ class ModelAdminUrl(template.Node):
         self.app_label = self.unresolved_app_label.resolve(context)
         self.extra_url_context = self.unresolved_extra_url_context.resolve(context)        
         self.visit_model_instance = None
+        
+        if not self.extra_url_context:
+            self.extra_url_context = ''
 
         #raise TypeError(self.visit_model)
         # wait ??  what type of obejct is visit_model??
