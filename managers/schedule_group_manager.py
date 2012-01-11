@@ -28,7 +28,7 @@ class ScheduleGroupManager(models.Manager):
         # (naming needs work ...)            
         include_after_exclusion_model_keyed = kwargs.get("include_after_exclusion_model_keyed", None)          
                
-        # category of the membership form. Can be any value as long as 
+        # category of the membership form. Can be any value as  long as 
         # it helps link membership forms in some way. For example, 
         # to distinguish 'maternal' from 'infant' forms. Specified at the form level
         membership_form_category = kwargs.get("membership_form_category")        
