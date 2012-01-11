@@ -461,6 +461,12 @@ class RegisteredSubjectDashboard(Dashboard):
                 name="dashboard_url"
                 ),
 
+
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registered_subject>{pk})/$'.format(**regex), 
+                'dashboard', 
+                name="dashboard_url"
+                ),
+
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registration_identifier>{registration_identifier})/(?P<registered_subject>{pk})/$'.format(**regex), 
                 'dashboard', 
                 name="dashboard_url"
