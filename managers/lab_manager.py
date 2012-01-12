@@ -38,7 +38,7 @@ class LabManager(models.Manager):
         subject_identifier = kwargs.get('subject_identifier')
         if self.connected():
             # update for new samples received at the lab
-            lis_receives = LisReceive.objects.using('lab_api').filter(patient__subject_identifier=subject_identifier)
+            lis_receives = LisReceive.objects.using('lab_api').filter(patient__subject_identifier=subject_identifier).exclude(aliquot__order__result__isnull=True)
             for lis_receive in lis_receives:
                 if AliquotCondition.objects.filter(display_index=lis_receive.receive_condition):
                     aliquot_condition = AliquotCondition.objects.get(display_index=lis_receive.receive_condition) 
@@ -57,7 +57,7 @@ class LabManager(models.Manager):
                     lab.protocol_identifier = lis_receive.protocol.protocol_identifier
                     lab.release_status = 'received' 
                     lab.panel = lis_receive.dmis_panel_name
-                    lab.aliquot_identifier = None#lis_receive.aliquot.aliquot_identifier
+                    lab.aliquot_identifier = None #lis_receive.aliquot.aliquot_identifier
                     lab.condition = condition_name
                     lab.receive_datetime = lis_receive.receive_datetime
                     lab.receive_identifier = lis_receive.receive_identifier
