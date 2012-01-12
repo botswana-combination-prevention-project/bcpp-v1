@@ -42,6 +42,11 @@ def update_result_status(request, subject_identifier):
             if results:
                 ResultItem.objects.fetch(subject_identifier=subject_identifier, results=results)        
         
+        # temp workaround, delete all without a result until
+        # i can get this to import correctly
+        if Lab.objects.filter(subject_identifier=subject_identifier, result__isnull=True):
+            Lab.objects.filter(subject_identifier=subject_identifier, result__isnull=True).delete()        
+
         aggr = UpdateLog.objects.filter(subject_identifier=subject_identifier).aggregate(Max('update_datetime'))
         if isinstance(aggr['update_datetime__max'], (date,datetime,)):
             lab_last_updated = aggr['update_datetime__max']
