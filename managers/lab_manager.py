@@ -68,7 +68,7 @@ class LabManager(models.Manager):
                     lab.release_datetime = None
 
                     lab.save()
-                    print 'receive: updating %s for %s' % (lis_receive.receive_identifier, subject_identifier)
+                    #print 'receive: updating %s for %s' % (lis_receive.receive_identifier, subject_identifier)
                 else:
                     super(LabManager, self).create(
                         created = lis_receive.created,
@@ -89,7 +89,7 @@ class LabManager(models.Manager):
                         condition = condition_name,
 
                         )
-                    print 'receive: creating %s for %s' % (lis_receive.receive_identifier, subject_identifier)                        
+                    #print 'receive: creating %s for %s' % (lis_receive.receive_identifier, subject_identifier)                        
                 
                                                     
             # order and result
@@ -125,7 +125,7 @@ class LabManager(models.Manager):
                     lab.drawn_datetime = lis_result.order.aliquot.receive.drawn_datetime
                     lab.release_datetime = lis_result.release_datetime
                     lab.save()
-                    print 'order: updating %s for %s' % (lis_result.order.aliquot.receive.receive_identifier, subject_identifier)                    
+                    #print 'order: updating %s for %s' % (lis_result.order.aliquot.receive.receive_identifier, subject_identifier)                    
             
                 else:
                     lab = super(LabManager, self).create(
@@ -150,7 +150,7 @@ class LabManager(models.Manager):
                         drawn_datetime = lis_result.order.aliquot.receive.drawn_datetime,
                         release_datetime = lis_result.release_datetime,
                         )
-                    print 'order: creating %s for %s' % (lis_result.order.aliquot.receive.receive_identifier, subject_identifier)                                                
+                    #print 'order: creating %s for %s' % (lis_result.order.aliquot.receive.receive_identifier, subject_identifier)                                                
             if UpdateLog.objects.filter(subject_identifier=subject_identifier):
                 update_log = UpdateLog.objects.get(subject_identifier=subject_identifier)
                 update_log.update_datetime = datetime.today()                 

@@ -26,7 +26,8 @@ class ResultItemManager(models.Manager):
     
     def update(self, **kwargs ):
         """
-        Using the 'lab_api' DATABASE connection defined in settings, update the local copy of lab data and return nothing.
+        Using the 'lab_api' DATABASE connection defined in settings, 
+        update the local copy of lab data and return nothing.
         
         From your code, call 'fetch' instead of 'update'
         """
@@ -95,3 +96,4 @@ class ResultItemManager(models.Manager):
         self.update(subject_identifier = subject_identifier, results=results)
         
         return super(ResultItemManager, self).filter(result__lab__subject_identifier = subject_identifier)
+        
