@@ -23,7 +23,7 @@ class Transaction(MyBasicUuidModel):
     tx = models.TextField()
     
     producer = models.CharField(
-        max_length = 15,
+        max_length = 25,
         default = str(transaction_producer),
         )
 
