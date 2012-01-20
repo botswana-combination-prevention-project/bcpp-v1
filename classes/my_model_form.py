@@ -8,6 +8,7 @@ class MyModelForm(forms.ModelForm):
 
         other =[]
         [other.append(k) for k in cleaned_data.iterkeys() if cleaned_data[k] == 'OTHER']
+        
         for k in other:
             if k+'_other' in cleaned_data:
                 if not cleaned_data[k+'_other']:        
@@ -57,10 +58,10 @@ class MyModelForm(forms.ModelForm):
             raise forms.ValidationError("You stated there are NO " + label + "s. Please correct")                
 
         # if leading question is 'Yes' and an m2m item is 'other, specify', ensure 'other' attribute has a value
-        if leading.lower() == 'yes' and not other and [True for item in m2m if item.name.lower() == 'other, specify']:        
+        if leading.lower() == 'yes' and not other and [True for item in m2m if 'other' in item.name.lower()]:        
             raise forms.ValidationError("You have selected a '" + label + "' as 'Other', please specify.")
 
         # if 'other' has a value but no m2m item is 'Other, specify'
-        if other and not [True for item in m2m if item.name.lower() == 'other, specify']:
+        if other and not [True for item in m2m if 'other' in item.name.lower()]:
             raise forms.ValidationError("You have specified an 'Other' " + label + " but not selected 'Other, specify'. Please correct.")        
 
