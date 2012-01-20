@@ -56,6 +56,8 @@ class ModelPk(template.Node):
 
         # make sure appointment is the visit_instance 0 appointment
         # the data is linked to the visit of visit_instance 0
+
+        #TODO: have condition when self.appointment in None
         appointment_0 = self.appointment.__class__.objects.get(
                     registered_subject = self.appointment.registered_subject, 
                     visit_definition = self.appointment.visit_definition,
