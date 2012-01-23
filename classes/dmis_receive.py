@@ -17,8 +17,9 @@ class DmisReceive(object):
 
     def __init__(self, debug=False):
         self.debug = debug
+        self.lab_db = 'default'
 
-    def fetch_receive(self, **kwargs):
+    def fetch(self, **kwargs):
         
         """Fetch receiving (lab01) and order (lab21) records from the mssql/vb version of dmis.
            
@@ -27,7 +28,7 @@ class DmisReceive(object):
            and which records to fetch (perhaps something older has been modeified.
            Also, call with both process_status (pending and available) to make sure you get everything.
         """
-        lab_db = kwargs.get('lab_db', 'default')
+        self.lab_db = kwargs.get('lab_db', 'default')
         subject_identifier = kwargs.get('subject_identifier')
 
         if subject_identifier:
@@ -147,10 +148,10 @@ class DmisReceive(object):
         receive_condition = kwargs.get('receive_condition')
 
 
-        receive = Receive.objects.using(lab_db).filter(receive_identifier=receive_identifier)
+        receive = Receive.objects.using(self.lab_db).filter(receive_identifier=receive_identifier)
 
         if receive:
-            receive = Receive.objects.using(lab_db).get(receive_identifier=receive_identifier)
+            receive = Receive.objects.using(self.lab_db).get(receive_identifier=receive_identifier)
             if receive.modified < modified:
                 if self.debug:
                     print 'updating receive %s' % receive_identifier
@@ -182,7 +183,7 @@ class DmisReceive(object):
                                         dob=dob, 
                                         initials=initials,
                                         )
-            receive = Receive.objects.using(lab_db).create(
+            receive = Receive.objects.using(self.lab_db).create(
                 protocol = protocol,
                 receive_identifier = receive_identifier,
                 patient = patient,
@@ -211,14 +212,14 @@ class DmisReceive(object):
         if site_identifier == None or site_identifier == '' or site_identifier == '-9':
             site_identifier = '00'
             
-        site = Site.objects.using(lab_db).filter(site_identifier__iexact=site_identifier)
+        site = Site.objects.using(self.lab_db).filter(site_identifier__iexact=site_identifier)
 
         if site:
-            site = Site.objects.using(lab_db).get(site_identifier__iexact=site_identifier)
+            site = Site.objects.using(self.lab_db).get(site_identifier__iexact=site_identifier)
         else:
-            oLocation = Location.objects.using(lab_db).filter(name__exact='UNKNOWN')
+            oLocation = Location.objects.using(self.lab_db).filter(name__exact='UNKNOWN')
             if oLocation:
-                oLocation = Location.objects.using(lab_db).get(name__exact='UNKNOWN')        
+                oLocation = Location.objects.using(self.lab_db).get(name__exact='UNKNOWN')        
             else:
                 oLocation = Location(
                     name = 'UNKNOWN',
@@ -235,14 +236,14 @@ class DmisReceive(object):
 
     def fetch_or_create_protocol(self,  protocol_identifier ):
 
-        protocol = Protocol.objects.using(lab_db).filter(protocol_identifier__iexact=protocol_identifier)
-        
+        protocol = Protocol.objects.using(self.lab_db).filter(protocol_identifier__iexact=protocol_identifier)
+        raise TypeError(protocol, self.lab_db)
         if protocol:
-            protocol = Protocol.objects.using(lab_db).get(protocol_identifier__iexact=protocol_identifier)
+            protocol = Protocol.objects.using(self.lab_db).get(protocol_identifier__iexact=protocol_identifier)
         else:
-            oPI = PrincipalInvestigator.objects.using(lab_db).get(last_name='UNKNOWN')
-            oSL = SiteLeader.objects.using(lab_db).get(last_name='UNKNOWN')                
-            oFS = FundingSource.objects.using(lab_db).get(name='UNKNOWN')                
+            oPI = PrincipalInvestigator.objects.using(self.lab_db).get(last_name='UNKNOWN')
+            oSL = SiteLeader.objects.using(self.lab_db).get(last_name='UNKNOWN')                
+            oFS = FundingSource.objects.using(self.lab_db).get(name='UNKNOWN')                
 
             protocol = Protocol(
                 protocol_identifier = protocol_identifier,
@@ -259,10 +260,10 @@ class DmisReceive(object):
 
     def fetch_or_create_account(self,  account_name ):
 
-        account = Account.objects.using(lab_db).filter(account_name__iexact=account_name)
+        account = Account.objects.using(self.lab_db).filter(account_name__iexact=account_name)
         
         if account:
-            account = Account.objects.using(lab_db).get(account_name__iexact=account_name)
+            account = Account.objects.using(self.lab_db).get(account_name__iexact=account_name)
         else:
             account = Account(
                 account_name = account_name,
@@ -287,16 +288,16 @@ class DmisReceive(object):
         dob = kwargs.get('dob')
         is_dob_estimated = '-'
 
-        patient = Patient.objects.using(lab_db).filter(subject_identifier__iexact=subject_identifier)
+        patient = Patient.objects.using(self.lab_db).filter(subject_identifier__iexact=subject_identifier)
         if patient:
-            patient = Patient.objects.using(lab_db).get(subject_identifier__iexact=subject_identifier)
+            patient = Patient.objects.using(self.lab_db).get(subject_identifier__iexact=subject_identifier)
             patient.dob = dob
             patient.gender = gender
             patient.is_dob_estimated = is_dob_estimated
             patient.initials = initials
             patient.save()
         else:
-            patient = Patient.objects.using(lab_db).create(
+            patient = Patient.objects.using(self.lab_db).create(
                 subject_identifier = subject_identifier,
                 initials = initials,
                 gender = gender,
@@ -329,19 +330,19 @@ class DmisReceive(object):
         
         # get or create the primary aliquot
         aliquot_identifier = '%s0000%s01' % (receive.receive_identifier, create['type'])    
-        if Aliquot.objects.using(lab_db).filter(aliquot_identifier__iexact=aliquot_identifier):
-            primary_aliquot = Aliquot.objects.using(lab_db).get(aliquot_identifier__iexact=aliquot_identifier)
+        if Aliquot.objects.using(self.lab_db).filter(aliquot_identifier__iexact=aliquot_identifier):
+            primary_aliquot = Aliquot.objects.using(self.lab_db).get(aliquot_identifier__iexact=aliquot_identifier)
             if not primary_aliquot.modified == modified:        
-                aliquot_type = AliquotType.objects.using(lab_db).get(numeric_code__exact=create['type'])        
+                aliquot_type = AliquotType.objects.using(self.lab_db).get(numeric_code__exact=create['type'])        
                 primary_aliquot.modified = modified
                 primary_aliquot.aliquot_type = aliquot_type
                 primary_aliquot.condition = aliquot_condition
                 primary_aliquot.save()
         else:
             create['comment'] = 'auto created on import from DMIS'
-            aliquot_type = AliquotType.objects.using(lab_db).get(numeric_code__exact=create['type'])
-            aliquot_medium = AliquotMedium.objects.using(lab_db).get(short_name__iexact=create['medium'])            
-            primary_aliquot = Aliquot.objects.using(lab_db).create(
+            aliquot_type = AliquotType.objects.using(self.lab_db).get(numeric_code__exact=create['type'])
+            aliquot_medium = AliquotMedium.objects.using(self.lab_db).get(short_name__iexact=create['medium'])            
+            primary_aliquot = Aliquot.objects.using(self.lab_db).create(
                 aliquot_identifier = aliquot_identifier,
                 receive = receive,
                 count = 1,
@@ -358,10 +359,10 @@ class DmisReceive(object):
 
     def create_or_update_aliquotcondition(self,  **kwargs ):
 
-        if AliquotCondition.objects.using(lab_db).filter(short_name__exact=kwargs.get('condition')):
-            aliquot_condition = AliquotCondition.objects.using(lab_db).get(short_name__exact=kwargs.get('condition'))
+        if AliquotCondition.objects.using(self.lab_db).filter(short_name__exact=kwargs.get('condition')):
+            aliquot_condition = AliquotCondition.objects.using(self.lab_db).get(short_name__exact=kwargs.get('condition'))
         else:        
-            agg = AliquotCondition.objects.using(lab_db).aggregate(Max('display_index'),)
+            agg = AliquotCondition.objects.using(self.lab_db).aggregate(Max('display_index'),)
             if not agg:
                 display_index = 10
             else:
