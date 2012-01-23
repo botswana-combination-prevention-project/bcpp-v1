@@ -6,7 +6,7 @@ from dajax.core import Dajax
 from dajaxice.decorators import dajaxice_register
 from lab_clinic_api.models import Lab, Result, ResultItem, UpdateLog
 from lab_clinic_api.classes import ResultContext, LabContext
-
+from lab_import_dmis.classes import Dmis
 
 @dajaxice_register
 def plot_longitudinal_results(request, subject_identifier, test_code):
@@ -30,6 +30,9 @@ def update_result_status(request, subject_identifier):
     dajax = Dajax()
 
     if subject_identifier:            
+        
+        dmis = Dmis()
+        dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
 
         labs = Lab.objects.fetch(subject_identifier=subject_identifier)
         if labs:
