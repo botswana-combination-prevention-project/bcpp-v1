@@ -20,7 +20,7 @@ def updating(request):
     
     dajax = Dajax()
 
-    dajax.assign('#x_results','innerHTML','Contacting lab,<BR>please wait...<BR>')
+    dajax.assign('#x_results','innerHTML','Contacting lab,<BR>please wait...(may take 1 to 2 mins)<BR>')
     
     return dajax.json()
 
