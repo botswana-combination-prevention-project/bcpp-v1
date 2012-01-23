@@ -29,7 +29,7 @@ class ResultItem(BaseResultItem):
   	    )
 
 
-    history = AuditTrail()
+    #history = AuditTrail()
     
     def save(self, *args, **kwargs):
         
@@ -61,6 +61,10 @@ class ResultItem(BaseResultItem):
     
     def get_result_document_url(self):
         return "/laboratory/result/document/%s/" % (self.result.result_identifier)  	
+
+    #TODO: get this to return a subject_identifier for the audit trial
+    def get_subject_identifier(self,):
+        return ''
     
     class Meta:
         app_label = 'lab_result_item'    
