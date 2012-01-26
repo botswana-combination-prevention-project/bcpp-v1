@@ -201,6 +201,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                     entry_comment = comment
                     )
                 
+                #if not (s.entry_status.lower() == 'keyed' and action.lower() == 'not_required'):
                 s.report_datetime = status['report_datetime']
                 s.entry_status = status['entry_status']
                 s.entry_comment = status['entry_comment']                
