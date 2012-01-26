@@ -116,6 +116,26 @@ class RegisteredSubjectDashboard(Dashboard):
         self.include_after_exclusion_model_keyed = []
 
 
+    def update_entry_status(self, **kwargs):
+
+        model = kwargs.get('model')
+        visit_model_instance = kwargs.get('visit_model_instance')
+        required = kwargs.get('required', True) 
+
+        if required:
+            ScheduledEntryBucket.objects.update_status( 
+                model = model,
+                visit_model_instance = visit_model_instance,
+                action = 'new',
+                )
+        else:
+            ScheduledEntryBucket.objects.update_status( 
+                model = model,
+                visit_model_instance = visit_model_instance,
+                action = 'not_required',
+                )
+
+
     def create(self, **kwargs):
         
         super(RegisteredSubjectDashboard, self).create(**kwargs)
