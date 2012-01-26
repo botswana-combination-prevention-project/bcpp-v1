@@ -35,6 +35,9 @@ class LabManager(models.Manager):
         From your code, call 'fetch' instead of 'update'
         """
          
+        # check dmis for any new results
+         
+         
         subject_identifier = kwargs.get('subject_identifier')
         if self.connected():
             # update for new samples received at the lab

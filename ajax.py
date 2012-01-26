@@ -34,6 +34,11 @@ def update_result_status(request, subject_identifier):
         dmis = Dmis()
         dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
 
+        dmis = DmisReceive()
+        dmis.fetch_receive(subject_identifier=subject_identifier, lab_db='lab_api')
+        dmis = DmisOrder()
+        dmis.fetch_order(subject_identifier=subject_identifier, lab_db='lab_api')
+
         labs = Lab.objects.fetch(subject_identifier=subject_identifier)
         if labs:
             results = Result.objects.fetch(subject_identifier=subject_identifier, labs=labs)
