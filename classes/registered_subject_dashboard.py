@@ -118,6 +118,8 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def update_entry_status(self, **kwargs):
 
+        """ If called, update form entry status (new, not required, etc) when the visit dashboard is refreshed."""
+
         model = kwargs.get('model')
         visit_model_instance = kwargs.get('visit_model_instance')
         required = kwargs.get('required', True) 
