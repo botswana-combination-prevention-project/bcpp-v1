@@ -7,7 +7,7 @@ from base_subject import BaseSubject
 from bhp_variables.models import StudySpecific, StudySite
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_common.fields import IsDateEstimatedField
-from bhp_common.choices import YES_NO
+from bhp_common.choices import YES_NO, POS_NEG, ALIVE_DEAD
 
 
 class RegisteredSubject(BaseSubject):
@@ -68,6 +68,18 @@ class RegisteredSubject(BaseSubject):
         help_text = _("Does the subject agree to have samples stored after the study has ended")
         )
 
+    hiv_status = models.CharField(
+        verbose_name = 'Hiv status',
+        max_length = 15,
+        choices = POS_NEG,
+        null = True,
+        )
+    survival_status = models.CharField(
+        verbose_name = 'Survival status',
+        max_length = 15,
+        choices = ALIVE_DEAD,
+        null = True,
+        )
     
     comment = models.TextField(
         verbose_name = 'Comment',
