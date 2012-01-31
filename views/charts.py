@@ -1,15 +1,17 @@
 import random
 import datetime
 from django.http import HttpResponse
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-from matplotlib.dates import DateFormatter
+#from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+#from matplotlib.figure import Figure
+#from matplotlib.dates import DateFormatter
 from lab_clinic_api.models import ResultItem
 
 """http://localhost:8000/mpepu/specimens/charts/simple.png"""
 
 def longitudinal_result(request, **kwargs):
 
+    return ''
+    """
     subject_identifier = kwargs.get('subject_identifier')
     test_code = []
     if kwargs.get('test_code') == 'VL':
@@ -42,3 +44,4 @@ def longitudinal_result(request, **kwargs):
     canvas.print_png(response)
 
     return response
+    """
