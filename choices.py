@@ -23,6 +23,11 @@ ACU_EST_NEG = (
 )    
 
 
+ALIVE_DEAD = (
+    ('alive', 'Alive'),
+    ('dead', 'Dead'),
+    )     
+
 ART_STATUS = (
     ('ON', 'Yes, ON ART'),
     ('STOPPED', 'No, stopped ART'),
@@ -185,6 +190,8 @@ SEXUAL_DEBUT = (
     ('15-17',' 15 - 17'),
     ('>=18','18 or above'),
 )
+
+
    
 TIME_UNITS = (
     ('TODAY', 'Today'),
