@@ -54,6 +54,18 @@ CONFIRMED_SUSPECTED = (
     ('SUSPECTED', 'Suspected'),
 )    
 
+COUNTRY = (
+    ('botswana', 'Botswana'),
+    ('zimbabwe', 'Zimbabwe'),
+    ('rsa', 'South Africa'),
+    ('zambia', 'Zambia'),
+    ('namibia', 'Namibia'),
+    ('nigeria', 'Nigeria'),
+    ('china', 'China'),
+    ('india', 'India'),    
+    ('OTHER', 'Other'),    
+    )
+
 DATE_ESTIMATED = (
     ('-', 'No'),
     ('D', 'Yes, estimated the Day'),            
@@ -152,6 +164,10 @@ POS_NEG_ANY = (
     ('ANY', 'Any'),
 )
 
+POS_NEG_ONLY = (
+    ('POS', 'Positive'),
+    ('NEG', 'Negative'),
+)
 
 POS_NEG_UNKNOWN = (
     ('POS', 'Positive'),
