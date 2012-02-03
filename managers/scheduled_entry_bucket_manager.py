@@ -163,16 +163,12 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         # coming from 'forms' is a model
 
         self.set_visit_model_instance(**kwargs)  
-        
         self.set_content_type_map(**kwargs)
-        
         if kwargs.get('subject_visit_model'):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
-    
         action = kwargs.get('action', 'add_change')
         comment = kwargs.get('comment', '----')
         model_filter_qset = kwargs.get('model_filter_qset')
-
         # have content_type_map and visit_mode_instance, so good to go from here...
         if self.visit_model_instance:
             # get visit definition for visit_model_instance attached to this model
@@ -191,22 +187,26 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
             if super(ScheduledEntryBucketManager, self).filter(registered_subject = registered_subject, appointment = appointment, entry = entry):
                 # already in bucket, so get bucket entry
-                s = super(ScheduledEntryBucketManager, self).get(registered_subject = registered_subject, appointment = appointment, entry = entry)
+                scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).get(registered_subject = registered_subject, appointment = appointment, entry = entry)
                 # update entry_status if NEW no matter what, to indictate perhaps that it was modified
-
                 status = self.get_status(
                     action = action, 
                     report_datetime = report_datetime, 
-                    entry_status = s.entry_status, 
+                    entry_status = scheduled_entry_bucket.entry_status, 
                     entry_comment = comment
                     )
-                
-                #if not (s.entry_status.lower() == 'keyed' and action.lower() == 'not_required'):
-                s.report_datetime = status['report_datetime']
-                s.entry_status = status['entry_status']
-                s.entry_comment = status['entry_comment']                
-                s.close_datetime = status['close_datetime']                
-                s.modified = datetime.today()
-                # save
-                s.save()
+                # uncommented the if condition below 03/02/2012    
+                if not (scheduled_entry_bucket.entry_status.lower() == 'keyed' and action.lower() == 'not_required'):
+                    scheduled_entry_bucket.report_datetime = status['report_datetime']
+                    scheduled_entry_bucket.entry_status = status['entry_status']
+                    scheduled_entry_bucket.entry_comment = status['entry_comment']                
+                    scheduled_entry_bucket.close_datetime = status['close_datetime']                
+                    scheduled_entry_bucket.modified = datetime.today()
+                    scheduled_entry_bucket.save()                    
+                if scheduled_entry_bucket.entry_status.lower() == 'keyed' and action.lower() == 'not_required':
+                    scheduled_entry_bucket.report_datetime = status['report_datetime']
+                    scheduled_entry_bucket.entry_comment = 'NOT REQUIRED!'                
+                    scheduled_entry_bucket.close_datetime = status['close_datetime']                
+                    scheduled_entry_bucket.modified = datetime.today()
+                    scheduled_entry_bucket.save()                    
 
