@@ -19,6 +19,23 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
     
     """ 
     
+    def __init__(self, *args, **kwargs):
+
+        self.search_fields = ['registered_subject__subject_identifier',] 
+    
+        self.list_display = ['registered_subject', 'created', 'modified', 'user_created', 'user_modified',]    
+    
+        self.list_filter = [
+            'registered_subject__gender', 
+            'created', 
+            'modified', 
+            'user_created',
+            'user_modified',
+            ]
+        super(BaseRegisteredSubjectModelAdmin, self).__init__(*args, **kwargs)            
+
+
+
     def save_model(self, request, obj, form, change):
         
         # i am explicitly listing valid subclasses for now. in future when code has stabilized
@@ -91,6 +108,7 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
         return super(BaseRegisteredSubjectModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)                   
 
 
+
     actions = [export_as_csv_action("CSV Export of registered_subject", 
         fields=[], 
         exclude=[],
@@ -102,15 +120,15 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
             ],
         )]
         
-    search_fields = ('registered_subject__subject_identifier',) 
+    #search_fields = ('registered_subject__subject_identifier',) 
+     
+    #list_display = ('registered_subject', 'created', 'modified', 'user_created', 'user_modified',)    
     
-    list_display = ('registered_subject', 'created', 'modified', 'user_created', 'user_modified',)    
-    
-    list_filter = (
-        'registered_subject__gender', 
-        'created', 
-        'modified', 
-        'user_created',
-        'user_modified',
-        )
+    #list_filter = (
+    #    'registered_subject__gender', 
+    #    'created', 
+    #    'modified', 
+    #    'user_created',
+    #    'user_modified',
+    #    )
 
