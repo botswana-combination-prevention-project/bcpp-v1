@@ -64,3 +64,5 @@ class ResultContext(object):
                 self.result= None
                 self.result_items = None
                 self.registered_subject = None
+                
+                
