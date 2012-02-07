@@ -2,6 +2,7 @@ import sys, socket
 from django.core.urlresolvers import reverse
 from django.conf.urls.defaults import patterns, include, url
 from django.db.models.base import ModelBase
+from django.template.loader import render_to_string
 from bhp_common.utils import os_variables
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
@@ -9,6 +10,7 @@ from bhp_appointment.models import Appointment
 from bhp_visit.models import ScheduleGroup, VisitDefinition
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
+from bhp_subject_summary.models import Link
 
 
 class RegisteredSubjectDescriptor(object):
@@ -109,6 +111,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self.app_label = None
         self.requisition_model = None
         self.appointment_row_template = 'appointment_row.html'
+        #side bar links for med, etc summaries
+        self.summary_links = ''
 
         # limit the membership forms to those of this category
         self.membership_form_category = None
@@ -215,6 +219,8 @@ class RegisteredSubjectDashboard(Dashboard):
         
         self.set_current_visit()
         
+        self.set_summary_links()
+        
         # update / add to entries in ScheduledEntryBucket, ScheduledLabEntryBucket
         if self.visit:
             ScheduledEntryBucket.objects.add_for_visit(visit_model_instance = self.visit)           
@@ -225,8 +231,17 @@ class RegisteredSubjectDashboard(Dashboard):
                     visit_model_instance = self.visit,
                     requisition_model = self.requisition_model,
                     )
-        
 
+
+    def set_summary_links(self):   
+                     
+        # render side bar template for subject summaries
+        self.summary_links = render_to_string('summary_side_bar.html', {
+                'links': Link.objects.filter(dashboard_type=self.dashboard_type), 
+                'subject_identifier': self.subject_identifier,
+                })                  
+        self.context.add(summary_links = self.summary_links)
+        
     def set_scheduled_entry_bucket(self):
     
         # get list of scheduled crfs
