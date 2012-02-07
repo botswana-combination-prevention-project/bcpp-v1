@@ -23,15 +23,17 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
 
         self.search_fields = ['registered_subject__subject_identifier',] 
     
-        self.list_display = ['registered_subject', 'created', 'modified', 'user_created', 'user_modified',]    
+        self.list_display = ['registered_subject', 'study_site', 'created', 'modified', 'user_created', 'user_modified',]    
     
         self.list_filter = [
             'registered_subject__gender', 
+            'study_site',
             'created', 
             'modified', 
             'user_created',
             'user_modified',
             ]
+            
         super(BaseRegisteredSubjectModelAdmin, self).__init__(*args, **kwargs)            
 
 
