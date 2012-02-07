@@ -13,6 +13,7 @@ class LinkAdmin(MyModelAdmin):
     fields = (
         "label",
         "app_label",
+        "dashboard_type",
         "ajax_method",
         "is_active"
     )
@@ -20,6 +21,7 @@ class LinkAdmin(MyModelAdmin):
     list_display = (        
         "label",
         "app_label",
+        "dashboard_type",        
         "ajax_method",
         "is_active",
     )
