@@ -21,13 +21,16 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
     
     def __init__(self, *args, **kwargs):
 
-        self.search_fields = ['registered_subject__subject_identifier',] 
+        self.search_fields = ['registered_subject__subject_identifier','registered_subject__sid'] 
     
-        self.list_display = ['registered_subject', 'study_site', 'created', 'modified', 'user_created', 'user_modified',]    
+        self.list_display = ['registered_subject', 'created', 'modified', 'user_created', 'user_modified',]    
     
         self.list_filter = [
             'registered_subject__gender', 
-            'study_site',
+            'registered_subject__study_site',
+            'registered_subject__hiv_status',
+            'registered_subject__survival_status',
+            'registered_subject__registration_datetime',                                                                                    
             'created', 
             'modified', 
             'user_created',
