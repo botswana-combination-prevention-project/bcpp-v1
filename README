@@ -1,0 +1,4 @@
+
+to active add this to your settings.py
+
+ALLOW_MODEL_SERIALIZATION = True
