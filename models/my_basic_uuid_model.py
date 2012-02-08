@@ -27,9 +27,9 @@ class MyBasicUuidModel(MyBasicModel):
         # view in bhp_sync.
         # get value and delete from kwargs before calling super
         #transaction_producer = TransactionProducer()
-        #if 'transaction_producer' in kwargs:
-        #    transaction_producer = kwargs.get('transaction_producer')            
-        #    del kwargs['transaction_producer']
+        if 'transaction_producer' in kwargs:
+            #transaction_producer = kwargs.get('transaction_producer')            
+            del kwargs['transaction_producer']
         
         # use 'suppress_autocreate_on_deserialize' to not allow save methods
         # to create new model instances such as appointments, ScheduledEntry, etc
@@ -59,6 +59,8 @@ from django.dispatch import receiver
                 obj = self._meta.proxy_for_model.objects.get(pk=self.pk)
             else:
                 obj = self    
+            #if self.__class__._meta.object_name.lower() == 'qn002sectionone':
+            #    raise TypeError(self.__dict__)    
             json_tx = serializers.serialize("json", 
                             obj.__class__.objects.filter(pk=obj.pk),
                             ensure_ascii=False, 
