@@ -1,14 +1,23 @@
+from datetime import datetime
 from django.db.models import get_model
+from django.core import serializers
 from transaction_producer import TransactionProducer
 
 class SerializeToTransaction(object):
 
     def serialize(self, sender, instance,**kwargs):
         action = 'U'
+        hostname = instance.hostname_modified
         if kwargs.get('created'):
             action = 'I'
-        transaction_producer = TransactionProducer()    
+            hostname = instance.hostname_created
+        if not hostname:
+            hostname = instance.hostname_created
+        transaction_producer = TransactionProducer(hostname=hostname)    
         Transaction = get_model('bhp_sync', 'transaction')
+
+        #if 'suppress_autocreate_on_deserialize' in dir(sender):
+        #    del kwargs['suppress_autocreate_on_deserialize']
 
         use_natural_keys = False
         if 'natural_key' in dir(sender):
