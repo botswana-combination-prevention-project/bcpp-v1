@@ -134,7 +134,7 @@ def get_new_transactions(request, **kwargs):
                                                 response = f.read()
                                                 f.close()                        
                                                 # display a message on the consumer (self)
-                                                messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
+                                                #messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
 
                                             elif transaction['action'] == 'D':
                                                 if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
@@ -142,7 +142,7 @@ def get_new_transactions(request, **kwargs):
                                                         if obj.object.__class__.objects.filter(pk=transaction['tx_pk']):
                                                             obj_name = unicode(obj.object) 
                                                             obj.object.__class__.objects.get(pk=transaction['tx_pk']).delete(transaction_producer=transaction['producer'])
-                                                            messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(obj_name,))                                            
+                                                            #messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(obj_name,))                                            
                                                     else:
                                                         messages.add_message(request, messages.WARNING, 'Delete not allowed. %s' %(obj.object._meta.object_name,))
                                                         messages.add_message(request, messages.WARNING, 'Delete from imported serialized objects not allowed. See ALLOW_DELETE_MODEL_FROM_SERIALIZATION in settings.')                                                                                            

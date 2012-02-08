@@ -39,7 +39,7 @@ class Transaction(MyBasicUuidModel):
         )
     
     is_consumed = models.BooleanField(
-        default = False
+        default = False,
         )
     
     consumed_datetime = models.DateTimeField(
@@ -59,10 +59,11 @@ class Transaction(MyBasicUuidModel):
         return False
         
     def save(self, *args, **kwargs):
-        
+
         if self.is_consumed is True and not self.consumed_datetime:
             self.consumed_datetime = datetime.today()
         super(Transaction, self).save(*args, **kwargs)
+
     
     class Meta:
         app_label = 'bhp_sync'   
