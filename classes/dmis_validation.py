@@ -67,7 +67,7 @@ class DmisValidation(object):
                         where result_accepted=1 and convert(varchar(36),l5.result_guid)='%s'" % result.dmis_result_guid 
                         
                 cursor_result = cnxn2.cursor() 
-                cursor_result.execute(sql)  
+                cursor_result.execute(str(sql))  
                 #try:
                 for row in cursor_result:        
                     result_item.result_item_operator=row.operator.strip('BHP\\bhp\\')
@@ -97,7 +97,7 @@ class DmisValidation(object):
                         left join bhplab.dbo.lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0 \
                         where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % ( result_item.test_code.code, result.dmis_result_guid)
                 cursor_result = cnxn2.cursor() 
-                cursor_result.execute(sql)           
+                cursor_result.execute(str(sql))  
                 for row in cursor_result:  
                     result_item.result_item_operator=row.operator.strip('BHP\\bhp\\')
                     result_item.validation_reference=row.validation_reference
