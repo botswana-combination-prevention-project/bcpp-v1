@@ -2,3 +2,51 @@
 to active add this to your settings.py
 
 ALLOW_MODEL_SERIALIZATION = True
+
+
+Sync Errors
+
+Case 1: Structure and its members have been generated on more than one netbook. 
+
+Netbook A has already sync'ed. When netbook B tries to sync and integrity error 
+occurs as the structure and member data have different pks.
+
+better to figure out the use of natrual keys, but...
+
+
+1. determine the houshold identifier. The pk for the household is in the householdstructure
+transaction and will be the same on both systems
+
+2. determine the householdstructure old and new pks.
+
+3. change
+
+4. determine the conflicting householdstructurememeber old and new pks 
+
+5. change
+
+change the pk on the transaction. for example, in the case of the mochudi survey 
+the household structure and household structure members often get created on more than on system
+where only the pk is different
+
+the old_pk is listed in the json object on the producer
+the new_pk is the pk assigned to the record on the consumer. in this
+case the consumer is the community server and the producer is a 
+netbook.
+
+# pk on netbook for record (or related records) existing on community server
+old_pk='2458e764-48bb-11e1-a0e4-6dc5fbbdc8e2'
+
+# pk on consumer / community server
+new_pk='406e16f2-4e49-11e1-afda-002564c382e3'
+
+# replace on netbook
+for t in Transaction.objects.filter(is_consumed=False,producer=producer, tx__icontains=old_pk):
+    t.tx = t.tx.replace(old_pk, new_pk)
+    t.save()
+
+# run the sync from the community server to consume the corrected transactions
+
+Note, we are not changing the pk in the tables on the netbook and further edits to these records
+will recreate the integrity error and require the above steps to be repeated.
+
