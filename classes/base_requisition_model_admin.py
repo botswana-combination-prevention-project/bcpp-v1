@@ -1,9 +1,75 @@
+from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from lab_panel.models import Panel
 from bhp_appointment.classes import BaseVisitModelAdmin
 from bhp_appointment.classes import VisitModelHelper
+from lab_requisition.actions import flag_as_received, flag_as_not_received
+
 
 class BaseRequisitionModelAdmin(MyModelAdmin):
+    
+    def __init__(self, *args, **kwargs):
+    
+        self.fields = [
+            self.visit_fieldname,
+            "requisition_datetime",
+            "is_drawn",
+            "reason_not_drawn",
+            "drawn_datetime",
+            "site",
+            "panel",
+            "aliquot_type",                
+            "item_type",
+            "item_count_total",
+            "estimated_volume",
+            "priority",
+            #"test_code",        
+            "clinician_initials",
+            "comments",]
+
+        self.radio_fields = {
+            "is_drawn":admin.VERTICAL,
+            "reason_not_drawn":admin.VERTICAL,                        
+            "item_type":admin.VERTICAL,                
+            "priority":admin.VERTICAL,
+            "site":admin.VERTICAL,        
+            }
+        
+        self.list_display = [
+            'requisition_identifier',
+            'specimen_identifier',
+            self.visit_fieldname,
+            "requisition_datetime",
+            'hostname_created', 
+            "priority",
+            'is_receive',
+            'is_labelled',
+            'is_packed', 
+            'is_lis',
+            'is_receive_datetime',
+            'is_labelled_datetime',              
+            'packing_list']        
+
+        self.list_filter = [
+            "priority",
+            'is_receive',
+            'is_labelled',
+            'is_packed', 
+            'is_lis',
+            "requisition_datetime",
+            'is_receive_datetime',
+            'is_labelled_datetime',            
+            'hostname_created']
+        
+        self.search_fields = [
+            '%s__appointment__registered_subject__subject_identifier' % (self.visit_fieldname,),
+            'specimen_identifier',
+            'requisition_identifier']
+
+        self.actions = [flag_as_received, flag_as_not_received,]
+        
+        super(BaseRequisitionModelAdmin, self).__init__(*args, **kwargs)
+
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         

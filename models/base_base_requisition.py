@@ -10,6 +10,7 @@ from bhp_variables.models import StudySite, StudySpecific
 from lab_panel.models import Panel
 from lab_aliquot_list.models import AliquotType
 from lab_test_code.models import TestCode
+from lab_packing.models import PackingList
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
 from lab_requisition.classes import ClinicRequisitionLabel
 from lab_requisition.managers import BaseRequisitionManager
@@ -109,6 +110,40 @@ class BaseBaseRequisition (MyBasicUuidModel):
         null = True,
         blank = True,
         )
+    
+    is_receive = models.BooleanField(
+        verbose_name = 'received',        
+        default = False,
+        )
+    is_receive_datetime = models.DateTimeField(
+        verbose_name = 'rcv-date',    
+        null = True,
+        blank = True,
+        )
+
+    is_packed = models.BooleanField(
+        verbose_name = 'packed',    
+        default = False,
+        )
+
+    is_labelled = models.BooleanField(
+        verbose_name = 'labelled',
+        default = False,
+        )
+
+    is_labelled_datetime = models.DateTimeField(
+        verbose_name = 'label-date',
+        null = True,
+        blank = True,
+        )
+    
+    is_lis = models.BooleanField(
+        verbose_name = 'lis',    
+        default = False,
+        )
+        
+    packing_list = models.ForeignKey(PackingList, null=True)
+    
     
     objects = BaseRequisitionManager()
     
