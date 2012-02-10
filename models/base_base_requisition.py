@@ -42,6 +42,7 @@ class BaseBaseRequisition (MyBasicUuidModel):
         max_length=10,
         null = True,
         blank = True,
+        help_text = 'Use three digit code e.g 041, 056, 062, etc'
         )
 
     site = models.ForeignKey(StudySite)    

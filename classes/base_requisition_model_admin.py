@@ -4,7 +4,7 @@ from lab_panel.models import Panel
 from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_appointment.classes import BaseVisitModelAdmin
 from bhp_appointment.classes import VisitModelHelper
-from lab_requisition.actions import flag_as_received, flag_as_not_received
+from lab_requisition.actions import flag_as_received, flag_as_not_received, flag_as_not_labelled, print_barcode_labels
 
 
 class BaseRequisitionModelAdmin(MyModelAdmin):
@@ -71,7 +71,10 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
             'specimen_identifier',
             'requisition_identifier']
 
-        self.actions = [flag_as_received, flag_as_not_received,]
+        self.actions = [flag_as_received, 
+                        flag_as_not_received, 
+                        flag_as_not_labelled, 
+                        print_barcode_labels]
         
         super(BaseRequisitionModelAdmin, self).__init__(*args, **kwargs)
 

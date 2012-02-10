@@ -3,29 +3,18 @@ from django.contrib import messages
 
 def flag_as_received(modeladmin, request, queryset, **kwargs):
 
-    """wrap this in your own so that you can pass the kwargs
-    
-        def my_flag_as_received(modeladmin, request, queryset):
-            flag_as_received(modeladmin, request, queryset, site_code='20', protocol_code='041')
-        my_flag_as_received.short_description = "Flag as received against requisition"
-    
-    """
-            
-    site_code = kwargs.get('site_code')
-    protocol_code = kwargs.get('protocol_code')        
     for qs in queryset:
         if not qs.specimen_identifier:
-            qs.specimen_identifier = qs.__class__.objects.get_identifier(site_code=site_code, protocol_code=protocol_code)
+            qs.specimen_identifier = qs.__class__.objects.get_identifier(site_code=qs.study_site.site_code, protocol_code=qs.protocol)
             qs.is_receive = True
             qs.is_receive_datetime = datetime.today()
             qs.save()
             
-#flag_as_received.short_description = "Flag as received against requisition"
+flag_as_received.short_description = "Flag as received against requisition"
 
 def flag_as_not_received(modeladmin, request, queryset):
 
     for qs in queryset:
-        #if not qs.specimen_identifier:
         qs.specimen_identifier=None
         qs.is_receive = False
         qs.is_receive_datetime = datetime.today()
