@@ -8,6 +8,11 @@ from lab_requisition.actions import flag_as_received, flag_as_not_received, flag
 
 
 class BaseRequisitionModelAdmin(MyModelAdmin):
+
+    actions = [flag_as_received, 
+                        flag_as_not_received, 
+                        flag_as_not_labelled, 
+                        print_barcode_labels]
     
     def __init__(self, *args, **kwargs):
 
@@ -29,7 +34,7 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
             "estimated_volume",
             "priority",
             #"test_code",        
-            "clinician_initials",
+            #"clinician_initials",
             "comments",]
 
         self.radio_fields = {
@@ -71,10 +76,7 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
             'specimen_identifier',
             'requisition_identifier']
 
-        self.actions = [flag_as_received, 
-                        flag_as_not_received, 
-                        flag_as_not_labelled, 
-                        print_barcode_labels]
+        
         
         super(BaseRequisitionModelAdmin, self).__init__(*args, **kwargs)
 

@@ -47,7 +47,10 @@ class BaseBaseRequisition (MyBasicUuidModel):
 
     site = models.ForeignKey(StudySite)    
     
-    clinician_initials = InitialsField()
+    clinician_initials = InitialsField(
+        null = True,
+        blank = True,
+        )
     
     aliquot_type = models.ForeignKey(AliquotType)
 

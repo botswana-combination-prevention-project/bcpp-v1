@@ -5,7 +5,7 @@ def flag_as_received(modeladmin, request, queryset, **kwargs):
 
     for qs in queryset:
         if not qs.specimen_identifier:
-            qs.specimen_identifier = qs.__class__.objects.get_identifier(site_code=qs.study_site.site_code, protocol_code=qs.protocol)
+            qs.specimen_identifier = qs.__class__.objects.get_identifier(site_code=qs.site.site_code, protocol_code=qs.protocol)
             qs.is_receive = True
             qs.is_receive_datetime = datetime.today()
             qs.save()
