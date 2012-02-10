@@ -63,7 +63,7 @@ class ModelPk(template.Node):
                     visit_definition = self.appointment.visit_definition,
                     visit_instance = 0,
                     )
-
+                                
         if self.visit_model.__class__.objects.filter(appointment = self.appointment):
             self.visit_model_instance = self.visit_model.__class__.objects.filter(appointment = appointment_0)[0]
             
@@ -77,15 +77,17 @@ class ModelPk(template.Node):
             fk_fieldname_to_visit_model = '%s_id' % this_model_fk[0].name
         else:
             raise AttributeError, 'Cannot determine pk with this templatetag, Model %s must have a foreignkey to the visit model \'%s\'.'
-                            
+        
+
         # query this_model for visit=this_visit, or whatever the fk_fieldname is
         # i have to use 'extra' because i can only know the fk field name pointing to the visit model at runtime
-        if this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk]):
-            #the link is for a change
-            # these next two lines would change if for another dashboard and another visit model 
-            next = 'dashboard_visit_url'
-            this_model_instance = this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk])[0] 
-            pk = this_model_instance.pk            
+        if self.visit_model_instance:
+            if this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk]):
+                #the link is for a change
+                # these next two lines would change if for another dashboard and another visit model 
+                next = 'dashboard_visit_url'
+                this_model_instance = this_model.objects.extra(where=[fk_fieldname_to_visit_model+'=%s'], params=[self.visit_model_instance.pk])[0] 
+                pk = this_model_instance.pk            
 
         return pk
         
