@@ -10,7 +10,7 @@ class StudySpecificAdmin(admin.ModelAdmin):
         "device_id",
         )
 
-admin.site.register(StudySpecific)
+admin.site.register(StudySpecific, StudySpecificAdmin)
 
 admin.site.register(StudySite)
 
