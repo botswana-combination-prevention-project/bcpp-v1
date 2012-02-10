@@ -13,6 +13,15 @@ from tastypie.models import create_api_key
 for user in User.objects.all():
     if not ApiKey.objects.filter(user=user):
         create_api_key(instance=user, created=True)
+        
+from django.contrib.auth.models import User
+from django.db import models
+from tastypie.models import create_api_key
+for user in User.objects.all():
+    if not ApiKey.objects.filter(user=user):
+        ApiKey.objects.create(user=user)
+        
+        
 """    
 
 
@@ -30,3 +39,4 @@ class TransactionResource(ModelResource):
         serializer = Serializer()
         
 
+#models.signals.post_save.connect(create_api_key, sender=User)

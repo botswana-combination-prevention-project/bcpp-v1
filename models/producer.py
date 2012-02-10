@@ -34,6 +34,12 @@ class Producer(MyBasicUuidModel):
         default = 0
         )
     
+    comment = models.TextField(
+        max_length=50,
+        null=True,
+        blank=True,
+        )
+    
     def __unicode__(self):
         return self.name
             
