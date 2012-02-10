@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from django.db.models import ForeignKey
 from django import forms
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyBasicUuidModel
