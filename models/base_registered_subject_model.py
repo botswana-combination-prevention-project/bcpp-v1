@@ -52,7 +52,19 @@ class BaseRegisteredSubjectModel (MyBasicUuidModel):
 
 def delete_unused_appointments(sender, **kwargs):
     
-    """ delete unused appointments created upon INSERT of sender model """
+    """ delete unused appointments created upon INSERT of sender model 
+    
+    for example, in the model file...
+
+        from bhp_registration.models import BaseRegisteredSubjectModel, delete_unused_appointments
+
+        < your model class ... >
+
+        @receiver(post_delete, sender=InfantEligibility)
+        def my_delete_handler(sender, **kwargs):
+            delete_unused_appointments(sender, visit_model_name='infantvisit', **kwargs)    
+
+    """
     
     instance = kwargs.get('instance')
     visit_model_name = kwargs.get('visit_model_name')
