@@ -1,6 +1,7 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from lab_panel.models import Panel
+from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_appointment.classes import BaseVisitModelAdmin
 from bhp_appointment.classes import VisitModelHelper
 from lab_requisition.actions import flag_as_received, flag_as_not_received
@@ -9,7 +10,11 @@ from lab_requisition.actions import flag_as_received, flag_as_not_received
 class BaseRequisitionModelAdmin(MyModelAdmin):
     
     def __init__(self, *args, **kwargs):
-    
+
+        #visit_model_helper = VisitModelHelper()
+        #if db_field.name == visit_model_helper.get_visit_field(model=self.model, visit_model=self.visit_model):
+
+
         self.fields = [
             self.visit_fieldname,
             "requisition_datetime",
@@ -90,4 +95,17 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
                                                             )
             
         return super(BaseRequisitionModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
+        
+    def save_model(self, request, obj, form, change):
+        
+        if not self.visit_model:
+            raise AttributeError, 'visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
+        
+        ScheduledLabEntryBucket.objects.update_status(
+            model_instance = obj,
+            visit_model = self.visit_model,
+            )
+                        
+        return super(BaseRequisitionModelAdmin, self).save_model(request, obj, form, change)
+        
 
