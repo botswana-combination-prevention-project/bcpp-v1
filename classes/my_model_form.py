@@ -1,6 +1,10 @@
 from django import forms
+from logic_check import LogicCheck
+
 
 class MyModelForm(forms.ModelForm):
+
+    logic = LogicCheck()
 
     def clean(self):
     
