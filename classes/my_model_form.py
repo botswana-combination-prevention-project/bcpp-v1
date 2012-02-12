@@ -4,8 +4,14 @@ from logic_check import LogicCheck
 
 class MyModelForm(forms.ModelForm):
 
-    logic = LogicCheck()
+    def __init__(self, *args, **kwargs):
 
+        super(MyModelForm, self).__init__(*args, **kwargs)
+        
+        self.logic = LogicCheck(self._meta.model)
+        
+
+    
     def clean(self):
     
         cleaned_data = self.cleaned_data 
