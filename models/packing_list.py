@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
 
 
@@ -19,6 +20,8 @@ class PackingList(MyBasicUuidModel):
         max_length=1000,
         help_text = 'List specimen_identifier\'s. One per line.'
         )    
+
+    history = AuditTrail()
 
     def __unicode__(self):
         return self.pk

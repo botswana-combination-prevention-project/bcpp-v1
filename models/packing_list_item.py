@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
 from packing_list import PackingList
 
@@ -22,7 +23,8 @@ class PackingListItem(MyBasicUuidModel):
         null = True,
         blank = True,
         )    
-    
+
+    history = AuditTrail()    
 
     class Meta:
         app_label = 'lab_packing'    
