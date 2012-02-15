@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext as _
 from bhp_common.models import MyModelAdmin, MyStackedInline
 from bhp_netbook.models import Netbook, NetbookUser, SvnHistory
-from actions import netbook_uphosts, netbook_update_svn
+from actions import netbook_uphosts #, netbook_update_svn
 
 
 class NetbookAdmin (MyModelAdmin):
@@ -21,11 +21,12 @@ class NetbookUserAdmin (MyModelAdmin):
 
 admin.site.register(NetbookUser, NetbookUserAdmin)
 
+
 class SvnHistoryAdmin (MyModelAdmin):
 
     list_display = ('netbook','repo', 'last_revision_number', 'last_revision_date')
     list_filter = ('netbook','repo',)
     list_per_page = 50
-    actions = [netbook_update_svn,]
+    #actions = [netbook_update_svn,]
 
 admin.site.register(SvnHistory, SvnHistoryAdmin)

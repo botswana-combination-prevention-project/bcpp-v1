@@ -20,6 +20,8 @@ def netbook_uphosts(modeladmin, request, queryset):
         
 netbook_uphosts.short_description = "Refresh list of active netbooks"
 
+
+"""
 def netbook_update_svn(modeladmin, request, queryset):
     
     netbook_name = socket.gethostname()
@@ -28,3 +30,4 @@ def netbook_update_svn(modeladmin, request, queryset):
     messages.add_message(request, messages.SUCCESS, 'Local svn repositories have been updated')                      
 
 netbook_update_svn.short_description = "Update local svn repositories"
+"""
