@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib import messages
 from bhp_common.models import MyModelAdmin
 from bhp_nmap.utils import all_uphosts
-from bhp_netbook.classes import Svn
+#from bhp_netbook.classes import Svn
 from models import Netbook
 
 
