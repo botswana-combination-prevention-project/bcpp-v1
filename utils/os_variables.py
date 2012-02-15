@@ -1,6 +1,6 @@
 import re, socket, sys
 import syslog
-from ifconfig import ifconfig
+#from ifconfig import ifconfig
 from django import forms
 from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
@@ -15,6 +15,8 @@ def os_variables():
     variables['hostname'] = socket.gethostname()
     variables['wlan_network'] = ""
     variables['warnings'] = []
+    
+    """
 
     #netbook checks
     if StudySpecific.objects.all():
@@ -55,5 +57,5 @@ def os_variables():
                     syslog.syslog(syslog.LOG_ERR, msg)
             except:
                 variables['warnings'].append('Cannot check hostname against derived hostname, (StudySpecific variable hostname_prefix, StudySpecific variable device_id and wlan0 ip).')                
-
+        """
     return variables
