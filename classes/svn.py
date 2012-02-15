@@ -1,3 +1,4 @@
+"""
 import os, pysvn
 from django.contrib import messages
 from bhp_netbook.models import Netbook, SvnHistory
@@ -51,4 +52,4 @@ class Svn(object):
                                 #raise ValueError, 'Cannot update repo %s' % (fld,)
                 
 
-
+"""
