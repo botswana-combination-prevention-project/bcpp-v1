@@ -4,7 +4,8 @@ to active add this to your settings.py
 ALLOW_MODEL_SERIALIZATION = True
 
 
-Sync Errors
+** Sync Errors from mochudi
+*****************************************
 
 Case 1: Structure and its members have been generated on more than one netbook. 
 
@@ -50,3 +51,25 @@ for t in Transaction.objects.filter(is_consumed=False,producer=producer, tx__ico
 Note, we are not changing the pk in the tables on the netbook and further edits to these records
 will recreate the integrity error and require the above steps to be repeated.
 
+
+** Examples from maikalelo
+**************************************************
+#fix Entry instance with different pk
+new_pk = u'ebd4af6a-560f-11e1-aede-001c7b771d23'
+for t in Transaction.objects.filter(is_consumed=False):
+    t.tx = t.tx.replace(u'97a4fd58-540e-11e1-a1fc-50af7311838d', new_pk)
+    t.save()
+
+
+# resave all models with m2m field to get the correct m2m transactions
+from django.db.models import get_models
+m2m_models = []
+for model in get_models():
+    if model._meta.app_label in ['maikalelo_infant', 'maikalelo_maternal', 'maikalelo_lab']:
+        for fld in model._meta.many_to_many:            
+            for m in model.objects.all():
+                m.save()
+            break                
+                #m2m_models.append(model)
+                
+                
