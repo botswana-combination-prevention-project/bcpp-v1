@@ -20,9 +20,11 @@
 
 <table>
 <thead>
+<th></th>
 <th>Producer</th>
-<th>URL</th>
+<th>Sync URL</th>
 <th>Transactions</th>
+<th>Direct URL</th>
 <th>Last Sync</th>
 <th>Status</th>
 </thead>
@@ -30,9 +32,11 @@
 {% for producer in producers %}
 
     <tr>
+    <td>{{ forloop.counter }}.&nbsp;</td>
     <td>{{ producer.name }}</td>
     <td><A href="/bhp_sync/get/{{ producer.name }}/">synchronize with community server</A></td>
     <td><A href="{{ producer.url }}admin/bhp_sync/transaction/">producer transactions</A></td>    
+    <td>{{ producer.url }}</td>
     <td>{{ producer.sync_datetime|date:"Y-m-d H:i" }} </td>
     <td><div style="{% if producer.sync_status == 'OK' %}color:green;{% endif%}{% if producer.sync_status == 'Error' %}color:red;{% endif%}">{{ producer.sync_status }}</div></td>        
     </tr> 
