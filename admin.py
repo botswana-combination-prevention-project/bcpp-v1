@@ -30,3 +30,4 @@ class SvnHistoryAdmin (MyModelAdmin):
     #actions = [netbook_update_svn,]
 
 admin.site.register(SvnHistory, SvnHistoryAdmin)
+"""
