@@ -71,5 +71,15 @@ for model in get_models():
                 m.save()
             break                
                 #m2m_models.append(model)
-                
+
+
+# resave all models with m2m field to get the correct m2m transactions
+from django.db.models import get_models
+m2m_models = []
+for model in get_models():
+    if model._meta.app_label in ['mochudi_subject', 'mochudi_household', 'mochudi_survey_lab']:
+        for fld in model._meta.many_to_many:            
+            for m in model.objects.all():
+                m.save()
+            break                
                 

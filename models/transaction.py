@@ -25,6 +25,7 @@ class Transaction(MyBasicUuidModel):
     producer = models.CharField(
         max_length = 25,
         default = str(transaction_producer),
+        db_index = True,
         )
 
     action = models.CharField(
@@ -36,6 +37,7 @@ class Transaction(MyBasicUuidModel):
     timestamp = models.CharField(
         max_length = 50,    
         null = True,
+        db_index = True,
         )
     
     is_consumed = models.BooleanField(
@@ -51,6 +53,7 @@ class Transaction(MyBasicUuidModel):
         max_length = 15,
         null = True,
         blank = True,
+        db_index = True,
         )
 
     objects = TransactionManager()
