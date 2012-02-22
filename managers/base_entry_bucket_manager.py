@@ -1,7 +1,6 @@
-from datetime import datetime
 from django.db import models
 from django.db.models.base import ModelBase
-from django.db.models import ForeignKey, get_model
+from django.db.models import ForeignKey
 from bhp_entry.models import Entry
 from bhp_content_type_map.models import ContentTypeMap
 
@@ -68,8 +67,8 @@ class BaseEntryBucketManager(models.Manager):
 
         self.set_appointment()
 
-        self.report_datetime = self.visit_model_instance.report_datetime        
-        
+        self.report_datetime = self.visit_model_instance.report_datetime  
+              
         self.set_entry()
                 
 
@@ -105,7 +104,6 @@ class BaseEntryBucketManager(models.Manager):
     
         if current_status == 'KEYED' and not action == 'delete':
             report_datetime = report_datetime
-            entry_status = 'KEYED'
             if action == 'not_required':
                 entry_comment = 'NOT REQUIRED!'
             

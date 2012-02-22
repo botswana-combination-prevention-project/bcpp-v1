@@ -1,10 +1,6 @@
 from datetime import datetime
-from django.db import models
-from django.db.models import ForeignKey, get_model, Q
-from django.db.models.base import ModelBase
+from django.db.models import ForeignKey, Q
 from bhp_entry.models import Entry
-from bhp_content_type_map.models import ContentTypeMap
-
 from bhp_entry.managers import BaseEntryBucketManager
 
 
@@ -168,13 +164,16 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                 
         action = kwargs.get('action', 'add_change')
         comment = kwargs.get('comment', '----')
-        model_filter_qset = kwargs.get('model_filter_qset')
 
         if self.visit_model_instance:
-            if super(ScheduledEntryBucketManager, self).filter(registered_subject = self.registered_subject, appointment = self.appointment, entry = self.entry):
+            if super(ScheduledEntryBucketManager, self).filter(registered_subject = self.registered_subject,
+                                                               appointment = self.appointment, 
+                                                               entry = self.entry):
 
                 # already in bucket, so get bucket entry
-                scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).get(registered_subject = self.registered_subject, appointment = self.appointment, entry = self.entry)
+                scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).get(registered_subject = self.registered_subject, 
+                                                                                      appointment = self.appointment, 
+                                                                                      entry = self.entry)
 
                 # update entry_status if NEW no matter what, to indictate perhaps that it was modified
                 status = self.get_status(

@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.db import models
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.managers import BaseEntryBucketManager
 
@@ -39,20 +38,21 @@ class AdditionalEntryBucketManager(BaseEntryBucketManager):
 
             report_datetime = datetime.today()
 
-            if super(AdditionalEntryBucketManager, self).filter(registered_subject = self.registered_subject, content_type_map = self.content_type_map):
-                s = super(AdditionalEntryBucketManager, self).get(registered_subject = self.registered_subject, content_type_map = self.content_type_map)
+            if super(AdditionalEntryBucketManager, self).filter(registered_subject = self.registered_subject, 
+                                                                content_type_map = self.content_type_map):
+                additional_bucket_entry = super(AdditionalEntryBucketManager, self).get(registered_subject = self.registered_subject, 
+                                                                                        content_type_map = self.content_type_map)
                 status = self.get_status(
                     action = action, 
                     report_datetime = report_datetime, 
-                    entry_status = s.entry_status, 
+                    entry_status = additional_bucket_entry.entry_status, 
                     entry_comment = comment
                     )
-                s.report_datetime = status['report_datetime']
-                s.entry_status = status['entry_status']
-                s.entry_comment = status['entry_comment']                
-                # clear close_datetime
-                s.close_datetime = status['close_datetime']
-                s.modified = datetime.today()
-                # save
-                s.save()
+                
+                additional_bucket_entry.report_datetime = status['report_datetime']
+                additional_bucket_entry.entry_status = status['entry_status']
+                additional_bucket_entry.entry_comment = status['entry_comment']                
+                additional_bucket_entry.close_datetime = status['close_datetime']
+                additional_bucket_entry.modified = datetime.today()
+                additional_bucket_entry.save()
 
