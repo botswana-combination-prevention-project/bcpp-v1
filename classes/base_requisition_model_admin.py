@@ -2,7 +2,6 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from lab_panel.models import Panel
 from bhp_lab_entry.models import ScheduledLabEntryBucket
-from bhp_appointment.classes import BaseVisitModelAdmin
 from bhp_appointment.classes import VisitModelHelper
 from lab_requisition.actions import flag_as_received, flag_as_not_received, flag_as_not_labelled, print_barcode_labels
 
@@ -113,4 +112,15 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
                         
         return super(BaseRequisitionModelAdmin, self).save_model(request, obj, form, change)
         
+    def delete_model(self, request, obj):
 
+        if not self.visit_model:
+            raise AttributeError, 'delete_model(): visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
+
+        ScheduledLabEntryBucket.objects.update_status(
+            model_instance = obj,
+            visit_model = self.visit_model,
+            action = 'delete',
+            )
+
+        return super(BaseRequisitionModelAdmin, self).delete_model(request, obj) 
