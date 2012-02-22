@@ -1,5 +1,4 @@
 from django.db import models
-from bhp_content_type_map.models import ContentTypeMap
 from bhp_visit.models import VisitDefinition
 from base_lab_entry import BaseLabEntry
 

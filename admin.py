@@ -1,6 +1,5 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
-from django.db.models import Max
+from bhp_common.models import MyModelAdmin
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 from forms import ScheduledLabEntryBucketForm
@@ -42,8 +41,8 @@ class ScheduledLabEntryBucketAdmin(MyModelAdmin):
 
     list_filter = ('entry_status', 'lab_entry__visit_definition__code', 'fill_datetime',)
     
-    #override, limit dropdown in add_view to id passed in the URL        
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        
         if db_field.name == "registered_subject":
             if request.GET.get('subject_identifier'):
                 kwargs["queryset"] = RegisteredSubject.objects.filter(subject_identifier = request.GET.get('subject_identifier'))
@@ -58,7 +57,7 @@ class ScheduledLabEntryBucketAdmin(MyModelAdmin):
             if request.GET.get('visit_code'):
                 kwargs["queryset"] = LabEntry.objects.filter(
                                                 visit_definition__code = request.GET.get('visit_code'),
-                                                lab_entry__panel = request.GET.get('panel'),
+                                                panel = request.GET.get('panel'),
                                                 )
         return super(ScheduledLabEntryBucketAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
     

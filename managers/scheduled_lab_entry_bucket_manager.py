@@ -1,8 +1,8 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import ForeignKey, get_model, Q
-from django.db.models.base import ModelBase
-from bhp_content_type_map.models import ContentTypeMap
+from django.db.models import ForeignKey, Q
+#from django.db.models.base import ModelBase
+#from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.managers import BaseEntryBucketManager
 from bhp_lab_entry.models import LabEntry
 
@@ -36,6 +36,44 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
 
         return scheduled_lab_entry_bucket
 
+
+    def set_entry(self):
+
+        if LabEntry.objects.filter(visit_definition = self.visit_definition, 
+                                   panel = self.scheduled_model_instance.panel):
+            self.entry = LabEntry.objects.get(visit_definition = self.visit_definition, 
+                                              panel = self.scheduled_model_instance.panel)        
+        else:
+            self.entry = None   
+
+    def is_keyed(self):
+
+        """ confirm if model instance exists / is_keyed 
+        
+        Note that this differs from the ScheduledEntry manager in that
+        the instance is an instance of a single model, the requisition model. 
+        Filter the requisition model on visit and panel to determine if keyed
+        """
+
+        is_keyed = False
+
+        # notice self.content_type_map instead of self.entry.content_type_map as in the ScheduledEntryManager
+        model = models.get_model(
+                        self.content_type_map.content_type.app_label, 
+                        self.content_type_map.content_type.model)
+        
+        visit_fk_name = [fk for fk in [f for f in self.content_type_map.model_class()._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model_instance._meta.module_name]                                        
+                
+        if visit_fk_name:
+            visit_fk_name = visit_fk_name[0].name
+            # notice additional filter attribute 'panel'.
+            if model.objects.filter(** { visit_fk_name:self.visit_model_instance, 'panel':self.requisition_model.panel }):
+                is_keyed = True
+                
+        #raise TypeError(is_keyed)
+                    
+        return is_keyed 
+    
 
     def add_for_visit(self, **kwargs):
         
@@ -181,47 +219,47 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
     
         self.requisition_model = kwargs.get('model_instance', None)
+        
         panel = kwargs.get('panel', None)
+        if not panel and self.requisition_model:
+            panel = self.requisition_model.panel
+        else:    
+            raise ValueError('Need a value for \'panel\'. Either attribute \'panel\' is required or \'model_instance\', please correct call to update_status')
+        
         action = kwargs.get('action', 'add_change')
         comment = kwargs.get('comment', '----')
-        model_filter_qset = kwargs.get('model_filter_qset')
         
-        # have requisition_model and visit_mode_instance, so good to go from here...
+        # have requisition_model, visit_mode_instance, and panel so good to go from here...
         if self.visit_model_instance:
             # get visit definition for visit_model_instance attached to this model
-            visit_definition = self.visit_model_instance.appointment.visit_definition
-            # get Entry using visit_definition and content_type_map 
-            if panel:
-                lab_entry = LabEntry.objects.filter(visit_definition=visit_definition, panel=panel)
-            else:
-                lab_entry = LabEntry.objects.filter(visit_definition=visit_definition, panel=self.requisition_model.panel)                                
+            #visit_definition = self.visit_model_instance.appointment.visit_definition
+            
+            # get LabEntry using visit_definition, panel and content_type_map 
+            #lab_entry = LabEntry.objects.filter(visit_definition=visit_definition, panel=panel)
+            
             # check if entry.content_type_map.model has been keyed for this registered_subject, timepoint
             # if so, set report date and status accordingly
             report_datetime = self.visit_model_instance.report_datetime
-            registered_subject = self.visit_model_instance.appointment.registered_subject
-            appointment = self.visit_model_instance.appointment.__class__.objects.get(
-                registered_subject = registered_subject, 
-                visit_definition__code = self.visit_model_instance.appointment.visit_definition.code, 
-                visit_instance = '0')
-            # update
 
-            if super(ScheduledLabEntryBucketManager, self).filter(registered_subject = registered_subject, appointment = appointment, lab_entry = lab_entry):
+
+            if super(ScheduledLabEntryBucketManager, self).filter(registered_subject = self.registered_subject, 
+                                                                  appointment = self.appointment, 
+                                                                  lab_entry = self.entry):
                 # already in bucket, so get bucket entry
-                s = super(ScheduledLabEntryBucketManager, self).get(registered_subject = registered_subject, appointment = appointment, lab_entry = lab_entry)
+                scheduled_entry_bucket = super(ScheduledLabEntryBucketManager, self).get(registered_subject = self.registered_subject, 
+                                                                    appointment = self.appointment, 
+                                                                    lab_entry = self.entry)
                 # update entry_status if NEW no matter what, to indictate perhaps that it was modified
-
                 status = self.get_status(
                     action = action, 
                     report_datetime = report_datetime, 
-                    entry_status = s.entry_status, 
+                    entry_status = scheduled_entry_bucket.entry_status, 
                     entry_comment = comment
                     )
                 
-                s.report_datetime = status['report_datetime']
-                s.entry_status = status['entry_status']
-                s.entry_comment = status['entry_comment']                
-                s.close_datetime = status['close_datetime']                
-                s.modified = datetime.today()
-                # save
-                s.save()
-
+                scheduled_entry_bucket.report_datetime = status['report_datetime']
+                scheduled_entry_bucket.entry_status = status['current_status']
+                scheduled_entry_bucket.entry_comment = status['entry_comment']                
+                scheduled_entry_bucket.close_datetime = status['close_datetime']                
+                scheduled_entry_bucket.modified = datetime.today()
+                scheduled_entry_bucket.save()
