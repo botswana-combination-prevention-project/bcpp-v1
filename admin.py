@@ -2,7 +2,7 @@ from datetime import datetime
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from models import Transaction, RequestLog, Producer
-from actions import reset_transaction_as_not_consumed, reset_transaction_as_consumed
+from actions import reset_transaction_as_not_consumed, reset_transaction_as_consumed, reset_producer_status
 
 
 class TransactionAdmin (MyModelAdmin):
@@ -22,6 +22,8 @@ class ProducerAdmin(MyModelAdmin):
     list_display = ('name', 'url', 'is_active', 'sync_datetime', 'sync_status', 'comment')
     list_filter = ('is_active', 'sync_datetime', 'sync_status',)
     
+    actions = [reset_producer_status,]
+    
 admin.site.register(Producer, ProducerAdmin)
 
 class RequestLogAdmin(MyModelAdmin):
@@ -29,3 +31,5 @@ class RequestLogAdmin(MyModelAdmin):
     list_display = ('producer', 'request_datetime', 'status', 'comment')
 
 admin.site.register(RequestLog, RequestLogAdmin)
+
+

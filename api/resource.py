@@ -21,6 +21,9 @@ for user in User.objects.all():
     if not ApiKey.objects.filter(user=user):
         ApiKey.objects.create(user=user)
         
+api_key = ApiKey.objects.get(user=User.objects.get(username='erikvw'))
+api_key.key='1af87bd7d0c7763e7b11590c9398740f0de7678b'
+api_key.save()
         
 """    
 
