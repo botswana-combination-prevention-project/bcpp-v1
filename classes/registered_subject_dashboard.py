@@ -423,6 +423,11 @@ class RegisteredSubjectDashboard(Dashboard):
                 'dashboard', 
                 name="dashboard_visit_url"
                 ),
+            
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<panel>\d+)/(?P<current_entry_title>[\w\s\(\)]+)/$'.format(**regex), 
+                'dashboard', 
+                name="dashboard_visit_url"
+                ),
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<appointment>{pk})/$'.format(**regex), 
                 'dashboard', 
