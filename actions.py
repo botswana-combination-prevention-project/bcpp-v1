@@ -18,8 +18,9 @@ reset_transaction_as_consumed.short_description = "Set transactions as consumed 
 def reset_producer_status(modeladmin, request, queryset):
     """ reset producer status to '-' """
     for qs in queryset:
-        qs.status = '-'
-        qs.save()
+        if qs.is_active:
+            qs.sync_status = '-'
+            qs.save()
             
 reset_producer_status.short_description = "Reset producer status to '-'"
 
