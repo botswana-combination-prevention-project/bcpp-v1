@@ -1,4 +1,4 @@
-from django.db.models import Q, ForeignKey
+from django.db.models import ForeignKey
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
