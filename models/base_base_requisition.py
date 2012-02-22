@@ -48,6 +48,7 @@ class BaseBaseRequisition (MyBasicUuidModel):
     site = models.ForeignKey(StudySite)    
     
     clinician_initials = InitialsField(
+        default = '--',                               
         null = True,
         blank = True,
         )
