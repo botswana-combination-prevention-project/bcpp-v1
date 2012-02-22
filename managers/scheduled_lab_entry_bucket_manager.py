@@ -39,10 +39,24 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
 
     def set_entry(self):
 
+        panel = None    
+        if 'requisition_model' in self.__dict__:
+            if self.requisition_model:
+                if 'panel' in self.requisition_model.__dict__:
+                    panel = self.requisition_model.panel
+        # TODO: refactor this to be requisition model    
+        elif 'scheduled_model_instance' in self.__dict__:
+            if self.scheduled_model_instance:
+                if 'panel' in self.scheduled_model_instance.__dict__:    
+                    panel = self.scheduled_model_instance.panel
+        #else:
+        #    raise AttributeError("Attribute \'requisition_model.panel'\ is required in method set_entry()")   
+                
+        
         if LabEntry.objects.filter(visit_definition = self.visit_definition, 
-                                   panel = self.scheduled_model_instance.panel):
+                                   panel = panel):
             self.entry = LabEntry.objects.get(visit_definition = self.visit_definition, 
-                                              panel = self.scheduled_model_instance.panel)        
+                                              panel = panel)        
         else:
             self.entry = None   
 
@@ -223,7 +237,8 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
         panel = kwargs.get('panel', None)
         if not panel and self.requisition_model:
             panel = self.requisition_model.panel
-        else:    
+        if not panel:    
+            # if you are calling from the model, then specify panel there    
             raise ValueError('Need a value for \'panel\'. Either attribute \'panel\' is required or \'model_instance\', please correct call to update_status')
         
         action = kwargs.get('action', 'add_change')
