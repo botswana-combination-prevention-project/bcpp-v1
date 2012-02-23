@@ -1,18 +1,12 @@
 from django.db import models
-from django.conf import settings
-from bhp_identifier.classes import Identifier
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.fields import InitialsField
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
-from bhp_registration.models import RegisteredSubject
-from bhp_variables.models import StudySite, StudySpecific
 from lab_panel.models import Panel
 from lab_aliquot_list.models import AliquotType
-from lab_test_code.models import TestCode
 from lab_packing.models import PackingList
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
-from lab_requisition.classes import ClinicRequisitionLabel
 from lab_requisition.managers import BaseRequisitionManager
 
 
@@ -157,8 +151,11 @@ class BaseBaseRequisition (MyBasicUuidModel):
 
     def save(self, *args, **kwargs):
     
-        if not self.requisition_identifier:
-            self.requisition_identifier = self.__class__.objects.get_identifier(site_code=self.site.site_code)
+        if self.is_drawn.lower() == 'yes':
+            self.requisition_identifier = self.__class__.objects.get_identifier_for_device()
+        
+        #if not self.requisition_identifier:
+        #    self.requisition_identifier = self.__class__.objects.get_identifier(site_code=self.site.site_code)
         
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
