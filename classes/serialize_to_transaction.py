@@ -15,7 +15,7 @@ class SerializeToTransaction(object):
         
         Call this using the post_save and m2m_changed signal.
         
-        For example, for models that inheret from MyBasicUuidModel
+        For example, for models that inherit from MyBasicUuidModel
 
             @receiver(m2m_changed,)
             def serialize_m2m_on_save(sender, instance, **kwargs):
@@ -61,8 +61,8 @@ class SerializeToTransaction(object):
         # serialize to json
         json_tx = serializers.serialize("json", 
                         [instance,],
-                        ensure_ascii=False, 
-                        use_natural_keys=use_natural_keys)              
+                        ensure_ascii = False, 
+                        use_natural_keys = use_natural_keys)              
 
         # save to Transaction.
         Transaction.objects.create(

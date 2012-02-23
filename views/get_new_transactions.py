@@ -26,9 +26,9 @@ def get_new_transactions(request, **kwargs):
             if not request.user.api_key:
                 raise ValueError, 'ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,)
             else:            
-                timeout = 10
-                socket_default_timeout = socket.getdefaulttimeout()        
-                consumed = []
+                #timeout = 10
+                #socket_default_timeout = socket.getdefaulttimeout()        
+                #consumed = []
                 
                 # specify producer "name" of the server you are connecting to 
                 # as you only want transactions created by that server.
@@ -43,8 +43,8 @@ def get_new_transactions(request, **kwargs):
                 if producer:
                 
                     # url to producer, add in the producer, username and api_key of the current user
-                    data = {'host': producer.url, 'producer':producer.name, 'username':request.user.username, 'api_key':request.user.api_key.key}
-                    url = '{host}bhp_sync/api/transaction/?format=json&limit=2000&producer={producer}&username={username}&api_key={api_key}'.format(**data)
+                    data = {'host': producer.url, 'producer':producer.name, 'limit':producer.json_limit, 'username':request.user.username, 'api_key':request.user.api_key.key}
+                    url = '{host}bhp_sync/api/transaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
 
                     request_log = RequestLog()
                     request_log.producer = producer
