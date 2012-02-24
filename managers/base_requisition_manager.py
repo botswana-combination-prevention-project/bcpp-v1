@@ -71,7 +71,8 @@ class BaseRequisitionManager(models.Manager):
                     requisition.modified = datetime.today()
                     requisition.save()                                             
                 except ValueError, err:
-                    messages.add_message(request, messages.ERROR, err)
+                    raise ValueError('Unable to print, is the lab_barcode app configured?')
+                    #messages.add_message(request, messages.ERROR, err)
                 if not label.printer_error:
                     print_message = '%s for specimen %s at %s from host %s' % (label.message, requisition.requisition_identifier, datetime.today().strftime('%H:%M'), remote_addr)
                     li_class = "info"
