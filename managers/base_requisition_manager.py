@@ -2,7 +2,6 @@ import socket, re
 from datetime import date, datetime
 from django.db import models
 from django.conf import settings
-from django.contrib import messages
 from bhp_variables.models import StudySpecific
 from bhp_identifier.classes import Identifier
 from lab_requisition.classes import ClinicRequisitionLabel

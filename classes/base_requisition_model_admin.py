@@ -3,7 +3,8 @@ from bhp_common.models import MyModelAdmin
 from lab_panel.models import Panel
 from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_appointment.classes import VisitModelHelper
-from lab_requisition.actions import flag_as_received, flag_as_not_received, flag_as_not_labelled, print_barcode_labels
+from lab_barcode.actions import print_barcode_labels
+from lab_requisition.actions import flag_as_received, flag_as_not_received, flag_as_not_labelled
 
 
 class BaseRequisitionModelAdmin(MyModelAdmin):
