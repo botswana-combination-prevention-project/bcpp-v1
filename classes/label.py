@@ -91,7 +91,7 @@ class Label(object):
         self.client = None
 
         #self.get_client_ips()
-        client = None
+        # client = None
         #for client_ip in self.client_ips:
         #    if Client.objects.filter(ip=client_ip):
         #        client = Client.objects.filter(ip=client_ip)
