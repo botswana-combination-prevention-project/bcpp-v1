@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from django.core.validators import RegexValidator, MinLengthValidator
 from bhp_common.models import MyBasicUuidModel
-from bhp_variables.choices import GENDER_OF_CONSENT, SETTINGS_KEYWORD, MACHINE_TYPE
+from bhp_variables.choices import GENDER_OF_CONSENT, MACHINE_TYPE
 from bhp_variables.managers import StudySpecificManager
 
 
@@ -12,24 +12,39 @@ class BaseStudySpecific (MyBasicUuidModel):
         verbose_name = _("BHP Protocol Number"),
         max_length=10,
         unique=True,
-        help_text="e.g. BHP056, ...")
+        help_text="e.g. BHP041, BHP056, ..."
+        )
+    
+    protocol_code = models.CharField(
+        verbose_name = _("BHP Protocol Code"),
+        max_length=3,
+        validators = [MinLengthValidator(3),],
+        unique=True,
+        help_text="Three digit code mostly for identifiers. e.g. 041, 056, ..."
+        )    
+    
     protocol_title = models.CharField(
         verbose_name = _("Protocol Local Title"),
         max_length=100,
         unique=True,        
-        help_text=_("Local name for the protocol, e.g. Mashi, Mmabana, ..."))    
+        help_text=_("Local name for the protocol, e.g. Mashi, Mmabana, ...")
+        )   
+     
     research_title = models.CharField("Protocol Research Title",
         max_length=250,
         unique=True,                
-        help_text=_("Protocol title used on the grant"))    
+        help_text=_("Protocol title used on the grant")
+        )    
     
     study_start_datetime = models.DateTimeField(
         verbose_name = _("Study Start Date and Time"),
         help_text=_("This is usually the date at which IRB approval was given OR, if later than IRB approval, the date of site activation"),
         )
+    
     minimum_age_of_consent = models.IntegerField(
         verbose_name = _("Minumum age of consent (>=)"),
-        )    
+        )  
+      
     maximum_age_of_consent = models.IntegerField(
         verbose_name = _("Maximum age of consent (<=)"),
         )    
@@ -52,7 +67,8 @@ class BaseStudySpecific (MyBasicUuidModel):
         validators = [
             RegexValidator("^[1-9]{1}[0-9]*$", "Ensure first digit is not zero (0)"),
             ],
-        help_text="an integer, usually 1000.")
+        help_text="an integer, usually 1000."
+        )
 
     subject_identifier_prefix = models.CharField(
         verbose_name = _("Subject Identifier prefix"),
@@ -70,7 +86,7 @@ class BaseStudySpecific (MyBasicUuidModel):
         verbose_name = 'Machine type',
         choices = MACHINE_TYPE,
         max_length=25,
-        default='NETBOOK',
+        default='',
         help_text = 'If netbook, other checks are triggered',
         )
 
@@ -78,8 +94,8 @@ class BaseStudySpecific (MyBasicUuidModel):
         verbose_name = _("Hostname prefix"),
         max_length=15,
         validators = [
-            RegexValidator("^[a-zA-Z]{1,15}$", "Ensure prefix does not contain any spaces or numbers"),
-            RegexValidator("^[a-z]{1,15}$", "Ensure prefix is in lowercase"),
+            RegexValidator("^[a-zA-Z\.]{1,15}$", "Ensure prefix does not contain any spaces or numbers"),
+            RegexValidator("^[a-z\.]{1,15}$", "Ensure prefix is in lowercase"),
             ],
         help_text=_("Refers to the machine hostname. Hostname_prefix+device_id = hostname. To override validation, set hostname_prefix to your hostname and device_id to '0'.")
         )
@@ -98,7 +114,7 @@ class BaseStudySpecific (MyBasicUuidModel):
         abstract=True
 
 class StudySpecific (BaseStudySpecific):
-    pass
+    
     def __unicode__(self):
         return "%s: %s started on %s" % (self.protocol_number, self.protocol_title, self.study_start_datetime)
     class Meta:
