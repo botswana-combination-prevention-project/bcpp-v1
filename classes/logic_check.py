@@ -44,5 +44,11 @@ class LogicCheck(object):
                 if conditional_field_value == condition_value and not optional_field_value == required_optional_field_value: 
                     raise forms.ValidationError('%s must be %s if %s is %s. Please correct' % (optional_field, required_optional_field_value, conditional_field, condition_value,))
                 if not conditional_field_value == condition_value and optional_field_value == required_optional_field_value: 
-                    raise forms.ValidationError('%s cannot be %s if %s is %s. Please correct' % (optional_field, optional_field_value, conditional_field, condition_value,))
+                    raise forms.ValidationError('%s cannot be %s if %s is not \'%s\'. Please correct' % (optional_field, optional_field_value, conditional_field, condition_value,))
 
+        if logic == 'if_condition_then_not':
+            if conditional_field_value:
+                if conditional_field_value == condition_value and optional_field_value == required_optional_field_value: 
+                    raise forms.ValidationError('%s must not be %s if %s is %s. Please correct' % (optional_field, required_optional_field_value, conditional_field, condition_value,))
+                if not conditional_field_value == condition_value and not optional_field_value == required_optional_field_value: 
+                    raise forms.ValidationError('%s must be %s if %s is %s. Please correct' % (optional_field, optional_field_value, conditional_field, condition_value,))
