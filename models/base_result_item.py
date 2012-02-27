@@ -72,7 +72,7 @@ class BaseResultItem(MyBasicUuidModel):
 	    blank=True,
         db_index=True,	    
 	    )
-	
+    
     validation_username = models.CharField(
         verbose_name = "Validation username",
         max_length=50,
@@ -103,6 +103,6 @@ class BaseResultItem(MyBasicUuidModel):
 	    help_text = ''
   	    )
 
-  	    
+    
     class Meta:
         abstract = True       
