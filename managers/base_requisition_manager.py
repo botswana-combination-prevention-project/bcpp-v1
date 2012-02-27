@@ -1,7 +1,6 @@
 import socket, re
 from datetime import date, datetime
 from django.db import models
-from django.conf import settings
 from bhp_variables.models import StudySpecific
 from bhp_identifier.classes import Identifier
 from lab_requisition.classes import ClinicRequisitionLabel
@@ -9,21 +8,31 @@ from lab_requisition.classes import ClinicRequisitionLabel
 
 class BaseRequisitionManager(models.Manager):
 
-    def get_identifier(self, **kwargs):
+    def get_global_identifier(self, **kwargs):
 
-        """Generate and return a locally unique requisition identifier"""        
+        """Generate and return a globally unique requisition identifier (adds site and protocolnumber)"""        
+        
+        if not StudySpecific.objects.all()[0].machine_type == 'SERVER':
+            raise ValueError('Only SERVERs may access method \'get_global_identifier\'. Machine Type is determined from model StudySpecific attribute machine_type. Got %s' % (StudySpecific.objects.all()[0].machine_type, ))
         
         site_code = kwargs.get('site_code')
         protocol_code = kwargs.get('protocol_code', '')                        
 
         if not site_code:
             try:
-                site_code = settings.SITE_CODE
+                site_code = StudySpecific.objects.all()[0].site_code
             except AttributeError:
-                raise AttributeError('Requisition needs a \'site_code\'. Got None. Either pass as a parameter or set SITE_CODE= in settings.py')
+                raise AttributeError('Requisition needs a \'site_code\'. Got None. Either pass as a parameter or in StudySpecific')
 
         if len(site_code) == 1:
             site_code = site_code + '0'
+            
+        if not protocol_code:
+            try:
+                protocol_code = StudySpecific.objects.all()[0].protocol_code
+            except AttributeError:
+                raise AttributeError('Requisition needs a \'protocol_code\'. Got None. Either pass as a parameter or set in StudySpecific')
+ 
         
         identifier = Identifier(subject_type = 'specimen', 
                             site_code = site_code, 
@@ -37,9 +46,7 @@ class BaseRequisitionManager(models.Manager):
 
     def get_identifier_for_device(self, **kwargs):
 
-        """Generate and return a locally unique requisition identifier if created on a device / netbook"""        
-
-        # mostly will get device_id from hostname
+        """Generate and return a locally unique requisition identifier for a device (adds device id)"""        
         if kwargs.get('device_id'):
             device_id = kwargs.get('device_id')
         else:
@@ -47,10 +54,13 @@ class BaseRequisitionManager(models.Manager):
             if re.match(r'[0-9]{2}', hostname[len(hostname)-2:]):
                 device_id = hostname[len(hostname)-2:]
             else:
-                device_id = StudySpecific.objects.all()[0].device_id    
-        
+                device_id = StudySpecific.objects.all()[0].device_id
+                if StudySpecific.objects.all()[0].machine_type == 'SERVER':
+                    device_id = 98
+        if not device_id:
+            raise ValueError('Device ID unknown. Must either be passed as a kwarg, extracted from hostname, or queried from StudySpecific.')    
         given_root_segment = str(device_id) + date.today().strftime('%m%d')
-            
+        
         return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, counter_length=2)
         
     def print_label(self, **kwargs):
@@ -70,7 +80,7 @@ class BaseRequisitionManager(models.Manager):
                     requisition.modified = datetime.today()
                     requisition.save()                                             
                 except ValueError, err:
-                    raise ValueError('Unable to print, is the lab_barcode app configured?')
+                    raise ValueError('Unable to print, is the lab_barcode app configured? %s' % (err,))
                     #messages.add_message(request, messages.ERROR, err)
                 if not label.printer_error:
                     print_message = '%s for specimen %s at %s from host %s' % (label.message, requisition.requisition_identifier, datetime.today().strftime('%H:%M'), remote_addr)
