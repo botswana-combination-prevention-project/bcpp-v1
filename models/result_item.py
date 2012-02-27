@@ -13,7 +13,10 @@ class ResultItem(BaseResultItem):
 
     result = models.ForeignKey(Result)
     
-    objects = ResultItemManager()    
+    objects = ResultItemManager() 
+   
+    def __unicode__(self):
+        return '%s %s %s' % (unicode(self.result.lab), unicode(self.result), unicode(self.test_code))       
 
     def save(self, *args, **kwargs):
         
