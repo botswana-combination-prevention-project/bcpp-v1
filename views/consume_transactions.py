@@ -1,17 +1,13 @@
-import urllib, urllib2, base64, socket
+import urllib2
 import simplejson as json
 from django.core.serializers.json import DjangoJSONEncoder
-from datetime import datetime
-from tastypie.models import ApiKey
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.db import IntegrityError
 from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core import serializers
-from bhp_sync.models import Transaction, Producer, RequestLog
+from bhp_sync.models import Producer, RequestLog
 from bhp_sync.classes import TransactionProducer
 
 @login_required
@@ -26,10 +22,6 @@ def get_new_transactions(request, **kwargs):
             if not request.user.api_key:
                 raise ValueError, 'ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,)
             else:            
-                #timeout = 10
-                #socket_default_timeout = socket.getdefaulttimeout()        
-                #consumed = []
-                
                 # specify producer "name" of the server you are connecting to 
                 # as you only want transactions created by that server.
                 producer = None
@@ -41,7 +33,7 @@ def get_new_transactions(request, **kwargs):
                         producer = Producer.objects.get(name__iexact=kwargs.get('producer'))
 
                 if producer:
-                
+                    
                     # url to producer, add in the producer, username and api_key of the current user
                     data = {'host': producer.url, 'producer':producer.name, 'limit':producer.json_limit, 'username':request.user.username, 'api_key':request.user.api_key.key}
                     url = '{host}bhp_sync/api/transaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
@@ -51,23 +43,34 @@ def get_new_transactions(request, **kwargs):
                     request_log.save()
                     
                     producer.sync_datetime = request_log.request_datetime
-                    producer.sync_status = 'Error'
+                    #producer.sync_status = 'Error'
+                    producer.sync_status = '?'
                     producer.save()
                     
                     err = None
-                    req = urllib2.Request(url=url)
+                    try:
+                        req = urllib2.Request(url=url)
+                    except urllib2.URLError, err:
+                        producer.sync_status = err
+                        producer.save()
+                        messages.add_message(request, messages.ERROR, err)
+                            
                     while req:
                         try:
                             f = urllib2.urlopen(req)
                             req = None
                         except urllib2.HTTPError, err:
+                            producer.sync_status = err  
+                            producer.save()
+                            messages.add_message(request, messages.ERROR, err)
                             request_log.status = 'error'
                             request_log.save()
                             req = None            
                             if err.code == 404:
                                 messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
                         except urllib2.URLError, err:
-                            producer.sync_status = 'error'                                                
+                            producer.sync_status = err  
+                            producer.save()                                              
                             request_log.status = 'error'
                             request_log.save()
                             messages.add_message(request, messages.ERROR, err)                                       
@@ -93,7 +96,7 @@ def get_new_transactions(request, **kwargs):
                                 #    messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))  
 
                                 if json_response:
-                                    error_list = []
+                                    
                                     messages.add_message(request, messages.INFO, 'Fetching %s unsent transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
 
                                     # 'transaction' is the serialized Transaction object from the producer. 
@@ -101,8 +104,8 @@ def get_new_transactions(request, **kwargs):
                                     # instance of the data model we are looking for
                                     for transaction in json_response['objects']:
                                         for obj in serializers.deserialize("json",transaction['tx']):
+                                            
                                             # if you get an error deserializing a datetime, confirm dev version of json.py
-                                            #try:
                                             if transaction['action'] == 'I' or transaction['action'] == 'U':
                                                 
                                                 # deserialiser save() method
@@ -112,6 +115,8 @@ def get_new_transactions(request, **kwargs):
                                                 # methods are called. (for example, saving a membership form triggers the creation of appointments)
                                                 # this will cause an integrity error as the consumer will auto-create a model instance 
                                                 # and the next transaction to be consumed will be that same model instance with a different pk.
+                                                
+                                                # get_by_natural_key_with_dict is disabled, just save()
                                                 if 'xget_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
                                                     if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
                                                         obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
@@ -140,7 +145,7 @@ def get_new_transactions(request, **kwargs):
                                                 if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
                                                     if settings.ALLOW_DELETE_MODEL_FROM_SERIALIZATION:
                                                         if obj.object.__class__.objects.filter(pk=transaction['tx_pk']):
-                                                            obj_name = unicode(obj.object) 
+                                                            #obj_name = unicode(obj.object) 
                                                             obj.object.__class__.objects.get(pk=transaction['tx_pk']).delete(transaction_producer=transaction['producer'])
                                                             #messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(obj_name,))                                            
                                                     else:
@@ -152,10 +157,10 @@ def get_new_transactions(request, **kwargs):
                                             else:
                                                 raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (transaction['action'],)
 
-        producer.sync_status = 'OK'
-        producer.save()
+                    #producer.sync_status = 'OK'
+                    producer.save()
         
     
-        return render_to_response('new_transactions.html', { 
+        return render_to_response('consume_transactions.html', { 
             'producer': producer,
         },context_instance=RequestContext(request))

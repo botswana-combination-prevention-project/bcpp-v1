@@ -1,5 +1,4 @@
 # requires django-extensions 0.7
-# from django_extensions.db.fields import json as jsonfield
 from datetime import datetime
 from django.db import models
 from bhp_common.models import MyBasicUuidModel

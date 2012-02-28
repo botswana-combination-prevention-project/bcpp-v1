@@ -1,9 +1,9 @@
-from tastypie import fields
+#from tastypie import fields
 from tastypie.serializers import Serializer
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import DjangoAuthorization
-from tastypie.authorization import Authorization
-from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
+#from tastypie.authorization import Authorization
+from tastypie.resources import ModelResource
 from bhp_sync.models import Transaction
 
 """

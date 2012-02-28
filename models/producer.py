@@ -21,8 +21,8 @@ class Producer(MyBasicUuidModel):
         )
 
     sync_status = models.CharField(
-        max_length = 25,
-        default = 'Complete',
+        max_length = 250,
+        default = '-',
         null = True,
         )
     
