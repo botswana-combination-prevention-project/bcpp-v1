@@ -15,7 +15,7 @@ class BaseResultItem(MyBasicUuidModel):
 
     result_item_value_as_float = models.FloatField(
         verbose_name = 'Result as float',
-        max_digits = 15,
+        #max_digits = 15,
         help_text = '',
         null = True,
         db_index=True,
