@@ -11,7 +11,7 @@ from bhp_sync.models import Producer, RequestLog
 from bhp_sync.classes import TransactionProducer
 
 @login_required
-def get_new_transactions(request, **kwargs):
+def consume_transactions(request, **kwargs):
 
     if not 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
         messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')                                                                                            
