@@ -1,5 +1,5 @@
+import re
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
 from lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
 
@@ -12,6 +12,16 @@ class BaseResultItem(MyBasicUuidModel):
 	    help_text = '',
         db_index=True,
 	    )
+
+    result_item_value_as_float = models.FloatField(
+        verbose_name = 'Result as float',
+        max_digits = 15,
+        decimal_places=4,
+        help_text = '',
+        null = True,
+        db_index=True,
+        editable = False,
+        )
 
     result_item_quantifier = models.CharField(
         verbose_name = 'Quantifier',
@@ -102,6 +112,18 @@ class BaseResultItem(MyBasicUuidModel):
         blank = True,	    
 	    help_text = ''
   	    )
+
+    
+    def save(self, *args, **kwargs):
+        
+        # if value can be converted to a numeric, then do so and store as float
+        if re.search(r'\d+\.?\d*', self.result_item_value):
+            try:
+                self.result_item_value_as_float = float(self.result_item_value)
+            except:
+                pass    
+            
+        super(BaseResultItem, self).save(*args, **kwargs)
 
     
     class Meta:
