@@ -43,9 +43,12 @@ class SerializeToTransaction(object):
         transaction_producer = TransactionProducer(hostname=hostname)    
         Transaction = get_model('bhp_sync', 'transaction')
 
-        # TODO: is this still necessary??
-        #if 'suppress_autocreate_on_deserialize' in dir(sender):
-        #    del kwargs['suppress_autocreate_on_deserialize']
+        # 'suppress_autocreate_on_deserialize' is passed by the method that
+        # deserializes a transaction to avoid duplicating autocreated related model instances. 
+        # The conditional was used in the save method of the model that was saved. 
+        # It can (and must) now be discarded.
+        if 'suppress_autocreate_on_deserialize' in dir(sender):
+            del kwargs['suppress_autocreate_on_deserialize']
 
         # TODO: is there value in using this??
         use_natural_keys = False
