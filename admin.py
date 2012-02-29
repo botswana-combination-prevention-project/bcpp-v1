@@ -9,6 +9,7 @@ class StudySpecificAdmin(admin.ModelAdmin):
     
     list_display = (
         "protocol_number", 
+        "protocol_code",
         "study_start_datetime",
         "machine_type",
         "hostname_prefix",
