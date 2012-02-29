@@ -1,11 +1,7 @@
-from datetime import datetime
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
-from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_appointment.models import Appointment
-from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
+from bhp_entry.models import AdditionalEntryBucket
 from registered_subject import RegisteredSubject
 
         

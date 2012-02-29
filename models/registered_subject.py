@@ -1,10 +1,8 @@
-from datetime import datetime
 from django.db import models
-from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
 from base_subject import BaseSubject
-from bhp_variables.models import StudySpecific, StudySite
+from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_common.fields import IsDateEstimatedField
 from bhp_common.choices import YES_NO, POS_NEG, ALIVE_DEAD

@@ -2,7 +2,7 @@ from django.db import models
 from django.db import IntegrityError
 from bhp_common.models import MyBasicUuidModel
 from bhp_common.choices import GENDER_UNDETERMINED
-from bhp_registration.choices import REGISTRATION_STATUS, SUBJECT_TYPE
+
 
 class BaseSubject (MyBasicUuidModel):
        

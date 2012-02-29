@@ -161,7 +161,7 @@ class RegisteredSubjectManager(models.Manager):
         
         """
 
-        registration_model = kwargs.get('registration_model')
+        #registration_model = kwargs.get('registration_model')
         registered_mother = kwargs.get('mother_identifier')
         live_infants = kwargs.get('live_infants')
         live_infants_to_register = kwargs.get('live_infants_to_register')

@@ -1,6 +1,5 @@
 from datetime import date
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from bhp_common.fields import MyUUIDField, DobField
 from bhp_common.models import MyBasicModel
 
