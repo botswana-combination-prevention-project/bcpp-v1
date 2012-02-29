@@ -1,7 +1,9 @@
 from datetime import datetime
 
 def flag_as_received(modeladmin, request, queryset, **kwargs):
-
+    """ flag as received and generate a globally unique identifier.
+    Note the model is a SubjectRequisition"""
+    
     for qs in queryset: 
         if not qs.specimen_identifier:
             qs.specimen_identifier = qs.__class__.objects.get_global_identifier(site_code = qs.site.site_code, 

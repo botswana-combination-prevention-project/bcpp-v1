@@ -151,12 +151,9 @@ class BaseBaseRequisition (MyBasicUuidModel):
 
     def save(self, *args, **kwargs):
     
-        if self.is_drawn.lower() == 'yes':
+        if not self.requisition_identifier and self.is_drawn.lower() == 'yes' :
             self.requisition_identifier = self.__class__.objects.get_identifier_for_device()
-        
-        #if not self.requisition_identifier:
-        #    self.requisition_identifier = self.__class__.objects.get_identifier(site_code=self.site.site_code)
-        
+                
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
 
