@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
 from bhp_common.models import MyBasicUuidModel
 from bhp_registration.models import RegisteredSubject
 from bhp_entry.choices import ENTRY_STATUS
@@ -41,8 +41,8 @@ class BaseEntryBucket(MyBasicUuidModel):
     fill_datetime = models.DateTimeField()
     
 
-    def is_serialized(self):
-        return super(BaseEntryBucket, self).is_serialized(True)
+    # def is_serialized(self):
+    #     return super(BaseEntryBucket, self).is_serialized(False)
     
     class Meta:
         abstract = True

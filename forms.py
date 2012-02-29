@@ -1,5 +1,3 @@
-from datetime import date, datetime, timedelta
-from django.db.models import Q, Max
 from django import forms
 from bhp_entry.models import ScheduledEntryBucket
 
