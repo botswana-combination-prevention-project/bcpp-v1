@@ -1,4 +1,4 @@
-import os, sys, subprocess, platform, tempfile
+import os, subprocess, tempfile
 from bhp_common.utils import get_ip_address, get_iface_list
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client
 
@@ -58,7 +58,7 @@ class Label(object):
         #self.formatted_label = self.label % kwargs        
         try:
             self.formatted_label = self.unformatted_label % kwargs
-        except KeyError, e:
+        except KeyError:
             # silently fail, label will print with placeholder which should imply that all the placeholder values were not provided
             self.formatted_label = self.unformatted_label
             #elf.message = Cannot print label. with data, e           
