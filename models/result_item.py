@@ -1,6 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from audit_trail.audit import AuditTrail
 from lab_reference.classes import ReferenceFlag
 from lab_grading.classes import GradeFlag
 from lab_result.models import Result, ResultSource
@@ -54,7 +52,7 @@ class ResultItem(BaseResultItem):
         return super(ResultItem, self).save(*args, **kwargs)
     
     def __unicode__(self):
-  	    return '%s %s' % (unicode(self.result), unicode(self.test_code))
+        return '%s %s' % (unicode(self.result), unicode(self.test_code))
     
     def get_absolute_url(self):
         return "lab_result_item/resultitem/%s/" % (self.id)
