@@ -8,41 +8,43 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'ResultItemAudit'
-        db.create_table('bhp_lab_core_resultitem_audit', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
-            ('_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
-            ('result_item_value', self.gf('django.db.models.fields.CharField')(max_length=25, db_index=True)),
-            ('result_item_value_as_float', self.gf('django.db.models.fields.FloatField')(null=True, db_index=True)),
-            ('result_item_quantifier', self.gf('django.db.models.fields.CharField')(default='=', max_length=25)),
-            ('result_item_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
-            ('result_item_operator', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, null=True, blank=True)),
-            ('grade_range', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
-            ('grade_flag', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
-            ('reference_flag', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
-            ('reference_range', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
-            ('validation_status', self.gf('django.db.models.fields.CharField')(default='P', max_length=10, db_index=True)),
-            ('validation_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True, null=True, blank=True)),
-            ('validation_username', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, null=True, blank=True)),
-            ('validation_reference', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('error_code', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('test_code', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_resultitem', to=orm['lab_test_code.TestCode'])),
-            ('result', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_resultitem', to=orm['lab_result.Result'])),
-            ('result_item_source', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_resultitem', to=orm['lab_result.ResultSource'])),
-            ('result_item_source_reference', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('_audit_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
-            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-        ))
-        db.send_create_signal('lab_result_item', ['ResultItemAudit'])
-
+        try:
+            # Adding model 'ResultItemAudit'
+            db.create_table('bhp_lab_core_resultitem_audit', (
+                ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+                ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+                ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+                ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+                ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, blank=True)),
+                ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, blank=True)),
+                ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
+                ('_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+                ('result_item_value', self.gf('django.db.models.fields.CharField')(max_length=25, db_index=True)),
+                ('result_item_value_as_float', self.gf('django.db.models.fields.FloatField')(null=True, db_index=True)),
+                ('result_item_quantifier', self.gf('django.db.models.fields.CharField')(default='=', max_length=25)),
+                ('result_item_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
+                ('result_item_operator', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, null=True, blank=True)),
+                ('grade_range', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+                ('grade_flag', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
+                ('reference_flag', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
+                ('reference_range', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+                ('validation_status', self.gf('django.db.models.fields.CharField')(default='P', max_length=10, db_index=True)),
+                ('validation_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True, null=True, blank=True)),
+                ('validation_username', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, null=True, blank=True)),
+                ('validation_reference', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+                ('comment', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+                ('error_code', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+                ('test_code', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_resultitem', to=orm['lab_test_code.TestCode'])),
+                ('result', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_resultitem', to=orm['lab_result.Result'])),
+                ('result_item_source', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_resultitem', to=orm['lab_result.ResultSource'])),
+                ('result_item_source_reference', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+                ('_audit_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+                ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
+                ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ))
+            db.send_create_signal('lab_result_item', ['ResultItemAudit'])
+        except:
+            pass
 
     def backwards(self, orm):
         

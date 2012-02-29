@@ -9,8 +9,10 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Deleting model 'ResultItemAudit'
-        db.delete_table('bhp_lab_core_resultitem_audit')
-
+        try:
+            db.delete_table('bhp_lab_core_resultitem_audit')
+        except:
+            pass        
         # Adding field 'ResultItem.result_item_value_as_float'
         db.add_column('bhp_lab_core_resultitem', 'result_item_value_as_float', self.gf('django.db.models.fields.FloatField')(null=True, db_index=True), keep_default=False)
 
