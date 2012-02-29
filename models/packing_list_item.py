@@ -26,6 +26,9 @@ class PackingListItem(MyBasicUuidModel):
 
     history = AuditTrail()    
 
+    def get_subject_identifier(self):
+        return ''
+    
     class Meta:
         app_label = 'lab_packing'    
         ordering = ['created',]            

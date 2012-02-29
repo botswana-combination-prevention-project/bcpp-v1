@@ -26,6 +26,9 @@ class PackingList(MyBasicUuidModel):
     def __unicode__(self):
         return self.pk
 
+    def get_subject_identifier(self):
+        return ''
+
     class Meta:
         app_label = 'lab_packing'
         ordering = ['list_datetime',]
