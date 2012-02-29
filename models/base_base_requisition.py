@@ -28,7 +28,8 @@ class BaseBaseRequisition (MyBasicUuidModel):
         max_length = 25,
         null = True,
         blank = True,
-        editable = False
+        editable = False,
+        unique = True,
         )
 
     protocol = models.CharField(
