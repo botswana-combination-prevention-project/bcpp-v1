@@ -3,6 +3,7 @@ def reset_transaction_as_not_consumed(modeladmin, request, queryset):
     """ reset transaction by setting is_consumed = False"""
     for qs in queryset:
         qs.is_consumed = False
+        qs.consumer = None
         qs.save()
             
 reset_transaction_as_not_consumed.short_description = "Set transactions as NOT consumed (is_consumed=False)"
