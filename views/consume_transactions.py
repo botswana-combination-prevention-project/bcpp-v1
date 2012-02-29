@@ -97,7 +97,7 @@ def consume_transactions(request, **kwargs):
 
                                 if json_response:
                                     
-                                    messages.add_message(request, messages.INFO, 'Fetching %s unsent transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
+                                    messages.add_message(request, messages.INFO, 'Consuming %s new transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
 
                                     # 'transaction' is the serialized Transaction object from the producer. 
                                     # Recall that the Transaction's object field 'tx' has the serialized 
@@ -138,7 +138,8 @@ def consume_transactions(request, **kwargs):
                                                 req = urllib2.Request(url, json.dumps(transaction, cls=DjangoJSONEncoder), {'Content-Type': 'application/json'})
                                                 f = urllib2.urlopen(req)
                                                 response = f.read()
-                                                f.close()                        
+                                                f.close()  
+                                                producer.sync_status = 'OK'                      
                                                 # display a message on the consumer (self)
                                                 #messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
 
