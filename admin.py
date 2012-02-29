@@ -1,8 +1,7 @@
-from datetime import *
+from datetime import datetime
 from django.contrib import admin
-from autocomplete.views import autocomplete, AutocompleteSettings
 from autocomplete.admin import AutocompleteAdmin
-from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
+from bhp_common.models import MyModelAdmin
 from lab_result.models import Result
 from models import ResultItem
 
