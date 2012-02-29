@@ -94,8 +94,7 @@ class BaseStudySpecific (MyBasicUuidModel):
         verbose_name = _("Hostname prefix"),
         max_length=15,
         validators = [
-            RegexValidator("^[a-z0-9\.]{1,15}$", "Ensure prefix contains only numbers and letters and does not contain any spaces"),
-            RegexValidator("^[a-z\.]{1,15}$", "Ensure prefix is in lowercase"),
+            RegexValidator("^[a-z0-9\.]{1,15}$", "Ensure prefix contains only numbers and lowercase letters and does not contain any spaces"),
             ],
         help_text=_("Refers to the machine hostname. Hostname_prefix+device_id = hostname. To override validation, set hostname_prefix to your hostname and device_id to '0'.")
         )
