@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.db import models
 from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
