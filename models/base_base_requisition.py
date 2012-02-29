@@ -152,8 +152,9 @@ class BaseBaseRequisition (MyBasicUuidModel):
 
     def save(self, *args, **kwargs):
     
-        if not self.requisition_identifier and self.is_drawn.lower() == 'yes' :
-            self.requisition_identifier = self.__class__.objects.get_identifier_for_device()
+        if not kwargs.get('suppress_autocreate_on_deserialize', False):
+            if not self.requisition_identifier and self.is_drawn.lower() == 'yes' :
+                self.requisition_identifier = self.__class__.objects.get_identifier_for_device()
                 
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
