@@ -1,9 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import Q, Max
-from django.core.urlresolvers import reverse
 from django.conf import settings
-from bhp_common.models import MyBasicUuidModel
 from lab_result.models import Result as LisResult
 from bhp_poll_mysql.poll_mysql import PollMySQL
 from lab_clinic_api.models import UpdateLog

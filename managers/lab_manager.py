@@ -1,13 +1,10 @@
 from datetime import datetime
 from django.db import models
 from django.db.models import Q, Max
-from django.core.urlresolvers import reverse
 from django.conf import settings
-from bhp_common.models import MyBasicUuidModel
 from lab_aliquot_list.models import AliquotCondition
 from lab_result.models import Result as LisResult
 from lab_receive.models import Receive as LisReceive
-from lab_result_item.models import ResultItem as LisResultItem
 from bhp_poll_mysql.poll_mysql import PollMySQL
 from lab_clinic_api.models import UpdateLog
 
@@ -98,7 +95,7 @@ class LabManager(models.Manager):
             # order and result
             qset = Q(order__aliquot__receive__patient__subject_identifier=subject_identifier)
             aggr = super(LabManager, self).filter(subject_identifier=subject_identifier).aggregate(Max('release_datetime'))
-            last_release_datetime = aggr['release_datetime__max']
+            #last_release_datetime = aggr['release_datetime__max']
             #if last_release_datetime:
             #    qset.add(Q(release_datetime__gt=last_release_datetime), Q.AND)
 

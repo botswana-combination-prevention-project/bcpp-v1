@@ -1,9 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import Q, Max
-from django.core.urlresolvers import reverse
 from django.conf import settings
-from bhp_common.models import MyBasicUuidModel
 from lab_test_code.models import TestCode, TestCodeGroup
 from lab_result_item.models import ResultItem as LisResultItem
 from bhp_poll_mysql.poll_mysql import PollMySQL
@@ -37,11 +34,13 @@ class ResultItemManager(models.Manager):
         if self.connected():
             for result in results:         
                 # update local "ResultItem" for this result
-                lis_result_items = LisResultItem.objects.using('lab_api').filter(result__result_identifier = result.result_identifier)
+                lis_result_items = LisResultItem.objects.using('lab_api').filter(result__result_identifier=result.result_identifier)
                 for lis_result_item in lis_result_items:
-                    if super(ResultItemManager, self).filter(result=result, test_code__code = lis_result_item.test_code.code):
+                    if super(ResultItemManager, self).filter(result = result, 
+                                                             test_code__code = lis_result_item.test_code.code):
                         # update existing result_item
-                        result_item = super(ResultItemManager, self).get(result=result, test_code__code = lis_result_item.test_code.code)
+                        result_item = super(ResultItemManager, self).get(result = result, 
+                                                                         test_code__code = lis_result_item.test_code.code)
                         for fld in result_item._meta.fields:
                             if fld.name in [field.name for field in lis_result_item._meta.fields if field.name <> 'id' and field.name <> 'result' and field.name <> 'test_code']:
                                 setattr(result_item, fld.name, getattr(lis_result_item, fld.name))
@@ -62,13 +61,12 @@ class ResultItemManager(models.Manager):
                                 test_code_group = TestCodeGroup.objects.get(code=lis_result_item.test_code.test_code_group.code) 
                             test_code =  TestCode()      
                             for field in TestCode._meta.fields:
-                                if field.name <> 'id' and field_name <> 'test_code_group':
+                                if field.name <> 'id' and field.name <> 'test_code_group':
                                     test_code.__dict__[field.name] =  lis_result_item.__dict__[field.name]
                             test_code.test_code_group = test_code_group
                             test_code.save()                        
                             
                         # update  
-                        kw = {}  
                         result_item = super(ResultItemManager, self).__dict__['model']()            
                         for fld in super(ResultItemManager, self).__dict__['model']._meta.fields:
                             if fld.name in [field.name for field in lis_result_item._meta.fields if field.name <> 'id' and field.name <> 'result' and field.name <> 'test_code']:
