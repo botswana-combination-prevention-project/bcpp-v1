@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from bhp_consent.models import BaseConsentModel
 
 class ConsentNonUniqueModel(BaseConsentModel):

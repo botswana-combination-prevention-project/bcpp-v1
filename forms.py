@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date
 from dateutil.relativedelta import relativedelta
 from django import forms
 from bhp_variables.models import StudySpecific
@@ -15,7 +15,7 @@ class BaseSubjectConsentForm(forms.ModelForm):
         check omang if identity_type is omang
         """                        
         if cleaned_data["identity_type"] == 'OMANG':
-             check_omang_field(cleaned_data["identity"], cleaned_data["gender"])            
+            check_omang_field(cleaned_data["identity"], cleaned_data["gender"])            
         
         if 'subject_identifier' in cleaned_data: #which it never is??
             consents = self._meta.model.objects.filter(identity=cleaned_data["identity"]).exclude(subject_identifier=cleaned_data["subject_identifier"])
