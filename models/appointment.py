@@ -1,8 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from django.core.validators import RegexValidator
 from audit_trail.audit import AuditTrail
 from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition

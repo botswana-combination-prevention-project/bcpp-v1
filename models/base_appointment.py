@@ -1,10 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
 from bhp_common.models import MyBasicUuidModel
-from bhp_common.fields import NameField, DobField, InitialsField
-from bhp_common.validators import datetime_is_future, date_not_future
-from bhp_registration.models import RegisteredSubject
 from bhp_appointment.choices import APPT_STATUS
 
 class BaseAppointment (MyBasicUuidModel):
@@ -38,10 +34,6 @@ class BaseAppointment (MyBasicUuidModel):
         max_length=250, 
         blank=True,
         )        
-
-    def is_serialized(self):
-        return super(BaseAppointment, self).is_serialized(True)
-
-       
+   
     class Meta:
         abstract=True  

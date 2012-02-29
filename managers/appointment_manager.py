@@ -1,6 +1,5 @@
 import inspect
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup

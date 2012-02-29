@@ -1,8 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
-from bhp_common.choices import YES_NO
 from bhp_appointment.managers import ConfigurationManager
 
 
@@ -24,7 +22,7 @@ class Configuration(MyBasicUuidModel):
     def save(self, *args, **kwargs):
         
         if not self.id and self.__class__.objects.all().count() == 1:
-            raise ValidationError, 'Configuration model may only have one record and you are trying to add a second. Edit the first record instead.'
+            raise ValueError, 'Configuration model may only have one record and you are trying to add a second. Edit the first record instead.'
         else:
             super(Configuration, self).save(*args, **kwargs)            
 
