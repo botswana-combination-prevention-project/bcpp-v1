@@ -50,7 +50,7 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
         
         self.search_fields = ['id', 'reason','appointment__visit_definition__code', 'appointment__registered_subject__subject_identifier']
 
-        self.list_filter = ['appointment__visit_instance', 'reason', 'report_datetime', 'created', 'modified', 'user_created', 'user_modified',]
+        self.list_filter = ['appointment__visit_instance', 'reason', 'appointment__visit_definition__code','report_datetime', 'created', 'modified', 'user_created', 'user_modified',]
 
     def save_model(self, request, obj, form, change):
         
