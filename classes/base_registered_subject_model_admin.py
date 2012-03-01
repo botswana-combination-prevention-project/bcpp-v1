@@ -1,12 +1,8 @@
-from datetime import datetime
-from django.db.models import Q
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_appointment.models import Appointment
-#from bhp_adverse.models.base_death_report import BaseDeathReport
-from bhp_registration.models import BaseRegisteredSubjectModel, BaseOffStudy
-from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
+from bhp_entry.models import AdditionalEntryBucket
 from bhp_registration.models import  RegisteredSubject
 
 
@@ -125,15 +121,5 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
             ],
         )]
         
-    #search_fields = ('registered_subject__subject_identifier',) 
-     
-    #list_display = ('registered_subject', 'created', 'modified', 'user_created', 'user_modified',)    
-    
-    #list_filter = (
-    #    'registered_subject__gender', 
-    #    'created', 
-    #    'modified', 
-    #    'user_created',
-    #    'user_modified',
-    #    )
+
 
