@@ -1,8 +1,6 @@
-from datetime import datetime, date, time
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_common.utils import os_variables
 from bhp_model_selector.classes import ModelSelector
 from bhp_model_selector.forms import ModelSelectorForm
 from bhp_model_describer.classes import ModelDescriber

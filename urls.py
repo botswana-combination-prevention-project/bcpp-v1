@@ -12,6 +12,12 @@ urlpatterns = patterns('',
         'data_describer', 
         name="describer_url_name"
         ),
+                       
+    url(r'^counter/', 
+        'model_instance_counter', 
+        name="model_instance_counter_url_name"
+        ),
+                       
     )        
 
 
