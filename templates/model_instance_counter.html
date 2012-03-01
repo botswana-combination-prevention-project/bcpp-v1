@@ -1,0 +1,38 @@
+{% extends "section_statistics.html"%}
+{% load describer_tags %}{% load common_tags %}
+
+{% block content %}
+<form action="." method="POST">
+<div style='display:none'>  
+  {% csrf_token %}
+</div>
+<table>
+<tr>
+{{ form }}
+<td>
+    <input type="submit" value="Submit" class="default" name="submit" />
+</td>
+
+<script type="text/javascript">document.getElementById("id_producer").focus();</script>
+<script type="text/javascript">
+    (function($) {
+        var field = null;
+    })(django.jQuery);
+</script>
+    </table>
+</form>
+
+
+<H4>Counts for Models in App : {{ app_label }}</H4>
+<table>
+<thead>
+<th>Model</th>
+<th>Count</th>
+</thead>
+<tbody>
+{% for model, count in result.iteritems %}
+<tr><td>{{ model }}</td><td>{{count}}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
