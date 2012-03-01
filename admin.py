@@ -7,7 +7,7 @@ from bhp_entry.models import Entry, ScheduledEntryBucket, AdditionalEntryBucket
 
 class EntryAdmin(MyModelAdmin):
 
-    search_fields = ('visit_definition__code','content_type_map__model')
+    search_fields = ('visit_definition__code','content_type_map__model', 'id')
 
     list_display = ('content_type_map', 'visit_definition', 'entry_order','required', 'entry_category')
     
@@ -19,7 +19,7 @@ class ScheduledEntryBucketAdmin(MyModelAdmin):
     
     form = ScheduledEntryBucketForm
     
-    search_fields = ('registered_subject__subject_identifier', 'entry__visit_definition__code', 'entry__content_type_map__model')
+    search_fields = ('registered_subject__subject_identifier', 'entry__visit_definition__code', 'entry__content_type_map__model', 'id')
 
     list_display = ('registered_subject', 'entry', 'entry_status', 'fill_datetime', 'due_datetime', 'close_datetime', 'created', 'hostname_created')
 
@@ -54,7 +54,7 @@ class AdditionalEntryBucketAdmin(MyModelAdmin):
     
     list_filter = ('entry_status', 'fill_datetime',)    
     
-    search_fields = ('registered_subject__subject_identifier', 'content_type_map__model')    
+    search_fields = ('registered_subject__subject_identifier', 'content_type_map__model', 'id')    
 
 admin.site.register(AdditionalEntryBucket, AdditionalEntryBucketAdmin)
 
