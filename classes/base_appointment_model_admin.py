@@ -48,7 +48,7 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
         
         self.list_display = ['appointment', 'report_datetime', 'reason', 'created', 'modified', 'user_created', 'user_modified',]         
         
-        self.search_fields = ['id', 'reason','appointment__visit_definition__code', 'appointment__registered_subject']
+        self.search_fields = ['id', 'reason','appointment__visit_definition__code', 'appointment__registered_subject__subject_identifier']
 
         self.list_filter = ['appointment__visit_instance', 'reason', 'report_datetime', 'created', 'modified', 'user_created', 'user_modified',]
 
