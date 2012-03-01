@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.db import models
-from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
-from bhp_common.models import  MyBasicUuidModel
+from django.core.urlresolvers import reverse
+from django.core.validators import MinLengthValidator
 from bhp_visit.utils import get_lower_window_days, get_upper_window_days
 from bhp_visit.models import ScheduleGroup
 from bhp_visit.models import BaseWindowPeriodItem
