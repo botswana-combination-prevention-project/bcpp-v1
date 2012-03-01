@@ -11,6 +11,31 @@ conditional, because you do not want the save() to create these model instances 
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
             Appointment.create()
             
+from django.db import models
+app_list=['maikalelo_maternal',]
+common_foreign_key_field_name = 'maternal_visit'
+model_list = [{'name': model._meta.module_name, 'model':model} 
+                        for model in models.get_models() 
+                        if (model._meta.app_label in app_list) 
+                        and common_foreign_key_field_name in 
+                        [field.name for field in model._meta.fields] 
+                        and '_audit_id' not in 
+                        [field.name for field in model._meta.fields]
+                       ]
+
+# count records
+
+for dct in model_list:
+    dct['model'].objects.all().count()
+                           
+#resave models
+for dct in model_list:
+    for m in dct['model'].objects.all():
+        m.save()
+
+maybe update producer
+
+update bhp_sync_transaction set producer='mkl51' where producer='dmc3' and is_consumed=False;
 
 
 ** Sync Errors from mochudi
