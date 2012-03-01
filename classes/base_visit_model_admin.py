@@ -42,6 +42,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
             'modified', 
             'user_created',
             'user_modified',
+            'hostname_created',
             ]
 
         self.actions.append(export_as_csv_action("CSV Export: ...with visit and demographics", 

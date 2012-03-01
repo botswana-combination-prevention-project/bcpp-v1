@@ -19,6 +19,7 @@ class ConfigurationAdmin(MyModelAdmin):
 admin.site.register(Configuration, ConfigurationAdmin)    
 
 
+
 class AppointmentAdmin(MyModelAdmin):
 
     form = AppointmentForm
