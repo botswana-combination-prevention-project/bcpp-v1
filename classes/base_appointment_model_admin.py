@@ -45,6 +45,10 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
         if not [f.name for f in self.model._meta.fields if f.name=='appointment']:
             raise AttributeError, 'The model for BaseAppointmentModelAdmin child class %s requires model attribute \'appointment\'. Not found in model %s.' % (self, self.model._meta.object_name)
         
+        
+        self.list_display = ['appointment__registered_subject__subject_identifier', 'visit_definition__code', 'created', 'modified', 'user_created', 'user_modified',]         
+        
+        self.search_fields = ['id', 'appointment__registered_subject__subject_identifier', 'visit_definition__code']
 
     def save_model(self, request, obj, form, change):
         
