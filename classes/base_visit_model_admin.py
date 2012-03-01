@@ -32,7 +32,6 @@ class BaseVisitModelAdmin(MyModelAdmin):
         self.search_fields = [self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',] 
         
         self.list_display = [self.visit_model_foreign_key, 
-                             self.visit_model_foreign_key+'__appointment__registered_subject__study_site__site_code', 
                              'created', 'modified', 'user_created', 'user_modified',]    
         
         self.list_filter = [
@@ -40,6 +39,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
             self.visit_model_foreign_key+'__reason',
             self.visit_model_foreign_key+'__appointment__appt_status',
             self.visit_model_foreign_key+'__appointment__visit_definition__code',
+            self.visit_model_foreign_key+'__appointment__registered_subject__study_site__site_code', 
             'created', 
             'modified', 
             'user_created',
