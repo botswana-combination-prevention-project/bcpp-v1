@@ -46,9 +46,11 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
             raise AttributeError, 'The model for BaseAppointmentModelAdmin child class %s requires model attribute \'appointment\'. Not found in model %s.' % (self, self.model._meta.object_name)
         
         
-        self.list_display = ['appointment__registered_subject__subject_identifier', 'visit_definition__code', 'created', 'modified', 'user_created', 'user_modified',]         
+        self.list_display = ['appointment', 'report_datetime', 'reason', 'created', 'modified', 'user_created', 'user_modified',]         
         
-        self.search_fields = ['id', 'appointment__registered_subject__subject_identifier', 'visit_definition__code']
+        self.search_fields = ['id', 'reason','visit_definition__code',]
+
+        self.list_filter = ['appointment__visit_instance', 'reason', 'report_datetime', 'created', 'modified', 'user_created', 'user_modified',]
 
     def save_model(self, request, obj, form, change):
         
