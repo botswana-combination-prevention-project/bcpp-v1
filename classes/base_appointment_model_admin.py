@@ -1,6 +1,4 @@
-from datetime import datetime, date, timedelta
-
-from django.db.models import Q, ForeignKey
+from datetime import datetime
 from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
