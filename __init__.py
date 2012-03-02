@@ -1,13 +1,15 @@
-from classes.bucket_controller import bucket
+from classes import bucket
 
 
 def autodiscover():
     
-    ""
-    #Auto-discover INSTALLED_APPS admin.py modules and fail silently when
-    #not present. This forces an import on them to register any admin bits they
-    #may want.
-    ""
+    """
+    copied from django sites and only very slightly modified - erikvw
+    
+    Auto-discover INSTALLED_APPS admin.py modules and fail silently when
+    not present. This forces an import on them to register any admin bits they
+    may want.
+    """
 
     import copy
     from django.conf import settings
@@ -16,7 +18,7 @@ def autodiscover():
 
     for app in settings.INSTALLED_APPS:
         mod = import_module(app)
-        # Attempt to import the app's admin module.
+        # Attempt to import the app's bucket module.
         try:
             before_import_registry = copy.copy(bucket._registry)
             import_module('%s.bucket' % app)
