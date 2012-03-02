@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
+from bhp_common.models import MyModelAdmin, MyTabularInline
 from django.db.models import Max
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment, Holiday, Configuration
@@ -115,7 +115,7 @@ class AppointmentAdmin(MyModelAdmin):
         'visit_instance',
     )
     
-    search_fields = ('registered_subject__subject_identifier',)
+    search_fields = ('registered_subject__subject_identifier','id')
     
     list_display = (
         'registered_subject',
@@ -129,6 +129,7 @@ class AppointmentAdmin(MyModelAdmin):
     
     list_filter = (
         'registered_subject__subject_type',    
+        'registered_subject__study_site__site_code', 
         'appt_datetime',
         'appt_status',
         'visit_instance',
