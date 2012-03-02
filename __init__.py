@@ -1,5 +1,4 @@
-"""
-from classes import bucket
+from classes.bucket_controller import bucket
 
 
 def autodiscover():
@@ -33,4 +32,3 @@ def autodiscover():
             # attempting to import it, otherwise we want it to bubble up.
             if module_has_submodule(mod, 'bucket'):
                 raise
-"""
