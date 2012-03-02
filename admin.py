@@ -24,7 +24,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
         'subject_identifier',
         )
 
-    search_fields = ('subject_identifier', 'first_name', 'initials', 'sid', 'identity')    
+    search_fields = ('subject_identifier', 'first_name', 'initials', 'sid', 'identity', 'id')    
 
     
     list_filter = ('subject_type', 'registration_status', 'registration_datetime','gender','study_site',)
