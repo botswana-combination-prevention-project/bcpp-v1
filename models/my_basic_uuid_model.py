@@ -7,7 +7,8 @@ from django.db.models import get_model
 from bhp_common.models import MyBasicModel
 from bhp_common.fields import MyUUIDField
 from bhp_sync.classes import TransactionProducer, SerializeToTransaction
-#from bhp_entry.classes import bucket
+from bhp_bucket.classes.bucket_controller import bucket
+
 
 
 class MyBasicUuidModel(MyBasicModel):
@@ -120,10 +121,7 @@ def serialize_on_save(sender, instance, **kwargs):
             serialize_to_transaction = SerializeToTransaction()
             serialize_to_transaction.serialize(sender, instance,**kwargs)
 
-"""
 @receiver(post_save,)
 def scheduled_entry_on_save(sender, instance, **kwargs):
     if isinstance(instance, MyBasicUuidModel):
         bucket.update(instance)
-"""
-

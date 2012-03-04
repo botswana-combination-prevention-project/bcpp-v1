@@ -17,3 +17,5 @@ class MyBasicModel(TimeStampedModel):
     
     class Meta:
         abstract = True
+
+    
