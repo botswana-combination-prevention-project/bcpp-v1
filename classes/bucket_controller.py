@@ -31,7 +31,7 @@ class BucketController(object):
             if instance.__class__ == model:
                 for item in dir(model_bucket):
                     if isinstance(getattr(model_bucket, item), ModelRule):
-                        getattr(model_bucket, item).run(instance)
+                        getattr(model_bucket, item).run(instance, model_bucket.Meta.app_label)
 
     def autodiscover(self):
         """
