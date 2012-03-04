@@ -18,7 +18,7 @@
 </thead>
 <tbody>
 {% if not scheduled_entry_bucket %}
-    <tr class="{% cycle 'row1' 'row2' %}"><td colsapn="12"></td></tr>
+    <tr class="{% cycle 'row1' 'row2' %}"><td colspan="12"></td></tr>
 {% else %}                
     {% for f in scheduled_entry_bucket %}
         <tr class="{% cycle 'row1' 'row2' %}">

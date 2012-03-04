@@ -1,11 +1,9 @@
-import sys, socket
 from django.core.urlresolvers import reverse
-from django.conf.urls.defaults import patterns, include, url
-from django.db.models.base import ModelBase
+from django.conf.urls.defaults import patterns, url
 from django.template.loader import render_to_string
-from bhp_common.utils import os_variables
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
+from bhp_bucket.classes import bucket
 from bhp_appointment.models import Appointment
 from bhp_visit.models import ScheduleGroup, VisitDefinition
 from bhp_registration.models import RegisteredSubject
@@ -118,29 +116,13 @@ class RegisteredSubjectDashboard(Dashboard):
         self.membership_form_category = None
         self.exclude_others_if_keyed_model_name = '' #this is a form name or regex pattern
         self.include_after_exclusion_model_keyed = []
+    
+                
+        self.scheduled_entry_bucket_rules = []
 
 
-    def update_entry_status(self, **kwargs):
 
-        """ If called, update form entry status (new, not required, etc) when the visit dashboard is refreshed."""
-
-        model = kwargs.get('model')
-        visit_model_instance = kwargs.get('visit_model_instance')
-        required = kwargs.get('required', True) 
-
-        if required:
-            ScheduledEntryBucket.objects.update_status( 
-                model = model,
-                visit_model_instance = visit_model_instance,
-                action = 'new',
-                )
-        else:
-            ScheduledEntryBucket.objects.update_status( 
-                model = model,
-                visit_model_instance = visit_model_instance,
-                action = 'not_required',
-                )
-
+    
 
     def create(self, **kwargs):
         
@@ -203,23 +185,30 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(visit_model_add_url = self.visit_model_add_url)                    
 
         
-        self.set_membership_forms()
+        self._set_membership_forms()
 
-        self.set_appointments()
+        self._set_appointments()
             
-        self.set_additional_entry_bucket()
+        self._set_additional_entry_bucket()
 
-        self.set_scheduled_entry_bucket()
+        self._set_scheduled_entry_bucket()
         
-        self.set_scheduled_lab_bucket()        
+        self._set_scheduled_lab_bucket()        
 
-        self.set_additional_lab_bucket()        
+        self._set_additional_lab_bucket()        
         
-        self.set_current_appointment()
+        self._set_current_appointment()
         
-        self.set_current_visit()
+        self._set_current_visit()
         
-        self.set_summary_links()
+        self._set_summary_links()
+        
+        self._add_to_entry_buckets()
+
+        self._run_entry_bucket_rules()
+        
+        
+    def _add_to_entry_buckets(self):    
         
         # update / add to entries in ScheduledEntryBucket, ScheduledLabEntryBucket
         if self.visit:
@@ -231,9 +220,36 @@ class RegisteredSubjectDashboard(Dashboard):
                     visit_model_instance = self.visit,
                     requisition_model = self.requisition_model,
                     )
+    
+    def _run_entry_bucket_rules(self, **kwargs):
 
+        """ Runs rules in self.scheduled_entry_bucket_rules if visit_code is known
+        Add rules before calling create()
+        If called, update form entry status (new, not required, etc) when the visit dashboard is refreshed."""
 
-    def set_summary_links(self):   
+        if bucket.dashboard_rules:
+            
+            if not self.subject_identifier:
+                raise AttributeError('set value of subject_identifier before calling dashboard create() when scheduled_entry_bucket_rules exist')
+    
+            # run rules if visit_code is known -- user selected, that is user clicked to see list of
+            # scheduled entries for a given visit.
+            if self.visit_code:
+                if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier, 
+                                                   appointment__visit_definition__code=self.visit_code):
+                    
+                    visit_model_instance = self.visit_model.objects.get(appointment__registered_subject__subject_identifier=self.subject_identifier, 
+                                                                        appointment__visit_definition__code=self.visit_code)
+                    for rule in bucket.dashboard_rules:
+                        rule.run(visit_model_instance=visit_model_instance)
+
+    def _update_status_for_entry_buckets(self):
+        
+        #TODO: this dashboard method is a good place to update the entry status of each bucket entry
+        
+        pass
+
+    def _set_summary_links(self):   
                      
         # render side bar template for subject summaries
         self.summary_links = render_to_string('summary_side_bar.html', {
@@ -242,7 +258,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 })                  
         self.context.add(summary_links = self.summary_links)
         
-    def set_scheduled_entry_bucket(self):
+    def _set_scheduled_entry_bucket(self):
     
         # get list of scheduled crfs
         if self.visit_code:
@@ -262,7 +278,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(scheduled_entry_bucket = self.scheduled_entry_bucket)
 
     
-    def set_scheduled_lab_bucket(self):
+    def _set_scheduled_lab_bucket(self):
 
         # get list of scheduled crfs
         if self.visit_code:
@@ -280,7 +296,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         self.context.add(scheduled_lab_bucket = self.scheduled_lab_bucket)                                                      
 
-    def set_additional_lab_bucket(self):
+    def _set_additional_lab_bucket(self):
 
         # get list of scheduled crfs
         if self.visit_code:
@@ -297,7 +313,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         self.context.add(additional_lab_bucket = self.additional_lab_bucket)                                                      
             
-    def set_appointments(self):
+    def _set_appointments(self):
 
         # get all appointments for this registered_subject 
         # if self.visit_code and self.visit_instance, then limit to the one appointment
@@ -321,7 +337,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(appointments = self.appointments)                
     
 
-    def set_current_visit(self):
+    def _set_current_visit(self):
     
         if self.appointment:
             # set the visit
@@ -335,7 +351,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(visit = self.visit)                    
         
 
-    def set_current_appointment(self):
+    def _set_current_appointment(self):
     
         self.appointment = Appointment.objects.none()
     
@@ -356,7 +372,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(appointment = self.appointment)                    
 
         
-    def set_additional_entry_bucket(self):
+    def _set_additional_entry_bucket(self):
 
         # get additional crfs
         self.additional_entry_bucket= AdditionalEntryBucket.objects.filter(
@@ -365,7 +381,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(additional_entry_bucket = self.additional_entry_bucket)
                                         
 
-    def set_membership_forms(self):
+    def _set_membership_forms(self):
 
         # membership forms can also be proxy models ... see mochudi_subject.models
 
