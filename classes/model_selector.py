@@ -1,5 +1,3 @@
-from datetime import datetime
-from django.db import models
 from django.db.models import get_model, get_models
 from django.conf import settings
 
