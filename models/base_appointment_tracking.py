@@ -6,7 +6,6 @@ from bhp_appointment.managers import VisitManager
 from appointment import Appointment
 
 
-
 class BaseAppointmentTracking (MyBasicUuidModel):
     
     """Base model for Appt/Visit Tracking (AF002).
@@ -98,6 +97,7 @@ class BaseAppointmentTracking (MyBasicUuidModel):
         ) 
         
     """
+    #TODO: add next_scheduled_visit_datetime but put in checks for the window period etc.
     next_scheduled_visit_datetime = models.DateTimeField(
         verbose_name="Next scheduled visit date and time",
         validators=[
@@ -111,6 +111,13 @@ class BaseAppointmentTracking (MyBasicUuidModel):
 
     def natural_key_as_dict(self):
         return {'appointment':self.appointment, }
+    
+    
+    def save(self, *args, **kwargs):
+        
+        # TODO: BaseAppointmentTracking.save() is the correct place to recalculate ScheduledEntryBucket?? no
+        
+        return super(BaseAppointmentTracking, self).save(*args, **kwargs)
         
     class Meta:
         abstract = True 

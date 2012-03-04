@@ -70,10 +70,10 @@ class BaseVisitModelAdmin(MyModelAdmin):
         if not self.visit_model:
             raise AttributeError, 'visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''            
         
-        ScheduledEntryBucket.objects.update_status(
-            model_instance = obj,
-            visit_model = self.visit_model,
-            )
+        #ScheduledEntryBucket.objects.update_status(
+        #    model_instance = obj,
+        #    visit_model = self.visit_model,
+        #    )
 
         return super(BaseVisitModelAdmin, self).save_model(request, obj, form, change)
         
