@@ -12,8 +12,9 @@ conditional, because you do not want the save() to create these model instances 
             Appointment.create()
             
 from django.db import models
+producer = 'mkl94'
 app_list=['maikalelo_maternal',]
-common_foreign_key_field_name = 'maternal_visit'
+common_foreign_key_field_name = 'id'
 model_list = [{'name': model._meta.module_name, 'model':model} 
                         for model in models.get_models() 
                         if (model._meta.app_label in app_list) 
@@ -23,14 +24,17 @@ model_list = [{'name': model._meta.module_name, 'model':model}
                         [field.name for field in model._meta.fields]
                        ]
 
-# count records
-
+lst = []
 for dct in model_list:
-    dct['model'].objects.all().count()
+    lst.append('%s: %s' % (dct['name'], dct['model'].objects.filter(hostname_created=producer).count()))
+
+lst.sort()
+lst
                            
 #resave models
 for dct in model_list:
-    for m in dct['model'].objects.all():
+    for m in dct['model'].objects.filter(hostname_created='mkl04'):
+        m.hostname_created = 'mkl94'
         m.save()
 
 maybe update producer
