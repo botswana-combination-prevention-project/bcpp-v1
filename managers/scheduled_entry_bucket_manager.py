@@ -2,6 +2,7 @@ from datetime import datetime
 from django.db.models import ForeignKey, Q
 from bhp_entry.models import Entry
 from bhp_entry.managers import BaseEntryBucketManager
+from bhp_bucket.models import RuleHistory
 
 
 class ScheduledEntryBucketManager(BaseEntryBucketManager):
@@ -39,23 +40,21 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         
         """ Add entries to the scheduled_entry_bucket for a given visit_model. 
         
+        For example, as in registered_subject_dashboard
         
-        for example, 
-        
-        class VisitAdmin(MyRegisteredSubjectModelAdmin):
-
-            form = VisitForm
-
-            def save_model(self, request, obj, form, change):
-
-                ScheduledEntryBucket.objects.add_for_visit(
-                    visit_model_instance = obj,
-                    )                
-                    
-                return super(VisitAdmin, self).save_model(request, obj, form, change)                                                
-                
-            search_fields = ('appointment__registered_subject__subject_identifier',)        
-        
+            def add_to_entry_buckets(self):    
+            
+                # update / add to entries in ScheduledEntryBucket, ScheduledLabEntryBucket
+                if self.visit:
+                    ScheduledEntryBucket.objects.add_for_visit(visit_model_instance = self.visit)           
+                             
+                    # if requisition_model has been defined, assume scheduled labs otherwise pass
+                    if hasattr(self, 'requisition_model'):
+                        ScheduledLabEntryBucket.objects.add_for_visit(
+                            visit_model_instance = self.visit,
+                            requisition_model = self.requisition_model,
+                            )
+            
         """
 
         visit_model_instance = kwargs.get('visit_model_instance')
@@ -154,7 +153,6 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
             return super(MyVisitModelAdmin, self).delete_model(request, obj)         
         
         """    
-
         # need to determine the visit model instance and the content_type_map value for this Entry 
         # coming from 'admin' is model instance
         # coming from 'forms' is a model
@@ -162,31 +160,55 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
             raise AttributeError('subject_visit_model should be \'visit_model_instance\', please correct call to update_status')
         self.set_visit_model_instance(**kwargs)  
                 
-        action = kwargs.get('action', 'add_change')
+        if not kwargs.get('action', None):
+            raise AttributeError('parameter \'action\' is required. Got None')
+        action = kwargs.get('action')
+        
+        action_terms = ['new', 'keyed', 'not_required', 'delete']
+        if action not in action_terms:
+            raise ValueError('Action must be %s. Got %s' % (action_terms, action) )
+        
         comment = kwargs.get('comment', '----')
 
-        if self.visit_model_instance:
-            if super(ScheduledEntryBucketManager, self).filter(registered_subject = self.registered_subject,
-                                                               appointment = self.appointment, 
-                                                               entry = self.entry):
-
-                # already in bucket, so get bucket entry
-                scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).get(registered_subject = self.registered_subject, 
-                                                                                      appointment = self.appointment, 
-                                                                                      entry = self.entry)
-
-                # update entry_status if NEW no matter what, to indictate perhaps that it was modified
-                status = self.get_status(
-                    action = action, 
-                    report_datetime = self.report_datetime, 
-                    current_status = scheduled_entry_bucket.entry_status, 
-                    entry_comment = comment
-                    )
-
-                scheduled_entry_bucket.report_datetime = status['report_datetime']
-                scheduled_entry_bucket.entry_status = status['current_status']
-                scheduled_entry_bucket.entry_comment = status['entry_comment']                
-                scheduled_entry_bucket.close_datetime = status['close_datetime']                
-                scheduled_entry_bucket.modified = datetime.today()
-                scheduled_entry_bucket.save()                    
+        # try to update
+        # if self.entry is None implies Entry has no occurrence for this visit_definition, content_type_map, which is OK.
+        # see method set_entry()
+        if self.entry:
+            if self.visit_model_instance:
+                if super(ScheduledEntryBucketManager, self).filter(registered_subject = self.registered_subject,
+                                                                   appointment = self.appointment, 
+                                                                   entry = self.entry):
+    
+                    # already in bucket, so get bucket entry
+                    scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).get(registered_subject = self.registered_subject, 
+                                                                                          appointment = self.appointment, 
+                                                                                          entry = self.entry)
+    
+                    # update entry_status if NEW no matter what, to indictate perhaps that it was modified
+                    status = self.get_status(
+                        action = action, 
+                        report_datetime = self.report_datetime, 
+                        current_status = scheduled_entry_bucket.entry_status, 
+                        entry_comment = comment
+                        )
+    
+                    scheduled_entry_bucket.report_datetime = status['report_datetime']
+                    scheduled_entry_bucket.entry_status = status['action']
+                    scheduled_entry_bucket.entry_comment = status['entry_comment']                
+                    scheduled_entry_bucket.close_datetime = status['close_datetime']                
+                    scheduled_entry_bucket.modified = datetime.today()
+                    scheduled_entry_bucket.save()
+                    
+                    RuleHistory.objects.create(rule = self, 
+                               model = self.content_type_map.model.lower(), 
+                               predicate = '-', 
+                               action = status['action'],)
+                               
+                    
+                else:
+                    raise AttributeError('Cannot determine the scheduled entry bucket record for %s Appointment=\'%s\',  Entry=\'%s\'' % (self.registered_subject.subject_identifier,
+                                                                                                           self.appointment, 
+                                                                                                           self.entry))       
+            else:
+                raise AttributeError('Cannot determine visit model. See %s update_status()' % (self, )) 
 

@@ -24,20 +24,26 @@ class BaseEntryBucketManager(models.Manager):
         self._set_scheduled_model_instance(**kwargs)        
 
         if self.scheduled_model:
-            self.content_type_map = ContentTypeMap.objects.get(app_label = self.scheduled_model._meta.app_label, name = self.scheduled_model._meta.verbose_name)
+            self.content_type_map = ContentTypeMap.objects.get(app_label = self.scheduled_model._meta.app_label, 
+                                                               name = self.scheduled_model._meta.verbose_name)
         elif self.scheduled_model_instance:    
-            self.content_type_map = ContentTypeMap.objects.get(app_label = self.scheduled_model_instance._meta.app_label, name = self.scheduled_model_instance._meta.verbose_name)            
+            self.content_type_map = ContentTypeMap.objects.get(app_label = self.scheduled_model_instance._meta.app_label, 
+                                                               name = self.scheduled_model_instance._meta.verbose_name)            
         else:
             raise AttributeError, 'To set content_type_map, EntryBucketManager.update_status requires attribute \'scheduled_model\' or \'scheduled_model_instance\'. Got neither'            
 
     def set_entry(self):
-
+        
+        # find occurrence for this visit_definition in the Entry model.
+        # if not found, update_status() has nothing to do
         if Entry.objects.filter(visit_definition = self.visit_definition, content_type_map = self.content_type_map):
             self.entry = Entry.objects.get(visit_definition = self.visit_definition, content_type_map = self.content_type_map)        
         else:
+            #raise AttributeError('Entry instance not found for visit_defintion=%s, content_type_map=%s' % (self.visit_definition,self.content_type_map))
             self.entry = None                        
 
     def set_appointment(self):
+        
         self.appointment = self.visit_model_instance.appointment.__class__.objects.get(
                 registered_subject = self.registered_subject, 
                 visit_definition__code = self.visit_model_instance.appointment.visit_definition.code, 
@@ -76,7 +82,7 @@ class BaseEntryBucketManager(models.Manager):
 
         """ confirm if model instance exists / is_keyed """
 
-        is_keyed = False
+        #raise TypeError()
 
         model = models.get_model(
                         self.entry.content_type_map.content_type.app_label, 
@@ -88,6 +94,11 @@ class BaseEntryBucketManager(models.Manager):
             visit_fk_name = visit_fk_name[0].name
             if model.objects.filter(** { visit_fk_name:self.visit_model_instance }):
                 is_keyed = True            
+            else:
+                is_keyed = False
+        else:
+            raise AttributeError('Attribute \'visit_fk_name\' is required for method is_keyed in %s' % (self,))             
+        
         return is_keyed                
 
     def get_status(self, **kwargs):
@@ -96,6 +107,7 @@ class BaseEntryBucketManager(models.Manager):
         report_datetime = kwargs.get("report_datetime")
         current_status = kwargs.get("current_status")
         entry_comment = kwargs.get("comment")
+
 
         if self.is_keyed():
             current_status = 'KEYED' 
@@ -129,9 +141,8 @@ class BaseEntryBucketManager(models.Manager):
 
         close_datetime = None                
 
-        return {'action': action, 
+        return {'action': action.upper(), 
                 'report_datetime': report_datetime, 
-                'current_status': current_status, 
                 'entry_comment':entry_comment,
                 'close_datetime':close_datetime,
                 }
@@ -144,7 +155,7 @@ class BaseEntryBucketManager(models.Manager):
         self.scheduled_model = kwargs.get('model')
         if self.scheduled_model:
             if not isinstance(self.scheduled_model, ModelBase):
-                raise ValueError('EntryBucketManager.update_status, \'model\' must be type ModelBase, is this an instance?' )
+                raise ValueError('EntryBucketManager.update_status, \'model\' must be type ModelBase, is this an instance? Got %s' % (self.scheduled_model,))
 
         
     def _set_scheduled_model_instance(self, **kwargs):
