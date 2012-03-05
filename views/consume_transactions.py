@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.core import serializers
+#from django.core import serializers
 from bhp_sync.models import Producer, RequestLog
 from bhp_sync.classes import TransactionProducer
 
@@ -103,6 +103,20 @@ def consume_transactions(request, **kwargs):
                                     # Recall that the Transaction's object field 'tx' has the serialized 
                                     # instance of the data model we are looking for
                                     for transaction in json_response['objects']:
+                                        
+                                        transaction.save()
+                                        
+                                        # POST success back to to the producer
+                                        transaction['is_consumed'] = True
+                                        transaction['consumer'] = str(TransactionProducer())
+                                        req = urllib2.Request(url, json.dumps(transaction, cls=DjangoJSONEncoder), {'Content-Type': 'application/json'})
+                                        f = urllib2.urlopen(req)
+                                        response = f.read()
+                                        f.close()  
+                                        producer.sync_status = 'OK'
+                                        
+                                        """
+                                        
                                         for obj in serializers.deserialize("json",transaction['tx']):
                                             
                                             # if you get an error deserializing a datetime, confirm dev version of json.py
@@ -142,7 +156,8 @@ def consume_transactions(request, **kwargs):
                                                 producer.sync_status = 'OK'                      
                                                 # display a message on the consumer (self)
                                                 #messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
-
+                                        
+                                                
                                             elif transaction['action'] == 'D':
                                                 if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
                                                     if settings.ALLOW_DELETE_MODEL_FROM_SERIALIZATION:
@@ -158,9 +173,9 @@ def consume_transactions(request, **kwargs):
                                                     messages.add_message(request, messages.ERROR, msg)                                                                                            
                                             else:
                                                 raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (transaction['action'],)
-
+                                        """
                     #producer.sync_status = 'OK'
-                    producer.save()
+                    # producer.save()
         
     
         return render_to_response('consume_transactions.html', { 
