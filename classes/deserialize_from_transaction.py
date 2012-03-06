@@ -30,15 +30,13 @@ class DeserializeFromTransaction(object):
                 else:  
                     # save using ModelBase save() method (skips all the subclassed save() methods)  
 
+                    obj.save()
+
+                    """
                     try:
+                        
                         obj.save()
-                        # call the object's save() method to trigger AuditTrail
-                        # pass the producer so that new incoming_transactions on the
-                        # consumer (self) correctly appear to come from the producer.
-                        #if obj.object._meta.object_name.lower()[-5:] == 'audit':
-                        #    obj.object.save()
-                        #else:
-                        #    obj.object.save(suppress_autocreate_on_deserialize=True)
+                        
                     except IntegrityError as error:
                         incoming_transaction.is_consumed = False
                         incoming_transaction.consumer = None                        
@@ -47,9 +45,12 @@ class DeserializeFromTransaction(object):
                         incoming_transaction.save()
                     except: 
                         raise
-                                            # POST success back to to the producer
+                    """    
+                    # POST success back to to the producer
                     incoming_transaction.is_consumed = True
                     incoming_transaction.consumer = str(TransactionProducer())
                     incoming_transaction.save()
+     
+     
                     
                         
