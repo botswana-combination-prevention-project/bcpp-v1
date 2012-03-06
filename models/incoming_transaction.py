@@ -6,14 +6,18 @@ from bhp_sync.classes import DeserializeFromTransaction
 
 
 class IncomingTransaction(BaseTransaction):
-    
-    
+
+    """ transactions received from a remote producer and to be consumed locally"""
+
     class Meta:
         app_label = 'bhp_sync'   
-        ordering = ['timestamp']
+        ordering = ['timestamp'] 
+  
         
-        
-@receiver(post_save,)
+@receiver(post_save, sender=IncomingTransaction,  dispatch_uid="deserialize_on_post_save")
 def deserialize_on_post_save(sender, instance, **kwargs):
     if isinstance(instance, IncomingTransaction):
-        DeserializeFromTransaction.deserialize(sender, instance, **kwargs)
+        if not instance.is_consumed:
+            deserialize_from_transaction = DeserializeFromTransaction()
+            deserialize_from_transaction.deserialize(sender, instance, **kwargs)
+        

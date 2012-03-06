@@ -7,8 +7,9 @@ from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 #from django.core import serializers
-from bhp_sync.models import Producer, RequestLog
+from bhp_sync.models import Producer, RequestLog, IncomingTransaction
 from bhp_sync.classes import TransactionProducer
+
 
 @login_required
 def consume_transactions(request, **kwargs):
@@ -99,17 +100,27 @@ def consume_transactions(request, **kwargs):
                                     
                                     messages.add_message(request, messages.INFO, 'Consuming %s new transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
 
-                                    # 'transaction' is the serialized Transaction object from the producer. 
-                                    # Recall that the Transaction's object field 'tx' has the serialized 
+                                    # 'outgoing_transaction' is the serialized Transaction object from the producer. 
+                                    # The OutgoingTransaction's object field 'tx' has the serialized 
                                     # instance of the data model we are looking for
-                                    for transaction in json_response['objects']:
+                                    for outgoing_transaction in json_response['objects']:
                                         
-                                        transaction.save()
-                                        
+                                        # save to IncomingTransaction.
+                                        # this will trigger the post_save signal to deserialize tx
+                                        IncomingTransaction.objects.create(
+                                            pk = outgoing_transaction['pk'],
+                                            tx_name = outgoing_transaction['tx_name'],
+                                            tx_pk = outgoing_transaction['tx_pk'],
+                                            tx = outgoing_transaction['tx'],
+                                            timestamp = outgoing_transaction['timestamp'],
+                                            producer = outgoing_transaction['producer'],
+                                            action = outgoing_transaction['action'],                
+                                            )
+                                                                        
                                         # POST success back to to the producer
-                                        transaction['is_consumed'] = True
-                                        transaction['consumer'] = str(TransactionProducer())
-                                        req = urllib2.Request(url, json.dumps(transaction, cls=DjangoJSONEncoder), {'Content-Type': 'application/json'})
+                                        outgoing_transaction['is_consumed'] = True
+                                        outgoing_transaction['consumer'] = str(TransactionProducer())
+                                        req = urllib2.Request(url, json.dumps(outgoing_transaction, cls=DjangoJSONEncoder), {'Content-Type': 'application/json'})
                                         f = urllib2.urlopen(req)
                                         response = f.read()
                                         f.close()  
@@ -175,7 +186,7 @@ def consume_transactions(request, **kwargs):
                                                 raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (transaction['action'],)
                                         """
                     #producer.sync_status = 'OK'
-                    # producer.save()
+                    producer.save()
         
     
         return render_to_response('consume_transactions.html', { 

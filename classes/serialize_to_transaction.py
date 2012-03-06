@@ -34,14 +34,23 @@ class SerializeToTransaction(object):
                         serialize_to_transaction.serialize(sender, instance,**kwargs)
         """
 
+        
+        # watch out for this. The producer is the device that created 
+        # the "transaction" instance and not necessarily the one that created the model instance
+        # so just using the hostname created or hostname modified would not necessarily work.
+        
         action = 'U'
-        hostname = instance.hostname_modified
+        #hostname = instance.hostname_modified
         if kwargs.get('created'):
             action = 'I'
-            hostname = instance.hostname_created
-        if not hostname:
-            hostname = instance.hostname_created
-        transaction_producer = TransactionProducer(hostname=hostname)    
+            #hostname = instance.hostname_created
+        
+        #if not hostname:
+        #    hostname = instance.hostname_created
+        #transaction_producer = TransactionProducer(hostname=hostname)   
+        
+        transaction_producer = TransactionProducer()    
+         
         Transaction = get_model('bhp_sync', 'transaction')
         OutgoingTransaction = get_model('bhp_sync', 'outgoingtransaction')
         
@@ -60,6 +69,9 @@ class SerializeToTransaction(object):
         # if this is a proxy model, get to the main model
         # Note, proxy model itself only returns a pointer to the 
         # main model.
+        # i do not want both the proxy model and its parent model to 
+        # trigger a transaction, but make sure the parent "model" has
+        # is_serialized=True, otherwise no transaction will be created.
         if instance._meta.proxy_for_model:
             instance = instance._meta.proxy_for_model.objects.get(pk=instance.pk)
 
@@ -80,12 +92,15 @@ class SerializeToTransaction(object):
             )
         
         # save to Outgoing Transaction.
-        OutgoingTransaction.objects.create(
-            pk = transaction.pk,
-            tx_name = transaction.tx_name,
-            tx_pk = transaction.tx_pk,
-            tx = transaction.tx,
-            timestamp = transaction.timestamp,
-            producer = transaction.producer,
-            action = transaction.action,                
-            )
+        if not OutgoingTransaction.objects.filter(tx__exact=transaction.tx):
+            OutgoingTransaction.objects.create(
+                pk = transaction.pk,
+                tx_name = transaction.tx_name,
+                tx_pk = transaction.tx_pk,
+                tx = transaction.tx,
+                timestamp = transaction.timestamp,
+                producer = transaction.producer,
+                action = transaction.action,                
+                )
+            
+       

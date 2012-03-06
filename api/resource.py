@@ -30,11 +30,10 @@ api_key.save()
 
 class TransactionResource(ModelResource):
     class Meta:
-        queryset = Transaction.objects.filter(is_consumed=False)
+        queryset = Transaction.objects.filter(is_consumed=False).order_by('timestamp')
         resource_name = 'transaction'
         authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()       
-        #excludes = ['email', 'password', 'is_active', 'is_staff', 'is_superuser']
         allowed_methods = ['get','post','put',]        
         filtering = {
             'producer': ['exact',],

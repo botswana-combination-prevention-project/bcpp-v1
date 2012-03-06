@@ -1,13 +1,16 @@
 # requires django-extensions 0.7
 from datetime import datetime
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_common.models import MyBasicModel
+from bhp_common.fields import MyUUIDField
 from bhp_sync.managers import TransactionManager
 from bhp_sync.classes import TransactionProducer
 
 transaction_producer = TransactionProducer()
 
-class BaseTransaction(MyBasicUuidModel):
+class BaseTransaction(MyBasicModel):
+    
+    id = MyUUIDField(primary_key=True)
     
     tx_name = models.CharField(
         max_length = 64,
@@ -47,15 +50,15 @@ class BaseTransaction(MyBasicUuidModel):
         )
 
     consumer = models.CharField(
-        max_length = 15,
+        max_length = 25,
         null = True,
         blank = True,
         db_index = True,
         )
 
-    batch_seq = models.IntegerField(null=True)
+    batch_seq = models.IntegerField(null=True, blank=True)
     
-    batch_id = models.IntegerField(null=True)
+    batch_id = models.IntegerField(null=True, blank=True)
 
     objects = TransactionManager()
 
@@ -66,10 +69,10 @@ class BaseTransaction(MyBasicUuidModel):
 
         if self.is_consumed is True and not self.consumed_datetime:
             self.consumed_datetime = datetime.today()
+        
         super(BaseTransaction, self).save(*args, **kwargs)
 
     
     class Meta:
         abstract = True
-        #app_label = 'bhp_sync'   
-        #ordering = ['timestamp'] 
+
