@@ -10,6 +10,8 @@ import types
 
 from importlib import import_module
 from bhp_common.models import MyModelAdmin
+from bhp_common.fields import MyUUIDField
+from bhp_sync.classes import SerializeToTransaction
 
 try:
     import settings_audit
@@ -75,11 +77,21 @@ class AuditTrail(object):
 
                     model._default_manager.create(**kwargs)
                     
+            
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
             ## Comment this line for pre r8223 Django builds
             models.signals.post_save.connect(_audit, sender=cls, weak=False)
+            
+            # begin: erikvw added for serialization
+            def _serialize_on_save(sender, instance, **kwargs): 
+                """ serialize the AUDIT model instance to the outgoing transaction model """
+                serialize_to_transaction = SerializeToTransaction()
+                serialize_to_transaction.serialize(sender, instance,**kwargs)      
+            models.signals.post_save.connect(_serialize_on_save, sender=model, weak=False, dispatch_uid='audit_serialize_on_save')
+            # end: erikvw added for serialization
 
+            
             if self.opts['audit_deletes']:
                 def _audit_delete(sender, instance, **kwargs):
                     # Write model changes to the audit model
@@ -152,7 +164,8 @@ def create_audit_model(cls, **kwargs):
     attrs = {
         '__module__': cls.__module__,
         'Meta': Meta,
-        '_audit_id': models.AutoField(primary_key=True),
+        # erikvw '_audit_id': models.AutoField(primary_key=True),
+        '_audit_id': MyUUIDField(primary_key=True),
         '_audit_timestamp': models.DateTimeField(auto_now_add=True, db_index=True),
         '_audit__str__': cls.__str__.im_func,
         '__str__': lambda self: '%s as of %s' % (self._audit__str__(), self._audit_timestamp),
@@ -170,12 +183,13 @@ def create_audit_model(cls, **kwargs):
         if isinstance(field, models.AutoField):
             # Audit models have a separate AutoField
             attrs[field.name] = models.IntegerField(db_index=True, editable=False)
-        # erikvw added this as OneToOneField was not handled, causes an IntegrityError
+        # begin erikvw added this as OneToOneField was not handled, causes an IntegrityError
         elif isinstance(field, models.OneToOneField):
             rel = copy.copy(field.rel)
             new_field = models.ForeignKey(rel.to)            
             new_field.rel.related_name = '_audit_' + field.related_query_name()
             attrs[field.name] = new_field
+            # end erikvw added 
         else:
             attrs[field.name] = copy.copy(field)
             # If 'unique' is in there, we need to remove it, otherwise the index

@@ -1,4 +1,3 @@
-from datetime import datetime, date, time, timedelta
 from django.db.models import get_model
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -14,8 +13,7 @@ def audit_trail_view(request, **kwargs):
     """ Using app_label and model_name present the cls+'_audit' table"""
     
     section_name = kwargs.get('section_name')
-    app_label = kwargs.get('app_label')
-    model_name = kwargs.get('model_name')
+
     audit_subject_identifier = request.GET.get('audit_subject_identifier', kwargs.get('audit_subject_identifier'))
     
     if audit_subject_identifier:
