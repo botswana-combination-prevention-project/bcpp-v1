@@ -107,7 +107,7 @@ def consume_transactions(request, **kwargs):
                                         # save to IncomingTransaction.
                                         # this will trigger the post_save signal to deserialize tx
                                         IncomingTransaction.objects.create(
-                                            pk = outgoing_transaction['pk'],
+                                            pk = outgoing_transaction['id'],
                                             tx_name = outgoing_transaction['tx_name'],
                                             tx_pk = outgoing_transaction['tx_pk'],
                                             tx = outgoing_transaction['tx'],
