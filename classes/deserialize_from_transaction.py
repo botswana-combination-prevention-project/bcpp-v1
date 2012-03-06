@@ -29,7 +29,7 @@ class DeserializeFromTransaction(object):
                         raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,) )
                 else:  
                     # save using ModelBase save() method (skips all the subclassed save() methods)  
-                    
+
                     try:
                         obj.save()
             
@@ -45,11 +45,14 @@ class DeserializeFromTransaction(object):
                         incoming_transaction.is_consumed = True
                         incoming_transaction.consumer = str(TransactionProducer())
                         incoming_transaction.save()
-                    except IntegrityError, err:
+                    except IntegrityError as error:
                         incoming_transaction.is_consumed = False
                         incoming_transaction.consumer = None                        
                         incoming_transaction.is_error = True
-                        incoming_transaction.error = err
+                        incoming_transaction.error = error
                         incoming_transaction.save()
                     except: 
-                        raise TypeError()    
+                        raise
+                    
+                    
+                        
