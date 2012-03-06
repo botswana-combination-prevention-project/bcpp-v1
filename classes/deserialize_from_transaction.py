@@ -32,7 +32,6 @@ class DeserializeFromTransaction(object):
 
                     try:
                         obj.save()
-            
                         # call the object's save() method to trigger AuditTrail
                         # pass the producer so that new incoming_transactions on the
                         # consumer (self) correctly appear to come from the producer.
@@ -40,11 +39,6 @@ class DeserializeFromTransaction(object):
                         #    obj.object.save()
                         #else:
                         #    obj.object.save(suppress_autocreate_on_deserialize=True)
-                            
-                        # POST success back to to the producer
-                        incoming_transaction.is_consumed = True
-                        incoming_transaction.consumer = str(TransactionProducer())
-                        incoming_transaction.save()
                     except IntegrityError as error:
                         incoming_transaction.is_consumed = False
                         incoming_transaction.consumer = None                        
@@ -53,6 +47,9 @@ class DeserializeFromTransaction(object):
                         incoming_transaction.save()
                     except: 
                         raise
-                    
+                                            # POST success back to to the producer
+                    incoming_transaction.is_consumed = True
+                    incoming_transaction.consumer = str(TransactionProducer())
+                    incoming_transaction.save()
                     
                         
