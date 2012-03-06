@@ -17,7 +17,7 @@ class IncomingTransaction(BaseTransaction):
 @receiver(post_save, sender=IncomingTransaction,  dispatch_uid="deserialize_on_post_save")
 def deserialize_on_post_save(sender, instance, **kwargs):
     if isinstance(instance, IncomingTransaction):
-        if not instance.is_consumed:
+        if not instance.is_consumed and not instance.is_error:
             deserialize_from_transaction = DeserializeFromTransaction()
             deserialize_from_transaction.deserialize(sender, instance, **kwargs)
         
