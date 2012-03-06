@@ -66,7 +66,7 @@ def audit_trail_view(request, **kwargs):
 
             if history:
                 # for the template, prepare separate ordered lists of field labels and field names
-                field_labels = ['#','type', 'time', 'user'] + [
+                field_labels = ['audit_id','type', 'time', 'user'] + [
                                 fld.name for fld in history[0]._meta.fields if fld.column[-3:]=='_id' and fld.name<>'_audit_id'] + [
                                 fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
                                 fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']

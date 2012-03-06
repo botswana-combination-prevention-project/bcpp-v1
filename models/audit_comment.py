@@ -19,7 +19,8 @@ class AuditComment (MyBasicUuidModel):
         )
 
     audit_id = MyUUIDField(
-        db_index = True)
+        db_index = True,
+        editable = True)
     
     audit_code = models.CharField(
         max_length = 25,
@@ -36,5 +37,5 @@ class AuditComment (MyBasicUuidModel):
 
     class Meta:
         app_label = 'audit_trail'  
-        ordering = ['audit_id','created']      
+        ordering = ['created']      
     
