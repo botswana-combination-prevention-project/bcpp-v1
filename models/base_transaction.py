@@ -56,6 +56,10 @@ class BaseTransaction(MyBasicModel):
         db_index = True,
         )
     
+    is_error = models.BooleanField(
+        default = False,
+        )
+    
     error = models.CharField(
          max_length = 1000,
          null = True,
