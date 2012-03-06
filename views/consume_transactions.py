@@ -16,7 +16,6 @@ def consume_transactions(request, **kwargs):
 
     if not 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
         messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')                                                                                            
-    
     producer = None
     if request.user:
         if 'api_key' in dir(request.user):
@@ -32,13 +31,13 @@ def consume_transactions(request, **kwargs):
                         messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
                     else:
                         producer = Producer.objects.get(name__iexact=kwargs.get('producer'))
-
+                
                 if producer:
                     
                     # url to producer, add in the producer, username and api_key of the current user
                     data = {'host': producer.url, 'producer':producer.name, 'limit':producer.json_limit, 'username':request.user.username, 'api_key':request.user.api_key.key}
                     url = '{host}bhp_sync/api/outgoingtransaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
-
+                    
                     request_log = RequestLog()
                     request_log.producer = producer
                     request_log.save()
