@@ -43,6 +43,7 @@ class DashboardRule(object):
                 action = 'not_required',
                 )   
             
+            
 class DashboardRuleContainer(object):
     
     def __init__(self):
@@ -68,6 +69,7 @@ class DashboardRuleContainer(object):
         while self.index < len(self.dashboard_rules):
             yield self.dashboard_rules[self.index]
             self.index += 1   
+    
     def count(self):
         return len(self.dashboard_rules)
     

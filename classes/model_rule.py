@@ -21,17 +21,18 @@ class ModelRule(object):
         self._target_models = []
         
         # target_model should be a list. So you may send more
-        # than one tuple (app_label, model) for the rule to be
-        # run against
-        self.target_model = kwargs.get('target_model')
-        if not isinstance(self.target_model, list):
+        # than one tuple (app_label, model name) for the rule to be
+        # run against, (or a list of model names as long as
+        # the Meta.app_label is set)
+        self.unresolved_target_models = kwargs.get('target_model')
+        if not isinstance(self.unresolved_target_models, list):
             raise TypeError('Attribute target_model must be a list')
         
         # you may pass a reference_instance. The default is None which means 
         # use the instance of model from the bucket.py class, 
         # but you may wish to reference a value that is not in the 
         # default model. 
-        self.reference_model = kwargs.get('reference_model', None)
+        self.unresolved_reference_model = kwargs.get('reference_model', None)
         self.reference_model_filter = kwargs.get('reference_model_filter')
         
         # name of model attribute of the visit model. will be used with
@@ -41,19 +42,21 @@ class ModelRule(object):
         
         # logic tuple
         self.logic = kwargs.get('logic')
+        if not isinstance(self.logic, tuple):
+            raise TypeError('Attribute logic must be a tuple')
         
         # extract the predicate from the logic. Note that we will
         # need to update this later with the current instance
-        self._raw_predicate = self.logic[self._RAW_PREDICATE]
+        self.unresolved_predicate = self.logic[self._RAW_PREDICATE]
         self._predicate = ''
         
         # extract the actions from the logic
         self._consequent_action = self.logic[self._CONSEQUENT_ACTION]
         self._alternative_action = self.logic[self._ALTERNATIVE_ACTION]
-    
-    #def __unicode__(self):
-    #    return '%s %s' % (self._target_model._meta.object_name.lower(),self.logic, )
-    
+        
+        if not 'Meta' in dir(self):
+            AttributeError('class Meta with the app_label attribute has not been defined. Do so in the bucket.py')
+        
     def run(self, instance, app_label):
         
         self._target_models = []
@@ -61,15 +64,18 @@ class ModelRule(object):
         if not self._predicate:
             raise TypeError('self.predicate should be set in the child object. cannot be None, See method run() of %s.' % (self,)) 
     
-        # for each target model tuple, convert the the actual mode
-        # and append to the internal list of target models
-        for target_model in self.target_model:
+        # for each target model tuple, get the actual model
+        # and append to the internal list of target models to run against
+        for target_model in self.unresolved_target_models:
             if isinstance(target_model, tuple):
                 self._target_models.append(get_model(target_model[self._APP_LABEL], target_model[self._MODEL_NAME]))
             else:
                 self._target_models.append(get_model(app_label, target_model))    
         
         # TODO: add code for AdditionalEntryBucket
+        # TODO: what if target model is not in bucket?
+        # TODO: detect type of reference model, membership form, scheduled form or prn and decide whether
+        # to update scheduled entry or add to additional entry.
         
         ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
         # run the rule for each target model in the list
@@ -94,20 +100,15 @@ class ModelRule(object):
                                    model = target_model._meta.object_name.lower(), 
                                    predicate = self._predicate, 
                                    action = self._alternative_action)    
-
-            
-            
-class CharModelRule(ModelRule):
     
-    def run(self, instance, app_label):
-        
-        self.visit_model_instance = getattr(instance, self.visit_model_fieldname)
+    
+    def _set_reference_model(self, instance, app_label):
         
         # check if a model other than the default will be used
         # to get the field value for the predicate
-        if self.reference_model:
+        if self.unresolved_reference_model:
             # get the model
-            reference_model = get_model(self.reference_model[self._APP_LABEL], self.reference_model[self._MODEL_NAME]) 
+            reference_model = get_model(self.unresolved_reference_model[self._APP_LABEL], self.unresolved_reference_model[self._MODEL_NAME]) 
             if self.reference_model_filter == 'registered_subject':           
                 # filter on registered subject
                 self._reference_model_instance = reference_model.objects.get(registered_subject=self.visit_model_instance.appointment.registered_subject)
@@ -116,16 +117,63 @@ class CharModelRule(ModelRule):
         
         else:
             # use the default instance    
-            self._reference_model_instance = instance 
+            self._reference_model_instance = instance         
+    
+    def _build_predicate(self, instance):
+        
+        # the unresolved predicate is a tuple with three items (field, operator, value) 
+        # or a tuple of tuples where all but the first tuple have
+        # a boolean operator as an additional and fourth item
+        # ((field, operator, value), (field, operator, value, boolean_operator))
+        
+        self._predicate = ''
+        
+        if isinstance(self.unresolved_predicate[0], basestring):
+            self.unresolved_predicate = (self.unresolved_predicate,)
         
         # build the predicate
-        if isinstance(self._raw_predicate, tuple): 
-            field_value = self._reference_model_instance.__dict__[self._raw_predicate[0]]
-            value = self._raw_predicate[2]
-            self._predicate = '\'%s\' == \'%s\'' % (field_value.lower(), value.lower())    
-        else:    
-            raise TypeError('First \'logic\' item must be a tuple of (field, operator, value). Got %s' % (self._raw_predicate, ))        
+        # check that unresolved predicate is a tuple
+        if not isinstance(self.unresolved_predicate, tuple): 
+            raise TypeError('First \'logic\' item must be a tuple of (field, operator, value). Got %s' % (self.unresolved_predicate, ))     
+        n = 0
+        for item in self.unresolved_predicate:    
+            if n == 0 and not len(item) == 3:
+                ValueError('The logic tuple (or the first tuple of tuples) must must have three items')
+            if n > 0 and not len(item) == 4:
+                ValueError('Additional tuples in the logic tuple must have a boolean operator as the fourth item')
+            
+            # value from reference model field
+            try:
+                field_value = self._reference_model_instance.__dict__[item[0]]
+            except:
+                raise ValueError('Field name in tuple %s does not exist in reference model %s' % (item[0], self.unresolved_reference_model))    
+            
+            # comparison value
+            value = item[2]
+            
+            # boolean operator if more than one tuple in the logic tuple
+            if len(item) == 4:
+                boolean_operator = item[3]
+                if boolean_operator not in ['and', 'or', 'and not', 'or not']:
+                    ValueError('Illegal operator in logic tuple for rule %s' % (self))
+            else:
+                boolean_operator = ''
+            
+            # add as string for eval    
+            self._predicate += ' %s (\'%s\' == \'%s\')' % (boolean_operator, field_value.lower(), value.lower())    
+            n += 1    
+                       
+            
+class CharModelRule(ModelRule):
+    
+    def run(self, instance, app_label):
         
+        self.visit_model_instance = getattr(instance, self.visit_model_fieldname)
+        
+        self._set_reference_model(instance, app_label)
+        
+        self._build_predicate(instance)
+               
         # call super now that the predicate is built
         super(CharModelRule, self).run(instance, app_label)
         

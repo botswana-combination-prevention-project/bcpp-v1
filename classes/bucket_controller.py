@@ -10,7 +10,7 @@ class AlreadyRegistered(Exception):
 
 class NotRegistered(Exception):
     pass       
- 
+
 class BucketController(object):
     
     def __init__(self):
