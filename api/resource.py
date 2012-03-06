@@ -31,7 +31,7 @@ api_key.save()
 class OutgoingTransactionResource(ModelResource):
     class Meta:
         queryset = OutgoingTransaction.objects.filter(is_consumed=False).order_by('timestamp')
-        resource_name = 'transaction'
+        resource_name = 'outgoingtransaction'
         authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()       
         allowed_methods = ['get','post','put',]        
