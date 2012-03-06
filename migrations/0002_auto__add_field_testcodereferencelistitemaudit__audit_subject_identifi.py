@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Adding field 'TestCodeReferenceListItemAudit._audit_subject_identifier'
-        db.add_column('bhp_lab_test_code_testcodereferencelistitem_audit', '_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True), keep_default=False)
+        #db.add_column('bhp_lab_test_code_testcodereferencelistitem_audit', '_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True), keep_default=False)
 
         # Changing field 'TestCodeReferenceListItemAudit._audit_id'
         db.alter_column('bhp_lab_test_code_testcodereferencelistitem_audit', '_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True))
@@ -18,7 +18,7 @@ class Migration(SchemaMigration):
     def backwards(self, orm):
         
         # Deleting field 'TestCodeReferenceListItemAudit._audit_subject_identifier'
-        db.delete_column('bhp_lab_test_code_testcodereferencelistitem_audit', '_audit_subject_identifier')
+        #db.delete_column('bhp_lab_test_code_testcodereferencelistitem_audit', '_audit_subject_identifier')
 
         # Changing field 'TestCodeReferenceListItemAudit._audit_id'
         db.alter_column('bhp_lab_test_code_testcodereferencelistitem_audit', '_audit_id', self.gf('django.db.models.fields.AutoField')(primary_key=True))
