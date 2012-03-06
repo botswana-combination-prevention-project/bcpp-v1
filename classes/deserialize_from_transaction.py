@@ -1,5 +1,5 @@
 from django.core import serializers
-from django.db import IntegrityError
+from django.db.utils import IntegrityError
 from transaction_producer import TransactionProducer
 
 class DeserializeFromTransaction(object):
@@ -30,14 +30,12 @@ class DeserializeFromTransaction(object):
                 else:  
                     # save using ModelBase save() method (skips all the subclassed save() methods)  
 
-                    obj.save()
-
-                    """
                     try:
                         
                         obj.save()
                         
                     except IntegrityError as error:
+                        raise
                         incoming_transaction.is_consumed = False
                         incoming_transaction.consumer = None                        
                         incoming_transaction.is_error = True
@@ -45,7 +43,7 @@ class DeserializeFromTransaction(object):
                         incoming_transaction.save()
                     except: 
                         raise
-                    """    
+                        
                     # POST success back to to the producer
                     incoming_transaction.is_consumed = True
                     incoming_transaction.consumer = str(TransactionProducer())
