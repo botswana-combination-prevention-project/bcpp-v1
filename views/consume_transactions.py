@@ -37,7 +37,7 @@ def consume_transactions(request, **kwargs):
                     
                     # url to producer, add in the producer, username and api_key of the current user
                     data = {'host': producer.url, 'producer':producer.name, 'limit':producer.json_limit, 'username':request.user.username, 'api_key':request.user.api_key.key}
-                    url = '{host}bhp_sync/api/transaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
+                    url = '{host}bhp_sync/api/outgoingtransaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
 
                     request_log = RequestLog()
                     request_log.producer = producer

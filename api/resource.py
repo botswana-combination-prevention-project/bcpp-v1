@@ -4,7 +4,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import DjangoAuthorization
 #from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
-from bhp_sync.models import Transaction
+from bhp_sync.models import OutgoingTransaction
 
 """
 from django.contrib.auth.models import User
@@ -28,9 +28,9 @@ api_key.save()
 """    
 
 
-class TransactionResource(ModelResource):
+class OutgoingTransactionResource(ModelResource):
     class Meta:
-        queryset = Transaction.objects.filter(is_consumed=False).order_by('timestamp')
+        queryset = OutgoingTransaction.objects.filter(is_consumed=False).order_by('timestamp')
         resource_name = 'transaction'
         authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()       

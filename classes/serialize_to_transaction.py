@@ -12,7 +12,7 @@ class SerializeToTransaction(object):
         save the json object to the Transaction model.
         
         Transaction producer name is based on the hostname (created
-        or modified) field. 
+        or modified) field.     
         
         Call this using the post_save and m2m_changed signal.
         
