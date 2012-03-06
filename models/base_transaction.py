@@ -55,6 +55,12 @@ class BaseTransaction(MyBasicModel):
         blank = True,
         db_index = True,
         )
+    
+    error = models.CharField(
+         max_length = 1000,
+         null = True,
+         blank = True,
+         )
 
     batch_seq = models.IntegerField(null=True, blank=True)
     
