@@ -60,7 +60,7 @@ class BaseTransaction(MyBasicModel):
         default = False,
         )
     
-    error = models.CharField(
+    error = models.TextField(
          max_length = 1000,
          null = True,
          blank = True,
