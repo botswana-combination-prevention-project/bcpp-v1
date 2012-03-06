@@ -46,6 +46,10 @@ class DeserializeFromTransaction(object):
                         incoming_transaction.consumer = str(TransactionProducer())
                         incoming_transaction.save()
                     except IntegrityError, err:
+                        incoming_transaction.is_consumed = False
+                        incoming_transaction.consumer = None                        
+                        incoming_transaction.is_error = True
                         incoming_transaction.error = err
+                        incoming_transaction.save()
                     except: 
                         raise TypeError()    
