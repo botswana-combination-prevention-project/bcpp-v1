@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db.models import ForeignKey, Q
 from bhp_entry.models import Entry
 from bhp_entry.managers import BaseEntryBucketManager
-from bhp_bucket.models import RuleHistory
+#from bhp_bucket.models import RuleHistory
 
 
 class ScheduledEntryBucketManager(BaseEntryBucketManager):
@@ -199,10 +199,10 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                     scheduled_entry_bucket.modified = datetime.today()
                     scheduled_entry_bucket.save()
                     
-                    RuleHistory.objects.create(rule = self, 
-                               model = self.content_type_map.model.lower(), 
-                               predicate = '-', 
-                               action = status['action'],)
+                    #RuleHistory.objects.create(rule = self, 
+                    #           model = self.content_type_map.model.lower(), 
+                    #           predicate = '-', 
+                    #           action = status['action'],)
                                
                     
                 else:
