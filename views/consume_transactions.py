@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-#from django.core import serializers
 from bhp_sync.models import Producer, RequestLog, IncomingTransaction
 from bhp_sync.classes import TransactionProducer
 
@@ -125,65 +124,6 @@ def consume_transactions(request, **kwargs):
                                         f.close()  
                                         producer.sync_status = 'OK'
                                         
-                                        """
-                                        
-                                        for obj in serializers.deserialize("json",transaction['tx']):
-                                            
-                                            # if you get an error deserializing a datetime, confirm dev version of json.py
-                                            if transaction['action'] == 'I' or transaction['action'] == 'U':
-                                                
-                                                # deserialiser save() method
-                                                # need to check if the model instance does not already exist as it may have been
-                                                # auto-created by the CONSUMER on the save of the previous transaction.
-                                                # Note that some transactions trigger the creation of new model instances on the consumer when their save() 
-                                                # methods are called. (for example, saving a membership form triggers the creation of appointments)
-                                                # this will cause an integrity error as the consumer will auto-create a model instance 
-                                                # and the next transaction to be consumed will be that same model instance with a different pk.
-                                                
-                                                # get_by_natural_key_with_dict is disabled, just save()
-                                                if 'xget_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
-                                                    if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
-                                                        obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
-                                                        obj.save()
-                                                    else:
-                                                        raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,) )
-                                                else:    
-                                                    obj.save()
-
-                                                # call the object's save() method to trigger AuditTrail
-                                                # pass the producer so that new transactions on the
-                                                # consumer (self) correctly appear to come from the producer.
-                                                obj.object.save(suppress_autocreate_on_deserialize=True)
-                                                #obj.object.save()
-                                                
-                                                # POST success back to to the producer
-                                                transaction['is_consumed'] = True
-                                                transaction['consumer'] = str(TransactionProducer())
-                                                req = urllib2.Request(url, json.dumps(transaction, cls=DjangoJSONEncoder), {'Content-Type': 'application/json'})
-                                                f = urllib2.urlopen(req)
-                                                response = f.read()
-                                                f.close()  
-                                                producer.sync_status = 'OK'                      
-                                                # display a message on the consumer (self)
-                                                #messages.add_message(request, messages.SUCCESS, 'Import succeeded for %s' %(unicode(obj.object),))                                
-                                        
-                                                
-                                            elif transaction['action'] == 'D':
-                                                if 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION' in dir(settings):
-                                                    if settings.ALLOW_DELETE_MODEL_FROM_SERIALIZATION:
-                                                        if obj.object.__class__.objects.filter(pk=transaction['tx_pk']):
-                                                            #obj_name = unicode(obj.object) 
-                                                            obj.object.__class__.objects.get(pk=transaction['tx_pk']).delete(transaction_producer=transaction['producer'])
-                                                            #messages.add_message(request, messages.SUCCESS, 'Delete succeeded for %s' %(obj_name,))                                            
-                                                    else:
-                                                        messages.add_message(request, messages.WARNING, 'Delete not allowed. %s' %(obj.object._meta.object_name,))
-                                                        messages.add_message(request, messages.WARNING, 'Delete from imported serialized objects not allowed. See ALLOW_DELETE_MODEL_FROM_SERIALIZATION in settings.')                                                                                            
-                                                else:
-                                                    msg = 'ALLOW_DELETE_MODEL_FROM_SERIALIZATION global boolean not found in settings.'
-                                                    messages.add_message(request, messages.ERROR, msg)                                                                                            
-                                            else:
-                                                raise ValueError, 'Unable to handle imported transaction, unknown \'action\'. Action must be I,U or D. Got %s' % (transaction['action'],)
-                                        """
                     #producer.sync_status = 'OK'
                     producer.save()
         

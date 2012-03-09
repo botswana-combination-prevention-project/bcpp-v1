@@ -28,10 +28,9 @@ class DeserializeFromTransaction(object):
                     else:
                         raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,) )
                 else:  
-                    # save using ModelBase save() method (skips all the subclassed save() methods)  
 
                     try:
-                        
+                        # save using ModelBase save() method (skips all the subclassed save() methods)  
                         obj.save()
                         
                     except IntegrityError as error:
