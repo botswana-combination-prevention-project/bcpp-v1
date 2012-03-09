@@ -2,7 +2,8 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from models import Transaction, IncomingTransaction, OutgoingTransaction, RequestLog, Producer
-from actions import reset_transaction_as_not_consumed, reset_transaction_as_consumed, reset_producer_status
+from actions import reset_transaction_as_not_consumed, reset_transaction_as_consumed, reset_producer_status, \
+                    reset_incomingtransaction_error_status
 
 
 class TransactionAdmin (MyModelAdmin):
@@ -26,7 +27,7 @@ class IncomingTransactionAdmin (MyModelAdmin):
     
     search_fields = ('tx_pk', 'tx', 'timestamp')
     
-    actions = [reset_transaction_as_not_consumed, reset_transaction_as_consumed,]
+    actions = [reset_transaction_as_not_consumed, reset_transaction_as_consumed, reset_incomingtransaction_error_status,]
     
 admin.site.register(IncomingTransaction, IncomingTransactionAdmin)
 
