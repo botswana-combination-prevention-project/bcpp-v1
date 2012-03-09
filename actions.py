@@ -28,9 +28,18 @@ reset_producer_status.short_description = "Reset producer status to '-'"
 def reset_incomingtransaction_error_status(modeladmin, request, queryset):
     """ reset producer status to '-' """
     for qs in queryset:
-        if qs.is_active:
-            qs.sync_status = False
-            qs.error = None
-            qs.save()
+        qs.is_error = False
+        qs.error = None
+        qs.save()
             
-reset_producer_status.short_description = "Reset transaction error status (is_error=False)"
+reset_incomingtransaction_error_status.short_description = "Reset transaction error status (is_error=False)"
+
+"""
+def set_incomingtransaction_postpone_status(modeladmin, request, queryset):
+    "" reset producer status to '-' ""
+    for qs in queryset:
+        qs.is_postpone = True
+        qs.save()
+            
+set_incomingtransaction_postpone_status.short_description = "Set transaction status to postpone (is_postpone = True)"
+"""

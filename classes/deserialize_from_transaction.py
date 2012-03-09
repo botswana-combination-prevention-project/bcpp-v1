@@ -30,7 +30,8 @@ class DeserializeFromTransaction(object):
                 else:  
 
                     try:
-                        # save using ModelBase save() method (skips all the subclassed save() methods)  
+                        # save using ModelBase save() method (skips all the subclassed save() methods)
+                        # post_save, etc signals will fire  
                         obj.save()
                         
                     except IntegrityError as error:
