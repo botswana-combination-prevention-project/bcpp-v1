@@ -93,7 +93,7 @@ class ResultItemAdmin(MyModelAdmin):
         "test_code",
         "result",
         "result_item_value",
-        "result_item_value_as_float",
+        #"result_item_value_as_float",
         "result_item_quantifier",
         "result_item_datetime",
         "result_item_operator",
