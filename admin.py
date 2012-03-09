@@ -106,7 +106,7 @@ class ResultItemAdmin(MyModelAdmin):
         )
     
     list_filter = ('grade_flag', 'reference_flag',"result_item_datetime","test_code", "created", "modified")    
-    search_fields = ('test_code__code','result__result_identifier', "result__lab__subject_identifier",)    
+    search_fields = ('test_code__code','result__result_identifier', "result__lab__subject_identifier", "result__lab__receive_identifier")    
 
     fields = (
         "result_item_value",
