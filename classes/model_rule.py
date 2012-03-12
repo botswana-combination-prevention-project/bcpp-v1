@@ -1,5 +1,5 @@
 from django.db.models import get_model
-from bhp_bucket.models import RuleHistory
+#from bhp_bucket.models import RuleHistory
 
 class ModelRule(object):
     
@@ -86,20 +86,20 @@ class ModelRule(object):
                     visit_model_instance = getattr(instance, self.visit_model_fieldname),
                     action = self._consequent_action,
                     )
-                RuleHistory.objects.create(rule = self, 
-                                   model = target_model._meta.object_name.lower(), 
-                                   predicate = self._predicate, 
-                                   action = self._consequent_action)             
+                #RuleHistory.objects.create(rule = self, 
+                #                   model = target_model._meta.object_name.lower(), 
+                #                   predicate = self._predicate, 
+                #                   action = self._consequent_action)             
             else:
                 ScheduledEntryBucket.objects.update_status( 
                     model = target_model,
                     visit_model_instance = getattr(instance, self.visit_model_fieldname),
                     action = self._alternative_action,
                     )
-                RuleHistory.objects.create(rule = self, 
-                                   model = target_model._meta.object_name.lower(), 
-                                   predicate = self._predicate, 
-                                   action = self._alternative_action)    
+                #RuleHistory.objects.create(rule = self, 
+                #                   model = target_model._meta.object_name.lower(), 
+                #                   predicate = self._predicate, 
+                #                   action = self._alternative_action)    
     
     
     def _set_reference_model(self, instance, app_label):
