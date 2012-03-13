@@ -191,7 +191,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                         current_status = scheduled_entry_bucket.entry_status, 
                         entry_comment = comment
                         )
-    
+                    
                     scheduled_entry_bucket.report_datetime = status['report_datetime']
                     scheduled_entry_bucket.entry_status = status['action']
                     scheduled_entry_bucket.entry_comment = status['entry_comment']                

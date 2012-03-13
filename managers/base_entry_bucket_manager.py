@@ -103,45 +103,48 @@ class BaseEntryBucketManager(models.Manager):
 
     def get_status(self, **kwargs):
 
-        action = kwargs.get("action")
+        desired_action = kwargs.get("action")
         report_datetime = kwargs.get("report_datetime")
-        current_status = kwargs.get("current_status")
+        #current_status = kwargs.get("current_status")
         entry_comment = kwargs.get("comment")
 
 
+        # get the current status of the record, KEYED or NEW (not keyed)
         if self.is_keyed():
             current_status = 'KEYED' 
         else:           
             current_status = 'NEW'
-    
-        if current_status == 'KEYED' and not action == 'delete':
+
+
+        if current_status == 'KEYED' and not desired_action == 'delete':
+            # keep return action as keyed if the record is KEYED. regardless
+            # of the desired action
             report_datetime = report_datetime
-            if action == 'not_required':
+            if desired_action == 'not_required':
                 entry_comment = 'NOT REQUIRED!'
-            
+            return_action = 'KEYED'    
         else:        
-            if action == 'add_change':
+            if desired_action == 'add_change':
                 report_datetime = report_datetime
-                current_status = 'KEYED'
+                return_action = 'KEYED'
                 entry_comment = ''                
-            elif action == 'delete':
+            elif desired_action == 'delete':
                 report_datetime = None
-                current_status = 'NEW'
+                return_action = 'NEW'
                 entry_comment = 'deleted'
-            elif action == 'new':
+            elif desired_action == 'new':
                 report_datetime = None
-                current_status = 'NEW'
+                return_action = 'NEW'
                 entry_comment = 'required'
-            elif action == 'not_required':
+            elif desired_action == 'not_required':
                 report_datetime = None
-                current_status = 'NOT_REQUIRED'
+                return_action = 'NOT_REQUIRED'
                 entry_comment = ''
             else:
-                raise ValueError, 'In update_status, value of \'action\' is unhandled. Got %s.' % action
+                raise ValueError, 'In update_status, value of \'action\' is unhandled. Got %s.' % desired_action
 
         close_datetime = None                
-
-        return {'action': action.upper(), 
+        return {'action': return_action.upper(), 
                 'report_datetime': report_datetime, 
                 'entry_comment':entry_comment,
                 'close_datetime':close_datetime,
