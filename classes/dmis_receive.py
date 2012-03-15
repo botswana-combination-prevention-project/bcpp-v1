@@ -237,7 +237,7 @@ class DmisReceive(object):
     def fetch_or_create_protocol(self,  protocol_identifier ):
 
         protocol = Protocol.objects.using(self.lab_db).filter(protocol_identifier__iexact=protocol_identifier)
-        raise TypeError(protocol, self.lab_db)
+        
         if protocol:
             protocol = Protocol.objects.using(self.lab_db).get(protocol_identifier__iexact=protocol_identifier)
         else:
