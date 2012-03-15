@@ -120,7 +120,7 @@ class BaseResultItem(MyBasicUuidModel):
             try:
                 self.result_item_value_as_float = float(self.result_item_value)
             except:
-                pass    
+                self.result_item_value_as_float = None    
             
         super(BaseResultItem, self).save(*args, **kwargs)
 
