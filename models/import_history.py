@@ -1,6 +1,5 @@
 import datetime
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
 
 class DmisImportTransactionHistory(MyBasicUuidModel):

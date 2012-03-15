@@ -1,6 +1,5 @@
 import datetime
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
 
 class DmisImportHistory(MyBasicUuidModel):
@@ -20,5 +19,4 @@ class DmisImportHistory(MyBasicUuidModel):
 
     class Meta:
         app_label = 'bhp_lab_core' 
-        db_table = 'bhp_lab_core_dmisimporthistory'
-  	    
+        db_table = 'bhp_lab_core_dmisimporthistory'  
