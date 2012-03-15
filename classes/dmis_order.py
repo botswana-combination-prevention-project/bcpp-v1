@@ -1,17 +1,12 @@
 from datetime import datetime, timedelta
 import pyodbc
-from django.db.models import Avg, Max, Min, Count    
+from django.db.models import Max
+from django.conf import settings    
 from lab_receive.models import Receive
 from lab_aliquot.models import Aliquot
 from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
 from lab_order.models import Order
-from lab_result.models import Result
-from lab_result_item.models import ResultItem
-from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-from lab_patient.models import Patient
-from lab_account.models import Account
-from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
-
+from lab_panel.models import Panel, PanelGroup
 
 class DmisOrder(object):
 
@@ -28,18 +23,19 @@ class DmisOrder(object):
            and which records to fetch (perhaps something older has been modeified.
            Also, call with both process_status (pending and available) to make sure you get everything.
         """
+        dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
 
-        subject_identifier = kwargs.get('subject_identifier')
-        receive_identifier = kwargs.get('receive_identifier')
-        order_identifier = kwargs.get('order_identifier')    
-        aliquot_identifier = kwargs.get('aliquot_identifier')
+        #subject_identifier = kwargs.get('subject_identifier')
+        #receive_identifier = kwargs.get('receive_identifier')
+        #order_identifier = kwargs.get('order_identifier')    
+        #aliquot_identifier = kwargs.get('aliquot_identifier')
         self.lab_db = kwargs.get('lab_db', 'default')
 
-        cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+        cnxn = pyodbc.connect(dmis_data_source)
         cursor = cnxn.cursor()
 
         now  = datetime.today()
-        import_datetime = now
+        #import_datetime = now
         import_tdelta = 7
         days = kwargs.get("days")
         if days:
@@ -79,7 +75,7 @@ class DmisOrder(object):
                 panel = self.fetch_or_create_panel(panel_id=row.panel_id, receive_identifier = receive.receive_identifier)
                 aliquot = self.fetch_or_create_aliquot(receive=receive, panel=panel)
                 # result_guid = row.result_guid.strip(' \t\n\r')
-                order = self.create_or_update_order( 
+                self.create_or_update_order( 
                     order_identifier = row.order_identifier,
                     order_datetime = row.order_datetime,
                     aliquot = aliquot,
@@ -103,7 +99,7 @@ class DmisOrder(object):
         panel = kwargs.get('panel')
         aliquot = kwargs.get('aliquot')    
         order_datetime = kwargs.get('order_datetime')
-        comment = '',
+        #comment = '',
         created = kwargs.get('created')
         modified = kwargs.get('modified')
         user_created = kwargs.get('user_created')
@@ -213,7 +209,7 @@ class DmisOrder(object):
             else:
                 aliquot_type = AliquotType.objects.using(self.lab_db).get(numeric_code__exact=create['type'])
                 aliquot_medium = AliquotMedium.objects.using(self.lab_db).get(short_name__iexact=create['medium'])   
-                aliquot_condition = AliquotCondition.objects.using(self.lab_db).get(short_name__iexact=create['condition'])            
+                #aliquot_condition = AliquotCondition.objects.using(self.lab_db).get(short_name__iexact=create['condition'])            
                 aliquot = Aliquot.objects.using(self.lab_db).create(
                     aliquot_identifier = aliquot_identifier,
                     receive = receive,

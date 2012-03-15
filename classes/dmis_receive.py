@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import pyodbc
+from django.conf import settings
 from django.db.models import Avg, Max, Min, Count    
 from lab_receive.models import Receive
 from lab_aliquot.models import Aliquot
@@ -28,6 +29,9 @@ class DmisReceive(object):
            and which records to fetch (perhaps something older has been modeified.
            Also, call with both process_status (pending and available) to make sure you get everything.
         """
+        
+        dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
+        
         self.lab_db = kwargs.get('lab_db', 'default')
         subject_identifier = kwargs.get('subject_identifier')
 
@@ -42,7 +46,7 @@ class DmisReceive(object):
         order_identifier = kwargs.get('order_identifier')    
         aliquot_identifier = kwargs.get('aliquot_identifier')
 
-        cnxn = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+        cnxn = pyodbc.connect(dmis_data_source)
         cursor = cnxn.cursor()
 
         now  = datetime.today()

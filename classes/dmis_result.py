@@ -1,16 +1,10 @@
 import pyodbc, re
-from lab_result.models import ResultSource
-from django.db.models import Avg, Max, Min, Count        
-from lab_receive.models import Receive
-from lab_aliquot.models import Aliquot
-from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
+from django.db.models import Max 
+from django.conf import settings
 from lab_order.models import Order
-from lab_result.models import Result, ResultSource
+from lab_result.models import Result
+from lab_result.models import ResultSource
 from lab_result_item.models import ResultItem
-from lab_panel.models import Panel, PanelGroup, TidPanelMapping
-from lab_patient.models import Patient
-from lab_account.models import Account
-from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource
 from lab_common.utils import AllocateResultIdentifier
 from lab_test_code.models import TestCode, TestCodeGroup
 
@@ -23,6 +17,8 @@ class DmisResult(object):
 
     def __init__(self, debug=False):
         self.debug = debug
+        self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
+
 
     def fetch(self, **kwargs):
 
@@ -65,10 +61,10 @@ class DmisResult(object):
 
         order = kwargs.get('order')
             
-        cnxn2 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+        cnxn2 = pyodbc.connect(self.dmis_data_source)
         cursor_result = cnxn2.cursor()
 
-        cnxn3 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+        cnxn3 = pyodbc.connect(self.dmis_data_source)
         cursor_resultitem = cnxn3.cursor()
         result = None
         if Result.objects.using(self.lab_db).filter(order=order):

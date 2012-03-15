@@ -1,18 +1,19 @@
-import pyodbc, datetime
+import pyodbc
+from django.conf import settings
 from django.db.models import Q
-from lab_result.models import Result, ResultSource
+from lab_result.models import ResultSource
 from lab_result_item.models import ResultItem
-from lab_test_code.models import TestCode
 
 
 class DmisValidation(object):
 
     def __init__(self, debug=False):
         self.debug = debug
+        self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
 
     def fetch(self, **kwargs):
 
-        cnxn2 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+        cnxn2 = pyodbc.connect(self.dmis_data_source)
         cursor_result = cnxn2.cursor()
 
         #unvalidate everything
