@@ -112,6 +112,8 @@ class BaseResultItem(MyBasicUuidModel):
 	    help_text = ''
   	    )
 
+    def get_subject_identifier(self):
+        return ''
     
     def save(self, *args, **kwargs):
         
