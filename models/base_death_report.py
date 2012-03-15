@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_common.models import MyBasicListModel, MyBasicUuidModel
+from bhp_common.models import MyBasicListModel
 from bhp_common.fields import OtherCharField
 from bhp_common.choices import YES_NO
 from bhp_code_lists.models import DxCode
