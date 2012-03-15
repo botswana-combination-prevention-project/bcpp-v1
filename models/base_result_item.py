@@ -114,7 +114,8 @@ class BaseResultItem(MyBasicUuidModel):
 
     def get_subject_identifier(self):
         return ''
-    
+    def get_visit(self):
+        return ''    
     def save(self, *args, **kwargs):
         
         # if value can be converted to a numeric, then do so and store as float
