@@ -1,5 +1,5 @@
 from django.db import models
-from audit_trail.audit import AuditTrail
+#from audit_trail.audit import AuditTrail
 from lab_reference.classes import ReferenceFlag
 from lab_grading.classes import GradeFlag
 from lab_result.models import Result, ResultSource
@@ -28,7 +28,7 @@ class ResultItem(BaseResultItem):
   	    )
 
 
-    history = AuditTrail()
+    #history = AuditTrail()
     
     def save(self, *args, **kwargs):
         
