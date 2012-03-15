@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from bhp_common.models import MyBasicUuidModel
 from lab_result.choices import RESULT_RELEASE_STATUS
 
@@ -47,7 +46,7 @@ class BaseResult(MyBasicUuidModel):
         blank = True,	    
 	    help_text = ''
   	    )
-  	    
+    
     dmis_result_guid = models.CharField(
         max_length=36,
 	    null = True,

@@ -1,7 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from lab_order.models import Order
-from lab_result.choices import RESULT_RELEASE_STATUS
 from base_result import BaseResult
 
 class Result(BaseResult):
