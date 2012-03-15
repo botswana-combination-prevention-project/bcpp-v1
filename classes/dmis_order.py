@@ -12,6 +12,7 @@ class DmisOrder(object):
 
     def __init__(self, debug=False):
         self.debug = debug
+        self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
 
 
     def fetch(self, **kwargs):
@@ -23,7 +24,6 @@ class DmisOrder(object):
            and which records to fetch (perhaps something older has been modeified.
            Also, call with both process_status (pending and available) to make sure you get everything.
         """
-        dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
 
         #subject_identifier = kwargs.get('subject_identifier')
         #receive_identifier = kwargs.get('receive_identifier')
@@ -31,7 +31,7 @@ class DmisOrder(object):
         #aliquot_identifier = kwargs.get('aliquot_identifier')
         self.lab_db = kwargs.get('lab_db', 'default')
 
-        cnxn = pyodbc.connect(dmis_data_source)
+        cnxn = pyodbc.connect(self.dmis_data_source)
         cursor = cnxn.cursor()
 
         now  = datetime.today()
@@ -142,7 +142,7 @@ class DmisOrder(object):
                 panel = panels[0]
         if not panel and receive_identifier:
             # go back to the receving record and get the TID of the first record, usually only one record returned, but not always...
-            cnxn1 = pyodbc.connect("DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;DATABASE=BHPLAB")
+            cnxn1 = pyodbc.connect(self.dmis_data_source)
             cursor_panel = cnxn1.cursor()
             sql = 'select top 1 tid as panel_group_name from lab01response where pid=\'%s\' order by datecreated'  % (receive_identifier,)
             cursor_panel.execute(str(sql))

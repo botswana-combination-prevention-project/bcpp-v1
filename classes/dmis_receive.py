@@ -1,17 +1,13 @@
 from datetime import datetime, timedelta
 import pyodbc
 from django.conf import settings
-from django.db.models import Avg, Max, Min, Count    
+from django.db.models import Max
 from lab_receive.models import Receive
 from lab_aliquot.models import Aliquot
 from lab_aliquot_list.models import AliquotType, AliquotCondition,AliquotMedium
-from lab_order.models import Order
-from lab_result.models import Result
-from lab_result_item.models import ResultItem
-from lab_panel.models import Panel, PanelGroup, TidPanelMapping
 from lab_patient.models import Patient
 from lab_account.models import Account
-from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
+from bhp_research_protocol.models import Protocol, Site, Location
 
 
 class DmisReceive(object):
@@ -42,9 +38,9 @@ class DmisReceive(object):
         else:
             where_subject_identifier = ''
             
-        receive_identifier = kwargs.get('receive_identifier')
-        order_identifier = kwargs.get('order_identifier')    
-        aliquot_identifier = kwargs.get('aliquot_identifier')
+        #receive_identifier = kwargs.get('receive_identifier')
+        #order_identifier = kwargs.get('order_identifier')    
+        #aliquot_identifier = kwargs.get('aliquot_identifier')
 
         cnxn = pyodbc.connect(dmis_data_source)
         cursor = cnxn.cursor()
@@ -120,7 +116,7 @@ class DmisReceive(object):
                 receive_condition = row.sample_condition,
                 )
             #create an aliquot record, will guess specimen type by tid    
-            aliquot = self.create_or_update_aliquot( receive=receive , condition=row.sample_condition, primary=True, tid=row.tid, modified=row.modified )
+            self.create_or_update_aliquot( receive=receive , condition=row.sample_condition, primary=True, tid=row.tid, modified=row.modified )
             
         try:
             cursor.close()          
@@ -159,8 +155,8 @@ class DmisReceive(object):
             if receive.modified < modified:
                 if self.debug:
                     print 'updating receive %s' % receive_identifier
-                protocol = fetch_or_create_protocol(protocol_identifier)        
-                site = fetch_or_create_site(site_identifier)                    
+                protocol = self.fetch_or_create_protocol(protocol_identifier)        
+                site = self.fetch_or_create_site(site_identifier)                    
                 receive.modified = modified
                 receive.user_modified = user_modified
                 receive.protocol = protocol
@@ -245,9 +241,9 @@ class DmisReceive(object):
         if protocol:
             protocol = Protocol.objects.using(self.lab_db).get(protocol_identifier__iexact=protocol_identifier)
         else:
-            oPI = PrincipalInvestigator.objects.using(self.lab_db).get(last_name='UNKNOWN')
-            oSL = SiteLeader.objects.using(self.lab_db).get(last_name='UNKNOWN')                
-            oFS = FundingSource.objects.using(self.lab_db).get(name='UNKNOWN')                
+            #oPI = PrincipalInvestigator.objects.using(self.lab_db).get(last_name='UNKNOWN')
+            #oSL = SiteLeader.objects.using(self.lab_db).get(last_name='UNKNOWN')                
+            #oFS = FundingSource.objects.using(self.lab_db).get(name='UNKNOWN')                
 
             protocol = Protocol(
                 protocol_identifier = protocol_identifier,
