@@ -238,8 +238,10 @@ class RegisteredSubjectDashboard(Dashboard):
                 if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier, 
                                                    appointment__visit_definition__code=self.visit_code):
                     
-                    visit_model_instance = self.visit_model.objects.get(appointment__registered_subject__subject_identifier=self.subject_identifier, 
-                                                                        appointment__visit_definition__code=self.visit_code)
+                    # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
+                    visit_model_instance = self.visit_model.objects.get(appointment__registered_subject__subject_identifier = self.subject_identifier, 
+                                                                        appointment__visit_definition__code = self.visit_code,
+                                                                        appointment__visit_instance = self.visit_instance)
                     for rule in bucket.dashboard_rules:
                         rule.run(visit_model_instance=visit_model_instance)
 
