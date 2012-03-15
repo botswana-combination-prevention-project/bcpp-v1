@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from lab_result.models.base_result import BaseResult
 from lab_clinic_api.managers import ResultManager
 from lab_clinic_api.models import Lab
