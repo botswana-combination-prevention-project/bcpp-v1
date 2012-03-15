@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db import models
 from bhp_common.models import MyBasicUuidModel
-from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
+from bhp_common.validators import datetime_not_future
 from bhp_common.fields import InitialsField
 from bhp_research_protocol.models import Protocol, Site
 from lab_patient.models import Patient
