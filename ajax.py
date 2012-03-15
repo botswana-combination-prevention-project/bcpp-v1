@@ -1,12 +1,12 @@
 from datetime import date, datetime
 from django.db.models import Max
 from django.template.loader import render_to_string
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
 from dajax.core import Dajax
 from dajaxice.decorators import dajaxice_register
 from lab_clinic_api.models import Lab, Result, ResultItem, UpdateLog
 from lab_clinic_api.classes import ResultContext, LabContext
-from lab_import_dmis.classes import Dmis
+from lab_import_dmis.classes import Dmis, DmisReceive, DmisOrder
 
 @dajaxice_register
 def plot_longitudinal_results(request, subject_identifier, test_code):
