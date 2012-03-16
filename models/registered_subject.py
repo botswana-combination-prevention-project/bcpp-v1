@@ -105,5 +105,6 @@ class RegisteredSubject(BaseSubject):
             return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)                    
 
     class Meta:
-        app_label = 'bhp_registration'            
+        app_label = 'bhp_registration'   
+        ordering = ['subject_identifier',]         
 
