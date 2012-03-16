@@ -37,14 +37,6 @@ def update_result_status(request, subject_identifier):
         dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
         
         logging.warning('ajax update_result_status dmis fetch for %s' % (subject_identifier,))
-        
-        #dmis = DmisReceive()
-        #dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
-        #logging.warning('ajax update_result_status dmis_receive fetch for %s' % (subject_identifier,))
-
-        #dmis = DmisOrder()
-        #dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
-        #logging.warning('ajax update_result_status dmis_order fetch for %s' % (subject_identifier,))
 
         labs = Lab.objects.fetch(subject_identifier=subject_identifier)
         if labs:
@@ -56,7 +48,9 @@ def update_result_status(request, subject_identifier):
         # i can get this to import correctly
         if Lab.objects.filter(subject_identifier=subject_identifier, result__isnull=True):
             Lab.objects.filter(subject_identifier=subject_identifier, result__isnull=True).delete()        
-        labs = Lab.objects.fetch(subject_identifier=subject_identifier)
+        
+        labs = Lab.objects.filter(subject_identifier=subject_identifier)
+        
         aggr = UpdateLog.objects.filter(subject_identifier=subject_identifier).aggregate(Max('update_datetime'))
         if isinstance(aggr['update_datetime__max'], (date,datetime,)):
             lab_last_updated = aggr['update_datetime__max']
