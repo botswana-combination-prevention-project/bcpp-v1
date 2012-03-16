@@ -1,3 +1,4 @@
+import logging
 from datetime import date, datetime
 from django.db.models import Max
 from django.template.loader import render_to_string
@@ -30,14 +31,17 @@ def update_result_status(request, subject_identifier):
     dajax = Dajax()
 
     if subject_identifier:            
-        
+        logging.warning('ajax update_result_status for %s' % (subject_identifier,))
         dmis = Dmis()
         dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
-
+        logging.warning('ajax update_result_status dmis fetch for %s' % (subject_identifier,))
         dmis = DmisReceive()
         dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
+        logging.warning('ajax update_result_status dmis_receive fetch for %s' % (subject_identifier,))
+
         dmis = DmisOrder()
         dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
+        logging.warning('ajax update_result_status dmis_order fetch for %s' % (subject_identifier,))
 
         labs = Lab.objects.fetch(subject_identifier=subject_identifier)
         if labs:
