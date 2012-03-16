@@ -1,8 +1,5 @@
-from datetime import datetime
 from django.db import models
-from django.conf import settings
 from bhp_common.models import MyBasicUuidModel
-from bhp_common.choices import GENDER, YES_NO
 from lab_clinic_api.managers import LabManager
 
 class Lab(MyBasicUuidModel):
@@ -81,6 +78,12 @@ class Lab(MyBasicUuidModel):
         )
 
     objects = LabManager()
+        
+    def save(self, *args, **kwargs):
+    
+        # TODO: try to match to the local panel definition
+    
+        super(Lab,self).save(self, *args, **kwargs)
     
     def __unicode__(self):
         return '%s order %s for %s drawn %s [%s]' % (self.subject_identifier, self.order_identifier, self.panel, self.drawn_datetime.strftime('%Y-%m-%d'), self.release_status)

@@ -25,6 +25,11 @@ class ResultItem(BaseResultItem):
         if RegisteredSubject.objects.filter(subject_identifier=subject_identifier):
             dob = RegisteredSubject.objects.get(subject_identifier = subject_identifier).dob
             gender = RegisteredSubject.objects.get(subject_identifier = subject_identifier).gender
+            hiv_status = RegisteredSubject.objects.get(subject_identifier = subject_identifier).hiv_status
+            if not hiv_status:
+                #TODO: hiv status should be determined elsewhere than the resultitem
+                hiv_status = 'any'
+                #raise TypeError('Hiv Status unknown for subject_identifier %s ' % (subject_identifier,))
             
             reference = ReferenceFlag()            
             reference.result_item_value = self.result_item_value
@@ -41,7 +46,9 @@ class ResultItem(BaseResultItem):
             grade.dob = dob
             grade.gender = gender
             grade.drawn_datetime = self.result.lab.drawn_datetime
+            grade.hiv_status = hiv_status
             grade.test_code = self.test_code
+            
             if grade.flag:
                 self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])
                 self.grade_flag = grade.flag['flag']        

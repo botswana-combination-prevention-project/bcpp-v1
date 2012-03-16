@@ -1,8 +1,6 @@
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_registration.models import RegisteredSubject
-from lab_clinic_api.models import Lab, Result, ResultItem
 from lab_clinic_api.classes import ResultContext
 
 
@@ -13,7 +11,7 @@ def view_result(request, **kwargs):
     search_name = 'result'
 
     result_identifier = kwargs.get('result_identifier')
-    limit = 20
+    #limit = 20
     template = 'result_report_single.html'
     result_context = ResultContext()
                   

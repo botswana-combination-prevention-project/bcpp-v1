@@ -8,6 +8,7 @@ class Result(BaseResult):
     lab = models.ForeignKey(Lab)
     
     objects = ResultManager()
+
     
     def __unicode__(self):
         return '%s' % (self.result_identifier)
