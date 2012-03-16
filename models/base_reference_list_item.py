@@ -17,11 +17,13 @@ class BaseReferenceListItem(MyBasicModel):
         max_length=10, 
         )
     lln = models.DecimalField(
+        verbose_name = 'lower',
         null=True, 
         max_digits=12, 
         decimal_places=4, 
         blank=True)
     uln = models.DecimalField(
+        verbose_name = 'upper',
         null=True, 
         max_digits=12, 
         decimal_places=4, 
