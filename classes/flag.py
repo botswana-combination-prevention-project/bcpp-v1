@@ -13,9 +13,14 @@ class FlagDescriptor(object):
             self.__set__(instance)
         return self.value
     def __set__(self, instance):
-        if instance.result_item_value and instance.dob and instance.gender and instance.drawn_datetime and instance.test_code and instance.hiv_status:    
+        if instance.result_item_value and instance.dob \
+                and instance.gender \
+                and instance.drawn_datetime \
+                and instance.test_code \
+                and instance.hiv_status:    
             # set reference_flag dictionary
             value = instance.get_flag()
+            #raise TypeError(instance)
             if not isinstance(value, DictType):
                 raise TypeError, 'flag must be of type Dictionary, Got %s' % type(value)
             instance.dirty = False                
@@ -95,11 +100,12 @@ class Flag(object):
     def __init__(self, **kwargs):
         self.dirty = True
         self.value = kwargs.get('result_item_value')
-        self.test_code = kwargs.get('test_code')
-        self.gender = kwargs.get('gender')
-        self.drawn_datetime = kwargs.get('drawn_datetime')
-        self.dob = kwargs.get('dob')
-        self.hiv_status = kwargs.get('hiv_status', 'ANY')                
+        #self.test_code = kwargs.get('test_code')
+        #self.gender = kwargs.get('gender')
+        #self.drawn_datetime = kwargs.get('drawn_datetime')
+        #self.dob = kwargs.get('dob')
+        #self.hiv_status = kwargs.get('hiv_status', 'ANY')
+                        
         
     def get_flag(self):
         """ override this method to calculate the values need to set self.flag. See flag descriptor """
