@@ -1,6 +1,6 @@
 from django.db.models import Q
 from bhp_common.utils import round_up, get_age_in_days
-from lab_flag.classes import Flag, BaseDescriptor
+from lab_flag.classes import Flag
 from lab_grading.models import GradingListItem
 
 
@@ -40,7 +40,7 @@ flag.flag
 
         #get age in days using the collection date as a reference
         age_in_days = get_age_in_days(self.drawn_datetime, self.dob)
-
+        raise TypeError(age_in_days)
                 
         #filter for the reference items for this list and this testcode, gender
         if self.hiv_status:
@@ -53,6 +53,7 @@ flag.flag
                                 test_code=self.test_code, 
                                 gender__icontains=self.gender,
                                 )    
+        
         grade = {'flag':'', 'range':{'lln':'', 'uln':''}}        
         if grading_list_items:
             for reference_list_item in grading_list_items:
@@ -61,7 +62,8 @@ flag.flag
                     if not grade['flag']:
                         grade['flag'] = '0'
                     #see if value is in the of range of a grade
-                    if round_up(self.result_item_value, self.test_code.display_decimal_places) >= round_up(reference_list_item.lln, self.test_code.display_decimal_places) and round_up(self.result_item_value, self.test_code.display_decimal_places) <= round_up(reference_list_item.uln, self.test_code.display_decimal_places):
+                    if round_up(self.result_item_value, self.test_code.display_decimal_places) >= round_up(reference_list_item.lln, self.test_code.display_decimal_places) \
+                            and round_up(self.result_item_value, self.test_code.display_decimal_places) <= round_up(reference_list_item.uln, self.test_code.display_decimal_places):
                         grade['flag'] = reference_list_item.grade        
                         grade['range']['lln'] = round_up(reference_list_item.lln,self.test_code.display_decimal_places)
                         grade['range']['uln'] = round_up(reference_list_item.uln,self.test_code.display_decimal_places)
