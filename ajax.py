@@ -7,7 +7,7 @@ from dajax.core import Dajax
 from dajaxice.decorators import dajaxice_register
 from lab_clinic_api.models import Lab, Result, ResultItem, UpdateLog
 from lab_clinic_api.classes import ResultContext, LabContext
-from lab_import_dmis.classes import Dmis, DmisReceive, DmisOrder
+from lab_import_dmis.classes import Dmis
 
 @dajaxice_register
 def plot_longitudinal_results(request, subject_identifier, test_code):
@@ -31,6 +31,7 @@ def update_result_status(request, subject_identifier):
     dajax = Dajax()
 
     if subject_identifier:            
+        
         logging.warning('ajax update_result_status for %s' % (subject_identifier,))
         
         dmis = Dmis()
@@ -52,6 +53,7 @@ def update_result_status(request, subject_identifier):
         labs = Lab.objects.filter(subject_identifier=subject_identifier)
         
         aggr = UpdateLog.objects.filter(subject_identifier=subject_identifier).aggregate(Max('update_datetime'))
+        
         if isinstance(aggr['update_datetime__max'], (date,datetime,)):
             lab_last_updated = aggr['update_datetime__max']
         else:    
