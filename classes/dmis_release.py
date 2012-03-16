@@ -1,6 +1,5 @@
-import pyodbc, datetime
-from django.db.models import Avg, Max, Min, Count
-from lab_result.models import Result, ResultSource
+from django.db.models import Max
+from lab_result.models import Result
 from lab_result_item.models import ResultItem
 
 class DmisRelease(object):

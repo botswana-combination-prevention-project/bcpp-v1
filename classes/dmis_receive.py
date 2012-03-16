@@ -118,10 +118,10 @@ class DmisReceive(object):
             #create an aliquot record, will guess specimen type by tid    
             self.create_or_update_aliquot( receive=receive , condition=row.sample_condition, primary=True, tid=row.tid, modified=row.modified )
             
-        try:
-            cursor.close()          
-        except:
-            pass
+        #try:
+        #    cursor.close()          
+        #except:
+        #    pass
             
         return None        
         

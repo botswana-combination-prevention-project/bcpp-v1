@@ -86,10 +86,11 @@ class DmisOrder(object):
                     modified = row.modified,
                     dmis_reference=row.dmis_reference,
                     )
-        try:
-            cursor.close()          
-        except:
-            pass
+        
+        #try:
+        #    cursor.close()          
+        #except:
+        #    pass
             
         return None        
         
