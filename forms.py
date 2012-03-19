@@ -1,7 +1,17 @@
 from django import forms
-from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 from bhp_common.classes import MyModelForm
 from lab_barcode.models import ZplTemplate, LabelPrinter
+
+
+class LabelForm(forms.Form):
+    
+    identifier = forms.CharField(
+        max_length=25,
+        label="Identifier",
+        help_text="",
+        error_messages={'required': 'Please enter a valid identifier.'},
+        #initial=""
+        )
 
 
 # ZplTemplate
