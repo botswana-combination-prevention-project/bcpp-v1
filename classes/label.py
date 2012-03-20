@@ -1,5 +1,4 @@
 import os, subprocess, tempfile
-from bhp_common.utils import get_ip_address, get_iface_list
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client
 
 class Label(object):

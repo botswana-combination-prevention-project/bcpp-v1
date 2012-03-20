@@ -1,1 +1,1 @@
-from label import label
+from simple_labeller import simple_labeller
