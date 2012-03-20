@@ -75,7 +75,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
         ScheduledEntryBucket.objects.update_status(
             model_instance = obj,
             visit_model = self.visit_model,
-            action='keyed',
+            action='new',
             )
 
         return super(BaseVisitModelAdmin, self).save_model(request, obj, form, change)
