@@ -72,10 +72,10 @@ def resave_for_subject(subject_identifier, consent, visit, visit_key):
     for model in get_models():
         try:
             if getattr(model, visit_key):
-                m=model.objects.get(**{field_contains:subject_identifier})
-                if m:
-                    m.save()
-                    print "saved %s" % (m,)
+                models = model.objects.filter(**{field_contains:subject_identifier})
+                for model in models:
+                    model.save()
+                    print "saved %s" % (model,)
     
         except:
             pass
