@@ -23,7 +23,9 @@ def resave_for_subject(subject_identifier, consent, visit, visit_key):
     MODEL_NAME = 1
     
     visit_model = get_model(visit[APP_LABEL], visit[MODEL_NAME])
-    consent_model = get_model(consent[APP_LABEL], consent[MODEL_NAME])
+    
+    if consent:
+        consent_model = get_model(consent[APP_LABEL], consent[MODEL_NAME])
     
     field_contains = '%s__appointment__registered_subject__subject_identifier' % (visit_key,)
     
@@ -34,11 +36,12 @@ def resave_for_subject(subject_identifier, consent, visit, visit_key):
         print "saved %s" % (rs,)
     
     #consent
-    consents=consent_model.objects.filter(subject_identifier=subject_identifier)
-    for consent in consents:
-        consent.save()
-        print "saved %s" % (consent,)
-    
+    if consent_model:
+        consents=consent_model.objects.filter(subject_identifier=subject_identifier)
+        for consent in consents:
+            consent.save()
+            print "saved %s" % (consent,)
+        
     #unscheduled and registration forms
     for model in get_models():
         try:
