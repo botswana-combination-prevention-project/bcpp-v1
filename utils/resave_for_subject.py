@@ -26,7 +26,9 @@ def resave_for_subject(subject_identifier, consent, visit, visit_key):
     
     if consent:
         consent_model = get_model(consent[APP_LABEL], consent[MODEL_NAME])
-    
+    else:
+        consent_model = None
+        
     field_contains = '%s__appointment__registered_subject__subject_identifier' % (visit_key,)
     
     #registered_subject
