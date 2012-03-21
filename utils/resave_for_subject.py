@@ -4,7 +4,15 @@ from bhp_registration.models import RegisteredSubject
 
 def resave_for_subject(subject_identifier, consent, visit, visit_key):
     
-    """ resave all model instances for a given subject"""
+    """ resave all model instances for a given subject
+    
+    for example:
+    
+    resave_for_subject('062-5511-0', 
+                        ('maikalelo_maternal','maternalconsent'), 
+                        ('maikalelo_maternal', 'maternalvisit'), 
+                        'maternal_visit')
+    """
     
     #subject_identifier = '062-5512-1'
     #visit_key = 'maternal_visit'
@@ -26,7 +34,7 @@ def resave_for_subject(subject_identifier, consent, visit, visit_key):
         print "saved %s" % (rs,)
     
     #consent
-    consents=consent_model.objects.filter(registered_subject__subject_identifier=subject_identifier)
+    consents=consent_model.objects.filter(subject_identifier=subject_identifier)
     for consent in consents:
         consent.save()
         print "saved %s" % (consent,)
