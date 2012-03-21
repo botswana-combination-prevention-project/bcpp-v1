@@ -29,7 +29,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
         else:
             self.visit_model_foreign_key = self.visit_model_foreign_key[0].name
                 
-        self.search_fields = [self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',] 
+        self.search_fields = ['pk', self.visit_model_foreign_key+'__appointment__registered_subject__subject_identifier',] 
         
         self.list_display = [self.visit_model_foreign_key, 
                              'created', 'modified', 'user_created', 'user_modified',]    
