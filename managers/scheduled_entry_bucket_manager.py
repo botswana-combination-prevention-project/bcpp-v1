@@ -171,7 +171,8 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         comment = kwargs.get('comment', '----')
 
         # try to update
-        # if self.entry is None implies Entry has no occurrence for this visit_definition, content_type_map, which is OK.
+        # if self.entry is None implies Entry has no occurrence for this visit_definition, content_type_map, 
+        # which is OK.
         # see method set_entry()
         if self.entry:
             if self.visit_model_instance:
@@ -206,9 +207,26 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                                
                     
                 else:
-                    raise AttributeError('Cannot determine the scheduled entry bucket record for %s Appointment=\'%s\',  Entry=\'%s\'' % (self.registered_subject.subject_identifier,
-                                                                                                           self.appointment, 
-                                                                                                           self.entry))       
+                    # create a new scheduled bucket entry instance
+                    # 
+                    super(ScheduledEntryBucketManager, self).create(
+                        created = datetime.today(),
+                        modified = datetime.today(),
+                        registered_subject = self.registered_subject,
+                        current_entry_title = self.entry.content_type_map.model.lower(),
+                        entry_status = 'NEW',
+                        due_datetime = None,
+                        report_datetime = datetime.today(),
+                        entry_comment = 'auto',
+                        close_datetime = None,
+                        fill_datetime = None,
+                        appointment = self.appointment,
+                        entry = self.entry,
+                    )
+                    #raise AttributeError('Cannot determine the scheduled entry bucket record for %s Appointment=\'%s\',  Entry=\'%s\'' % (self.registered_subject.subject_identifier,
+                    #                                                                                       self.appointment, 
+                    #
+                    #                                                                                       self.entry))       
             else:
                 raise AttributeError('Cannot determine visit model. See %s update_status()' % (self, )) 
 
