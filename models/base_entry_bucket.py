@@ -20,7 +20,10 @@ class BaseEntryBucket(MyBasicUuidModel):
         default = 'NEW',        
         )
 
-    due_datetime = models.DateTimeField()
+    due_datetime = models.DateTimeField(
+        null=True,
+        blank=True,
+        )
     
     report_datetime = models.DateTimeField(
         null=True,
@@ -38,7 +41,10 @@ class BaseEntryBucket(MyBasicUuidModel):
         blank = True,
         )  
     
-    fill_datetime = models.DateTimeField()
+    fill_datetime = models.DateTimeField(
+        null=True,
+        blank=True,
+        )
     
 
     # def is_serialized(self):
