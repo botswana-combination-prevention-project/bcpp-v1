@@ -103,8 +103,11 @@ class LabManager(models.Manager):
 
             # check release_datetime and create new or update modified records            
             for lis_result in lis_results:         
-                if super(LabManager, self).filter(subject_identifier=subject_identifier, receive_identifier=lis_result.order.order_identifier):
-                    lab = super(LabManager, self).get(subject_identifier=subject_identifier, order_identifier=lis_result.order.order_identifier)
+                if super(LabManager, self).filter(subject_identifier = subject_identifier, 
+                                                  receive_identifier = lis_result.order.order_identifier):
+                    
+                    lab = super(LabManager, self).get(subject_identifier = subject_identifier, 
+                                                      order_identifier = lis_result.order.order_identifier)
                     lab.modified = datetime.today()
                     lab.user_created = 'auto'
                     lab.user_modified = 'auto'
