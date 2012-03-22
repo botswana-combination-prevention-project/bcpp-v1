@@ -23,7 +23,8 @@ class ResultManager(models.Manager):
     
     def update(self, **kwargs ):
         """
-        Using the 'lab_api' DATABASE connection defined in settings, update the local copy of lab data and return nothing.
+        Using the 'lab_api' DATABASE connection defined in settings, update the 
+        local copy of lab data and return nothing.
         
         From your code, call 'fetch' instead of 'update'
         """
