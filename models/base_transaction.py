@@ -14,6 +14,7 @@ class BaseTransaction(MyBasicModel):
     
     tx_name = models.CharField(
         max_length = 64,
+        db_index = True,
         )
     
     tx_pk = models.CharField(
@@ -42,6 +43,7 @@ class BaseTransaction(MyBasicModel):
     
     is_consumed = models.BooleanField(
         default = False,
+        db_index = True,
         )
     
     consumed_datetime = models.DateTimeField(
@@ -58,6 +60,7 @@ class BaseTransaction(MyBasicModel):
     
     is_error = models.BooleanField(
         default = False,
+        db_index = True,
         )
     
     error = models.TextField(

@@ -12,7 +12,7 @@ class TransactionAdmin (MyModelAdmin):
     
     list_filter = ('is_consumed', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name','hostname_modified')
     
-    search_fields = ('tx_pk', 'tx', 'timestamp')
+    search_fields = ('tx_pk', 'tx', 'timestamp',)
     
     actions = [reset_transaction_as_not_consumed, reset_transaction_as_consumed,]
     
@@ -25,7 +25,7 @@ class IncomingTransactionAdmin (MyModelAdmin):
     
     list_filter = ('is_consumed', 'is_error', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name','hostname_modified')
     
-    search_fields = ('tx_pk', 'tx', 'timestamp')
+    search_fields = ('tx_pk', 'tx', 'timestamp','error')
     
     actions = [reset_transaction_as_not_consumed, reset_transaction_as_consumed, reset_incomingtransaction_error_status,]
     
@@ -38,7 +38,7 @@ class OutgoingTransactionAdmin (MyModelAdmin):
     
     list_filter = ('is_consumed', 'is_error', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name','hostname_modified')
     
-    search_fields = ('tx_pk', 'tx', 'timestamp')
+    search_fields = ('tx_pk', 'tx', 'timestamp', 'error')
     
     actions = [reset_transaction_as_not_consumed, reset_transaction_as_consumed,]
     
