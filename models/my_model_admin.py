@@ -1,11 +1,19 @@
 from datetime import datetime
 from django.contrib import admin
 from django.core.urlresolvers import reverse
+from bhp_sync.actions import serialize
 
 
 class MyModelAdmin (admin.ModelAdmin):
     
     """Overide ModelAdmin to force username to be saved on add and change""" 
+    
+    def __init__(self, *args, **kwargs):
+        
+        self.actions.append(serialize)
+                            
+        super(MyModelAdmin, self).__init__(*args, **kwargs)
+    
     
     def save_model(self, request, obj, form, change):
         

@@ -11,9 +11,13 @@ class MyBasicModel(TimeStampedModel):
     
     user_modified = models.CharField(max_length=250, verbose_name='user modified',editable=False, default="")
     
-    hostname_created = HostnameCreationField()
+    hostname_created = HostnameCreationField(
+         db_index = True,
+        )
     
-    hostname_modified = HostnameModificationField()
+    hostname_modified = HostnameModificationField(         
+        db_index = True,
+        )
     
     class Meta:
         abstract = True
