@@ -31,6 +31,8 @@ class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
             'modified', 
             'user_created',
             'user_modified',
+            'hostname_created',
+            'hostname_modified',
             ]
             
         super(BaseRegisteredSubjectModelAdmin, self).__init__(*args, **kwargs)            
