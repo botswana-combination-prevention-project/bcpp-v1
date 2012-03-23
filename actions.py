@@ -1,14 +1,19 @@
+from django.contrib import messages
 from bhp_sync.classes import SerializeToTransaction
 
 def serialize(modeladmin, request, queryset):
     
     """ for a model instance serializing to outgoing"""
     serialize_to_transaction = SerializeToTransaction()
-                
+    
+    n = 0            
+    
     for instance in queryset:
-        
         serialize_to_transaction.serialize(instance.__class__, instance)
-
+        n += 1
+    
+    messages.add_message(request, messages.SUCCESS, '%s transactions have been sent to Outgoing' % (n,))
+    
 serialize.short_description = "Send as Outgoing Transaction"
 
 
