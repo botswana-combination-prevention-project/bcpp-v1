@@ -6,7 +6,7 @@ from transaction_producer import TransactionProducer
 
 class SerializeToTransaction(object):
 
-    def serialize(self, sender, instance,**kwargs):
+    def serialize(self, sender, instance, **kwargs):
     
         """Serialize the model instance to a json object and 
         save the json object to the Transaction model.
@@ -51,7 +51,7 @@ class SerializeToTransaction(object):
         
         transaction_producer = TransactionProducer()    
          
-        Transaction = get_model('bhp_sync', 'transaction')
+        #Transaction = get_model('bhp_sync', 'transaction')
         OutgoingTransaction = get_model('bhp_sync', 'outgoingtransaction')
         
         # 'suppress_autocreate_on_deserialize' is passed by the method that
@@ -82,7 +82,18 @@ class SerializeToTransaction(object):
                         use_natural_keys = use_natural_keys)              
 
         # save to Transaction.
-        transaction = Transaction.objects.create(
+        #transaction = Transaction.objects.create(
+        #    tx_name = instance._meta.object_name,
+        #    tx_pk = instance.pk,
+        #    tx = json_tx,
+        #    timestamp = datetime.today().strftime('%Y%m%d%H%M%S%f'),
+        #    producer = str(transaction_producer),
+        #    action = action,                
+        #    )
+        
+        # save to Outgoing Transaction.
+        #if not OutgoingTransaction.objects.filter(tx__exact=transaction.tx):
+        OutgoingTransaction.objects.create(
             tx_name = instance._meta.object_name,
             tx_pk = instance.pk,
             tx = json_tx,
@@ -90,17 +101,5 @@ class SerializeToTransaction(object):
             producer = str(transaction_producer),
             action = action,                
             )
-        
-        # save to Outgoing Transaction.
-        if not OutgoingTransaction.objects.filter(tx__exact=transaction.tx):
-            OutgoingTransaction.objects.create(
-                pk = transaction.pk,
-                tx_name = transaction.tx_name,
-                tx_pk = transaction.tx_pk,
-                tx = transaction.tx,
-                timestamp = transaction.timestamp,
-                producer = transaction.producer,
-                action = transaction.action,                
-                )
             
        

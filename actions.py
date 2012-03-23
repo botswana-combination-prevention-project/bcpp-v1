@@ -1,3 +1,16 @@
+from bhp_sync.classes import SerializeToTransaction
+
+def serialize(modeladmin, request, queryset):
+    
+    """ for a model instance serializing to outgoing"""
+    serialize_to_transaction = SerializeToTransaction()
+                
+    for instance in queryset:
+        
+        serialize_to_transaction.serialize(instance.__class__, instance)
+
+serialize.short_description = "Send as Outgoing Transaction"
+
 
 def reset_transaction_as_not_consumed(modeladmin, request, queryset):
     """ reset transaction by setting is_consumed = False"""
