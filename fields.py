@@ -1,7 +1,7 @@
 """
 Erik's additional model fields
 """
-import sys, socket, re
+import socket, re
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import CharField, DateTimeField, DecimalField
 from django.forms import RegexField
@@ -94,7 +94,8 @@ class HostnameModificationField (CharField):
         field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
-        
+    
+    
 class OtherCharField(CharField):
     """field for "Other specify" options"""
 
@@ -118,6 +119,7 @@ class OtherCharField(CharField):
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
         
+
 class DobField(DateTimeField):
     """field for date of birth"""
 
@@ -166,7 +168,6 @@ class IsDateEstimatedField(CharField):
         field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
-
 
 
 
@@ -379,9 +380,9 @@ class CellPhoneField(CharField):
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,
-            'regex': re.compile("^7[1-5]{1}[0-9]{6}$"),
+            'regex': re.compile("^7[1-8]{1}[0-9]{6}$"),
             'error_messages': {
-                'invalid': _(u'Enter a valid cellphone number. Allowed prefixes are 71, 72, 73, 74, 75.'),
+                'invalid': _(u'Enter a valid cellphone number. Allowed prefixes are 71-78.'),
             }
         }
         defaults.update(kwargs)

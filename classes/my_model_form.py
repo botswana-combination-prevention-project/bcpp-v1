@@ -10,6 +10,8 @@ class MyModelForm(forms.ModelForm):
         
         self.logic = LogicCheck(self._meta.model)
         
+        #self.list_filter = ['created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified'] 
+        
 
     
     def clean(self):
@@ -61,7 +63,7 @@ class MyModelForm(forms.ModelForm):
 
         # if leading question is 'No', ensure the m2m item is 'not applicable'
         if leading.lower() == 'no' and not [True for item in m2m if item.name.lower() == 'not applicable']:
-           raise forms.ValidationError("You stated there are NO " + label + "s. Please correct")                
+            raise forms.ValidationError("You stated there are NO " + label + "s. Please correct")                
 
         # if leading question is 'No', ensure only one m2m item is selected.
         if leading.lower() == 'no' and len(m2m) > 1:
