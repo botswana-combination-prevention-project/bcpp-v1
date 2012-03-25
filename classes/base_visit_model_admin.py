@@ -130,7 +130,10 @@ class BaseVisitModelAdmin(MyModelAdmin):
 
         # do the reverse manually
         # if later wish to decouple from dashboard, perhaps test for dashboard_type, if none/exception skip
-        result['Location'] = reverse('dashboard_visit_url' , kwargs={'dashboard_type':self.dashboard_type, 'subject_identifier':subject_identifier, 'visit_code': unicode(visit_code)})
+        result['Location'] = reverse('dashboard_visit_url' , kwargs={'dashboard_type':self.dashboard_type, 
+                                                                     'subject_identifier':subject_identifier, 
+                                                                     'appointment':visit.appointment.pk,
+                                                                     'visit_code': unicode(visit_code)})
 
         return result
 
