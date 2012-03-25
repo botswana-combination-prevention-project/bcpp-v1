@@ -235,11 +235,14 @@ class RegisteredSubjectDashboard(Dashboard):
             # run rules if visit_code is known -- user selected, that is user clicked to see list of
             # scheduled entries for a given visit.
             if self.visit_code:
-                if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier, 
-                                                   appointment__visit_definition__code=self.visit_code):
+                #if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier, 
+                #                                   appointment__visit_definition__code=self.visit_code):
                     
-                    # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
-                    visit_model_instance = self.visit_model.objects.get(appointment__registered_subject__subject_identifier = self.subject_identifier, 
+                # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
+                if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier = self.subject_identifier, 
+                                                                    appointment__visit_definition__code = self.visit_code,
+                                                                    appointment__visit_instance = self.visit_instance):
+                    visit_model_instance=self.visit_model.objects.get(appointment__registered_subject__subject_identifier = self.subject_identifier, 
                                                                         appointment__visit_definition__code = self.visit_code,
                                                                         appointment__visit_instance = self.visit_instance)
                     for rule in bucket.dashboard_rules:
@@ -270,7 +273,7 @@ class RegisteredSubjectDashboard(Dashboard):
                                         visit_definition__code = self.visit_code, 
                                         visit_instance = 0,
                                         )
-            self.scheduled_entry_bucket = ScheduledEntryBucket.objects.get_scheduled_forms_for(
+            self.scheduled_entry_bucket = ScheduledEntryBucket.objects.get_entries_for(
                 registered_subject = self.registered_subject, 
                 appointment = appointment,    
                 visit_code = self.visit_code,
@@ -456,8 +459,11 @@ class RegisteredSubjectDashboard(Dashboard):
                 'dashboard', 
                 name="dashboard_visit_url"
                 ),
-
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/$'.format(**regex), 
+                'dashboard', 
+                name="dashboard_visit_url"
+                ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<appointment>{pk})/$'.format(**regex), 
                 'dashboard', 
                 name="dashboard_visit_url"
                 ),
