@@ -25,6 +25,22 @@ class AdditionalEntryBucket(BaseEntryBucket):
     def __unicode__(self):        
         return '%s: %s' % (self.registered_subject.subject_identifier, self.content_type_map)    
     
+    
+    def is_keyed(self):
+
+        """ confirm if model instance exists / is_keyed """
+        
+        model = models.get_model(
+                        self.content_type_map.content_type.app_label, 
+                        self.content_type_map.content_type.model)
+        
+        if model.objects.filter(registered_subject=self.registered_subject):
+            is_keyed = True            
+        else:
+            is_keyed = False
+
+        return is_keyed
+    
     class Meta:
         app_label = 'bhp_entry'
         db_table = 'bhp_form_additionalentrybucket'

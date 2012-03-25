@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.db import models
 from django.db.models import ForeignKey, Q
 from bhp_entry.models import Entry
 from bhp_entry.managers import BaseEntryBucketManager
@@ -7,7 +8,29 @@ from bhp_entry.managers import BaseEntryBucketManager
 
 class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
-    def get_scheduled_forms_for(self, **kwargs ):
+    
+    def is_keyed(self):
+
+        """ confirm if model instance exists / is_keyed """
+
+        model = models.get_model(
+                        self.entry.content_type_map.content_type.app_label, 
+                        self.entry.content_type_map.content_type.model)
+        
+        visit_fk_name = [fk for fk in [f for f in self.entry.content_type_map.model_class()._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model_instance._meta.module_name]                                        
+        
+        if visit_fk_name:
+            visit_fk_name = visit_fk_name[0].name
+            if model.objects.filter(** { visit_fk_name:self.visit_model_instance }):
+                is_keyed = True            
+            else:
+                is_keyed = False
+        else:
+            raise AttributeError('Attribute \'visit_fk_name\' is required for method is_keyed in %s' % (self,))             
+        
+        return is_keyed
+    
+    def get_entries_for(self, **kwargs ):
     
         """Return a queryset of ScheduledEntryBucket objects for the given subject and appointment.
         

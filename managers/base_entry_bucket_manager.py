@@ -34,6 +34,7 @@ class BaseEntryBucketManager(models.Manager):
 
     def set_entry(self):
         
+        #raise TypeError()
         # find occurrence for this visit_definition in the Entry model.
         # if not found, update_status() has nothing to do
         if Entry.objects.filter(visit_definition = self.visit_definition, content_type_map = self.content_type_map):
@@ -81,25 +82,9 @@ class BaseEntryBucketManager(models.Manager):
     def is_keyed(self):
 
         """ confirm if model instance exists / is_keyed """
-
-        #raise TypeError()
-
-        model = models.get_model(
-                        self.entry.content_type_map.content_type.app_label, 
-                        self.entry.content_type_map.content_type.model)
         
-        visit_fk_name = [fk for fk in [f for f in self.entry.content_type_map.model_class()._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model_instance._meta.module_name]                                        
-        
-        if visit_fk_name:
-            visit_fk_name = visit_fk_name[0].name
-            if model.objects.filter(** { visit_fk_name:self.visit_model_instance }):
-                is_keyed = True            
-            else:
-                is_keyed = False
-        else:
-            raise AttributeError('Attribute \'visit_fk_name\' is required for method is_keyed in %s' % (self,))             
-        
-        return is_keyed                
+        raise AttributeError('is_keyed() may not be called on the base model %' % (self,))
+           
 
     def get_status(self, **kwargs):
 
