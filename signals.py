@@ -1,14 +1,15 @@
-from django.db.models.signals import post_save, m2m_changed
-from django.dispatch import receiver
+from datetime import datetime
+#from django.db.models.signals import post_save #, m2m_changed
+#from django.dispatch import receiver
 from django.core import serializers
 from django.db.models import get_model
 from django.contrib.auth.models import User
 from django.db import models
 from tastypie.models import create_api_key
-from bhp_common.models import MyBasicUuidModel
+#from bhp_common.models import MyBasicUuidModel
 from bhp_sync.classes import TransactionProducer
 
-
+# tastypie signal to create api_ky
 models.signals.post_save.connect(create_api_key, sender=User)
 
 def json_to_transaction(sender, instance,**kwargs):
