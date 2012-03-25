@@ -19,6 +19,8 @@ class BaseVisitModelAdmin(MyModelAdmin):
 
     def __init__(self, *args, **kwargs):
 
+        super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
+        
         model = args[0]
 
         if not self.visit_model:
@@ -62,7 +64,7 @@ class BaseVisitModelAdmin(MyModelAdmin):
                 ],
             ))
 
-        super(BaseVisitModelAdmin, self).__init__(*args, **kwargs)
+        
 
 
     def save_model(self, request, obj, form, change):
