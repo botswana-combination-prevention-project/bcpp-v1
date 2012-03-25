@@ -14,10 +14,7 @@ class ModelRule(object):
         """
         self._APP_LABEL = 0
         self._MODEL_NAME = 1
-        self._RAW_PREDICATE = 0
         self._PREDICATE = 0
-        self._CONSEQUENT_ACTION = 1
-        self._ALTERNATIVE_ACTION = 2
         self._target_models = []
         
         # target_model should be a list. So you may send more
@@ -45,62 +42,38 @@ class ModelRule(object):
         if not isinstance(self.logic, tuple):
             raise TypeError('Attribute logic must be a tuple')
         
-        # extract the predicate from the logic. Note that we will
-        # need to update this later with the current instance
-        self.unresolved_predicate = self.logic[self._RAW_PREDICATE]
+        
         self._predicate = ''
-        
-        # extract the actions from the logic
-        self._consequent_action = self.logic[self._CONSEQUENT_ACTION]
-        self._alternative_action = self.logic[self._ALTERNATIVE_ACTION]
-        
+                
         if not 'Meta' in dir(self):
             AttributeError('class Meta with the app_label attribute has not been defined. Do so in the bucket.py')
         
     def run(self, instance, app_label):
         
-        self._target_models = []
-
+        self._set_reference_model(instance, app_label)
+        
+        self._build_predicate(instance)
+        
+        self._set_target_model(instance, app_label)
+        
         if not self._predicate:
-            raise TypeError('self.predicate should be set in the child object. cannot be None, See method run() of %s.' % (self,)) 
+            raise TypeError('self._predicate should be set in the child object. cannot be None, See method run() of %s.' % (self,))   
+        
+        if not self._target_models:
+            raise TypeError('self._target_models should be set in the child object. cannot be None, See method run() of %s.' % (self,))   
+        
+
+    def _set_target_model(self, instance, app_label):
     
+        self._target_models = []    
+        
         # for each target model tuple, get the actual model
         # and append to the internal list of target models to run against
         for target_model in self.unresolved_target_models:
             if isinstance(target_model, tuple):
                 self._target_models.append(get_model(target_model[self._APP_LABEL], target_model[self._MODEL_NAME]))
             else:
-                self._target_models.append(get_model(app_label, target_model))    
-        
-        # TODO: add code for AdditionalEntryBucket
-        # TODO: what if target model is not in bucket?
-        # TODO: detect type of reference model, membership form, scheduled form or prn and decide whether
-        # to update scheduled entry or add to additional entry.
-        
-        ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
-        # run the rule for each target model in the list
-        for target_model in self._target_models:
-            if eval(self._predicate):
-                ScheduledEntryBucket.objects.update_status( 
-                    model = target_model,
-                    visit_model_instance = getattr(instance, self.visit_model_fieldname),
-                    action = self._consequent_action,
-                    )
-                #RuleHistory.objects.create(rule = self, 
-                #                   model = target_model._meta.object_name.lower(), 
-                #                   predicate = self._predicate, 
-                #                   action = self._consequent_action)             
-            else:
-                ScheduledEntryBucket.objects.update_status( 
-                    model = target_model,
-                    visit_model_instance = getattr(instance, self.visit_model_fieldname),
-                    action = self._alternative_action,
-                    )
-                #RuleHistory.objects.create(rule = self, 
-                #                   model = target_model._meta.object_name.lower(), 
-                #                   predicate = self._predicate, 
-                #                   action = self._alternative_action)    
-    
+                self._target_models.append(get_model(app_label, target_model))  
     
     def _set_reference_model(self, instance, app_label):
         
@@ -127,7 +100,7 @@ class ModelRule(object):
         # ((field, operator, value), (field, operator, value, boolean_operator))
         
         self._predicate = ''
-        
+
         if isinstance(self.unresolved_predicate[0], basestring):
             self.unresolved_predicate = (self.unresolved_predicate,)
         
@@ -162,20 +135,4 @@ class ModelRule(object):
             # add as string for eval    
             self._predicate += ' %s (\'%s\' == \'%s\')' % (boolean_operator, field_value.lower(), value.lower())    
             n += 1    
-                       
             
-class CharModelRule(ModelRule):
-    
-    def run(self, instance, app_label):
-        
-        self.visit_model_instance = getattr(instance, self.visit_model_fieldname)
-        
-        self._set_reference_model(instance, app_label)
-        
-        self._build_predicate(instance)
-               
-        # call super now that the predicate is built
-        super(CharModelRule, self).run(instance, app_label)
-        
-        
-
