@@ -1,5 +1,4 @@
 from django.db.models import get_model
-from bhp_content_type_map.models import ContentTypeMap
 from model_rule import ModelRule
 
 
@@ -30,7 +29,7 @@ class ScheduledModelRule(ModelRule):
         self.visit_model_instance = getattr(instance, self.visit_model_fieldname)
                        
         ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
-
+        ContentTypeMap = get_model('bhp_content_type_map', 'contenttypemap')
         # run the rule for each target model in the list
         for target_model in self._target_models:
             

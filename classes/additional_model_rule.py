@@ -1,5 +1,4 @@
-from django.db.models import get_model, Q
-from bhp_content_type_map.models import ContentTypeMap
+from django.db.models import get_model
 from model_rule import ModelRule
 
 
@@ -24,7 +23,8 @@ class AdditionalModelRule(ModelRule):
         
         target_model_add = []
         target_model_delete = []
-        
+        ContentTypeMap = get_model('bhp_content_type_map', 'contenttypemap')
+
         # call super to build predicate
         super(AdditionalModelRule, self).run(instance, app_label)
         
