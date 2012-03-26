@@ -23,10 +23,11 @@ class ScheduledModelRule(ModelRule):
     
     def run(self, instance, app_label):
 
-        # call super to build predicate
+        self.visit_model_instance = getattr(instance, self.visit_model_fieldname)
+        
+        # call super to build predicate, etc
         super(ScheduledModelRule, self).run(instance, app_label)
                 
-        self.visit_model_instance = getattr(instance, self.visit_model_fieldname)
                        
         ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
         ContentTypeMap = get_model('bhp_content_type_map', 'contenttypemap')
