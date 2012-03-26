@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django import forms
 from bhp_variables.models import StudySpecific
@@ -49,6 +49,15 @@ class BaseSubjectConsentForm(forms.ModelForm):
         if rdelta.years >= obj.age_at_adult_lower_bound and not cleaned_data["guardian_name"] == '':
             raise forms.ValidationError(u'Subject\'s age is %s. Subject is an adult. Guardian\'s name is NOT required.' % (formatted_age(cleaned_data['dob'], date.today())))
 
+        
+        # if consent model has a ConsentAge method that returns an ordered range of ages as list
+        if hasattr(self._meta.model, 'ConsentAge'):
+            instance = self._meta.model()
+            consent_age_range = instance.ConsentAge()
+            rdelta = relativedelta(datetime.today(), cleaned_data.get('dob'))
+            if rdelta.years not in consent_age_range:
+                raise forms.ValidationError("Invalid Date of Birth. Age of consent must be between %sy and %sy inclusive. Got %sy" % (consent_age_range[0], consent_age_range[-1].rdelta.years,))
+        
         # Always return the full collection of cleaned data.
         return cleaned_data    
     
