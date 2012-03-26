@@ -1,9 +1,43 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
-from bhp_registration.utils import AllocateIdentifier
-from models import BaseLocator
+from bhp_common.models import MyModelAdmin
+#from bhp_registration.utils import AllocateIdentifier
+#from models import BaseLocator
 
 class SubjectConsentAdminBase(MyModelAdmin):
+
+    def __init__(self, *args, **kwargs):
+
+        super(SubjectConsentAdminBase, self).__init__(*args, **kwargs)
+                
+        self.search_fields = ['id', 'subject_identifier','first_name', 'last_name', 'identity',] 
+        
+        self.list_display = ['subject_identifier','first_name','initials','gender','dob', 
+                             'consent_datetime','created', 'modified', 'user_created', 'user_modified',]    
+        
+        self.list_filter = [
+            'gender',
+            'study_site',
+            'consent_datetime', 
+            'created', 
+            'modified', 
+            'user_created',
+            'user_modified',
+            'hostname_created',
+            ]
+
+        #self.actions.append(export_as_csv_action("CSV Export: ...with visit and demographics", 
+        #    fields=[], 
+        #    exclude=['id',],        
+        #    extra_fields=[
+        #        {'dob': self.visit_model_foreign_key+'__appointment__registered_subject__dob'},                                    
+        #        {'visit_reason': self.visit_model_foreign_key+'__reason'},
+        #        {'visit_status': self.visit_model_foreign_key+'__appointment__appt_status'},
+        #        {'visit': self.visit_model_foreign_key+'__appointment__visit_definition__code'},
+        #        {'visit_instance': self.visit_model_foreign_key+'__appointment__visit_instance'},                                                                    
+        #        ],
+        #    ))
+
+
   
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj = None):
