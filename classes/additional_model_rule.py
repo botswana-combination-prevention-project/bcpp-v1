@@ -1,6 +1,32 @@
 from django.db.models import get_model
 from model_rule import ModelRule
 
+"""
+
+to the bucket.py in the app add something like this
+
+    class MaternalVisitBucket(ModelBucket):
+        
+        reason_lost = AdditionalModelRule(                                        
+            logic = (('reason', 'equals', 'lost'),), 
+            target_model = ['maternaloffstudy'],
+            registered_subject_model_name = 'appointment',
+             )
+        
+        reason_death = AdditionalModelRule(                                        
+            logic = (('reason', 'equals', 'death',)), 
+            target_model = ['maternaloffstudy', 'maternaldeath'],
+            registered_subject_model_name = 'appointment',
+             )
+        
+        class Meta:
+            app_label = 'maikalelo_maternal'   
+            
+    bucket.register(MaternalVisit, MaternalVisitBucket, 'additional')
+
+"""
+
+
 
 class AdditionalModelRule(ModelRule):
 
