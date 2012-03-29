@@ -217,3 +217,39 @@ class RegisteredSubjectManager(models.Manager):
         # audit.subject_identifier = subject_identifier['identifier']
         # audit.save()
         return True
+    
+    def register_partner(self, ** kwargs):
+
+        """
+        Allocate partner identifiers .
+        
+        """
+        index_identifier = kwargs.get('mother_identifier')
+        partner_first_name = kwargs.get('partner_first_name')
+        partner_initials = kwargs.get('partner_initials')
+        study_site = kwargs.get('study_site')
+
+        user = kwargs.get('user')
+                
+        subject_identifier = {}
+
+        subject_identifier['base_identifier'] = index_identifier  
+        
+        subject_identifier = "%s-10" % (index_identifier)            
+        #only allow one partner per index
+        if not super(RegisteredSubjectManager, self).filter(relative_identifier = index_identifier):
+            super(RegisteredSubjectManager, self).create(    
+                subject_identifier = subject_identifier,
+                registration_datetime = datetime.now(),
+                subject_type = 'partner', 
+                user_created = user,
+                created = datetime.now(),
+                first_name = partner_first_name,
+                initials = partner_initials.upper(),
+                registration_status = 'not_contacted',
+                relative_identifier = index_identifier, 
+                study_site = study_site,       
+                )                
+
+        return True
+    
