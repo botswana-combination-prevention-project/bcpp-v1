@@ -53,4 +53,5 @@ class ContentTypeMap(MyBasicModel):
         app_label = 'bhp_content_type_map'
         db_table = 'bhp_common_contenttypemap'
         unique_together = ['app_label', 'model',]
+        ordering = ['name',]
 
