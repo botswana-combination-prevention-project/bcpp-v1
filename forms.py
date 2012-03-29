@@ -43,11 +43,12 @@ class BaseSubjectConsentForm(forms.ModelForm):
         if minor, force specify guardian's name
         """
         obj=StudySpecific.objects.all()[0]
-        rdelta = relativedelta(date.today(), cleaned_data['dob']) 
-        if rdelta.years < obj.age_at_adult_lower_bound and cleaned_data["guardian_name"] == '':
-            raise forms.ValidationError(u'Subject\'s age is %s. Subject is a minor. Guardian\'s name is required.' % (formatted_age(cleaned_data['dob'], date.today())))
-        if rdelta.years >= obj.age_at_adult_lower_bound and not cleaned_data["guardian_name"] == '':
-            raise forms.ValidationError(u'Subject\'s age is %s. Subject is an adult. Guardian\'s name is NOT required.' % (formatted_age(cleaned_data['dob'], date.today())))
+        if cleaned_data.get('dob'):
+            rdelta = relativedelta(date.today(), cleaned_data.get('dob')) 
+            if rdelta.years < obj.age_at_adult_lower_bound and cleaned_data["guardian_name"] == '':
+                raise forms.ValidationError(u'Subject\'s age is %s. Subject is a minor. Guardian\'s name is required.' % (formatted_age(cleaned_data['dob'], date.today())))
+            if rdelta.years >= obj.age_at_adult_lower_bound and not cleaned_data["guardian_name"] == '':
+                raise forms.ValidationError(u'Subject\'s age is %s. Subject is an adult. Guardian\'s name is NOT required.' % (formatted_age(cleaned_data['dob'], date.today())))
 
         
         # if consent model has a ConsentAge method that returns an ordered range of ages as list
@@ -56,7 +57,7 @@ class BaseSubjectConsentForm(forms.ModelForm):
             consent_age_range = instance.ConsentAge()
             rdelta = relativedelta(datetime.today(), cleaned_data.get('dob'))
             if rdelta.years not in consent_age_range:
-                raise forms.ValidationError("Invalid Date of Birth. Age of consent must be between %sy and %sy inclusive. Got %sy" % (consent_age_range[0], consent_age_range[-1].rdelta.years,))
+                raise forms.ValidationError("Invalid Date of Birth. Age of consent must be between %sy and %sy inclusive. Got %sy" % (consent_age_range[0], consent_age_range[-1],rdelta.years,))
         
         # Always return the full collection of cleaned data.
         return cleaned_data    
