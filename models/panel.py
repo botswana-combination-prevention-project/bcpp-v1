@@ -48,6 +48,7 @@ class Panel(MyBasicModel):
     class Meta:
         app_label = 'lab_panel'        
         db_table = 'bhp_lab_core_panel'
+        ordering = ['name',]
 
 
 
