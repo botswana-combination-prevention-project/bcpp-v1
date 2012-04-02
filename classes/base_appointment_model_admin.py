@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket
+from bhp_appointment.actions import update_entry_bucket_rules
 from bhp_appointment.models import Appointment
 
 
@@ -58,6 +59,9 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
                             'user_created', 
                             'user_modified', 
                             'hostname_created' ]
+        
+        self.actions.append(update_entry_bucket_rules)
+
 
     def save_model(self, request, obj, form, change):
         
