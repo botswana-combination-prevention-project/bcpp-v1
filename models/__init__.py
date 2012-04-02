@@ -1,3 +1,4 @@
+from index_together import *
 from my_basic_model import MyBasicModel
 from my_basic_uuid_model import MyBasicUuidModel
 #from my_new_basic_uuid_model import MyNewBasicUuidModel
