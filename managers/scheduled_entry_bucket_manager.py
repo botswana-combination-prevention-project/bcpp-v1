@@ -63,6 +63,11 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         
         """ Add entries to the scheduled_entry_bucket for a given visit_model. 
         
+        From shell_plus
+        
+        for visit in MaternalVisit.objects.filter(appointment__registered_subject__subject_identifier='062-88157-2'):
+            ScheduledEntryBucket.objects.add_for_visit(visit_model_instance=visit)
+        
         For example, as in registered_subject_dashboard
         
             def add_to_entry_buckets(self):    
@@ -90,7 +95,6 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
         if kwargs.get('subject_visit_model'):
             raise ValueError('subject_visit_model has been changed to \'visit_model_instance\', please read comment in ScheduledEntryBucketManager.add_for_visit() and correct.')
-
 
         # scheduled entries are only added if visit instance is 0
         if visit_model_instance.appointment.visit_instance == '0':
@@ -130,7 +134,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                 
                     if entry.content_type_map.model_class().objects.filter(qset):
                         report_datetime = visit_model_instance.report_datetime
-                        # add to bucket, if not already added, or update
+                        # update
                         if super(ScheduledEntryBucketManager, self).filter(
                                     registered_subject = registered_subject, 
                                     appointment = visit_model_instance.appointment, 
@@ -151,10 +155,9 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
     def update_status(self, **kwargs):
 
         """Update bucket status, etc for a given entry in bucket. 
+        usually called from bucket controller. 
         
-        
-        for example
-        
+        old way, if avoiding bucket.py:
         
         def save_model(self, request, obj, form, change):
             
