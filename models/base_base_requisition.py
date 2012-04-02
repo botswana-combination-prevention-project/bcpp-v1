@@ -48,7 +48,8 @@ class BaseBaseRequisition (MyBasicUuidModel):
         blank = True,
         )
     
-    aliquot_type = models.ForeignKey(AliquotType)
+    aliquot_type = models.ForeignKey(AliquotType,
+        help_text = 'Note: Lists only those types associtaed with the Panel.')
 
     panel = models.ForeignKey(Panel)
     
