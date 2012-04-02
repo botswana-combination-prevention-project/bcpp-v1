@@ -58,6 +58,19 @@ class RegisteredSubjectDashboard(Dashboard):
     """
     Create and add to a default clinic "registered subject" dashboard context and render_to_response from a view.
     
+    in shell
+    
+from maikalelo_dashboard.classes import MaternalDashboard    
+subject_identifier = '062-88157-2'
+dashboard = MaternalDashboard()
+for visit in MaternalVisit.objects.filter(appointment__registered_subject__subject_identifier=subject_identifier):
+    dashboard.create(
+        registered_subject = visit.appointment.registered_subject,
+        visit_code = visit.appointment.visit_definition.code,
+        visit_instance = visit.appointment.visit_instance,              
+        visit_model = MaternalVisit,)
+    
+    
     In your view:
     
     #get request vars from kwargs, lookup others from your models as required
@@ -212,6 +225,7 @@ class RegisteredSubjectDashboard(Dashboard):
         
         # update / add to entries in ScheduledEntryBucket, ScheduledLabEntryBucket
         if self.visit:
+            
             ScheduledEntryBucket.objects.add_for_visit(visit_model_instance = self.visit)           
                      
             # if requisition_model has been defined, assume scheduled labs otherwise pass
@@ -225,34 +239,32 @@ class RegisteredSubjectDashboard(Dashboard):
 
         """ Runs rules in self.scheduled_entry_bucket_rules if visit_code is known
         Add rules before calling create()
-        If called, update form entry status (new, not required, etc) when the visit dashboard is refreshed."""
+        If called, update entry status (new, not required, etc) when the visit dashboard is refreshed."""
 
-        if bucket.dashboard_rules:
+        #if bucket.dashboard_rules:
             
-            if not self.subject_identifier:
-                raise AttributeError('set value of subject_identifier before calling dashboard create() when scheduled_entry_bucket_rules exist')
-    
-            # run rules if visit_code is known -- user selected, that is user clicked to see list of
-            # scheduled entries for a given visit.
-            if self.visit_code:
-                #if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier, 
-                #                                   appointment__visit_definition__code=self.visit_code):
-                    
-                # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
-                if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier = self.subject_identifier, 
-                                                                    appointment__visit_definition__code = self.visit_code,
-                                                                    appointment__visit_instance = self.visit_instance):
-                    visit_model_instance=self.visit_model.objects.get(appointment__registered_subject__subject_identifier = self.subject_identifier, 
-                                                                        appointment__visit_definition__code = self.visit_code,
-                                                                        appointment__visit_instance = self.visit_instance)
-                    for rule in bucket.dashboard_rules:
-                        rule.run(visit_model_instance=visit_model_instance)
+        if not self.subject_identifier:
+            raise AttributeError('set value of subject_identifier before calling dashboard create() when scheduled_entry_bucket_rules exist')
 
-    def _update_status_for_entry_buckets(self):
-        
-        #TODO: this dashboard method is a good place to update the entry status of each bucket entry
-        
-        pass
+        # run rules if visit_code is known -- user selected, that is user clicked to see list of
+        # scheduled entries for a given visit.
+        if self.visit_code:
+            #if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier, 
+            #                                   appointment__visit_definition__code=self.visit_code):
+                
+            # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
+            if self.visit_model.objects.filter(appointment__registered_subject__subject_identifier = self.subject_identifier, 
+                                                                appointment__visit_definition__code = self.visit_code,
+                                                                appointment__visit_instance = self.visit_instance):
+                
+                visit_model_instance=self.visit_model.objects.get(appointment__registered_subject__subject_identifier = self.subject_identifier, 
+                                                                    appointment__visit_definition__code = self.visit_code,
+                                                                    appointment__visit_instance = self.visit_instance)
+                for rule in bucket.dashboard_rules:
+                    rule.run(visit_model_instance=visit_model_instance)
+                    
+                bucket.update_all(visit_model_instance)
+                    
 
     def _set_summary_links(self):   
                      
