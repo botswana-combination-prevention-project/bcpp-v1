@@ -149,6 +149,15 @@ def eligible_if_negative (value):
     if value != 'NEG':
         raise ValidationError('Participant must be HIV Negative. Participant is NOT ELIGIBLE and registration cannot continue.')
 
+def eligible_if_positive (value):        
+    if value != 'POS':
+        raise ValidationError('Participant must be HIV Positive. Participant is NOT ELIGIBLE and registration cannot continue.')
+
+def eligible_not_positive (value):        
+    if value == 'POS':
+        raise ValidationError('Participant must be HIV Negative / Unknown. Participant is NOT ELIGIBLE and registration cannot continue.')
+
+
 def Omang(value):
     """ note this can also be checked at the form level"""
     check_omang_field(value)
