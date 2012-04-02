@@ -224,7 +224,7 @@ class RegisteredSubjectManager(models.Manager):
         Allocate partner identifiers .
         
         """
-        index_identifier = kwargs.get('mother_identifier')
+        index_identifier = kwargs.get('index_identifier')
         partner_first_name = kwargs.get('partner_first_name')
         partner_initials = kwargs.get('partner_initials')
         study_site = kwargs.get('study_site')
@@ -237,6 +237,7 @@ class RegisteredSubjectManager(models.Manager):
         
         subject_identifier = "%s-10" % (index_identifier)            
         #only allow one partner per index
+        
         if not super(RegisteredSubjectManager, self).filter(relative_identifier = index_identifier):
             super(RegisteredSubjectManager, self).create(    
                 subject_identifier = subject_identifier,
