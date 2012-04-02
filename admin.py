@@ -55,25 +55,29 @@ class PackingListAdmin(BasePackingListModelAdmin):
         
         for item in lst:
             if item:
-                subject_requisition = self.requisition.objects.get(specimen_identifier=item)
-                if PackingListItem.objects.filter(packing_list=obj, item_reference=subject_requisition.specimen_identifier):
-                    packing_list_item = PackingListItem.objects.get(packing_list=obj, item_reference=subject_requisition.specimen_identifier)
-                    packing_list_item.item_description = '%s (%s) DOB:%s' % (subject_requisition.subject_visit.appointment.registered_subject.subject_identifier, subject_requisition.subject_visit.appointment.registered_subject.initials, subject_requisition.subject_visit.appointment.registered_subject.dob,)
-                    packing_list_item.user_modified = request.user
-                    packing_list_item.save()                    
-                    subject_requisition.is_packed = True
-                    
-                    subject_requisition.save()                    
-                else:
-                    PackingListItem.objects.create(
-                        packing_list=obj,
-                        item_reference = subject_requisition.specimen_identifier,
-                        item_description = '%s (%s) DOB:%s' % (subject_requisition.subject_visit.appointment.registered_subject.subject_identifier, subject_requisition.subject_visit.appointment.registered_subject.initials, subject_requisition.subject_visit.appointment.registered_subject.dob,),
-                        user_created = request.user,                        
-                        )
-                    subject_requisition.is_packed = True
-                    subject_requisition.save()
-                    
+                if not isinstance(self.requisition, list):
+                    self.requisition = [self.requisition,]
+                for requisition in self.requisition:
+                    if requisition.objects.filter(specimen_identifier=item):   
+                        subject_requisition = requisition.objects.get(specimen_identifier=item)
+                        if PackingListItem.objects.filter(packing_list=obj, item_reference=subject_requisition.specimen_identifier):
+                            packing_list_item = PackingListItem.objects.get(packing_list=obj, item_reference=subject_requisition.specimen_identifier)                            
+                            packing_list_item.item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,)
+                            packing_list_item.user_modified = request.user
+                            packing_list_item.save()                    
+                            subject_requisition.is_packed = True
+                            
+                            subject_requisition.save()                    
+                        else:
+                            PackingListItem.objects.create(
+                                packing_list=obj,
+                                item_reference = subject_requisition.specimen_identifier,
+                                item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,),
+                                user_created = request.user,                        
+                                )
+                            subject_requisition.is_packed = True
+                            subject_requisition.save()
+                        
         
     
 admin.site.register(PackingList, PackingListAdmin)
@@ -87,10 +91,13 @@ class PackingListItemAdmin(MyModelAdmin):
     
     def delete_model(self, request, obj):
     
-        if self.requisition.objects.filter(specimen_identifier=obj.item_reference):
-            subject_requisition = self.requisition.objects.get(specimen_identifier=obj.item_reference)                            
-            subject_requisition.is_packed = False
-            subject_requisition.save()
+        if not isinstance(self.subject_requisition, list):
+            self.subject_requisition = [self.subject_requisition,]
+        for requisition in self.requisition:
+            if requisition.objects.filter(specimen_identifier=obj.item_reference):
+                subject_requisition = requisition.objects.get(specimen_identifier=obj.item_reference)                            
+                subject_requisition.is_packed = False
+                subject_requisition.save()
         
         super(PackingListItemAdmin, self).delete_model(request, obj)
    

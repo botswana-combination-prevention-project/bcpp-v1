@@ -34,14 +34,19 @@ class PackingListForm(BaseRequisitionForm):
         
         if not self.requisition:
             raise forms.ValidationError('Packing lists may not be saved via the \'lab_packing\' app. Requisition is unknown. Go to your local _lab app.')  
-        
+        if not isinstance(self.requisition, list):
+            self.requisition = [self.requisition,]
         list_items = cleaned_data.get('list_items')
         lst = list_items.replace('\r', '').split('\n')
         for item in lst:
             if item:
-                if not self.requisition.objects.filter(specimen_identifier=item):
-                    raise forms.ValidationError('%s for packing list item \'%s\' not found' % (self.requisition._meta.verbose_name, item,))
-
+                found = False
+                for requisition in self.requisition:
+                    if requisition.objects.filter(specimen_identifier=item):
+                        found = True
+                        break
+                if not found:   
+                    raise forms.ValidationError('%s for packing list item \'%s\' not found' % (requisition._meta.verbose_name, item,))
 
         return cleaned_data
 
