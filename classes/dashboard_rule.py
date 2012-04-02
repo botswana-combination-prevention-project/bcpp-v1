@@ -16,7 +16,8 @@ class DashboardRule(object):
         
         self.required = required
 
-        
+    def __unicode__(self):
+        return "%s %s" % (self.bucket_type, self.model)        
     def run(self, **kwargs):
         
         if self.bucket_type == 'scheduled':

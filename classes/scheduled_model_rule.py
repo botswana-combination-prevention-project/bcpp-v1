@@ -2,6 +2,12 @@ from django.db.models import get_model
 from model_rule import ModelRule
 
 """
+The order in which the classes are listed matters. If rules refer to the same
+model, only the result of the last rule will matter. In the example below, 
+the target_model 'hivhistorycd4' is referred to in HivHistoryBucket and ObHistoryBucket.
+Since ObHistoryBucket rules will run last, the result of the HivHistoryBucket
+rule referring to target_model 'hivhistorycd4' will be overwritten.
+
 
 to the bucket.py in the app add something like this
 

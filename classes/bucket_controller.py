@@ -35,6 +35,19 @@ class BucketController(object):
         else:
             raise ValueError('Invalid Key for _registry. Got %s' % (register,))    
            
+    def update_all(self, visit_model_instance):
+        
+        """ given a visit model instance, run all rules for all models referred to by the bucket entries
+        This method is called by the dashboard create() method"""
+        
+        if self._registry['scheduled']:
+            for model, model_bucket in self._registry['scheduled'].iteritems():
+                for item in dir(model_bucket):
+                    if isinstance(getattr(model_bucket, item), ModelRule):
+                        if model.objects.filter(**{getattr(model_bucket, item).visit_model_fieldname:visit_model_instance}):
+                            instance = model.objects.get(**{getattr(model_bucket, item).visit_model_fieldname:visit_model_instance})
+                            getattr(model_bucket, item).run(instance, model_bucket.Meta.app_label)    
+    
     def update(self, instance):
             
         """ run model rules for this model instance"""
