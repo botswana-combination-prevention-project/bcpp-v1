@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin, MyTabularInline
 from django.db.models import Max
 from bhp_registration.models import RegisteredSubject
