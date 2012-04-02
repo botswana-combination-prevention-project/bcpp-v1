@@ -18,9 +18,10 @@ class ContentTypeMapManager(models.Manager):
 
             if get_model(content_type_map.app_label, content_type_map.model):
                 model = get_model(content_type_map.app_label, content_type_map.model)
-                content_type = ContentType.objects.get(app_label=model._meta.app_label, model=model._meta.module_name)
-                content_type_map.content_type = content_type
-                content_type_map.save()
+                if ContentType.objects.filter(app_label=model._meta.app_label, model=model._meta.module_name):
+                    content_type = ContentType.objects.get(app_label=model._meta.app_label, model=model._meta.module_name)
+                    content_type_map.content_type = content_type
+                    content_type_map.save()
             else:    
                 content_type_map.delete()
     
