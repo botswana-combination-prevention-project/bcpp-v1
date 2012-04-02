@@ -63,6 +63,7 @@ class PackingListAdmin(BasePackingListModelAdmin):
                         if PackingListItem.objects.filter(packing_list=obj, item_reference=subject_requisition.specimen_identifier):
                             packing_list_item = PackingListItem.objects.get(packing_list=obj, item_reference=subject_requisition.specimen_identifier)                            
                             packing_list_item.item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,)
+                            packing_list_item.panel = subject_requisition.panel
                             packing_list_item.user_modified = request.user
                             packing_list_item.save()                    
                             subject_requisition.is_packed = True
@@ -73,6 +74,7 @@ class PackingListAdmin(BasePackingListModelAdmin):
                                 packing_list=obj,
                                 item_reference = subject_requisition.specimen_identifier,
                                 item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,),
+                                panel = subject_requisition.panel,
                                 user_created = request.user,                        
                                 )
                             subject_requisition.is_packed = True
@@ -86,7 +88,7 @@ admin.site.register(PackingList, PackingListAdmin)
 class PackingListItemAdmin(MyModelAdmin):
 
     search_fields = ('packing_list__pk','item_description','item_reference',)
-    list_display = ('packing_list','item_reference','item_description', 'created', 'user_created')
+    list_display = ('packing_list','item_reference','panel','item_description', 'created', 'user_created')
     list_filter = ('created',)
     
     def delete_model(self, request, obj):

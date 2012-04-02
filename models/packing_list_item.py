@@ -1,5 +1,5 @@
 from django.db import models
-from audit_trail.audit import AuditTrail
+#from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
 from lab_panel.models import Panel
 from packing_list import PackingList
@@ -28,7 +28,7 @@ class PackingListItem(MyBasicUuidModel):
         blank = True,
         )  
     
-    history = AuditTrail()    
+    #history = AuditTrail()    
 
     def get_subject_identifier(self):
         return ''
