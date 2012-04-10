@@ -137,6 +137,7 @@ class Label(object):
                     try:
                         # note -r will delete the file after printing ...
 
+                        # TODO: can i trap en erorr here if lpr for example does not have the -H parameter
                         subprocess.call(['lpr', '-P' ,self.label_printer.cups_printer_name, '-l', self.file_name, '-H', self.label_printer.cups_server_ip], shell=False)                        
                         #subprocess.call(['lp', '-d' ,self.label_printer.cups_printer_name, '', self.file_name, '-h', self.label_printer.cups_server_ip], shell=False)                        
                         self.message = "Label sent to printer %s" % self.label_printer.cups_printer_name
