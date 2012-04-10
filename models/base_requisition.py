@@ -10,7 +10,8 @@ class BaseRequisition (BaseBaseRequisition):
         null = True,
         blank = True,
         )
-    
+        
     class Meta:
         abstract = True 
        
+

@@ -12,7 +12,7 @@ def flag_as_received(modeladmin, request, queryset, **kwargs):
             qs.is_receive_datetime = datetime.today()
             qs.save()
             
-flag_as_received.short_description = "Flag as received against requisition"
+flag_as_received.short_description = "RECEIVE as received against requisition"
 
 def flag_as_not_received(modeladmin, request, queryset):
 
@@ -22,7 +22,7 @@ def flag_as_not_received(modeladmin, request, queryset):
         qs.is_receive_datetime = datetime.today()
         qs.save()
             
-flag_as_not_received.short_description = "UNFLAG: flag as NOT received"
+flag_as_not_received.short_description = "UN-RECEIVE: flag as NOT received"
 
 
 def flag_as_not_labelled(modeladmin, request, queryset):
@@ -30,7 +30,7 @@ def flag_as_not_labelled(modeladmin, request, queryset):
         qs.is_labelled = False
         qs.save()
 
-flag_as_not_labelled.short_description = "UNLABEL: flag as NOT labelled"
+flag_as_not_labelled.short_description = "UN-LABEL: flag as NOT labelled"
 
 
 

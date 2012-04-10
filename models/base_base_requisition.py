@@ -5,7 +5,6 @@ from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from lab_panel.models import Panel
 from lab_aliquot_list.models import AliquotType
-from lab_packing.models import PackingList
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
 from lab_requisition.managers import BaseRequisitionManager
 
@@ -143,14 +142,18 @@ class BaseBaseRequisition (MyBasicUuidModel):
         default = False,
         )
         
-    packing_list = models.ForeignKey(PackingList, null=True)
-    
     
     objects = BaseRequisitionManager()
     
     def __unicode__(self):
         return '%s' % (self.requisition_identifier)
+    
+    def get_infant_identifier(self):
+        return self.get_visit().appointment.registered_subject.subject_identifier
 
+    def get_subject_identifier(self):
+        return self.get_visit().appointment.registered_subject.subject_identifier
+    
     def save(self, *args, **kwargs):
     
         if not kwargs.get('suppress_autocreate_on_deserialize', False):

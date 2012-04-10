@@ -16,10 +16,6 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
     
     def __init__(self, *args, **kwargs):
 
-        #visit_model_helper = VisitModelHelper()
-        #if db_field.name == visit_model_helper.get_visit_field(model=self.model, visit_model=self.visit_model):
-
-
         self.fields = [
             self.visit_fieldname,
             "requisition_datetime",
@@ -58,7 +54,8 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
             'is_lis',
             'is_receive_datetime',
             'is_labelled_datetime',              
-            'packing_list']        
+            #'packing_list',
+            ]        
 
         self.list_filter = [
             "priority",
