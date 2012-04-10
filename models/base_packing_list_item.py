@@ -2,12 +2,9 @@ from django.db import models
 #from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
 from lab_panel.models import Panel
-from packing_list import PackingList
 
 
-class PackingListItem(MyBasicUuidModel):
-
-    packing_list = models.ForeignKey(PackingList)
+class BasePackingListItem(MyBasicUuidModel):
 
     item_reference = models.CharField(
         max_length = 25,
@@ -34,7 +31,8 @@ class PackingListItem(MyBasicUuidModel):
         return ''
     
     class Meta:
-        app_label = 'lab_packing'    
+        abstract = True
+        #app_label = 'lab_packing'    
         ordering = ['created',]            
         
     

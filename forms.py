@@ -1,7 +1,7 @@
-from datetime import date, datetime, timedelta
 from django import forms
+from bhp_common.classes import MyModelForm
 from lab_requisition.forms import BaseRequisitionForm
-from lab_packing.models import PackingList
+#from lab_packing.models import PackingList
 
 """
 The "requisition" model is required for the code
@@ -11,20 +11,20 @@ In the local xxxx_lab app add something this to forms
 
 from lab_packing.forms import PackingListForm
 
-class InfantPackingListForm (PackingListForm): 
+class PackingListForm (BasePackingListForm): 
 
     def clean(self):
-        self.requisition  = InfantRequisition 
-        return  super(InfantPackingListForm, self).clean()
+        self.requisition  = [InfantRequisition,] 
+        return  super(PackingListForm, self).clean()
 
 
     class Meta:
-        model = InfantPackingList 
+        model = PackingList 
 
 """        
 
 
-class PackingListForm(BaseRequisitionForm):
+class BasePackingListForm(BaseRequisitionForm):
 
     requisition = None
     
@@ -33,22 +33,26 @@ class PackingListForm(BaseRequisitionForm):
         cleaned_data = self.cleaned_data 
         
         if not self.requisition:
-            raise forms.ValidationError('Packing lists may not be saved via the \'lab_packing\' app. Requisition is unknown. Go to your local _lab app.')  
+            raise forms.ValidationError('Class attribute requisition cannot be None. Was it not defined in the local \'..._lab\' forms.py app?')  
         if not isinstance(self.requisition, list):
             self.requisition = [self.requisition,]
-        list_items = cleaned_data.get('list_items')
-        lst = list_items.replace('\r', '').split('\n')
-        for item in lst:
-            if item:
+        for specimen_identifier in cleaned_data.get('list_items').replace('\r', '').split('\n'):
+            if specimen_identifier:
                 found = False
                 for requisition in self.requisition:
-                    if requisition.objects.filter(specimen_identifier=item):
+                    if requisition.objects.filter(specimen_identifier=specimen_identifier):
                         found = True
                         break
                 if not found:   
-                    raise forms.ValidationError('%s for packing list item \'%s\' not found' % (requisition._meta.verbose_name, item,))
+                    raise forms.ValidationError('%s specimen identifier \'%s\' not found' % (requisition._meta.verbose_name, specimen_identifier,))
 
         return cleaned_data
+  
+        
+# PackingList
+class BasePackingListItemForm (MyModelForm): 
 
-    class Meta:
-        model = PackingList  
+    def clean(self):
+   
+        return  super(BasePackingListItemForm, self).clean()
+       

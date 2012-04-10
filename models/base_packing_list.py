@@ -4,7 +4,7 @@ from audit_trail.audit import AuditTrail
 from bhp_common.models import MyBasicUuidModel
 
 
-class PackingList(MyBasicUuidModel):
+class BasePackingList(MyBasicUuidModel):
 
     list_datetime = models.DateTimeField(
         default = datetime.today(),
@@ -30,7 +30,8 @@ class PackingList(MyBasicUuidModel):
         return ''
 
     class Meta:
-        app_label = 'lab_packing'
+        abstract = True
+        #app_label = 'lab_packing'
         ordering = ['list_datetime',]
 
 

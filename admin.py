@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyTabularInline
+from bhp_common.models import MyModelAdmin
 from lab_packing.classes import BasePackingListModelAdmin
 from lab_packing.forms import *
 from lab_packing.models import *
@@ -38,9 +38,9 @@ for each packing list / requisition model defined in models.
 
 """
     
-class PackingListAdmin(BasePackingListModelAdmin): 
+class BasePackingListAdmin(BasePackingListModelAdmin): 
     
-    form = PackingListForm    
+    #form = PackingListForm    
     
     def save_model(self, request, obj, form, change):
         
@@ -49,7 +49,7 @@ class PackingListAdmin(BasePackingListModelAdmin):
         else:
             obj.user_modeified = request.user        
         
-        super(PackingListAdmin, self).save_model(request, obj, form, change)
+        super(BasePackingListAdmin, self).save_model(request, obj, form, change)
 
         lst = obj.list_items.replace('\r', '').split('\n')
         
@@ -60,8 +60,8 @@ class PackingListAdmin(BasePackingListModelAdmin):
                 for requisition in self.requisition:
                     if requisition.objects.filter(specimen_identifier=item):   
                         subject_requisition = requisition.objects.get(specimen_identifier=item)
-                        if PackingListItem.objects.filter(packing_list=obj, item_reference=subject_requisition.specimen_identifier):
-                            packing_list_item = PackingListItem.objects.get(packing_list=obj, item_reference=subject_requisition.specimen_identifier)                            
+                        if self.packing_list_item_model.objects.filter(packing_list=obj, item_reference=subject_requisition.specimen_identifier):
+                            packing_list_item = self.packing_list_item_model.objects.get(packing_list=obj, item_reference=subject_requisition.specimen_identifier)                            
                             packing_list_item.item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,)
                             packing_list_item.panel = subject_requisition.panel
                             packing_list_item.user_modified = request.user
@@ -70,7 +70,7 @@ class PackingListAdmin(BasePackingListModelAdmin):
                             
                             subject_requisition.save()                    
                         else:
-                            PackingListItem.objects.create(
+                            self.packing_list_item_model.objects.create(
                                 packing_list=obj,
                                 item_reference = subject_requisition.specimen_identifier,
                                 item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,),
@@ -79,13 +79,9 @@ class PackingListAdmin(BasePackingListModelAdmin):
                                 )
                             subject_requisition.is_packed = True
                             subject_requisition.save()
-                        
-        
-    
-admin.site.register(PackingList, PackingListAdmin)
 
 
-class PackingListItemAdmin(MyModelAdmin):
+class BasePackingListItemAdmin(MyModelAdmin):
 
     search_fields = ('packing_list__pk','item_description','item_reference',)
     list_display = ('packing_list','item_reference','panel','item_description', 'created', 'user_created')
@@ -101,7 +97,6 @@ class PackingListItemAdmin(MyModelAdmin):
                 subject_requisition.is_packed = False
                 subject_requisition.save()
         
-        super(PackingListItemAdmin, self).delete_model(request, obj)
+        super(BasePackingListItemAdmin, self).delete_model(request, obj)
    
-admin.site.register(PackingListItem, PackingListItemAdmin)
 

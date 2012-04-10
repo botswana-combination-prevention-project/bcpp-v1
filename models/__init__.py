@@ -1,4 +1,4 @@
-from packing_list import PackingList
-from packing_list_item import PackingListItem
+from base_packing_list import BasePackingList
+from base_packing_list_item import BasePackingListItem
 
 
