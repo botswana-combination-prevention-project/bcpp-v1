@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from bhp_model_describer.forms import ModelInstanceCounterForm
 from bhp_model_describer.classes import ModelInstanceCounter
@@ -32,6 +33,7 @@ def model_instance_counter(request, **kwargs):
                 'producer': producer,
                 'result': counter.get(),
                 'section_name': section_name,
+                'app_name':settings.APP_NAME,        
                 'report_title': report_title,                  
                 }
             
@@ -52,5 +54,6 @@ def model_instance_counter(request, **kwargs):
                 'producer': producer,
                 'result': {},
                 'section_name': section_name,
+                'app_name':settings.APP_NAME,        
                 'report_title': report_title,                  
                 }, context_instance=RequestContext(request))   

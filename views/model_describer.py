@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from bhp_model_selector.classes import ModelSelector
 from bhp_model_selector.forms import ModelSelectorForm
@@ -51,6 +52,8 @@ def model_describer(request, **kwargs):
                 'app_labels': model_selector.app_labels,                
                 'model_names': model_selector.model_names,
                 'section_name': section_name, 
+                'app_name':settings.APP_NAME,
+
                 #'report_title': report_title,                                  
                 }
             elif dd.error_type == 'model_name':
@@ -62,6 +65,7 @@ def model_describer(request, **kwargs):
                 'app_label': app_label,                                
                 'model_name': model_name,
                 'section_name': section_name, 
+                'app_name':settings.APP_NAME,
                 #'report_title': report_title,                                  
                 }
             else:
@@ -87,6 +91,7 @@ def model_describer(request, **kwargs):
         'group_fields': {},                                
         'group_m2m_fields': {},                        
         'section_name': section_name, 
+        'app_name':settings.APP_NAME,        
         'report_title': report_title,                          
         'report': ''  ,
         'report_name': kwargs.get('report_name'),         

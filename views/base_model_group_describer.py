@@ -1,13 +1,10 @@
-from itertools import groupby
-from django.db import connection
 from django.db.models import Q
-from datetime import datetime, date, time, timedelta
+from django.conf import settings
+from datetime import datetime, time
 from django.shortcuts import render_to_response
-from django.db.models import Count, Avg, Max, Min, StdDev, Variance
+from django.db.models import Count
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_common.utils import os_variables
-from bhp_registration.models import RegisteredSubject
 from bhp_variables.models import StudySite
 from django.db import models
 from bhp_model_describer.forms import DateRangeForm
@@ -26,7 +23,7 @@ def base_model_group_describer(request, **kwargs):
     years = []
     sites = []
     model_reports = {}
-    model_list = []
+    #model_list = []
     model_reports_ordered_keys = []
     
     
@@ -155,7 +152,8 @@ def base_model_group_describer(request, **kwargs):
         'model_list_title': model_list_title,
         'model_reports': model_reports,
         'model_reports_ordered_keys':model_reports_ordered_keys,
-        'section_name': section_name, 
+        'section_name': section_name,
+        'app_name':settings.APP_NAME, 
         'report_title': report_title,                          
         'report': ''  ,
         'report_name': kwargs.get('report_name'),         
