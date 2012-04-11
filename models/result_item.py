@@ -6,7 +6,7 @@ from lab_grading.classes import GradeFlag
 from bhp_registration.models import RegisteredSubject
 from result import Result
 from lab_clinic_api.managers import ResultItemManager
-from lab_longitudinal_history.classes import longitudinal_history
+#from lab_longitudinal_history.classes import longitudinal_history
 
 class ResultItem(BaseResultItem):
 
@@ -21,7 +21,7 @@ class ResultItem(BaseResultItem):
 
     def save(self, *args, **kwargs):
     
-        longitudinal_history.update(self)
+        #longitudinal_history.update(self)
     
         subject_identifier = self.result.lab.subject_identifier
         if RegisteredSubject.objects.filter(subject_identifier=subject_identifier):
