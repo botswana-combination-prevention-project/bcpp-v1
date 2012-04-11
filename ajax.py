@@ -26,7 +26,7 @@ def updating(request):
     return dajax.json()
 
 @dajaxice_register
-def update_result_status(request, subject_identifier):
+def update_result_status(request, subject_identifier, output=True):
 
     dajax = Dajax()
 
@@ -63,8 +63,11 @@ def update_result_status(request, subject_identifier):
                 
         rendered = render_to_string('result_status_bar.html', {'results': labs, 'lab_last_updated': lab_last_updated})
 
+        
         dajax.assign('#x_results','innerHTML',rendered)
     
+    if not output:
+        return None
     return dajax.json()
     
     
