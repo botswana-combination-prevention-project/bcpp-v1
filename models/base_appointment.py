@@ -12,6 +12,16 @@ class BaseAppointment (MyBasicUuidModel):
         help_text="",
         #validators=[datetime_is_future,], check this at the form level...
         )
+    
+    # this is the original calculated appointment datetime
+    # which the user cannot change
+    timepoint_datetime = models.DateTimeField(
+        verbose_name = _("Timepoint date and time"),
+        help_text = "calculated appointment datetime. Do not change",
+        null = True,
+        editable = False,
+        )
+    
     appt_status = models.CharField(
         verbose_name = _("Status"),
         choices=APPT_STATUS,

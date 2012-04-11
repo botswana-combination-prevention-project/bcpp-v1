@@ -107,6 +107,7 @@ class AppointmentManager(models.Manager):
                         visit_definition = visit_definition,
                         visit_instance = 0,
                         appt_datetime = appt_datetime,
+                        timepoint_datetime = appt_datetime,
                         dashboard_type = dashboard_type,
                         )
 
