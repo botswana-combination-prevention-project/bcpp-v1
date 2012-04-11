@@ -32,14 +32,14 @@ def update_result_status(request, subject_identifier, output=True):
 
     if subject_identifier:            
         
-        logging.warning('ajax update_result_status for %s' % (subject_identifier,))
+        #logging.warning('ajax update_result_status for %s' % (subject_identifier,))
         
         dmis = Dmis()
         dmis.fetch(subject_identifier=subject_identifier, lab_db='lab_api')
         
         #dajax.assign('#x_results','innerHTML','Fetching from DMIS for %s' % (subject_identifier,))
 
-        logging.warning('ajax update_result_status dmis fetch for %s' % (subject_identifier,))
+        #logging.warning('ajax update_result_status dmis fetch for %s' % (subject_identifier,))
 
         labs = Lab.objects.fetch(subject_identifier=subject_identifier)
         if labs:
