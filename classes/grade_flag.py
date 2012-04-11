@@ -40,7 +40,7 @@ flag.flag
 
         #get age in days using the collection date as a reference
         age_in_days = get_age_in_days(self.drawn_datetime, self.dob)
-        raise TypeError(age_in_days)
+        
                 
         #filter for the reference items for this list and this testcode, gender
         if self.hiv_status:
@@ -53,6 +53,7 @@ flag.flag
                                 test_code=self.test_code, 
                                 gender__icontains=self.gender,
                                 )    
+        
         
         grade = {'flag':'', 'range':{'lln':'', 'uln':''}}        
         if grading_list_items:
