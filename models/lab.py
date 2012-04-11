@@ -83,7 +83,7 @@ class Lab(MyBasicUuidModel):
     
         # TODO: try to match to the local panel definition
     
-        super(Lab,self).save(self, *args, **kwargs)
+        super(Lab,self).save(*args, **kwargs)
     
     def __unicode__(self):
         return '%s order %s for %s drawn %s [%s]' % (self.subject_identifier, self.order_identifier, self.panel, self.drawn_datetime.strftime('%Y-%m-%d'), self.release_status)

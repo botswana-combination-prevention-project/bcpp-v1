@@ -6,6 +6,7 @@ from lab_grading.classes import GradeFlag
 from bhp_registration.models import RegisteredSubject
 from result import Result
 from lab_clinic_api.managers import ResultItemManager
+from lab_longitudinal_history.classes import longitudinal_history
 
 class ResultItem(BaseResultItem):
 
@@ -19,15 +20,16 @@ class ResultItem(BaseResultItem):
         return '%s %s %s' % (unicode(self.result.lab), unicode(self.result), unicode(self.test_code))       
 
     def save(self, *args, **kwargs):
-        
-
+    
+        longitudinal_history.update(self)
+    
         subject_identifier = self.result.lab.subject_identifier
         if RegisteredSubject.objects.filter(subject_identifier=subject_identifier):
             dob = RegisteredSubject.objects.get(subject_identifier = subject_identifier).dob
             gender = RegisteredSubject.objects.get(subject_identifier = subject_identifier).gender
             hiv_status = RegisteredSubject.objects.get(subject_identifier = subject_identifier).hiv_status
             if not hiv_status:
-                #TODO: hiv status should be determined elsewhere than the resultitem
+                #TODO: hiv status should be tracked elsewhere than the resultitem
                 hiv_status = 'any'
                 #raise TypeError('Hiv Status unknown for subject_identifier %s ' % (subject_identifier,))
             

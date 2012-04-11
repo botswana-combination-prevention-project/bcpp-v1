@@ -45,8 +45,19 @@ class LabManager(models.Manager):
                     condition_name = aliquot_condition.name[0:35]                       
                 else:
                     condition_name = lis_receive.receive_condition 
-                if super(LabManager, self).filter(subject_identifier=subject_identifier, receive_identifier=lis_receive.receive_identifier, aliquot_identifier__isnull=True):
-                    lab = super(LabManager, self).get(subject_identifier=subject_identifier, receive_identifier=lis_receive.receive_identifier, aliquot_identifier__isnull=True)
+                #if super(LabManager, self).filter(subject_identifier = subject_identifier, 
+                #                                  receive_identifier = lis_receive.receive_identifier, 
+                #                                  aliquot_identifier__isnull = True):
+                #    
+                #TODO:  WHY am i getting duplicates in the Lab model??
+                # WHY aliquot_identifier__isnull = True
+                for lab in super(LabManager, self).filter(subject_identifier = subject_identifier, 
+                                                  receive_identifier = lis_receive.receive_identifier,
+                                                  aliquot_identifier__isnull = True):  
+                    
+                    #lab = super(LabManager, self).get(subject_identifier = subject_identifier, 
+                    #                                  receive_identifier = lis_receive.receive_identifier,
+                    #                                  aliquot_identifier__isnull = True)
                     lab.modified = datetime.today()
                     lab.user_created = 'auto'
                     lab.user_modified = 'auto'
@@ -69,7 +80,10 @@ class LabManager(models.Manager):
 
                     lab.save()
                     #print 'receive: updating %s for %s' % (lis_receive.receive_identifier, subject_identifier)
-                else:
+                
+                if not super(LabManager, self).filter(subject_identifier = subject_identifier, 
+                                                  receive_identifier = lis_receive.receive_identifier,):
+                    #else:
                     super(LabManager, self).create(
                         created = lis_receive.created,
                         modified = lis_receive.modified,
@@ -87,7 +101,6 @@ class LabManager(models.Manager):
                         receive_identifier = lis_receive.receive_identifier,
                         aliquot_identifier = None, #lis_receive.aliquot.aliquot_identifier,
                         condition = condition_name,
-
                         )
                     #print 'receive: creating %s for %s' % (lis_receive.receive_identifier, subject_identifier)                        
                 
