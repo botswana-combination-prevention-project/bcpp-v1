@@ -15,14 +15,14 @@ class BaseSubjectConsentForm(forms.ModelForm):
         check omang if identity_type is omang
         """                        
         if cleaned_data.get("identity_type", None) == 'OMANG':
-            check_omang_field(cleaned_data["identity"], cleaned_data["gender"])            
+            check_omang_field(cleaned_data.get("identity", None), cleaned_data.get("gender", None))            
     
         if 'subject_identifier' in cleaned_data: #which it never is??
-            consents = self._meta.model.objects.filter(identity=cleaned_data["identity"]).exclude(subject_identifier=cleaned_data["subject_identifier"])
+            consents = self._meta.model.objects.filter(identity=cleaned_data.get("identity")).exclude(subject_identifier=cleaned_data.get("subject_identifier"))
         else:
-            consents = self._meta.model.objects.filter(identity=cleaned_data["identity"])        
+            consents = self._meta.model.objects.filter(identity=cleaned_data.get("identity"))        
         if consents:
-            consent = self._meta.model.objects.get(identity=cleaned_data["identity"])
+            consent = self._meta.model.objects.get(identity=cleaned_data.get("identity"))
             raise forms.ValidationError('Omang already on file for subject %s, %s (%s)' % (consent.last_name, consent.first_name, consent.subject_identifier))            
             
         """
