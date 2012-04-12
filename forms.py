@@ -14,9 +14,9 @@ class BaseSubjectConsentForm(forms.ModelForm):
         """
         check omang if identity_type is omang
         """                        
-        if cleaned_data["identity_type"] == 'OMANG':
+        if cleaned_data.get("identity_type", None) == 'OMANG':
             check_omang_field(cleaned_data["identity"], cleaned_data["gender"])            
-        
+    
         if 'subject_identifier' in cleaned_data: #which it never is??
             consents = self._meta.model.objects.filter(identity=cleaned_data["identity"]).exclude(subject_identifier=cleaned_data["subject_identifier"])
         else:
@@ -28,9 +28,9 @@ class BaseSubjectConsentForm(forms.ModelForm):
         """
         check 1st and last letters of initials match subjects name
         """
-        my_first_name = cleaned_data["first_name"] 
-        my_last_name = cleaned_data["last_name"] 
-        my_initials = cleaned_data["initials"] 
+        my_first_name = cleaned_data.get("first_name") 
+        my_last_name = cleaned_data.get("last_name") 
+        my_initials = cleaned_data.get("initials")
         check_initials_field(my_first_name, my_last_name, my_initials)
             
         # obj=StudySpecific.objects.all()[0]
