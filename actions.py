@@ -42,19 +42,17 @@ def print_barcode_labels(modeladmin, request, queryset):
         messages.add_message(request, messages.ERROR, 'The client %s is not configured to print. See lab_barcode app: label_printer model.' % (remote_addr,))
     else:
         cups_server_ip = LabelPrinter.objects.get(client__ip=remote_addr).cups_server_ip
-        
-        
-    for requisition in queryset:
-        if requisition.is_receive:
-            requisition.__class__.objects.print_label(requisition=requisition,remote_addr=cups_server_ip)    
-            #requisition.is_labelled = True
-            #requisition.is_labelled_datetime = datetime.today()             
-            #requisition.save()
-            n += 1       
-        else:
-            messages.add_message(request, messages.ERROR, 'Requisition %s has not been received. Labels cannot be printed until the specimen is received.' % (requisition.requisition_identifier,))
-            #break            
-    messages.add_message(request, messages.SUCCESS, '%s label(s) have been printed to %s' % (n,cups_server_ip,))                        
+        for requisition in queryset:
+            if requisition.is_receive:
+                requisition.__class__.objects.print_label(requisition=requisition,remote_addr=cups_server_ip)    
+                #requisition.is_labelled = True
+                #requisition.is_labelled_datetime = datetime.today()             
+                #requisition.save()
+                n += 1       
+            else:
+                messages.add_message(request, messages.ERROR, 'Requisition %s has not been received. Labels cannot be printed until the specimen is received.' % (requisition.requisition_identifier,))
+                #break            
+        messages.add_message(request, messages.SUCCESS, '%s label(s) have been printed to %s' % (n,cups_server_ip,))                        
         
 print_barcode_labels.short_description = "LABEL: print label"
     
