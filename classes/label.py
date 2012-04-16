@@ -16,6 +16,7 @@ class Label(object):
         self.item_count = 1
         self.item_count_total = 1
         self.cups_server_ip = kwargs.get('cups_server_ip', None)
+        self.client_ip = kwargs.get('client_ip', None)
         self.client = None        
         
         

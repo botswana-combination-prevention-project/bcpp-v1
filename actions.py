@@ -45,7 +45,7 @@ def print_barcode_labels(modeladmin, request, queryset):
             cups_server_ip = LabelPrinter.objects.get(client__ip=remote_addr).cups_server_ip
             for requisition in queryset:
                 if requisition.is_receive:
-                    requisition.__class__.objects.print_label(requisition=requisition,remote_addr=cups_server_ip)    
+                    requisition.__class__.objects.print_label(requisition=requisition,cups_server_ip=cups_server_ip)    
                     #requisition.is_labelled = True
                     #requisition.is_labelled_datetime = datetime.today()             
                     #requisition.save()
