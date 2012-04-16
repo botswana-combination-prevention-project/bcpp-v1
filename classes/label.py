@@ -15,7 +15,7 @@ class Label(object):
         self.label_printer = None
         self.item_count = 1
         self.item_count_total = 1
-        self.client_ip = kwargs.get('client_ip', None)
+        self.cups_server_ip = kwargs.get('cups_server_ip', None)
         self.client = None        
         
         
@@ -77,13 +77,13 @@ class Label(object):
             self.message = 'Cannot print label. Unable to create/open temporary file %s.' % self.file_name
             self.file_name = None            
 
-    def get_client_ips(self):
-        
-        #get interfaces and then ips
-        self.client_ips  = []
-        self.ifaces = get_iface_list()
-        for iface in [i for i in self.ifaces if 'eth' in i]:
-            self.client_ips.append(get_ip_address(iface))
+    #def get_client_ips(self):
+    #    
+    #    #get interfaces and then ips
+    ##    self.client_ips  = []
+    #    self.ifaces = get_iface_list()
+    #    for iface in [i for i in self.ifaces if 'eth' in i]:
+    #        self.client_ips.append(get_ip_address(iface))
 
     def set_client(self):
     
@@ -101,13 +101,16 @@ class Label(object):
         
     def set_label_printer(self):
 
-        # TODO ask cups for default printer
-        self.label_printer = None
-        if self.client:
-            self.label_printer = self.client.label_printer
-        else:
-            if LabelPrinter.objects.filter(default=True):
-                self.label_printer = LabelPrinter.objects.filter(default=True)[0]
+        if self.cups_server_ip:
+            self.label_printer = LabelPrinter.objects.get(cups_server_ip=self.cups_server_ip)
+        else:    
+            # TODO ask cups for default printer
+            self.label_printer = None
+            if self.client:
+                self.label_printer = self.client.label_printer
+            else:
+                if LabelPrinter.objects.filter(default=True):
+                    self.label_printer = LabelPrinter.objects.filter(default=True)[0]
                 
             
         #if not self.label_printer:
@@ -125,7 +128,7 @@ class Label(object):
                 # get printer
                 self.set_label_printer()
                 if not self.label_printer:
-                    self.message = 'Cannot print label. No printers found for host \'%s\'' % self.client_ip  
+                    self.message = 'Cannot print label. No printers found for print server \'%s\'' % self.cups_server_ip  
                     self.printer_error = True                    
                 else:
                     # raise TypeError(self.label_printer.cups_printer_name)
