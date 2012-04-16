@@ -34,16 +34,19 @@ def print_barcode_labels(modeladmin, request, queryset):
     #TODO: remote_addr='127.0.0.1'
     n = 0
     
+    #use the remote addr to determine which cups_server_ip to select
     remote_addr = request.META.get('REMOTE_ADDR')
-    if not LabelPrinter.objects.filter(client__ip=remote_addr) and not remote_addr=='127.0.0.1':
+    if not LabelPrinter.objects.filter(client__ip=remote_addr):
         #cups_server_ip = LabelPrinter.objects.get(client__ip=remote_addr).cups_server_ip
         #else:
         messages.add_message(request, messages.ERROR, 'The client %s is not configured to print. See lab_barcode app: label_printer model.' % (remote_addr,))
- 
-    
+    else:
+        cups_server_ip = LabelPrinter.objects.get(client__ip=remote_addr).cups_server_ip
+        
+        
     for requisition in queryset:
         if requisition.is_receive:
-            requisition.__class__.objects.print_label(requisition=requisition,remote_addr=remote_addr)    
+            requisition.__class__.objects.print_label(requisition=requisition,remote_addr=cups_server_ip)    
             #requisition.is_labelled = True
             #requisition.is_labelled_datetime = datetime.today()             
             #requisition.save()
