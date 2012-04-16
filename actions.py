@@ -54,7 +54,7 @@ def print_barcode_labels(modeladmin, request, queryset):
         else:
             messages.add_message(request, messages.ERROR, 'Requisition %s has not been received. Labels cannot be printed until the specimen is received.' % (requisition.requisition_identifier,))
             #break            
-    messages.add_message(request, messages.SUCCESS, '%s labels have been printed' % (n,))                        
+    messages.add_message(request, messages.SUCCESS, '%s label(s) have been printed to %s' % (n,cups_server_ip,))                        
         
 print_barcode_labels.short_description = "LABEL: print label"
     
