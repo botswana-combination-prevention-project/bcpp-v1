@@ -67,7 +67,7 @@ class BaseRequisitionManager(models.Manager):
         
         requisition = kwargs.get('requisition')
         remote_addr = kwargs.get('remote_addr')
-        cups_server_ip = kwargs.args('cups_server_ip')
+        cups_server_ip = kwargs.get('cups_server_ip')
         if requisition.specimen_identifier:    
             for cnt in range(requisition.item_count_total, 0, -1):
                 try:
