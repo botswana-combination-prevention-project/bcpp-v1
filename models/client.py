@@ -20,5 +20,5 @@ class Client(MyBasicUuidModel):
         
     class Meta:
         app_label='lab_barcode'   
-        ordering = ['ip, label_printer',]          
+        ordering = ['ip', 'label_printer',]          
 
