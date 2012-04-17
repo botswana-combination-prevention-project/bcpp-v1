@@ -15,7 +15,7 @@ class LabelPrinter(MyBasicUuidModel):
         )    
     
     def __unicode__(self):
-        return self.cups_printer_name
+        return '%s@%s' % (self.cups_printer_name, self.cups_server_ip,)
         
     class Meta:
         app_label='lab_barcode'             
