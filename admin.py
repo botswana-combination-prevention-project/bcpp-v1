@@ -32,7 +32,13 @@ class ZplTemplateAdmin(MyModelAdmin):
 admin.site.register(ZplTemplate, ZplTemplateAdmin)
 
 class ClientAdmin(MyModelAdmin):
-    pass
+    
+    fields = (
+        "name",
+        "ip",
+        "label_printer",
+    )
+    
 admin.site.register(Client, ClientAdmin)    
     
 
