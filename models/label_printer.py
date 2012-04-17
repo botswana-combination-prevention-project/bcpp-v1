@@ -18,7 +18,8 @@ class LabelPrinter(MyBasicUuidModel):
         return '%s@%s' % (self.cups_printer_name, self.cups_server_ip,)
         
     class Meta:
-        app_label='lab_barcode'             
+        app_label='lab_barcode'      
+        ordering = ['cups_server_ip',]     
 
 
 
