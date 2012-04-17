@@ -31,6 +31,11 @@ class ZplTemplateAdmin(MyModelAdmin):
 
 admin.site.register(ZplTemplate, ZplTemplateAdmin)
 
+class ClientAdmin(MyModelAdmin):
+    pass
+admin.site.register(Client, ClientAdmin)    
+    
+
 class ClientInline(admin.TabularInline):
 
     model = Client

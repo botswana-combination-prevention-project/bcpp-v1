@@ -16,7 +16,7 @@ class Client(MyBasicUuidModel):
     label_printer = models.ForeignKey(LabelPrinter)
 
     def __unicode__(self):
-        return self.name
+        return "%s - %s" % (self.ip, self.name,)
         
     class Meta:
         app_label='lab_barcode'             
