@@ -33,7 +33,7 @@ admin.site.register(ZplTemplate, ZplTemplateAdmin)
 
 class ClientAdmin(MyModelAdmin):
     
-    fields = (
+    list_display = (
         "name",
         "ip",
         "label_printer",
