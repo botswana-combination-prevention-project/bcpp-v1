@@ -23,6 +23,7 @@ class DeserializeFromTransaction(object):
                     print "Ignoring my own transaction %s" % (incoming_transaction.tx_pk)
                 
                 else:
+                    print "deserializing %s" % (incoming_transaction.tx_pk)
                     # deserialiser save() method
                     # need to check if the model instance does not already exist as it may have been
                     # auto-created by the CONSUMER on the save of the previous incoming_transaction.
