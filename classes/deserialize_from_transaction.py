@@ -52,7 +52,7 @@ class DeserializeFromTransaction(object):
                             incoming_transaction.is_error = True
                             incoming_transaction.error = error
                             incoming_transaction.save()
-                            print error
+                            
                         except: 
                             raise
                         else:
