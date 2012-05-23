@@ -17,13 +17,14 @@ class DeserializeFromTransaction(object):
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
 
                 # check if tx originanted from me
-                print "created %s : modified %s" % (obj.object.hostname_created, obj.object.hostname_modified)
+                #print "created %s : modified %s" % (obj.object.hostname_created, obj.object.hostname_modified)
      
                 if obj.object.hostname_modified == socket.gethostname(): 
-                    print "Ignoring my own transaction %s" % (incoming_transaction.tx_pk)
-                
+                    #print "Ignoring my own transaction %s" % (incoming_transaction.tx_pk)
+                    pass
                 else:
-                    print "deserializing %s" % (incoming_transaction.tx_pk)
+                    #print "deserializing %s" % (incoming_transaction.tx_pk)
+                    
                     # deserialiser save() method
                     # need to check if the model instance does not already exist as it may have been
                     # auto-created by the CONSUMER on the save of the previous incoming_transaction.
