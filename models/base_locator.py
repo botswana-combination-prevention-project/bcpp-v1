@@ -26,11 +26,13 @@ class BaseLocator(MyBasicUuidModel):
         verbose_name = "Mailing address ",
         help_text="",
         )
+    '''
     care_clinic = OtherCharField(
         max_length=35,
         verbose_name = "Health clinic where your infant will receive their routine care ",
         help_text="",
         ) 
+    '''
     home_visit_permission = models.CharField(
         max_length = 25,
         choices = YES_NO,

@@ -42,7 +42,12 @@ class BaseSubjectConsentForm(forms.ModelForm):
         """
         if minor, force specify guardian's name
         """
-        obj=StudySpecific.objects.all()[0]
+        try:
+            obj=StudySpecific.objects.all()[0]
+        except IndexError:
+            raise TypeError("Please add site specific junk")
+
+
         if cleaned_data.get('dob'):
             rdelta = relativedelta(date.today(), cleaned_data.get('dob')) 
             if rdelta.years < obj.age_at_adult_lower_bound and cleaned_data["guardian_name"] == '':

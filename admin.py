@@ -85,7 +85,7 @@ class BaseLocatorFormAdmin(MyModelAdmin):
         'subject_consent',
         'date_signed',
         'mail_address',
-        'care_clinic',
+        #'care_clinic',
         'home_visit_permission',
         'physical_address',
         'may_follow_up',
