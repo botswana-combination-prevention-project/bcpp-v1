@@ -45,7 +45,7 @@ class BaseSubjectConsentForm(forms.ModelForm):
         try:
             obj=StudySpecific.objects.all()[0]
         except IndexError:
-            raise TypeError("Please add site specific junk")
+            raise TypeError("Please add your bhp_variables site specifics")
 
 
         if cleaned_data.get('dob'):
