@@ -64,7 +64,7 @@ class SubjectConsentAdminBase(MyModelAdmin):
         'is_dob_estimated',
         'identity',
         'identity_type',
-        'guardian_name',
+        #'guardian_name',
         'may_store_samples',
         'comment',
         ]
