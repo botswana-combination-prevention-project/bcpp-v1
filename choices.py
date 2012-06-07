@@ -28,6 +28,12 @@ ALIVE_DEAD = (
     ('dead', 'Dead'),
     )     
 
+ALIVE_DEAD_UNKNOWN = (
+    ('alive', 'Alive'),
+    ('dead', 'Dead'),
+    ('unknown', 'Unknown'),
+    )  
+
 ART_STATUS = (
     ('ON', 'Yes, ON ART'),
     ('STOPPED', 'No, stopped ART'),

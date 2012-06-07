@@ -4,18 +4,14 @@ from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from django.core import serializers
 from django.db.models import get_model
-from bhp_common.models import MyBasicModel
-from bhp_common.fields import MyUUIDField
 from bhp_sync.classes import TransactionProducer, SerializeToTransaction
 from bhp_bucket.classes.bucket_controller import bucket
+from bhp_base_model.classes import BaseUuidModel
 
 
-
-class MyBasicUuidModel(MyBasicModel):
+class MyBasicUuidModel(BaseUuidModel):
 
     """Base model class for all models using an UUID and not an INT for the primary key. """
-    
-    id = MyUUIDField(primary_key=True)
 
     def is_serialized(self, serialize=True):
 
@@ -70,6 +66,8 @@ class MyBasicUuidModel(MyBasicModel):
         abstract = True
 
 """ Signals """
+
+
 
 @receiver(m2m_changed, weak=False, dispatch_uid='serialize_m2m_on_save')
 def serialize_m2m_on_save(sender, instance, **kwargs):
