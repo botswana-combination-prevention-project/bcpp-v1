@@ -1,28 +1,42 @@
 """
 Erik's additional encrypted model fields, try one!
 """
-from django.db import models
-#from django.db.models import CharField
 from classes import BaseEncryptedField
-#from django_extensions.db.fields.encrypted import EncryptedCharField
+from django.core.exceptions import ImproperlyConfigured
 
-
-class EncryptedIdentityField(BaseEncryptedField):
-    __metaclass__ = models.SubfieldBase
+class StrongEncryptionField(BaseEncryptedField):
     
-    def get_internal_type(self):
-        return "TextField"
+    def __init__(self, *args, **kwargs):
+        
+        # force the Crypter class to use of strong encryption
+        if 'encryption_method' in kwargs:
+            raise ImproperlyConfigured('StrongEncryptionField parameter \'encryption_method\' = \'strong\' by default.'  \
+                                       ' Do not set this parameter at the model level.') 
+        defaults = {'encryption_method': 'strong'}
+        kwargs.update(defaults)
+        
+        super(StrongEncryptionField, self).__init__(*args, **kwargs)
 
-    #def formfield(self, **kwargs):
-    #    defaults = {'max_length': 1024}        
-    #    defaults.update(kwargs)
-    #    return super(EncryptedIdentityField, self).formfield(**defaults)
 
-    def south_field_triple(self):
-        "Returns a suitable description of this field for South."
-        # We'll just introspect the _actual_ field.
-        from south.modelsinspector import introspector
-        field_class = "django.db.models.fields.CharField"
-        args, kwargs = introspector(self)
-        # That's our definition!
-        return (field_class, args, kwargs)
+class WeakEncryptionField(BaseEncryptedField):
+    
+    def __init__(self, *args, **kwargs):
+        
+        # force the Crypter class to use of strong encryption
+        if 'encryption_method' in kwargs:
+            raise ImproperlyConfigured('WeakEncryptionField parameter \'encryption_method\' = \'weak\' by default.'  \
+                                       ' Do not set this parameter at the model level.') 
+        defaults = {'encryption_method': 'weak'}
+        kwargs.update(defaults)
+        
+        super(WeakEncryptionField, self).__init__(*args, **kwargs)
+        
+        
+class EncryptedIdentityField(StrongEncryptionField):
+    pass
+
+class EncryptedFirstnameField(WeakEncryptionField):
+    pass
+
+class EncryptedLastnameField(StrongEncryptionField):
+    pass

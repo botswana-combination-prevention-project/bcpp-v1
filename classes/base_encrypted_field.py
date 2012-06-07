@@ -1,80 +1,125 @@
-import base64
-from M2Crypto import RSA
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from hasher import Hasher
-
-
+from crypter import Crypter
 
 class BaseEncryptedField(models.Field):
     
-    """ store both a SHA-256 hash-value for exact comparison when searching and a cipher generated 
-    using a public key which can be decrypted if the private key is available on the system. Hash 
-    and cipher are stored as one string prefixed by the 'prefix' and can be split on 
-    the 'cipher_prefix' """
+    """ A field class that stores sensitive data in an encrypted format.
+    
+    To maintain uniqueness and searchability, only the hash is ever stored in the model field.
+    
+    If a cipher is generated, it is stored with the hash in the Crypt lookup model and will be
+    made available when required for decryption (e.g. the private key is available)
+       
+    Hash salt, public key and private key are referred to via the settings file
+    
+    """
 
-    prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
-    cipher_prefix = 'enc2:::'
+    __metaclass__ = models.SubfieldBase
+    encryption_method = None
+    valid_encryption_methods = ['strong', 'weak', 'hash-only']
+    crypter = Crypter()
+    
+    def __init__(self, *args, **kwargs):  
+        """
+        The required field attribute 'encryption_method' guides in loading public and private keys
+        
+        1. strong: use on values that should be less convenient to decrypt. Private key is not
+           allowed on mobile devices (settings.IS_MOBILE_DEVICE).
+        2. weak: same as strong but the private key is expected to be available and is not checked for
+        3. hash: irreversibly hash the value. do not create a corresponding cipher 
+        """
+        
+        defaults = {}
+        self.encryption_method = kwargs.get('encryption_method', 'public-key')
+        if 'encryption_method' in kwargs:
+            del kwargs['encryption_method']
+        
+        if self.encryption_method not in self.valid_encryption_methods:
+            raise ImproperlyConfigured('Available options for EncryptedField field parameter' \
+                                        '\'encryption_method\' are \'%s\'. Got \'%s\' ' \
+                                        % ('\' or \''.join(self.valid_encryption_methods), kwargs.get('encryption_method')))
+           
+        if self.encryption_method == 'strong':
+            defaults = {'help_text': kwargs.get('help_text', '') + ' (Encryption: strong)'}
+            # load public key, private key (if available) and set writer
+            if not hasattr(settings, 'IS_MOBILE_DEVICE'):
+                raise ImproperlyConfigured('You must set the IS_MOBILE_DEVICE setting to True ' \
+                                           'or False for \'strong\' encryption' )
+            if not hasattr(settings, 'PUBLIC_KEY_STRONG'):
+                raise ImproperlyConfigured('You must set the PUBLIC_KEY_STRONG setting to ' \
+                                           'point to your public key (path and filename) .')
+            self.crypter.public_key = settings.PUBLIC_KEY_STRONG
+            if 'PRIVATE_KEY_STRONG' in dir(settings):
+                # strong security DOES NOT expect a private key to be available on the device
+                if settings.PRIVATE_KEY_STRONG:
+                    if not settings.IS_MOBILE_DEVICE:
+                        self.crypter.private_key = settings.PRIVATE_KEY_STRONG
+                    else:
+                        raise ImproperlyConfigured('PRIVATE_KEY_STRONG setting should not be set on a mobile device.' )                        
+        elif self.encryption_method == 'weak':
+            defaults = {'help_text': kwargs.get('help_text', '') + ' (Encryption: weak)'}
 
+            # load public key, private key (if available) and set writer
+            if not hasattr(settings, 'PUBLIC_KEY_WEAK'):
+                raise ImproperlyConfigured('For \'weak\' security, you must set the PUBLIC_KEY_WEAK setting to ' \
+                                           'point to your public key (path and filename) .')
+            self.crypter.public_key = settings.PUBLIC_KEY_STRONG
+            if 'PRIVATE_KEY_WEAK' in dir(settings):
+                # medium security expects a private key to be available on the device, 
+                # but you could remove move it to fully de-identify the DB
+                if settings.PRIVATE_KEY_WEAK:
+                    self.crypter.private_key = settings.PRIVATE_KEY_WEAK     
+        if self.encryption_method == 'hash':
+            raise ImproperlyConfigured('EncryptedField field \'encryption_method\' \'%s\' is ' \
+                                       'not supported yet' % (self.encryption_method ,))    
+        kwargs.update(defaults)                    
+        super(BaseEncryptedField, self).__init__(*args, **kwargs)
+
+    def get_internal_type(self):
+        return "TextField"
+    
     def to_python(self, value):
         """ return the decrypted value if a private key is found, otherwise remains encrypted. """
-        if value:
-            retval = self.decrypt(value)
+        if isinstance(value, basestring):
+            retval = self.crypter.decrypt(value)
         else:
             retval = value
         return retval
     
     def get_prep_value(self, value):
         if value:
-            value = self.encrypt(value)   
+            value = self.crypter.encrypt(value)   
         return super(BaseEncryptedField, self).get_prep_value(value)
 
-    def encrypt(self, value):
-        """ return the encrypted field value (hash+cipher), do not override """
-        # http://en.wikipedia.org/wiki/RSA_%28algorithm%29
-        # http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding
+    def get_db_prep_value(self, value, connection, prepared=False):
         
-        if not settings.PUBLICKEY:
-            raise ImproperlyConfigured('Improperly Configured. Settings attribute PUBLICKEY is required for encrypted fields.')
-        if not self.is_encrypted(value):
-            writer = RSA.load_pub_key(settings.PUBLICKEY)
-            cipher = writer.public_encrypt(value, RSA.pkcs1_oaep_padding)
-            hash_value = self.get_hash(value)
-            value = self.prefix + hash_value + self.cipher_prefix + base64.b64encode(cipher)
-        return value        
+        """ We ONLY store the hash in the model field. 
+        
+        The Crypter class will update the Crypt cipher lookup table with
+        the hash, cipher pair for future access to the cipher
+        
+        """ 
+        # need to read the docs a bit more as i might be able to just set prepared=True, etc
+        # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#converting-query-values-to-database-values
+        
+        # call super (which will call get_prep_value)
+        encrypted_value = super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
+        # update cipher lookup table
+        self.crypter.update_cipher_lookup(encrypted_value)
+        # remove the cipher prefix and the cipher_text from the value
+        # just before the save to the DB
+        hash_text = self.crypter.prefix + self.crypter.get_hash(encrypted_value)
+        return hash_text
+    
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect the _actual_ field.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.TextField"
+        args, kwargs = introspector(self)
+        # That's our definition!
+        return (field_class, args, kwargs)
 
-    def get_hash(self, value):
-        """ hash is stored for exact match search functionality as the cipher is never the same twice """
-        if value.startswith(self.prefix):
-            ret_val = value[len(self.prefix):].split(self.cipher_prefix)[0]
-        else:
-            hasher = Hasher()
-            hash_value = hasher.get_hash(value).hexdigest()
-            # return the hash_value base64 encoded
-            # ret_val = base64.b64encode(hash_value)
-            ret_val = hash_value
-        return ret_val        
-
-    def is_encrypted(self, value):
-        """ this is a encrypted if it has my prefix"""
-        if value.startswith(self.prefix):
-            retval = True
-        else:
-            retval = False
-        return retval
-
-    def decrypt(self, value):
-        """ if private key is available, then return a decrypted value, otherwise return an encrypted value """
-
-        if 'PRIVATEKEY' in dir(settings):
-            if settings.PRIVATEKEY:
-                if self.is_encrypted(value):
-                    private_key = RSA.load_key (settings.PRIVATEKEY)
-                    cipher = value[len(self.prefix):].split(self.cipher_prefix)[1]
-                    value = private_key.private_decrypt(base64.b64decode(cipher), RSA.pkcs1_oaep_padding).replace('\x00','')
-        else:
-            if not self.is_encrypted(value):
-                value = self.encrypt(value)
-        return value
 
