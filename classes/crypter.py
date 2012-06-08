@@ -4,27 +4,39 @@ from M2Crypto import Rand, RSA
 from bhp_crypto.models import Crypt
 from hasher import Hasher
 
+
 # http://chandlerproject.org/Projects/MeTooCrypto
 # http://www.topdog.za.net/2012/03/27/generating-cryptography-keys-in-python/
 # http://en.wikipedia.org/wiki/RSA_%28algorithm%29
 # http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding
 
 class KeyDescriptor(object):
+    
     def __init__(self):
         self.value = None
+    
     def __get__(self, instance, owner):
         return self.value
+
 
 class PublicKeyDescriptor(KeyDescriptor):
+    
     def __set__(self, instance, value):
-        self.value = RSA.load_pub_key(value)
-        
-class PrivateKeyDescriptor(KeyDescriptor):
-    def __get__(self, instance, owner):
-        return self.value
-    def __set__(self, instance, value):
-        self.value = RSA.load_key(value)
+        if value:
+            self.value = RSA.load_pub_key(value)
+        else:
+            self.value = None
 
+            
+class PrivateKeyDescriptor(KeyDescriptor):
+    
+    def __set__(self, instance, value):
+        if value:
+            self.value = RSA.load_key(value)
+        else:
+            self.value = None
+            
+            
 class Crypter(object):
     
     """
@@ -45,6 +57,7 @@ class Crypter(object):
     public_key = PublicKeyDescriptor()
     private_key = PrivateKeyDescriptor()
     hasher = Hasher()
+
     #def __init__(self, encryption_method):
     #    self.encryption_method = encryption_method
 
@@ -71,35 +84,39 @@ class Crypter(object):
 
     def encrypt(self, value, update_lookup=False):
         """ return the encrypted field value (hash+cipher), do not override """
-        if not self.is_encrypted(value):
-            cipher_text = self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
-            hash_text = self.get_hash(value)
-            encoded_cipher_text = base64.b64encode(cipher_text)
-            encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
-            if update_lookup:
-                # normally this is done via the pre_save signal
-                self.update_cipher_lookup(encrypted_value)
-        else:
+        if not value:
             encrypted_value = value    
+        else:    
+            if not self.is_encrypted(value):
+                cipher_text = self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
+                hash_text = self.get_hash(value)
+                encoded_cipher_text = base64.b64encode(cipher_text)
+                encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
+                if update_lookup:
+                    # normally this is done via the pre_save signal
+                    self.update_cipher_lookup(encrypted_value)
+            else:
+                encrypted_value = value    
         return encrypted_value        
 
     def update_cipher_lookup(self, encrypted_value):
         """ update a model to have a reference of hash_value / cipher_value pairs """
-        # get and update or create the crypt model with this hash, cipher pair
-        hash_text = self.get_hash(encrypted_value)
-        cipher_text = self.get_cipher(encrypted_value, hash_text)
-        if Crypt.objects.filter(hash_text=hash_text):
-            if cipher_text:
-                crypt = Crypt.objects.get(hash_text=hash_text)
-                crypt.cipher_text = cipher_text
-                crypt.save()
-        else:
-            if cipher_text:
-                Crypt.objects.create(hash_text=hash_text, cipher_text=cipher_text)
+        if encrypted_value:
+            # get and update or create the crypt model with this hash, cipher pair
+            hash_text = self.get_hash(encrypted_value)
+            cipher_text = self.get_cipher(encrypted_value, hash_text)
+            if Crypt.objects.filter(hash_text=hash_text):
+                if cipher_text:
+                    crypt = Crypt.objects.get(hash_text=hash_text)
+                    crypt.cipher_text = cipher_text
+                    crypt.save()
             else:
-                # if the hash is not in the crypt model and you do not have a cipher
-                # this is an error condition
-                raise TypeError('Expected cipher text for given new hash, but got None.')
+                if cipher_text:
+                    Crypt.objects.create(hash_text=hash_text, cipher_text=cipher_text)
+                else:
+                    # if the hash is not in the crypt model and you do not have a cipher
+                    # this is an error condition
+                    raise TypeError('Expected cipher text for given new hash, but got None.')
             
     def get_hash(self, value):
         """ hash is stored for exact match search functionality as the cipher is never the same twice """
@@ -115,16 +132,19 @@ class Crypter(object):
 
     def get_cipher(self, encrypted_value, hash_text):
         """ Return the cipher string from within the encrypted value or from a lookup """
-        if self.is_encrypted(encrypted_value):
-            # split on hash, but if this is a hash only, cipher_text will be None
-            cipher_text = encrypted_value[len(self.prefix)+len(hash_text)+len(self.cipher_prefix):]
-            if not cipher_text:
-                # lookup cipher_text for this hash_text
-                cipher_text = self._get_cipher_lookup(hash_text)
-            ret_val = cipher_text    
+        if not encrypted_value:
+            retval = None
         else:
-            raise ValueError('Value must be encrypted.')
-        return ret_val
+            if self.is_encrypted(encrypted_value):
+                # split on hash, but if this is a hash only, cipher_text will be None
+                cipher_text = encrypted_value[len(self.prefix)+len(hash_text)+len(self.cipher_prefix):]
+                if not cipher_text:
+                    # lookup cipher_text for this hash_text
+                    cipher_text = self._get_cipher_lookup(hash_text)
+                retval = cipher_text    
+            else:
+                raise ValueError('Value must be encrypted or None.')
+            return retval
 
     def _get_cipher_lookup(self, hash_text):
         """ Given a hash, lookup cipher in Crypt model. 
@@ -141,25 +161,28 @@ class Crypter(object):
     
     def is_encrypted(self, value):
         """ The value string is considered encrypted if it starts with 'self.prefix' """
-        if value == self.prefix:
-            raise TypeError('Expected a string value, got just the encryption prefix.')
-        
-        if value.startswith(self.prefix):
-            retval = True
-        else:
+        if not value:
             retval = False
+        else:
+            if value == self.prefix:
+                raise TypeError('Expected a string value, got just the encryption prefix.')
+            if value.startswith(self.prefix):
+                retval = True
+            else:
+                retval = False
         return retval
     
     def decrypt(self, value):
         """ if private key is known, return an decrypted value, otherwise return the encrypted value """
-        if self.private_key:
-            if self.is_encrypted(value):
-                value = self._decrypt_rsa(value)
-        else:
-            if not self.is_encrypted(value):
-                # for some reason, the value was not encrypted AND we do not
-                # have a private key, so it should be 
-                value = self.encrypt(value)
+        if value:
+            if self.private_key:
+                if self.is_encrypted(value):
+                    value = self._decrypt_rsa(value)
+            else:
+                if not self.is_encrypted(value):
+                    # for some reason, the value was not encrypted AND we do not
+                    # have a private key, so it should be 
+                    value = self.encrypt(value)
         return value  
 
     def _decrypt_rsa(self, encrypted_value):
@@ -172,5 +195,7 @@ class Crypter(object):
         else:
             raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
         return value 
-    
+
+  
+              
     

@@ -44,11 +44,16 @@ class EncryptedFieldCase(unittest.TestCase):
         crypter.public_key = settings.PUBLIC_KEY_STRONG
         crypter.private_key = settings.PRIVATE_KEY_STRONG
         
-        #self.weak_field.public_key = settings.PUBLIC_KEY_WEAK
-        #self.weak_field.private_key = settings.PRIVATE_KEY_WEAK
+        self.weak_field.public_key = settings.PUBLIC_KEY_WEAK
+        self.weak_field.private_key = settings.PRIVATE_KEY_WEAK
     
-        field_strong_encrypted_value = crypter.encrypt(self.value, True)
-        x = crypter.decrypt(field_strong_encrypted_value)
+        x = crypter.encrypt(self.value, True)
+        y = crypter.decrypt(x)
+        self.assertEqual(self.value,y)
+        crypter.private_key = None
+        y = crypter.decrypt(x)
+        self.assertNotEqual(self.value,y)
+        
         #        print field_strong_encrypted_value
         #self.assertEqual(self.strong_field.crypter.decrypt(field_strong_encrypted_value), self.value)
         #self.assertEqual(self.strong_field.crypter.decrypt(strong_encrypted_value), self.value)

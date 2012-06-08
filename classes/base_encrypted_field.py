@@ -103,15 +103,16 @@ class BaseEncryptedField(models.Field):
         """ 
         # need to read the docs a bit more as i might be able to just set prepared=True, etc
         # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#converting-query-values-to-database-values
-        
-        # call super (which will call get_prep_value)
-        encrypted_value = super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
-        # update cipher lookup table
-        self.crypter.update_cipher_lookup(encrypted_value)
-        # remove the cipher prefix and the cipher_text from the value
-        # just before the save to the DB
-        hash_text = self.crypter.prefix + self.crypter.get_hash(encrypted_value)
-        return hash_text
+        if value:
+            # call super (which will call get_prep_value)
+            encrypted_value = super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
+            # update cipher lookup table
+            self.crypter.update_cipher_lookup(encrypted_value)
+            # remove the cipher prefix and the cipher_text from the value
+            # just before the save to the DB
+            hash_text = self.crypter.prefix + self.crypter.get_hash(encrypted_value)
+            value = hash_text
+        return value
     
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
