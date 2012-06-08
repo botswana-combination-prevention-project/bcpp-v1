@@ -4,6 +4,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from bhp_sync.actions import serialize
 from bhp_crypto.fields import EncryptedIdentityField
+from bhp_crypto.actions import encrypt, decrypt
 
 
 class BaseModelAdmin (admin.ModelAdmin):
@@ -17,7 +18,10 @@ class BaseModelAdmin (admin.ModelAdmin):
     
     def __init__(self, *args, **kwargs):
         #add serialize action
-        self.actions.append(serialize)                            
+        self.actions.append(serialize)
+        self.actions.append(encrypt)    
+        self.actions.append(decrypt)                            
+                        
         super(BaseModelAdmin, self).__init__(*args, **kwargs)
     
     def save_model(self, request, obj, form, change):
