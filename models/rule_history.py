@@ -1,8 +1,8 @@
 from datetime import datetime
 from django.db import models
-from bhp_common.models import MyBasicModel 
+from bhp_base_model.classes import BaseModel 
 
-class RuleHistory(MyBasicModel):
+class RuleHistory(BaseModel):
     
     model  = models.CharField(
         max_length = 100,
