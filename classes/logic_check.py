@@ -12,7 +12,7 @@ class LogicCheck(object):
         conditional_field_value = cleaned_data.get(conditional_field, None)
         if isinstance(conditional_field_value, basestring):
             conditional_field_value = conditional_field_value.lower()    
-        conditional_field_verbose_name = [field.verbose_name for field in self.model._meta.fields if field.name==conditional_field][0]
+        #conditional_field_verbose_name = [field.verbose_name for field in self.model._meta.fields if field.name==conditional_field][0]
                         
         if isinstance(condition_value, basestring):
             condition_value = condition_value.lower()    
