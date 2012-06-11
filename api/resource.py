@@ -27,7 +27,12 @@ api_key.save()
         
 api_key = ApiKey.objects.get(user=User.objects.get(username='kbinda'))
 api_key.key='0a0b09212e2661d01b09ffe2c780145dc86c1cd6'
-api_key.save()       
+api_key.save()  
+
+api_key = ApiKey.objects.get(user=User.objects.get(username='tlentswe'))
+api_key.key='93d15e5d8b8c589c28be956a4419d18c5c657924'
+api_key.save()
+    
         
 """    
 

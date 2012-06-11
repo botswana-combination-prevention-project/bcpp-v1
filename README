@@ -3,6 +3,19 @@ to activate add this to your settings.py
 
 ALLOW_MODEL_SERIALIZATION = True
 
+
+add this to your models.py
+
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
+    
+-or just-
+
+from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+
+
 IMPORTANT:
 if you auto-create instances of any pertinent models in a model save() method, put it in a 
 conditional, because you do not want the save() to create these model instances on deserialization.

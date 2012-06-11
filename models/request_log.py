@@ -1,10 +1,10 @@
 from datetime import datetime
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from producer import Producer
 
 
-class RequestLog(MyBasicUuidModel):
+class RequestLog(BaseUuidModel):
     
     producer = models.ForeignKey(Producer)
         

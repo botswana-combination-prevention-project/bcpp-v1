@@ -1,16 +1,14 @@
 # requires django-extensions 0.7
 from datetime import datetime
 from django.db import models
-from bhp_common.models import MyBasicModel
-from bhp_common.fields import MyUUIDField
+from bhp_base_model.classes import BaseUuidModel
 from bhp_sync.managers import TransactionManager
 from bhp_sync.classes import TransactionProducer
 
+
 transaction_producer = TransactionProducer()
 
-class BaseTransaction(MyBasicModel):
-    
-    id = MyUUIDField(primary_key=True)
+class BaseTransaction(BaseUuidModel):
     
     tx_name = models.CharField(
         max_length = 64,
