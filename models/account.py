@@ -1,9 +1,8 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from lab_account.models import AccountHolder
 
-class Account (MyBasicUuidModel):
+class Account (BaseUuidModel):
     
     account_name = models.CharField(
         max_length = 25,
