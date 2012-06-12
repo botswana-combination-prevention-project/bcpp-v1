@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from lab_clinic_api.managers import LabManager
 
-class Lab(MyBasicUuidModel):
+class Lab(BaseUuidModel):
    
     subject_identifier = models.CharField(
         max_length = 50,

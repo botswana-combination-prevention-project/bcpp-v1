@@ -1,10 +1,10 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.fields import InitialsField
+from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.fields import InitialsField
 from lab_clinic_api.choices import REVIEW_STATUS
 from lab import Lab
 
-class Review(MyBasicUuidModel):
+class Review(BaseUuidModel):
 
     lab = models.ForeignKey(Lab,
         editable = False

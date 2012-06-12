@@ -1,7 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 
-class UpdateLog(MyBasicUuidModel):
+
+class UpdateLog(BaseUuidModel):
 
     subject_identifier = models.CharField(
         max_length = 25,
