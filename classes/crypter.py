@@ -58,10 +58,7 @@ class Crypter(object):
     private_key = PrivateKeyDescriptor()
     hasher = Hasher()
 
-    #def __init__(self, encryption_method):
-    #    self.encryption_method = encryption_method
-
-    def blank_callback(self): 
+    def _blank_callback(self): 
         "Replace the default dashes as output upon key generation" 
         return
     
@@ -74,7 +71,7 @@ class Crypter(object):
         # Random seed 
         Rand.rand_seed (os.urandom (KEY_LENGTH)) 
         # Generate key pair 
-        key = RSA.gen_key (KEY_LENGTH, 65537, self.blank_callback) 
+        key = RSA.gen_key (KEY_LENGTH, 65537, self._blank_callback) 
         # Non encrypted key 
         key.save_key('user-private.pem.%s' % name, None) 
         # Use a pass phrase to encrypt key 
@@ -179,6 +176,7 @@ class Crypter(object):
                 if self.is_encrypted(value):
                     value = self._decrypt_rsa(value)
             else:
+                # if there is no private key, we must always return an encrypted value, unless None!
                 if not self.is_encrypted(value):
                     # for some reason, the value was not encrypted AND we do not
                     # have a private key, so it should be 
@@ -194,7 +192,10 @@ class Crypter(object):
                                                      RSA.pkcs1_oaep_padding).replace('\x00','')
         else:
             raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
-        return value 
+        return value
+    
+    def rehash_with_name(self, name):
+        """ rehash using """ 
 
   
               

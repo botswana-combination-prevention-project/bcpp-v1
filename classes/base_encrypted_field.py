@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from crypter import Crypter
 
+
 class BaseEncryptedField(models.Field):
     
     """ A field class that stores sensitive data in an encrypted format.

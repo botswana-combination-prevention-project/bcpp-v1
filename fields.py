@@ -33,7 +33,9 @@ class WeakEncryptionField(BaseEncryptedField):
         
         
 class EncryptedIdentityField(StrongEncryptionField):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(EncryptedIdentityField, self).__init__(*args, **kwargs)
+
 
 class EncryptedFirstnameField(WeakEncryptionField):
     pass

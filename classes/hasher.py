@@ -9,6 +9,8 @@ class Hasher(object):
         self.length = 64
         
     def get_hash(self, value, salt=None):
+        """ for a given value, return a salted SHA256 hash """
+        
         if not value:
             retval = None
         else:
