@@ -1,28 +1,28 @@
 from django.db import models
-from bhp_common.models import MyBasicListModel
-from bhp_common.fields import OtherCharField
+from bhp_base_model.classes import BaseListModel
+from bhp_base_model.fields import OtherCharField
 from bhp_common.choices import YES_NO
 from bhp_code_lists.models import DxCode
-from bhp_common.validators import date_not_before_study_start, date_not_future
+from bhp_base_model.validators import date_not_before_study_start, date_not_future
 from bhp_registration.models import BaseRegisteredSubjectModel
 
 
-class DeathCauseInfo (MyBasicListModel):
+class DeathCauseInfo (BaseListModel):
     class Meta:
         ordering = ['display_index']  
         app_label = 'bhp_adverse'
                 
-class DeathCauseCategory (MyBasicListModel):
+class DeathCauseCategory (BaseListModel):
     class Meta:
         ordering = ['display_index']  
         app_label = 'bhp_adverse'
                 
-class DeathMedicalResponsibility (MyBasicListModel):
+class DeathMedicalResponsibility (BaseListModel):
     class Meta:
         ordering = ['display_index']  
         app_label = 'bhp_adverse'        
         
-class DeathReasonHospitalized (MyBasicListModel):
+class DeathReasonHospitalized (BaseListModel):
     class Meta:
         ordering = ['display_index']  
         app_label = 'bhp_adverse'

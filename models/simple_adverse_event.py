@@ -1,33 +1,37 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
-from bhp_common.models import MyBasicListModel, MyBasicUuidModel
+from bhp_base_model.classes import BaseListModel 
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
 from bhp_registration.models import RegisteredSubject
 from bhp_adverse.choices import GRADING_SCALE
 
 """ list tables to be populated by study specific fixtures """
 
-class AdverseEventReportType (MyBasicListModel):
+class AdverseEventReportType (BaseListModel):
     class Meta:
         app_label="bhp_adverse"
         ordering = ['display_index']
 
-class AdverseEventStudyRelation (MyBasicListModel):
+class AdverseEventStudyRelation (BaseListModel):
     class Meta:
         app_label="bhp_adverse"
         ordering = ['display_index']
         
-class Ae010ReportType (MyBasicListModel):
+class Ae010ReportType (BaseListModel):
     class Meta:
         app_label="bhp_adverse"
         ordering = ['display_index']
 
-class Ae010AdverseStudyRel (MyBasicListModel):
+class Ae010AdverseStudyRel (BaseListModel):
     class Meta:
         app_label="bhp_adverse"
         ordering = ['display_index']
         
-class SimpleAdverseEvent (MyBasicUuidModel):
+class SimpleAdverseEvent (BaseUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject)
     
