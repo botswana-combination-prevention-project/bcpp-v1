@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
+from bhp_crypto.fields import EncryptedIdentityField
 from bhp_base_model.fields import NameField, InitialsField
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
@@ -35,10 +36,10 @@ class BaseBaseConsentModel(BaseUuidModel):
             datetime_not_before_study_start,
             datetime_not_future,],
         )
-    '''    
-    guardian_name = models.CharField(
+        
+    guardian_name = EncryptedIdentityField(
         verbose_name = _("Guardian\'s Last and first name (minors only)"),
-        max_length = 150,
+        max_length = 512,
         validators = [
             RegexValidator('^[A-Z]{1-50}\,[A-Z]{1-50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
             ],
@@ -46,7 +47,7 @@ class BaseBaseConsentModel(BaseUuidModel):
         null=True,    
         help_text = _('Required only if subject  a minor. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
         )
-    '''        
+            
     comment = models.CharField("Comment", 
         max_length=250, 
         blank=True
