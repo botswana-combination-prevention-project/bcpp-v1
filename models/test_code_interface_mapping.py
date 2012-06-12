@@ -1,8 +1,9 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 from lab_test_code.models import TestCode
 
-class TestCodeInterfaceMapping(MyBasicModel):
+
+class TestCodeInterfaceMapping(BaseModel):
 
     foreign_test_code = models.CharField(
         verbose_name = "Foreign Test Code", 

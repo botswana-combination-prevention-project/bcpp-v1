@@ -1,11 +1,11 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-from bhp_common.models import MyBasicModel, MyBasicListModel
-from bhp_common.choices import GENDER
+from django.core.validators import RegexValidator
+from bhp_base_model.classes import BaseModel
 from lab_common.choices import UNITS, ABS_CALC
 from lab_test_code.models import TestCodeGroup
     
-class TestCode(MyBasicModel):
+    
+class TestCode(BaseModel):
 
     code = models.CharField(
         verbose_name = "Test Code", 
