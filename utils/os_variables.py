@@ -32,7 +32,7 @@ def os_variables():
             except:
                 variables['warnings'].append('StudySpecific variables not set')                
             
-            config = ifconfig('wlan0')
+            config = {} #ifconfig('wlan0')
             
             if not config['addr'] == '0.0.0.0':
                 variables['wlan_ipaddr'] = config['addr'] 
