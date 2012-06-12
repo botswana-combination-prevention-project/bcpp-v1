@@ -1,13 +1,13 @@
 from datetime import datetime
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.validators import datetime_not_future
-from bhp_common.fields import InitialsField
+from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.validators import datetime_not_future
+from bhp_base_model.fields import InitialsField
 from bhp_research_protocol.models import Protocol, Site
 from lab_patient.models import Patient
 from lab_receive.managers import ReceiveManager
      
-class Receive (MyBasicUuidModel):
+class Receive (BaseUuidModel):
 
     """ 
     Lab receiving table.
