@@ -1,7 +1,7 @@
-from django.db import models
-from bhp_common.models import MyBasicListModel
+from bhp_base_model.classes import BaseListModel
 
-class SpecimenType (MyBasicListModel):
+
+class SpecimenType (BaseListModel):
     pass
     
     class Meta:
