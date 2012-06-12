@@ -1,7 +1,7 @@
-from bhp_common.models import MyBasicListModel
+from bhp_base_model.classes import BaseListModel
 
 
-class ResultSource(MyBasicListModel):
+class ResultSource(BaseListModel):
     pass
 
     class Meta:

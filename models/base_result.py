@@ -1,9 +1,9 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from lab_result.choices import RESULT_RELEASE_STATUS
 
 
-class BaseResult(MyBasicUuidModel):
+class BaseResult(BaseUuidModel):
 
     result_identifier = models.CharField(
         max_length=25,
