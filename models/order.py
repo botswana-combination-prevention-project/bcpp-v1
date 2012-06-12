@@ -1,13 +1,12 @@
-from datetime import datetime
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.validators import datetime_not_future
+from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.validators import datetime_not_future
 from lab_aliquot.models import Aliquot
 from lab_panel.models import Panel
 from lab_order.managers import OrderManager
 
 
-class Order(MyBasicUuidModel):
+class Order(BaseUuidModel):
 
     order_identifier = models.CharField(
         verbose_name = 'Order number',

@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 
 
-class OrderIdentifierTracker(MyBasicModel):
+class OrderIdentifierTracker(BaseModel):
 
     """track unique order numbers for new order records."""
     
