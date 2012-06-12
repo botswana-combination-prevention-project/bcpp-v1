@@ -1,10 +1,10 @@
 from django.db import models
-#from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
 from bhp_content_type_map.managers import ContentTypeMapManager
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel 
 
-class ContentTypeMap(MyBasicModel):
+
+class ContentTypeMap(BaseModel):
 
     content_type = models.ForeignKey(ContentType,
         verbose_name = 'Link to content type',
