@@ -1,10 +1,10 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from bhp_appointment.managers import ConfigurationManager
 
 
-class Configuration(MyBasicUuidModel):
+class Configuration(BaseUuidModel):
 
     allowed_iso_weekdays = models.IntegerField(
         default = 12345,

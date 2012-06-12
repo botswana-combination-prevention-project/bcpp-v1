@@ -1,12 +1,15 @@
 from django.db import models
-from bhp_common.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.fields import OtherCharField
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
+from bhp_base_model.fields import OtherCharField
 from bhp_appointment.managers import VisitManager
 from appointment import Appointment
 
 
-class BaseAppointmentTracking (MyBasicUuidModel):
+class BaseAppointmentTracking (BaseUuidModel):
     
     """Base model for Appt/Visit Tracking (AF002).
 

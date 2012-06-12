@@ -1,11 +1,10 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from configuration import Configuration
 
 
-class Holiday(MyBasicUuidModel):
+class Holiday(BaseUuidModel):
 
     configuration = models.ForeignKey(Configuration)
     

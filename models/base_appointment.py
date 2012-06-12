@@ -1,9 +1,13 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from bhp_common.models import MyBasicUuidModel
 from bhp_appointment.choices import APPT_STATUS
-
-class BaseAppointment (MyBasicUuidModel):
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
+    
+    
+class BaseAppointment (BaseUuidModel):
     
     """Base model of appointments. """     
     
