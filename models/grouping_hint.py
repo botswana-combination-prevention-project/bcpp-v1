@@ -1,7 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 
-class GroupingHint (MyBasicUuidModel):
+
+class GroupingHint (BaseUuidModel):
 
     """A model to list a field_name that should be grouped on but has no choices tuple.
     

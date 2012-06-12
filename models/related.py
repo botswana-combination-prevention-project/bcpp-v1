@@ -1,7 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 
-class Related (MyBasicUuidModel):
+
+class Related (BaseUuidModel):
 
     """A model to refer to when the 'option' or 'choice' field name (related_to_field_name) of the foreignkey is not obvious, e.g. not = 'name'.  """
 
