@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator, MinLengthValidator
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from bhp_variables.choices import GENDER_OF_CONSENT, MACHINE_TYPE
 from bhp_variables.managers import StudySpecificManager
 
 
-class BaseStudySpecific (MyBasicUuidModel):
+class BaseStudySpecific (BaseUuidModel):
 
     protocol_number = models.CharField(
         verbose_name = _("BHP Protocol Number"),

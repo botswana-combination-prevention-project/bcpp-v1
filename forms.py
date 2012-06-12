@@ -1,12 +1,12 @@
 from django import forms
 #from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 import socket, re
-from bhp_common.classes import MyModelForm
+from bhp_base_form.classes import BaseModelForm
 from models import StudySpecific
 
 
 # StudySpecific
-class StudySpecificForm(MyModelForm):
+class StudySpecificForm(BaseModelForm):
     
     def clean(self):
     
