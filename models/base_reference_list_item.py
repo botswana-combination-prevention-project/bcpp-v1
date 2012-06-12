@@ -1,13 +1,10 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-from bhp_common.models import MyBasicModel, MyBasicListModel
-from bhp_common.choices import GENDER
-from lab_common.choices import UNITS, ABS_CALC
+from bhp_base_model.classes import BaseModel
 from lab_test_code.models import TestCode
 from lab_reference.choices import GENDER_OF_REFERENCE
 
 
-class BaseReferenceListItem(MyBasicModel):
+class BaseReferenceListItem(BaseModel):
 
     test_code = models.ForeignKey(TestCode)
 

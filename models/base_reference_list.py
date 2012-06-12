@@ -1,8 +1,8 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-from bhp_common.models import MyBasicModel, MyBasicListModel
+from bhp_base_model.classes import BaseModel
 
-class BaseReferenceList(MyBasicModel):
+
+class BaseReferenceList(BaseModel):
 
     name = models.CharField(
         verbose_name="List name",
