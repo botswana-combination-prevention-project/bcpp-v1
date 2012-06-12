@@ -10,7 +10,7 @@ import types
 
 from importlib import import_module
 from bhp_common.models import MyModelAdmin
-from bhp_common.fields import MyUUIDField
+from bhp_base_model.fields import MyUUIDField
 from bhp_sync.classes import SerializeToTransaction
 
 try:
