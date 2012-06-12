@@ -1,9 +1,9 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 from lab_panel.models import Panel
 
 
-class TidPanelMapping(MyBasicModel):
+class TidPanelMapping(BaseModel):
     
     tid = models.CharField(
         verbose_name = 'dmis TID',

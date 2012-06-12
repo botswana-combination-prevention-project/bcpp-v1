@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 
 
-class PanelGroup (MyBasicModel):
+class PanelGroup (BaseModel):
 
     name = models.CharField(
         verbose_name = "Panel Group Name", 

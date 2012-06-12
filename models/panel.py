@@ -1,12 +1,12 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 from lab_account.models import Account
 from lab_test_code.models import TestCode
 from lab_aliquot_list.models import AliquotType
 from panel_group import PanelGroup
 
 
-class Panel(MyBasicModel):
+class Panel(BaseModel):
     
     name = models.CharField(
         verbose_name = "Panel Name", 
