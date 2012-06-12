@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_common.fields import OtherCharField
+from bhp_base_model.fields import OtherCharField
 from base_registered_subject_model import BaseRegisteredSubjectModel
 
 """

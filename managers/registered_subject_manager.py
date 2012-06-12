@@ -1,13 +1,12 @@
 from datetime import datetime
-from django.db import models
+#from django.db import models
 from django.db.models import Count
 from bhp_variables.models import StudySpecific
 from bhp_registration.models import SubjectIdentifierAuditTrail
+from bhp_crypto.managers import CryptoManager
 
 
-class RegisteredSubjectManager(models.Manager):
-    
-    """Manager class for RegisteredSubject model."""
+class RegisteredSubjectManager(CryptoManager):
     
     def register_subject(self, consent_model, subject_type='SUBJECT', user='', **kwargs):
         

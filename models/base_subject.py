@@ -1,10 +1,10 @@
 from django.db import models
 from django.db import IntegrityError
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from bhp_common.choices import GENDER_UNDETERMINED
 
 
-class BaseSubject (MyBasicUuidModel):
+class BaseSubject (BaseUuidModel):
        
     subject_consent_id = models.CharField(
         max_length=100, 

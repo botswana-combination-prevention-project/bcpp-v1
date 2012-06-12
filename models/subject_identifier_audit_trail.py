@@ -1,10 +1,11 @@
 from datetime import date
 from django.db import models
-from bhp_common.fields import MyUUIDField, DobField
-from bhp_common.models import MyBasicModel
+from bhp_base_model.fields import MyUUIDField
+from bhp_base_model.fields import DobField
+from bhp_base_model.classes import BaseModel
 
 
-class SubjectIdentifierAuditTrail(MyBasicModel):
+class SubjectIdentifierAuditTrail(BaseModel):
     """
     A table to track every attempt to allocate a subject identifier
     to a subject 'by this device'. If a subject's record is deleted
@@ -15,15 +16,20 @@ class SubjectIdentifierAuditTrail(MyBasicModel):
     
     """
     subject_consent_id = MyUUIDField()
+    
     subject_identifier = models.CharField(
         max_length=25,
         unique=True
         )
+    
     first_name = models.CharField(max_length=250) 
+    
     initials = models.CharField(max_length=3)
+    
     dob = DobField(
         null=True
         )
+    
     date_allocated = models.DateTimeField(
         default=date.today()
         )

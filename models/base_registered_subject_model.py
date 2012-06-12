@@ -1,11 +1,14 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
 from bhp_appointment.models import Appointment
 from bhp_entry.models import AdditionalEntryBucket
 from registered_subject import RegisteredSubject
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
 
         
-class BaseRegisteredSubjectModel (MyBasicUuidModel):
+class BaseRegisteredSubjectModel (BaseUuidModel):
 
     """ Base model for models that need a key to RegisteredSubject. Such
     models may be listed by name in the ScheduledGroup model and thus

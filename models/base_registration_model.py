@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_common.validators import datetime_not_before_study_start, datetime_not_future
+from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from base_registered_subject_model import BaseRegisteredSubjectModel
 
        

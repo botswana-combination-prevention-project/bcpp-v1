@@ -1,11 +1,13 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
+from bhp_common.models import MyModelAdmin
 from models import RegisteredSubject, RandomizedSubject, SubjectIdentifierAuditTrail
+from forms import RegisteredSubjectForm
+
 
 class RegisteredSubjectAdmin (MyModelAdmin):
 
-
-
+    form = RegisteredSubjectForm
+ 
     list_display = (
         'subject_identifier',
         'first_name',

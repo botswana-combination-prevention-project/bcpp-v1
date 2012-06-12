@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
-from base_subject import BaseSubject
+from bhp_base_model.fields import IsDateEstimatedField
+from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
 from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
-from bhp_common.fields import IsDateEstimatedField
-from bhp_common.choices import YES_NO, POS_NEG, ALIVE_DEAD
+from bhp_crypto.fields import EncryptedIdentityField
+from base_subject import BaseSubject
 
 
 class RegisteredSubject(BaseSubject):
@@ -39,8 +40,9 @@ class RegisteredSubject(BaseSubject):
         help_text = "For example, mother's identifier, if available / appropriate"
         )
     
-    identity = models.CharField(
-        max_length = 25,
+    identity = EncryptedIdentityField(
+        max_length = 512,
+        unique = True,
         null=True,
         blank=True,
         )
@@ -69,13 +71,13 @@ class RegisteredSubject(BaseSubject):
     hiv_status = models.CharField(
         verbose_name = 'Hiv status',
         max_length = 15,
-        choices = POS_NEG,
+        choices = POS_NEG_UNKNOWN,
         null = True,
         )
     survival_status = models.CharField(
         verbose_name = 'Survival status',
         max_length = 15,
-        choices = ALIVE_DEAD,
+        choices = ALIVE_DEAD_UNKNOWN,
         null = True,
         )
     
@@ -105,6 +107,7 @@ class RegisteredSubject(BaseSubject):
             return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)                    
 
     class Meta:
-        app_label = 'bhp_registration'   
+        app_label = 'bhp_registration' 
+        verbose_name = 'Registered Subject'  
         ordering = ['subject_identifier',]         
 

@@ -1,16 +1,14 @@
 from django import forms
+from models import RegisteredSubject
 
-class OffStudyForm (forms.ModelForm):
+
+class RegisteredSubjectForm (forms.ModelForm):
     
     def clean(self):
+        
         cleaned_data = self.cleaned_data 
         
-        #check if StudyDrugInitiation <> None
-        
-        # Always return the full collection of cleaned data.
         return cleaned_data   
 
-    
     class Meta:
-        model = OffStudy
-
+        model = RegisteredSubject
