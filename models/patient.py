@@ -1,15 +1,15 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
-from bhp_common.validators import dob_not_future
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.choices import GENDER, YES_NO, ART_STATUS_UNKNOWN, POS_NEG_UNKNOWN
-from bhp_common.fields import InitialsField, IsDateEstimatedField
+from bhp_common.choices import GENDER, ART_STATUS_UNKNOWN, POS_NEG_UNKNOWN
+from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.fields import InitialsField, IsDateEstimatedField
+from bhp_base_model.validators import dob_not_future
 from lab_account.models import Account
 from lab_patient.managers import PatientManager
 from lab_patient.models import SimpleConsent
         
-class Patient(MyBasicUuidModel):
+
+class Patient(BaseUuidModel):
 
     subject_identifier = models.CharField('Subject Identifier', 
         max_length=25, 

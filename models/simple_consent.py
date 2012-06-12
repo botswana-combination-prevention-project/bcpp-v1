@@ -1,14 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
-from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
-from bhp_common.validators import date_not_future, date_is_future
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.validators import date_not_future, date_is_future
+from bhp_base_model.classes import BaseUuidModel
 from bhp_common.choices import YES_NO
 from bhp_research_protocol.models import Site
 from bhp_research_protocol.models import Protocol
 
-class SimpleConsent (MyBasicUuidModel):
+class SimpleConsent (BaseUuidModel):
   
     protocol = models.ForeignKey(Protocol)
     
