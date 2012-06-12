@@ -79,7 +79,7 @@ class BaseEncryptedField(models.Field):
         super(BaseEncryptedField, self).__init__(*args, **kwargs)
 
     def get_internal_type(self):
-        return "TextField"
+        return "CharField"
     
     def to_python(self, value):
         """ return the decrypted value if a private key is found, otherwise remains encrypted. """
