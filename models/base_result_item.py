@@ -1,10 +1,10 @@
 import re
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
 
 
-class BaseResultItem(MyBasicUuidModel):
+class BaseResultItem(BaseUuidModel):
 
     result_item_value = models.CharField(
         verbose_name = 'Result',
