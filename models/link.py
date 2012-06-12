@@ -1,7 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 
-class Link (MyBasicUuidModel):
+
+class Link (BaseUuidModel):
     
     label = models.CharField(
         max_length = 25,

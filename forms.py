@@ -1,10 +1,10 @@
 from django import forms
-from bhp_common.classes import MyModelForm
+from bhp_base_form.classes import BaseModelForm
 from models import Link
 
 
 # Link
-class LinkForm (MyModelForm): 
+class LinkForm (BaseModelForm): 
     def clean(self):
     
         cleaned_data = self.cleaned_data 
