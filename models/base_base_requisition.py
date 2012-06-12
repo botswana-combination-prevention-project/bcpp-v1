@@ -1,6 +1,9 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.fields import InitialsField
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.fields import InitialsField
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from lab_panel.models import Panel
@@ -9,7 +12,7 @@ from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
 from lab_requisition.managers import BaseRequisitionManager
 
 
-class BaseBaseRequisition (MyBasicUuidModel):
+class BaseBaseRequisition (BaseUuidModel):
     
     """ does not include additional tests """
     

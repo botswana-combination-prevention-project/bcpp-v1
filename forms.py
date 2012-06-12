@@ -1,8 +1,8 @@
 from django import forms
-from bhp_common.classes import MyModelForm
+from bhp_base_form.classes import BaseModelForm
 
 
-class BaseRequisitionForm (MyModelForm): 
+class BaseRequisitionForm (BaseModelForm): 
 
     def clean(self):
     
