@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_research_protocol.models import PrincipalInvestigator, SiteLeader, FundingSource, Site
+from bhp_research_protocol.models import FundingSource
 
 class Protocol(models.Model):
 

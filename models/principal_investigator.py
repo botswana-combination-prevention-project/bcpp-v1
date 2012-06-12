@@ -1,12 +1,8 @@
-from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
-from bhp_common.validators import datetime_not_future, datetime_is_future
-from bhp_common.choices import YES_NO
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.fields import NameField, InitialsField
+from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.fields import NameField, InitialsField
 
-class PrincipalInvestigator (MyBasicUuidModel):
+class PrincipalInvestigator (BaseUuidModel):
     
     first_name = NameField(
         verbose_name = _("First name")
