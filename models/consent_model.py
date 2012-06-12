@@ -1,6 +1,7 @@
 from django.db import models
 from bhp_consent.models import BaseConsentModel
 
+
 class ConsentModel(BaseConsentModel):
 
     subject_identifier = models.CharField('Subject Identifier', 

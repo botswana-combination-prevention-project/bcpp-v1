@@ -1,12 +1,16 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
-from bhp_common.fields import NameField, InitialsField
-from bhp_common.models import MyBasicUuidModel
-from bhp_common.validators import datetime_not_future, datetime_not_before_study_start
+from bhp_base_model.fields import NameField, InitialsField
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_variables.models import StudySite
 
-class BaseBaseConsentModel(MyBasicUuidModel):
+
+class BaseBaseConsentModel(BaseUuidModel):
 
     """infants consent models may wish to start here as they would not need the identity fields
        and the dob validators would be different from those reading values from StudySpecific
