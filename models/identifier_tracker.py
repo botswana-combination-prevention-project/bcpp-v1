@@ -1,8 +1,9 @@
 from django.db import models
 #from bhp_common.classes import LockableObject
-from bhp_common.models import MyBasicUuidModel
+from bhp_sync.classes import BaseSyncModel
 
-class IdentifierTracker(MyBasicUuidModel): #, LockableObject):
+
+class IdentifierTracker(BaseSyncModel): #, LockableObject):
 
     """
     A lockable model to create and track unique identifiers for new records such as requsitions, receive, etc.
