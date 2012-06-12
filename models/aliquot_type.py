@@ -1,8 +1,9 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 
-class AliquotType(MyBasicModel):
+
+class AliquotType(BaseModel):
 
     name = models.CharField(
         verbose_name = 'Description',

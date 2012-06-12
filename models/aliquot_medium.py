@@ -1,7 +1,7 @@
-from django.db import models
-from bhp_common.models import MyBasicListModel
+from bhp_base_model.classes import BaseListModel
 
-class AliquotMedium(MyBasicListModel):
+
+class AliquotMedium(BaseListModel):
 
     def __unicode__(self):
         return "%s" % ( self.name.upper())

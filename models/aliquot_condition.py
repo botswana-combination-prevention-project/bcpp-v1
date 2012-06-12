@@ -1,8 +1,7 @@
-from django.db import models
-from bhp_common.models import MyBasicListModel
+from bhp_base_model.classes import BaseListModel
 
 
-class AliquotCondition(MyBasicListModel):
+class AliquotCondition(BaseListModel):
     
     def __unicode__(self):
         return "%s: %s" % ( self.short_name.upper() ,self.name)
