@@ -1,9 +1,9 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from label_printer import LabelPrinter
 
 
-class Client(MyBasicUuidModel):
+class Client(BaseUuidModel):
 
     ip = models.IPAddressField()
     

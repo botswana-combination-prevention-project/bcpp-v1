@@ -1,5 +1,5 @@
 from django import forms
-from bhp_common.classes import MyModelForm
+from bhp_base_form.classes import BaseModelForm
 from lab_barcode.models import ZplTemplate, LabelPrinter
 
 
@@ -15,7 +15,7 @@ class LabelForm(forms.Form):
 
 
 # ZplTemplate
-class ZplTemplateForm (MyModelForm): 
+class ZplTemplateForm (BaseModelForm): 
     def clean(self):
     
         cleaned_data = self.cleaned_data 
@@ -26,7 +26,7 @@ class ZplTemplateForm (MyModelForm):
         model = ZplTemplate
 
 # LabelPrinter
-class LabelPrinterForm (MyModelForm): 
+class LabelPrinterForm (BaseModelForm): 
     def clean(self):
     
         cleaned_data = self.cleaned_data 

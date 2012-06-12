@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 
 
-class LabelPrinter(MyBasicUuidModel):
+class LabelPrinter(BaseUuidModel):
 
     cups_printer_name = models.CharField(
         max_length = 50,
