@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        raise TypeError('WAIT! lab_packing 0008 deletes the lab_packing table. Back it up and remove this raise error.')
+        #raise TypeError('WAIT! lab_packing 0008 deletes the lab_packing table. Back it up and remove this raise error.')
         # Deleting model 'PackingListItemAudit'
         db.delete_table('lab_packing_packinglistitem_audit')
 

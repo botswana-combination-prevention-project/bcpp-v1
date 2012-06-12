@@ -1,10 +1,13 @@
 from django.db import models
 #from audit_trail.audit import AuditTrail
-from bhp_common.models import MyBasicUuidModel
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
 from lab_panel.models import Panel
 
 
-class BasePackingListItem(MyBasicUuidModel):
+class BasePackingListItem(BaseUuidModel):
 
     item_reference = models.CharField(
         max_length = 25,

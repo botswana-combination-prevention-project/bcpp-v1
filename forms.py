@@ -1,5 +1,5 @@
 from django import forms
-from bhp_common.classes import MyModelForm
+from bhp_base_form.classes import BaseModelForm
 from lab_requisition.forms import BaseRequisitionForm
 #from lab_packing.models import PackingList
 
@@ -50,7 +50,7 @@ class BasePackingListForm(BaseRequisitionForm):
   
         
 # PackingList
-class BasePackingListItemForm (MyModelForm): 
+class BasePackingListItemForm (BaseModelForm): 
 
     def clean(self):
    

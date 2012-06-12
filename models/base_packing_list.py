@@ -1,10 +1,13 @@
 from datetime import datetime
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bhp_common.models import MyBasicUuidModel
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
 
 
-class BasePackingList(MyBasicUuidModel):
+class BasePackingList(BaseUuidModel):
 
     list_datetime = models.DateTimeField(
         default = datetime.today(),
