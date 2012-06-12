@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 
-class Netbook(MyBasicModel):
+
+class Netbook(BaseModel):
 
     name = models.CharField(
         verbose_name = _("Netbook Name"), 
@@ -50,9 +50,6 @@ class Netbook(MyBasicModel):
         null = True,
         blank = True,
         )        
-
-    class Meta:
-        ordering = ["name"]
        
     def get_absolute_url(self):
         return "/bhp_netbook/netbook/%s/" % self.id   
@@ -61,5 +58,5 @@ class Netbook(MyBasicModel):
         return "%s" % (self.name)
         
     class Meta:
-        ordering=['name'] 
-        app_label='bhp_netbook'
+        ordering = ['name'] 
+        app_label = 'bhp_netbook'

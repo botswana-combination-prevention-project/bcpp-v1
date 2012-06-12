@@ -1,9 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 from netbook import Netbook
-class NetbookUser(MyBasicModel):
+
+
+class NetbookUser(BaseModel):
   
     netbook = models.ForeignKey(Netbook)    
     
