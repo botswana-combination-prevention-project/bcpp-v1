@@ -1,7 +1,7 @@
 from django.db import models
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel 
 
-class BaseCodeList (MyBasicModel):
+class BaseCodeList (BaseModel):
     
     code = models.CharField("Code",
         max_length = 15,
