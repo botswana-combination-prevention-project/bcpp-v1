@@ -1,8 +1,9 @@
 from django.db import models
-from bhp_common.models import  MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 from bhp_visit.choices import VISIT_INTERVAL_UNITS
 
-class BaseWindowPeriodItem(MyBasicUuidModel):
+
+class BaseWindowPeriodItem(BaseUuidModel):
 
     """Base Model of fields that define a window period, either for visits or forms."""
 

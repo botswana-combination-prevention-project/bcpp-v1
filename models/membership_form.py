@@ -1,10 +1,10 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from bhp_common.choices import YES_NO
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_common.models import MyBasicUuidModel
+from bhp_base_model.classes import BaseUuidModel
 
-class MembershipForm(MyBasicUuidModel):
+
+class MembershipForm(BaseUuidModel):
 
     """Model to list forms to be linked to a ShceduleGroup as "registration" forms to that group"""
     
