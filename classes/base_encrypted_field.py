@@ -81,6 +81,22 @@ class BaseEncryptedField(models.Field):
     def get_internal_type(self):
         return "CharField"
     
+    def is_encrypted(self, value):
+        return self.crypter.is_encrypted(value)
+    
+    def decrypt(self, value):
+        return self.crypter.decrypt(value)
+    
+    def validate_with_cleaned_data(self, attname, cleaned_data):
+        
+        """ may be overridden to test field data against other values in cleaned data. 
+        Should raise a forms.ValidationError if the test fails 
+        
+        'attname' is the key in cleaned_data for the value to be tested, 
+        'cleaned_data' comes from forms clean() method
+        """
+        pass
+    
     def to_python(self, value):
         """ return the decrypted value if a private key is found, otherwise remains encrypted. """
         if isinstance(value, basestring):
