@@ -47,13 +47,20 @@ class BaseSubjectConsentForm(forms.ModelForm):
         except IndexError:
             raise TypeError("Please add your bhp_variables site specifics")
 
-
         if cleaned_data.get('dob'):
             rdelta = relativedelta(date.today(), cleaned_data.get('dob')) 
-            if rdelta.years < obj.age_at_adult_lower_bound and cleaned_data["guardian_name"] == '':
-                raise forms.ValidationError(u'Subject\'s age is %s. Subject is a minor. Guardian\'s name is required.' % (formatted_age(cleaned_data['dob'], date.today())))
-            if rdelta.years >= obj.age_at_adult_lower_bound and not cleaned_data["guardian_name"] == '':
-                raise forms.ValidationError(u'Subject\'s age is %s. Subject is an adult. Guardian\'s name is NOT required.' % (formatted_age(cleaned_data['dob'], date.today())))
+            # check if guardian name is required
+            #guardian name is required if 
+            if rdelta.years < obj.age_at_adult_lower_bound:
+                if "guardian_name" not in cleaned_data.keys():
+                    raise forms.ValidationError('Subject is a minor. "guardian_name" is required but missing from the form. Please add this field to the form.')
+                elif "guardian_name" in cleaned_data.keys() and cleaned_data.get("guardian_name", None) == '':
+                    raise forms.ValidationError(u'Subject\'s age is %s. Subject is a minor. Guardian\'s name is required.' % (formatted_age(cleaned_data.get('dob'), date.today())))
+                else:
+                    pass
+            if rdelta.years >= obj.age_at_adult_lower_bound and "guardian_name" in cleaned_data.keys():
+                if not cleaned_data.get("guardian_name", None) == '':
+                    raise forms.ValidationError(u'Subject\'s age is %s. Subject is an adult. Guardian\'s name is NOT required.' % (formatted_age(cleaned_data.get('dob'), date.today())))
 
         
         # if consent model has a ConsentAge method that returns an ordered range of ages as list
