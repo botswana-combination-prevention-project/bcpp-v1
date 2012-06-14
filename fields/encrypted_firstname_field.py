@@ -1,9 +1,9 @@
 import re
-from weak_encryption_field import WeakEncryptionField
+from local_keypair_encryption_field import LocalKeyPairEncryptionField
 from django.forms import ValidationError
 
 
-class EncryptedFirstnameField(WeakEncryptionField):
+class EncryptedFirstnameField(LocalKeyPairEncryptionField):
     
     def validate_with_cleaned_data(self, attname, cleaned_data):
 

@@ -19,7 +19,6 @@ class LocalKeyPairEncryptionField(BaseEncryptedField):
                                        ' Do not set this parameter as model field attribute.' % (self.mode,)) 
         defaults = {'encryption_method': self.mode,
                     'help_text': kwargs.get('help_text', '') + ' (Encryption: %s)' % (self.mode,) }
-        
         kwargs.update(defaults)
 
         super(LocalKeyPairEncryptionField, self).__init__(*args, **kwargs)

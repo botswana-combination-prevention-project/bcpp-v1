@@ -9,16 +9,17 @@ class BaseEncryptedField(models.Field):
     
     To maintain uniqueness and searchability, only the hash is ever stored in the model field.
     
-    If a cipher is generated, it is stored with the hash in the Crypt lookup model and will be
+    The cipher is stored with the hash in the Crypt cipher lookup model and will be
     made available when required for decryption (e.g. the private key is available)
        
-    Hash salt, public key and private key are referred to via the settings file
+    Salt, public key filename and private key filename are referred to via the settings file
     
     """
 
     description = "Field to encrypt and decrypt values that are stored as encrypted"
     __metaclass__ = models.SubfieldBase
-    valid_encryption_methods = ['restricted key-pair', 'local key-pair', 'hash-only']
+    
+    valid_encryption_methods = ['restricted key-pair', 'local key-pair']
     
     def __init__(self, *args, **kwargs):  
         """
@@ -27,47 +28,33 @@ class BaseEncryptedField(models.Field):
         1. restricted key-pair: use on values that should be less convenient to decrypt. Private key is not
            allowed on mobile devices (settings.IS_SECURE_DEVICE).
         2. local key-pair: same as restricted key-pair but the private key is expected to be available and is not checked for
-        3. hash: irreversibly hash the value. do not create a corresponding cipher 
         """
         self.crypter = Crypter()
-
-        defaults = {}
-        
-        self.encryption_method = kwargs.get('encryption_method', None)
-        
-        if 'encryption_method' in kwargs:
-            del kwargs['encryption_method']
-        
-        if self.encryption_method not in self.valid_encryption_methods:
-            raise ImproperlyConfigured('Available options for EncryptedField field parameter' \
-                                        '\'encryption_method\' are \'%s\'. Got \'%s\' ' \
-                                        % ('\' or \''.join(self.valid_encryption_methods), kwargs.get('encryption_method')))
-           
-        if self.encryption_method == 'hash-only':
-            raise ImproperlyConfigured('EncryptedField field \'encryption_method\' \'%s\' is ' \
-                                       'not supported yet' % (self.encryption_method ,))    
-        kwargs.update(defaults)                    
                 
+        self.encryption_method = self.check_encryption_method(kwargs.get('encryption_method', None))        
+        if 'encryption_method' in kwargs:
+            del kwargs['encryption_method']                 
+        
+        defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.prefix)+len(self.crypter.cipher_prefix)}
+        kwargs.update(defaults)
+        
+        #get public and private keys for Crypter()
         self.crypter.set_public_key(self.get_public_keyfile())
-
         self.crypter.set_private_key(self.get_private_keyfile())
         
         super(BaseEncryptedField, self).__init__(*args, **kwargs)
 
     def get_public_keyfile(self, keyfile=None):
+        
+        """ Override to return the key filename and path if not in the project root """
+        
         raise ImproperlyConfigured("method should be overridden")
         
     def get_private_keyfile(self, keyfile=None):
-        raise ImproperlyConfigured("method should be overridden")
-    
-    #    def set_private_key(self):
-    #        self.crypter.set_private_key(self.get_private_keyfile())
-    #
-    #    def set_public_key(self):
-    #        self.crypter.set_public_key(self.get_public_keyfile())
+        
+        """ Override to return the key filename and path if not in the project root """
 
-    def get_internal_type(self):
-        return "CharField"
+        raise ImproperlyConfigured("method should be overridden")
     
     def is_encrypted(self, value):
         return self.crypter.is_encrypted(value)
@@ -121,6 +108,9 @@ class BaseEncryptedField(models.Field):
             value = hash_text
         return value
     
+    def get_internal_type(self):
+        return "CharField"
+    
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect the _actual_ field.
@@ -130,4 +120,12 @@ class BaseEncryptedField(models.Field):
         # That's our definition!
         return (field_class, args, kwargs)
 
-
+    def check_encryption_method(self, encryption_method):
+        
+        """ check if the subclass or model field pass a valid encryption method """
+        
+        if encryption_method not in self.valid_encryption_methods:
+            raise ImproperlyConfigured('Available options for EncryptedField field parameter' \
+                                        '\'encryption_method\' are \'%s\'. Got \'%s\' ' \
+                                        % ('\' or \''.join(self.valid_encryption_methods), encryption_method))
+            

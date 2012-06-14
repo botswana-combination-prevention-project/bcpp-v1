@@ -18,7 +18,7 @@ class RestrictedKeyPairEncryptionField(BaseEncryptedField):
             raise ImproperlyConfigured('RestrictedKeyPairEncryptionField parameter \'encryption_method\' = \'%s\' by default.'  \
                                        ' Do not set this parameter at the model level.' % (self.mode,)) 
         defaults = {'encryption_method': self.mode,
-                    'help_text': kwargs.get('help_text', '') + ' (Encryption: %s)' % (self.mode,)}
+                    'help_text': kwargs.get('help_text', '') + ' (Encryption: %s)' % (self.mode,),}
         kwargs.update(defaults)
         
         # we need this settings attribute when determining if the private key may be available
