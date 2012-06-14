@@ -4,39 +4,12 @@ from M2Crypto import Rand, RSA
 from bhp_crypto.models import Crypt
 from hasher import Hasher
 
-
 # http://chandlerproject.org/Projects/MeTooCrypto
 # http://www.topdog.za.net/2012/03/27/generating-cryptography-keys-in-python/
 # http://en.wikipedia.org/wiki/RSA_%28algorithm%29
 # http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding
-
-class KeyDescriptor(object):
-    
-    def __init__(self):
-        self.value = None
-    
-    def __get__(self, instance, owner):
-        return self.value
-
-
-class PublicKeyDescriptor(KeyDescriptor):
-    
-    def __set__(self, instance, value):
-        if value:
-            self.value = RSA.load_pub_key(value)
-        else:
-            self.value = None
-
             
-class PrivateKeyDescriptor(KeyDescriptor):
-    
-    def __set__(self, instance, value):
-        if value:
-            self.value = RSA.load_key(value)
-        else:
-            self.value = None
-            
-            
+        
 class Crypter(object):
     
     """
@@ -54,9 +27,21 @@ class Crypter(object):
     
     prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
     cipher_prefix = 'enc2:::'
-    public_key = PublicKeyDescriptor()
-    private_key = PrivateKeyDescriptor()
     hasher = Hasher()
+
+    
+    def __init__(self, *args, **kwargs):
+
+        self.public_key = None
+        self.private_key = None
+
+    def set_public_key(self, keyfile):
+        if keyfile:
+            self.public_key = RSA.load_pub_key(keyfile)
+        
+    def set_private_key(self, keyfile):
+        if keyfile:
+            self.private_key = RSA.load_key(keyfile)
 
     def _blank_callback(self): 
         "Replace the default dashes as output upon key generation" 
@@ -76,9 +61,8 @@ class Crypter(object):
         key.save_key('user-private.pem.%s' % name, None) 
         # Use a pass phrase to encrypt key 
         #key.save_key('user-private.pem') 
-        key.save_pub_key('user-public.pem.%s' % name) 
+        key.save_pub_key('user-public.pem.%s' % name)         
     
-
     def encrypt(self, value, update_lookup=False):
         """ return the encrypted field value (hash+cipher), do not override """
         if not value:
@@ -174,7 +158,13 @@ class Crypter(object):
         if value:
             if self.private_key:
                 if self.is_encrypted(value):
-                    value = self._decrypt_rsa(value)
+                    hash_text = self.get_hash(value)
+                    cipher_text = self.get_cipher(value, hash_text)
+                    if cipher_text:
+                        value = self.private_key.private_decrypt(base64.b64decode(cipher_text),
+                                                                 RSA.pkcs1_oaep_padding)
+                    else:
+                        raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
             else:
                 # if there is no private key, we must always return an encrypted value, unless None!
                 if not self.is_encrypted(value):
@@ -183,16 +173,16 @@ class Crypter(object):
                     value = self.encrypt(value)
         return value  
 
-    def _decrypt_rsa(self, encrypted_value):
-        """ """
-        hash_text = self.get_hash(encrypted_value)
-        cipher_text = self.get_cipher(encrypted_value, hash_text)
-        if cipher_text:
-            value = self.private_key.private_decrypt(base64.b64decode(cipher_text),
-                                                     RSA.pkcs1_oaep_padding).replace('\x00','')
-        else:
-            raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
-        return value
+    #    def _decrypt_rsa(self, encrypted_value):
+    #        """ """
+    #        hash_text = self.get_hash(encrypted_value)
+    #        cipher_text = self.get_cipher(encrypted_value, hash_text)
+    #        if cipher_text:
+    #            value = self.private_key.private_decrypt(base64.b64decode(cipher_text),
+    #                                                     RSA.pkcs1_oaep_padding)
+    #        else:
+    #            raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
+    #        return value
     
     def rehash_with_name(self, name):
         """ rehash using """ 

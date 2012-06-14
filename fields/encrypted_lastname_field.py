@@ -1,5 +1,5 @@
-from strong_encryption_field import StrongEncryptionField
+from restricted_keypair_encryption_field import RestrictedKeyPairEncryptionField
 
 
-class EncryptedLastnameField(StrongEncryptionField):
+class EncryptedLastnameField(RestrictedKeyPairEncryptionField):
     pass

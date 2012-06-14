@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from crypter import Crypter
 
@@ -17,23 +16,25 @@ class BaseEncryptedField(models.Field):
     
     """
 
+    description = "Field to encrypt and decrypt values that are stored as encrypted"
     __metaclass__ = models.SubfieldBase
-    encryption_method = None
-    valid_encryption_methods = ['strong', 'weak', 'hash-only']
-    crypter = Crypter()
+    valid_encryption_methods = ['restricted key-pair', 'local key-pair', 'hash-only']
     
     def __init__(self, *args, **kwargs):  
         """
         The required field attribute 'encryption_method' guides in loading public and private keys
         
-        1. strong: use on values that should be less convenient to decrypt. Private key is not
-           allowed on mobile devices (settings.IS_MOBILE_DEVICE).
-        2. weak: same as strong but the private key is expected to be available and is not checked for
+        1. restricted key-pair: use on values that should be less convenient to decrypt. Private key is not
+           allowed on mobile devices (settings.IS_SECURE_DEVICE).
+        2. local key-pair: same as restricted key-pair but the private key is expected to be available and is not checked for
         3. hash: irreversibly hash the value. do not create a corresponding cipher 
         """
-        
+        self.crypter = Crypter()
+
         defaults = {}
-        self.encryption_method = kwargs.get('encryption_method', 'public-key')
+        
+        self.encryption_method = kwargs.get('encryption_method', None)
+        
         if 'encryption_method' in kwargs:
             del kwargs['encryption_method']
         
@@ -42,41 +43,28 @@ class BaseEncryptedField(models.Field):
                                         '\'encryption_method\' are \'%s\'. Got \'%s\' ' \
                                         % ('\' or \''.join(self.valid_encryption_methods), kwargs.get('encryption_method')))
            
-        if self.encryption_method == 'strong':
-            defaults = {'help_text': kwargs.get('help_text', '') + ' (Encryption: strong)'}
-            # load public key, private key (if available) and set writer
-            if not hasattr(settings, 'IS_MOBILE_DEVICE'):
-                raise ImproperlyConfigured('You must set the IS_MOBILE_DEVICE setting to True ' \
-                                           'or False for \'strong\' encryption' )
-            if not hasattr(settings, 'PUBLIC_KEY_STRONG'):
-                raise ImproperlyConfigured('You must set the PUBLIC_KEY_STRONG setting to ' \
-                                           'point to your public key (path and filename) .')
-            self.crypter.public_key = settings.PUBLIC_KEY_STRONG
-            if 'PRIVATE_KEY_STRONG' in dir(settings):
-                # strong security DOES NOT expect a private key to be available on the device
-                if settings.PRIVATE_KEY_STRONG:
-                    if not settings.IS_MOBILE_DEVICE:
-                        self.crypter.private_key = settings.PRIVATE_KEY_STRONG
-                    else:
-                        raise ImproperlyConfigured('PRIVATE_KEY_STRONG setting should not be set on a mobile device.' )                        
-        elif self.encryption_method == 'weak':
-            defaults = {'help_text': kwargs.get('help_text', '') + ' (Encryption: weak)'}
-
-            # load public key, private key (if available) and set writer
-            if not hasattr(settings, 'PUBLIC_KEY_WEAK'):
-                raise ImproperlyConfigured('For \'weak\' security, you must set the PUBLIC_KEY_WEAK setting to ' \
-                                           'point to your public key (path and filename) .')
-            self.crypter.public_key = settings.PUBLIC_KEY_STRONG
-            if 'PRIVATE_KEY_WEAK' in dir(settings):
-                # medium security expects a private key to be available on the device, 
-                # but you could remove move it to fully de-identify the DB
-                if settings.PRIVATE_KEY_WEAK:
-                    self.crypter.private_key = settings.PRIVATE_KEY_WEAK     
-        if self.encryption_method == 'hash':
+        if self.encryption_method == 'hash-only':
             raise ImproperlyConfigured('EncryptedField field \'encryption_method\' \'%s\' is ' \
                                        'not supported yet' % (self.encryption_method ,))    
         kwargs.update(defaults)                    
+                
+        self.crypter.set_public_key(self.get_public_keyfile())
+
+        self.crypter.set_private_key(self.get_private_keyfile())
+        
         super(BaseEncryptedField, self).__init__(*args, **kwargs)
+
+    def get_public_keyfile(self, keyfile=None):
+        raise ImproperlyConfigured("method should be overridden")
+        
+    def get_private_keyfile(self, keyfile=None):
+        raise ImproperlyConfigured("method should be overridden")
+    
+    #    def set_private_key(self):
+    #        self.crypter.set_private_key(self.get_private_keyfile())
+    #
+    #    def set_public_key(self):
+    #        self.crypter.set_public_key(self.get_public_keyfile())
 
     def get_internal_type(self):
         return "CharField"
@@ -90,10 +78,12 @@ class BaseEncryptedField(models.Field):
     def validate_with_cleaned_data(self, attname, cleaned_data):
         
         """ may be overridden to test field data against other values in cleaned data. 
+        
         Should raise a forms.ValidationError if the test fails 
         
-        'attname' is the key in cleaned_data for the value to be tested, 
-        'cleaned_data' comes from forms clean() method
+        1. 'attname' is the key in cleaned_data for the value to be tested, 
+        2. 'cleaned_data' comes from django.forms clean() method
+        
         """
         pass
     
