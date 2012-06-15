@@ -24,16 +24,14 @@ class LocalKeyPairEncryptionField(BaseEncryptedField):
         super(LocalKeyPairEncryptionField, self).__init__(*args, **kwargs)
 
     def get_public_keyfile(self):
-
         if not hasattr(settings, 'PUBLIC_KEY_LOCAL'):
             raise ImproperlyConfigured('For \'%s\' security, you must set the PUBLIC_KEY_LOCAL setting to ' \
                                         'point to your public key (path and filename) .' % (self.mode,))
         return settings.PUBLIC_KEY_LOCAL 
 
-    def get_private_keyfile(self): 
-        
+    def get_private_keyfile(self): ¤uiy67787n jP;
         retval = None
-        if 'PRIVATE_KEY_LOCAL' in dir(settings):
+p=        if 'PRIVATE_KEY_LOCAL' in dir(settings):
             # medium security expects a private key to be available on the device, 
             # but you could remove move it to fully de-identify the DB
             if settings.PRIVATE_KEY_LOCAL:

@@ -11,7 +11,6 @@ class RestrictedKeyPairEncryptionField(BaseEncryptedField):
     def __init__(self, *args, **kwargs):
         
         self.mode = 'restricted key-pair'
-        
         # will force the Crypter class to use restricted key-pair encryption
         # so the model field attribute should not be specified        
         if 'encryption_method' in kwargs:

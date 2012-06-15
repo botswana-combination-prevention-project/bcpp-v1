@@ -24,22 +24,23 @@ class Crypter(object):
     #decrypt
     value = self.crypter.decrypt(value)
     """
-    
+    # prefix for each segment of an encrypted value, also used to calculate field length for model.
     prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
     cipher_prefix = 'enc2:::'
+    # hasher
     hasher = Hasher()
-
     
     def __init__(self, *args, **kwargs):
-
         self.public_key = None
         self.private_key = None
 
     def set_public_key(self, keyfile):
+        """ load public key """
         if keyfile:
             self.public_key = RSA.load_pub_key(keyfile)
         
     def set_private_key(self, keyfile):
+        """ load the private key """
         if keyfile:
             self.private_key = RSA.load_key(keyfile)
 
@@ -132,7 +133,6 @@ class Crypter(object):
         
         Will be called by get_cipher if cipher is not in the 'encrypted value' (e.g. is a hash) 
         """
-        
         if Crypt.objects.filter(hash_text=hash_text):
             crypt = Crypt.objects.get(hash_text=hash_text)
             ret_val = crypt.cipher_text
@@ -172,21 +172,4 @@ class Crypter(object):
                     # have a private key, so it should be 
                     value = self.encrypt(value)
         return value  
-
-    #    def _decrypt_rsa(self, encrypted_value):
-    #        """ """
-    #        hash_text = self.get_hash(encrypted_value)
-    #        cipher_text = self.get_cipher(encrypted_value, hash_text)
-    #        if cipher_text:
-    #            value = self.private_key.private_decrypt(base64.b64decode(cipher_text),
-    #                                                     RSA.pkcs1_oaep_padding)
-    #        else:
-    #            raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
-    #        return value
-    
-    def rehash_with_name(self, name):
-        """ rehash using """ 
-
-  
-              
-    
+        
