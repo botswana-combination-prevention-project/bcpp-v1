@@ -2,7 +2,8 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django import forms
 from bhp_variables.models import StudySpecific
-from bhp_common.utils import check_omang_field, check_initials_field, formatted_age
+from bhp_crypto.classes import BaseEncryptedField
+from bhp_common.utils import formatted_age
 
 
 class BaseSubjectConsentForm(forms.ModelForm):
@@ -14,31 +15,21 @@ class BaseSubjectConsentForm(forms.ModelForm):
         """
         check omang if identity_type is omang
         """                        
-        if cleaned_data.get("identity_type", None) == 'OMANG':
-            check_omang_field(cleaned_data.get("identity", None), cleaned_data.get("gender", None))            
-    
-        if 'subject_identifier' in cleaned_data: #which it never is??
-            consents = self._meta.model.objects.filter(identity=cleaned_data.get("identity")).exclude(subject_identifier=cleaned_data.get("subject_identifier"))
-        else:
-            consents = self._meta.model.objects.filter(identity=cleaned_data.get("identity"))        
-        if consents:
-            consent = self._meta.model.objects.get(identity=cleaned_data.get("identity"))
-            raise forms.ValidationError('Omang already on file for subject %s, %s (%s)' % (consent.last_name, consent.first_name, consent.subject_identifier))            
-            
+        # encrypted fields may cause problems if existing values
+        # cannot be decrypted, so call a custom field method validate_with_cleaned_data()
+        # to validate.
+        for field in self._meta.model._meta.fields:
+            if isinstance(field, BaseEncryptedField):
+                field.validate_with_cleaned_data(field.attname, cleaned_data)
+                    
         """
         check 1st and last letters of initials match subjects name
         """
-        my_first_name = cleaned_data.get("first_name") 
-        my_last_name = cleaned_data.get("last_name") 
-        my_initials = cleaned_data.get("initials")
-        check_initials_field(my_first_name, my_last_name, my_initials)
-            
-        # obj=StudySpecific.objects.all()[0]
-        # rdelta = relativedelta(datetime.today(), cleaned_data['dob']) 
-        # don't need this check, is done at the field level...
-        # if rdelta.years < obj.minimum_age_of_consent:
-        #    raise forms.ValidationError('Subject\'s age is below age of consent of %s for this protocol. You wrote %s.' % (obj.minimum_age_of_consent, rdelta.years))
-
+        #        my_first_name = cleaned_data.get("first_name") 
+        #        my_last_name = cleaned_data.get("last_name") 
+        #        my_initials = cleaned_data.get("initials")
+        #        check_initials_field(my_first_name, my_last_name, my_initials)
+        
         """
         if minor, force specify guardian's name
         """
@@ -50,7 +41,8 @@ class BaseSubjectConsentForm(forms.ModelForm):
         if cleaned_data.get('dob'):
             rdelta = relativedelta(date.today(), cleaned_data.get('dob')) 
             # check if guardian name is required
-            #guardian name is required if 
+            # guardian name is required if subject is a minor but the field may not be on the form
+            # if the study does not have minors.
             if rdelta.years < obj.age_at_adult_lower_bound:
                 if "guardian_name" not in cleaned_data.keys():
                     raise forms.ValidationError('Subject is a minor. "guardian_name" is required but missing from the form. Please add this field to the form.')

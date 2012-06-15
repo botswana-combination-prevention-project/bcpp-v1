@@ -9,23 +9,30 @@ except ImportError:
     from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_variables.models import StudySite
+from bhp_crypto.fields import EncryptedFirstnameField, EncryptedLastnameField
 
 
 class BaseBaseConsentModel(BaseUuidModel):
 
     """infants consent models may wish to start here as they would not need the identity fields
        and the dob validators would be different from those reading values from StudySpecific
+       
+       Be careful, you are also bypassing the save method in base_consent!
     """
      
-    first_name = NameField(
-        verbose_name = _("First name")
+    first_name = EncryptedFirstnameField(
+        verbose_name = _("First name"),
+        max_length = 512
         )
         
-    last_name = NameField(
-        verbose_name = _("Last name")
+    last_name = EncryptedLastnameField(
+        verbose_name = _("Last name"),
+        max_length = 512
     )
     
-    initials = InitialsField()
+    initials = models.CharField(
+        max_length = 3,
+        )
     
     study_site = models.ForeignKey(StudySite,
         verbose_name = 'Site',
