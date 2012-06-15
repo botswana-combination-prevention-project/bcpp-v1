@@ -3,7 +3,7 @@ from django.contrib import admin
 from django import forms
 from django.core.urlresolvers import reverse
 from bhp_sync.actions import serialize
-from bhp_crypto.fields import EncryptedIdentityField
+from bhp_crypto.fields import EncryptedIdentityField, EncryptedFirstnameField, EncryptedLastnameField
 from bhp_crypto.actions import encrypt, decrypt
 
 
@@ -12,9 +12,11 @@ class BaseModelAdmin (admin.ModelAdmin):
     """Overide ModelAdmin to force username to be saved on add/change and other stuff""" 
     
     # override the default widget for encrypted fields
-    formfield_overrides = {
-           EncryptedIdentityField: {'widget': forms.widgets.PasswordInput(render_value=True)},
-           }
+    #formfield_overrides = {
+    #       EncryptedIdentityField: {'widget': forms.widgets.PasswordInput(render_value=True)},
+    #       #EncryptedFirstnameField: {'widget': forms.widgets.PasswordInput(render_value=True)},
+    ##       EncryptedLastnameField: {'widget': forms.widgets.PasswordInput(render_value=True)},
+    #       }
     
     def __init__(self, *args, **kwargs):
         #add serialize action
