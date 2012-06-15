@@ -1,6 +1,7 @@
 from datetime import datetime
 #from django.db import models
 from django.db.models import Count
+from django.core.exceptions import ObjectDoesNotExist
 from bhp_variables.models import StudySpecific
 from bhp_registration.models import SubjectIdentifierAuditTrail
 from bhp_crypto.managers import CryptoManager
@@ -8,34 +9,72 @@ from bhp_crypto.managers import CryptoManager
 
 class RegisteredSubjectManager(CryptoManager):
     
-    def register_subject(self, consent_model, subject_type='SUBJECT', user='', **kwargs):
+    def update_with(self, instance):
+        
+        if super(RegisteredSubjectManager,self).filter(subject_identifier=instance.subject_identifier):
+            registered_subject = super(RegisteredSubjectManager,self).get(subject_identifier=instance.subject_identifier)
+            registered_subject.modified = datetime.today()
+            registered_subject.first_name = instance.first_name
+            registered_subject.initials = instance.initials
+            registered_subject.gender = instance.gender
+            registered_subject.study_site = instance.study_site
+            registered_subject.identity = instance.identity
+            registered_subject.dob = instance.dob
+            registered_subject.is_dob_estimated = instance.is_dob_estimated
+            registered_subject.may_store_samples = instance.may_store_samples
+            registered_subject.subject_type = instance.get_subject_type()
+            registered_subject.save()
+            retval = True
+        else:
+            raise ObjectDoesNotExist('Expected Registered Subject but not found for %s' % (instance.subject_identifier,))
+        return retval    
+    
+    def register_subject(self, instance, subject_type='SUBJECT', user='', **kwargs):
         
         """
-        Register a subject by allocating an identifier at the time of consent and storing in model RegisteredSubject.
+        Register a subject by allocating an identifier at the time of consent and storing in model 
+        RegisteredSubject.
         
         Generate an identifier and save it back to the consent form 
         and update the identifier audit trail.
         
-        The consent_model is the selected and new consent. Count=1
+        The instance is the selected and new consent. Count=1
             
         """
         
-        #if kwargs.get('registered_subject'):
-        #    raise TypeError()
+        #does this subject already exist in registered_subject? If so, just return the subject_identifier
+        #check for same identity and firstname and dob
+        if super(RegisteredSubjectManager,self).filter(identity=instance.identity):
+            return super(RegisteredSubjectManager,self).get(identity=instance.identity).subject_identifier
+        #check for same firstname, initials and dob
+        elif super(RegisteredSubjectManager,self).filter(first_name = instance.first_name,
+                                                        dob = instance.dob,
+                                                        initials = instance.initials):
+            return super(RegisteredSubjectManager,self).get(
+                                                            first_name = instance.first_name,
+                                                            dob = instance.dob,
+                                                            initials = instance.initials,
+                                                            ).subject_identifier
+        # did you pass registered_subject as a keyword argument, with the subject_identifier?
+        elif 'registered_subject' in kwargs:
+            if kwargs.get('registered_subject').subject_identifier:
+                return kwargs.get('registered_subject').subject_identifier
+        else:
+            pass
         
+        
+        # subject does not exist in registered subject
         subject_identifier = {}
         
         #get the consent just created
         #consent = SubjectConsent.objects.get(pk=new_pk)
 
-        subject_identifier['site'] = consent_model.study_site.site_code
+        subject_identifier['site'] = instance.study_site.site_code
         
         #add a new record in the audit trail for this consent and identifier-'to be'
         #leave subject_identifier 'null' for now
         audit = SubjectIdentifierAuditTrail(
-            subject_consent_id=consent_model.pk, 
-            first_name = consent_model.first_name,
-            initials = consent_model.initials,
+            subject_consent_id=instance.pk, 
             date_allocated=datetime.now(),
             user_created = user,
             )
@@ -111,38 +150,38 @@ class RegisteredSubjectManager(CryptoManager):
         # you may pass the RegisteredSubject object and update instead of creating a new one
         # pass when calling this manager (for example, from save_model in admin)
         if 'registered_subject' in kwargs:
-            registered_subject =  kwargs['registered_subject']               
-            registered_subject.subject_consent_id = consent_model.pk
+            registered_subject =  kwargs.get('registered_subject')            
+            registered_subject.subject_consent_id = instance.pk
             registered_subject.subject_identifier = subject_identifier['identifier']
-            registered_subject.first_name = consent_model.first_name
-            registered_subject.study_site = consent_model.study_site
-            registered_subject.may_store_samples = consent_model.may_store_samples
-            registered_subject.initials = consent_model.initials
-            registered_subject.gender = consent_model.gender
+            registered_subject.first_name = instance.first_name
+            registered_subject.study_site = instance.study_site
+            registered_subject.may_store_samples = instance.may_store_samples
+            registered_subject.initials = instance.initials
+            registered_subject.gender = instance.gender
             registered_subject.subject_type = subject_type
             registered_subject.registration_datetime = datetime.now()
             registered_subject.registration_status = 'consented'
-            registered_subject.identity = consent_model.identity
-            registered_subject.dob = consent_model.dob
-            registered_subject.is_dob_estimated = consent_model.is_dob_estimated
+            registered_subject.identity = instance.identity
+            registered_subject.dob = instance.dob
+            registered_subject.is_dob_estimated = instance.is_dob_estimated
             registered_subject.save()
         else:        
             super(RegisteredSubjectManager, self).create(
                     created = datetime.now(),
                     user_created = user,
-                    subject_consent_id = consent_model.pk,
+                    subject_consent_id = instance.pk,
                     subject_identifier = subject_identifier['identifier'],
-                    first_name = consent_model.first_name,
-                    study_site = consent_model.study_site,
-                    may_store_samples = consent_model.may_store_samples,
-                    initials = consent_model.initials,
-                    gender = consent_model.gender,
+                    first_name = instance.first_name,
+                    study_site = instance.study_site,
+                    may_store_samples = instance.may_store_samples,
+                    initials = instance.initials,
+                    gender = instance.gender,
                     subject_type = subject_type,
                     registration_datetime = datetime.now(),
                     registration_status = 'consented',
-                    identity = consent_model.identity,
-                    dob = consent_model.dob,
-                    is_dob_estimated = consent_model.is_dob_estimated,
+                    identity = instance.identity,
+                    dob = instance.dob,
+                    is_dob_estimated = instance.is_dob_estimated,
                 )
                 
         # return the new subject identifier to the form currently being save()'d

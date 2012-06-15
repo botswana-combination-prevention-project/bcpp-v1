@@ -1,7 +1,11 @@
 from django.db import models
 from django.db import IntegrityError
+from django.utils.translation import ugettext_lazy as _
+from django.core.validators import RegexValidator
 from bhp_base_model.classes import BaseUuidModel
 from bhp_common.choices import GENDER_UNDETERMINED
+from bhp_base_model.fields import IsDateEstimatedField
+from bhp_crypto.fields import EncryptedFirstnameField
 
 
 class BaseSubject (BaseUuidModel):
@@ -22,13 +26,30 @@ class BaseSubject (BaseUuidModel):
         db_index=True,               
         )
     
-    first_name = models.CharField(
-        max_length=50,
+    first_name = EncryptedFirstnameField(
+        max_length=512,
+        #validators = [RegexValidator(regex=r'$[A-Z]^', 
+        #                             message='Ensure first name consists letters only in upper case, no spaces.'),]
         )
     
     initials = models.CharField(
         max_length=3,
+        validators = [RegexValidator(regex=r'$[A-Z]^', 
+                                    message='Ensure initials consist of letters only in upper case, no spaces.'),]
         )                    
+
+    dob = models.DateField(
+        verbose_name = _("Date of birth"),
+        null=True,
+        blank=True,
+        help_text=_("Format is YYYY-MM-DD"),
+        )
+
+    is_dob_estimated = IsDateEstimatedField( 
+        verbose_name=_("Is date of birth estimated?"),       
+        null=True,
+        blank=True,
+        )    
 
     gender = models.CharField(
         verbose_name = "Gender",

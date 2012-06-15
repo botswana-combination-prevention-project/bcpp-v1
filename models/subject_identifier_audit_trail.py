@@ -22,13 +22,13 @@ class SubjectIdentifierAuditTrail(BaseModel):
         unique=True
         )
     
-    first_name = models.CharField(max_length=250) 
-    
-    initials = models.CharField(max_length=3)
-    
-    dob = DobField(
-        null=True
-        )
+    #    first_name = models.CharField(max_length=250) 
+    #    
+    #    initials = models.CharField(max_length=3)
+    #    
+    #    dob = DobField(
+    #        null=True
+    #        )
     
     date_allocated = models.DateTimeField(
         default=date.today()

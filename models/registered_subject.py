@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
-from bhp_base_model.fields import IsDateEstimatedField
 from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
 from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
@@ -47,18 +46,7 @@ class RegisteredSubject(BaseSubject):
         blank=True,
         )
         
-    dob = models.DateField(
-        verbose_name = _("Date of birth"),
-        null=True,
-        blank=True,
-        help_text=_("Format is YYYY-MM-DD"),
-        )
 
-    is_dob_estimated = IsDateEstimatedField( 
-        verbose_name=_("Is date of birth estimated?"),       
-        null=True,
-        blank=True,
-        )    
     
     may_store_samples = models.CharField(
         verbose_name = _("Sample storage"),
@@ -109,5 +97,6 @@ class RegisteredSubject(BaseSubject):
     class Meta:
         app_label = 'bhp_registration' 
         verbose_name = 'Registered Subject'  
-        ordering = ['subject_identifier',]         
+        ordering = ['subject_identifier',]   
+        unique_together = (('first_name', 'dob', 'initials'),)      
 

@@ -40,8 +40,6 @@ class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
     
     list_display = (
         'subject_identifier',
-        'first_name',
-        'initials',
         'date_allocated',
         )
     list_per_page = 15
