@@ -5,10 +5,10 @@ from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
 from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_crypto.fields import EncryptedIdentityField
-from base_subject import BaseSubject
+from subject import Subject
 
 
-class RegisteredSubject(BaseSubject):
+class RegisteredSubject(Subject):
 
     registration_identifier = models.CharField(
         max_length = 36,
@@ -40,13 +40,10 @@ class RegisteredSubject(BaseSubject):
         )
     
     identity = EncryptedIdentityField(
-        max_length = 512,
         unique = True,
         null=True,
         blank=True,
         )
-        
-
     
     may_store_samples = models.CharField(
         verbose_name = _("Sample storage"),

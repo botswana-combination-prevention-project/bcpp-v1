@@ -9,19 +9,19 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Changing field 'RegisteredSubject.first_name'
-        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=78))
+        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=78))
 
         # Changing field 'RegisteredSubject.identity'
-        db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.TextField')(max_length=78, unique=True, null=True))
+        db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.CharField')(max_length=78, unique=True, null=True))
 
         # Changing field 'RandomizedSubject.first_name'
-        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=78))
+        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=78))
 
         # Changing field 'RegisteredSubjectAudit.first_name'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=78))
+        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=78))
 
         # Changing field 'RegisteredSubjectAudit.identity'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.TextField')(max_length=78, null=True))
+        db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.CharField')(max_length=78, null=True))
 
 
     def backwards(self, orm):
