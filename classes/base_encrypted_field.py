@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
-from crypter import Crypter
+from crypter import AsymetricCrypter as Crypter
 
 
 class BaseEncryptedField(models.Field):
@@ -103,7 +103,7 @@ class BaseEncryptedField(models.Field):
         "Returns a suitable description of this field for South."
         # We'll just introspect the _actual_ field.
         from south.modelsinspector import introspector
-        field_class = "django.db.models.fields.TextField"
+        field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         # That's our definition!
         return (field_class, args, kwargs)

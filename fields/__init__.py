@@ -3,4 +3,6 @@ from local_keypair_encryption_field import LocalKeyPairEncryptionField
 from encrypted_identity_field import EncryptedIdentityField
 from encrypted_lastname_field import EncryptedLastnameField
 from encrypted_firstname_field import EncryptedFirstnameField
+from encrypted_char_field import EncryptedCharField
+from encrypted_other_char_field import EncryptedOtherCharField
 

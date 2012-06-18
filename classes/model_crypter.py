@@ -1,4 +1,4 @@
-from crypter import Crypter
+from asymetric_crypter import AsymetricCrypter as Crypter
 from base_encrypted_field import BaseEncryptedField
 
 class ModelCrypter(Crypter):

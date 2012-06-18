@@ -1,5 +1,5 @@
 from django.db.models import get_models
-from bhp_crypto.classes import Crypter
+from asymetric_crypter import AsymetricCrypter as Crypter
 from bhp_crypto.classes import BaseEncryptedField
 
 

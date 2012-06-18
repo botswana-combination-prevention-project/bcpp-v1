@@ -10,7 +10,7 @@ from hasher import Hasher
 # http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding
             
         
-class Crypter(object):
+class AsymetricCrypter(object):
     
     """
     Uses M2Crypto.RSA public key encryption
@@ -27,12 +27,14 @@ class Crypter(object):
     # prefix for each segment of an encrypted value, also used to calculate field length for model.
     prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
     cipher_prefix = 'enc2:::'
+    KEY_LENGTH = 4096
     # hasher
     hasher = Hasher()
     
     def __init__(self, *args, **kwargs):
         self.public_key = None
         self.private_key = None
+        
 
     def set_public_key(self, keyfile):
         """ load public key """
@@ -49,15 +51,13 @@ class Crypter(object):
         return
     
     def create_new_key_pair(self):
-        """ create a new key-pair in the default folder, filename includes the current timestamp """
-        KEY_LENGTH = 1024
-        
+        """ create a new key-pair in the default folder, filename includes the current timestamp """        
         # have a suffix to the file names to prevent overwriting
         name = str(datetime.today())
         # Random seed 
-        Rand.rand_seed (os.urandom (KEY_LENGTH)) 
+        Rand.rand_seed (os.urandom (self.KEY_LENGTH)) 
         # Generate key pair 
-        key = RSA.gen_key (KEY_LENGTH, 65537, self._blank_callback) 
+        key = RSA.gen_key (self.KEY_LENGTH, 65537, self._blank_callback) 
         # Non encrypted key 
         key.save_key('user-private.pem.%s' % name, None) 
         # Use a pass phrase to encrypt key 
@@ -70,6 +70,8 @@ class Crypter(object):
             encrypted_value = value    
         else:    
             if not self.is_encrypted(value):
+                if len(value) >= self.KEY_LENGTH/24:
+                    raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
                 cipher_text = self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
                 hash_text = self.get_hash(value)
                 encoded_cipher_text = base64.b64encode(cipher_text)
@@ -162,7 +164,7 @@ class Crypter(object):
                     cipher_text = self.get_cipher(value, hash_text)
                     if cipher_text:
                         value = self.private_key.private_decrypt(base64.b64decode(cipher_text),
-                                                                 RSA.pkcs1_oaep_padding)
+                                                                 RSA.pkcs1_oaep_padding).replace('\x00', '')
                     else:
                         raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
             else:
