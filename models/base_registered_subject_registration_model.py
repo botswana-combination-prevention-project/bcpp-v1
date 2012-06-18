@@ -6,7 +6,7 @@ except ImportError:
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from registered_subject import RegisteredSubject
 
-"""RATHER NOT USE THESE"""
+"""DO NOT USE THESE"""
 
 
 class BaseRegisteredSubjectRegistrationModel (BaseUuidModel):

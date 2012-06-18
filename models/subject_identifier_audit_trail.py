@@ -1,7 +1,6 @@
 from datetime import date
 from django.db import models
 from bhp_base_model.fields import MyUUIDField
-from bhp_base_model.fields import DobField
 from bhp_base_model.classes import BaseModel
 
 

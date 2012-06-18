@@ -24,7 +24,7 @@ class BaseRandomizationList (BaseUuidModel):
         abstract = True 
         
 """
-You might inheret from RandomizationList to get something like this, assuming your app is 'protocol'
+You might inherit from RandomizationList to get something like this, assuming your app is 'protocol'
 
 class RandomizationList (RandomizationListBase):
 
