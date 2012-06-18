@@ -63,6 +63,10 @@ class BaseSubjectConsentForm(forms.ModelForm):
             if rdelta.years not in consent_age_range:
                 raise forms.ValidationError("Invalid Date of Birth. Age of consent must be between %sy and %sy inclusive. Got %sy" % (consent_age_range[0], consent_age_range[-1],rdelta.years,))
         
+        # check for gender of consent
+        
+        
+        
         # Always return the full collection of cleaned data.
         return cleaned_data    
     

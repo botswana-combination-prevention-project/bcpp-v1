@@ -1,43 +1,24 @@
 from django.db import models
+from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
+from bhp_common.choices import YES_NO
 from bhp_crypto.fields import EncryptedIdentityField
-from bhp_base_model.fields import NameField, InitialsField
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_variables.models import StudySite
-from bhp_crypto.fields import EncryptedFirstnameField, EncryptedLastnameField
+from bhp_subject.classes import BaseSubject
+from bhp_identifier.classes import Subject
 
 
-class BaseBaseConsentModel(BaseUuidModel):
+class BaseConsent(BaseSubject):
 
-    """infants consent models may wish to start here as they would not need the identity fields
-       and the dob validators would be different from those reading values from StudySpecific
-       
-       Be careful, you are also bypassing the save method in base_consent!
-    """
-     
-    first_name = EncryptedFirstnameField(
-        verbose_name = _("First name"),
-        max_length = 512
-        )
-        
-    last_name = EncryptedLastnameField(
-        verbose_name = _("Last name"),
-        max_length = 512
-    )
-    
-    initials = models.CharField(
-        max_length = 3,
-        )
+    """ """
     
     study_site = models.ForeignKey(StudySite,
         verbose_name = 'Site',
         help_text="This refers to the site or 'clinic area' where the subject is being consented."
         )
+    
     consent_datetime = models.DateTimeField("Consent date and time",
         validators=[
             datetime_not_before_study_start,
@@ -55,12 +36,35 @@ class BaseBaseConsentModel(BaseUuidModel):
         help_text = _('Required only if subject  a minor. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
         )
             
+    may_store_samples = models.CharField(
+        verbose_name = _("Sample storage"),
+        max_length = 3, 
+        choices = YES_NO, 
+        help_text = _("Does the subject agree to have samples stored after the study has ended")
+        )
+    
     comment = models.CharField("Comment", 
         max_length=250, 
         blank=True
         )        
 
-
+    def save(self, *args, **kwargs):
+        
+        RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
+        
+        if not self.id:
+            # allocate identifier, insert in registered subject
+            subject = Subject()
+            subject_identifier = subject.get_identifier(subject_type = self.get_subject_type(),
+                                                    site = self.study_site.site_code,
+                                                    registration_status = 'consented')
+            
+            #self.subject_identifier = RegisteredSubject.objects.register_subject(self, self.get_subject_type(), self.user_created)            
+        else:
+            # call registered_subject
+            RegisteredSubject.objects.update_with(self)
+            
+        super(BaseConsent, self).save(*args, **kwargs)
     class Meta:
         abstract = True
 

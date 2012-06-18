@@ -1,7 +1,7 @@
 from django.db import models
-from bhp_consent.models import BaseConsentModel
+from bhp_consent.classes import BaseConsent
 
-class ConsentNonUniqueModel(BaseConsentModel):
+class ConsentNonUniqueModel(BaseConsent):
 
     subject_identifier = models.CharField('Subject Identifier', 
         max_length=25, 

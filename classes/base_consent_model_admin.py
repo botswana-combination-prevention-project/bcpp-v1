@@ -5,6 +5,7 @@ from bhp_common.models import MyModelAdmin
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 
+
 class BaseConsentModelAdmin(MyModelAdmin):
 
     def save_model(self, request, obj, form, change):
