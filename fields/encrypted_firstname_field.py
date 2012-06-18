@@ -12,9 +12,9 @@ class EncryptedFirstnameField(LocalKeyPairEncryptionField):
             if first_name:
                 # check for required keys from cleaned_data
                 if 'initials' not in cleaned_data:
-                    raise TypeError('Field %s expects key \'initials\' for validation' % (attname,))
+                    raise ValidationError('Field %s expects key \'initials\' for validation' % (attname,))
                 if 'last_name' not in cleaned_data:
-                    raise TypeError('Field %s expects key \'last_name\' for validation' % (attname,))
+                    raise ValidationError('Field %s expects key \'last_name\' for validation' % (attname,))
                 # check if value is encrypted, if so we need to decrypt it to run the tests
                 if self.is_encrypted(first_name):
                     self.decrypt(first_name)
