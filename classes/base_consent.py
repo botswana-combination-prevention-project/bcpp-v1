@@ -58,8 +58,10 @@ class BaseConsent(BaseSubject):
                                                              self.study_site.site_code)
         # create or update RegisteredSubject
         subject.update_register(self, 'subject_identifier', 
-                                subject_identifier = subject.subject_identifier, 
-                                registration_status = 'consented')
+                                subject_identifier = subject.subject_identifier,
+                                registration_datetime = self.created,
+                                registration_status = 'consented',
+                                subject_consent_id = self.pk)
         super(BaseConsent, self).save(*args, **kwargs) 
  
 
