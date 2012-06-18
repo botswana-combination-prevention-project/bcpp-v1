@@ -1,0 +1,1 @@
+from base_consent import BaseConsent
