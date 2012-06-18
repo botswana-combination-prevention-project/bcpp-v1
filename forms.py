@@ -2,8 +2,10 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django import forms
 from bhp_variables.models import StudySpecific
+from bhp_variables.choices import GENDER_OF_CONSENT
 from bhp_crypto.classes import BaseEncryptedField
 from bhp_common.utils import formatted_age
+
 
 
 class BaseSubjectConsentForm(forms.ModelForm):
@@ -64,7 +66,21 @@ class BaseSubjectConsentForm(forms.ModelForm):
                 raise forms.ValidationError("Invalid Date of Birth. Age of consent must be between %sy and %sy inclusive. Got %sy" % (consent_age_range[0], consent_age_range[-1],rdelta.years,))
         
         # check for gender of consent
-        
+        if cleaned_data.get('gender'):
+            study_specific = StudySpecific.objects.all()[0]
+            gender_of_consent = study_specific.gender_of_consent
+            if gender_of_consent == 'MF':
+                allowed = ('MF', 'Male and Female')
+                entry = ('value', cleaned_data.get('gender'))
+            else:
+                for lst in GENDER_OF_CONSENT:
+                    if lst[0] == gender_of_consent:
+                        allowed = lst
+                for lst in GENDER_OF_CONSENT:
+                    if lst[0] == cleaned_data.get('gender'):
+                        entry = lst
+            if cleaned_data.get('gender') != allowed[0] and allowed[0] != 'MF':    
+                raise forms.ValidationError(u'Gender of consent is %s. You entered %s.' % ( allowed[1], entry[1]))
         
         
         # Always return the full collection of cleaned data.

@@ -12,7 +12,7 @@ from bhp_subject.classes import BaseSubject
 class BaseConsent(BaseSubject):
 
     """ """
-    
+        
     study_site = models.ForeignKey(StudySite,
         verbose_name = 'Site',
         help_text="This refers to the site or 'clinic area' where the subject is being consented."
@@ -46,6 +46,9 @@ class BaseConsent(BaseSubject):
         blank=True
         )        
 
+    def __unicode__(self):
+        return unicode(self.subject_identifier)
+    
     def save(self, *args, **kwargs):
         
         subject = Subject()

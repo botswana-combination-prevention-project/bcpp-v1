@@ -1,4 +1,4 @@
-from base_consent import BaseBaseConsent
+from base_consent import BaseConsent
 
 
 class ConsentDescriptor(object):
@@ -10,6 +10,6 @@ class ConsentDescriptor(object):
         return self.value
     
     def __set__(self, instance, value):
-        if not isinstance(value, BaseBaseConsent):
+        if not isinstance(value, BaseConsent):
             raise TypeError('Consent must be an instance of BaseConsent.')
         self.value = value
