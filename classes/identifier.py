@@ -242,7 +242,8 @@ class Identifier(object):
 
     def increment(self):
 
-        """Increment last counter by 1 using last counter (or None) from IdentifierTracker model for given root_segment and create a new IdentifierTracker record."""
+        """Increment last counter by 1 using last counter (or None) from IdentifierTracker model 
+           for given root_segment and create a new IdentifierTracker record."""
 
         if self.counter_length == 0: 
             self.counter = 0
@@ -298,6 +299,10 @@ class Identifier(object):
 
     def encode(self, number=None, has_check_digit=False, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
    
+        #coder = Coder()
+        
+        #coder.encode(number, has_check_digit, alphabet ) 
+        
         """Convert positive integer to a base36 string."""
         
         # access internally as encode()
