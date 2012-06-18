@@ -29,9 +29,9 @@ class LocalKeyPairEncryptionField(BaseEncryptedField):
                                         'point to your public key (path and filename) .' % (self.mode,))
         return settings.PUBLIC_KEY_LOCAL 
 
-    def get_private_keyfile(self): ¤uiy67787n jP;
+    def get_private_keyfile(self):
         retval = None
-p=        if 'PRIVATE_KEY_LOCAL' in dir(settings):
+        if 'PRIVATE_KEY_LOCAL' in dir(settings):
             # medium security expects a private key to be available on the device, 
             # but you could remove move it to fully de-identify the DB
             if settings.PRIVATE_KEY_LOCAL:
