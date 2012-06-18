@@ -11,7 +11,6 @@ class BaseConsent(BaseConsent):
 
     identity = EncryptedOmangField(
         verbose_name = _("Identity number (OMANG, etc)"), 
-        max_length = 512, 
         unique = True,
         help_text = _("Use Omang, Passport number, driver's license number or Omang receipt number")
         )
