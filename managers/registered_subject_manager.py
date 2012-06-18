@@ -1,9 +1,6 @@
 from datetime import datetime
-#from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
-from bhp_registration.models import SubjectIdentifierAuditTrail
 from bhp_crypto.managers import CryptoManager
-from bhp_identifier.classes import Subject, Infant, Partner
+from bhp_identifier.classes import Infant, Partner
 
 
 class RegisteredSubjectManager(CryptoManager):
@@ -17,13 +14,16 @@ class RegisteredSubjectManager(CryptoManager):
         #if found update, otherwise raise an error
         if super(RegisteredSubjectManager,self).filter(**{attrname:getattr(instance,attrname)}):
             registered_subject = super(RegisteredSubjectManager,self).get(**{attrname:getattr(instance,attrname)})
-            registered_subject.registration_datetime = datetime.today()
+            #registered_subject.registration_datetime = datetime.today()
+            registered_subject.user_modified = instance.user_modified,
             registered_subject.modified = datetime.today()
             registered_subject.first_name = instance.first_name
+            registered_subject.last_name = instance.last_name
             registered_subject.initials = instance.initials
             registered_subject.gender = instance.gender
             registered_subject.study_site = instance.study_site
             registered_subject.identity = instance.identity
+            registered_subject.identity_type = instance.identity_type
             registered_subject.dob = instance.dob
             registered_subject.is_dob_estimated = instance.is_dob_estimated
             registered_subject.may_store_samples = instance.may_store_samples
@@ -34,22 +34,32 @@ class RegisteredSubjectManager(CryptoManager):
                     setattr(registered_subject, attr, kwargs.get(attr)) 
             registered_subject.save()
         else:
-            #raise ObjectDoesNotExist('Expected Registered Subject but not found for %s' % (getattr(instance, attrname),))
-            super(RegisteredSubjectManager,self).create(
-                relative_identifier = kwargs.get('relative_identifier', None),
-                subject_identifier = kwargs.get('subject_identifier'),
-                registration_datetime = datetime.today(),
+            registered_subject = super(RegisteredSubjectManager,self).create(
+                # relative_identifier = kwargs.get('relative_identifier', None),
+                # subject_identifier = kwargs.get('subject_identifier'),
+                # registration_datetime = instance.created,
+                user_created = instance.user_created,
                 created = datetime.today(),
                 first_name = instance.first_name,
+                last_name = instance.last_name,
                 initials = instance.initials,
                 gender = instance.gender,
                 study_site = instance.study_site,
                 identity = instance.identity,
+                identity_type = instance.identity_type,
                 dob = instance.dob,
                 is_dob_estimated = instance.is_dob_estimated,
                 may_store_samples = instance.may_store_samples,
                 subject_type = instance.get_subject_type(),
                 )
+            # set values for any extra attributes, or overwrite the value from above
+            extra = False
+            for attr in kwargs:
+                if kwargs.get(attr):
+                    extra = True
+                    setattr(registered_subject, attr, kwargs.get(attr)) 
+            if extra:
+                registered_subject.save()
                 
     #    def register_subject(self, consent, subject_type='SUBJECT', user='', **kwargs):
     #        

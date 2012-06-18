@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_common.models import MyModelAdmin
-from models import RegisteredSubject, RandomizedSubject, SubjectIdentifierAuditTrail
+from models import RegisteredSubject, SubjectIdentifierAuditTrail
 from forms import RegisteredSubjectForm
 
 
@@ -32,8 +32,6 @@ class RegisteredSubjectAdmin (MyModelAdmin):
     list_filter = ('subject_type', 'registration_status', 'registration_datetime','gender','study_site', 'hiv_status', 'survival_status', 'may_store_samples','hostname_created')
     
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
-
-admin.site.register(RandomizedSubject)
 
 
 class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):

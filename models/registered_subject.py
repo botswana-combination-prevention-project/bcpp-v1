@@ -87,12 +87,7 @@ class RegisteredSubject(BaseSubject):
 
     def is_serialized(self):
         return super(RegisteredSubject, self).is_serialized(True)
-    
-    def save(self, *args, **kwargs):
-        # important: go to save() of super() FIRST to enforce unique subject_identifier
-        super(RegisteredSubject, self).save(*args, **kwargs)
-        # now you can add something below...
-        
+            
     def __unicode__ (self):
         if self.sid:
             return "%s %s (%s %s)" % (self.subject_identifier, self.subject_type, self.first_name, self.sid)
