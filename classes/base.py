@@ -8,8 +8,7 @@ class Base(object):
     #consent = ConsentDescriptor()
 
     def __init__(self, *args, **kwargs):
-        # the model, for creating a new instance
-        self.RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+
         # the instance, if set, will be updated instead of creating a new instance
         self.registered_subject = None
         # need an instance of the consent, raise an error later if not available
@@ -25,5 +24,7 @@ class Base(object):
     
     def update_register(self, consent, attrname='subject_identifier', **kwargs):
         """ update for this subject in registered subject """
+        # the model, for creating a new instance
+        self.RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
         # access registered subject manager method
         self.RegisteredSubject.objects.update_with(consent, attrname, **kwargs)
