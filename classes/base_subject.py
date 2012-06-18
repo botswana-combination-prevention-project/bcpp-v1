@@ -32,7 +32,7 @@ class BaseSubject (BaseUuidModel):
     
     initials = models.CharField(
         max_length=3,
-        validators = [RegexValidator(regex=r'$[A-Z]^', 
+        validators = [RegexValidator(regex=r'^[A-Z]{2,3}$', 
                                     message='Ensure initials consist of letters only in upper case, no spaces.'),]
         )
 
