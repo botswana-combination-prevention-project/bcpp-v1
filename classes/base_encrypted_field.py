@@ -60,13 +60,15 @@ class BaseEncryptedField(models.Field):
     
     def decrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        alg = kwargs.get('algorithm',self.algorithm)
-        return self.crypter.decrypt(value, alg)
+        algorithm = kwargs.get('algorithm',self.algorithm)
+        mode = kwargs.get('algorithm',self.mode)
+        return self.crypter.decrypt(value, algorithm=algorithm, mode=mode)
     
     def encrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        alg = kwargs.get('algorithm',self.algorithm)
-        return self.crypter.encrypt(value, alg)
+        algorithm = kwargs.get('algorithm',self.algorithm)
+        mode = kwargs.get('algorithm',self.mode)        
+        return self.crypter.encrypt(value, algorithm=algorithm, mode=mode)
     
     def validate_with_cleaned_data(self, attname, cleaned_data):
         """ May be overridden to test field data against other values in cleaned data. 

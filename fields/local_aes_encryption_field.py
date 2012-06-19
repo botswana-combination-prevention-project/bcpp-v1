@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 #from django.forms import widgets
 from local_keypair_encryption_field import LocalKeyPairEncryptionField
@@ -22,20 +23,11 @@ class LocalAesEncryptionField(LocalKeyPairEncryptionField):
         super(LocalAesEncryptionField, self).__init__(*args, **kwargs)        
 
 
-    def get_aes_key(self, aes_key_file="user-aes-local.pem"):
-        """ decrypt and load the AES key using the local private key"""
-        try:
-            f = open(aes_key_file, 'r')
-            encrypted_key = f.read()
-            f.close()
-            key = self.crypter.rsa_decrypt(encrypted_key)
-        except:
-            key = ''
-        return key
-
-    #def formfield(self, **kwargs):
-    #    if not self.crypter.private_key:
-    #        defaults = {'widget': ReadOnlyWidget()}
-    #        defaults.update(kwargs)
-    #    return super(LocalAesEncryptionField, self).formfield(**defaults)
+    def get_aes_key(self):
+        retval = None
+        if 'AES_KEY' in dir(settings):
+            if settings.AES_KEY:
+                retval = settings.AES_KEY
+        return retval 
+    
         

@@ -17,7 +17,7 @@ class Migration(SchemaMigration):
             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('hash_text', self.gf('django.db.models.fields.TextField')(max_length=512)),
+            ('hash_text', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128, db_index=True)),
             ('cipher_text', self.gf('django.db.models.fields.TextField')()),
         ))
         db.send_create_signal('bhp_crypto', ['Crypt'])
@@ -34,7 +34,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Crypt'},
             'cipher_text': ('django.db.models.fields.TextField', [], {}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hash_text': ('django.db.models.fields.TextField', [], {'max_length': '512'}),
+            'hash_text': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128', 'db_index': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),

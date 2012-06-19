@@ -6,8 +6,8 @@ from hasher import Hasher
 # http://chandlerproject.org/Projects/MeTooCrypto
 # http://www.topdog.za.net/2012/03/27/generating-cryptography-keys-in-python/
 # http://en.wikipedia.org/wiki/RSA_%28algorithm%29
-# http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding
-            
+# http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding   
+        
         
 class Crypter(BaseCrypter):
     
@@ -30,12 +30,12 @@ class Crypter(BaseCrypter):
     # hasher
     hasher = Hasher()
     
-    def __init__(self, *args, **kwargs):
-        self.public_key = None
-        self.private_key = None
-        
-    def encrypt(self, value, algorithm='RSA', update_lookup=False):
+    def encrypt(self, value, **kwargs):
         """ return the encrypted field value (hash+cipher), do not override """
+        algorithm = kwargs.get('algorithm', None)
+        mode = kwargs.get('mode', None)
+        update_lookup = kwargs.get('update_lookup', False)
+        
         if not value:
             encrypted_value = value    
         else:    
@@ -48,7 +48,7 @@ class Crypter(BaseCrypter):
                     cipher_text = self.rsa_encrypt(value)
                 else:
                     raise ValueError('Cannot determine algorithm for encryptor')
-                hash_text = self.get_hash(value)
+                hash_text = self.get_hash(value, algorithm+mode)
                 encoded_cipher_text = base64.b64encode(cipher_text)
                 encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
                 if update_lookup:
@@ -58,12 +58,14 @@ class Crypter(BaseCrypter):
                 encrypted_value = value    
         return encrypted_value        
     
-    def decrypt(self, value, algorithm):
+    def decrypt(self, value, **kwargs):
         """ if private key is known, return an decrypted value, otherwise return the encrypted value """
+        algorithm = kwargs.get('algorithm', None)
+        mode = kwargs.get('mode', None)
         if value:
             if self.private_key:
                 if self.is_encrypted(value):
-                    hash_text = self.get_hash(value)
+                    hash_text = self.get_hash(value, algorithm+mode)
                     cipher_text = self.get_cipher(value, hash_text)
                     if cipher_text:
                         if algorithm == 'AES':
@@ -79,7 +81,7 @@ class Crypter(BaseCrypter):
                 if not self.is_encrypted(value):
                     # for some reason, the value was not encrypted AND we do not
                     # have a private key, so it should be 
-                    value = self.encrypt(value, algorithm)
+                    value = self.encrypt(value, **kwargs)
         return value
     
     def update_cipher_lookup(self, encrypted_value):
@@ -101,7 +103,7 @@ class Crypter(BaseCrypter):
                     # this is an error condition
                     raise TypeError('Expected cipher text for given new hash, but got None.')
             
-    def get_hash(self, value):
+    def get_hash(self, value, extra_salt=''):
         """ hash is stored for exact match search functionality as the cipher is never the same twice """
         if self.is_encrypted(value):
             # if value is an encrypted value string, cut out the hash segment
@@ -109,7 +111,10 @@ class Crypter(BaseCrypter):
             #hash_text = value[len(self.prefix):].split(self.cipher_prefix)[0]
         else:
             # if the value is not encrypted, hash it.
-            hash_text = self.hasher.get_hash(value)
+            # note that hash must be unique for each mode and algorithm
+            if not extra_salt:
+                raise TypeError('Subclass must set the mode and algorithm to ensure a unique hash.')
+            hash_text = self.hasher.get_hash(value, extra_salt.replace(' ', ''))
         ret_val = hash_text
         return ret_val        
 
@@ -153,6 +158,13 @@ class Crypter(BaseCrypter):
             else:
                 retval = False
         return retval
+    
+    def mask_encrypted(self, value, mask='<encrypted>'):
+        """ help format values for display by masking them if encrypted at the time of display"""
+        if self.is_encrypted(value):
+            return mask
+        else:
+            return value
     
       
         

@@ -5,9 +5,8 @@ register = template.Library()
 
 @register.filter(name='encrypted')
 def encrypted(value):
+    retval = value  
     crypter = Crypter()
-    if crypter.is_encrypted(value):
-        ret_val = '<encrypted>'
-    else:
-        ret_val = value    
-    return ret_val 
+    if isinstance(value, basestring):
+        retval = crypter.mask_encrypted(value)
+    return retval 
