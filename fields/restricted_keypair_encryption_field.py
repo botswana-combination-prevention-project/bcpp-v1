@@ -10,6 +10,7 @@ class RestrictedKeyPairEncryptionField(BaseEncryptedField):
     
     def __init__(self, *args, **kwargs):
         
+        self.algorithm = 'RSA'
         self.mode = 'restricted key-pair'
         # will force the Crypter class to use restricted key-pair encryption
         # so the model field attribute should not be specified        
@@ -46,12 +47,10 @@ class RestrictedKeyPairEncryptionField(BaseEncryptedField):
                 retval = settings.PRIVATE_KEY_RESTRICTED  
         return retval
      
-    def formfield(self, **kwargs):
-        # This is a fairly standard way to set up some defaults
-        # while letting the caller override them 
-        defaults = {'widget': forms.widgets.PasswordInput(render_value=True)}
-        defaults.update(kwargs)
-        return super(RestrictedKeyPairEncryptionField, self).formfield(**defaults)      
-    
-              
+    #    def formfield(self, **kwargs):
+    #        # This is a fairly standard way to set up some defaults
+    #        # while letting the caller override them 
+    #        defaults = {'widget': forms.widgets.TextInput(render_value=True)}
+    #        defaults.update(kwargs)
+    #        return super(RestrictedKeyPairEncryptionField, self).formfield(**defaults)                  
         

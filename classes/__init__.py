@@ -1,3 +1,4 @@
+from base_crypter import BaseCrypter
 from hasher import Hasher
 from crypter import Crypter
 from base_encrypted_field import BaseEncryptedField

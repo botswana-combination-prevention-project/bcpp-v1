@@ -1,9 +1,9 @@
 import re
-from local_keypair_encryption_field import LocalKeyPairEncryptionField
+from local_rsa_encryption_field import LocalRsaEncryptionField
 from django.forms import ValidationError
 
 
-class EncryptedFirstnameField(LocalKeyPairEncryptionField):
+class EncryptedFirstnameField(LocalRsaEncryptionField):
     
     def validate_with_cleaned_data(self, attname, cleaned_data):
 

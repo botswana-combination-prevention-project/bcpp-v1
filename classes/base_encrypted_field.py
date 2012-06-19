@@ -16,7 +16,7 @@ class BaseEncryptedField(models.Field):
     description = "Field to encrypt and decrypt values that are stored as encrypted"
     __metaclass__ = models.SubfieldBase
     # can only set encryption_method to these values at the model field 
-    valid_encryption_methods = ['restricted key-pair', 'local key-pair']
+    valid_encryption_methods = ['restricted key-pair', 'local RSA key-pair', 'local AES']
     
     def __init__(self, *args, **kwargs):  
         """
@@ -38,9 +38,14 @@ class BaseEncryptedField(models.Field):
         #get public and private keys for Crypter()
         self.crypter.set_public_key(self.get_public_keyfile())
         self.crypter.set_private_key(self.get_private_keyfile())
+        self.crypter.set_aes_key(self.get_aes_key())
         
         super(BaseEncryptedField, self).__init__(*args, **kwargs)
 
+    def get_aes_key(self, key=None):
+        """ Override to return the aes key """
+        return ''
+    
     def get_public_keyfile(self, keyfile=None):
         """ Override to return the key filename and path if not in the project root """
         raise ImproperlyConfigured("method should be overridden")
@@ -53,9 +58,15 @@ class BaseEncryptedField(models.Field):
         """ wrap the crypter method of same name """
         return self.crypter.is_encrypted(value)
     
-    def decrypt(self, value):
+    def decrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        return self.crypter.decrypt(value)
+        alg = kwargs.get('algorithm',self.algorithm)
+        return self.crypter.decrypt(value, alg)
+    
+    def encrypt(self, value, **kwargs):
+        """ wrap the crypter method of same name """
+        alg = kwargs.get('algorithm',self.algorithm)
+        return self.crypter.encrypt(value, alg)
     
     def validate_with_cleaned_data(self, attname, cleaned_data):
         """ May be overridden to test field data against other values in cleaned data. 
@@ -69,7 +80,8 @@ class BaseEncryptedField(models.Field):
     def to_python(self, value):
         """ Returns the decrypted value IF the private key is found, otherwise returns the encrypted value. """
         if isinstance(value, basestring):
-            retval = self.crypter.decrypt(value)
+            retval = self.decrypt(value)
+            self.readonly = retval==value
         else:
             retval = value
         return retval
@@ -77,7 +89,7 @@ class BaseEncryptedField(models.Field):
     def get_prep_value(self, value):
         """ Always returns the encrypted value. """
         if value:
-            value = self.crypter.encrypt(value)   
+            value = self.encrypt(value)   
         return super(BaseEncryptedField, self).get_prep_value(value)
 
     def get_db_prep_value(self, value, connection, prepared=False):

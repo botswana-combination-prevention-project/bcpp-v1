@@ -1,6 +1,5 @@
-import base64, os
-from datetime import datetime
-from M2Crypto import Rand, RSA, Cipher
+import base64
+from base_crypter import BaseCrypter
 from bhp_crypto.models import Crypt
 from hasher import Hasher
 
@@ -10,7 +9,7 @@ from hasher import Hasher
 # http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding
             
         
-class Crypter(object):
+class Crypter(BaseCrypter):
     
     """
     Uses M2Crypto.RSA public key encryption
@@ -27,10 +26,7 @@ class Crypter(object):
     # prefix for each segment of an encrypted value, also used to calculate field length for model.
     prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
     cipher_prefix = 'enc2:::'
-    KEY_LENGTH = 4096
-    ALGORITHM = None # ('RSA', 'AES')
-    ENC=1
-    DEC=0
+
     # hasher
     hasher = Hasher()
     
@@ -38,67 +34,20 @@ class Crypter(object):
         self.public_key = None
         self.private_key = None
         
-
-    def set_public_key(self, keyfile):
-        """ load public key """
-        if keyfile:
-            self.public_key = RSA.load_pub_key(keyfile)
-        
-    def set_private_key(self, keyfile):
-        """ load the private key """
-        if keyfile:
-            self.private_key = RSA.load_key(keyfile)
-
-    def set_key(self, key="123452345"):
-        """ load the key """
-        self.key = base64.b64encode(key)
-    
-    def build_cipher(self, key, iv=None, op=ENC):
-        """"""""
-        return Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
-    
-    def _blank_callback(self): 
-        "Replace the default dashes as output upon key generation" 
-        return
-    
-    def create_new_key_pair(self):
-        """ create a new key-pair in the default folder, filename includes the current timestamp """        
-        # have a suffix to the file names to prevent overwriting
-        name = str(datetime.today())
-        # Random seed 
-        Rand.rand_seed (os.urandom (self.KEY_LENGTH)) 
-        # Generate key pair 
-        key = RSA.gen_key (self.KEY_LENGTH, 65537, self._blank_callback) 
-        # Non encrypted key 
-        key.save_key('user-private.pem.%s' % name, None) 
-        # Use a pass phrase to encrypt key 
-        #key.save_key('user-private.pem') 
-        key.save_pub_key('user-public.pem.%s' % name)         
-    
-    def encrypt(self, value, update_lookup=False):
+    def encrypt(self, value, algorithm='RSA', update_lookup=False):
         """ return the encrypted field value (hash+cipher), do not override """
-        def aes_encrypt(value):            
-            cipher = self.build_cipher(self.key)
-            v = cipher.update(value)
-            v = v + cipher.final()
-            del cipher
-            return v
-        
-        def rsa_encrypt(value):
-            return self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
-        
         if not value:
             encrypted_value = value    
         else:    
             if not self.is_encrypted(value):
-                if self.ALGORITHM == 'AES':
-                    cipher_text = aes_encrypt(value)
-                elif self.ALGORITHM == 'RSA':
+                if algorithm == 'AES':
+                    cipher_text = self.aes_encrypt(value)
+                elif algorithm == 'RSA':
                     if len(value) >= self.KEY_LENGTH/24:
                         raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
-                    cipher_text = rsa_encrypt(value)
+                    cipher_text = self.rsa_encrypt(value)
                 else:
-                    raise ValueError('Cannot determine algorithm for encryption')
+                    raise ValueError('Cannot determine algorithm for encryptor')
                 hash_text = self.get_hash(value)
                 encoded_cipher_text = base64.b64encode(cipher_text)
                 encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
@@ -108,7 +57,31 @@ class Crypter(object):
             else:
                 encrypted_value = value    
         return encrypted_value        
-
+    
+    def decrypt(self, value, algorithm):
+        """ if private key is known, return an decrypted value, otherwise return the encrypted value """
+        if value:
+            if self.private_key:
+                if self.is_encrypted(value):
+                    hash_text = self.get_hash(value)
+                    cipher_text = self.get_cipher(value, hash_text)
+                    if cipher_text:
+                        if algorithm == 'AES':
+                            value = self.aes_decrypt(cipher_text)
+                        elif algorithm == 'RSA':
+                            value = self.rsa_decrypt(cipher_text)
+                        else:
+                            raise ValueError('Cannot determine algorithm for decryptor')
+                    else:
+                        raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
+            else:
+                # if there is no private key, we must always return an encrypted value, unless None!
+                if not self.is_encrypted(value):
+                    # for some reason, the value was not encrypted AND we do not
+                    # have a private key, so it should be 
+                    value = self.encrypt(value, algorithm)
+        return value
+    
     def update_cipher_lookup(self, encrypted_value):
         """ update a model to have a reference of hash_value / cipher_value pairs """
         if encrypted_value:
@@ -181,23 +154,5 @@ class Crypter(object):
                 retval = False
         return retval
     
-    def decrypt(self, value):
-        """ if private key is known, return an decrypted value, otherwise return the encrypted value """
-        if value:
-            if self.private_key:
-                if self.is_encrypted(value):
-                    hash_text = self.get_hash(value)
-                    cipher_text = self.get_cipher(value, hash_text)
-                    if cipher_text:
-                        value = self.private_key.private_decrypt(base64.b64decode(cipher_text),
-                                                                 RSA.pkcs1_oaep_padding).replace('\x00', '')
-                    else:
-                        raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
-            else:
-                # if there is no private key, we must always return an encrypted value, unless None!
-                if not self.is_encrypted(value):
-                    # for some reason, the value was not encrypted AND we do not
-                    # have a private key, so it should be 
-                    value = self.encrypt(value)
-        return value  
+      
         
