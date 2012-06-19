@@ -62,10 +62,11 @@ class BaseConsentModelAdmin(MyModelAdmin):
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj = None):
 
+        readonly_fields = super(BaseConsentModelAdmin, self).get_readonly_fields(request, obj)
+        
         consent_fk_name = [fk for fk in [f for f in self.model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.consent_model._meta.module_name][0].name        
 
         if obj: #In edit mode
-            return (consent_fk_name,) + self.readonly_fields
+            return (consent_fk_name,) + readonly_fields
         else:
-            return self.readonly_fields  
-
+            return readonly_fields

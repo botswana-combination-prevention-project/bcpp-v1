@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
-from bhp_crypto.fields import EncryptedLastnameField
+from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
@@ -41,7 +41,7 @@ class BaseConsent(BaseSubject):
         help_text = _("Does the subject agree to have samples stored after the study has ended")
         )
     
-    comment = models.CharField("Comment", 
+    comment = EncryptedTextField("Comment", 
         max_length = 250, 
         blank=True
         )        
@@ -58,7 +58,7 @@ class BaseConsent(BaseSubject):
                                                              self.study_site.site_code)
         # create or update RegisteredSubject
         subject.update_register(self, 'subject_identifier', 
-                                subject_identifier = subject.subject_identifier,
+                                subject_identifier = self.subject_identifier,
                                 registration_datetime = self.created,
                                 registration_status = 'consented',
                                 subject_consent_id = self.pk)

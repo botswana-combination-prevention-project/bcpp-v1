@@ -1,20 +1,31 @@
-from datetime import date
+from datetime import date, datetime
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future    
 from bhp_common.choices import YES_NO, YES_NO_DOESNT_WORK
-from bhp_base_model.fields import OtherCharField
 from bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
+from bhp_crypto.fields import EncryptedCharField, EncryptedTextField
 
 
 class BaseLocator(BaseUuidModel): 
 
+    report_datetime = models.DateTimeField("Today's date",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future,],
+        default = datetime.today(),    
+        )
+    
     date_signed = models.DateField( 
         verbose_name = "1. Date Locator Form signed ",
         default = date.today(),
         help_text="",
         ) 
-    mail_address = OtherCharField(
-        max_length=35,
+    mail_address = EncryptedTextField(
+        max_length = 350,
         verbose_name = "Mailing address ",
         help_text="",
         )
@@ -30,7 +41,7 @@ class BaseLocator(BaseUuidModel):
         choices = YES_NO,
         verbose_name = "Has the participant given her permission for study staff to make home visits for follow-up purposes before and during the study?",
         )
-    physical_address = models.TextField(
+    physical_address = EncryptedTextField(
         max_length = 350,
         verbose_name = "Physical address with detailed description",
         blank=True,
@@ -43,7 +54,7 @@ class BaseLocator(BaseUuidModel):
         verbose_name="3. Has the participant given her permission for study staff to call her for follow-up purposes before and during the study?", 
         )
 
-    subject_cell = models.IntegerField(
+    subject_cell = EncryptedCharField(
         max_length = 8,
         verbose_name = "Cell number",
         validators = [BWCellNumber,],
@@ -51,7 +62,7 @@ class BaseLocator(BaseUuidModel):
         null=True,
         help_text="",
         )
-    subject_cell_alt= models.IntegerField(
+    subject_cell_alt= EncryptedCharField(
         max_length = 8,
         verbose_name = "Cell number (alternate)",
         validators = [BWCellNumber,],
@@ -59,7 +70,7 @@ class BaseLocator(BaseUuidModel):
         blank=True,
         null=True,
         )
-    subject_phone = models.IntegerField(
+    subject_phone = EncryptedCharField(
         max_length = 8,
         verbose_name = "Telephone",  
         validators = [BWTelephoneNumber,],    
@@ -68,7 +79,7 @@ class BaseLocator(BaseUuidModel):
         null=True,
         )  
         
-    subject_phone_alt = models.IntegerField(
+    subject_phone_alt = EncryptedCharField(
         max_length=8,
         verbose_name = "Telephone (alternate)",               
         help_text="",
@@ -83,14 +94,14 @@ class BaseLocator(BaseUuidModel):
         verbose_name = "Has the participant given her permission for study staff to contact her at work for follow up purposes before and during the study?", 
         help_text=" if 'No' go to section B, otherwise continue"
     )
-    subject_work_place = models.TextField(
+    subject_work_place = EncryptedTextField(
         max_length=35,
         verbose_name = "Name and location of work place",
         help_text="",
         blank=True,
         null=True,        
         )
-    subject_work_phone = models.IntegerField(
+    subject_work_phone = EncryptedCharField(
         max_length=8,
         verbose_name = "Work telephone number ",               
         help_text="",
@@ -104,25 +115,28 @@ class BaseLocator(BaseUuidModel):
         verbose_name = "Has the participant given her permission for study staff to contact anyone else for follow-up purposes before and during the study?", 
         help_text = "For example a partner, spouse, family member, neighbour ...",
         )
-    contact_name = OtherCharField(
+    contact_name = EncryptedCharField(
         max_length=35,
         verbose_name = "Full names of the contact person",
+        blank=True,
+        null=True,
         help_text="",
         )
-    contact_rel = OtherCharField(
+    contact_rel = EncryptedCharField(
         max_length=35,
         verbose_name = "Relationship to participant",
+        blank=True,
+        null=True,
         help_text="",
-        
         )
-    contact_physical_address = models.TextField(
+    contact_physical_address = EncryptedTextField(
         max_length=350,
         verbose_name = "Full physical address ",
         blank=True,
         null=True,
         help_text="",
         )
-    contact_cell = models.IntegerField(
+    contact_cell = EncryptedCharField(
         max_length=8,
         verbose_name = "Cell number",
         validators = [BWCellNumber,],
@@ -130,7 +144,7 @@ class BaseLocator(BaseUuidModel):
         blank=True,
         null=True,
         )
-    contact_phone = models.IntegerField(
+    contact_phone = EncryptedCharField(
         max_length=8,
         verbose_name = "Telephone number",
         validators = [BWTelephoneNumber,],
