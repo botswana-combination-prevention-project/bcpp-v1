@@ -1,6 +1,6 @@
 import base64, os
 from datetime import datetime
-from M2Crypto import Rand, RSA
+from M2Crypto import Rand, RSA, Cipher
 from bhp_crypto.models import Crypt
 from hasher import Hasher
 
@@ -10,7 +10,7 @@ from hasher import Hasher
 # http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding
             
         
-class AsymetricCrypter(object):
+class Crypter(object):
     
     """
     Uses M2Crypto.RSA public key encryption
@@ -28,6 +28,9 @@ class AsymetricCrypter(object):
     prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
     cipher_prefix = 'enc2:::'
     KEY_LENGTH = 4096
+    ALGORITHM = None # ('RSA', 'AES')
+    ENC=1
+    DEC=0
     # hasher
     hasher = Hasher()
     
@@ -46,6 +49,14 @@ class AsymetricCrypter(object):
         if keyfile:
             self.private_key = RSA.load_key(keyfile)
 
+    def set_key(self, key="123452345"):
+        """ load the key """
+        self.key = base64.b64encode(key)
+    
+    def build_cipher(self, key, iv=None, op=ENC):
+        """"""""
+        return Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
+    
     def _blank_callback(self): 
         "Replace the default dashes as output upon key generation" 
         return
@@ -66,13 +77,28 @@ class AsymetricCrypter(object):
     
     def encrypt(self, value, update_lookup=False):
         """ return the encrypted field value (hash+cipher), do not override """
+        def aes_encrypt(value):            
+            cipher = self.build_cipher(self.key)
+            v = cipher.update(value)
+            v = v + cipher.final()
+            del cipher
+            return v
+        
+        def rsa_encrypt(value):
+            return self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
+        
         if not value:
             encrypted_value = value    
         else:    
             if not self.is_encrypted(value):
-                if len(value) >= self.KEY_LENGTH/24:
-                    raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
-                cipher_text = self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
+                if self.ALGORITHM == 'AES':
+                    cipher_text = aes_encrypt(value)
+                elif self.ALGORITHM == 'RSA':
+                    if len(value) >= self.KEY_LENGTH/24:
+                        raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
+                    cipher_text = rsa_encrypt(value)
+                else:
+                    raise ValueError('Cannot determine algorithm for encryption')
                 hash_text = self.get_hash(value)
                 encoded_cipher_text = base64.b64encode(cipher_text)
                 encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text

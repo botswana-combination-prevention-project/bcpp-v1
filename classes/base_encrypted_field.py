@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
-from crypter import AsymetricCrypter as Crypter
+from crypter import Crypter
 
 
 class BaseEncryptedField(models.Field):
