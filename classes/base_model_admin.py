@@ -3,8 +3,8 @@ from django.contrib import admin
 from django import forms
 from django.core.urlresolvers import reverse
 from bhp_sync.actions import serialize
-from bhp_crypto.fields import EncryptedIdentityField, EncryptedFirstnameField, EncryptedLastnameField
 from bhp_crypto.actions import encrypt, decrypt
+from bhp_crypto.classes import BaseEncryptedField
 
 
 class BaseModelAdmin (admin.ModelAdmin):
@@ -61,7 +61,6 @@ class BaseModelAdmin (admin.ModelAdmin):
     def change_view(self, request, object_id, extra_context=None):
 
             result = super(BaseModelAdmin, self).change_view(request, object_id, extra_context)
-
             #Catch named url from request.GET.get('next') and reverse resolve along with other 
             # GET parameters
             if request.GET.get('next'):
@@ -73,3 +72,11 @@ class BaseModelAdmin (admin.ModelAdmin):
 
             return result
 
+    def get_readonly_fields(self, request, obj = None):
+        # make crypter fields readonly if no private key and in edit mode
+        if obj: #In edit mode
+            for field in obj._meta.fields:
+                if isinstance(field, BaseEncryptedField):
+                    if not field.crypter.private_key:
+                        self.readonly_fields = (field.attname,) + self.readonly_fields 
+        return self.readonly_fields
