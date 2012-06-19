@@ -5,6 +5,7 @@ from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
 from bhp_base_model.fields import IdentityTypeField
 from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
+from bhp_crypto.classes import Crypter
 from bhp_crypto.fields import EncryptedIdentityField
 from bhp_subject.classes import BaseSubject
 
@@ -89,10 +90,16 @@ class RegisteredSubject(BaseSubject):
         return super(RegisteredSubject, self).is_serialized(True)
             
     def __unicode__ (self):
+        crypter = Crypter()
         if self.sid:
-            return "%s %s (%s %s)" % (self.subject_identifier, self.subject_type, self.first_name, self.sid)
+            return "{0} {1} ({2} {3})".format(self.subject_identifier, 
+                                              self.subject_type, 
+                                              crypter.mask_encrypted(self.first_name), 
+                                              self.sid)
         else:
-            return "%s %s (%s)" % (self.subject_identifier, self.subject_type, self.first_name)                    
+            return "{0} {1} ({2})".format(self.subject_identifier, 
+                                          self.subject_type, 
+                                          crypter.mask_encrypted(self.first_name))                    
 
     class Meta:
         app_label = 'bhp_registration' 
