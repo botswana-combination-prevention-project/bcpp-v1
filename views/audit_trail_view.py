@@ -2,7 +2,7 @@ from django.db.models import get_model
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_common.models import MyBasicModel
+from bhp_base_model.classes import BaseModel
 from bhp_model_selector.classes import ModelSelector
 from audit_trail.models import AuditComment
 from audit_trail.forms import AuditTrailForm
@@ -68,8 +68,8 @@ def audit_trail_view(request, **kwargs):
                 # for the template, prepare separate ordered lists of field labels and field names
                 field_labels = ['audit_id','type', 'time', 'user'] + [
                                 fld.name for fld in history[0]._meta.fields if fld.column[-3:]=='_id' and fld.name<>'_audit_id'] + [
-                                fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
-                                fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']
+                                fld.name for fld in history[0]._meta.fields if fld not in BaseModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
+                                fld.name for fld in BaseModel._meta.fields if fld.name <> 'user_modified']
 
                 # for now, manually remove rando field rx, develop a better mechanism later...
                 try:
@@ -81,8 +81,8 @@ def audit_trail_view(request, **kwargs):
                 
                 field_names = ['_audit_id','_audit_change_type', '_audit_timestamp', 'user_modified'] + [
                                 fld.name for fld in history[0]._meta.fields if fld.column[-3:]=='_id' and fld.name<>'_audit_id'] + [
-                                fld.name for fld in history[0]._meta.fields if fld not in MyBasicModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
-                                fld.name for fld in MyBasicModel._meta.fields if fld.name <> 'user_modified']
+                                fld.name for fld in history[0]._meta.fields if fld not in BaseModel._meta.fields and fld.name <> 'id' and fld.column[0]<>'_' and fld.column[-3:]<>'_id'] + [
+                                fld.name for fld in BaseModel._meta.fields if fld.name <> 'user_modified']
                 try:
                     field_names.remove('rx')                                
                 except:
