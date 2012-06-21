@@ -20,10 +20,8 @@ class MyModel(models.Model):
 
 """
 
-
 from django.db import connection
 from django.conf import settings
-
 
 def create_index(model):
     meta = getattr(model, '_meta', None)
@@ -49,7 +47,6 @@ def create_index(model):
     if successes:
         print '%d indices created' % successes
     return successes
-
 
 def create_index_mysql(name, table, columns):
     cursor = connection.cursor()    
