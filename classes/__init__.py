@@ -1,3 +1,5 @@
+from base import Base
+from salter import Salter
 from base_crypter import BaseCrypter
 from hasher import Hasher
 from crypter import Crypter

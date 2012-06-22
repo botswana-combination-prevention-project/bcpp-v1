@@ -1,9 +1,10 @@
 import os, base64
 from datetime import datetime
 from M2Crypto import Rand, RSA, EVP
+from base import Base
 
 
-class BaseCrypter(object):
+class BaseCrypter(Base):
     
     KEY_LENGTH = 2048
     ENC=1
@@ -55,12 +56,16 @@ class BaseCrypter(object):
         #key.save_key('user-private.pem') 
         key.save_pub_key('user-public.pem.%s' % name)         
     
-    def create_aes_key(self, key, public_keyfile):
+    def create_aes_key(self, public_keyfile, key=None):
         """ create and encrypt a new AES key. Use the "local" public key.
         * For now this can be called in the shell. 
         * Filename includes the current timestamp to avoid overwriting as existing key """        
+        if not key:
+            key = self.get_random_string()
+        if not public_keyfile:
+            raise TypeError('Please specify the local public key filename. Got None')
         self.set_public_key(public_keyfile)
-        name = 'user-aes-local.pem.{0}'.format(str(datetime.today()))
+        name = 'user-aes-local.pem.{1}'.format(public_keyfile,str(datetime.today()))
         encrypted_key = self.public_key.public_encrypt(key, RSA.pkcs1_oaep_padding)   
         f = open(name, 'w') 
         f.write(base64.b64encode(encrypted_key))
