@@ -2,7 +2,7 @@ import inspect
 from datetime import datetime, timedelta
 from django.db import models
 from django.db.models import get_model, Max
-from bhp_appointment.classes import VisitModelHelper
+from bhp_visit_tracking.classes import VisitModelHelper
 from bhp_visit.models import VisitDefinition, ScheduleGroup
 from bhp_appointment.models.holiday import Holiday
 from bhp_appointment.models.configuration import Configuration
