@@ -1,4 +1,3 @@
 from appt_date_helper import ApptDateHelper
 from base_appointment_model_admin import BaseAppointmentModelAdmin
-from visit_model_helper import VisitModelHelper
-from base_visit_model_admin import BaseVisitModelAdmin
+
