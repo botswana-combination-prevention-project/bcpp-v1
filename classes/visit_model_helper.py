@@ -1,4 +1,7 @@
 from django.db.models import ForeignKey
+from django.db.models import get_app, get_models
+from bhp_appointment.models import BaseAppointmentTracking
+
 
 class VisitModelHelper(object):
     
@@ -33,5 +36,12 @@ class VisitModelHelper(object):
         self.visit_model = kwargs.get('visit_model')
         visit_fk = [fk for fk in [f for f in self.model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]
         return visit_fk[0].name
+    
+    def get_visit_model(self, instance):
+        """ given the instance of a model, return the visit model of its app """
+        for model in get_models(get_app(instance._meta.app_label)):
+            if isinstance(model(), BaseAppointmentTracking):
+                return model
+        raise TypeError('Unable to determine the visit model from instance {0} for app {1}'.format(instance._meta.model_name, instance._meta.app_label))
 
 

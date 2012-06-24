@@ -2,9 +2,11 @@ import inspect
 from datetime import datetime, timedelta
 from django.db import models
 from django.db.models import get_model, Max
+from bhp_appointment.classes import VisitModelHelper
 from bhp_visit.models import VisitDefinition, ScheduleGroup
 from bhp_appointment.models.holiday import Holiday
 from bhp_appointment.models.configuration import Configuration
+
 
 class AppointmentManager(models.Manager):
 
@@ -110,39 +112,23 @@ class AppointmentManager(models.Manager):
                         timepoint_datetime = appt_datetime,
                         dashboard_type = dashboard_type,
                         )
-
-        #return visits
-
-    def delete_appointments_for_model(self, **kwargs):        
         
-        """ delete created appointments for this registered_subject for this model_name if visit report not yet submitted """
-        
-        registered_subject = kwargs.get("registered_subject")
-        if not registered_subject:
-            raise TypeError('AppointmentManager.delete_appointments requires registered_subject. Got None')
-        model_name = kwargs.get("model_name")
-        if not model_name:
-            raise TypeError('AppointmentManager.delete_appointments requires a model_name. Got None')
-        visit_model_name = kwargs.get("visit_model_name")
-        if not model_name:
-            raise TypeError('AppointmentManager.delete_appointments requires a visit_model_name. Got None')
-        visit_model_app_label = kwargs.get("visit_model_app_label")
-        if not model_name:
-            raise TypeError('AppointmentManager.delete_appointments requires a visit_model_app_label. Got None')
-
-        visit_definitions = self.list_visit_definitions_for_model(registered_subject=registered_subject, model_name=model_name)            
-        
+    def delete_appointments_for_instance(self, model_instance):        
+    
+        """ Delete appointments for this registered_subject for this model_instance but only if visit report not yet submitted """
+    
+        visit_definitions = self.list_visit_definitions_for_model(registered_subject=model_instance.registered_subject, model_name=model_instance._meta.model_name)                    
         # only delete appointments without a visit model 
-        visit_model = get_model( visit_model_app_label, visit_model_name)
-        appointments = super(AppointmentManager, self).filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)    
+        appointments = super(AppointmentManager, self).objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)    
         count = 0
+        visit_model_helper = VisitModelHelper()
+        visit_model = visit_model_helper.get_visit_model(model_instance)
         for appointment in appointments:
             if not visit_model.objects.filter(appointment=appointment):
                 appointment.delete()   
                 count += 1
-        
         return count
-
+    
     def create_next_appointment_instance(self, **kwargs):
 
         """ create the next instance of an appointment given the base appointment instance (.0) and the next appt_datetime """

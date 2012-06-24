@@ -5,6 +5,7 @@ from bhp_entry.models import ScheduledEntryBucket
 from bhp_export_data.actions import export_as_csv_action
 from bhp_appointment.classes import VisitModelHelper
 
+
 class BaseVisitModelAdmin(MyModelAdmin):
 
     """ModelAdmin subclass for models with a ForeignKey to your visit model(s)

@@ -5,7 +5,7 @@ except ImportError:
     from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
 from bhp_base_model.fields import OtherCharField
-from bhp_appointment.managers import VisitManager
+from bhp_appointment.managers import AppointmentTrackingManager
 from appointment import Appointment
 
 
@@ -110,12 +110,11 @@ class BaseAppointmentTracking (BaseUuidModel):
         )            
     """
 
-    objects = VisitManager()
+    objects = AppointmentTrackingManager()
 
     def natural_key_as_dict(self):
         return {'appointment':self.appointment, }
-    
-    
+        
     def save(self, *args, **kwargs):
         
         # TODO: BaseAppointmentTracking.save() is the correct place to recalculate ScheduledEntryBucket?? no
