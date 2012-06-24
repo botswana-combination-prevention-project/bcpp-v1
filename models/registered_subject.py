@@ -6,7 +6,7 @@ from bhp_base_model.fields import IdentityTypeField
 from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_crypto.classes import Crypter
-from bhp_crypto.fields import EncryptedIdentityField
+from bhp_crypto.fields import EncryptedIdentityField, SaltField
 from bhp_subject.classes import BaseSubject
 
 
@@ -82,10 +82,14 @@ class RegisteredSubject(BaseSubject):
         blank = True,
         )
     
+    salt = SaltField(
+        unique = True,
+        )                        
+    
     objects = RegisteredSubjectManager()
     
     history = AuditTrail()            
-
+                                         
     def is_serialized(self):
         return super(RegisteredSubject, self).is_serialized(True)
             
