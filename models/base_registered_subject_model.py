@@ -2,8 +2,6 @@ from django.db import models
 from django.db.models import get_app, get_models
 from bhp_appointment.models import Appointment
 from bhp_entry.models import AdditionalEntryBucket
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
 from registered_subject import RegisteredSubject
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
@@ -58,10 +56,6 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
         abstract=True
 
 
-@receiver(post_delete, weak=False, dispatch_uid='delete_unused_appointments')
-def delete_unused_appointments(sender, instance, **kwargs):
-    """ delete unused appointments if this instance on delete """
-    if isinstance(instance, BaseRegisteredSubjectModel):
-        Appointment.objects.delete_appointments_for_instance(instance)
+
 
 
