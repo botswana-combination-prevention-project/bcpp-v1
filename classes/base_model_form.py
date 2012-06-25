@@ -1,4 +1,5 @@
 from django import forms
+from bhp_crypto.classes import BaseEncryptedField
 from logic_check import LogicCheck
 
 
@@ -18,6 +19,11 @@ class BaseModelForm(forms.ModelForm):
     
         cleaned_data = self.cleaned_data 
 
+        # encrypted fields may have their own validation code to run. See the custom field objects in bhp_crypto.
+        for field in self._meta.model._meta.fields:
+            if isinstance(field, BaseEncryptedField):
+                field.validate_with_cleaned_data(field.attname, cleaned_data)
+        
         other =[]
         [other.append(k) for k in cleaned_data.iterkeys() if cleaned_data[k] == 'OTHER']
         
