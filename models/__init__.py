@@ -1,5 +1,4 @@
-from base_appointment import BaseAppointment
-#from base_appointment_tracking import BaseAppointmentTracking
 from configuration import Configuration
 from holiday import Holiday
+from base_appointment import BaseAppointment
 from appointment import Appointment

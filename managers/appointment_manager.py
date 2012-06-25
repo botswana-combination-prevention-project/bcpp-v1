@@ -2,10 +2,7 @@ import inspect
 from datetime import datetime, timedelta
 from django.db import models
 from django.db.models import get_model, Max
-from bhp_visit_tracking.classes import VisitModelHelper
 from bhp_visit.models import VisitDefinition, ScheduleGroup
-from bhp_appointment.models.holiday import Holiday
-from bhp_appointment.models.configuration import Configuration
 
 
 class AppointmentManager(models.Manager):
@@ -117,12 +114,11 @@ class AppointmentManager(models.Manager):
     
         """ Delete appointments for this registered_subject for this model_instance but only if visit report not yet submitted """
     
-        visit_definitions = self.list_visit_definitions_for_model(registered_subject=model_instance.registered_subject, model_name=model_instance._meta.model_name)                    
+        visit_definitions = self.list_visit_definitions_for_model(registered_subject=model_instance.registered_subject, model_name=model_instance._meta.object_name.lower())                    
         # only delete appointments without a visit model 
-        appointments = super(AppointmentManager, self).objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)    
+        appointments = super(AppointmentManager, self).filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)    
         count = 0
-        visit_model_helper = VisitModelHelper()
-        visit_model = visit_model_helper.get_visit_model(model_instance)
+        visit_model = model_instance.get_visit_model(model_instance)
         for appointment in appointments:
             if not visit_model.objects.filter(appointment=appointment):
                 appointment.delete()   
@@ -221,12 +217,9 @@ class AppointmentManager(models.Manager):
     def check_if_allowed_isoweekday(self,appt_datetime):
 
         """ check if weekday is allowed, otherwise adjust forward or backward """
-
-        configuration = Configuration.objects.get_configuration()
-
         # check if is allowable isoweekday based on integer value in 
         # study_specific.allowed_iso_weekdays (e.g. 12345)
-        allowed_iso_weekdays = [int(num) for num in str(configuration.allowed_iso_weekdays)]            
+        allowed_iso_weekdays = [int(num) for num in str(self.get_appointment_configuration().allowed_iso_weekdays)]            
         forward = appt_datetime
         while forward.isoweekday() not in allowed_iso_weekdays:
             forward = forward + timedelta(days=+1)                                
@@ -246,6 +239,7 @@ class AppointmentManager(models.Manager):
     def check_if_holiday(self, appt_datetime):
 
         """ check if appt_datetime lands on a holiday, if so, move forward """
+        Holiday = get_model('bhp_appointment', 'holiday')
 
         while appt_datetime.date() in [holiday.holiday_date for holiday in Holiday.objects.all()]:
             appt_datetime = appt_datetime + timedelta(days=+1)
@@ -275,6 +269,10 @@ class AppointmentManager(models.Manager):
 
         return appt_datetime
     
+    def get_appointment_configuration(self):
+        Configuration = get_model('bhp_appointment', 'configuration')
+        return Configuration.objects.get_configuration()
+
         
     def best_appointment_datetime(self, **kwargs):
 
@@ -285,9 +283,9 @@ class AppointmentManager(models.Manager):
             # note, this datetime comes from the membership_form model method get_registration_datetime
             raise TypeError, '%s method %s expects kwarg \'appt_datetime\' to be an instance of datetime, got %s' % (self, inspect.stack()[0][3], appt_datetime.__class__,)
         weekday = kwargs.get('weekday')
-        configuration = Configuration.objects.get_configuration()
+
         
-        if weekday and configuration.use_same_weekday:
+        if weekday and self.get_appointment_configuration().use_same_weekday:
             appt_datetime = self.move_to_same_weekday(appt_datetime, weekday)           
         appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
 
