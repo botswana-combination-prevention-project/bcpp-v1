@@ -109,5 +109,5 @@ class RegisteredSubject(BaseSubject):
         app_label = 'bhp_registration' 
         verbose_name = 'Registered Subject'  
         ordering = ['subject_identifier',]   
-        unique_together = (('first_name', 'dob', 'initials'),)      
+        #unique_together = (('first_name', 'dob', 'initials'),)      
 
