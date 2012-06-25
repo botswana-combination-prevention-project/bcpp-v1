@@ -1,12 +1,12 @@
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import ForeignKey
-from bhp_common.models import MyModelAdmin
+from bhp_base_model.classes import BaseModelAdmin
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 
 
-class BaseConsentModelAdmin(MyModelAdmin):
+class BaseConsentModelAdmin(BaseModelAdmin):
 
     def save_model(self, request, obj, form, change):
         

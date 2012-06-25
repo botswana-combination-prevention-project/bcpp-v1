@@ -1,13 +1,14 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin
+from bhp_base_model.classes import BaseModelAdmin
 #from bhp_registration.utils import AllocateIdentifier
 #from models import BaseLocator
 
-class SubjectConsentAdminBase(MyModelAdmin):
 
+class BaseSubjectConsentAdmin(BaseModelAdmin):    
+    
     def __init__(self, *args, **kwargs):
 
-        super(SubjectConsentAdminBase, self).__init__(*args, **kwargs)
+        super(BaseSubjectConsentAdmin, self).__init__(*args, **kwargs)
                 
         self.search_fields = ['id', 'subject_identifier','first_name', 'last_name', 'identity',] 
         
@@ -42,7 +43,7 @@ class SubjectConsentAdminBase(MyModelAdmin):
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj = None):
         
-        super(MyModelAdmin, self).get_readonly_fields(request, obj)
+        super(BaseSubjectConsentAdmin, self).get_readonly_fields(request, obj)
         
         if obj: #In edit mode
             return (
@@ -79,10 +80,12 @@ class SubjectConsentAdminBase(MyModelAdmin):
         "may_store_samples":admin.VERTICAL,
         }
         
-#admin.site.register(SubjectConsent, SubjectConsentAdmin)
+
+class SubjectConsentAdminBase(BaseSubjectConsentAdmin):
+    pass
 
 
-class BaseLocatorFormAdmin(MyModelAdmin):
+class BaseLocatorFormAdmin(BaseModelAdmin):
     
     fields = (
         'subject_consent',
