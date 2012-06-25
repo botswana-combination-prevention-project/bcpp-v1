@@ -106,5 +106,8 @@ class BaseCrypter(Base):
         v = v + cipher.final()
         del cipher
         return v
-   
+
+    def make_encrypted_salt(self, keyfile, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}'):
+        self.set_private_key(keyfile)
+        return self.rsa_encrypt(self.make_random_salt()) 
     

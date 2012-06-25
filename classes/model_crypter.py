@@ -7,13 +7,16 @@ class ModelCrypter(Crypter):
         """ returns a modified instance (not saved), encrypt all un-encrypted field objects in a given model instance """
         for field in instance._meta.fields:
             if isinstance(field, BaseEncryptedField):
-                setattr(instance, field.attname, self.encrypt(getattr(instance, field.attname)))
+                try:
+                    setattr(instance, field.attname, self.encrypt(getattr(instance, field.attname)))
+                except:
+                    pass
         return instance        
     
     def encrypt_model(self, model):
         """ encrypt field objects that are an instance of BaseEncryptedField in a given model """
         for instance in model.objects.all():
-            instance  = self.encrypt_instance(self, instance, BaseEncryptedField)
+            instance  = self.encrypt_instance(instance)
             instance.save()
                 
     def decrypt_instance(self, instance, encrypted_field_object=BaseEncryptedField):
