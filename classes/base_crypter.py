@@ -78,7 +78,7 @@ class BaseCrypter(Base):
 
     def rsa_decrypt(self, cipher_text):
         cipher_text = cipher_text
-       #print cipher_text
+        #print cipher_text
         #print base64.b64decode(cipher_text)
         return self.private_key.private_decrypt(cipher_text,
                                                     RSA.pkcs1_oaep_padding).replace('\x00', '')
@@ -107,7 +107,5 @@ class BaseCrypter(Base):
         del cipher
         return v
 
-    def make_encrypted_salt(self, keyfile, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}'):
-        self.set_private_key(keyfile)
-        return self.rsa_encrypt(self.make_random_salt()) 
+
     

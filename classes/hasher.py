@@ -1,4 +1,5 @@
 import hashlib, base64
+from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from base_crypter import BaseCrypter
@@ -17,9 +18,19 @@ class Hasher(BaseCrypter):
     def new_hasher(self, value=''):
         return hashlib.sha256(value)
             
-    def create_new_salt(self, value):
-        return base64.b64encode(self.rsa_encrypt(value))
+    #def create_new_salt(self, value):
+    #    return base64.b64encode(self.rsa_encrypt(value))
          
+    def create_new_salt(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}'):
+        if not self.public_key:
+            raise TypeError('Need a public key to encrypt the salt')
+        salt = self.rsa_encrypt(self.make_random_salt())
+        name = 'salt.{0}'.format(str(datetime.today()))
+        f = open(name, 'w') 
+        f.write(base64.b64encode(salt))
+        f.close()
+        return base64.b64encode(salt)
+    
     def get_salt(self):
         if self.private_key:
             return self.rsa_decrypt(self.encrypted_salt)
