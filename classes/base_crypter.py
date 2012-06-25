@@ -32,9 +32,10 @@ class BaseCrypter(Base):
         if keyfile:
             f = open(keyfile, 'r')
             encrypted_key = f.read()
+            
             f.close()
             if self.private_key:
-                self.aes_key = self.rsa_decrypt(encrypted_key)
+                self.aes_key = self.rsa_decrypt(base64.b64decode(encrypted_key))
     
     def _blank_callback(self): 
         "Replace the default dashes as output upon key generation" 
@@ -77,7 +78,9 @@ class BaseCrypter(Base):
 
     def rsa_decrypt(self, cipher_text):
         cipher_text = cipher_text
-        return self.private_key.private_decrypt(base64.b64decode(cipher_text),
+       #print cipher_text
+        #print base64.b64decode(cipher_text)
+        return self.private_key.private_decrypt(cipher_text,
                                                     RSA.pkcs1_oaep_padding).replace('\x00', '')
 
     def _build_cipher(self, key, iv=None, op=ENC):
