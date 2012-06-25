@@ -23,8 +23,11 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
         verbose_name="Comments:",
         blank=True,
         null=True,   
-        ) 
-      
+        )
+
+    def __unicode__(self):
+        return self.registered_subject
+    
     class Meta:
         app_label = 'bhp_off_study'
         abstract = True
