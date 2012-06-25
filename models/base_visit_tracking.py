@@ -14,7 +14,8 @@ class BaseVisitTracking (BaseUuidModel):
     """Base model for Appt/Visit Tracking (AF002).
 
     For entry, requires an appointment be created first, so there
-    is no direct reference to 'registered subject' in this model.
+    is no direct reference to 'registered subject' in this model except
+    thru appointment.
     
     List of appointments in admin.py should be limited to scheduled
     appointments for the current registered subject. 
