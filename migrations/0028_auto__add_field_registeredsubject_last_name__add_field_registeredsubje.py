@@ -9,13 +9,13 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Adding field 'RegisteredSubject.last_name'
-        db.add_column('bhp_registration_registeredsubject', 'last_name', self.gf('django.db.models.fields.TextField')(default='', max_length=78), keep_default=False)
+        db.add_column('bhp_registration_registeredsubject', 'last_name', self.gf('django.db.models.fields.CharField')(default='', max_length=78), keep_default=False)
 
         # Adding field 'RegisteredSubject.identity_type'
         db.add_column('bhp_registration_registeredsubject', 'identity_type', self.gf('django.db.models.fields.CharField')(default='', max_length=15), keep_default=False)
 
         # Adding field 'RegisteredSubjectAudit.last_name'
-        db.add_column('bhp_registration_registeredsubject_audit', 'last_name', self.gf('django.db.models.fields.TextField')(default='', max_length=78), keep_default=False)
+        db.add_column('bhp_registration_registeredsubject_audit', 'last_name', self.gf('django.db.models.fields.CharField')(default='', max_length=78), keep_default=False)
 
         # Adding field 'RegisteredSubjectAudit.identity_type'
         db.add_column('bhp_registration_registeredsubject_audit', 'identity_type', self.gf('django.db.models.fields.CharField')(default='', max_length=15), keep_default=False)

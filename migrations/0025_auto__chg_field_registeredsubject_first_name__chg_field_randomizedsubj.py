@@ -8,26 +8,28 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Changing field 'RegisteredSubject.first_name'
-        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
-
-        # Changing field 'RandomizedSubject.first_name'
-        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
-
-        # Changing field 'RegisteredSubjectAudit.first_name'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
+        pass
+        #        # Changing field 'RegisteredSubject.first_name'
+        #        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
+        #
+        #        # Changing field 'RandomizedSubject.first_name'
+        #        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
+        #
+        #        # Changing field 'RegisteredSubjectAudit.first_name'
+        #        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
 
 
     def backwards(self, orm):
         
-        # Changing field 'RegisteredSubject.first_name'
-        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=50))
-
-        # Changing field 'RandomizedSubject.first_name'
-        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=50))
-
-        # Changing field 'RegisteredSubjectAudit.first_name'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=50))
+        pass
+        #        # Changing field 'RegisteredSubject.first_name'
+        #        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=50))
+        #
+        #        # Changing field 'RandomizedSubject.first_name'
+        #        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=50))
+        #
+        #        # Changing field 'RegisteredSubjectAudit.first_name'
+        #        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=50))
 
 
     models = {

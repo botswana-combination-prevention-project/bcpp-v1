@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Changing field 'RegisteredSubject.identity'
-        db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.TextField')(max_length=512, unique=True, null=True))
+        #db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.TextField')(max_length=512, unique=True, null=True))
 
         # Adding unique constraint on 'RegisteredSubject', fields ['identity']
         db.create_unique('bhp_registration_registeredsubject', ['identity'])
@@ -24,7 +24,7 @@ class Migration(SchemaMigration):
         db.add_column('bhp_registration_randomizedsubject', 'is_dob_estimated', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True), keep_default=False)
 
         # Changing field 'RegisteredSubjectAudit.identity'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.TextField')(max_length=512, null=True))
+        #db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.TextField')(max_length=512, null=True))
 
 
     def backwards(self, orm):
@@ -36,7 +36,7 @@ class Migration(SchemaMigration):
         db.delete_unique('bhp_registration_registeredsubject', ['identity'])
 
         # Changing field 'RegisteredSubject.identity'
-        db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.CharField')(max_length=512, null=True))
+        #db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.CharField')(max_length=512, null=True))
 
         # Deleting field 'RandomizedSubject.dob'
         db.delete_column('bhp_registration_randomizedsubject', 'dob')
@@ -45,7 +45,7 @@ class Migration(SchemaMigration):
         db.delete_column('bhp_registration_randomizedsubject', 'is_dob_estimated')
 
         # Changing field 'RegisteredSubjectAudit.identity'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.CharField')(max_length=512, null=True))
+        #db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.CharField')(max_length=512, null=True))
 
 
     models = {

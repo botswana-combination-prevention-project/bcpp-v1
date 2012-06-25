@@ -26,20 +26,22 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         
-        # Changing field 'RegisteredSubject.first_name'
-        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
+        raise RuntimeError("Cannot reverse this migration.")
 
-        # Changing field 'RegisteredSubject.identity'
-        db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.TextField')(unique=True, max_length=512, null=True))
-
-        # Changing field 'RandomizedSubject.first_name'
-        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
-
-        # Changing field 'RegisteredSubjectAudit.first_name'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
-
-        # Changing field 'RegisteredSubjectAudit.identity'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.TextField')(max_length=512, null=True))
+        #        # Changing field 'RegisteredSubject.first_name'
+        #        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
+        #
+        #        # Changing field 'RegisteredSubject.identity'
+        #        db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.TextField')(unique=True, max_length=512, null=True))
+        #
+        #        # Changing field 'RandomizedSubject.first_name'
+        #        db.alter_column('bhp_registration_randomizedsubject', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
+        #
+        #        # Changing field 'RegisteredSubjectAudit.first_name'
+        #        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.TextField')(max_length=512))
+        #
+        #        # Changing field 'RegisteredSubjectAudit.identity'
+        #        db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.TextField')(max_length=512, null=True))
 
 
     models = {
