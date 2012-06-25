@@ -2,10 +2,10 @@
 from django.utils.translation import ugettext_lazy as _
 from bhp_base_model.fields import IdentityTypeField
 from bhp_botswana.fields import EncryptedOmangField
-from bhp_consent.classes import BaseConsent
+from bhp_consent.classes import BaseConsent as BaseBaseConsent
 
 
-class BaseConsent(BaseConsent):
+class BaseConsent(BaseBaseConsent):
     
     """ because of the identity field, this is a Botswana model """
 
