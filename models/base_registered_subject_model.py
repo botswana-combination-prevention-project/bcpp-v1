@@ -1,12 +1,16 @@
 from django.db import models
+from django.db.models import get_app, get_models
 from bhp_appointment.models import Appointment
 from bhp_entry.models import AdditionalEntryBucket
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from registered_subject import RegisteredSubject
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
 except ImportError:
     from bhp_base_model.classes import BaseUuidModel
-
+from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
+ 
         
 class BaseRegisteredSubjectModel (BaseUuidModel):
 
@@ -22,7 +26,12 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
 
     registered_subject = models.OneToOneField(RegisteredSubject)            
     
-    
+    def get_visit_model(self, instance):
+        for model in get_models(get_app(instance._meta.app_label)):
+            if isinstance(model(), BaseVisitTracking):
+                return model
+        raise TypeError('Unable to determine the visit model from instance {0} for app {1}'.format(instance._meta.model_name, instance._meta.app_label))
+        
     def save(self, *args, **kwargs):
 
         super(BaseRegisteredSubjectModel, self).save(*args, **kwargs)
@@ -49,29 +58,10 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
         abstract=True
 
 
-def delete_unused_appointments(sender, **kwargs):
-    
-    """ delete unused appointments created upon INSERT of sender model 
-    
-    for example, in the model file...
-
-        from bhp_registration.models import BaseRegisteredSubjectModel, delete_unused_appointments
-
-        < your model class ... >
-
-        @receiver(post_delete, sender=InfantEligibility)
-        def my_delete_handler(sender, **kwargs):
-            delete_unused_appointments(sender, visit_model_name='infantvisit', **kwargs)    
-
-    """
-    
-    instance = kwargs.get('instance')
-    visit_model_name = kwargs.get('visit_model_name')
-    Appointment.objects.delete_appointments_for_model(
-                            registered_subject = instance.registered_subject, 
-                            model_name = instance._meta.module_name,
-                            visit_model_app_label = instance._meta.app_label,
-                            visit_model_name = visit_model_name,
-                            )    
+@receiver(post_delete, weak=False, dispatch_uid='delete_unused_appointments')
+def delete_unused_appointments(sender, instance, **kwargs):
+    """ delete unused appointments if this instance on delete """
+    if isinstance(instance, BaseRegisteredSubjectModel):
+        Appointment.objects.delete_appointments_for_instance(instance)
 
 
