@@ -1,8 +1,9 @@
 import datetime
 from django.db import models
-from bhp_common.models import MyBasicUuidModel
+from base_model import BaseModel
 
-class DmisImportHistory(MyBasicUuidModel):
+
+class DmisImportHistory(BaseModel):
     
     import_label = models.CharField(
         verbose_name = 'Import label',
@@ -18,5 +19,4 @@ class DmisImportHistory(MyBasicUuidModel):
         return '%s on %s' % (self.import_label, self.import_datetime)
 
     class Meta:
-        app_label = 'bhp_lab_core' 
-        db_table = 'bhp_lab_core_dmisimporthistory'  
+        app_label = 'lab_import_dmis' 
