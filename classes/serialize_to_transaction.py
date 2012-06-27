@@ -76,6 +76,8 @@ class SerializeToTransaction(object):
             instance = instance._meta.proxy_for_model.objects.get(pk=instance.pk)
 
         # serialize to json
+        
+        #serialize everything, even those transactions you have just consumed
         json_tx = serializers.serialize("json", 
                         [instance,],
                         ensure_ascii = False, 
