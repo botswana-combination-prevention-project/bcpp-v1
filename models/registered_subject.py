@@ -47,7 +47,6 @@ class RegisteredSubject(BaseSubject):
         )
     
     identity = EncryptedIdentityField(
-        unique = True,
         null=True,
         blank=True,
         )
@@ -82,9 +81,7 @@ class RegisteredSubject(BaseSubject):
         blank = True,
         )
     
-    salt = SaltField(
-        unique = True,
-        )                        
+    salt = SaltField()                        
     
     objects = RegisteredSubjectManager()
     

@@ -7,99 +7,28 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
-        # Deleting model 'RandomizedSubject'
-        db.delete_table('bhp_registration_randomizedsubject')
 
         # Adding field 'RegisteredSubject.last_name'
-        db.add_column('bhp_registration_registeredsubject', 'last_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True), keep_default=False)
+        #db.add_column('bhp_registration_registeredsubject', 'last_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True), keep_default=False)
 
         # Adding field 'RegisteredSubject.identity_type'
-        db.add_column('bhp_registration_registeredsubject', 'identity_type', self.gf('django.db.models.fields.CharField')(default=0, max_length=15), keep_default=False)
+        #db.add_column('bhp_registration_registeredsubject', 'identity_type', self.gf('django.db.models.fields.CharField')(default=0, max_length=15), keep_default=False)
 
         # Adding field 'RegisteredSubject.salt'
-        db.add_column('bhp_registration_registeredsubject', 'salt', self.gf('django.db.models.fields.CharField')(default='0W,FKWDbd(C>', unique=True, max_length=25), keep_default=False)
-
-        # Adding index on 'RegisteredSubject', fields ['hostname_created']
-        db.create_index('bhp_registration_registeredsubject', ['hostname_created'])
-
-        # Adding index on 'RegisteredSubject', fields ['hostname_modified']
-        db.create_index('bhp_registration_registeredsubject', ['hostname_modified'])
-
-        # Changing field 'RegisteredSubject.first_name'
-        db.alter_column('bhp_registration_registeredsubject', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True))
-
-        # Changing field 'RegisteredSubject.identity'
-        db.alter_column('bhp_registration_registeredsubject', 'identity', self.gf('django.db.models.fields.CharField')(max_length=78L, unique=True, null=True))
-
-        # Adding unique constraint on 'RegisteredSubject', fields ['identity']
-        db.create_unique('bhp_registration_registeredsubject', ['identity'])
-
-        # Changing field 'RegisteredSubject.initials'
-        db.alter_column('bhp_registration_registeredsubject', 'initials', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
+        db.add_column('bhp_registration_registeredsubject', 'salt', self.gf('django.db.models.fields.CharField')(default='0W,FKWDbd(C>', max_length=25), keep_default=False)
 
         # Adding field 'RegisteredSubjectAudit.last_name'
-        db.add_column('bhp_registration_registeredsubject_audit', 'last_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True), keep_default=False)
+        #db.add_column('bhp_registration_registeredsubject_audit', 'last_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True), keep_default=False)
 
         # Adding field 'RegisteredSubjectAudit.identity_type'
-        db.add_column('bhp_registration_registeredsubject_audit', 'identity_type', self.gf('django.db.models.fields.CharField')(default=0, max_length=15), keep_default=False)
+        #db.add_column('bhp_registration_registeredsubject_audit', 'identity_type', self.gf('django.db.models.fields.CharField')(default=0, max_length=15), keep_default=False)
 
         # Adding field 'RegisteredSubjectAudit.salt'
         db.add_column('bhp_registration_registeredsubject_audit', 'salt', self.gf('django.db.models.fields.CharField')(default='0W,FKWDbd(C>', max_length=25), keep_default=False)
 
-        # Adding index on 'RegisteredSubjectAudit', fields ['hostname_created']
-        db.create_index('bhp_registration_registeredsubject_audit', ['hostname_created'])
-
-        # Adding index on 'RegisteredSubjectAudit', fields ['hostname_modified']
-        db.create_index('bhp_registration_registeredsubject_audit', ['hostname_modified'])
-
-        # Changing field 'RegisteredSubjectAudit.first_name'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'first_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True))
-
-        # Changing field 'RegisteredSubjectAudit.identity'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'identity', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True))
-
-        # Changing field 'RegisteredSubjectAudit.initials'
-        db.alter_column('bhp_registration_registeredsubject_audit', 'initials', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
-
-        # Deleting field 'SubjectIdentifierAuditTrail.first_name'
-        db.delete_column('bhp_registration_subjectidentifieraudittrail', 'first_name')
-
-        # Deleting field 'SubjectIdentifierAuditTrail.dob'
-        db.delete_column('bhp_registration_subjectidentifieraudittrail', 'dob')
-
-        # Deleting field 'SubjectIdentifierAuditTrail.initials'
-        db.delete_column('bhp_registration_subjectidentifieraudittrail', 'initials')
-
-        # Adding index on 'SubjectIdentifierAuditTrail', fields ['hostname_created']
-        db.create_index('bhp_registration_subjectidentifieraudittrail', ['hostname_created'])
-
-        # Adding index on 'SubjectIdentifierAuditTrail', fields ['hostname_modified']
-        db.create_index('bhp_registration_subjectidentifieraudittrail', ['hostname_modified'])
-
-
     def backwards(self, orm):
         
-        # Removing index on 'SubjectIdentifierAuditTrail', fields ['hostname_modified']
-        db.delete_index('bhp_registration_subjectidentifieraudittrail', ['hostname_modified'])
-
-        # Removing index on 'SubjectIdentifierAuditTrail', fields ['hostname_created']
-        db.delete_index('bhp_registration_subjectidentifieraudittrail', ['hostname_created'])
-
-        # Removing index on 'RegisteredSubjectAudit', fields ['hostname_modified']
-        db.delete_index('bhp_registration_registeredsubject_audit', ['hostname_modified'])
-
-        # Removing index on 'RegisteredSubjectAudit', fields ['hostname_created']
-        db.delete_index('bhp_registration_registeredsubject_audit', ['hostname_created'])
-
-        # Removing unique constraint on 'RegisteredSubject', fields ['identity']
-        db.delete_unique('bhp_registration_registeredsubject', ['identity'])
-
-        # Removing index on 'RegisteredSubject', fields ['hostname_modified']
-        db.delete_index('bhp_registration_registeredsubject', ['hostname_modified'])
-
-        # Removing index on 'RegisteredSubject', fields ['hostname_created']
-        db.delete_index('bhp_registration_registeredsubject', ['hostname_created'])
+        raise RuntimeError("Cannot reverse this migration.")
 
         # Adding model 'RandomizedSubject'
         db.create_table('bhp_registration_randomizedsubject', (
@@ -181,7 +110,7 @@ class Migration(SchemaMigration):
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            'identity': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
+            'identity': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'identity_type': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'initials': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
             'is_dob_estimated': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),

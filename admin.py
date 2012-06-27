@@ -1,10 +1,10 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin
+from bhp_base_model.classes import BaseModelAdmin
 from models import RegisteredSubject, SubjectIdentifierAuditTrail
 from forms import RegisteredSubjectForm
 
 
-class RegisteredSubjectAdmin (MyModelAdmin):
+class RegisteredSubjectAdmin (BaseModelAdmin):
 
     form = RegisteredSubjectForm
  
@@ -34,7 +34,7 @@ class RegisteredSubjectAdmin (MyModelAdmin):
 admin.site.register(RegisteredSubject, RegisteredSubjectAdmin)
 
 
-class SubjectIdentifierAuditTrailAdmin(MyModelAdmin):
+class SubjectIdentifierAuditTrailAdmin(BaseModelAdmin):
     
     list_display = (
         'subject_identifier',
