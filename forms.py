@@ -1,5 +1,4 @@
 from django import forms
-#from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 import socket, re
 from bhp_base_form.classes import BaseModelForm
 from models import StudySpecific
