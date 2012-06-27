@@ -24,16 +24,23 @@ class BaseSubject (BaseUuidModel):
         db_index=True,               
         )
     
-    first_name = EncryptedFirstnameField()
-    
-    last_name = EncryptedLastnameField(
-        verbose_name = "Last name",
+    # may not be available when instance created (e.g. infants prior to birth report)
+    first_name = EncryptedFirstnameField(
+        null = True,
         )
     
+    # may not be available when instance created (e.g. infants or household subject before consent)
+    last_name = EncryptedLastnameField(
+        verbose_name = "Last name",
+        null = True,
+        )        
+    
+    # may not be available when instance created (e.g. infants)
     initials = models.CharField(
         max_length=3,
         validators = [RegexValidator(regex=r'^[A-Z]{2,3}$', 
-                                    message='Ensure initials consist of letters only in upper case, no spaces.'),]
+                                    message='Ensure initials consist of letters only in upper case, no spaces.'),],
+        null = True,
         )
 
     dob = models.DateField(
