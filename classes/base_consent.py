@@ -11,7 +11,7 @@ from bhp_subject.classes import BaseSubject
 
 class BaseConsent(BaseSubject):
 
-    """ """
+    """ consents should be subclasses of this """
         
     study_site = models.ForeignKey(StudySite,
         verbose_name = 'Site',
@@ -50,19 +50,28 @@ class BaseConsent(BaseSubject):
         return unicode(self.subject_identifier)
     
     def save(self, *args, **kwargs):
-        
+        """ create or get a subject identifier and update registered subject """
         subject = Subject()
+        
+        registered_subject = getattr(self, 'registered_subject', None)
         if not self.id:
-            # allocate new subject identifier
-            self.subject_identifier = subject.get_identifier(self.get_subject_type(),
+            # see if there is a registered subject key. want to know this as it
+            # might have the subject identifier already (e.g for subjects re-consenting)
+            if registered_subject:
+                # set identifier, but it may be None
+                self.subject_identifier = self.registered_subject.subject_identifier
+            if not self.subject_identifier:  
+                # allocate new subject identifier
+                self.subject_identifier = subject.get_identifier(self.get_subject_type(),
                                                              self.study_site.site_code)
+        # call super
+        super(BaseConsent, self).save(*args, **kwargs) 
         # create or update RegisteredSubject
-        subject.update_register(self, 'subject_identifier', 
+        subject.update_register(self, 
                                 subject_identifier = self.subject_identifier,
                                 registration_datetime = self.created,
                                 registration_status = 'consented',
                                 subject_consent_id = self.pk)
-        super(BaseConsent, self).save(*args, **kwargs) 
  
 
     class Meta:
