@@ -1,16 +1,15 @@
 import inspect
 from dateutil.relativedelta import relativedelta
 from django.db import models
-from django.db.models import Q
 from bhp_visit.models import MembershipForm
 
 class VisitDefinitionManager(models.Manager):
     
     """
-schedule_group=ScheduleGroup.objects.all()
-schedule_group=schedule_group[4]
-visit_definition = VisitDefinition.objects.filter(code='2010',schedule_group=schedule_group).order_by('time_point')[0]
-VisitDefinition.objects.next_visit_definition(visit_definition=visit_definition)
+    schedule_group=ScheduleGroup.objects.all()
+    schedule_group=schedule_group[4]
+    visit_definition = VisitDefinition.objects.filter(code='2010',schedule_group=schedule_group).order_by('time_point')[0]
+    VisitDefinition.objects.next_visit_definition(visit_definition=visit_definition)
     """
     
     

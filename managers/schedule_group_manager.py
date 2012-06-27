@@ -25,7 +25,7 @@ class ScheduleGroupManager(models.Manager):
         # if the "exclude" model (above) is keyed, remove all unkeyed models, except those listed here
         # for example, if the model in 'exclude_others_if_keyed_model_name' is KEYED,
         # still show links to the models listed here
-        # (naming needs work ...)            
+        # (naming needs work ...)           
         include_after_exclusion_model_keyed = kwargs.get("include_after_exclusion_model_keyed", None)          
                
         # category of the membership form. Can be any value as  long as 
