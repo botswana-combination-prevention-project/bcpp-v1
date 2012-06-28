@@ -48,6 +48,7 @@ class DeserializeFromTransaction(object):
                             obj.save()
                             
                         except IntegrityError as error:
+                            #print error
                             incoming_transaction.is_consumed = False
                             incoming_transaction.consumer = None                        
                             incoming_transaction.is_error = True

@@ -81,6 +81,7 @@ def serialize_on_save(sender, instance, **kwargs):
     """ serialize the model instance to the outgoing transaction model for consumption by another application """
     if isinstance(instance, BaseSyncModel):
         hostname = socket.gethostname()
+        print "%s %s %s" % (hostname, instance.hostname_created, instance.hostname_modified)
         if (instance.hostname_created == hostname and not instance.hostname_modified) \
                                           or (instance.hostname_modified == hostname):
             if instance.is_serialized() and not instance._meta.proxy:
