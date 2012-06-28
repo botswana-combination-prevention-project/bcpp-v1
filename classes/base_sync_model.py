@@ -1,4 +1,5 @@
 from datetime import datetime
+import socket
 from django.conf import settings
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
@@ -79,8 +80,11 @@ def serialize_m2m_on_save(sender, instance, **kwargs):
 def serialize_on_save(sender, instance, **kwargs):
     """ serialize the model instance to the outgoing transaction model for consumption by another application """
     if isinstance(instance, BaseSyncModel):
-        if instance.is_serialized() and not instance._meta.proxy:
-            serialize_to_transaction = SerializeToTransaction()
-            serialize_to_transaction.serialize(sender, instance,**kwargs)
+        hostname = socket.gethostname()
+        if (instance.hostname_created == hostname and not instance.hostname_modified) \
+                                          or (instance.hostname_modified == hostname):
+            if instance.is_serialized() and not instance._meta.proxy:
+                serialize_to_transaction = SerializeToTransaction()
+                serialize_to_transaction.serialize(sender, instance,**kwargs)
 
 

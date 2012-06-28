@@ -31,6 +31,7 @@ def json_to_transaction(sender, instance,**kwargs):
                     [instance,],
                     ensure_ascii=False, 
                     use_natural_keys=use_natural_keys)              
+    
     transaction.objects.create(
         tx_name = instance._meta.object_name,
         tx_pk = instance.pk,
