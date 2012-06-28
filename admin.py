@@ -1,5 +1,4 @@
-from django.contrib import admin
-from bhp_common.models import MyModelAdmin
+from bhp_base_model.classes import BaseModelAdmin
 from lab_packing.classes import BasePackingListModelAdmin
 from lab_packing.forms import *
 from lab_packing.models import *
@@ -81,7 +80,7 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
                             subject_requisition.save()
 
 
-class BasePackingListItemAdmin(MyModelAdmin):
+class BasePackingListItemAdmin(BaseModelAdmin):
 
     search_fields = ('packing_list__pk','item_description','item_reference',)
     list_display = ('packing_list','item_reference','panel','item_description', 'created', 'user_created')
