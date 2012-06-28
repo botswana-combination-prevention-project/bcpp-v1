@@ -1,5 +1,9 @@
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
+
 
 class Crypt (BaseUuidModel):
 
