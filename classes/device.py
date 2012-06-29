@@ -9,10 +9,11 @@ class Device(object):
     """ Determines the device name, useful to know when identifiers are created by the device.
     First tries settings.py (with DEVICE_ID settings attribute), then hostname (with HOSTNAME_PREFIX settings attribute), then from the DB.
     Settings attribute DEVICE_ID_LENGTH, if exists, determines the number of digits of the device_id. """
-   
+    
     def __init__(self, **kwargs):
         """ Set length and pattern of device_id and call update(). """
         # if settings attribute DEVICE_ID_LENGTH exists, use that value
+        self.device_id = None
         self.length = None
         if 'DEVICE_ID_LENGTH' in dir(settings):
             self.length = settings.DEVICE_ID_LENGTH
