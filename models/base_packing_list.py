@@ -32,7 +32,7 @@ class BasePackingList(BaseUuidModel):
     history = AuditTrail()
 
     def reference(self):
-        return self.timestamp
+        return unicode(self.timestamp)
     
     def specimen_count(self):
         lst = filter(None,self.list_items.replace('\r', '').split('\n'))
@@ -46,7 +46,7 @@ class BasePackingList(BaseUuidModel):
     view_list_items.allow_tags = True
     
     def __unicode__(self):
-        return self.timestamp
+        return self.reference()
 
     def get_subject_identifier(self):
         return ''
