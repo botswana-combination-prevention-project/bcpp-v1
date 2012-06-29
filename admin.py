@@ -1,3 +1,4 @@
+from datetime import datetime
 from bhp_base_model.classes import BaseModelAdmin
 from lab_packing.classes import BasePackingListModelAdmin
 from lab_packing.forms import *
@@ -46,11 +47,11 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
         if not change:
             obj.user_created = request.user
         else:
-            obj.user_modeified = request.user        
+            obj.user_modified = request.user        
         
         super(BasePackingListAdmin, self).save_model(request, obj, form, change)
 
-        lst = obj.list_items.replace('\r', '').split('\n')
+        lst = filter(None,obj.list_items.replace('\r', '').split('\n'))
         
         for item in lst:
             if item:
@@ -59,20 +60,28 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
                 for requisition in self.requisition:
                     if requisition.objects.filter(specimen_identifier=item):   
                         subject_requisition = requisition.objects.get(specimen_identifier=item)
-                        if self.packing_list_item_model.objects.filter(packing_list=obj, item_reference=subject_requisition.specimen_identifier):
-                            packing_list_item = self.packing_list_item_model.objects.get(packing_list=obj, item_reference=subject_requisition.specimen_identifier)                            
-                            packing_list_item.item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,)
+                        if self.packing_list_item_model.objects.filter(packing_list=obj, 
+                                                                       item_reference=subject_requisition.specimen_identifier):
+                            packing_list_item = self.packing_list_item_model.objects.get(packing_list=obj, 
+                                                                                         item_reference=subject_requisition.specimen_identifier)                            
+                            packing_list_item.item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, 
+                                                                                     subject_requisition.get_visit().appointment.registered_subject.initials, 
+                                                                                     subject_requisition.get_visit().appointment.registered_subject.dob,)
+                            packing_list_item.requisition = subject_requisition._meta.object_name.lower()
                             packing_list_item.panel = subject_requisition.panel
                             packing_list_item.user_modified = request.user
                             packing_list_item.save()                    
                             subject_requisition.is_packed = True
-                            
                             subject_requisition.save()                    
                         else:
+
                             self.packing_list_item_model.objects.create(
                                 packing_list=obj,
                                 item_reference = subject_requisition.specimen_identifier,
-                                item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, subject_requisition.get_visit().appointment.registered_subject.initials, subject_requisition.get_visit().appointment.registered_subject.dob,),
+                                requisition = subject_requisition._meta.object_name.lower(),
+                                item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, 
+                                                                       subject_requisition.get_visit().appointment.registered_subject.initials, 
+                                                                       subject_requisition.get_visit().appointment.registered_subject.dob,),
                                 panel = subject_requisition.panel,
                                 user_created = request.user,                        
                                 )
@@ -82,8 +91,8 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
 
 class BasePackingListItemAdmin(BaseModelAdmin):
 
-    search_fields = ('packing_list__pk','item_description','item_reference',)
-    list_display = ('packing_list','item_reference','panel','item_description', 'created', 'user_created')
+    search_fields = ('packing_list__pk','packing_list__timestamp', 'item_description','item_reference',)
+    list_display = ('specimen','panel','item_description', 'created', 'user_created', 'view_packing_list',)
     list_filter = ('created',)
     
     def delete_model(self, request, obj):
