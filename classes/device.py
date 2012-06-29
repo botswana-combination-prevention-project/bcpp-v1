@@ -43,7 +43,7 @@ class Device(object):
                 ImproperlyConfigured( 'Incorrect format for settings attribute DEVICE_ID. Got {device_id}'.format(device_id=getattr(settings, attr)))          
         return self.device_id
     
-    def _update_from_hostname(self, hostname_prefix):
+    def _update_from_hostname(self, hostname_prefix=None):
         """ get device device_id from hostname using the hostname prefix and the regex/length """
         attr = 'HOSTNAME_PREFIX'
         if attr in dir(settings):
