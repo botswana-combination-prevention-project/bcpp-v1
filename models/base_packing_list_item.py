@@ -68,10 +68,15 @@ class BasePackingListItem(BaseUuidModel):
     view_packing_list.allow_tags = True
 
     def priority(self):
-        if self.item_priority.lower() == 'urgent':
+        style=''
+        priority = self.item_priority.lower() 
+        if priority == 'urgent':
             style = 'color:red;font-weight:700'
-        return '<span style="{style}">{priority}</span>'.format(style=style, priority=self.item_priority)
-    
+        if priority == 'normal':
+            priority = ''    
+        return '<span style="{style}">{priority}</span>'.format(style=style, priority=priority)
+    priority.allow_tags = True
+     
     def specimen(self):
         return '{item_reference}<BR>{requisition}</a>'.format(item_reference = self.item_reference,
                                                               requisition = self.requisition.replace('requisition', ''))
