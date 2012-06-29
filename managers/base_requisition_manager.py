@@ -1,6 +1,7 @@
 import socket, re
 from datetime import date, datetime
 from django.db import models
+from bhp_device.classes import Device
 from bhp_variables.models import StudySpecific
 from bhp_identifier.classes import Identifier
 from lab_requisition.classes import ClinicRequisitionLabel
@@ -13,7 +14,9 @@ class BaseRequisitionManager(models.Manager):
         """Generate and return a globally unique requisition identifier (adds site and protocolnumber)"""        
         
         if not StudySpecific.objects.all()[0].machine_type == 'SERVER':
-            raise ValueError('Only SERVERs may access method \'get_global_identifier\'. Machine Type is determined from model StudySpecific attribute machine_type. Got %s' % (StudySpecific.objects.all()[0].machine_type, ))
+            raise ValueError('Only SERVERs may access method \'get_global_identifier\'. \
+                              Machine Type is determined from model StudySpecific attribute \
+                              machine_type. Got %s' % (StudySpecific.objects.all()[0].machine_type, ))
         
         site_code = kwargs.get('site_code')
         protocol_code = kwargs.get('protocol_code', '')                        
@@ -47,21 +50,13 @@ class BaseRequisitionManager(models.Manager):
     def get_identifier_for_device(self, **kwargs):
 
         """Generate and return a locally unique requisition identifier for a device (adds device id)"""        
-        if kwargs.get('device_id'):
-            device_id = kwargs.get('device_id')
-        else:
-            hostname = socket.gethostname()
-            if re.match(r'[0-9]{2}', hostname[len(hostname)-2:]):
-                device_id = hostname[len(hostname)-2:]
-            else:
-                device_id = StudySpecific.objects.all()[0].device_id
-                if StudySpecific.objects.all()[0].machine_type == 'SERVER':
-                    device_id = 98
-        if not device_id:
+        device = Device()
+        if not device.device_id:
             raise ValueError('Device ID unknown. Must either be passed as a kwarg, extracted from hostname, or queried from StudySpecific.')    
-        given_root_segment = str(device_id) + date.today().strftime('%m%d')
+        given_root_segment = str(device.device_id) + date.today().strftime('%m%d')
         
-        return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, counter_length=2)
+        return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, 
+                                                                         counter_length=2)
         
     def print_label(self, **kwargs):
         

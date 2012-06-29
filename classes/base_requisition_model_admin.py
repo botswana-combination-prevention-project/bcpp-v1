@@ -46,6 +46,7 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
             'specimen_identifier',
             self.visit_fieldname,
             "requisition_datetime",
+            "panel",
             'hostname_created', 
             "priority",
             'is_receive',
