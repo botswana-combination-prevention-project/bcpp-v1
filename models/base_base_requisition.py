@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
@@ -172,6 +173,36 @@ class BaseBaseRequisition (BaseUuidModel):
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
 
+    def get_label(self, **kwargs):
+        """  override to return a subclass of label 
+        for example:
+            label = ClinicRequisitionLabel(
+                        client_ip = kwargs.get('remote_addr'),
+                        cups_server_ip = kwargs.get('cups_server_ip'),
+                        item_count = kwargs.get('item_count'), 
+                        requisition = self)
+            return label"""
+        raise TypeError('{0} method get_label() should be overridden by the subclass to return an instance of Label()'.format(self))
+        
+    
+    def print_label(self, **kwargs):
+        """ print a label using the label class or subclass returned by get_label()"""
+        remote_addr = kwargs.get('remote_addr')
+        cups_server_ip = kwargs.get('cups_server_ip')
+        if self.specimen_identifier:    
+            for item_count in range(self.item_count_total, 0, -1):
+                try:
+                    label = self.get_label(
+                                   client_ip = remote_addr,
+                                   cups_server_ip = cups_server_ip,
+                                   item_count = item_count)
+                    label.print_label()
+                    self.is_labelled = True
+                    self.modified = datetime.today()
+                    self.save()                                             
+                except ValueError, err:
+                    raise ValueError('Unable to print, is the lab_barcode app configured? %s' % (err,))
+    
     class Meta:
         abstract = True 
        

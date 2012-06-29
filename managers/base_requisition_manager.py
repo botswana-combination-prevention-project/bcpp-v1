@@ -1,10 +1,10 @@
-import socket, re
-from datetime import date, datetime
+#import socket, re
+from datetime import date
 from django.db import models
 from bhp_device.classes import Device
 from bhp_variables.models import StudySpecific
 from bhp_identifier.classes import Identifier
-from lab_requisition.classes import ClinicRequisitionLabel
+#from lab_requisition.classes import ClinicRequisitionLabel
 
 
 class BaseRequisitionManager(models.Manager):
@@ -58,35 +58,24 @@ class BaseRequisitionManager(models.Manager):
         return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, 
                                                                          counter_length=2)
         
-    def print_label(self, **kwargs):
-        
-        requisition = kwargs.get('requisition')
-        remote_addr = kwargs.get('remote_addr')
-        cups_server_ip = kwargs.get('cups_server_ip')
-        if requisition.specimen_identifier:    
-            for cnt in range(requisition.item_count_total, 0, -1):
-                try:
-                    label = ClinicRequisitionLabel(
-                                            client_ip = remote_addr,
-                                            cups_server_ip = cups_server_ip,
-                                            item_count = cnt, 
-                                            requisition = requisition,
-                                            )
-                    label.print_label()
-                    requisition.is_labelled = True
-                    requisition.modified = datetime.today()
-                    requisition.save()                                             
-                except ValueError, err:
-                    raise ValueError('Unable to print, is the lab_barcode app configured? %s' % (err,))
-                    #messages.add_message(request, messages.ERROR, err)
-                #if not label.printer_error:
-                #    print_message = '%s for specimen %s at %s from host %s' % (label.message, requisition.requisition_identifier, datetime.today().strftime('%H:%M'), remote_addr)
-                ##    li_class = "info"
-                #else:
-                #    print_message = '%s' % (label.message)
-                #    li_class = "error"
-                    
-        #else:            
-        #    print_message = "Label did not print."
-        #    li_class = "error"            
+        #    def print_label(self, **kwargs):
+        #        
+        #        requisition = kwargs.get('requisition')
+        #        remote_addr = kwargs.get('remote_addr')
+        #        cups_server_ip = kwargs.get('cups_server_ip')
+        #        if requisition.specimen_identifier:    
+        #            for cnt in range(requisition.item_count_total, 0, -1):
+        #                try:
+        #                    label = ClinicRequisitionLabel(
+        #                                            client_ip = remote_addr,
+        #                                            cups_server_ip = cups_server_ip,
+        #                                            item_count = cnt, 
+        #                                            requisition = requisition,
+        #                                            )
+        #                    label.print_label()
+        #                    requisition.is_labelled = True
+        #                    requisition.modified = datetime.today()
+        #                    requisition.save()                                             
+        #                except ValueError, err:
+        #                    raise ValueError('Unable to print, is the lab_barcode app configured? %s' % (err,))
 

@@ -8,6 +8,8 @@ class RequisitionLabel(Label):
     def __init__(self, **kwargs):
         
         requisition = kwargs.get('requisition')
+        #if not isinstance(requisition, BaseBaseRequisition):
+        #    raise TypeError('{0} expects kwarg \'requisition\' to be be an instance of BaseBaseRequisition'.format(self)) 
         template = kwargs.get('template')        
         item_count = kwargs.get('item_count', 1)
         try:
@@ -38,6 +40,7 @@ class RequisitionLabel(Label):
         kwargs['panel']= requisition.panel.name[0:21]
         kwargs['drawn_datetime'] = requisition.drawn_datetime
         kwargs['subject_identifier'] = subject_identifier
+        kwargs['visit'] = requisition.get_visit().appointment.visit_definition.code
         kwargs['gender'] = registered_subject.gender
         kwargs['dob'] = registered_subject.dob
         kwargs['initials'] = registered_subject.initials
