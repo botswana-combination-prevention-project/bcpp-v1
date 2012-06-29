@@ -17,7 +17,8 @@ class Label(object):
         self.item_count_total = 1
         self.cups_server_ip = kwargs.get('cups_server_ip', None)
         self.client_ip = kwargs.get('client_ip', None)
-        self.client = None        
+        self.client = None  
+        self.remote_addr = kwargs.get('remote_addr', None)      
         
         
         # take either the template name or the template object
@@ -101,18 +102,21 @@ class Label(object):
             self.client = client[0]
         
     def set_label_printer(self):
-
+        
         if self.cups_server_ip:
             self.label_printer = LabelPrinter.objects.get(cups_server_ip=self.cups_server_ip)
         else:    
-            # TODO ask cups for default printer
-            self.label_printer = None
-            if self.client:
-                self.label_printer = self.client.label_printer
-            else:
-                if LabelPrinter.objects.filter(default=True):
-                    self.label_printer = LabelPrinter.objects.filter(default=True)[0]
-                
+            if self.remote_addr:
+                self.cups_server_ip = LabelPrinter.objects.get(client__ip=self.remote_addr).cups_server_ip
+            else:    
+                # TODO ask cups for default printer
+                self.label_printer = None
+                if self.client:
+                    self.label_printer = self.client.label_printer
+                else:
+                    if LabelPrinter.objects.filter(default=True):
+                        self.label_printer = LabelPrinter.objects.filter(default=True)[0]
+                    
             
         #if not self.label_printer:
         #    raise ValueError, 'Cannot print label. Label printer has no client with your ip address OR no default label printer defined'
