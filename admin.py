@@ -64,11 +64,14 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
                                                                        item_reference=subject_requisition.specimen_identifier):
                             packing_list_item = self.packing_list_item_model.objects.get(packing_list=obj, 
                                                                                          item_reference=subject_requisition.specimen_identifier)                            
-                            packing_list_item.item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, 
-                                                                                     subject_requisition.get_visit().appointment.registered_subject.initials, 
-                                                                                     subject_requisition.get_visit().appointment.registered_subject.dob,)
+                            packing_list_item.item_description = '{subject_identifier} ({initials}) VISIT:{visit} DOB:{dob}'.format(
+                                                                                     subject_identifier = subject_requisition.get_visit().appointment.registered_subject.subject_identifier, 
+                                                                                     initials = subject_requisition.get_visit().appointment.registered_subject.initials, 
+                                                                                     visit = subject_requisition.get_visit().appointment.visit_definition.code,
+                                                                                     dob = subject_requisition.get_visit().appointment.registered_subject.dob,)
                             packing_list_item.requisition = subject_requisition._meta.object_name.lower()
                             packing_list_item.panel = subject_requisition.panel
+                            packing_list_item.item_priority = subject_requisition.priority
                             packing_list_item.user_modified = request.user
                             packing_list_item.save()                    
                             subject_requisition.is_packed = True
@@ -79,10 +82,13 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
                                 packing_list=obj,
                                 item_reference = subject_requisition.specimen_identifier,
                                 requisition = subject_requisition._meta.object_name.lower(),
-                                item_description = '%s (%s) DOB:%s' % (subject_requisition.get_visit().appointment.registered_subject.subject_identifier, 
-                                                                       subject_requisition.get_visit().appointment.registered_subject.initials, 
-                                                                       subject_requisition.get_visit().appointment.registered_subject.dob,),
+                                item_description = '{subject_identifier} ({initials}) VISIT:{visit} DOB:{dob}'.format(
+                                                         subject_identifier = subject_requisition.get_visit().appointment.registered_subject.subject_identifier, 
+                                                         initials = subject_requisition.get_visit().appointment.registered_subject.initials, 
+                                                         visit = subject_requisition.get_visit().appointment.visit_definition.code,
+                                                         dob = subject_requisition.get_visit().appointment.registered_subject.dob,),
                                 panel = subject_requisition.panel,
+                                item_priority = subject_requisition.priority,
                                 user_created = request.user,                        
                                 )
                             subject_requisition.is_packed = True
@@ -92,7 +98,7 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
 class BasePackingListItemAdmin(BaseModelAdmin):
 
     search_fields = ('packing_list__pk','packing_list__timestamp', 'item_description','item_reference',)
-    list_display = ('specimen','panel','item_description', 'created', 'user_created', 'view_packing_list',)
+    list_display = ('specimen','priority','panel','description', 'created', 'user_created', 'view_packing_list',)
     list_filter = ('created',)
     
     def delete_model(self, request, obj):

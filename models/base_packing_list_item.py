@@ -30,7 +30,16 @@ class BasePackingListItem(BaseUuidModel):
         max_length = 100,
         null = True,
         blank = True,
-        )    
+        )  
+    
+    item_priority = models.CharField(
+        max_length = 35,
+        choices = (('normal','Normal'),('urgent','Urgent')),
+        null = True,
+        blank = False,
+        help_text = "",
+        )
+      
     panel = models.ForeignKey(Panel,
         null = True,
         blank = True,
@@ -58,12 +67,20 @@ class BasePackingListItem(BaseUuidModel):
             return 'packing list'
     view_packing_list.allow_tags = True
 
+    def priority(self):
+        if self.item_priority.lower() == 'urgent':
+            style = 'color:red;font-weight:700'
+        return '<span style="{style}">{priority}</span>'.format(style=style, priority=self.item_priority)
     
     def specimen(self):
         return '{item_reference}<BR>{requisition}</a>'.format(item_reference = self.item_reference,
                                                               requisition = self.requisition.replace('requisition', ''))
     specimen.allow_tags=True
        
+    def description(self):
+        return self.item_description.replace(' ', '<BR>')
+    description.allow_tags = True
+    
     def get_subject_identifier(self):
         return ''
     
