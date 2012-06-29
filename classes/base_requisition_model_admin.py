@@ -44,7 +44,9 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
         self.list_display = [
             'requisition_identifier',
             'specimen_identifier',
-            self.visit_fieldname,
+            'subject',
+            'visit',
+            #self.visit_fieldname,
             "requisition_datetime",
             "panel",
             'hostname_created', 

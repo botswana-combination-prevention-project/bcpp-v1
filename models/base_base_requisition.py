@@ -154,6 +154,12 @@ class BaseBaseRequisition (BaseUuidModel):
     def get_infant_identifier(self):
         return self.get_visit().appointment.registered_subject.subject_identifier
 
+    def subject(self):
+        return self.get_subject_identifier()
+    
+    def visit(self):
+        return self.get_visit().appointment.visit_definition.code
+    
     def get_subject_identifier(self):
         return self.get_visit().appointment.registered_subject.subject_identifier
     
