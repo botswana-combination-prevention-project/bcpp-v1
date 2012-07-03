@@ -9,7 +9,6 @@ class MyUUIDField (UUIDField):
     http://code.djangoproject.com/ticket/12235
     subclassed to avoid MultiValueDictKeyError when editing Inline objects
     """
-
     description = _("Custom Uuid field")
 
     def contribute_to_class(self, cls, name):
@@ -51,6 +50,7 @@ class HostnameCreationField (CharField):
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
 
+
 class HostnameModificationField (CharField):  
     """ 
     HostnameModificationField
@@ -59,7 +59,6 @@ class HostnameModificationField (CharField):
     
     Sets value to socket.gethostname() on each save of the model.
     """
-
     description = _("Custom field for hostname modified")
     
     def __init__(self, *args, **kwargs):
@@ -85,3 +84,4 @@ class HostnameModificationField (CharField):
         field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
+    

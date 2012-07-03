@@ -9,7 +9,6 @@ from bhp_crypto.classes import BaseEncryptedField
 class BaseModelAdmin (admin.ModelAdmin):
     
     """Overide ModelAdmin to force username to be saved on add/change and other stuff""" 
-    
     def __init__(self, *args, **kwargs):
         #add serialize action
         self.actions.append(serialize)
@@ -69,6 +68,6 @@ class BaseModelAdmin (admin.ModelAdmin):
         if obj: #In edit mode
             for field in obj._meta.fields:
                 if isinstance(field, BaseEncryptedField):
-                    if not field.crypter.private_key:
+                    if not field.crypter.private_key and field.attname not in self.readonly_fields:
                         self.readonly_fields = (field.attname,) + self.readonly_fields 
         return self.readonly_fields
