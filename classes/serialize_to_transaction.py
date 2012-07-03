@@ -23,7 +23,7 @@ class SerializeToTransaction(BaseCrypter):
         
         Call this using the post_save and m2m_changed signal.
         
-        For example, for models that inherit from MyBasicUuidModel
+        For example, for models that inherit from BasicUuidModel
 
             @receiver(m2m_changed,)
             def serialize_m2m_on_save(sender, instance, **kwargs):
@@ -60,6 +60,7 @@ class SerializeToTransaction(BaseCrypter):
         use_natural_keys = False
         if 'natural_key' in dir(sender):
             use_natural_keys = True
+        # Handle proxy models.
         # if this is a proxy model, get to the main model
         # Note, proxy model itself only returns a pointer to the 
         # main model.
@@ -69,7 +70,7 @@ class SerializeToTransaction(BaseCrypter):
         if instance._meta.proxy_for_model:
             instance = instance._meta.proxy_for_model.objects.get(pk=instance.pk)
         # serialize to json
-        #serialize everything, even those transactions you have just consumed
+        # serialize everything? even those transactions you have just consumed?
         json_tx = serializers.serialize("json", 
                         [instance,],
                         ensure_ascii = False, 

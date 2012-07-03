@@ -86,6 +86,6 @@ def serialize_on_save(sender, instance, **kwargs):
                                           or (instance.hostname_modified == hostname):
             if instance.is_serialized() and not instance._meta.proxy:
                 serialize_to_transaction = SerializeToTransaction()
-                serialize_to_transaction.serialize(sender, instance,**kwargs)
+                serialize_to_transaction.serialize(sender, instance, **kwargs)
 
 
