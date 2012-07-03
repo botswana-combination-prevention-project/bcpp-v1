@@ -1,4 +1,5 @@
 import os, subprocess, tempfile
+from string import Template
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client
 
 class Label(object):
@@ -15,26 +16,34 @@ class Label(object):
         self.label_printer = None
         self.item_count = 1
         self.item_count_total = 1
+        self.client = None  
+        self.label_options = None
+        #self.prepare_label_dictionary(**kwargs) 
+
+    def prepare_label_options(self, **kwargs):
+        """ subclass to set label dcitionary """
         self.cups_server_ip = kwargs.get('cups_server_ip', None)
         self.client_ip = kwargs.get('client_ip', None)
-        self.client = None  
-        self.remote_addr = kwargs.get('remote_addr', None)      
-        
-        
-        # take either the template name or the template object
-        template_name = kwargs.get("template_name")
-        template = kwargs.get("template")
+        self.remote_addr = kwargs.get('remote_addr', None)
+        self.set_template(**kwargs)       
+        self.set_client()
+        self.label_options = kwargs 
+
+    def set_template(self, **kwargs):
+        template_name = kwargs.get("template_name", None)
+        template = kwargs.get("template", None)
+        # use either the template name or the template instance
         if template_name:
             zpl_templates = ZplTemplate.objects.filter(name=template_name)
             if zpl_templates:
                 self.zpl_template = zpl_templates[0]
             else:
-                raise ValueError('Template \'%s\' does not exist. ' % template_name )                                    
+                raise ValueError('Barcode ZPL template \'%s\' does not exist. ' % template_name )                                    
         elif template:
             if isinstance(template, ZplTemplate):
                 self.zpl_template = template                
             else:
-                raise ValueError, 'Parameter template must be an instance of ZplTemplate'    
+                raise ValueError, 'Parameter template must be an instance of Barcode ZplTemplate'    
         else:
             # got neither template name nor a template objects but, 
             # maybe one of the templates is flagged as default
@@ -42,32 +51,21 @@ class Label(object):
                 self.zpl_template = ZplTemplate.objects.get(default=True)
             except:
                 # ... guess not
-                raise ValueError('No valid template or template_name specified and a default template does not exist. Cannot continue.')                
-                
-        
-        self.set_client()
-
-        self.set_label(**kwargs)
-
-    def set_label(self, **kwargs ):
-
-        """ format label given a dictionary of key/value pairs"""        
-
-        self.unformatted_label = self.zpl_template.template
-        #self.label.format(**kwargs) 
-        # try to format
-        #self.formatted_label = self.label % kwargs        
-        try:
-            self.formatted_label = self.unformatted_label % kwargs
-        except KeyError:
-            # silently fail, label will print with placeholder which should imply that all the placeholder values were not provided
-            self.formatted_label = self.unformatted_label
-            #elf.message = Cannot print label. with data, e           
-       
+                raise ValueError('No valid template or template_name specified and a default template does not exist. Cannot continue.')                        
+    
+    def format_label(self):
+        """ format label given a dictionary of key/value pairs prepared in a sublcass of label"""        
+        # convert old templates
+        self.zpl_template.template = self.zpl_template.template.replace('%(', '${').replace(')s','}')
+        self.zpl_template.save()
+        # safe_substitue
+        self.formatted_label = self.zpl_template.template
+        self.formatted_label = Template(self.zpl_template.template)
+        self.formatted_label = self.formatted_label.safe_substitute(self.label_options)     
+    
     def label_to_file(self):
 
         """ write the label to a text file to be sent directly to the printer """        
-
         # create temp file
         tup = tempfile.mkstemp()
         self.file_name = tup[1]
@@ -79,24 +77,9 @@ class Label(object):
             self.message = 'Cannot print label. Unable to create/open temporary file %s.' % self.file_name
             self.file_name = None            
 
-    #def get_client_ips(self):
-    #    
-    #    #get interfaces and then ips
-    ##    self.client_ips  = []
-    #    self.ifaces = get_iface_list()
-    #    for iface in [i for i in self.ifaces if 'eth' in i]:
-    #        self.client_ips.append(get_ip_address(iface))
-
     def set_client(self):
     
         self.client = None
-
-        #self.get_client_ips()
-        # client = None
-        #for client_ip in self.client_ips:
-        #    if Client.objects.filter(ip=client_ip):
-        #        client = Client.objects.filter(ip=client_ip)
-        #        break
         client = Client.objects.filter(ip=self.client_ip)        
         if client:
             self.client = client[0]
@@ -107,7 +90,8 @@ class Label(object):
             self.label_printer = LabelPrinter.objects.get(cups_server_ip=self.cups_server_ip)
         else:    
             if self.remote_addr:
-                self.cups_server_ip = LabelPrinter.objects.get(client__ip=self.remote_addr).cups_server_ip
+                self.label_printer = LabelPrinter.objects.get(client__ip=self.remote_addr)
+                self.cups_server_ip = self.label_printer.cups_server_ip
             else:    
                 # TODO ask cups for default printer
                 self.label_printer = None
@@ -124,7 +108,7 @@ class Label(object):
     def print_label(self):
 
         # TODO : handle printing in windows
-        
+        self.format_label()        
         if not self.formatted_label:
             raise ValueError, 'Cannot print label. Label has not been defined.'
         else:    
