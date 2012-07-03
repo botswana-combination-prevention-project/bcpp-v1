@@ -14,6 +14,8 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
                         flag_as_not_labelled, 
                         print_barcode_labels]
     
+    label_template_name = None
+    
     def __init__(self, *args, **kwargs):
 
         self.fields = [

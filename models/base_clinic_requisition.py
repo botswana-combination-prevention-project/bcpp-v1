@@ -1,18 +1,8 @@
 from bhp_visit_tracking.models import BaseVisitTracking
 from lab_requisition.models import BaseRequisition
-from lab_requisition.classes import ClinicRequisitionLabel
 
 
 class BaseClinicRequisition (BaseRequisition):
-    
-    def get_label(self, **kwargs):
-        
-        label = ClinicRequisitionLabel(
-                    client_ip = kwargs.get('remote_addr'),
-                    cups_server_ip = kwargs.get('cups_server_ip'),
-                    item_count = kwargs.get('item_count'), 
-                    requisition = self)
-        return label
     
     def get_visit(self):
         

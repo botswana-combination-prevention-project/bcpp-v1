@@ -1,7 +1,6 @@
 #import socket, re
 from datetime import date
 from django.db import models
-from bhp_device.classes import Device
 from bhp_variables.models import StudySpecific
 from bhp_identifier.classes import Identifier
 #from lab_requisition.classes import ClinicRequisitionLabel
@@ -47,16 +46,7 @@ class BaseRequisitionManager(models.Manager):
         return identifier                   
 
 
-    def get_identifier_for_device(self, **kwargs):
 
-        """Generate and return a locally unique requisition identifier for a device (adds device id)"""        
-        device = Device()
-        if not device.device_id:
-            raise ValueError('Device ID unknown. Must either be passed as a kwarg, extracted from hostname, or queried from StudySpecific.')    
-        given_root_segment = str(device.device_id) + date.today().strftime('%m%d')
-        
-        return Identifier(subject_type = 'requisition').create_with_root(given_root_segment, 
-                                                                         counter_length=2)
         
         #    def print_label(self, **kwargs):
         #        

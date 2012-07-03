@@ -6,11 +6,15 @@ except ImportError:
     from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.fields import InitialsField
 from bhp_common.choices import YES_NO
-from bhp_variables.models import StudySite
+from bhp_variables.models import StudySite, StudySpecific
+from bhp_device.classes import Device
+from bhp_string.classes import BaseString
+from bhp_identifier.classes import CheckDigit
 from lab_panel.models import Panel
 from lab_aliquot_list.models import AliquotType
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
 from lab_requisition.managers import BaseRequisitionManager
+from lab_requisition.classes import RequisitionLabel
 
 
 class BaseBaseRequisition (BaseUuidModel):
@@ -108,7 +112,6 @@ class BaseBaseRequisition (BaseUuidModel):
         help_text = 'If applicable, estimated volume of sample for this test/order. This is the total volume if number of "tubes" above is greater than 1'
         )
         
-    
     comments = models.TextField(
         max_length=25,
         null = True,
@@ -119,6 +122,7 @@ class BaseBaseRequisition (BaseUuidModel):
         verbose_name = 'received',        
         default = False,
         )
+    
     is_receive_datetime = models.DateTimeField(
         verbose_name = 'rcv-date',    
         null = True,
@@ -165,37 +169,62 @@ class BaseBaseRequisition (BaseUuidModel):
         return self.get_visit().appointment.registered_subject.subject_identifier
     
     def save(self, *args, **kwargs):
-    
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
             if not self.requisition_identifier and self.is_drawn.lower() == 'yes' :
-                self.requisition_identifier = self.__class__.objects.get_identifier_for_device()
-                
+                self.requisition_identifier = self.prepare_requisition_identifier()
+            if self.requisition_identifier and not self.specimen_identifier:
+                self.specimen_identifier=self.prepare_specimen_identifier()
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
-
+    def prepare_specimen_identifier(self, **kwargs):
+        """ add protocol, site and check digit"""
+        study_specific = StudySpecific.objects.get_query_set()
+        check_digit = CheckDigit()
+        opts={}
+        opts.update({'protocol': study_specific.protocol_prefix})
+        opts.update({'requisition_identifier':self.requisition_identifier, 'site':self.site})
+        opts.update({'check_digit':check_digit.calculate('{protocol}{site}{requisition_identifier}'.format(opts), modulus=7)})
+        return '{protocol}-{site}{requisition_identifier}-{check-digit}'.format(opts)
+    
+    def prepare_requisition_identifier(self, **kwargs):
+        """Generate and return a locally unique requisition identifier for a device (adds device id)"""        
+        device = Device()
+        string = BaseString()
+        length=5
+        template = '{device_id}{random_string}'
+        opts = {'device_id':device.device_id, 'random_string':string.get_safe_random_string(length=length)}
+        requisition_identifier = template.format(**opts)
+        # look for a duplicate
+        if self.__class__.objects.filter(requisition_identifier=requisition_identifier):
+            n=1
+            while self.__class__.objects.filter(requisition_identifier=requisition_identifier):
+                requisition_identifier = template.format(**opts)
+                n+=1
+                if n==length**len(string.safe_allowed_chars):
+                    raise TypeError('Unable prepare a unique requisition identifier, all are taken. Increase the length of the random string')        
+        return requisition_identifier
+    
     def get_label(self, **kwargs):
-        """  override to return a subclass of label 
-        for example:
-            label = ClinicRequisitionLabel(
-                        client_ip = kwargs.get('remote_addr'),
-                        cups_server_ip = kwargs.get('cups_server_ip'),
-                        item_count = kwargs.get('item_count'), 
-                        requisition = self)
-            return label"""
-        raise TypeError('{0} method get_label() should be overridden by the subclass to return an instance of Label()'.format(self))
-        
+        """ Return a "ready to print" label object. """
+        label = RequisitionLabel()
+        return label       
     
     def print_label(self, **kwargs):
         """ print a label using the label class or subclass returned by get_label()"""
         remote_addr = kwargs.get('remote_addr')
         cups_server_ip = kwargs.get('cups_server_ip')
+        template_name = kwargs.get('template_name')
+        item_count = kwargs.get('item_count',1), 
         if self.specimen_identifier:    
             for item_count in range(self.item_count_total, 0, -1):
                 try:
-                    label = self.get_label(
-                                   client_ip = remote_addr,
-                                   cups_server_ip = cups_server_ip,
-                                   item_count = item_count)
+                    label = self.get_label()
+                    label.prepare_label_options(
+                               template_name = template_name,
+                               requisition = self,        
+                               client_ip = remote_addr,
+                               cups_server_ip = cups_server_ip,
+                               item_count = item_count)
                     label.print_label()
                     self.is_labelled = True
                     self.modified = datetime.today()
