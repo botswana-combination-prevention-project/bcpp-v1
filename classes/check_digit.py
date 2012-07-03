@@ -4,7 +4,7 @@ class CheckDigit(object):
     
     """ Create or validate a check digit"""
     
-    def calculate(self, number, modulus):
+    def calculate(self, number, modulus=7):
         
         # using the integer segment, calculate the check digit
         check_digit = number % modulus

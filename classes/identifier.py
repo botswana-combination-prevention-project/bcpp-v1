@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from bhp_identifier.models import IdentifierTracker
 
+
 class Descr(object):
     """Base descriptor, converts value to string on set."""
     def __init__(self):
