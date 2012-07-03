@@ -18,17 +18,18 @@ class BaseCrypter(Base):
         self.aes_key = None
     
     def set_public_key(self, keyfile):
-        """ load public key using the pem filename"""
+        """ load public key using the pem filename """
         if keyfile:
             self.public_key = RSA.load_pub_key(keyfile)
         
     def set_private_key(self, keyfile):
-        """ load the private key using the pem filename"""
+        """ load the private key using the pem filename """
         if keyfile:
             self.private_key = RSA.load_key(keyfile)
 
     def set_aes_key(self, keyfile="user-aes-local.pem"):
-        """ decrypt and set the AES key from a file using the local private key"""
+        """ Decrypt and set the AES key from a file using the local private key.
+        Private key must be set before calling """
         self.aes_key = ''
         if keyfile:
             f = open(keyfile, 'r')
@@ -45,6 +46,7 @@ class BaseCrypter(Base):
         return settings.PRIVATE_KEY_LOCAL
     
     def get_aes_key(self):
+        """ """
         retval = None
         if 'AES_KEY' in dir(settings):
             if settings.AES_KEY:
