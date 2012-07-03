@@ -72,7 +72,6 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
                 visit_model_instance = obj,
                 requisition_model = self.requisition_model,
                 )  
-        
         #set other appointments that are in progress to incomplete
         this_appointment = obj.appointment
         this_appt_tdelta = datetime.today() - obj.appointment.appt_datetime
@@ -97,8 +96,6 @@ class BaseAppointmentModelAdmin(MyModelAdmin):
             this_appointment.save()
         else:
             pass    
-        
-
         return super(BaseAppointmentModelAdmin, self).save_model(request, obj, form, change)                                                
 
         
