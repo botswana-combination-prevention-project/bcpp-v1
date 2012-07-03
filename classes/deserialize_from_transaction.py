@@ -1,24 +1,25 @@
+
+import socket
 from django.core import serializers
 from django.db.utils import IntegrityError
+from bhp_crypto.classes import BaseCrypter
 from transaction_producer import TransactionProducer
-import socket
 
-class DeserializeFromTransaction(object):
 
-    def deserialize(self, sender, instance,**kwargs):
+class DeserializeFromTransaction(BaseCrypter):
+    
+    def __init__(self, *args, **kwargs):
+        super(DeserializeFromTransaction, self).__init__(*args, **kwargs)
+        self.set_private_key(self.get_private_key_local_keyfile())
+        self.set_aes_key(self.get_aes_key())
         
-        incoming_transaction = instance
-        
-       
-        
-        for obj in serializers.deserialize("json",incoming_transaction.tx):
+    def deserialize(self, sender, incoming_transaction, **kwargs):
+        """ decrypt and deserialize the incoming json object"""
+        for obj in serializers.deserialize("json",self.aes_decrypt(incoming_transaction.tx)):
         # if you get an error deserializing a datetime, confirm dev version of json.py
-                
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
-
                 # check if tx originanted from me
                 #print "created %s : modified %s" % (obj.object.hostname_created, obj.object.hostname_modified)
-     
                 if obj.object.hostname_modified == socket.gethostname(): 
                     #print "Ignoring my own transaction %s" % (incoming_transaction.tx_pk)
                     pass
@@ -33,20 +34,18 @@ class DeserializeFromTransaction(object):
                     # this will cause an integrity error as the consumer will auto-create a model instance 
                     # and the next incoming_transaction to be consumed will be that same model instance with a different pk.
                     
-                    # get_by_natural_key_with_dict is disabled, just save()
-                    if 'xget_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
+                    #  get_by_natural_key_with_dict is disabled, just save()
+                    if 'DISABLEDget_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
                         if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
                             obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
                             obj.save()
                         else:
                             raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,) )
                     else:  
-    
                         try:
                             # save using ModelBase save() method (skips all the subclassed save() methods)
                             # post_save, etc signals will fire  
-                            obj.save()
-                            
+                            obj.save() 
                         except IntegrityError as error:
                             #print error
                             incoming_transaction.is_consumed = False
