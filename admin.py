@@ -19,8 +19,7 @@ class RegisteredSubjectAdmin (BaseModelAdmin):
         'study_site',
         'user_created',
         'created',
-
-    )   
+        )   
     
     readonly_fields = (
         'subject_identifier',

@@ -21,7 +21,6 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
     Use this along with BaseRegisteredSubjectModelAdmin()
     
     """
-
     registered_subject = models.OneToOneField(RegisteredSubject)            
     
     def get_visit_model(self, instance):
@@ -40,17 +39,14 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
         # for the base_appt_datetime, see Appointment.objects.create_appointments()
 
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
-            
             Appointment.objects.create_appointments( 
                 registered_subject = self.registered_subject, 
                 model_name = self.__class__.__name__.lower(),
                 )
-            
             AdditionalEntryBucket.objects.update_status(
                 registered_subject = self.registered_subject,    
                 model_instance = self,
                 )
-
 
     class Meta:
         abstract=True
