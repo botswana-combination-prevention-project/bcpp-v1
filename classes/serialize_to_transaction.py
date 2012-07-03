@@ -74,11 +74,9 @@ class SerializeToTransaction(BaseCrypter):
                         [instance,],
                         ensure_ascii = False, 
                         use_natural_keys = use_natural_keys)              
-
         #encrypt the json_tx string using the aes key
         json_tx = base64.b64encode(self.aes_encrypt(json_tx))
         # save to Outgoing Transaction.
-        #if not OutgoingTransaction.objects.filter(tx__exact=transaction.tx):
         OutgoingTransaction.objects.create(
             tx_name = instance._meta.object_name,
             tx_pk = instance.pk,
