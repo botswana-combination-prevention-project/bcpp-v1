@@ -1,46 +1,22 @@
-from bhp_common.classes import BaseTemplateContext
+#from bhp_common.classes import BaseTemplateContext
 from base_search_template_context import BaseSearchTemplateContext
+
 
 class BaseSearch(BaseSearchTemplateContext):
     
-    """ 
-        a base class for search forms/result set 
-    
-        Inherets a base context specific to search
-        
-        adds 
-        
-        section_name, 
-        search_name, 
-        result_include_file 
-        
-        and
-        
-        get_labeled_queryset() (which you have to override)
-        
-    """
-
     def __init__(self, request, **kwargs):
-        
         BaseSearchTemplateContext.__init__(self, **kwargs)
-
-        """ 
-            search_name:              
-            Comes as a parameter from the Url
-        """
-
-        if kwargs.get('search_name') is None:
+        defaults={}
+        #search_name: comes as a parameter from the Url
+        if not kwargs.get('search_name', None):
             raise TypeError('BaseSearch requires keyword/value for key \'search_name\'. None given.')
         else:
-            self['search_name'] =  kwargs.get('search_name')
-        
-        """
-           result_include_file: if you look at the base_search.html you'll see that 
-           the result set block refers to an include file.  
-        """
-        
-        if kwargs.get('result_include_file') is None:
-            self['result_include_file'] = '%s%s' % (self['search_name'], "_include.html")
+            defaults.update({'search_name':kwargs.get('search_name')})
+        # result_include_file: if you look at the base_search.html you'll see that 
+        # the result set block refers to an include file.  
+        if not kwargs.get('result_include_file', None):
+            defaults.update({'result_include_file':'{0}{1}'.format(self.get('search_name'), "_include.html")})
+        self.update(defaults)
                     
     def get_labeled_queryset(self, queryset_label, **kwargs):
         
@@ -60,7 +36,6 @@ class BaseSearch(BaseSearchTemplateContext):
         raise TypeError("BaseSearch.get_labeled_queryset must be overridden by child class")        
         
     def form(self, post=None):
-        pass
         """you can override this method to use a different form"""
-        #return SearchForm(post)            
+        pass
 

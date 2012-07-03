@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from bhp_search.forms import SearchForm
 from base_search import BaseSearch
 
@@ -8,42 +7,37 @@ class BaseSearchByWord(BaseSearch):
         
         BaseSearch.__init__(self, request, **kwargs )
         
-        self['report_title'] = "Search %s by word" % (self['search_name'])
+        defaults={'report_title':'Search {0} by word'.format(self.get('search_name')),
+                  'search_helptext':'Search by search term.',
+                  'extend':'base_search_by_word.html',  
+                  'search_by_name':'word',} 
+        self.update(**defaults) 
         
-        #may wish to handle this as kwargs
-        self['search_helptext'] = _(u'Search by search term. ')
-        self['extend']= "base_search_by_word.html"  
-        self['search_by_name']='word'  
-            
+        options={}
         # check **kwargs for queryset_label, otherwise default
-        if not kwargs.get('queryset_label') is None:
-            self['queryset_label'] = kwargs.get('queryset_label')
+        if kwargs.get('queryset_label'):
+            options.update({'queryset_label':kwargs.get('queryset_label')})
         else:
-            self['queryset_label'] = '%s_by_word' % (self['search_name'])
-
+            options.update({'queryset_label':'%s_by_word'.format(self.get('search_name'))})
         if ((request.method == 'GET' and not request.GET == {}) or ( request.method == 'POST' and not request.POST == {})):            
             if request.method == 'POST':
-                self['form'] = SearchForm(request.POST)
+                options.update({'form':SearchForm(request.POST)})
             elif request.method == 'GET':    
-                self['form'] = SearchForm(request.GET)
+                options.update({'form':SearchForm(request.GET)})
             else:
                 raise TypeError('Request method unknown. Expected POST or GET. See BaseSearchByWeek')
-
-            if self['form'].is_valid():
+            if self.get('form').is_valid():
                 if request.method == 'POST':
-                    self['magic_url'] = request.POST.urlencode()                
+                    options.update({'magic_url':request.POST.urlencode()})                
                 elif request.method == 'GET':    
-                    self['magic_url'] = request.GET.urlencode()                
-
-                self['search_term']= self['form'].cleaned_data['search_term']
-                self['search_result_title'] = 'Results for search term \'%s\'' % (self['search_term'])                
-                
+                    options.update({'magic_url':request.GET.urlencode()})                
+                options.update({'search_term':self.get('form').cleaned_data.get('search_term')})
+                options.update({'search_result_title':'Results for search term \'{0}\''.format(self.get('search_term'))})              
                 """call your app's get_labeled_queryset"""
-                self.get_labeled_queryset(self['queryset_label'], search_term=self['search_term'])
+                self.get_labeled_queryset(self.get('queryset_label'), search_term=self.get('search_term'))
         else:     
-
-            self['form'] = SearchForm()
-    
+            options.update({'form':SearchForm()})
+        self.update(**options)    
         return 
 
 
