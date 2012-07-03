@@ -76,12 +76,12 @@ class Crypter(BaseCrypter):
                             raise ValueError('Cannot determine algorithm for decryptor')
                     else:
                         raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
-            else:
-                # if there is no private key, we must always return an encrypted value, unless None!
-                if not self.is_encrypted(value):
-                    # for some reason, the value was not encrypted AND we do not
-                    # have a private key, so it should be 
-                    value = self.encrypt(value, **kwargs)
+        #            else:
+        #                # if there is no private key, we must always return an encrypted value, unless None!
+        #                if not self.is_encrypted(value):
+        #                    # for some reason, the value was not encrypted AND we do not
+        #                    # have a private key, so it should be 
+        #                    value = self.encrypt(value, **kwargs)
         return value
     
     def update_cipher_lookup(self, encrypted_value):

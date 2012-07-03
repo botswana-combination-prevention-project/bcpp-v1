@@ -39,8 +39,7 @@ class BaseEncryptedField(models.Field):
         self.crypter.set_public_key(self.get_public_keyfile())
         self.crypter.set_private_key(self.get_private_keyfile())
         self.crypter.set_aes_key(self.get_aes_key())
-        
-        super(BaseEncryptedField, self).__init__(*args, **kwargs)
+        super(BaseEncryptedField, self).__init__(*args, **kwargs)    
 
     def get_aes_key(self, key=None):
         """ Override to return the aes key """

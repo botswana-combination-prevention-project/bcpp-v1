@@ -2,6 +2,8 @@ import os, base64
 from datetime import datetime
 from M2Crypto import Rand, RSA, EVP
 from base import Base
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 
 class BaseCrypter(Base):
@@ -27,16 +29,28 @@ class BaseCrypter(Base):
 
     def set_aes_key(self, keyfile="user-aes-local.pem"):
         """ decrypt and set the AES key from a file using the local private key"""
-        #try:
         self.aes_key = ''
         if keyfile:
             f = open(keyfile, 'r')
             encrypted_key = f.read()
-            
             f.close()
             if self.private_key:
-                self.aes_key = self.rsa_decrypt(base64.b64decode(encrypted_key))
+                self.aes_key = self.rsa_decrypt(encrypted_key)
     
+    def get_private_key_local_keyfile(self):
+        self.private_keyfile = None
+        if not hasattr(settings, 'PRIVATE_KEY_LOCAL'):
+            raise ImproperlyConfigured('For \'%s\' security, you must set the PRIVATE_KEY_LOCAL setting to ' \
+                                        'point to your public key (path and filename).' % (self.mode,))
+        return settings.PRIVATE_KEY_LOCAL
+    
+    def get_aes_key(self):
+        retval = None
+        if 'AES_KEY' in dir(settings):
+            if settings.AES_KEY:
+                retval = settings.AES_KEY
+        return retval  
+       
     def _blank_callback(self): 
         "Replace the default dashes as output upon key generation" 
         return
@@ -77,11 +91,10 @@ class BaseCrypter(Base):
         return self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
 
     def rsa_decrypt(self, cipher_text):
-        cipher_text = cipher_text
-        #print cipher_text
-        #print base64.b64decode(cipher_text)
+        """Given a base64 encoded cipher, return the decrypted value"""
+        cipher_text = base64.b64decode(cipher_text)
         return self.private_key.private_decrypt(cipher_text,
-                                                    RSA.pkcs1_oaep_padding).replace('\x00', '')
+                                                RSA.pkcs1_oaep_padding).replace('\x00', '')
 
     def _build_cipher(self, key, iv=None, op=ENC):
         """"""""
