@@ -12,15 +12,13 @@ class SubjectIdentifier(BaseModel):
         max_length = 25,
         unique = True)
     
-    seed = models.IntegerField(
-       default = 1000,
-       unique = True)
+    seed = models.IntegerField()
     
     def get_sequence(self):
         """return a padded sequence segment of the subject identifier"""
         if not self.seed:
             raise TypeError('Seed cannot be None.')
-        return str(self.pk).rjust(len(self.seed),'0')    
+        return str(self.pk).ljust(len(self.seed),'0')    
     
     def __unicode__(self):
         return self.subject_identifier
