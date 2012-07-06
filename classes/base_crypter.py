@@ -90,14 +90,24 @@ class BaseCrypter(Base):
         return base64.b64encode(encrypted_key)
     
     def rsa_encrypt(self, value):
+        """Return an uncode encrypted value, but know that it may fail if keys are not available"""
+        if not self.public_key:
+            raise ImproperlyConfigured("RSA public key not set, unable to decrypt cipher.")
         return self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
-
-    def rsa_decrypt(self, cipher_text):
-        """Given a base64 encoded cipher, return the decrypted value"""
-        cipher_text = base64.b64decode(cipher_text)
+    
+    def rsa_decrypt(self, cipher_text, is_encoded=True):
+        """ Return cleaned decrypted cipher text if the private key is available. 
+        Check for the private_key before calling this method.
+        Cipher_text is base64 encoded unless is_encoded is false"""
+        
+        if not self.private_key:
+            raise ImproperlyConfigured("RSA private key not set, unable to decrypt cipher.")
+        if is_encoded:
+            cipher_text = base64.b64decode(cipher_text)
         return self.private_key.private_decrypt(cipher_text,
                                                 RSA.pkcs1_oaep_padding).replace('\x00', '')
-
+    
+    
     def _build_cipher(self, key, iv=None, op=ENC):
         """"""""
         if iv is None:
@@ -106,20 +116,32 @@ class BaseCrypter(Base):
             iv = base64.b64decode(iv)
         return EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
                                                     
-    def aes_decrypt(self, cipher_text):
+    def aes_decrypt(self, cipher_text, is_encoded=True):
         """ Decrypt a AES cipher using a secret key that itself is decrypted using the private key. """
-        cipher_text = base64.b64decode(cipher_text)
-        cipher = self._build_cipher(self.aes_key, None, self.DEC)
-        v = cipher.update(cipher_text)
-        v = v + cipher.final()
-        del cipher
-        return v.replace('\x00', '')
+        retval = cipher_text
+        if not self.aes_key:
+            raise ImproperlyConfigured("AES key not set, unable to decrypt cipher.")
+        else:    
+            if is_encoded:
+                cipher_text = base64.b64decode(cipher_text)
+            cipher = self._build_cipher(self.aes_key, None, self.DEC)
+            v = cipher.update(cipher_text)
+            v = v + cipher.final()
+            del cipher
+            retval = v.replace('\x00', '')
+        return retval
     
     def aes_encrypt(self, value):            
-        cipher = self._build_cipher(self.aes_key, None, self.ENC)
-        v = cipher.update(value)
-        v = v + cipher.final()
-        del cipher
+        """ Encrypt with AES, but fail if aes_key unavailable.
+        Important to not allow any data to be saved if the keys are not available"""
+        
+        if not self.aes_key:
+            raise ImproperlyConfigured('AES key not available, unable to encrypt sensitive data using the AES algorithm.')
+        else:    
+            cipher = self._build_cipher(self.aes_key, None, self.ENC)
+            v = cipher.update(value)
+            v = v + cipher.final()
+            del cipher
         return v
 
 
