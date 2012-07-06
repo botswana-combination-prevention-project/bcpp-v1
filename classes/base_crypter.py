@@ -107,7 +107,6 @@ class BaseCrypter(Base):
         return self.private_key.private_decrypt(cipher_text,
                                                 RSA.pkcs1_oaep_padding).replace('\x00', '')
     
-    
     def _build_cipher(self, key, iv=None, op=ENC):
         """"""""
         if iv is None:
