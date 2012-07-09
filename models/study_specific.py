@@ -114,6 +114,9 @@ class BaseStudySpecific (BaseUuidModel):
 
 class StudySpecific (BaseStudySpecific):
     
+    def protocol_prefix(self):
+        return self.protocol_code    
+    
     def __unicode__(self):
         return "%s: %s started on %s" % (self.protocol_number, self.protocol_title, self.study_start_datetime)
     class Meta:
