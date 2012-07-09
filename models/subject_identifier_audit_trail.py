@@ -34,7 +34,8 @@ class SubjectIdentifierAuditTrail(BaseModel):
         )
     
     def __unicode__(self):
-        return '%s %s' % (self.subject_identifier, self.initials)
+        #return '%s %s' % (self.subject_identifier, self.initials)
+        return '%s' % (self.subject_identifier)
         
     class Meta:
         ordering = ['-date_allocated']
