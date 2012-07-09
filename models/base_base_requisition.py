@@ -178,7 +178,7 @@ class BaseBaseRequisition (BaseUuidModel):
 
     def prepare_specimen_identifier(self, **kwargs):
         """ add protocol, site and check digit"""
-        study_specific = StudySpecific.objects.get_query_set()
+        study_specific = StudySpecific.objects.get_query_set()[0]
         check_digit = CheckDigit()
         opts={}
         opts.update({'protocol': study_specific.protocol_prefix})
