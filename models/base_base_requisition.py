@@ -181,7 +181,7 @@ class BaseBaseRequisition (BaseUuidModel):
         study_specific = StudySpecific.objects.get_query_set()[0]
         #check_digit = CheckDigit()
         opts={}
-        opts.update({'protocol': study_specific.protocol_prefix})
+        opts.update({'protocol': study_specific.protocol_prefix()})
         opts.update({'requisition_identifier':self.requisition_identifier, 'site':self.site})
         #opts.update({'check_digit':check_digit.calculate('{protocol}{site}{requisition_identifier}'.format(opts), modulus=7)})
         return '{protocol}-{site}{requisition_identifier}-{check-digit}'.format(opts)
