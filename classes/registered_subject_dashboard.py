@@ -450,7 +450,7 @@ for visit in MaternalVisit.objects.filter(appointment__registered_subject__subje
         if 'registration_identifier' not in regex.keys():
             regex['registration_identifier'] = '[A-Z0-9]{6,8}'             
 
-        self.urlpatterns = patterns(view,
+        urlpatterns = patterns(view,
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<panel>\d+)/$'.format(**regex), 
                 'dashboard', 
@@ -484,7 +484,7 @@ for visit in MaternalVisit.objects.filter(appointment__registered_subject__subje
         for visit_field_name in visit_field_names:
 
             regex['visit_field_name'] = visit_field_name
-            self.urlpatterns += patterns(view,
+            urlpatterns += patterns(view,
             
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<{visit_field_name}>{pk})/(?P<panel>\d+)/$'.format(**regex), 
                     'dashboard', 
@@ -501,7 +501,7 @@ for visit in MaternalVisit.objects.filter(appointment__registered_subject__subje
                 )    
 
             
-        self.urlpatterns += patterns(view,
+        urlpatterns += patterns(view,
         
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<appointment>{pk})/$'.format(**regex), 
                 'dashboard', 
@@ -576,6 +576,6 @@ for visit in MaternalVisit.objects.filter(appointment__registered_subject__subje
                 ),
 
             )
-        return self.urlpatterns
+        return urlpatterns
 
         
