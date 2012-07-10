@@ -1,6 +1,7 @@
 from django.db.models import CharField
 from bhp_crypto.classes import Salter
 
+
 class SaltField (CharField):  
     """ 
     HostnameCreationField

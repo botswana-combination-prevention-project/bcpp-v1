@@ -1,8 +1,7 @@
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-#from django.forms import widgets
+from bhp_crypto.settings import settings
 from local_keypair_encryption_field import LocalKeyPairEncryptionField
-#from bhp_base_model.widgets import ReadOnlyWidget
+
 
 class LocalAesEncryptionField(LocalKeyPairEncryptionField):
     

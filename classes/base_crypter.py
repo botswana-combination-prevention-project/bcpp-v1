@@ -1,9 +1,9 @@
 import os, base64
 from datetime import datetime
 from M2Crypto import Rand, RSA, EVP
-from base import Base
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from base import Base
+from bhp_crypto.settings import settings
 
 
 class BaseCrypter(Base):
@@ -11,11 +11,14 @@ class BaseCrypter(Base):
     KEY_LENGTH = 2048
     ENC=1
     DEC=0
+     
     
     def __init__(self, *args, **kwargs):
-        self.public_key = None
-        self.private_key = None
-        self.aes_key = None
+        self.public_key=None
+        self.private_key=None
+        self.aes_key=None
+        self.algorithm=None
+        self.mode=None
     
     def set_public_key(self, keyfile):
         """ load public key using the pem filename """

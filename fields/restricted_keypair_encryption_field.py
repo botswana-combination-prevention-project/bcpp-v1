@@ -1,7 +1,6 @@
-from django.conf import settings
-from django import forms
 from django.core.exceptions import ImproperlyConfigured
 from bhp_crypto.classes import BaseEncryptedField
+from bhp_crypto.settings import settings
 
 
 class RestrictedKeyPairEncryptionField(BaseEncryptedField):
@@ -9,18 +8,6 @@ class RestrictedKeyPairEncryptionField(BaseEncryptedField):
     """ Encrypts using a key pair but will raise an error if the private key is available and IS_SECURE_DEVICE is False. """
     
     def __init__(self, *args, **kwargs):
-        
-        self.algorithm = 'RSA'
-        self.mode = 'restricted key-pair'
-        # will force the Crypter class to use restricted key-pair encryption
-        # so the model field attribute should not be specified        
-        if 'encryption_method' in kwargs:
-            raise ImproperlyConfigured('RestrictedKeyPairEncryptionField parameter \'encryption_method\' = \'%s\' by default.'  \
-                                       ' Do not set this parameter at the model level.' % (self.mode,)) 
-        defaults = {'encryption_method': self.mode,
-                    'help_text': kwargs.get('help_text', '') + ' (Encryption: %s)' % (self.mode,),}
-        kwargs.update(defaults)
-        
         # we need this settings attribute when determining if the private key may be available
         if not hasattr(settings, 'IS_SECURE_DEVICE'):
             raise ImproperlyConfigured('You must set the IS_SECURE_DEVICE setting to True ' \

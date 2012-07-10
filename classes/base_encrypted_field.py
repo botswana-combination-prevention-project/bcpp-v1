@@ -16,7 +16,7 @@ class BaseEncryptedField(models.Field):
     description = "Field to encrypt and decrypt values that are stored as encrypted"
     __metaclass__ = models.SubfieldBase
     # can only set encryption_method to these values at the model field 
-    valid_encryption_methods = ['restricted key-pair', 'local RSA key-pair', 'local AES']
+    valid_encryption_methods = ['restricted RSA key-pair', 'local RSA key-pair', 'local AES']
     
     def __init__(self, *args, **kwargs):  
         """
@@ -27,7 +27,9 @@ class BaseEncryptedField(models.Field):
         2. local key-pair: same as restricted key-pair but the private key is expected to be available and is not checked for
         """
         # this has all the crypto methods
-        self.crypter = Crypter() 
+        self.crypter=Crypter() 
+        self.crypter.algorithm=self.algorithm
+        self.crypter.mode=self.mode
         # check encryption_method kwarg from subclass or field object
         self.encryption_method = self.check_encryption_method(kwargs.get('encryption_method', None))        
         if 'encryption_method' in kwargs:
@@ -40,7 +42,16 @@ class BaseEncryptedField(models.Field):
         self.crypter.set_private_key(self.get_private_keyfile())
         self.crypter.set_aes_key(self.get_aes_key())
         super(BaseEncryptedField, self).__init__(*args, **kwargs)    
-
+    
+    @property
+    def extra_salt(self):
+        """salt for hashes"""
+        if not self.algorithm:
+            raise ImproperlyConfigured('Encryption algorithm cannot be None')
+        if not self.mode:
+            raise ImproperlyConfigured('Encryption mode cannot be None')
+        return self.algorithm+self.mode.replace(' ', '')
+    
     def get_aes_key(self, key=None):
         """ Override to return the aes key """
         return ''
@@ -59,15 +70,11 @@ class BaseEncryptedField(models.Field):
     
     def decrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        algorithm = kwargs.get('algorithm',self.algorithm)
-        mode = kwargs.get('algorithm',self.mode)
-        return self.crypter.decrypt(value, algorithm=algorithm, mode=mode)
+        return self.crypter.decrypt(value, extra_salt=self.extra_salt)
     
     def encrypt(self, value, **kwargs):
-        """ wrap the crypter method of same name """
-        algorithm = kwargs.get('algorithm',self.algorithm)
-        mode = kwargs.get('algorithm',self.mode)        
-        return self.crypter.encrypt(value, algorithm=algorithm, mode=mode)
+        """ wrap the crypter method of same name """   
+        return self.crypter.encrypt(value, extra_salt=self.extra_salt)
     
     def validate_with_cleaned_data(self, attname, cleaned_data):
         """ May be overridden to test field data against other values in cleaned data. 

@@ -1,4 +1,5 @@
-from restricted_keypair_encryption_field import RestrictedKeyPairEncryptionField
-
-class EncryptedIdentityField(RestrictedKeyPairEncryptionField):
+from restricted_rsa_encryption_field import RestrictedRsaEncryptionField 
+ 
+ 
+class EncryptedIdentityField(RestrictedRsaEncryptionField):
     pass

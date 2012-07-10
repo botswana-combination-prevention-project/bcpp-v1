@@ -1,7 +1,7 @@
 import hashlib, base64
 from datetime import datetime
 from django.core.exceptions import ValidationError
-from django.conf import settings
+from bhp_crypto.settings import settings
 from base_crypter import BaseCrypter
 
 
@@ -40,7 +40,7 @@ class Hasher(BaseCrypter):
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size
         
-    def get_hash(self, value, extra_salt=''):
+    def get_hash(self, value, extra_salt):
         """ for a given value, return a salted SHA256 hash """
         if not value:
             retval = None
@@ -51,7 +51,6 @@ class Hasher(BaseCrypter):
                 salt = salt+extra_salt
             if not isinstance(salt, str):
                 raise ValidationError('The Encryption keys are not available to this system. Unable to save sensitive data.')
-                #raise TypeError('Hasher expects \'salt\' to be a string.')
             digest = self.new_hasher(salt+value).digest()
             # then hash 40-1 times
             for x in range(0, self.iterations-1):

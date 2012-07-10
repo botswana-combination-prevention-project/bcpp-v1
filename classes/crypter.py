@@ -1,4 +1,5 @@
 import base64
+from django.core.exceptions import ImproperlyConfigured
 from base_crypter import BaseCrypter
 from bhp_crypto.models import Crypt
 from hasher import Hasher
@@ -30,25 +31,36 @@ class Crypter(BaseCrypter):
     # hasher
     hasher = Hasher()
     
+    def __init__(self, *args, **kwargs):
+        super(Crypter, self).__init__(self, *args, **kwargs)
+    
+    @property
+    def extra_salt(self):
+        """salt for hashes"""
+        if not self.algorithm:
+            raise ImproperlyConfigured('Encryption algorithm cannot be None')
+        if not self.mode:
+            raise ImproperlyConfigured('Encryption mode cannot be None')
+        return self.algorithm+self.mode.replace(' ', '')
+    
     def encrypt(self, value, **kwargs):
         """ return the encrypted field value (hash+cipher), do not override """
-        algorithm = kwargs.get('algorithm', None)
-        mode = kwargs.get('mode', None)
-        update_lookup = kwargs.get('update_lookup', False)
-        
+        if not self.extra_salt:
+            raise ImproperlyConfigured('Instance attribute \'extra_salt\' is required. Got None')
+        update_lookup=kwargs.get('update_lookup', False)
         if not value:
             encrypted_value = value    
         else:    
             if not self.is_encrypted(value):
-                if algorithm == 'AES':
+                if self.algorithm == 'AES':
                     cipher_text = self.aes_encrypt(value)
-                elif algorithm == 'RSA':
+                elif self.algorithm == 'RSA':
                     if len(value) >= self.KEY_LENGTH/24:
                         raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
                     cipher_text = self.rsa_encrypt(value)
                 else:
                     raise ValueError('Cannot determine algorithm for encryptor')
-                hash_text = self.get_hash(value, algorithm+mode)
+                hash_text = self.get_hash(value)
                 encoded_cipher_text = base64.b64encode(cipher_text)
                 encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
                 if update_lookup:
@@ -60,22 +72,22 @@ class Crypter(BaseCrypter):
     
     def decrypt(self, value, **kwargs):
         """ if private key is known, return an decrypted value, otherwise return the encrypted value """
-        algorithm = kwargs.get('algorithm', None)
-        mode = kwargs.get('mode', None)
+        if not self.extra_salt:
+            raise ImproperlyConfigured('Instance attribute \'extra_salt\' is required. Got None')
         if value:
             if self.private_key:
                 if self.is_encrypted(value):
-                    hash_text = self.get_hash(value, algorithm+mode)
+                    hash_text = self.get_hash(value)
                     cipher_text = self.get_cipher(value, hash_text)
                     if cipher_text:
-                        if algorithm == 'AES':
+                        if self.algorithm == 'AES':
                             value = self.aes_decrypt(cipher_text)
-                        elif algorithm == 'RSA':
+                        elif self.algorithm == 'RSA':
                             value = self.rsa_decrypt(cipher_text)
                         else:
                             raise ValueError('Cannot determine algorithm for decryptor')
                     else:
-                        raise ValueError('When decrypting, expected to find cipher for given hash %s' % (hash_text,))
+                        raise ValueError('When decrypting, expected to find cipher for given hash {0}'.format(hash_text))
         #            else:
         #                # if there is no private key, we must always return an encrypted value, unless None!
         #                if not self.is_encrypted(value):
@@ -101,9 +113,11 @@ class Crypter(BaseCrypter):
                 else:
                     # if the hash is not in the crypt model and you do not have a cipher
                     # this is an error condition
-                    raise TypeError('Expected cipher text for given new hash, but got None.')
+                    # update: if performing a search, instead of data entry, the hash may not exist
+                    print 'hash not found in crypt model. {0} {1} {2}'.format(self.algorithm, self.mode, hash_text)
+                    #raise TypeError('Expected cipher text for given {0} {1} hash, but got None for value {2}, {3}.'.format(self.algorithm, self.mode, encrypted_value, hash_text))
             
-    def get_hash(self, value, extra_salt=''):
+    def get_hash(self, value):
         """ hash is stored for exact match search functionality as the cipher is never the same twice """
         if self.is_encrypted(value):
             # if value is an encrypted value string, cut out the hash segment
@@ -112,12 +126,15 @@ class Crypter(BaseCrypter):
         else:
             # if the value is not encrypted, hash it.
             # note that hash must be unique for each mode and algorithm
-            if not extra_salt:
-                raise TypeError('Subclass must set the mode and algorithm to ensure a unique hash.')
-            hash_text = self.hasher.get_hash(value, extra_salt.replace(' ', ''))
+            if not self.extra_salt:
+                raise TypeError('Subclass must set the mode and algorithm to make a salt to ensure a unique hash.')
+            hash_text = self.hasher.get_hash(value, self.extra_salt)
         ret_val = hash_text
         return ret_val        
-
+    
+    def get_stored_hash(self, value):
+        return self.prefix+self.get_hash(value)
+    
     def get_cipher(self, encrypted_value, hash_text):
         """ Return the cipher string from within the encrypted value or from a lookup """
         if not encrypted_value:
