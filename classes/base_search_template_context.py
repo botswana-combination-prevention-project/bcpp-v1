@@ -9,13 +9,14 @@ class BaseSearchTemplateContext(BaseTemplateContext):
         
         BaseTemplateContext.__init__(self, **kwargs)
         
-        defaults = {'template':"search.html",
-                    'base_search_extender':"section_search.html",
-                    'search_results':"",
+        defaults = {'template': "search.html",
+                    'base_search_extender': "section_search.html",
+                    'search_results': "",
                     'dbname':"default",
-                    'page':None,
-                    'magic_url':'',}
-        self.update(**defaults)        
+                    'page': None,
+                    'magic_url': '',}
+        
+        self.data.update(**defaults)        
         
 
 

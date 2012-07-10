@@ -3,6 +3,7 @@ from bhp_search.utils import weekBoundaries
 from bhp_search.forms import WeekNumberSearchForm
 from base_search import BaseSearch
 
+
 class BaseSearchByWeek(BaseSearch):
     """ subclass of BaseSearch specfic to week number range search"""
     def __init__(self, request, **kwargs):

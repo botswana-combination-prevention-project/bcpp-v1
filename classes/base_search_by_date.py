@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
-from bhp_search.forms import DateRangeSearchForm
 from base_search import BaseSearch
+
 
 class BaseSearchByDate(BaseSearch):
     """ subclass of BaseSearch specfic to date range search"""

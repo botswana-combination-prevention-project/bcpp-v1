@@ -2,13 +2,13 @@
 {% block title %}{{ block.super|capfirst }} by {{ search_by_name }}{% endblock %}
 
 {% block pagination %}
-{% if search_results.object_list %}
-{% include 'pagination_include.html' %}
+{% if search_result.object_list %}
+    {% include 'pagination_include.html' %}
 {% endif %}
 {% endblock %}
 
 {% block results_title %}
-{% if search_results.object_list %}
+{% if search_result.object_list %}
     <h3>{% block result_title %}{{ block.super }}{{ search_result_title }}{% endblock %}</h3>
 {% endif %}    
 {% endblock %}
@@ -16,13 +16,13 @@
 
 {% block results %}
 
-    {% if search_results %}
+    {% if search_result %}
 
-        {% if search_results.object_list %}
+        {% if search_result.object_list %}
         
             {% block result_body %}
 
-            {% include result_include_file %}
+            {% include search_result_template %}
             
             {% endblock %}  
 
