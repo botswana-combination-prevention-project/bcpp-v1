@@ -61,7 +61,7 @@ class WeekNumberSearchForm(forms.Form):
             
         
 class WeekYearSearchForm(forms.Form):
-    date_start = forms.IntegerField(
+    week_start = forms.IntegerField(
         #max_length=2,
         label="Start Week",
         help_text="Format is WW",
@@ -77,7 +77,7 @@ class WeekYearSearchForm(forms.Form):
         initial=date.today().isocalendar()[0]
         )
 
-    date_end = forms.IntegerField(
+    week_end = forms.IntegerField(
         #max_length=2,
         label="End Week",
         help_text="Format is WW",

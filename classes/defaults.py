@@ -9,10 +9,11 @@ defaults = {
     'os_variables': os_variables,
     'sql':"",
     'database': settings.DATABASES['default'],
-    'base_search_extender': "section_search.html",
+    'base_search_extender': "section.html",
     'search_results': "",
     'dbname':"default",
     'page': 0,
     'magic_url': '',
     'search_results': None,
+    'search_result_title': 'Results',
     }

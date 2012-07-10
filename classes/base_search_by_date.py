@@ -1,68 +1,35 @@
-from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
+from bhp_search.forms import DateRangeSearchForm
 from base_search import BaseSearch
 
 
 class BaseSearchByDate(BaseSearch):
     """ subclass of BaseSearch specfic to date range search"""
+    
+    search_type='date'
+    
     def __init__(self, request, **kwargs):
         
-        BaseSearch.__init__(self, request, **kwargs )
+        super(BaseSearchByDate, self).__init__(request, **kwargs )
+        defaults = {'search_helptext':'Search by date.'}
+        self.search_form = DateRangeSearchForm 
+        self.context.update(**defaults) 
 
-    def get_response(self, request, **kwargs):
-        
-        self['report_title'] = "Search %s by date range" % (self['search_name'])
-        
-        #may wish to handlethis as kwargs
-        self['search_helptext'] = _(u'Search by date range')
-        self['extend'] = "base_search_by_date.html" 
-        self['search_by_name'] = 'date'           
-            
-        # check **kwargs for queryset_label, otherwise default
-        if not kwargs.get('queryset_label') is None:
-            self['queryset_label'] = kwargs.get('queryset_label')
-        else:
-            self['queryset_label'] = self['search_name']          
-        if ((request.method == 'GET' and not request.GET == {}) or ( request.method == 'POST' and not request.POST == {})):            
-            if request.method == 'POST':
-                self['form'] = self.form(request.POST)                  
-            elif request.method == 'GET':    
-                self['form'] = self.form(request.GET)                  
-            else:
-                raise TypeError('Request method unknown. Expected POST or GET. See BaseSearchByWeek')
+    def prepare_form(self, request, **kwargs):
+        super(BaseSearchByDate, self).prepare_form(request, **kwargs )
+        #self.update_context(search_result_title='Results for \'{0}\''.format([v for v in self.context.get('form').cleaned_data.itervalues()]))  
+        #self['search_result_title'] = 'Results for period from %s to %s.' % (self['date_start'], self['date_end'] )                               
 
-            if self['form'].is_valid():
-                
-                if request.method == 'POST':
-                    self['magic_url'] = request.POST.urlencode()                
-                elif request.method == 'GET':    
-                    self['magic_url'] = request.GET.urlencode()                
-
-
-                self['date_start'] = "%s 00:00" % (self['form'].cleaned_data['date_start'])
-                self['date_end'] = "%s 23:59" % (self['form'].cleaned_data['date_end'])
-                        
-                self['search_result_title'] = 'Results for period from %s to %s.' % (self['date_start'], self['date_end'] )                               
-
-                """this will be overridden in the subclass"""
-                self.get_labeled_queryset(
-                    self['queryset_label'], 
-                    date_start=self['date_start'],
-                    date_end=self['date_end'], 
-                    cleaned_data=self['form'].cleaned_data 
-                    )                       
-        else:     
     
-            if kwargs.get('date_start') and kwargs.get('date_end'):
-                data = {}
-                for k,v in kwargs.items():
-                    data[k]=v
-                #data['date_start'] = kwargs.get('date_start')
-                #data['date_end'] = kwargs.get('date_end')
+    def search(self, request, **kwargs):                       
 
-                self['form'] = self.form(data)                      
-            else:
-                self['form'] = self.form()  
-        return 
-
+        model=self.search_model.get(self.search_model_name)                
+        qset_created=Q(Q(created__gte="{0} 00:00".format(self.context.get('form').cleaned_data.get('date_start'))),
+                       Q(created__lte="{0} 23:59".format(self.context.get('form').cleaned_data.get('date_end'))))
+        qset_modified=Q(Q(modified__gte="{0} 00:00".format(self.context.get('form').cleaned_data.get('date_start'))),
+                        Q(modified__lte="{0} 23:59".format(self.context.get('form').cleaned_data.get('date_end'))))                       
+        search_result=model.objects.filter(qset_created | qset_modified).order_by('-created')
+        kwargs.update({'search_result':search_result})
+        super(BaseSearchByDate, self).search(request, **kwargs)
 
 

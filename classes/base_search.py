@@ -8,9 +8,8 @@ from patterns import patterns
 
 class BaseSearch(object):
     
-    def __init__(self, request, search_type, **kwargs):
+    def __init__(self, request, **kwargs):
         self.ready = False
-        self.search_type = search_type # (word, date, week)
         self.registration_model = {}
         self.search_form=None
         self.search_model_name=None
@@ -18,7 +17,6 @@ class BaseSearch(object):
         self._context={}
         self.update_context(**defaults)
         self.pattern=patterns
-        #search_name: comes as a parameter from the Url
         if not kwargs.get('search_name', None):
             raise TypeError('BaseSearch requires keyword/value for key \'search_name\'. None given.')
         else:
@@ -30,9 +28,6 @@ class BaseSearch(object):
             self.context.update({'search_result_template':'{0}_include.html'.format(self.context.get('search_name'))})
         else:
             self.context.update({ 'search_result_template': kwargs.get('search_result_template')})   
-            
-        # check **kwargs for queryset_label, otherwise default
-        self.context.update({'queryset_label':kwargs.get('queryset_label', '{0}_by_{1}'.format(self.context.get('search_name'), self.search_type))})
         self.context.update({'report_title':'Search {0} by {1}'.format(self.context.get('search_name'), self.search_type)})
         self.context.update({'extend':'base_search_by_{0}.html'.format(self.search_type)}) 
         self.context.update({'search_by_name': self.search_type})
@@ -47,11 +42,14 @@ class BaseSearch(object):
             self._context[k]=v
     
     @classmethod
-    def urlpatterns(self, views, section_names):
-        urlpattern=url_patterns(views, 
-             url(r'^(?P<section_name>{section_names})/search/(?P<search_name>\w+)/by(?P<search_by>word)/$'.format(section_names='|'.join(section_names)),
-            'search_response', 
+    def urlpatterns(self, section_names, app_label='bhp_search',view='search'):
+        #urlpatterns=url_patterns('{app_label}.views'.format(app_label=app_label), 
+                                 
+        urlpattern=url_patterns('{app_label}.views'.format(app_label=app_label), 
+             url(r'^(?P<section_name>{section_names})/search/(?P<search_name>\w+)/by(?P<search_by>{search_type})/$'.format(section_names='|'.join(section_names), search_type=self.search_type),
+            view, 
             name="section_search_by_url_name"))
+        
         return urlpattern
     
     def prepare(self, request):
@@ -78,14 +76,19 @@ class BaseSearch(object):
                     self.update_context(magic_url=request.POST.urlencode())                
                 elif request.method == 'GET':    
                     self.update_context(magic_url=request.GET.urlencode())                
-                self.update_context(search_term=self.context.get('form').cleaned_data.get('search_term'))
-                self.update_context(search_result_title='Results for search term \'{0}\''.format(self.context.get('search_term')))              
                 self.ready=True
         else:     
             self.update_context(form=self.search_form())
     
     def search(self, request, **kwargs):
-        raise TypeError("BaseSearch.get_labeled_queryset must be overridden by child class")      
+        search_result=kwargs.get('search_result')
+        self.update_context(count=0)
+        if search_result:
+            self.paginate(request.GET.get('page', '1'))    
+            self.update_context(search_result=search_result)
+            self.update_context(count=search_result.count())
+        else:
+            self.update_context(search_result_title='No matching records') 
     
     def paginate(self, page=1):
         search_result=self.context.get('search_result')

@@ -8,9 +8,7 @@
 {% endblock %}
 
 {% block results_title %}
-{% if search_result.object_list %}
     <h3>{% block result_title %}{{ block.super }}{{ search_result_title }}{% endblock %}</h3>
-{% endif %}    
 {% endblock %}
 
 
@@ -28,12 +26,11 @@
 
             {% include 'pagination_include.html' %}               
     
-        {% endif %}
+        {% endif %}    
     
-    Total: {{ count }}
+    <BR>Total: {{ count }}
 
     {% endif %}
-   <p><small><small>label: {{ queryset_label }} [{{ queryset_label_branch }}]</small></small></p>
     </div>
 
 {% endblock %}
