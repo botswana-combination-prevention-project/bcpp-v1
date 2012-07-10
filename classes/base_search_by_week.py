@@ -1,5 +1,5 @@
+from datetime import date, timedelta
 from django.db.models import Q
-from bhp_search.utils import weekBoundaries
 from bhp_search.forms import WeekYearSearchForm
 from base_search import BaseSearch
 
@@ -27,8 +27,8 @@ class BaseSearchByWeek(BaseSearch):
         
         
         #this form returns week numbers so convert to datetime
-        wb_start = weekBoundaries(self.context.get('form').cleaned_data.get('year_start'), int(self.context.get('form').cleaned_data.get('week_start')))
-        wb_end = weekBoundaries(self.context.get('form').cleaned_data.get('year_end'), int(self.context.get('form').cleaned_data.get('week_end')))
+        wb_start = self.weekBoundaries(self.context.get('form').cleaned_data.get('year_start'), int(self.context.get('form').cleaned_data.get('week_start')))
+        wb_end = self.weekBoundaries(self.context.get('form').cleaned_data.get('year_end'), int(self.context.get('form').cleaned_data.get('week_end')))
                         
         qset_created=Q(Q(created__gte="%s 00:00" % (wb_start[0])),
                        Q(created__lte="%s 23:59" % (wb_end[1])))
@@ -39,7 +39,18 @@ class BaseSearchByWeek(BaseSearch):
         super(BaseSearchByWeek, self).search(request, **kwargs)
 
 
-
+    def weekBoundaries(self, year, week):
+        """http://bytes.com/topic/python/answers/499819-getting-start-end-dates-given-week-number"""
+        startOfYear = date(year, 1, 1)
+        now = startOfYear + timedelta(weeks=week)
+        # isoweekday() % 7 returns Sun=0 ... Sat=6
+        sun = now - timedelta(days=now.isoweekday() % 7)
+        sat = sun + timedelta(days=6)
+        #if DEBUG:
+        #    print "DEBUG: now = %s/%s" % (now, now.strftime("%a"))
+        #    print "DEBUG: sun = %s/%s" % (sun, sun.strftime("%a"))
+        #    print "DEBUG: sat = %s/%s" % (sat, sat.strftime("%a"))
+        return sun, sat
     
     
     
