@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
+from bhp_crypto.classes import Crypter
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
@@ -45,14 +46,14 @@ class BaseConsent(BaseSubject):
         max_length = 250, 
         blank=True
         )        
-
+        
     def __unicode__(self):
-        return unicode(self.subject_identifier)
+        crypter = Crypter()
+        return "{0} {1} {2}".format(self.subject_identifier, crypter.mask_encrypted(self.first_name), self.initials)
     
     def save(self, *args, **kwargs):
         """ create or get a subject identifier and update registered subject """
         subject = Subject()
-        
         registered_subject = getattr(self, 'registered_subject', None)
         if not self.id:
             # see if there is a registered subject key. want to know this as it
@@ -73,7 +74,7 @@ class BaseConsent(BaseSubject):
                                 registration_status = 'consented',
                                 subject_consent_id = self.pk)
  
-
+ 
     class Meta:
         abstract = True
 
