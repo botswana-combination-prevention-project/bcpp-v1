@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         
-        raise RuntimeError("Cannot reverse this migration.")
+        raise RuntimeError("Migration failed to add a unique key to identity. Are there duplicate values in the identity field?")
 
         # Adding model 'RandomizedSubject'
         db.create_table('bhp_registration_randomizedsubject', (
