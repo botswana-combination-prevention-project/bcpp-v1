@@ -100,6 +100,10 @@ class BaseSubject (BaseUuidModel):
         blank = True,
         )
     
+    @property
+    def firstname(self):
+        return self.first_name
+    
     def save(self, *args, **kwargs):
         # for new instances, enforce unique subject_identifier if not null
         if not self.pk and self.subject_identifier:
