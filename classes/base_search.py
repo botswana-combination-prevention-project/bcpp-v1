@@ -1,4 +1,5 @@
 import re
+from django.conf.urls.defaults import patterns as url_patterns, url
 from django import forms
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from defaults import defaults
@@ -45,8 +46,13 @@ class BaseSearch(object):
         for k,v in kwargs.iteritems():
             self._context[k]=v
     
-    def generate_urls(self):
-        pass
+    @classmethod
+    def urlpatterns(self, views, section_names):
+        urlpattern=url_patterns(views, 
+             url(r'^(?P<section_name>{section_names})/search/(?P<search_name>\w+)/by(?P<search_by>word)/$'.format(section_names='|'.join(section_names)),
+            'search_response', 
+            name="section_search_by_url_name"))
+        return urlpattern
     
     def prepare(self, request):
         if request.method == 'POST':
