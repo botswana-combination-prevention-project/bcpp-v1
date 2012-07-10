@@ -2,6 +2,7 @@ import base64
 from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
+from django.core.exceptions import ImproperlyConfigured
 from bhp_crypto.classes import BaseCrypter
 from transaction_producer import TransactionProducer
 
@@ -76,6 +77,10 @@ class SerializeToTransaction(BaseCrypter):
                         ensure_ascii = False, 
                         use_natural_keys = use_natural_keys)              
         #encrypt the json_tx string using the aes key
+        if not self.private_key:
+            # if local private key not availabe, cannot continue since sensitive data may be 
+            # in the transaction
+            raise ImproperlyConfigured('Local private key not available, cannot AES encrypt serialized transaction. Save cancelled.')
         json_tx = base64.b64encode(self.aes_encrypt(json_tx))
         # save to Outgoing Transaction.
         OutgoingTransaction.objects.create(
