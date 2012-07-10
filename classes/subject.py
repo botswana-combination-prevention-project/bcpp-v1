@@ -30,7 +30,7 @@ class Subject(Base):
         base = "{prefix}-{site}{device_id}{sequence}".format(prefix = self.prefix, 
                                                              site = site,
                                                              device_id = device.device_id,
-                                                             sequence = subject_identifier.get_sequence())
+                                                             sequence = subject_identifier.sequence)
         # add a check digit and set the SubjectIdentifier model instance attribute
         check_digit = CheckDigit()
         subject_identifier.subject_identifier = "{base}-{check_digit}".format(base = base, 
