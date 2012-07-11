@@ -12,15 +12,18 @@ class BaseCrypter(Base):
     ENC=1
     DEC=0
     #used to refer to files dictionary
-    valid_rsa_key_types=['irreversible','restricted', 'local']
+    #valid_rsa_key_types=['irreversible-rsa','restricted-rsa', 'local-rsa']
     #default filenames for the pem files, salt and aes key
     #the "keys" in this dictionary may NOT be changed
-    files={
-        'irreversible-public': 'user-public-irreversible.pem',
-        'restricted-public': 'user-public-restricted.pem',
-        'restricted-private': 'user-private-restricted.pem',
-        'local-public': 'user-public-local.pem',
-        'local-private': 'user-private-local.pem',
+    valid_keys={
+        'irreversible-rsa': 
+            {'public': 'user-public-irreversible.pem'},
+        'restricted-rsa': 
+            {'public': 'user-public-restricted.pem',
+             'private': 'user-private-restricted.pem'},
+        'local-rsa': 
+            { 'public': 'user-public-local.pem',
+              'private': 'user-private-local.pem'},
         'local-aes': 'user-aes-local.pem',
         'salt': 'user-encrypted-salt.pem'}
  
@@ -80,24 +83,23 @@ class BaseCrypter(Base):
         """ Create a new key-pair in the default folder, filename includes the current timestamp to avoid overwriting as existing key.
         * For now this can be called in the shell. 
         * Filename includes the current timestamp to avoid overwriting as existing key """        
-        for key_type in self.valid_rsa_key_types:
-            print key_type
+        for key_type in self.valid_keys:
+            key_pair=self.valid_keys.get(key_type)
             # Random seed 
             Rand.rand_seed (os.urandom (self.KEY_LENGTH)) 
             # Generate key pair 
             key = RSA.gen_key (self.KEY_LENGTH, 65537, self._blank_callback) 
             # create and save the public key to file
-            filename=[filename for k,filename in self.files.iteritems() if key_type+'-public' in k] 
+            filename=key_pair.get('public', None)
             # key.save_pub_key('user-private-local.pem'), for example if suffix=''            
             key.save_pub_key(''.join(filename)+suffix) 
             # create and save the private key to file
-            filename=[filename for k,filename in self.files.iteritems() if key_type+'-private' in k] 
+            filename=key_pair.get('private', None)
             # key.save_key('user-private-local.pem'), for example if suffix=''
             if filename:
                 key.save_key(''.join(filename)+suffix, None) 
-       
     
-    def create_aes_key(self, public_keyfile=files.get('local-public'), suffix=str(datetime.today()), key=None):
+    def create_aes_key(self, public_keyfile=valid_keys.get('local-rsa').get('public'), suffix=str(datetime.today()), key=None):
         """ create and encrypt a new AES key. Use the "local" public key.
         * Filename suffix is added to the filename to avoid overwriting an existing key """        
         if not key:
