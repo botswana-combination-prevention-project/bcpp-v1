@@ -9,7 +9,7 @@ class LocalAesEncryptionField(LocalKeyPairEncryptionField):
         
         self.algorithm = 'AES'
 
-        self.mode = 'local AES'
+        self.mode = 'local-aes'
         
         # will force the Crypter class to use 'local key-pair' encryption
         # so the model field attribute should not be specified

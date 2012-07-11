@@ -11,6 +11,9 @@ class LocalKeyPairEncryptionField(BaseEncryptedField):
             raise TypeError('Instance attribute algorithm may not be None. Set to RSA or AES in the subclass')
         if not self.mode:
             raise TypeError('Mode may not be None. Set in the subclass')
+        
+        if self.mode not in self.files.iterkeys():
+            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=','.join(self.files.iterkeys)))
         super(LocalKeyPairEncryptionField, self).__init__(*args, **kwargs)
     
     def get_public_keyfile(self):
@@ -27,10 +30,4 @@ class LocalKeyPairEncryptionField(BaseEncryptedField):
             if settings.PRIVATE_KEY_LOCAL:
                 retval = settings.PRIVATE_KEY_LOCAL
         return retval 
-    
-    #    def formfield(self, **kwargs):
-    #        # This is a fairly standard way to set up some defaults
-    #        # while letting the caller override them 
-    #        defaults = {'widget': forms.widgets.PasswordInput(render_value=True)}
-    #        defaults.update(kwargs)
-    #        return super(WeakEncryptionField, self).formfield(**defaults)        
+     
