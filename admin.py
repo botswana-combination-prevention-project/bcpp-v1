@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_crypto.classes import BaseCrypterModelAdmin as BaseModelAdmin
 from models import RegisteredSubject, SubjectIdentifierAuditTrail
 from forms import RegisteredSubjectForm
 
