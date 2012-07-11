@@ -1,12 +1,15 @@
 from django.core.urlresolvers import reverse
-from bhp_common.models import MyModelAdmin
+try:
+    from bhp_crypto.classes import BaseCrypterModelAdmin as BaseModelAdmin
+except ImportError:
+    from bhp_base_model.classes import BaseModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_appointment.models import Appointment
 from bhp_entry.models import AdditionalEntryBucket
 from bhp_registration.models import  RegisteredSubject
 
 
-class BaseRegisteredSubjectModelAdmin (MyModelAdmin):
+class BaseRegisteredSubjectModelAdmin (BaseModelAdmin):
    
     """ModelAdmin subclass for models with a ForeignKey to 'registered_subject'
     
