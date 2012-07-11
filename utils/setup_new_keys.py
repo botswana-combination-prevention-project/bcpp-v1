@@ -9,13 +9,16 @@ def setup_new_keys():
     datestring = datetime.today().strftime('%Y%m%d%H%M%S%f')
     crypter=Crypter()
     filenames=[]
-    for algorithm in crypter.valid_modes.iterkeys():
-        for filename in crypter.valid_modes.get(algorithm).itervalues():
-            if isinstance(filename, dict): 
-                for filename in filename.itervalues():
+    for algorithm, value in crypter.valid_modes.iteritems():
+        if not isinstance(value, dict): 
+            filenames.append(value)
+        else:
+            for filename in crypter.valid_modes.get(algorithm).itervalues():
+                if not isinstance(filename, dict): 
                     filenames.append(filename)
-            else:
-                filenames.append(filename)
+                else:
+                    for filename in filename.itervalues():
+                        filenames.append(filename)
     # backup existing keys
     try:
         path='keys_backup_{0}'.format(datestring)
@@ -38,7 +41,7 @@ def setup_new_keys():
     crypter.create_new_rsa_key_pairs(suffix='')
     hasher=Hasher()
     hasher.set_public_key(crypter.valid_modes.get('rsa').get('local-rsa').get('public'))
-    hasher.create_new_salt(suffix='')
+    hasher.create_new_salt(filename=crypter.valid_modes.get('salt'), suffix='')
     #create and encrypt AES key
     crypter.create_aes_key(suffix='')
 

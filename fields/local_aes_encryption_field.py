@@ -1,30 +1,25 @@
-#from django.core.exceptions import ImproperlyConfigured
-from bhp_crypto.settings import settings
-from local_keypair_encryption_field import LocalKeyPairEncryptionField
+from bhp_crypto.classes import BaseEncryptedField
 
 
-class LocalAesEncryptionField(LocalKeyPairEncryptionField):
+class LocalAesEncryptionField(BaseEncryptedField):
+    
+    """For encrypting long text """
     
     def __init__(self, *args, **kwargs):
         
         self.algorithm = 'aes'
-        self.mode = 'local-aes'
-        # will force the Crypter class to use 'local key-pair' encryption
-        # so the model field attribute should not be specified
-        #if 'encryption_method' in kwargs:
-        #    raise ImproperlyConfigured('LocalKeyPairEncryptionField parameter \'encryption_method\' = \'%s\' by default.'  \
-        #                               ' Do not set this parameter as model field attribute.' % (self.mode,)) 
-        defaults = {'encryption_method': self.mode,
-                    'help_text': kwargs.get('help_text', '') + ' (Encryption: {0})'.format(self.mode,) }
+        self.mode = 'local-aes'       
+        defaults = {'help_text': kwargs.get('help_text', '') + ' (Encryption: {0})'.format(self.mode,) }
         kwargs.update(defaults)
-        super(LocalAesEncryptionField, self).__init__(*args, **kwargs)        
-
-
-    def get_aes_key(self):
-        retval = None
-        if 'AES_KEY' in dir(settings):
-            if settings.AES_KEY:
-                retval = settings.AES_KEY
-        return retval 
+        super(LocalAesEncryptionField, self).__init__(*args, **kwargs) 
+        self.crypter.set_aes_key()
     
-        
+    #def get_private_keyfile(self):
+    #    """ need the local-rsa private key to decrypt the aes key """ 
+    #    return self.crypter.valid_modes.get('rsa').get('local-rsa').get('private')
+    
+    def have_decryption_key(self):
+        retval=False
+        if self.crypter.aes_key:
+            retval=True
+        return retval    

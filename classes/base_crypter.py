@@ -3,7 +3,6 @@ from datetime import datetime
 from M2Crypto import Rand, RSA, EVP
 from django.core.exceptions import ImproperlyConfigured
 from base import Base
-from bhp_crypto.settings import settings
 
 
 class BaseCrypter(Base):
@@ -16,21 +15,17 @@ class BaseCrypter(Base):
     #default filenames for the pem files, salt and aes key
     #the "keys" in this dictionary may NOT be changed
     valid_modes={
-        'rsa': {
-                'irreversible-rsa': {'public': 'user-public-irreversible.pem'},
-                'restricted-rsa': 
-                    {'public': 'user-public-restricted.pem',
-                     'private': 'user-private-restricted.pem'},
-                'local-rsa': 
-                    {'public': 'user-public-local.pem',
-                     'private': 'user-private-local.pem'},
+        'rsa': {'irreversible-rsa': {'public': 'user-public-irreversible.pem'},
+                'restricted-rsa': {'public': 'user-public-restricted.pem','private': 'user-private-restricted.pem'},
+                'local-rsa':{'public': 'user-public-local.pem','private': 'user-private-local.pem'},
                 },
         'aes': {'local-aes': 'user-aes-local.pem'},
-        'salt': {'local-salt': 'user-encrypted-salt.pem'}
+        'salt': 'user-encrypted-salt.pem'
             }
  
     
     def __init__(self, *args, **kwargs):
+        
         self.public_key=None
         self.private_key=None
         self.aes_key=None
@@ -39,43 +34,41 @@ class BaseCrypter(Base):
         
     def set_public_key(self, keyfile):
         """ load public key using the pem filename """
-        if keyfile:
-            self.public_key = RSA.load_pub_key(keyfile)
-        
+        if not self.public_key:
+            if keyfile:
+                try:
+                    self.public_key = RSA.load_pub_key(keyfile)
+                except:
+                    print 'warning: failed to load public key {0}.'.format(keyfile)
+
     def set_private_key(self, keyfile):
         """ load the private key using the pem filename """
-        
-        if keyfile:               
+        if not self.private_key:
+            if keyfile:               
+                try:
+                    self.private_key = RSA.load_key(keyfile)
+                except:
+                    pass
+                    #print 'Failed to load private key {0}.'.format(keyfile)
+    
+    def set_aes_key(self):
+        """ Decrypt and set the AES key from a file using the local-rsa private key. """
+        if not self.aes_key:
             try:
-                self.private_key = RSA.load_key(keyfile)
+                f = open(self.get_aes_keyfile(), 'r')
+                encrypted_key = f.read() 
+                f.close()
+                self.set_private_key(self.get_local_rsa_private_keyfile())
+                if self.private_key:
+                    self.aes_key = self.rsa_decrypt(encrypted_key)
             except:
-                print 'Failed to load private key {0}.'.format(keyfile)
-                                
-    def set_aes_key(self, keyfile="user-aes-local.pem"):
-        """ Decrypt and set the AES key from a file using the local private key.
-        Private key must be set before calling """
-        self.aes_key = ''
-        if keyfile:
-            f = open(keyfile, 'r')
-            encrypted_key = f.read()
-            f.close()
-            if self.private_key:
-                self.aes_key = self.rsa_decrypt(encrypted_key)
+                print 'warning: aes key {0} not found'.format(self.get_aes_keyfile())
+            
+    def get_local_rsa_private_keyfile(self):
+        return self.valid_modes.get('rsa').get('local-rsa').get('private')
     
-    def get_private_key_local_keyfile(self):
-        self.private_keyfile = None
-        if not hasattr(settings, 'PRIVATE_KEY_LOCAL'):
-            raise ImproperlyConfigured('For \'%s\' security, you must set the PRIVATE_KEY_LOCAL setting to ' \
-                                        'point to your public key (path and filename).' % (self.mode,))
-        return settings.PRIVATE_KEY_LOCAL
-    
-    def get_aes_key(self):
-        """ """
-        retval = None
-        if 'AES_KEY' in dir(settings):
-            if settings.AES_KEY:
-                retval = settings.AES_KEY
-        return retval  
+    def get_aes_keyfile(self):            
+        return self.valid_modes.get('aes').get('local-aes')
        
     def _blank_callback(self): 
         "Replace the default dashes as output upon key generation" 

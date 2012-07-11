@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.exceptions import ImproperlyConfigured
 from crypter import Crypter
 
 
@@ -29,43 +28,32 @@ class BaseEncryptedField(models.Field):
         # this has all the crypto methods
         self.crypter=Crypter() 
         self.crypter.algorithm=self.algorithm
+        if self.algorithm not in self.crypter.valid_modes.keys():
+            raise KeyError('Invalid algorithm \'{algorithm}\'. Must be one of {keys}'.format(algorithm=self.algorithm, keys=', '.join(self.crypter.valid_modes.keys())))
+        self.crypter.mode=self.mode
         if self.mode not in self.crypter.valid_modes.get(self.algorithm).iterkeys():
-            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=', '.join([key for key in self.crypter.valid_modes.iterkeys()])))
-        else:
-            self.crypter.mode=self.mode
-        # check encryption_method kwarg from subclass or field object
-        #self.encryption_method = self.check_encryption_method(kwargs.get('encryption_method', None))        
-        #if 'encryption_method' in kwargs:
-        #    del kwargs['encryption_method']                 
+            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=', '.join(self.crypter.valid_modes.get(self.algorithm).keys())))                
         # set the field length based on the hash
         defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.prefix)+len(self.crypter.cipher_prefix)}
         kwargs.update(defaults)
         #get public and private keys for Crypter()
-        self.crypter.set_public_key(self.get_public_keyfile())
-        self.crypter.set_private_key(self.get_private_keyfile())
-        self.crypter.set_aes_key(self.get_aes_key())
         super(BaseEncryptedField, self).__init__(*args, **kwargs)    
     
     @property
     def extra_salt(self):
-        """salt for hashes"""
-        if not self.algorithm:
-            raise ImproperlyConfigured('Encryption algorithm cannot be None')
-        if not self.mode:
-            raise ImproperlyConfigured('Encryption mode cannot be None')
-        return self.algorithm+self.mode.replace(' ', '')
+        return self.crypter.extra_salt
     
-    def get_aes_key(self, key=None):
-        """ Override to return the aes key """
-        return ''
+    def have_decryption_key(self):
+        retval=False
+        if self.crypter.private_key:
+            retval=True
+        return retval   
     
-    def get_public_keyfile(self, keyfile=None):
-        """ Override to return the key filename and path if not in the project root """
-        raise ImproperlyConfigured("method should be overridden")
-        
-    def get_private_keyfile(self, keyfile=None):
-        """ Override to return the key filename and path if not in the project root """
-        raise ImproperlyConfigured("method should be overridden")
+    def get_public_keyfile(self):
+        return self.crypter.valid_modes.get(self.algorithm).get(self.mode).get('public')
+
+    def get_private_keyfile(self):
+        return self.crypter.valid_modes.get(self.algorithm).get(self.mode).get('private')
     
     def is_encrypted(self, value):
         """ wrap the crypter method of same name """
@@ -73,11 +61,11 @@ class BaseEncryptedField(models.Field):
     
     def decrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        return self.crypter.decrypt(value, extra_salt=self.extra_salt)
+        return self.crypter.decrypt(value, extra_salt=self.crypter.extra_salt)
     
     def encrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """   
-        return self.crypter.encrypt(value, extra_salt=self.extra_salt)
+        return self.crypter.encrypt(value, extra_salt=self.crypter.extra_salt)
     
     def validate_with_cleaned_data(self, attname, cleaned_data):
         """ May be overridden to test field data against other values in cleaned data. 

@@ -1,7 +1,6 @@
 import hashlib, base64
 from datetime import datetime
 from django.core.exceptions import ValidationError
-from bhp_crypto.settings import settings
 from base_crypter import BaseCrypter
 
 
@@ -12,8 +11,7 @@ class Hasher(BaseCrypter):
         self.length = self._get_hash_length()
         self.iterations = 40
         super(Hasher, self).__init__( *args, **kwargs)
-        if 'PRIVATE_KEY_LOCAL' in dir(settings):
-            self.set_private_key(settings.PRIVATE_KEY_LOCAL)
+        self.set_private_key(self.get_local_rsa_private_keyfile())
 
     def new_hasher(self, value=''):
         return hashlib.sha256(value)
@@ -21,21 +19,23 @@ class Hasher(BaseCrypter):
     #def create_new_salt(self, value):
     #    return base64.b64encode(self.rsa_encrypt(value))
          
-    def create_new_salt(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}', suffix=str(datetime.today())):
+    def create_new_salt(self, filename, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}', suffix=str(datetime.today())):
         if not self.public_key:
             raise TypeError('Need to set the local public key to create and encrypt the salt')
         salt = self.rsa_encrypt(self.make_random_salt())
-        name = 'user-encrypted-salt.pem{0}'.format(suffix)
+        name = '{0}{1}'.format(filename, suffix)
         f = open(name, 'w') 
         f.write(base64.b64encode(salt))
         f.close()
         return base64.b64encode(salt)
     
-    def read_salt_from_file(self, path='user-encrypted-salt'):
+    def read_salt_from_file(self):
+        path=self.valid_modes.get('salt')
         try:
             f=open(path,'r')
             retval=f.read()
         except:
+            print 'Unable to open {0}'.format(path)
             retval=None
         return retval    
     

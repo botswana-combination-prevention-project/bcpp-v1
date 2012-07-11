@@ -12,18 +12,7 @@ from hasher import Hasher
         
 class Crypter(BaseCrypter):
     
-    """
-    Uses M2Crypto.RSA public key encryption
-    crypter = Crypter()
-    self.crypter.public_key = settings.PUBLIC_KEY_STRONG
-    self.crypter.private_key = settings.PRIVATE_KEY_STRONG
-    
-    #encrypt
-    value = self.crypter.encrypt(value)
-    
-    #decrypt
-    value = self.crypter.decrypt(value)
-    """
+    """   """
     # prefix for each segment of an encrypted value, also used to calculate field length for model.
     prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
     cipher_prefix = 'enc2:::'
@@ -37,10 +26,10 @@ class Crypter(BaseCrypter):
     @property
     def extra_salt(self):
         """salt for hashes"""
-        if not self.algorithm:
-            raise ImproperlyConfigured('Encryption algorithm cannot be None')
-        if not self.mode:
-            raise ImproperlyConfigured('Encryption mode cannot be None')
+        if self.algorithm not in self.valid_modes.keys():
+            raise ImproperlyConfigured('Invalid encryption algorithm. Got {0}. Valid options are {1}'.format(self.algorithm, ', '.join(self.valid_modes.keys())))
+        if self.mode not in self.valid_modes.get(self.algorithm).keys():
+            raise ImproperlyConfigured('Invalid encryption mode. Got {0}. Valid options are {1}'.format(self.mode, ', '.join(self.valid_modes.get(self.algorithm).keys())))
         return self.algorithm+self.mode.replace(' ', '')
     
     def encrypt(self, value, **kwargs):
@@ -52,14 +41,14 @@ class Crypter(BaseCrypter):
             encrypted_value = value    
         else:    
             if not self.is_encrypted(value):
-                if self.algorithm == 'AES':
+                if self.algorithm == 'aes':
                     cipher_text = self.aes_encrypt(value)
-                elif self.algorithm == 'RSA':
+                elif self.algorithm == 'rsa':
                     if len(value) >= self.KEY_LENGTH/24:
                         raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
                     cipher_text = self.rsa_encrypt(value)
                 else:
-                    raise ValueError('Cannot determine algorithm for encryptor')
+                    raise ValueError('Cannot determine algorithm to use for encryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
                 hash_text = self.get_hash(value)
                 encoded_cipher_text = base64.b64encode(cipher_text)
                 encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
@@ -80,12 +69,12 @@ class Crypter(BaseCrypter):
                     hash_text = self.get_hash(value)
                     cipher_text = self.get_cipher(value, hash_text)
                     if cipher_text:
-                        if self.algorithm == 'AES':
+                        if self.algorithm == 'aes':
                             value = self.aes_decrypt(cipher_text)
-                        elif self.algorithm == 'RSA':
+                        elif self.algorithm == 'rsa':
                             value = self.rsa_decrypt(cipher_text)
                         else:
-                            raise ValueError('Cannot determine algorithm for decryptor')
+                            raise ValueError('Cannot determine algorithm for decryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
                     else:
                         raise ValueError('When decrypting, expected to find cipher for given hash {0}'.format(hash_text))
         #            else:
@@ -112,7 +101,6 @@ class Crypter(BaseCrypter):
                     Crypt.objects.create(hash_text=hash_text, cipher_text=cipher_text)
                 else:
                     # if the hash is not in the crypt model and you do not have a cipher
-                    # this is an error condition
                     # update: if performing a search, instead of data entry, the hash may not exist
                     print 'hash not found in crypt model. {0} {1} {2}'.format(self.algorithm, self.mode, hash_text)
                     #raise TypeError('Expected cipher text for given {0} {1} hash, but got None for value {2}, {3}.'.format(self.algorithm, self.mode, encrypted_value, hash_text))

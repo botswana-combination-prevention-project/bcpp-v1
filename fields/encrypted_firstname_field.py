@@ -5,6 +5,8 @@ from django.forms import ValidationError
 
 class EncryptedFirstnameField(LocalRsaEncryptionField):
     
+    description = "restricted-rsa encrypted field for a Firstname CharField"
+    
     def validate_with_cleaned_data(self, attname, cleaned_data):
 
         if attname  in cleaned_data:

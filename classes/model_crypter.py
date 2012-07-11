@@ -1,14 +1,13 @@
-from crypter import Crypter
 from base_encrypted_field import BaseEncryptedField
 
-class ModelCrypter(Crypter):
+class ModelCrypter(object):
     
     def encrypt_instance(self, instance):
         """ returns a modified instance (not saved), encrypt all un-encrypted field objects in a given model instance """
         for field in instance._meta.fields:
             if isinstance(field, BaseEncryptedField):
                 try:
-                    setattr(instance, field.attname, self.encrypt(getattr(instance, field.attname)))
+                    setattr(instance, field.attname, field.encrypt(getattr(instance, field.attname)))
                 except:
                     pass
         return instance        
@@ -23,7 +22,7 @@ class ModelCrypter(Crypter):
         """ returns a modified instance (not saved), encrypt all un-encrypted field objects in a given model instance """
         for field in instance._meta.fields:
             if isinstance(field, BaseEncryptedField):
-                setattr(instance, field.attname, self.decrypt(getattr(instance, field.attname)))
+                setattr(instance, field.attname, field.decrypt(getattr(instance, field.attname)))
         return instance        
      
     def decrypt_model(self, model):
