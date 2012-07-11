@@ -15,7 +15,7 @@ class BaseCrypter(Base):
     #valid_rsa_key_types=['irreversible-rsa','restricted-rsa', 'local-rsa']
     #default filenames for the pem files, salt and aes key
     #the "keys" in this dictionary may NOT be changed
-    valid_keys={
+    valid_modes={
         'irreversible-rsa': 
             {'public': 'user-public-irreversible.pem'},
         'restricted-rsa': 
@@ -83,23 +83,23 @@ class BaseCrypter(Base):
         """ Create a new key-pair in the default folder, filename includes the current timestamp to avoid overwriting as existing key.
         * For now this can be called in the shell. 
         * Filename includes the current timestamp to avoid overwriting as existing key """        
-        for key_type in self.valid_keys:
-            key_pair=self.valid_keys.get(key_type)
+        for mode in self.valid_modes:
+            mode_pair=self.valid_keys.get(mode)
             # Random seed 
             Rand.rand_seed (os.urandom (self.KEY_LENGTH)) 
             # Generate key pair 
             key = RSA.gen_key (self.KEY_LENGTH, 65537, self._blank_callback) 
             # create and save the public key to file
-            filename=key_pair.get('public', None)
+            filename=mode_pair.get('public', None)
             # key.save_pub_key('user-private-local.pem'), for example if suffix=''            
             key.save_pub_key(''.join(filename)+suffix) 
             # create and save the private key to file
-            filename=key_pair.get('private', None)
+            filename=mode_pair.get('private', None)
             # key.save_key('user-private-local.pem'), for example if suffix=''
             if filename:
                 key.save_key(''.join(filename)+suffix, None) 
     
-    def create_aes_key(self, public_keyfile=valid_keys.get('local-rsa').get('public'), suffix=str(datetime.today()), key=None):
+    def create_aes_key(self, public_keyfile=valid_modes.get('local-rsa').get('public'), suffix=str(datetime.today()), key=None):
         """ create and encrypt a new AES key. Use the "local" public key.
         * Filename suffix is added to the filename to avoid overwriting an existing key """        
         if not key:
