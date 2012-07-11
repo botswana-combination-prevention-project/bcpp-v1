@@ -1,7 +1,9 @@
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import ForeignKey
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_crypto.classes import BaseCrypterModelAdmin as BaseModelAdmin
+#from bhp_base_model.classes import BaseModelAdmin
+
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 
@@ -62,11 +64,8 @@ class BaseConsentModelAdmin(BaseModelAdmin):
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj = None):
 
-        readonly_fields = super(BaseConsentModelAdmin, self).get_readonly_fields(request, obj)
-        
+        super(BaseConsentModelAdmin, self).get_readonly_fields(request, obj)
         consent_fk_name = [fk for fk in [f for f in self.model._meta.fields if isinstance(f,ForeignKey)] if fk.rel.to._meta.module_name == self.consent_model._meta.module_name][0].name        
-
         if obj: #In edit mode
-            return (consent_fk_name,) + readonly_fields
-        else:
-            return readonly_fields
+            self.readonly_fields+=(consent_fk_name,)
+        return self.readonly_fields

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_crypto.classes import BaseCrypterModelAdmin as BaseModelAdmin
 #from bhp_registration.utils import AllocateIdentifier
 #from models import BaseLocator
 
@@ -8,10 +8,8 @@ class BaseSubjectConsentAdmin(BaseModelAdmin):
     
     def __init__(self, *args, **kwargs):
 
-        super(BaseSubjectConsentAdmin, self).__init__(*args, **kwargs)
-                
+        super(BaseSubjectConsentAdmin, self).__init__(*args, **kwargs)  
         self.search_fields = ['id', 'subject_identifier','first_name', 'last_name', 'identity',] 
-        
         self.list_display = ['subject_identifier','firstname','initials','gender','dob', 
                              'consent_datetime','created', 'modified', 'user_created', 'user_modified',]    
         
