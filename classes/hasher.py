@@ -23,7 +23,7 @@ class Hasher(BaseCrypter):
          
     def create_new_salt(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}'):
         if not self.public_key:
-            raise TypeError('Need a public key to encrypt the salt')
+            raise TypeError('Need to set the local public key to create and encrypt the salt')
         salt = self.rsa_encrypt(self.make_random_salt())
         name = 'salt.{0}'.format(str(datetime.today()))
         f = open(name, 'w') 

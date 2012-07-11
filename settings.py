@@ -35,4 +35,8 @@ class Settings( object ):
     def AES_KEY(self):
         return self._register.get('AES_KEY', '')
 
+    @property
+    def MAY_CREATE_NEW_KEYS(self):
+        return self._register.get('MAY_CREATE_NEW_KEYS', False)
+
 settings = Settings()

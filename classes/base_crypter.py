@@ -3,6 +3,7 @@ from datetime import datetime
 from M2Crypto import Rand, RSA, EVP
 from django.core.exceptions import ImproperlyConfigured
 from base import Base
+from bhp_crypto.utils import setup_new_keys
 from bhp_crypto.settings import settings
 
 
@@ -19,7 +20,7 @@ class BaseCrypter(Base):
         self.aes_key=None
         self.algorithm=None
         self.mode=None
-    
+        
     def set_public_key(self, keyfile):
         """ load public key using the pem filename """
         if keyfile:
@@ -28,8 +29,15 @@ class BaseCrypter(Base):
     def set_private_key(self, keyfile):
         """ load the private key using the pem filename """
         if keyfile:
-            self.private_key = RSA.load_key(keyfile)
-
+            try:
+                self.private_key = RSA.load_key(keyfile)
+            except IOError:
+                if not self.all_keys_exist():
+                    #if not, cjeck the ALLOW_NEW_KEYS settings
+                    if settings.MAY_CREATE_NEW_KEYS:
+                        print 'creating new pem keys'
+                        setup_new_keys()
+                
     def set_aes_key(self, keyfile="user-aes-local.pem"):
         """ Decrypt and set the AES key from a file using the local private key.
         Private key must be set before calling """
