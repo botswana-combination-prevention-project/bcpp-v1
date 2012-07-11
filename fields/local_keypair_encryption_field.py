@@ -12,8 +12,8 @@ class LocalKeyPairEncryptionField(BaseEncryptedField):
         if not self.mode:
             raise TypeError('Mode may not be None. Set in the subclass')
         
-        if self.mode not in self.files.iterkeys():
-            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=','.join(self.files.iterkeys)))
+        if self.mode not in self.crypter.files.iterkeys():
+            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=','.join(self.crypter.files.iterkeys)))
         super(LocalKeyPairEncryptionField, self).__init__(*args, **kwargs)
     
     def get_public_keyfile(self):
