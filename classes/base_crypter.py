@@ -26,7 +26,7 @@ class BaseCrypter(Base):
                      'private': 'user-private-local.pem'},
                 },
         'aes': {'local-aes': 'user-aes-local.pem'},
-        'salt': 'user-encrypted-salt.pem'
+        'salt': {'local-salt': 'user-encrypted-salt.pem'}
             }
  
     
