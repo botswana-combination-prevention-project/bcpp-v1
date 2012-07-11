@@ -1,9 +1,8 @@
 import os
 from datetime import datetime
+from bhp_crypto.classes import Crypter
 from bhp_crypto.classes.hasher import Hasher
-from bhp_crypto.fields.restricted_rsa_encryption_field import RestrictedRsaEncryptionField
-from bhp_crypto.fields.local_rsa_encryption_field import LocalRsaEncryptionField
-from bhp_crypto.fields.local_aes_encryption_field import LocalAesEncryptionField
+
 
 def setup_new_keys():
 
@@ -30,18 +29,13 @@ def setup_new_keys():
             os.rename(oldpath, newpath)
         except:
             print 'Failed to copy {0} to backup folder {1}'.format(filename, path)
-    
     #create restricted RSA
-    fld = RestrictedRsaEncryptionField()
-    fld.crypter.create_new_key_pair()
-    # create local RSA
-    fld = LocalRsaEncryptionField()
-    fld.crypter.create_new_key_pair()
-    #create and encrypt a salt
+    crypter=Crypter()
+    crypter.create_new_rsa_key_pairs(suffix='')
     hasher=Hasher()
     hasher.set_public_key(pem.get('local_public'))
+    hasher.create_new_salt(suffix='')
     #create and encrypt AES key
-    fld=LocalAesEncryptionField()
-    fld.crypter.create_aes_key(pem.get('local_public'))
+    crypter.create_aes_key(suffix='')
 
    

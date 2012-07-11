@@ -8,7 +8,7 @@ from base_crypter import BaseCrypter
 class Hasher(BaseCrypter):
     
     def __init__(self, *args, **kwargs):
-        self.encrypted_salt = settings.SALT
+        self.encrypted_salt = self.read_salt_from_file()
         self.length = self._get_hash_length()
         self.iterations = 40
         super(Hasher, self).__init__( *args, **kwargs)
@@ -21,21 +21,29 @@ class Hasher(BaseCrypter):
     #def create_new_salt(self, value):
     #    return base64.b64encode(self.rsa_encrypt(value))
          
-    def create_new_salt(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}'):
+    def create_new_salt(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}', suffix=str(datetime.today())):
         if not self.public_key:
             raise TypeError('Need to set the local public key to create and encrypt the salt')
         salt = self.rsa_encrypt(self.make_random_salt())
-        name = 'salt.{0}'.format(str(datetime.today()))
+        name = 'user-encrypted-salt.pem{0}'.format(suffix)
         f = open(name, 'w') 
         f.write(base64.b64encode(salt))
         f.close()
         return base64.b64encode(salt)
     
+    def read_salt_from_file(self, path='user-encrypted-salt'):
+        try:
+            f=open(path,'r')
+            retval=f.read()
+        except:
+            retval=None
+        return retval    
+    
     def get_salt(self):
         if self.private_key:
             return self.rsa_decrypt(self.encrypted_salt)
-        else:
-            return None
+        #else:
+        #    return None
     
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size

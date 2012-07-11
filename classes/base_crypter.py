@@ -3,7 +3,6 @@ from datetime import datetime
 from M2Crypto import Rand, RSA, EVP
 from django.core.exceptions import ImproperlyConfigured
 from base import Base
-from bhp_crypto.utils import setup_new_keys
 from bhp_crypto.settings import settings
 
 
@@ -12,7 +11,19 @@ class BaseCrypter(Base):
     KEY_LENGTH = 2048
     ENC=1
     DEC=0
-     
+    #used to refer to files dictionary
+    valid_rsa_key_types=['irreversible','restricted', 'local']
+    #default filenames for the pem files, salt and aes key
+    #the "keys" in this dictionary may NOT be changed
+    files={
+        'irreversible-public': 'user-public-irreversible.pem',
+        'restricted-public': 'user-public-restricted.pem',
+        'restricted-private': 'user-private-restricted.pem',
+        'local-public': 'user-public-local.pem',
+        'local-private': 'user-private-local.pem',
+        'local-aes': 'user-aes-local.pem',
+        'salt': 'user-encrypted-salt.pem'}
+ 
     
     def __init__(self, *args, **kwargs):
         self.public_key=None
@@ -28,16 +39,13 @@ class BaseCrypter(Base):
         
     def set_private_key(self, keyfile):
         """ load the private key using the pem filename """
-        if keyfile:
+        
+        if keyfile:               
             try:
                 self.private_key = RSA.load_key(keyfile)
-            except IOError:
-                if not self.all_keys_exist():
-                    #if not, cjeck the ALLOW_NEW_KEYS settings
-                    if settings.MAY_CREATE_NEW_KEYS:
-                        print 'creating new pem keys'
-                        setup_new_keys()
-                
+            except:
+                print 'Failed to load private key {0}.'.format(keyfile)
+                                
     def set_aes_key(self, keyfile="user-aes-local.pem"):
         """ Decrypt and set the AES key from a file using the local private key.
         Private key must be set before calling """
@@ -68,37 +76,42 @@ class BaseCrypter(Base):
         "Replace the default dashes as output upon key generation" 
         return
     
-    def create_new_key_pair(self):
+    def create_new_rsa_key_pairs(self, suffix=str(datetime.today())):
         """ Create a new key-pair in the default folder, filename includes the current timestamp to avoid overwriting as existing key.
         * For now this can be called in the shell. 
         * Filename includes the current timestamp to avoid overwriting as existing key """        
-        # have a suffix to the file names to prevent overwriting
-        name = str(datetime.today())
-        # Random seed 
-        Rand.rand_seed (os.urandom (self.KEY_LENGTH)) 
-        # Generate key pair 
-        key = RSA.gen_key (self.KEY_LENGTH, 65537, self._blank_callback) 
-        # Non encrypted key 
-        key.save_key('user-private.pem.%s' % name, None) 
-        # Use a pass phrase to encrypt key 
-        #key.save_key('user-private.pem') 
-        key.save_pub_key('user-public.pem.%s' % name)         
+        for key_type in self.valid_rsa_key_types:
+            print key_type
+            # Random seed 
+            Rand.rand_seed (os.urandom (self.KEY_LENGTH)) 
+            # Generate key pair 
+            key = RSA.gen_key (self.KEY_LENGTH, 65537, self._blank_callback) 
+            # create and save the public key to file
+            filename=[filename for k,filename in self.files.iteritems() if key_type+'-public' in k] 
+            # key.save_pub_key('user-private-local.pem'), for example if suffix=''            
+            key.save_pub_key(''.join(filename)+suffix) 
+            # create and save the private key to file
+            filename=[filename for k,filename in self.files.iteritems() if key_type+'-private' in k] 
+            # key.save_key('user-private-local.pem'), for example if suffix=''
+            if filename:
+                key.save_key(''.join(filename)+suffix, None) 
+       
     
-    def create_aes_key(self, public_keyfile, key=None):
+    def create_aes_key(self, public_keyfile=files.get('local-public'), suffix=str(datetime.today()), key=None):
         """ create and encrypt a new AES key. Use the "local" public key.
-        * For now this can be called in the shell. 
-        * Filename includes the current timestamp to avoid overwriting as existing key """        
+        * Filename suffix is added to the filename to avoid overwriting an existing key """        
         if not key:
             key = self.get_random_string()
         if not public_keyfile:
             raise TypeError('Please specify the local public key filename. Got None')
         self.set_public_key(public_keyfile)
-        name = 'user-aes-local.pem.{1}'.format(public_keyfile,str(datetime.today()))
-        encrypted_key = self.public_key.public_encrypt(key, RSA.pkcs1_oaep_padding)   
-        f = open(name, 'w') 
-        f.write(base64.b64encode(encrypted_key))
+        filename=[filename for k,filename in self.files.iteritems() if 'local-aes' in k]
+        filename=''.join(filename)+suffix
+        encrypted_aes_key = self.public_key.public_encrypt(key, RSA.pkcs1_oaep_padding)   
+        f = open(filename, 'w') 
+        f.write(base64.b64encode(encrypted_aes_key))
         f.close()
-        return base64.b64encode(encrypted_key)
+        #return base64.b64encode(encrypted_aes_key)
     
     def rsa_encrypt(self, value):
         """Return an uncode encrypted value, but know that it may fail if keys are not available"""
