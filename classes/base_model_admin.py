@@ -1,9 +1,10 @@
 from datetime import datetime
 from django.contrib import admin
 from django.core.urlresolvers import reverse
-from bhp_sync.actions import serialize
-from bhp_crypto.actions import encrypt, decrypt
-from bhp_crypto.classes import BaseEncryptedField
+try:
+    from bhp_sync.actions import serialize
+except ImportError:
+    pass
 
 
 class BaseModelAdmin (admin.ModelAdmin):
@@ -11,10 +12,10 @@ class BaseModelAdmin (admin.ModelAdmin):
     """Overide ModelAdmin to force username to be saved on add/change and other stuff""" 
     def __init__(self, *args, **kwargs):
         #add serialize action
-        self.actions.append(serialize)
-        self.actions.append(encrypt)    
-        self.actions.append(decrypt)                            
-                        
+        try:
+            self.actions.append(serialize)
+        except:
+            pass                                  
         super(BaseModelAdmin, self).__init__(*args, **kwargs)
     
     def save_model(self, request, obj, form, change):
@@ -63,11 +64,11 @@ class BaseModelAdmin (admin.ModelAdmin):
 
             return result
 
-    def get_readonly_fields(self, request, obj = None):
-        # make crypter fields readonly if no private key and in edit mode
-        if obj: #In edit mode
-            for field in obj._meta.fields:
-                if isinstance(field, BaseEncryptedField):
-                    if not field.crypter.private_key and field.attname not in self.readonly_fields:
-                        self.readonly_fields = (field.attname,) + self.readonly_fields 
-        return self.readonly_fields
+    #    def get_readonly_fields(self, request, obj = None):
+    #        # make crypter fields readonly if no private key and in edit mode
+    #        if obj: #In edit mode
+    #            for field in obj._meta.fields:
+    #                if isinstance(field, BaseEncryptedField):
+    #                    if not field.crypter.private_key and field.attname not in self.readonly_fields:
+    #                        self.readonly_fields = (field.attname,) + self.readonly_fields 
+    #        return self.readonly_fields
