@@ -16,16 +16,18 @@ class BaseCrypter(Base):
     #default filenames for the pem files, salt and aes key
     #the "keys" in this dictionary may NOT be changed
     valid_modes={
-        'irreversible-rsa': 
-            {'public': 'user-public-irreversible.pem'},
-        'restricted-rsa': 
-            {'public': 'user-public-restricted.pem',
-             'private': 'user-private-restricted.pem'},
-        'local-rsa': 
-            { 'public': 'user-public-local.pem',
-              'private': 'user-private-local.pem'},
-        'local-aes': 'user-aes-local.pem',
-        'salt': 'user-encrypted-salt.pem'}
+        'rsa': {
+                'irreversible-rsa': {'public': 'user-public-irreversible.pem'},
+                'restricted-rsa': 
+                    {'public': 'user-public-restricted.pem',
+                     'private': 'user-private-restricted.pem'},
+                'local-rsa': 
+                    {'public': 'user-public-local.pem',
+                     'private': 'user-private-local.pem'},
+                },
+        'aes': {'local-aes': 'user-aes-local.pem'},
+        'salt': 'user-encrypted-salt.pem'
+            }
  
     
     def __init__(self, *args, **kwargs):
@@ -83,8 +85,7 @@ class BaseCrypter(Base):
         """ Create a new key-pair in the default folder, filename includes the current timestamp to avoid overwriting as existing key.
         * For now this can be called in the shell. 
         * Filename includes the current timestamp to avoid overwriting as existing key """        
-        for mode in self.valid_modes:
-            mode_pair=self.valid_keys.get(mode)
+        for mode_pair in self.valid_modes.get('rsa').itervalues():
             # Random seed 
             Rand.rand_seed (os.urandom (self.KEY_LENGTH)) 
             # Generate key pair 
@@ -99,7 +100,7 @@ class BaseCrypter(Base):
             if filename:
                 key.save_key(''.join(filename)+suffix, None) 
     
-    def create_aes_key(self, public_keyfile=valid_modes.get('local-rsa').get('public'), suffix=str(datetime.today()), key=None):
+    def create_aes_key(self, public_keyfile=valid_modes.get('rsa').get('local-rsa').get('public'), suffix=str(datetime.today()), key=None):
         """ create and encrypt a new AES key. Use the "local" public key.
         * Filename suffix is added to the filename to avoid overwriting an existing key """        
         if not key:
@@ -107,7 +108,7 @@ class BaseCrypter(Base):
         if not public_keyfile:
             raise TypeError('Please specify the local public key filename. Got None')
         self.set_public_key(public_keyfile)
-        filename=[filename for k,filename in self.files.iteritems() if 'local-aes' in k]
+        filename=self.valid_modes.get('aes').get('local-aes')
         filename=''.join(filename)+suffix
         encrypted_aes_key = self.public_key.public_encrypt(key, RSA.pkcs1_oaep_padding)   
         f = open(filename, 'w') 

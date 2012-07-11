@@ -29,7 +29,7 @@ class BaseEncryptedField(models.Field):
         # this has all the crypto methods
         self.crypter=Crypter() 
         self.crypter.algorithm=self.algorithm
-        if self.mode not in self.crypter.valid_modes.iterkeys():
+        if self.mode not in self.crypter.valid_modes.get(self.algorithm).iterkeys():
             raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=', '.join([key for key in self.crypter.valid_modes.iterkeys()])))
         else:
             self.crypter.mode=self.mode
