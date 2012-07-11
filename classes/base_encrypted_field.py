@@ -16,7 +16,7 @@ class BaseEncryptedField(models.Field):
     description = "Field to encrypt and decrypt values that are stored as encrypted"
     __metaclass__ = models.SubfieldBase
     # can only set encryption_method to these values at the model field 
-    valid_encryption_methods = ['restricted RSA key-pair', 'local RSA key-pair', 'local AES']
+    #valid_encryption_methods = ['restricted RSA key-pair', 'local RSA key-pair', 'local AES']
     
     def __init__(self, *args, **kwargs):  
         """
@@ -34,9 +34,9 @@ class BaseEncryptedField(models.Field):
         else:
             self.crypter.mode=self.mode
         # check encryption_method kwarg from subclass or field object
-        self.encryption_method = self.check_encryption_method(kwargs.get('encryption_method', None))        
-        if 'encryption_method' in kwargs:
-            del kwargs['encryption_method']                 
+        #self.encryption_method = self.check_encryption_method(kwargs.get('encryption_method', None))        
+        #if 'encryption_method' in kwargs:
+        #    del kwargs['encryption_method']                 
         # set the field length based on the hash
         defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.prefix)+len(self.crypter.cipher_prefix)}
         kwargs.update(defaults)
@@ -131,10 +131,10 @@ class BaseEncryptedField(models.Field):
         # That's our definition!
         return (field_class, args, kwargs)
 
-    def check_encryption_method(self, encryption_method):
-        """ Check if the subclass or model field pass a valid encryption method."""
-        if encryption_method not in self.valid_encryption_methods:
-            raise ImproperlyConfigured('Available options for EncryptedField field parameter' \
-                                        '\'encryption_method\' are \'%s\'. Got \'%s\' ' \
-                                        % ('\' or \''.join(self.valid_encryption_methods), encryption_method))
+    #def check_encryption_method(self, encryption_method):
+    #    """ Check if the subclass or model field pass a valid encryption method."""
+    #    if encryption_method not in self.valid_encryption_methods:
+    #        raise ImproperlyConfigured('Available options for EncryptedField field parameter' \
+    #                                    '\'encryption_method\' are \'%s\'. Got \'%s\' ' \
+    #                                    % ('\' or \''.join(self.valid_encryption_methods), encryption_method))
             
