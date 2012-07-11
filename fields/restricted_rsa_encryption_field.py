@@ -8,7 +8,7 @@ class RestrictedRsaEncryptionField(RestrictedKeyPairEncryptionField):
     def __init__(self, *args, **kwargs):
         
         self.algorithm='RSA'
-        self.mode='restricted RSA key-pair'
+        self.mode='restricted-rsa'
         defaults={'encryption_method': self.mode,
                   'help_text': kwargs.get('help_text', '')+' (Encryption: %s)' % (self.mode,) }
         kwargs.update(defaults)

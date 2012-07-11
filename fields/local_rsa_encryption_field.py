@@ -9,7 +9,7 @@ class LocalRsaEncryptionField(LocalKeyPairEncryptionField):
     def __init__(self, *args, **kwargs):
         
         self.algorithm='RSA'
-        self.mode='local RSA key-pair'
+        self.mode='local-rsa'
         # will force the Crypter class to use 'local key-pair' encryption
         # so the model field attribute should not be specified
         if 'encryption_method' in kwargs:
