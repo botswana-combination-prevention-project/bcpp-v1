@@ -11,8 +11,8 @@ class SerializeToTransaction(BaseCrypter):
     
     def __init__(self, *args, **kwargs):
         super(SerializeToTransaction, self).__init__(*args, **kwargs)
-        self.set_private_key(self.get_private_key_local_keyfile())
-        self.set_aes_key(self.get_aes_key())
+        self.set_private_key(self.get_local_rsa_private_keyfile())
+        self.set_aes_key()
     
     def serialize(self, sender, instance, **kwargs):
     
