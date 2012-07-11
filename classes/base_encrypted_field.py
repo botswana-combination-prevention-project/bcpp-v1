@@ -29,7 +29,10 @@ class BaseEncryptedField(models.Field):
         # this has all the crypto methods
         self.crypter=Crypter() 
         self.crypter.algorithm=self.algorithm
-        self.crypter.mode=self.mode
+        if self.mode not in self.crypter.files.iterkeys():
+            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=','.join(self.crypter.files.iterkeys)))
+        else:
+            self.crypter.mode=self.mode
         # check encryption_method kwarg from subclass or field object
         self.encryption_method = self.check_encryption_method(kwargs.get('encryption_method', None))        
         if 'encryption_method' in kwargs:
