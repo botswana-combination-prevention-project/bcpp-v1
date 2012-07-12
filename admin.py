@@ -1,6 +1,6 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
 from bhp_crypto.models import Crypt
+from bhp_crypto.models import TestModel
 
 class CryptAdmin (admin.ModelAdmin):
 
@@ -14,3 +14,7 @@ class CryptAdmin (admin.ModelAdmin):
     list_filter = ('hash_text',)
     
 admin.site.register(Crypt, CryptAdmin)
+
+class TestModelAdmin (admin.ModelAdmin):
+    pass
+admin.site.register(TestModel, TestModelAdmin)

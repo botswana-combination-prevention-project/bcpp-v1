@@ -16,7 +16,19 @@ class Crypt (BaseUuidModel):
     
     cipher_text = models.TextField(
         verbose_name = "Cipher",
-        ) 
+        )
+    
+    algorithm = models.CharField(
+        max_length = 25,
+        null = True)
+    
+    mode = models.CharField(
+        max_length = 25,
+        null = True)
+    
+    salt = models.CharField(
+        max_length = 50,
+        null = True) 
     
     class Meta:
         app_label = 'bhp_crypto'

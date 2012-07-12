@@ -97,7 +97,8 @@ class BaseCrypter(Base):
         """ create and encrypt a new AES key. Use the "local" public key.
         * Filename suffix is added to the filename to avoid overwriting an existing key """        
         if not key:
-            key = self.get_random_string()
+            #key = self.get_random_string()
+            key=os.urandom(16)
         if not public_keyfile:
             raise TypeError('Please specify the local public key filename. Got None')
         self.set_public_key(public_keyfile)
@@ -130,13 +131,11 @@ class BaseCrypter(Base):
     def _build_cipher(self, key, iv=None, op=ENC):
         """"""""
         if iv is None:
-                iv = '\0' * 16
-        else:
-            iv = base64.b64decode(iv)
+            iv = '\0' * 16
         return EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
                                                     
     def aes_decrypt(self, cipher_text, is_encoded=True):
-        """ Decrypt a AES cipher using a secret key that itself is decrypted using the private key. """
+        """ Need local-rsa private key since AES key is stored and encrypted using local-rsa. """
         retval = cipher_text
         if not self.aes_key:
             raise ImproperlyConfigured("AES key not set, unable to decrypt cipher.")
@@ -145,7 +144,11 @@ class BaseCrypter(Base):
                 cipher_text = base64.b64decode(cipher_text)
             cipher = self._build_cipher(self.aes_key, None, self.DEC)
             v = cipher.update(cipher_text)
-            v = v + cipher.final()
+            #print ('dec', self.aes_key,'', base64.b64encode(cipher_text))
+            try:
+                v = v + cipher.final()
+            except:
+                raise ValueError('AES decryption error. {0}, {1}, {2} cipher={3}'.format(self.algorithm, self.mode, self.aes_key, base64.b64encode(cipher_text)))
             del cipher
             retval = v.replace('\x00', '')
         return retval
@@ -161,6 +164,7 @@ class BaseCrypter(Base):
             v = cipher.update(value)
             v = v + cipher.final()
             del cipher
+            #print ('enc', self.aes_key, value, base64.b64encode(v))
         return v
 
 

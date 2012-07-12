@@ -94,11 +94,16 @@ class Crypter(BaseCrypter):
             if Crypt.objects.filter(hash_text=hash_text):
                 if cipher_text:
                     crypt = Crypt.objects.get(hash_text=hash_text)
+                    if crypt.cipher_text != cipher_text and self.algorithm=='aes':
+                        print 'Did not expect cipher_text to change for given hash {0}! ({1},{2})'.format(hash_text, self.algorithm, self.mode)
                     crypt.cipher_text = cipher_text
                     crypt.save()
             else:
                 if cipher_text:
-                    Crypt.objects.create(hash_text=hash_text, cipher_text=cipher_text)
+                    Crypt.objects.create(hash_text = hash_text, 
+                                         cipher_text = cipher_text,
+                                         algorithm = self.algorithm,
+                                         mode = self.mode)
                 else:
                     # if the hash is not in the crypt model and you do not have a cipher
                     # update: if performing a search, instead of data entry, the hash may not exist
