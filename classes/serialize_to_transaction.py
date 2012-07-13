@@ -3,16 +3,18 @@ from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
-from bhp_crypto.classes import BaseCrypter
+from bhp_crypto.classes import Crypter
 from transaction_producer import TransactionProducer
 
 
-class SerializeToTransaction(BaseCrypter):
+class SerializeToTransaction(Crypter):
     
     def __init__(self, *args, **kwargs):
         super(SerializeToTransaction, self).__init__(*args, **kwargs)
-        self.set_private_key(self.get_local_rsa_private_keyfile())
-        self.set_aes_key()
+        self.algorithm='aes'
+        self.mode='aes-local'
+        #self.set_private_key(self.get_local_rsa_private_keyfile())
+        #self.set_aes_key()
     
     def serialize(self, sender, instance, **kwargs):
     
@@ -76,12 +78,8 @@ class SerializeToTransaction(BaseCrypter):
                         [instance,],
                         ensure_ascii = False, 
                         use_natural_keys = use_natural_keys)              
-        #encrypt the json_tx string using the aes key
-        if not self.private_key:
-            # if local private key not availabe, cannot continue since sensitive data may be 
-            # in the transaction
-            raise ImproperlyConfigured('Local private key not available, cannot AES encrypt serialized transaction. Save cancelled.')
-        json_tx = base64.b64encode(self.aes_encrypt(json_tx))
+        #aes encrypt the json_tx string
+        json_tx = self.encrypt(json_tx)
         # save to Outgoing Transaction.
         OutgoingTransaction.objects.create(
             tx_name = instance._meta.object_name,

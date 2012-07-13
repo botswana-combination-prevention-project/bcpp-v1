@@ -2,20 +2,20 @@
 import socket
 from django.core import serializers
 from django.db.utils import IntegrityError
-from bhp_crypto.classes import BaseCrypter
+from bhp_crypto.classes import Crypter
 from transaction_producer import TransactionProducer
 
 
-class DeserializeFromTransaction(BaseCrypter):
+class DeserializeFromTransaction(Crypter):
     
     def __init__(self, *args, **kwargs):
         super(DeserializeFromTransaction, self).__init__(*args, **kwargs)
-        self.set_private_key(self.get_private_key_local_keyfile())
-        self.set_aes_key(self.get_aes_key())
+        self.algorithm='aes'
+        self.mode='aes-local'
         
     def deserialize(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
-        for obj in serializers.deserialize("json",self.aes_decrypt(incoming_transaction.tx)):
+        for obj in serializers.deserialize("json",self.decrypt(incoming_transaction.tx)):
         # if you get an error deserializing a datetime, confirm dev version of json.py
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
                 # check if tx originanted from me
