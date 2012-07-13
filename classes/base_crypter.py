@@ -7,14 +7,13 @@ from base import Base
 
 class BaseCrypter(Base):
     
-    KEY_LENGTH = 2048
+    KEY_LENGTH=2048
     ENC=1
     DEC=0
     # prefix for each segment of an encrypted value, also used to calculate field length for model.
-    prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
-    cipher_prefix = 'enc2:::'
-    #used to refer to files dictionary
-    #valid_rsa_key_types=['irreversible-rsa','restricted-rsa', 'local-rsa']
+    prefix='enc1:::' # uses a prefix to flag as encrypted like django_extensions does
+    secret_prefix='enc2:::'
+    iv_prefix='iv:::'
     #default filenames for the pem files, salt and aes key
     #the "keys" in this dictionary may NOT be changed
     valid_modes={
@@ -35,24 +34,34 @@ class BaseCrypter(Base):
         self.algorithm=None
         self.mode=None
         
-    def set_public_key(self, keyfile):
-        """ load public key using the pem filename """
+    def set_public_key(self, keyfile=None, **kwargs):
+        """ load public key using the pem filename. """
         if not self.public_key:
-            if keyfile:
-                try:
-                    self.public_key = RSA.load_pub_key(keyfile)
-                except:
-                    print 'warning: failed to load public key {0}.'.format(keyfile)
+            algorithm=kwargs.get('algorithm', self.algorithm)
+            mode=kwargs.get('mode', self.mode)
+            if not keyfile:
+                # keyfile not specified, so get the default for this algorithm and mode
+                if not algorithm or not mode:
+                    raise AttributeError('Algorithm and mode must be set before attempting to set the public key')
+                keyfile=self.valid_modes.get(algorithm).get(mode).get('public')
+            try:
+                self.public_key=RSA.load_pub_key(keyfile)
+            except:
+                print 'warning: failed to load public key {0}.'.format(keyfile)
 
-    def set_private_key(self, keyfile):
+    def set_private_key(self, keyfile=None):
         """ load the private key using the pem filename """
         if not self.private_key:
-            if keyfile:               
-                try:
-                    self.private_key = RSA.load_key(keyfile)
-                except:
-                    pass
-                    #print 'Failed to load private key {0}.'.format(keyfile)
+            if not keyfile:
+                # keyfile not specified, so get the default for this algorithm and mode
+                if not self.algorithm or not self.mode:
+                    raise AttributeError('Algorithm and mode must be set before attempting to set the private key')
+                keyfile=self.valid_modes.get(self.algorithm).get(self.mode).get('private')               
+            try:
+                self.private_key = RSA.load_key(keyfile)
+            except:
+                pass
+                #print 'Failed to load private key {0}.'.format(keyfile)
     
     def set_aes_key(self):
         """ Decrypt and set the AES key from a file using the local-rsa private key. """
@@ -97,69 +106,75 @@ class BaseCrypter(Base):
                 key.save_key(''.join(filename)+suffix, None) 
     
     def create_aes_key(self, public_keyfile=valid_modes.get('rsa').get('local-rsa').get('public'), suffix=str(datetime.today()), key=None):
-        """ create and encrypt a new AES key. Use the "local" public key.
+        """ create and rsa encrypt a new AES key. Use the "local" public key.
         * Filename suffix is added to the filename to avoid overwriting an existing key """        
         if not key:
-            #key = self.get_random_string()
             key=os.urandom(16)
         if not public_keyfile:
             raise TypeError('Please specify the local public key filename. Got None')
         self.set_public_key(public_keyfile)
-        filename=self.valid_modes.get('aes').get('local-aes')
-        filename=''.join(filename)+suffix
-        encrypted_aes_key = self.public_key.public_encrypt(key, RSA.pkcs1_oaep_padding)   
-        f = open(filename, 'w') 
+        filename=self.valid_modes.get('aes').get('local-aes')+suffix
+        encrypted_aes_key=self.public_key.public_encrypt(key, RSA.pkcs1_oaep_padding)   
+        f=open(filename, 'w') 
         f.write(base64.b64encode(encrypted_aes_key))
         f.close()
         #return base64.b64encode(encrypted_aes_key)
     
-    def rsa_encrypt(self, value):
+    def rsa_encrypt(self, plaintext, **kwargs):
         """Return an uncode encrypted value, but know that it may fail if keys are not available"""
         if not self.public_key:
+            self.set_public_key(**kwargs)
+        if not self.public_key:
             raise ImproperlyConfigured("RSA public key not set, unable to decrypt cipher.")
-        if self.is_encrypted(value):
+        if self.is_encrypted(plaintext):
             raise ValueError('Attempt to rsa encrypt an already encrypted value.')
-        return self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
+        return self.public_key.public_encrypt(plaintext, RSA.pkcs1_oaep_padding)
     
-    def rsa_decrypt(self, cipher_text, is_encoded=True):
+    def rsa_decrypt(self, secret, is_encoded=True):
         """ Return cleaned decrypted cipher text if the private key is available. 
         Check for the private_key before calling this method.
         Cipher_text is base64 encoded unless is_encoded is false"""
-        
+        if not self.private_key:
+            self.set_private_key()
         if not self.private_key:
             raise ImproperlyConfigured("RSA private key not set, unable to decrypt cipher.")
         if is_encoded:
-            cipher_text = base64.b64decode(cipher_text)
+            cipher_text = base64.b64decode(secret)
         return self.private_key.private_decrypt(cipher_text,
                                                 RSA.pkcs1_oaep_padding).replace('\x00', '')
     
-    def _build_cipher(self, key, iv=None, op=ENC):
+    def _build_cipher(self, key, iv, op=ENC):
         """"""""
-        if iv is None:
-            iv = '\0' * 16
         return EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
                                                     
-    def aes_decrypt(self, cipher_text, is_encoded=True):
-        """ Need local-rsa private key since AES key is stored and encrypted using local-rsa. """
-        retval = cipher_text
+    def aes_decrypt(self, secret, is_encoded=True):
+        """ Takes a tuple (secret_text, sep, iv)  """
+        retval=secret
+        if isinstance(secret, (list, tuple)):
+            #cipher_tuple is (cipher, sep, iv)
+            secret_text,iv=secret[0], secret[2]
+        else:
+            print 'warning: aes cipher_value should be a list or tuple'
+            secret_text,iv=base64.b64decode(secret),'\0'*16
         if not self.aes_key:
             self.set_aes_key()
             #raise ImproperlyConfigured("AES key not set, unable to decrypt cipher.")       
         if self.aes_key:
             if is_encoded:
-                cipher_text = base64.b64decode(cipher_text)
-            cipher = self._build_cipher(self.aes_key, None, self.DEC)
-            v = cipher.update(cipher_text)
+                secret_text=base64.b64decode(secret_text)
+                iv=base64.b64decode(iv)
+            cipher=self._build_cipher(self.aes_key, iv, self.DEC)
+            v=cipher.update(secret_text)
             #print ('dec', self.aes_key,'', base64.b64encode(cipher_text))
-            try:
-                v = v + cipher.final()
-            except:
-                raise ValueError('AES decryption error. {0}, {1}, {2} cipher={3}'.format(self.algorithm, self.mode, self.aes_key, base64.b64encode(cipher_text)))
+            #try:
+            v = v + cipher.final()
+            #except:
+            #    raise ValueError('AES decryption error. {0}, {1}, {2} cipher={3}'.format(self.algorithm, self.mode, self.aes_key, base64.b64encode(cipher_text)))
             del cipher
             retval = v.replace('\x00', '')
         return retval
     
-    def aes_encrypt(self, value):            
+    def aes_encrypt(self, plaintext):            
         """ Encrypt with AES, but fail if aes_key unavailable.
         Important to not allow any data to be saved if the keys are not available"""
         if not self.aes_key:
@@ -167,14 +182,15 @@ class BaseCrypter(Base):
             if not self.aes_key:
                 # must FAIL here if key not available and user is trying to save unencrypted data
                 raise ImproperlyConfigured('AES key not available, unable to encrypt sensitive data using the AES algorithm.')
-        if self.is_encrypted(value):
+        if self.is_encrypted(plaintext):
             raise ValueError('Attempt to aes encrypt an already encrypted value.')
-        cipher = self._build_cipher(self.aes_key, None, self.ENC)
-        v = cipher.update(value)
+        iv=os.urandom(16)
+        cipher = self._build_cipher(self.aes_key, iv, self.ENC)
+        v = cipher.update(plaintext)
         v = v + cipher.final()
         del cipher
         #print ('enc', self.aes_key, value, base64.b64encode(v))
-        return v
+        return (v,iv)
 
     def is_encrypted(self, value):
         """ The value string is considered encrypted if it starts with 'self.prefix' """

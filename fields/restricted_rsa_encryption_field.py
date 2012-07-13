@@ -19,8 +19,8 @@ class RestrictedRsaEncryptionField(BaseEncryptedField):
         kwargs.update(defaults)
         super(RestrictedRsaEncryptionField, self).__init__(*args, **kwargs)
         # setup the rsa keys
-        self.crypter.set_public_key(self.get_public_keyfile())
-        self.crypter.set_private_key(self.get_private_keyfile())
+        self.crypter.set_public_key()
+        self.crypter.set_private_key()
         # private key should not be on an insecure device
         if self.crypter.private_key:
             if not settings.IS_SECURE_DEVICE:

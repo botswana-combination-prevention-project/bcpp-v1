@@ -14,10 +14,6 @@ class LocalAesEncryptionField(BaseEncryptedField):
         super(LocalAesEncryptionField, self).__init__(*args, **kwargs) 
         self.crypter.set_aes_key()
     
-    #def get_private_keyfile(self):
-    #    """ need the local-rsa private key to decrypt the aes key """ 
-    #    return self.crypter.valid_modes.get('rsa').get('local-rsa').get('private')
-    
     def have_decryption_key(self):
         retval=False
         if self.crypter.aes_key:

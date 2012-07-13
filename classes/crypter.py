@@ -1,5 +1,5 @@
 import base64
-from django.core.exceptions import ImproperlyConfigured
+#from django.core.exceptions import ImproperlyConfigured
 from base_crypter import BaseCrypter
 from bhp_crypto.models import Crypt
 from hasher import Hasher
@@ -20,111 +20,109 @@ class Crypter(BaseCrypter):
         super(Crypter, self).__init__(self, *args, **kwargs)
         
     def encrypt(self, value, **kwargs):
-        """ return the encrypted field value (hash+cipher), do not override """       
+        """ return the encrypted field value (hash+cipher) where cipher is cipher or cipher_iv, do not override """       
         update_lookup=kwargs.get('update_lookup', False)
         if not value:
-            encrypted_value = value    
+            secret = value    
         else:    
             if not self.is_encrypted(value):
                 if self.algorithm == 'aes':
-                    cipher_text = self.aes_encrypt(value)
+                    encoded_secret_string = self.iv_prefix.join(map(base64.b64encode, self.aes_encrypt(value)))
                 elif self.algorithm == 'rsa':
                     if len(value) >= self.KEY_LENGTH/24:
                         raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
-                    cipher_text = self.rsa_encrypt(value)
+                    encoded_secret_string = base64.b64encode(self.rsa_encrypt(value))
                 else:
                     raise ValueError('Cannot determine algorithm to use for encryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
                 hash_text = self.get_hash(value)
-                encoded_cipher_text = base64.b64encode(cipher_text)
-                encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
+                secret = self.prefix + hash_text + self.secret_prefix + encoded_secret_string
                 if update_lookup:
                     # normally this is done via the pre_save signal??
-                    self.update_cipher_lookup(encrypted_value)
+                    self.update_cipher_lookup(secret)
             else:
-                encrypted_value = value    
-        return encrypted_value        
+                secret = value    
+        return secret        
     
-    def decrypt(self, value, **kwargs):
-        """ if private key is known, return an decrypted value, otherwise return the encrypted value """
-        if value:
+    def decrypt(self, plaintext, **kwargs):
+        """ if private key is known, return a decrypted value, otherwise return the encrypted value """
+        if plaintext:
             if self.private_key:
-                if self.is_encrypted(value):
-                    hash_text = self.get_hash(value)
-                    cipher_text = self.get_cipher(value, hash_text)
-                    if cipher_text:
-                        if self.algorithm == 'aes':
-                            value = self.aes_decrypt(cipher_text)
-                        elif self.algorithm == 'rsa':
-                            value = self.rsa_decrypt(cipher_text)
+                if self.is_encrypted(plaintext):
+                    hash_text=self.get_hash(plaintext)
+                    secret_string=self.get_secret_string(plaintext, hash_text)
+                    if secret_string:
+                        if self.algorithm=='aes':
+                            plaintext=self.aes_decrypt(secret_string.partition(self.iv_prefix))
+                            #value = self.iv_prefix.join(value)
+                        elif self.algorithm=='rsa':
+                            plaintext=self.rsa_decrypt(secret_string)
                         else:
                             raise ValueError('Cannot determine algorithm for decryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
                     else:
                         raise ValueError('When decrypting, expected to find cipher for given hash {0}'.format(hash_text))
-        return value
+        return plaintext
     
-    def update_cipher_lookup(self, encrypted_value):
+    def update_cipher_lookup(self, secret):
         """ update a model to have a reference of hash_value / cipher_value pairs """
-        if encrypted_value:
+        if secret:
             # get and update or create the crypt model with this hash, cipher pair
-            hash_text = self.get_hash(encrypted_value)
-            cipher_text = self.get_cipher(encrypted_value, hash_text)
+            hash_text=self.get_hash(secret)
+            secret_string=self.get_secret_string(secret, hash_text)
             if Crypt.objects.filter(hash_text=hash_text):
-                if cipher_text:
-                    crypt = Crypt.objects.get(hash_text=hash_text)
-                    if crypt.cipher_text != cipher_text and self.algorithm=='aes':
-                        print 'Did not expect cipher_text to change for given hash {0}! ({1},{2})'.format(hash_text, self.algorithm, self.mode)
-                    crypt.cipher_text = cipher_text
+                if secret_string:
+                    crypt=Crypt.objects.get(hash_text=hash_text)
+                    crypt.cipher_text=secret_string
                     crypt.save()
             else:
-                if cipher_text:
+                if secret_string:
                     Crypt.objects.create(hash_text = hash_text, 
-                                         cipher_text = cipher_text,
+                                         cipher_text = secret_string,
                                          algorithm = self.algorithm,
                                          mode = self.mode)
                 else:
                     # if the hash is not in the crypt model and you do not have a cipher
                     # update: if performing a search, instead of data entry, the hash may not exist
                     print 'hash not found in crypt model. {0} {1} {2}'.format(self.algorithm, self.mode, hash_text)
-                    #raise TypeError('Expected cipher text for given {0} {1} hash, but got None for value {2}, {3}.'.format(self.algorithm, self.mode, encrypted_value, hash_text))
+                    #raise TypeError('Expected cipher text for given {0} {1} hash, but got None for value {2}, {3}.'.format(self.algorithm, self.mode, secret, hash_text))
             
     def get_hash(self, value):
         """ hash is stored for exact match search functionality as the cipher is never the same twice """
         if self.is_encrypted(value):
             # if value is an encrypted value string, cut out the hash segment
-            hash_text = value[len(self.prefix):][:self.hasher.length]
-            #hash_text = value[len(self.prefix):].split(self.cipher_prefix)[0]
+            hash_text=value[len(self.prefix):][:self.hasher.length]
+            #hash_text = value[len(self.prefix):].split(self.secret_prefix)[0]
         else:
             # if the value is not encrypted, hash it.
             # note that hash must be unique for each mode and algorithm
             #if not self.:
             #    raise TypeError('Subclass must set the mode and algorithm to make a salt to ensure a unique hash.')
-            hash_text = self.hasher.get_hash(value)
-        ret_val = hash_text
+            hash_text=self.hasher.get_hash(value)
+        ret_val=hash_text
         return ret_val        
     
     def get_stored_hash(self, value):
         return self.prefix+self.get_hash(value)
     
-    def get_cipher(self, encrypted_value, hash_text):
-        """ Return the cipher string from within the encrypted value or from a lookup """
-        if not encrypted_value:
-            retval = None
+    def get_secret_string(self, secret, hash_text):
+        """ Return the secret string from within the encrypted value or from a lookup """
+        if not secret:
+            retval=None
         else:
-            if self.is_encrypted(encrypted_value):
-                # split on hash, but if this is a hash only, cipher_text will be None
-                cipher_text = encrypted_value[len(self.prefix)+len(hash_text)+len(self.cipher_prefix):]
-                if not cipher_text:
-                    # lookup cipher_text for this hash_text
-                    cipher_text = self._get_cipher_lookup(hash_text)
-                retval = cipher_text    
+            if self.is_encrypted(secret):
+                # split on hash, but if this is a hash only, secret_string will be None
+                secret_string=secret[len(self.prefix)+len(hash_text)+len(self.secret_prefix):]
+                if not secret_string:
+                    # lookup secret_string for this hash_text
+                    secret_string=self._get_secret_string_lookup(hash_text)
+                retval=secret_string    
             else:
                 raise ValueError('Value must be encrypted or None.')
             return retval
 
-    def _get_cipher_lookup(self, hash_text):
+    def _get_secret_string_lookup(self, hash_text):
         """ Given a hash, lookup cipher in Crypt model. 
         
-        Will be called by get_cipher if cipher is not in the 'encrypted value' (e.g. is a hash) 
+        Will be called by get_secret_string if cipher is not in the 'encrypted value' (e.g. is a hash) 
         """
         if Crypt.objects.filter(hash_text=hash_text):
             crypt = Crypt.objects.get(hash_text=hash_text)

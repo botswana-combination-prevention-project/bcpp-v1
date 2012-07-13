@@ -34,7 +34,7 @@ class BaseEncryptedField(models.Field):
         if self.mode not in self.crypter.valid_modes.get(self.algorithm).iterkeys():
             raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=', '.join(self.crypter.valid_modes.get(self.algorithm).keys())))                
         # set the field length based on the hash
-        defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.prefix)+len(self.crypter.cipher_prefix)}
+        defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.prefix)+len(self.crypter.secret_prefix)}
         kwargs.update(defaults)
         #get public and private keys for Crypter()
         super(BaseEncryptedField, self).__init__(*args, **kwargs)    

@@ -40,8 +40,7 @@ def setup_new_keys():
     crypter=Crypter()
     crypter.create_new_rsa_key_pairs(suffix='')
     hasher=Hasher()
-    hasher.set_public_key(crypter.valid_modes.get('rsa').get('local-rsa').get('public'))
-    hasher.create_new_salt(filename=crypter.valid_modes.get('salt'), suffix='')
+    hasher.create_new_salt(suffix='')
     #create and encrypt AES key
     crypter.create_aes_key(suffix='')
 

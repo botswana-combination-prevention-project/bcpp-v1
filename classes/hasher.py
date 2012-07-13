@@ -5,23 +5,22 @@ from base_crypter import BaseCrypter
 
 
 class Hasher(BaseCrypter):
-    
+    """ handle all hashing """
     def __init__(self, *args, **kwargs):
-        self.encrypted_salt = self.read_salt_from_file()
-        self.length = self._get_hash_length()
-        self.iterations = 40
+        self.encrypted_salt=self.read_salt_from_file()
+        self.length=self._get_hash_length()
+        self.iterations=40
         super(Hasher, self).__init__( *args, **kwargs)
+        #orivate key needed to get the salt
         self.set_private_key(self.get_local_rsa_private_keyfile())
 
     def new_hasher(self, value=''):
         return hashlib.sha256(value)
          
-    def create_new_salt(self, filename, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}', suffix=str(datetime.today())):
-        if not self.public_key:
-            raise TypeError('Need to set the local public key to create and encrypt the salt')
-        salt = self.rsa_encrypt(self.make_random_salt())
-        name = '{0}{1}'.format(filename, suffix)
-        f = open(name, 'w') 
+    def create_new_salt(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}', suffix=str(datetime.today())):
+        salt=self.rsa_encrypt(self.make_random_salt(), algorithm='rsa', mode='local-rsa')
+        path='{0}{1}'.format(self.valid_modes.get('salt'), suffix)
+        f=open(path, 'w') 
         f.write(base64.b64encode(salt))
         f.close()
         return base64.b64encode(salt)
@@ -46,17 +45,19 @@ class Hasher(BaseCrypter):
     def get_hash(self, value):
         """ for a given value, return a salted SHA256 hash """
         if not value:
-            retval = None
+            retval=None
         else:
             # only change algorithm if existing hashes have been updated
-            salt = self.get_salt()
+            salt=self.get_salt()
             if not isinstance(salt, str):
                 raise ValidationError('The Encryption keys are not available to this system. Unable to save sensitive data.')
-            digest = self.new_hasher(salt+value).digest()
+            digest=self.new_hasher(salt+value).digest()
             # then hash 40-1 times
             for x in range(0, self.iterations-1):
-                digest = self.new_hasher(digest).digest()
-            hash_value = digest.encode("hex")
-            retval = hash_value
+                digest=self.new_hasher(digest).digest()
+            hash_value=digest.encode("hex")
+            retval=hash_value
         return retval
+    
+    
     
