@@ -11,7 +11,7 @@ from hasher import Hasher
         
         
 class Crypter(BaseCrypter):
-    """   """
+
     hasher = Hasher()
     
     def __init__(self, *args, **kwargs):

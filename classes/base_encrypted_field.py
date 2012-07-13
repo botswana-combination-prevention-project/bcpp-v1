@@ -4,7 +4,7 @@ from crypter import Crypter
 
 class BaseEncryptedField(models.Field):
     
-    """ A base field class to store sensitive data in an encrypted format.
+    """ A base field class to store sensitive data at rest in an encrypted format.
     
     * To maintain uniqueness and searchability, only the hash is ever stored in the model field.
     * The cipher is stored with the hash in the Crypt cipher lookup model and will be
@@ -12,8 +12,8 @@ class BaseEncryptedField(models.Field):
     * Salt, public key filename and private key filename are referred to via the settings file """
 
     # see https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#the-subfieldbase-metaclass 
-    description = "Field to encrypt and decrypt values that are stored as encrypted"
-    __metaclass__ = models.SubfieldBase
+    description="Field to encrypt and decrypt values that are stored as encrypted"
+    __metaclass__=models.SubfieldBase
     # can only set encryption_method to these values at the model field 
     #valid_encryption_methods = ['restricted RSA key-pair', 'local RSA key-pair', 'local AES']
     
@@ -33,7 +33,7 @@ class BaseEncryptedField(models.Field):
         if self.mode not in self.crypter.valid_modes.get(self.algorithm).iterkeys():
             raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=', '.join(self.crypter.valid_modes.get(self.algorithm).keys())))                
         # set the db field length based on the hash
-        defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.hash_prefix)+len(self.crypter.secret_prefix)}
+        defaults={'max_length': self.crypter.hasher.length+len(self.crypter.hash_prefix)+len(self.crypter.secret_prefix)}
         kwargs.update(defaults)
         super(BaseEncryptedField, self).__init__(*args, **kwargs)    
     
@@ -74,8 +74,8 @@ class BaseEncryptedField(models.Field):
     def to_python(self, value):
         """ Returns the decrypted value IF the private key is found, otherwise returns the encrypted value. """
         if isinstance(value, basestring):
-            retval = self.decrypt(value)
-            self.readonly = retval==value
+            retval=self.decrypt(value)
+            self.readonly=retval==value
         else:
             retval = value
         return retval
@@ -83,7 +83,7 @@ class BaseEncryptedField(models.Field):
     def get_prep_value(self, value):
         """ Always returns the encrypted value. """
         if value:
-            value = self.encrypt(value)   
+            value=self.encrypt(value)   
         return super(BaseEncryptedField, self).get_prep_value(value)
 
     def get_db_prep_value(self, value, connection, prepared=False):
@@ -92,12 +92,12 @@ class BaseEncryptedField(models.Field):
         # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#converting-query-values-to-database-values
         if value:
             # call super (which will call get_prep_value)
-            hash_secret = super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
+            hash_secret=super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
             # update secret lookup table
             self.crypter.update_secret_in_lookup(hash_secret)
             # switch 'value' to just the hash before the save to the DB
-            hash_text = self.crypter.hash_prefix + self.crypter.get_hash(hash_secret)
-            value = hash_text
+            hash_text=self.crypter.hash_prefix+self.crypter.get_hash(hash_secret)
+            value=hash_text
         return value
     
     def get_internal_type(self):
@@ -108,8 +108,8 @@ class BaseEncryptedField(models.Field):
         "Returns a suitable description of this field for South."
         # We'll just introspect the _actual_ field.
         from south.modelsinspector import introspector
-        field_class = "django.db.models.fields.CharField"
-        args, kwargs = introspector(self)
+        field_class="django.db.models.fields.CharField"
+        args, kwargs=introspector(self)
         # That's our definition!
         return (field_class, args, kwargs)
 
