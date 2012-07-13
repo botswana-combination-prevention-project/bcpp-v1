@@ -4,14 +4,9 @@ from bhp_crypto.models import TestModel
 
 class CryptAdmin (admin.ModelAdmin):
 
-    list_display = (
-        'cipher_text',
-        )   
+    list_display = ('hash',)   
 
-    search_fields = ('hash_text', 'cipher_text')    
-
-    
-    list_filter = ('hash_text',)
+    search_fields = ('hash',)    
     
 admin.site.register(Crypt, CryptAdmin)
 

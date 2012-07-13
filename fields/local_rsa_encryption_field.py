@@ -14,6 +14,6 @@ class LocalRsaEncryptionField(BaseEncryptedField):
         self.crypter.set_public_key()
         self.crypter.set_private_key()
         if not self.crypter.private_key:
-            print 'warning: {0} key {1} not found'.format(self.mode, self.get_private_keyfile())
+            print 'warning: failed to load {0} key {1}.'.format(self.mode, self.get_private_keyfile())
 
         

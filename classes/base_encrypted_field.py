@@ -25,7 +25,6 @@ class BaseEncryptedField(models.Field):
            allowed on mobile devices (settings.IS_SECURE_DEVICE).
         2. local key-pair: same as restricted key-pair but the private key is expected to be available and is not checked for
         """
-        # this has all the crypto methods
         self.crypter=Crypter() 
         self.crypter.algorithm=self.algorithm
         if self.algorithm not in self.crypter.valid_modes.keys():
@@ -33,13 +32,13 @@ class BaseEncryptedField(models.Field):
         self.crypter.mode=self.mode
         if self.mode not in self.crypter.valid_modes.get(self.algorithm).iterkeys():
             raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}. Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm, keys=', '.join(self.crypter.valid_modes.get(self.algorithm).keys())))                
-        # set the field length based on the hash
-        defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.prefix)+len(self.crypter.secret_prefix)}
+        # set the db field length based on the hash
+        defaults = {'max_length': self.crypter.hasher.length+len(self.crypter.hash_prefix)+len(self.crypter.secret_prefix)}
         kwargs.update(defaults)
-        #get public and private keys for Crypter()
         super(BaseEncryptedField, self).__init__(*args, **kwargs)    
     
     def have_decryption_key(self):
+        """ """
         retval=False
         if self.crypter.private_key:
             retval=True
@@ -88,22 +87,21 @@ class BaseEncryptedField(models.Field):
         return super(BaseEncryptedField, self).get_prep_value(value)
 
     def get_db_prep_value(self, value, connection, prepared=False):
-        """ Store the hash in the model field and the cipher in the lookup table (Crypt). """ 
+        """ Store the hash in the model field and the secret in the lookup table (Crypt). """ 
         # need to read the docs a bit more as i might be able to just set prepared=True, etc
         # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#converting-query-values-to-database-values
         if value:
             # call super (which will call get_prep_value)
-            encrypted_value = super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
-            # update cipher lookup table
-            self.crypter.update_cipher_lookup(encrypted_value)
-            # remove the cipher prefix and the cipher_text from the value
-            # just before the save to the DB
-            hash_text = self.crypter.prefix + self.crypter.get_hash(encrypted_value)
+            hash_secret = super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
+            # update secret lookup table
+            self.crypter.update_secret_in_lookup(hash_secret)
+            # switch 'value' to just the hash before the save to the DB
+            hash_text = self.crypter.hash_prefix + self.crypter.get_hash(hash_secret)
             value = hash_text
         return value
     
     def get_internal_type(self):
-        """This is a Charfield as we only ever store the hash, which is a fixed length. """
+        """This is a Charfield as we only ever store the hash, which is a fixed length char. """
         return "CharField"
     
     def south_field_triple(self):

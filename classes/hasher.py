@@ -11,14 +11,12 @@ class Hasher(BaseCrypter):
         self.length=self._get_hash_length()
         self.iterations=40
         super(Hasher, self).__init__( *args, **kwargs)
-        #orivate key needed to get the salt
-        self.set_private_key(self.get_local_rsa_private_keyfile())
 
     def new_hasher(self, value=''):
         return hashlib.sha256(value)
          
     def create_new_salt(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}', suffix=str(datetime.today())):
-        salt=self.rsa_encrypt(self.make_random_salt(), algorithm='rsa', mode='local-rsa')
+        salt=self.rsa_encrypt(self.make_random_salt(length, allowed_chars), algorithm='rsa', mode='local-rsa')
         path='{0}{1}'.format(self.valid_modes.get('salt'), suffix)
         f=open(path, 'w') 
         f.write(base64.b64encode(salt))
@@ -31,13 +29,12 @@ class Hasher(BaseCrypter):
             f=open(path,'r')
             retval=f.read()
         except:
-            print 'Unable to open {0}'.format(path)
+            print 'warning: failed to load salt {0}.'.format(path)
             retval=None
         return retval    
     
     def get_salt(self):
-        if self.private_key:
-            return self.rsa_decrypt(self.encrypted_salt)
+        return self.rsa_decrypt(self.encrypted_salt, algorithm='rsa', mode='local-rsa')
     
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size
@@ -47,12 +44,11 @@ class Hasher(BaseCrypter):
         if not value:
             retval=None
         else:
-            # only change algorithm if existing hashes have been updated
             salt=self.get_salt()
             if not isinstance(salt, str):
                 raise ValidationError('The Encryption keys are not available to this system. Unable to save sensitive data.')
             digest=self.new_hasher(salt+value).digest()
-            # then hash 40-1 times
+            # iterate
             for x in range(0, self.iterations-1):
                 digest=self.new_hasher(digest).digest()
             hash_value=digest.encode("hex")

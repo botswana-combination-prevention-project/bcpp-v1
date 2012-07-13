@@ -7,15 +7,15 @@ except ImportError:
 
 class Crypt (BaseUuidModel):
 
-    hash_text = models.CharField(
+    hash = models.CharField(
         verbose_name = "Hash",
         max_length = 128,
         db_index=True,
         unique=True,
         ) 
     
-    cipher_text = models.TextField(
-        verbose_name = "Cipher",
+    secret = models.TextField(
+        verbose_name = "Secret",
         )
     
     algorithm = models.CharField(

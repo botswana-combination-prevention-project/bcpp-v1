@@ -24,4 +24,4 @@ class RestrictedRsaEncryptionField(BaseEncryptedField):
         # private key should not be on an insecure device
         if self.crypter.private_key:
             if not settings.IS_SECURE_DEVICE:
-                print 'warning: {0} key {1} should not be installed on an insecure device.'.format(self.mode, self.get_private_keyfile())
+                print 'warning: {0} key {1} should not be installed on an insecure device!'.format(self.mode, self.get_private_keyfile())
