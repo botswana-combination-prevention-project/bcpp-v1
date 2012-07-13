@@ -91,9 +91,9 @@ class Crypter(BaseCrypter):
             # get and update or create the crypt model with this hash, cipher pair
             hash_text = self.get_hash(encrypted_value)
             cipher_text = self.get_cipher(encrypted_value, hash_text)
-            if Crypt.objects.filter(hash_text=hash_text):
+            if Crypt.objects.filter(hash_text=hash_text, algorithm=self.algorithm, mode=self.mode):
                 if cipher_text:
-                    crypt = Crypt.objects.get(hash_text=hash_text)
+                    crypt = Crypt.objects.get(hash_text=hash_text, algorithm=self.algorithm, mode=self.mode)
                     if crypt.cipher_text != cipher_text and self.algorithm=='aes':
                         print 'Did not expect cipher_text to change for given hash {0}! ({1},{2})'.format(hash_text, self.algorithm, self.mode)
                     crypt.cipher_text = cipher_text
