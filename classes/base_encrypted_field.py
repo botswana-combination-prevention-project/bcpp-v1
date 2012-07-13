@@ -39,10 +39,6 @@ class BaseEncryptedField(models.Field):
         #get public and private keys for Crypter()
         super(BaseEncryptedField, self).__init__(*args, **kwargs)    
     
-    @property
-    def extra_salt(self):
-        return self.crypter.extra_salt
-    
     def have_decryption_key(self):
         retval=False
         if self.crypter.private_key:
@@ -61,11 +57,11 @@ class BaseEncryptedField(models.Field):
     
     def decrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        return self.crypter.decrypt(value, extra_salt=self.crypter.extra_salt)
+        return self.crypter.decrypt(value)
     
     def encrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """   
-        return self.crypter.encrypt(value, extra_salt=self.crypter.extra_salt)
+        return self.crypter.encrypt(value)
     
     def validate_with_cleaned_data(self, attname, cleaned_data):
         """ May be overridden to test field data against other values in cleaned data. 
@@ -119,10 +115,3 @@ class BaseEncryptedField(models.Field):
         # That's our definition!
         return (field_class, args, kwargs)
 
-    #def check_encryption_method(self, encryption_method):
-    #    """ Check if the subclass or model field pass a valid encryption method."""
-    #    if encryption_method not in self.valid_encryption_methods:
-    #        raise ImproperlyConfigured('Available options for EncryptedField field parameter' \
-    #                                    '\'encryption_method\' are \'%s\'. Got \'%s\' ' \
-    #                                    % ('\' or \''.join(self.valid_encryption_methods), encryption_method))
-            

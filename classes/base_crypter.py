@@ -10,6 +10,9 @@ class BaseCrypter(Base):
     KEY_LENGTH = 2048
     ENC=1
     DEC=0
+    # prefix for each segment of an encrypted value, also used to calculate field length for model.
+    prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
+    cipher_prefix = 'enc2:::'
     #used to refer to files dictionary
     #valid_rsa_key_types=['irreversible-rsa','restricted-rsa', 'local-rsa']
     #default filenames for the pem files, salt and aes key
@@ -114,6 +117,8 @@ class BaseCrypter(Base):
         """Return an uncode encrypted value, but know that it may fail if keys are not available"""
         if not self.public_key:
             raise ImproperlyConfigured("RSA public key not set, unable to decrypt cipher.")
+        if self.is_encrypted(value):
+            raise ValueError('Attempt to rsa encrypt an already encrypted value.')
         return self.public_key.public_encrypt(value, RSA.pkcs1_oaep_padding)
     
     def rsa_decrypt(self, cipher_text, is_encoded=True):
@@ -138,8 +143,9 @@ class BaseCrypter(Base):
         """ Need local-rsa private key since AES key is stored and encrypted using local-rsa. """
         retval = cipher_text
         if not self.aes_key:
-            raise ImproperlyConfigured("AES key not set, unable to decrypt cipher.")
-        else:    
+            self.set_aes_key()
+            #raise ImproperlyConfigured("AES key not set, unable to decrypt cipher.")       
+        if self.aes_key:
             if is_encoded:
                 cipher_text = base64.b64decode(cipher_text)
             cipher = self._build_cipher(self.aes_key, None, self.DEC)
@@ -156,16 +162,37 @@ class BaseCrypter(Base):
     def aes_encrypt(self, value):            
         """ Encrypt with AES, but fail if aes_key unavailable.
         Important to not allow any data to be saved if the keys are not available"""
-        
         if not self.aes_key:
-            raise ImproperlyConfigured('AES key not available, unable to encrypt sensitive data using the AES algorithm.')
-        else:    
-            cipher = self._build_cipher(self.aes_key, None, self.ENC)
-            v = cipher.update(value)
-            v = v + cipher.final()
-            del cipher
-            #print ('enc', self.aes_key, value, base64.b64encode(v))
+            self.set_aes_key()
+            if not self.aes_key:
+                # must FAIL here if key not available and user is trying to save unencrypted data
+                raise ImproperlyConfigured('AES key not available, unable to encrypt sensitive data using the AES algorithm.')
+        if self.is_encrypted(value):
+            raise ValueError('Attempt to aes encrypt an already encrypted value.')
+        cipher = self._build_cipher(self.aes_key, None, self.ENC)
+        v = cipher.update(value)
+        v = v + cipher.final()
+        del cipher
+        #print ('enc', self.aes_key, value, base64.b64encode(v))
         return v
 
-
+    def is_encrypted(self, value):
+        """ The value string is considered encrypted if it starts with 'self.prefix' """
+        if not value:
+            retval = False
+        else:
+            if value == self.prefix:
+                raise TypeError('Expected a string value, got just the encryption prefix.')
+            if value.startswith(self.prefix):
+                retval = True
+            else:
+                retval = False
+        return retval
+    
+    def mask_encrypted(self, value, mask='<encrypted>'):
+        """ help format values for display by masking them if encrypted at the time of display"""
+        if self.is_encrypted(value):
+            return mask
+        else:
+            return value
     

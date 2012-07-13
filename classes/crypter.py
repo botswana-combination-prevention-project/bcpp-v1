@@ -13,29 +13,14 @@ from hasher import Hasher
 class Crypter(BaseCrypter):
     
     """   """
-    # prefix for each segment of an encrypted value, also used to calculate field length for model.
-    prefix = 'enc1:::' # uses a prefix to flag as encrypted like django_extensions does
-    cipher_prefix = 'enc2:::'
-
     # hasher
     hasher = Hasher()
     
     def __init__(self, *args, **kwargs):
         super(Crypter, self).__init__(self, *args, **kwargs)
-    
-    @property
-    def extra_salt(self):
-        """salt for hashes"""
-        if self.algorithm not in self.valid_modes.keys():
-            raise ImproperlyConfigured('Invalid encryption algorithm. Got {0}. Valid options are {1}'.format(self.algorithm, ', '.join(self.valid_modes.keys())))
-        if self.mode not in self.valid_modes.get(self.algorithm).keys():
-            raise ImproperlyConfigured('Invalid encryption mode. Got {0}. Valid options are {1}'.format(self.mode, ', '.join(self.valid_modes.get(self.algorithm).keys())))
-        return self.algorithm+self.mode.replace(' ', '')
-    
+        
     def encrypt(self, value, **kwargs):
-        """ return the encrypted field value (hash+cipher), do not override """
-        if not self.extra_salt:
-            raise ImproperlyConfigured('Instance attribute \'extra_salt\' is required. Got None')
+        """ return the encrypted field value (hash+cipher), do not override """       
         update_lookup=kwargs.get('update_lookup', False)
         if not value:
             encrypted_value = value    
@@ -53,7 +38,7 @@ class Crypter(BaseCrypter):
                 encoded_cipher_text = base64.b64encode(cipher_text)
                 encrypted_value = self.prefix + hash_text + self.cipher_prefix + encoded_cipher_text
                 if update_lookup:
-                    # normally this is done via the pre_save signal
+                    # normally this is done via the pre_save signal??
                     self.update_cipher_lookup(encrypted_value)
             else:
                 encrypted_value = value    
@@ -61,8 +46,6 @@ class Crypter(BaseCrypter):
     
     def decrypt(self, value, **kwargs):
         """ if private key is known, return an decrypted value, otherwise return the encrypted value """
-        if not self.extra_salt:
-            raise ImproperlyConfigured('Instance attribute \'extra_salt\' is required. Got None')
         if value:
             if self.private_key:
                 if self.is_encrypted(value):
@@ -77,12 +60,6 @@ class Crypter(BaseCrypter):
                             raise ValueError('Cannot determine algorithm for decryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
                     else:
                         raise ValueError('When decrypting, expected to find cipher for given hash {0}'.format(hash_text))
-        #            else:
-        #                # if there is no private key, we must always return an encrypted value, unless None!
-        #                if not self.is_encrypted(value):
-        #                    # for some reason, the value was not encrypted AND we do not
-        #                    # have a private key, so it should be 
-        #                    value = self.encrypt(value, **kwargs)
         return value
     
     def update_cipher_lookup(self, encrypted_value):
@@ -91,9 +68,9 @@ class Crypter(BaseCrypter):
             # get and update or create the crypt model with this hash, cipher pair
             hash_text = self.get_hash(encrypted_value)
             cipher_text = self.get_cipher(encrypted_value, hash_text)
-            if Crypt.objects.filter(hash_text=hash_text, algorithm=self.algorithm, mode=self.mode):
+            if Crypt.objects.filter(hash_text=hash_text):
                 if cipher_text:
-                    crypt = Crypt.objects.get(hash_text=hash_text, algorithm=self.algorithm, mode=self.mode)
+                    crypt = Crypt.objects.get(hash_text=hash_text)
                     if crypt.cipher_text != cipher_text and self.algorithm=='aes':
                         print 'Did not expect cipher_text to change for given hash {0}! ({1},{2})'.format(hash_text, self.algorithm, self.mode)
                     crypt.cipher_text = cipher_text
@@ -119,9 +96,9 @@ class Crypter(BaseCrypter):
         else:
             # if the value is not encrypted, hash it.
             # note that hash must be unique for each mode and algorithm
-            if not self.extra_salt:
-                raise TypeError('Subclass must set the mode and algorithm to make a salt to ensure a unique hash.')
-            hash_text = self.hasher.get_hash(value, self.extra_salt)
+            #if not self.:
+            #    raise TypeError('Subclass must set the mode and algorithm to make a salt to ensure a unique hash.')
+            hash_text = self.hasher.get_hash(value)
         ret_val = hash_text
         return ret_val        
     
@@ -155,26 +132,6 @@ class Crypter(BaseCrypter):
         else:
             ret_val = None    
         return ret_val
-    
-    def is_encrypted(self, value):
-        """ The value string is considered encrypted if it starts with 'self.prefix' """
-        if not value:
-            retval = False
-        else:
-            if value == self.prefix:
-                raise TypeError('Expected a string value, got just the encryption prefix.')
-            if value.startswith(self.prefix):
-                retval = True
-            else:
-                retval = False
-        return retval
-    
-    def mask_encrypted(self, value, mask='<encrypted>'):
-        """ help format values for display by masking them if encrypted at the time of display"""
-        if self.is_encrypted(value):
-            return mask
-        else:
-            return value
     
       
         

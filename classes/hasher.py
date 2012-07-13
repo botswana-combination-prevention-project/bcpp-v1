@@ -39,21 +39,17 @@ class Hasher(BaseCrypter):
     def get_salt(self):
         if self.private_key:
             return self.rsa_decrypt(self.encrypted_salt)
-        #else:
-        #    return None
     
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size
         
-    def get_hash(self, value, extra_salt):
+    def get_hash(self, value):
         """ for a given value, return a salted SHA256 hash """
         if not value:
             retval = None
         else:
             # only change algorithm if existing hashes have been updated
             salt = self.get_salt()
-            if salt:
-                salt = salt+extra_salt
             if not isinstance(salt, str):
                 raise ValidationError('The Encryption keys are not available to this system. Unable to save sensitive data.')
             digest = self.new_hasher(salt+value).digest()
