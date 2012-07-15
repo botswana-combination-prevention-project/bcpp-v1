@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Classes &mdash; bhp_crypto 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="bhp_crypto 1.0 documentation" href="index.html" />
+    <link rel="next" title="Field Classes" href="field_classes.html" />
+    <link rel="prev" title="Django Settings Attributes" href="settings.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="field_classes.html" title="Field Classes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="settings.html" title="Django Settings Attributes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">bhp_crypto 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-bhp_crypto.classes"></span><div class="section" id="classes">
+<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bhp_crypto.classes.Base">
+<em class="property">class </em><tt class="descclassname">bhp_crypto.classes.</tt><tt class="descname">Base</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Base" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="bhp_crypto.classes.BaseCrypter">
+<em class="property">class </em><tt class="descclassname">bhp_crypto.classes.</tt><tt class="descname">BaseCrypter</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base.Base</span></tt></p>
+<p>Base class for all classes providing RSA and AES encryption methods.</p>
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.aes_decrypt">
+<tt class="descname">aes_decrypt</tt><big>(</big><em>secret</em>, <em>is_encoded=True</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.aes_decrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>AES encrypt using the random iv stored with the secret where secret is a tuple (secret_text, sep, iv).</p>
+<p>Will return plaintext or the original secret tuple</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.aes_encrypt">
+<tt class="descname">aes_encrypt</tt><big>(</big><em>plaintext</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.aes_encrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return secret as a tuple (secret,iv) or fail.</p>
+<p>Important to not allow any data to be saved if the keys are not available</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.create_aes_key">
+<tt class="descname">create_aes_key</tt><big>(</big><em>suffix='2012-07-15 16:53:25.315118'</em>, <em>key=None</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.create_aes_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new key and store it safely in a file by using local-rsa-encryption.</p>
+<p>Filename suffix is added to the filename to avoid overwriting an existing key</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.create_new_rsa_key_pairs">
+<tt class="descname">create_new_rsa_key_pairs</tt><big>(</big><em>suffix='2012-07-15 16:53:25.315104'</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.create_new_rsa_key_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new rsa key-pair.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.get_local_rsa_private_keyfile">
+<tt class="descname">get_local_rsa_private_keyfile</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.get_local_rsa_private_keyfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the local-rsa key filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.is_encrypted">
+<tt class="descname">is_encrypted</tt><big>(</big><em>value</em>, <em>prefix='enc1:::'</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.is_encrypted" title="Permalink to this definition">¶</a></dt>
+<dd><p>The value string is considered encrypted if it starts with &#8216;self.hash_prefix&#8217; or whichever prefix is passed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.mask_encrypted">
+<tt class="descname">mask_encrypted</tt><big>(</big><em>value</em>, <em>mask='&lt;encrypted&gt;'</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.mask_encrypted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Help format values for display by masking them if encrypted at the time of display.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.rsa_decrypt">
+<tt class="descname">rsa_decrypt</tt><big>(</big><em>secret</em>, <em>is_encoded=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.rsa_decrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return plaintext or secret if the private key is not available.</p>
+<p>Secret is base64 encoded unless &#8216;is_encoded&#8217; is false</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.rsa_encrypt">
+<tt class="descname">rsa_encrypt</tt><big>(</big><em>plaintext</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.rsa_encrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an un-encoded secret or fail</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.set_aes_key">
+<tt class="descname">set_aes_key</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.set_aes_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve and decrypt the AES key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.set_private_key">
+<tt class="descname">set_private_key</tt><big>(</big><em>keyfile=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.set_private_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the rsa private key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.set_public_key">
+<tt class="descname">set_public_key</tt><big>(</big><em>keyfile=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.set_public_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the rsa public key.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_crypto.classes.Crypter">
+<em class="property">class </em><tt class="descclassname">bhp_crypto.classes.</tt><tt class="descname">Crypter</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base_crypter.BaseCrypter</span></tt></p>
+<p>Subclass to be used with models that expect to stored just the hash and for this class to handle the secret</p>
+<dl class="method">
+<dt id="bhp_crypto.classes.Crypter.decrypt">
+<tt class="descname">decrypt</tt><big>(</big><em>secret</em>, <em>secret_is_hash=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter.decrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrypt secret and if secret is a hash, use hash to lookup the real secret first.</p>
+<p>Do not assume secret is an encrypted value, look for hash_prefix or secret prefix.
+By default we expect secret to be the stored field value &#8211; which is a hash.
+If we decide to use this method where the secret is not a hash, then the prefix is 
+the secret_prefix and the lookup is skipped.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.Crypter.encrypt">
+<tt class="descname">encrypt</tt><big>(</big><em>value</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter.encrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the encrypted field value (hash+cipher) where secret is secret or secret_iv, do not override</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.Crypter.get_db_prep_value">
+<tt class="descname">get_db_prep_value</tt><big>(</big><em>hash_secret</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter.get_db_prep_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the secret lookup and return just the hash.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.Crypter.get_hash">
+<tt class="descname">get_hash</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter.get_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>hash is stored for exact match search functionality as the cipher is never the same twice</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.Crypter.update_secret_in_lookup">
+<tt class="descname">update_secret_in_lookup</tt><big>(</big><em>hash_secret</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter.update_secret_in_lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>update a model to have a reference of hash_value / cipher_value pairs</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_crypto.classes.Hasher">
+<em class="property">class </em><tt class="descclassname">bhp_crypto.classes.</tt><tt class="descname">Hasher</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Hasher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base_crypter.BaseCrypter</span></tt></p>
+<p>handle all hashing</p>
+<dl class="method">
+<dt id="bhp_crypto.classes.Hasher.get_hash">
+<tt class="descname">get_hash</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Hasher.get_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>for a given value, return a salted SHA256 hash</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-bhp_crypto.fields"></span></div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="settings.html"
+                        title="previous chapter">Django Settings Attributes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="field_classes.html"
+                        title="next chapter">Field Classes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/base_classes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="field_classes.html" title="Field Classes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="settings.html" title="Django Settings Attributes"
+             >previous</a> |</li>
+        <li><a href="index.html">bhp_crypto 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, erik van widenfelt.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

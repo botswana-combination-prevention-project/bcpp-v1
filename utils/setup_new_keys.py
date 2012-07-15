@@ -5,7 +5,9 @@ from bhp_crypto.classes.hasher import Hasher
 
 
 def setup_new_keys():
-
+    """ Utility to generate all new keys for the project .
+    
+    """
     datestring = datetime.today().strftime('%Y%m%d%H%M%S%f')
     crypter=Crypter()
     filenames=[]

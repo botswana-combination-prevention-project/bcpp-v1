@@ -6,6 +6,8 @@ except ImportError:
 
 
 class Crypt (BaseUuidModel):
+    
+    """ A secrets lookup model searchable by hash """
 
     hash = models.CharField(
         verbose_name = "Hash",

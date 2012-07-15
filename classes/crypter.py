@@ -12,6 +12,8 @@ from hasher import Hasher
         
 class Crypter(BaseCrypter):
 
+    """ Subclass to be used with models that expect to stored just the hash and for this class to handle the secret """
+     
     hasher = Hasher()
     
     def __init__(self, *args, **kwargs):
@@ -19,7 +21,7 @@ class Crypter(BaseCrypter):
         
     def encrypt(self, value, **kwargs):
         """ return the encrypted field value (hash+cipher) where secret is secret or secret_iv, do not override """       
-        update_lookup=kwargs.get('update_lookup', False)
+        #update_lookup=kwargs.get('update_lookup', False)
         if not value:
             hash_secret=value    
         else:    
@@ -34,9 +36,9 @@ class Crypter(BaseCrypter):
                     raise ValueError('Cannot determine algorithm to use for encryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
                 hash_text=self.get_hash(value)
                 hash_secret=self.hash_prefix+hash_text+self.secret_prefix+encoded_secret
-                if update_lookup:
-                    # normally this is done via the pre_save signal??
-                    self.update_secret_in_lookup(hash_secret)
+                #if update_lookup:
+                #    # normally this is done via the pre_save signal??
+                #    self.update_secret_in_lookup(hash_secret)
             else:
                 hash_secret=value    
         return hash_secret        
@@ -54,7 +56,7 @@ class Crypter(BaseCrypter):
             if self.is_encrypted(secret, prefix(secret_is_hash)):
                 if secret_is_hash:
                     hash_text=self.get_hash(secret)
-                    secret=self.get_secret_from_string(secret, hash_text)
+                    secret=self._get_secret_from_hash_secret(secret, hash_text)
                 else:
                     secret=secret[len(self.secret_prefix):]
                 if secret:
@@ -75,7 +77,7 @@ class Crypter(BaseCrypter):
         if hash_secret:
             # get and update or create the crypt model with this hash, cipher pair
             hash_text=self.get_hash(hash_secret)
-            secret=self.get_secret_from_hash_secret(hash_secret, hash_text)
+            secret=self._get_secret_from_hash_secret(hash_secret, hash_text)
             if Crypt.objects.filter(hash=hash_text):
                 if secret:
                     crypt=Crypt.objects.get(hash=hash_text)
@@ -89,7 +91,7 @@ class Crypter(BaseCrypter):
                                          mode = self.mode)
                 else:
                     # if the hash is not in the crypt model and you do not have a cipher
-                    # update: if performing a search, instead of data entry, the hash may not exist
+                    # update: if performing a search, instead of data entry, the hash will not exist
                     print 'hash not found in crypt model. {0} {1} {2}'.format(self.algorithm, self.mode, hash_text)
                     #raise TypeError('Expected cipher text for given {0} {1} hash, but got None for value {2}, {3}.'.format(self.algorithm, self.mode, secret, hash_text))
             
@@ -111,7 +113,7 @@ class Crypter(BaseCrypter):
     def get_stored_hash(self, value):
         return self.hash_prefix+self.get_hash(value)
     
-    def get_secret_from_hash_secret(self, hash_secret, hash_text):
+    def _get_secret_from_hash_secret(self, hash_secret, hash_text):
         """ Return the secret from within the hash_secret or from a lookup if hash_secret is just the hash"""
         if not hash_secret:
             retval=None
@@ -128,8 +130,8 @@ class Crypter(BaseCrypter):
             return retval
 
     def _lookup_secret(self, hash_text):
-        """ Given a hash, lookup cipher in Crypt model. 
-        Will be called by get_secret_from_string if secret is not in the 'encrypted value' (e.g. is a hash) """
+        """ Given a hash, lookup secret in Crypt model. 
+        Will be called by _get_secret_from_hash_secret if aes secret is not in the 'secret' (e.g. is a hash) """
         if Crypt.objects.filter(hash=hash_text):
             crypt=Crypt.objects.get(hash=hash_text)
             ret_val=crypt.secret
@@ -137,5 +139,9 @@ class Crypter(BaseCrypter):
             ret_val=None    
         return ret_val
     
-      
+    def get_db_prep_value(self, hash_secret):
+        """ Update the secret lookup and return just the hash."""
+        self.update_secret_in_lookup(hash_secret)
+        # switch 'value' to just the hash before the save to the DB
+        return self.hash_prefix+self.get_hash(hash_secret)
         

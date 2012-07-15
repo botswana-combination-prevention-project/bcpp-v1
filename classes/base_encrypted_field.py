@@ -93,10 +93,8 @@ class BaseEncryptedField(models.Field):
         if value:
             # call super (which will call get_prep_value)
             hash_secret=super(BaseEncryptedField, self).get_db_prep_value(value, connection, prepared)
-            # update secret lookup table
-            self.crypter.update_secret_in_lookup(hash_secret)
-            # switch 'value' to just the hash before the save to the DB
-            hash_text=self.crypter.hash_prefix+self.crypter.get_hash(hash_secret)
+            # update secret lookup table and get back just the hash
+            hash_text=self.crypter.get_db_prep_value(hash_secret) 
             value=hash_text
         return value
     
