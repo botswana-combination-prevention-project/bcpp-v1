@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_crypto.models import Crypt
-from bhp_crypto.models import TestModel
+#from bhp_crypto.models import TestModel
 
 class CryptAdmin (admin.ModelAdmin):
 
@@ -10,6 +10,6 @@ class CryptAdmin (admin.ModelAdmin):
     
 admin.site.register(Crypt, CryptAdmin)
 
-class TestModelAdmin (admin.ModelAdmin):
-    pass
-admin.site.register(TestModel, TestModelAdmin)
+#class TestModelAdmin (admin.ModelAdmin):
+#    pass
+#admin.site.register(TestModel, TestModelAdmin)

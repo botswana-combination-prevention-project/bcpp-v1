@@ -1,5 +1,5 @@
-bhp_crypto's documentation
-======================================
+bhp_crypto
+==========
 
 .. toctree::
    :maxdepth: 2

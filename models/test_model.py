@@ -1,5 +1,5 @@
 #from django.db import models
-from audit_trail.audit import AuditTrail
+#from audit_trail.audit import AuditTrail
 from bhp_base_model.classes import BaseModel
 from bhp_crypto.fields import EncryptedCharField, EncryptedTextField, EncryptedFirstnameField, EncryptedLastnameField
 
@@ -20,7 +20,7 @@ class TestModel(BaseModel):
 
     text3 = EncryptedTextField()
 
-    history=AuditTrail()
+    #history=AuditTrail()
 
     def get_subject_identifier(self):
         return ''

@@ -29,8 +29,8 @@ class Crypter(BaseCrypter):
                 if self.algorithm=='aes':
                     encoded_secret=self.iv_prefix.join(map(base64.b64encode, self.aes_encrypt(value)))
                 elif self.algorithm=='rsa':
-                    if len(value)>=self.KEY_LENGTH/24:
-                        raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.KEY_LENGTH/24,len(value)))
+                    if len(value)>=self.RSA_KEY_LENGTH/24:
+                        raise ValueError('String value to encrypt may not exceed {0} characters. Got {1}.'.format(self.RSA_KEY_LENGTH/24,len(value)))
                     encoded_secret=base64.b64encode(self.rsa_encrypt(value))
                 else:
                     raise ValueError('Cannot determine algorithm to use for encryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
