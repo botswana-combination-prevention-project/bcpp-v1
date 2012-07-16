@@ -12,8 +12,9 @@ from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
         
 class BaseRegisteredSubjectModel (BaseUuidModel):
 
-    """ Base model for models that need a key to RegisteredSubject. Such
-    models may be listed by name in the ScheduledGroup model and thus
+    """ Base model for models that need a key to RegisteredSubject. 
+    
+    Such models may be listed by name in the ScheduledGroup model and thus
     trigger the creation of appointments. Other instances may be Additional
     forms which are link to a subject but not a time point (for example, 
     a Death model or OffStudy model (see also AdditionalEntryBucket) 

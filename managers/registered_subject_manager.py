@@ -7,6 +7,7 @@ class RegisteredSubjectManager(CryptoManager):
     
     def update_with(self, instance, attrname='subject_identifier', **kwargs):
         """ Use an instance, usually a consent, to update registered subject.
+        
         Assume all required fields attributes are included in the instance. 
         Additional fields may be passed as kwargs.
         
@@ -74,6 +75,44 @@ class RegisteredSubjectManager(CryptoManager):
         if extra:
             registered_subject.save()
                 
+
+    def register_live_infants(self, ** kwargs):
+
+        """ Identify and register the number of live infants "to register" and return identifier(s). """
+        maternal_registered_subject=kwargs.get('maternal_registered_subject')
+        maternal_identifier=maternal_registered_subject.subject_identifier
+        maternal_study_site=maternal_registered_subject.study_site
+        live_infants=kwargs.get('live_infants')
+        live_infants_to_register=kwargs.get('live_infants_to_register')
+        user=kwargs.get('user')
+        infant=Infant()
+        subject_identifier=infant.get_identifier(user, 
+                              maternal_identifier = maternal_identifier,
+                              maternal_study_site = maternal_study_site,
+                              live_infants = live_infants,
+                              live_infants_to_register = live_infants_to_register,)
+        return subject_identifier
+    
+    def register_partner(self, ** kwargs):
+        """ Allocate partner identifiers. """
+        index_identifier = kwargs.get('index_identifier')
+        first_name = kwargs.get('partner_first_name')
+        initials = kwargs.get('partner_initials')
+        site = kwargs.get('study_site')
+        user = kwargs.get('user')
+        partner = Partner()        
+        subject_identifier = partner.get_identifier(user, 
+                               index_identifier = index_identifier, 
+                               first_name = first_name,
+                               initials = initials,
+                               site = site,)        
+                 
+
+        return subject_identifier
+        
+    
+    
+    
     #    def register_subject(self, consent, subject_type='SUBJECT', user='', **kwargs):
     #        
     #        """
@@ -167,36 +206,4 @@ class RegisteredSubjectManager(CryptoManager):
     #        # return the new subject identifier to the form currently being save()'d
     #        return subject_identifier
 
-    def register_live_infants(self, ** kwargs):
-
-        """ Identify and register the number of live infants "to register" and return identifier(s). """
-        maternal_identifier = kwargs.get('maternal_identifier').subject_identifier
-        maternal_site = kwargs.get('maternal_site').subject_identifier
-        live_infants = kwargs.get('live_infants')
-        live_infants_to_register = kwargs.get('live_infants_to_register')
-        user = kwargs.get('user')
-        infant = Infant()
-        subject_identifier = infant.get_identifier(user, 
-                              maternal_identifier = maternal_identifier,
-                              maternal_site = maternal_site,
-                              live_infants = live_infants,
-                              live_infants_to_register = live_infants_to_register,)
-        return subject_identifier
-    
-    def register_partner(self, ** kwargs):
-        """ Allocate partner identifiers. """
-        index_identifier = kwargs.get('index_identifier')
-        first_name = kwargs.get('partner_first_name')
-        initials = kwargs.get('partner_initials')
-        site = kwargs.get('study_site')
-        user = kwargs.get('user')
-        partner = Partner()        
-        subject_identifier = partner.get_identifier(user, 
-                               index_identifier = index_identifier, 
-                               first_name = first_name,
-                               initials = initials,
-                               site = site,)        
-                 
-
-        return subject_identifier
-    
+ 

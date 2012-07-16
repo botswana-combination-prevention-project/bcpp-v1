@@ -4,9 +4,9 @@ try:
 except ImportError:
     from bhp_base_model.classes import BaseModelAdmin
 from bhp_export_data.actions import export_as_csv_action
+from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 from bhp_entry.models import AdditionalEntryBucket
-from bhp_registration.models import  RegisteredSubject
 
 
 class BaseRegisteredSubjectModelAdmin (BaseModelAdmin):
