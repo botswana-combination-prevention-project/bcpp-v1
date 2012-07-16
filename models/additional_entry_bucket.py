@@ -4,9 +4,10 @@ from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.models import BaseEntryBucket 
 from bhp_entry.managers import AdditionalEntryBucketManager
 
+
 class AdditionalEntryBucket(BaseEntryBucket):
     
-    """List of required but unscheduled entries by registered_subject such as off-study, death, adverse event, etc. (not attached to appointment model)
+    """List of required but unscheduled entries by registered_subject such as off-study, death, adverse event, etc (not attached to appointment model).
     
     This model differs from ScheduledEntryBucket in that it is not attached to an
     appointment/visit_definition. Also, it is not attached to the Entry model and instead refers 
@@ -23,12 +24,11 @@ class AdditionalEntryBucket(BaseEntryBucket):
         return reverse('admin:bhp_entry_additionalentrybucket_change', args=(self.id,))
 
     def __unicode__(self):        
-        return '%s: %s' % (self.registered_subject.subject_identifier, self.content_type_map)    
-    
+        return '%s: %s' % (self.registered_subject.subject_identifier, self.content_type_map)
     
     def is_keyed(self):
 
-        """ confirm if model instance exists / is_keyed """
+        """ Confirm if model instance exists / is_keyed. """
         
         model = models.get_model(
                         self.content_type_map.content_type.app_label, 
