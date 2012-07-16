@@ -7,9 +7,8 @@ from bhp_sync.classes import DeserializeFromTransaction
 
 
 class IncomingTransaction(BaseTransaction):
-
     """ transactions received from a remote producer and to be consumed locally """
-
+    
     is_self = models.BooleanField(
         default = False,
         db_index = True,

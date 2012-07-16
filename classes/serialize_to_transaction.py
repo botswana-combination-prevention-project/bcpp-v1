@@ -1,8 +1,6 @@
-import base64
 from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
-from django.core.exceptions import ImproperlyConfigured
 from bhp_crypto.classes import Crypter
 from transaction_producer import TransactionProducer
 
@@ -18,10 +16,9 @@ class SerializeToTransaction(Crypter):
     
     def serialize(self, sender, instance, **kwargs):
     
-        """Serialize the model instance to an encrypted json object and 
-        save the json object to the Transaction model.
+        """ Serialize the model instance to an encrypted json object and save the json object to the Transaction model. """
         
-        Transaction producer name is based on the hostname (created
+        """Transaction producer name is based on the hostname (created
         or modified) field.     
         
         Call this using the post_save and m2m_changed signal.

@@ -1,11 +1,8 @@
 from datetime import datetime
-import socket
 from django.conf import settings
-from django.db.models.signals import post_save, m2m_changed
-from django.dispatch import receiver
 from django.core import serializers
 from django.db.models import get_model
-from bhp_sync.classes import TransactionProducer, SerializeToTransaction
+from bhp_sync.classes import TransactionProducer
 from bhp_base_model.classes import BaseUuidModel
 #from bhp_bucket.classes.bucket_controller import bucket
 
@@ -22,7 +19,7 @@ class BaseSyncModel(BaseUuidModel):
         return False
     
     def save(self, *args, **kwargs):
-
+        
         # sneek in the transaction_producer, if called from 
         # view in bhp_sync.
         # get value and delete from kwargs before calling super
@@ -65,27 +62,5 @@ class BaseSyncModel(BaseUuidModel):
 
     class Meta:
         abstract = True
-
-
-@receiver(m2m_changed, weak=False, dispatch_uid='serialize_m2m_on_save')
-def serialize_m2m_on_save(sender, instance, **kwargs):
-    """ part of the serialize transaction process that ensures m2m are serialized correctly """
-    if kwargs.get('action') == 'post_add':
-        if isinstance(instance, BaseSyncModel):
-            if instance.is_serialized() and not instance._meta.proxy:
-                serialize_to_transaction = SerializeToTransaction()
-                serialize_to_transaction.serialize(sender, instance,**kwargs)
-                   
-@receiver(post_save, weak=False, dispatch_uid='serialize_on_save')
-def serialize_on_save(sender, instance, **kwargs):
-    """ serialize the model instance to the outgoing transaction model for consumption by another application """
-    if isinstance(instance, BaseSyncModel):
-        hostname = socket.gethostname()
-        #print "%s %s %s" % (hostname, instance.hostname_created, instance.hostname_modified)
-        if (instance.hostname_created == hostname and not instance.hostname_modified) \
-                                          or (instance.hostname_modified == hostname):
-            if instance.is_serialized() and not instance._meta.proxy:
-                serialize_to_transaction = SerializeToTransaction()
-                serialize_to_transaction.serialize(sender, instance, **kwargs)
 
 

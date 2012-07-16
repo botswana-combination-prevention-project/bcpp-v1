@@ -38,16 +38,19 @@ api_key.save()
 
 
 class OutgoingTransactionResource(ModelResource):
+    
+    """ APi resource based on model OutgoingTransaction filtered on is_consumed=False. """
+    
     class Meta:
-        queryset = OutgoingTransaction.objects.filter(is_consumed=False).order_by('timestamp')
-        resource_name = 'outgoingtransaction'
-        authentication = ApiKeyAuthentication()
-        authorization = DjangoAuthorization()       
-        allowed_methods = ['get','post','put',]        
-        filtering = {
+        queryset=OutgoingTransaction.objects.filter(is_consumed=False).order_by('timestamp')
+        resource_name='outgoingtransaction'
+        authentication=ApiKeyAuthentication()
+        authorization=DjangoAuthorization()       
+        allowed_methods=['get','post','put',]        
+        filtering={
             'producer': ['exact',],
         }        
-        serializer = Serializer()
+        serializer=Serializer()
         
 
 #models.signals.post_save.connect(create_api_key, sender=User)
