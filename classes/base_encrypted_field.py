@@ -7,7 +7,7 @@ class BaseEncryptedField(models.Field):
     """ A base field class to store sensitive data at rest in an encrypted format.
     
     * To maintain uniqueness and searchability, only the hash is ever stored in the model field.
-    * The cipher is stored with the hash in the Crypt cipher lookup model and will be
+    * The cipher is stored with the hash in the :class:`bhp_crypto.models.Crypt` cipher lookup model and will be
       made available when required for decryption (e.g. the private key is available)
     * Salt, public key filename and private key filename are referred to via the settings file """
 

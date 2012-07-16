@@ -60,7 +60,30 @@
 <dl class="class">
 <dt id="bhp_crypto.models.Crypt">
 <em class="property">class </em><tt class="descclassname">bhp_crypto.models.</tt><tt class="descname">Crypt</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.models.Crypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>A secrets lookup model searchable by hash</p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_uuid_model.BaseUuidModel</span></tt></p>
+<p>A secrets lookup model searchable by hash</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>created</strong> (<em>CreationDateTimeField</em>) &#8211; Created</li>
+<li><strong>modified</strong> (<em>ModificationDateTimeField</em>) &#8211; Modified</li>
+<li><strong>user_created</strong> (<em>CharField</em>) &#8211; User created</li>
+<li><strong>user_modified</strong> (<em>CharField</em>) &#8211; User modified</li>
+<li><strong>hostname_created</strong> (<em>HostnameCreationField</em>) &#8211; Hostname</li>
+<li><strong>hostname_modified</strong> (<em>HostnameModificationField</em>) &#8211; Hostname</li>
+<li><strong>id</strong> (<em>MyUUIDField</em>) &#8211; Id</li>
+<li><strong>hash</strong> (<em>CharField</em>) &#8211; Hash</li>
+<li><strong>secret</strong> (<em>TextField</em>) &#8211; Secret</li>
+<li><strong>algorithm</strong> (<em>CharField</em>) &#8211; Algorithm</li>
+<li><strong>mode</strong> (<em>CharField</em>) &#8211; Mode</li>
+<li><strong>salt</strong> (<em>CharField</em>) &#8211; Salt</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

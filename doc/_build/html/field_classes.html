@@ -65,7 +65,7 @@
 <p>A base field class to store sensitive data at rest in an encrypted format.</p>
 <ul class="simple">
 <li>To maintain uniqueness and searchability, only the hash is ever stored in the model field.</li>
-<li>The cipher is stored with the hash in the Crypt cipher lookup model and will be
+<li>The cipher is stored with the hash in the <a class="reference internal" href="models.html#bhp_crypto.models.Crypt" title="bhp_crypto.models.Crypt"><tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.models.Crypt</span></tt></a> cipher lookup model and will be
 made available when required for decryption (e.g. the private key is available)</li>
 <li>Salt, public key filename and private key filename are referred to via the settings file</li>
 </ul>

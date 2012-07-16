@@ -12,6 +12,7 @@
 # serve to show the default.
 
 import sys, os
+#sys.path.append(os.path.realpath('_ext'))
 sys.path.append(os.path.realpath('../../'))
 sys.path.append(os.path.realpath('../'))
 sys.path.append(os.path.realpath('../classes'))
@@ -32,7 +33,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 
+              'sphinx.ext.coverage', 'sphinx.ext.viewcode']
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -247,3 +250,9 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+from _ext.process_model_docstring import process_model_docstring
+
+def setup(app):
+    # Register the docstring processor with sphinx
+    app.connect('autodoc-process-docstring', process_model_docstring) 
