@@ -1,12 +1,9 @@
 from django.db.models import get_model
 from django.core.exceptions import ImproperlyConfigured
-#from bhp_consent.classes import ConsentDescriptor
 
 
 class Base(object):
     
-    #consent = ConsentDescriptor()
-
     def __init__(self, *args, **kwargs):
 
         # the instance, if set, will be updated instead of creating a new instance

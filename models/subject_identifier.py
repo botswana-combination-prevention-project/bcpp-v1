@@ -8,7 +8,7 @@ class SubjectIdentifier(BaseModel):
     Will not include identifiers derived from those of existing subject. For example infant and partner subject
     identifiers are not included in this model."""
     
-    subject_identifier = models.CharField(max_length = 25)
+    subject_identifier = models.CharField(max_length = 25, unique=True)
     
     seed = models.IntegerField()
     
@@ -17,7 +17,7 @@ class SubjectIdentifier(BaseModel):
         """return a padded sequence segment of the subject identifier based on the auto-increment integer primary key"""
         if not self.seed:
             raise TypeError('Seed cannot be None.')
-        return str(self.pk).ljust(len(self.seed),'0')    
+        return str(self.pk).rjust(len(self.seed),'0')    
     
     def __unicode__(self):
         return self.subject_identifier
