@@ -38,10 +38,9 @@ class ModelRule(object):
         self.visit_model_fieldname = kwargs.get('visit_model_fieldname')
         
         # logic tuple
-        self.logic = kwargs.get('logic')
+        self.logic=kwargs.get('logic')
         if not isinstance(self.logic, tuple):
             raise TypeError('Attribute logic must be a tuple')
-        
         
         self._predicate = ''
                 
@@ -49,6 +48,8 @@ class ModelRule(object):
             AttributeError('class Meta with the app_label attribute has not been defined. Do so in the bucket.py')
         
     def run(self, instance, app_label):
+        
+        """ Run the rule. """
         
         self._set_reference_model(instance, app_label)
         
@@ -65,6 +66,8 @@ class ModelRule(object):
 
     def _set_target_model(self, instance, app_label):
     
+        """ Set the target model for this rule. """
+    
         self._target_models = []    
         
         # for each target model tuple, get the actual model
@@ -76,6 +79,8 @@ class ModelRule(object):
                 self._target_models.append(get_model(app_label, target_model))  
     
     def _set_reference_model(self, instance, app_label):
+        
+        """ Set the reference model used to get a field value for the predicate. """
         
         # check if a model other than the default will be used
         # to get the field value for the predicate
@@ -93,6 +98,8 @@ class ModelRule(object):
             self._reference_model_instance = instance         
     
     def _build_predicate(self, instance):
+        
+        """ Build the predicate. """
         
         # the unresolved predicate is a tuple with three items (field, operator, value) 
         # or a tuple of tuples where all but the first tuple have

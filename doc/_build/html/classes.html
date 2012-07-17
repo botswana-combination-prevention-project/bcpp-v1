@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Classes &mdash; bhp_bucket 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="bhp_bucket 1.0 documentation" href="index.html" />
+    <link rel="next" title="Models" href="models.html" />
+    <link rel="prev" title="Building Model Rules" href="rules.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rules.html" title="Building Model Rules"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">bhp_bucket 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-bhp_bucket.classes">
+<span id="classes"></span><h1>Classes<a class="headerlink" href="#module-bhp_bucket.classes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bhp_bucket.classes.BucketController">
+<em class="property">class </em><tt class="descclassname">bhp_bucket.classes.</tt><tt class="descname">BucketController</tt><a class="headerlink" href="#bhp_bucket.classes.BucketController" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Main bucket controller of <a class="reference internal" href="#bhp_bucket.classes.ModelBucket" title="bhp_bucket.classes.ModelBucket"><tt class="xref py py-class docutils literal"><span class="pre">ModelBucket</span></tt></a> objects.</p>
+<dl class="method">
+<dt id="bhp_bucket.classes.BucketController.autodiscover">
+<tt class="descname">autodiscover</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_bucket.classes.BucketController.autodiscover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autodiscover buckey rules from a bucket.py.</p>
+<ul class="simple">
+<li>Copied from django sites and only very slightly modified</li>
+<li>Auto-discover INSTALLED_APPS admin.py modules and fail silently when
+not present. This forces an import on them to register any admin bits they
+may want.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_bucket.classes.BucketController.register">
+<tt class="descname">register</tt><big>(</big><em>model</em>, <em>model_bucket</em>, <em>register='scheduled'</em><big>)</big><a class="headerlink" href="#bhp_bucket.classes.BucketController.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register <a class="reference internal" href="#bhp_bucket.classes.ModelBucket" title="bhp_bucket.classes.ModelBucket"><tt class="xref py py-class docutils literal"><span class="pre">ModelBucket</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_bucket.classes.BucketController.update">
+<tt class="descname">update</tt><big>(</big><em>instance</em><big>)</big><a class="headerlink" href="#bhp_bucket.classes.BucketController.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model rules for this model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_bucket.classes.BucketController.update_all">
+<tt class="descname">update_all</tt><big>(</big><em>visit_model_instance</em><big>)</big><a class="headerlink" href="#bhp_bucket.classes.BucketController.update_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a visit model instance, run all model rules for all models referred to by the bucket.</p>
+<p>This method is called by the dashboard create() method</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_bucket.classes.ModelBucket">
+<em class="property">class </em><tt class="descclassname">bhp_bucket.classes.</tt><tt class="descname">ModelBucket</tt><a class="headerlink" href="#bhp_bucket.classes.ModelBucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Container for <tt class="xref py py-class docutils literal"><span class="pre">ModelRule</span></tt> for a given model bucket.</p>
+<p>ModelBuckets are contained by the BucketController</p>
+</dd></dl>
+
+<span class="target" id="module-bhp_bucket.classes.model_rule"></span><dl class="class">
+<dt id="bhp_bucket.classes.model_rule.ModelRule">
+<em class="property">class </em><tt class="descclassname">bhp_bucket.classes.model_rule.</tt><tt class="descname">ModelRule</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bhp_bucket/classes/model_rule.html#ModelRule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_bucket.classes.model_rule.ModelRule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="bhp_bucket.classes.model_rule.ModelRule.run">
+<tt class="descname">run</tt><big>(</big><em>instance</em>, <em>app_label</em><big>)</big><a class="reference internal" href="_modules/bhp_bucket/classes/model_rule.html#ModelRule.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_bucket.classes.model_rule.ModelRule.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the rule.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-bhp_bucket.classes.scheduled_model_rule"></span><dl class="class">
+<dt id="bhp_bucket.classes.scheduled_model_rule.ScheduledModelRule">
+<em class="property">class </em><tt class="descclassname">bhp_bucket.classes.scheduled_model_rule.</tt><tt class="descname">ScheduledModelRule</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bhp_bucket/classes/scheduled_model_rule.html#ScheduledModelRule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_bucket.classes.scheduled_model_rule.ScheduledModelRule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bhp_bucket.classes.model_rule.ModelRule" title="bhp_bucket.classes.model_rule.ModelRule"><tt class="xref py py-class docutils literal"><span class="pre">bhp_bucket.classes.model_rule.ModelRule</span></tt></a></p>
+<p>Model rule applied to ScheduledEntryBucket, if (logic) then update entry.</p>
+<dl class="method">
+<dt id="bhp_bucket.classes.scheduled_model_rule.ScheduledModelRule.run">
+<tt class="descname">run</tt><big>(</big><em>instance</em>, <em>app_label</em><big>)</big><a class="reference internal" href="_modules/bhp_bucket/classes/scheduled_model_rule.html#ScheduledModelRule.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_bucket.classes.scheduled_model_rule.ScheduledModelRule.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the rule, test the logic.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-bhp_bucket.classes.additional_model_rule"></span><dl class="class">
+<dt id="bhp_bucket.classes.additional_model_rule.AdditionalModelRule">
+<em class="property">class </em><tt class="descclassname">bhp_bucket.classes.additional_model_rule.</tt><tt class="descname">AdditionalModelRule</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bhp_bucket/classes/additional_model_rule.html#AdditionalModelRule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_bucket.classes.additional_model_rule.AdditionalModelRule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bhp_bucket.classes.model_rule.ModelRule" title="bhp_bucket.classes.model_rule.ModelRule"><tt class="xref py py-class docutils literal"><span class="pre">bhp_bucket.classes.model_rule.ModelRule</span></tt></a></p>
+<p>add an entry in AdditionalEntryBucket if logic</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="rules.html"
+                        title="previous chapter">Building Model Rules</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="next chapter">Models</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/classes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rules.html" title="Building Model Rules"
+             >previous</a> |</li>
+        <li><a href="index.html">bhp_bucket 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, erik van widenfelt.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

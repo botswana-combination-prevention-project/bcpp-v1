@@ -51,6 +51,8 @@ to the bucket.py in the app add something like this
 
 class ScheduledModelRule(ModelRule):
     
+    """ Model rule applied to ScheduledEntryBucket, if (logic) then update entry. """
+    
     def __init__(self, **kwargs):
         
         super(ScheduledModelRule, self).__init__(**kwargs)
@@ -69,7 +71,9 @@ class ScheduledModelRule(ModelRule):
         
     
     def run(self, instance, app_label):
-
+        
+        """ Run the rule, test the logic. """
+        
         self.visit_model_instance = getattr(instance, self.visit_model_fieldname)
         
         # call super to build predicate, etc
@@ -90,7 +94,7 @@ class ScheduledModelRule(ModelRule):
         
     def _eval(self, instance, target_model):
 
-        """ evaluate predicate and update status if true """
+        """ Evaluate predicate and update status if true """
     
         ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
 

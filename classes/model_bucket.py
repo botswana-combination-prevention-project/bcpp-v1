@@ -3,7 +3,8 @@ from model_rule import ModelRule
 
 class ModelBucket(object):
     
-    """ container for model rules for a given model bucket 
+    """ Container for :class:`ModelRule` for a given model bucket.
+    
     ModelBuckets are contained by the BucketController
     """
     

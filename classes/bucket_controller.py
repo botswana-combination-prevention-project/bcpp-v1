@@ -14,6 +14,8 @@ class NotRegistered(Exception):
 
 class BucketController(object):
     
+    """ Main bucket controller of :class:`ModelBucket` objects. """
+    
     def __init__(self):
         # contains model buckets {model:modelbucket}
         self._registry = {'scheduled':{}, 'additional':{}}
@@ -21,7 +23,9 @@ class BucketController(object):
         self.dashboard_rules = []
         
     def register(self, model, model_bucket, register='scheduled'):  
-        """ """
+    
+        """ Register :class:`ModelBucket`. """
+        
         if register == 'scheduled':
             if model in self._registry['scheduled']:
                 if self._registry['scheduled'][model] == model_bucket:
@@ -37,7 +41,8 @@ class BucketController(object):
            
     def update_all(self, visit_model_instance):
         
-        """ given a visit model instance, run all rules for all models referred to by the bucket entries
+        """ Given a visit model instance, run all model rules for all models referred to by the bucket.
+        
         This method is called by the dashboard create() method"""
         
         if self._registry['scheduled']:
@@ -50,7 +55,8 @@ class BucketController(object):
     
     def update(self, instance):
             
-        """ run model rules for this model instance"""
+        """ Run model rules for this model instance. """
+        
         self.target_model = {'add':[], 'delete':[]}
         AdditionalEntryBucket = get_model('bhp_entry', 'additionalentrybucket')
 
@@ -102,13 +108,12 @@ class BucketController(object):
     
     def autodiscover(self):
         
-        """
-        copied from django sites and only very slightly modified - erikvw
+        """ Autodiscover buckey rules from a bucket.py.
         
-        Auto-discover INSTALLED_APPS admin.py modules and fail silently when
-        not present. This forces an import on them to register any admin bits they
-        may want.
-        """
+        * Copied from django sites and only very slightly modified
+        * Auto-discover INSTALLED_APPS admin.py modules and fail silently when
+          not present. This forces an import on them to register any admin bits they
+          may want. """
     
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
@@ -128,6 +133,6 @@ class BucketController(object):
                 # attempting to import it, otherwise we want it to bubble up.
                 if module_has_submodule(mod, 'bucket'):
                     raise
-        
+# bucket global        
 bucket = BucketController()
         
