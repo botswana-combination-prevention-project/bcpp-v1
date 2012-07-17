@@ -35,10 +35,10 @@ class ModelRule(object):
         # name of model attribute of the visit model. will be used with
         # get model to get the current visit model instance
         # needed for the entry bucket
-        self.visit_model_fieldname = kwargs.get('visit_model_fieldname')
+        #self.visit_model_fieldname = kwargs.get('visit_model_fieldname')
         
         # logic tuple
-        self.logic=kwargs.get('logic')
+        self.logic = kwargs.get('logic')
         if not isinstance(self.logic, tuple):
             raise TypeError('Attribute logic must be a tuple')
         
@@ -47,15 +47,14 @@ class ModelRule(object):
         if not 'Meta' in dir(self):
             AttributeError('class Meta with the app_label attribute has not been defined. Do so in the bucket.py')
         
-    def run(self, instance, app_label):
+    def run(self, instance, meta):
         
         """ Run the rule. """
-        
-        self._set_reference_model(instance, app_label)
+        self._set_reference_model(instance, meta.app_label, meta.visit_model)
         
         self._build_predicate(instance)
         
-        self._set_target_model(instance, app_label)
+        self._set_target_model(instance, meta.app_label)
         
         if not self._predicate:
             raise TypeError('self._predicate should be set in the child object. cannot be None, See method run() of %s.' % (self,))   
@@ -78,7 +77,7 @@ class ModelRule(object):
             else:
                 self._target_models.append(get_model(app_label, target_model))  
     
-    def _set_reference_model(self, instance, app_label):
+    def _set_reference_model(self, instance, app_label, visit_model_fieldname):
         
         """ Set the reference model used to get a field value for the predicate. """
         
@@ -86,12 +85,22 @@ class ModelRule(object):
         # to get the field value for the predicate
         if self.unresolved_reference_model:
             # get the model
-            reference_model = get_model(self.unresolved_reference_model[self._APP_LABEL], self.unresolved_reference_model[self._MODEL_NAME]) 
-            if self.reference_model_filter == 'registered_subject':           
-                # filter on registered subject
-                self._reference_model_instance = reference_model.objects.get(registered_subject=self.visit_model_instance.appointment.registered_subject)
-            else:
-                raise AttributeError('Unknown reference_model_filter. Got %s' % (self.reference_model_filter))    
+            reference_model = get_model(self.unresolved_reference_model[self._APP_LABEL], self.unresolved_reference_model[self._MODEL_NAME])
+            # check if there is a key to the visit_model or registered subject
+            if not self.reference_model_filter:
+                for field in reference_model._meta.fields:
+                    if field.attname==visit_model_fieldname:
+                        self.reference_model_filter=visit_model_fieldname
+                        self._reference_model_instance = reference_model.objects.get(**{visit_model_fieldname:self.visit_model_instance})
+                        break
+            if not self.reference_model_filter:
+                for field in reference_model._meta.fields:
+                    if field.attname=='registered_subject':
+                        self.reference_model_filter='registered_subject'
+                        self._reference_model_instance = reference_model.objects.get(registered_subject=self.visit_model_instance.appointment.registered_subject)
+                        break   
+            if not self.reference_model_filter:
+                raise AttributeError('Unknown reference_model_filter. Expected {0} or registered_subject. Got {1}'.format(visit_model_fieldname, self.reference_model_filter))    
         
         else:
             # use the default instance    

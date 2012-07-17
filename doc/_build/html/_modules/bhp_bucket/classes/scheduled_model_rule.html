@@ -103,6 +103,8 @@
 
 <div class="viewcode-block" id="ScheduledModelRule"><a class="viewcode-back" href="../../../classes.html#bhp_bucket.classes.scheduled_model_rule.ScheduledModelRule">[docs]</a><span class="k">class</span> <span class="nc">ScheduledModelRule</span><span class="p">(</span><span class="n">ModelRule</span><span class="p">):</span>
     
+    <span class="sd">&quot;&quot;&quot; Model rule applied to ScheduledEntryBucket, if (logic) then update entry. &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="nb">super</span><span class="p">(</span><span class="n">ScheduledModelRule</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -121,7 +123,9 @@
         
     
 <div class="viewcode-block" id="ScheduledModelRule.run"><a class="viewcode-back" href="../../../classes.html#bhp_bucket.classes.scheduled_model_rule.ScheduledModelRule.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">app_label</span><span class="p">):</span>
-
+        
+        <span class="sd">&quot;&quot;&quot; Run the rule, test the logic. &quot;&quot;&quot;</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">visit_model_instance</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit_model_fieldname</span><span class="p">)</span>
         
         <span class="c"># call super to build predicate, etc</span>
@@ -142,7 +146,7 @@
         </div>
     <span class="k">def</span> <span class="nf">_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">target_model</span><span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot; evaluate predicate and update status if true &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate predicate and update status if true &quot;&quot;&quot;</span>
     
         <span class="n">ScheduledEntryBucket</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s">&#39;bhp_entry&#39;</span><span class="p">,</span> <span class="s">&#39;scheduledentrybucket&#39;</span><span class="p">)</span>
 

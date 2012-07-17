@@ -11,6 +11,7 @@ bhp_bucket
 
    overview
    rules
+   signals
    classes
    models
   

@@ -18,7 +18,7 @@ class BucketController(object):
     
     def __init__(self):
         # contains model buckets {model:modelbucket}
-        self._registry = {'scheduled':{}, 'additional':{}}
+        self._registry = {'scheduled':{}, 'additional':{}, 'additional_lab':{}}
         # iterable container object for dashboard rules
         self.dashboard_rules = []
         
@@ -36,6 +36,11 @@ class BucketController(object):
                 if self._registry['additional'][model] == model_bucket:
                     raise AlreadyRegistered('The model %s is already registered' % model.__name__)
             self._registry['additional'][model] = model_bucket    
+        elif register == 'additional_lab':
+            if model in self._registry['additional_lab']:
+                if self._registry['additional_lab'][model] == model_bucket:
+                    raise AlreadyRegistered('The model %s is already registered' % model.__name__)
+            self._registry['additional_lab'][model] = model_bucket
         else:
             raise ValueError('Invalid Key for _registry. Got %s' % (register,))    
            
@@ -66,7 +71,7 @@ class BucketController(object):
                 if instance.__class__ == model:
                     for item in dir(model_bucket):
                         if isinstance(getattr(model_bucket, item), ModelRule):
-                            getattr(model_bucket, item).run(instance, model_bucket.Meta.app_label)
+                            getattr(model_bucket, item).run(instance, model_bucket.Meta)
         
 
         if self._registry['additional']:
@@ -75,7 +80,7 @@ class BucketController(object):
                 if instance.__class__ == model:
                     for item in dir(model_bucket):
                         if isinstance(getattr(model_bucket, item), ModelRule):
-                            tpl = getattr(model_bucket, item).run(instance, model_bucket.Meta.app_label)            
+                            tpl = getattr(model_bucket, item).run(instance, model_bucket.Meta)            
                             for item in tpl[0]:
                                 self.target_model['add'].append(item)
                             for item in tpl[1]:
