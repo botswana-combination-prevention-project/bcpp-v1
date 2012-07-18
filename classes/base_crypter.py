@@ -1,6 +1,6 @@
 import os, base64
 from datetime import datetime
-from M2Crypto import Rand, RSA, EVP
+from M2Crypto import Rand, RSA, EVP, m2
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from base import Base
@@ -118,6 +118,11 @@ class BaseCrypter(Base):
         Filename suffix is added to the filename to avoid overwriting an existing key """        
         if not key:
             key=os.urandom(16)
+        # check if public key is set
+        if not self.public_key:
+            #raise ImproperlyConfigured('RSA public key not available, unable to encrypt aes key.')
+            self.set_public_key(self.valid_modes.get('rsa').get('local-rsa').get('public'))
+             
         filename=self.valid_modes.get('aes').get('local-aes')+suffix
         secret_aes_key=self.rsa_encrypt(key, algorithm='rsa', mode='local-rsa')   
         f=open(filename, 'w') 
@@ -183,7 +188,9 @@ class BaseCrypter(Base):
         return (v,iv)
 
     def _build_aes_cipher(self, key, iv, op=ENC):
-        return EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
+        cipher = EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
+        #cipher.m2_cipher_ctx_free = m2.cipher_ctx_free
+        return cipher
     
     def is_encrypted(self, value, prefix=hash_prefix):
         """ The value string is considered encrypted if it starts with 'self.hash_prefix' or whichever prefix is passed."""
