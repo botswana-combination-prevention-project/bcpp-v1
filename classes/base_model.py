@@ -5,7 +5,7 @@ from bhp_base_model.fields import HostnameCreationField, HostnameModificationFie
 
 class BaseModel(TimeStampedModel):
 
-    """Base model class for all models. Adds created and modified values for user, date and hostname (computer)"""
+    """Base model class for all models. Adds created and modified values for user, date and hostname (computer). """
     
     user_created = models.CharField(max_length=250, verbose_name='user created', editable=False, default="")
     
