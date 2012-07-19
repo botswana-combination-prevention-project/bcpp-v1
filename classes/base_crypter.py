@@ -84,7 +84,6 @@ class BaseCrypter(Base):
                 try:
                     self.private_key = RSA.load_key(keyfile)
                     print 'successfully loaded {0} {1} private key'.format(algorithm, mode)
-
                 except:
                     # if you need a warning here, do so in the subclass
                     pass
@@ -230,7 +229,7 @@ class BaseCrypter(Base):
         """ Force all keys to be loaded and populate dictionary preloaded_keys . """
         
         def _load_key(algorithm, mode=None, key_pair_type=None):
-            """ Helper method for load_all_keys. """
+            """ Helper method to load one key for load_all_keys. """
             if algorithm == 'rsa':
                 if key_pair_type == 'public':
                     self.set_public_key(algorithm=algorithm, mode=mode)
@@ -275,6 +274,7 @@ class BaseCrypter(Base):
         return retval    
     
     def get_encrypted_salt(self):
+        """ This is the encrypted salt (which is what is stored in the file) """
         if not self.encrypted_salt:
             if self.preloaded_keys.get('salt') and self.key_path not in self.preloaded_keys.get('salt'):
                 self.encrypted_salt = self.preloaded_keys.get('salt')
