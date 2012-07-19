@@ -290,7 +290,8 @@ epub_copyright = u'2012, erik van widenfelt'
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = { 'http://docs.python.org/': None, 
+                       'bhp_crypto': ('/Users/erikvw/source/bhp056_project/bhp056/bhp_crypto/doc/_build/html', None)}
 
 from bhp_sphinx.ext import process_model_docstring, process_model_verbose_name_docstring
 

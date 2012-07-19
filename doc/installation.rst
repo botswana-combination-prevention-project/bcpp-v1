@@ -23,7 +23,6 @@ Add :mod:`bhp_device` to your project ''settings'' file::
         'bhp_device',
         ...
         )
-      
 
 Add these attributes to the bottom of your project ''settings'' file::
 

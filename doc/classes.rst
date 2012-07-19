@@ -3,7 +3,7 @@ Classes
 
 .. automodule:: bhp_device.classes
     
-.. automodule:: bhp_device.classes.device
+.. autoclass:: bhp_device.classes.device.Device
   :members:
   :private-members:
       
