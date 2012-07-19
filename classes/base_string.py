@@ -1,7 +1,7 @@
 
 class BaseString(object):
     
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.safe_allowed_chars='ABCDEFGHKMNPRSTUVWXYZ23456789'
     
     def get_random_string(self, length=12, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()?<>.,[]{}'):
