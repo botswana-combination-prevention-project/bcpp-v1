@@ -1,12 +1,12 @@
 from django.db import models
-#from django.core.urlresolvers import reverse
 from bhp_base_model.classes import BaseUuidModel
 from bhp_registration.models import RegisteredSubject
 from bhp_entry.choices import ENTRY_STATUS
 
+
 class BaseEntryBucket(BaseUuidModel):
     
-    """Base model for list of required entries by registered_subject"""
+    """ Base model for list of required entries by registered_subject. """
     
     registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
     
@@ -14,6 +14,7 @@ class BaseEntryBucket(BaseUuidModel):
         max_length = 250,
         null = True,
         )
+    
     entry_status = models.CharField(
         max_length = 25,
         choices = ENTRY_STATUS,
