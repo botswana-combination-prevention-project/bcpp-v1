@@ -174,17 +174,19 @@ class BaseBaseRequisition (BaseUuidModel):
                 self.requisition_identifier = self.prepare_requisition_identifier()
             if self.requisition_identifier and not self.specimen_identifier:
                 self.specimen_identifier=self.prepare_specimen_identifier()
+
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
     def prepare_specimen_identifier(self, **kwargs):
         """ add protocol, site and check digit"""
         study_specific = StudySpecific.objects.get_query_set()[0]
         #check_digit = CheckDigit()
+        self.protocol = study_specific.protocol_code
         opts={}
         opts.update({'protocol': study_specific.protocol_prefix()})
-        opts.update({'requisition_identifier':self.requisition_identifier, 'site':self.site})
+        opts.update({'requisition_identifier':self.requisition_identifier, 'site':self.site.site_code})
         #opts.update({'check_digit':check_digit.calculate('{protocol}{site}{requisition_identifier}'.format(opts), modulus=7)})
-        return '{protocol}-{site}{requisition_identifier}-{check-digit}'.format(opts)
+        return '{protocol}-{site}{requisition_identifier}'.format(**opts)
     
     def prepare_requisition_identifier(self, **kwargs):
         """Generate and return a locally unique requisition identifier for a device (adds device id)"""        
