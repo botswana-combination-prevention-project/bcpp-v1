@@ -8,6 +8,8 @@ from patterns import patterns
 
 class BaseSearch(object):
     
+    """ Base search class. """
+    
     def __init__(self, request, **kwargs):
         self.ready = False
         self.registration_model = {}
@@ -43,7 +45,6 @@ class BaseSearch(object):
     
     @classmethod
     def urlpatterns(self, section_names, app_label='bhp_search',view='search'):
-        #urlpatterns=url_patterns('{app_label}.views'.format(app_label=app_label), 
                                  
         urlpattern=url_patterns('{app_label}.views'.format(app_label=app_label), 
              url(r'^(?P<section_name>{section_names})/search/(?P<search_name>\w+)/by(?P<search_by>{search_type})/$'.format(section_names='|'.join(section_names), search_type=self.search_type),
