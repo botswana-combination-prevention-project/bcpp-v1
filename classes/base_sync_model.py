@@ -9,7 +9,7 @@ from bhp_base_model.classes import BaseUuidModel
 
 class BaseSyncModel(BaseUuidModel):
 
-    """Base model class for all models using an UUID and not an INT for the primary key. """
+    """ Base model for all UUID models and adds synchronization methods and signals. """
 
     def is_serialized(self, serialize=True):
 

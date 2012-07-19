@@ -7,7 +7,8 @@ from bhp_sync.classes import DeserializeFromTransaction
 
 
 class IncomingTransaction(BaseTransaction):
-    """ transactions received from a remote producer and to be consumed locally """
+    
+    """ Transactions received from a remote producer and to be consumed locally. """
     
     is_self = models.BooleanField(
         default = False,
@@ -16,7 +17,7 @@ class IncomingTransaction(BaseTransaction):
         
     def save(self, *args, **kwargs):
         
-        """Note: An incoming transaction produced by self may exist, but is not wanted, if received by fanout from a consumer of
+        """ An incoming transaction produced by self may exist, but is not wanted, if received by fanout from a consumer of
         transactions of self (this producer). that is (hostname_modified==hostname)."""
         #TODO: for IncomingTransaction perhaps just cancel save instead??
         if self.hostname_modified == socket.gethostname():
@@ -33,8 +34,9 @@ class IncomingTransaction(BaseTransaction):
 @receiver(post_save, sender=IncomingTransaction,  dispatch_uid="deserialize_on_post_save")
 def deserialize_on_post_save(sender, instance, **kwargs):
     
-    """ callback to deserialize an incoming transaction as long as the transaction 
-    is not consumed or in error"""
+    """ Callback to deserialize an incoming transaction.
+    
+    as long as the transaction is not consumed or in error"""
     
     if isinstance(instance, IncomingTransaction):
         if not instance.is_consumed and not instance.is_error: # and not instance.is_self:
