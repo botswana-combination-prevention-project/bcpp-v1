@@ -4,9 +4,7 @@ from bhp_string.classes import BaseString
 
 class Base(BaseString):
     
-    def __init__(self, *args, **kwargs):
-        #check if the key files listed in settings exist
-        
+    def __init__(self, *args, **kwargs):        
         super(Base, self).__init__(*args, **kwargs)
         
     def all_keys_exist(self):

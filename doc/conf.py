@@ -251,8 +251,9 @@ texinfo_documents = [
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
 
-from _ext.process_model_docstring import process_model_docstring
+from bhp_sphinx.ext import process_model_docstring, process_model_verbose_name_docstring
 
 def setup(app):
     # Register the docstring processor with sphinx
+    app.connect('autodoc-process-docstring', process_model_verbose_name_docstring) 
     app.connect('autodoc-process-docstring', process_model_docstring) 
