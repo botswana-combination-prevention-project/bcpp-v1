@@ -1,4 +1,4 @@
-import hashlib, base64
+import hashlib, base64, os
 from datetime import datetime
 from django.core.exceptions import ValidationError
 from base_crypter import BaseCrypter
@@ -33,7 +33,7 @@ class Hasher(BaseCrypter):
             f = open(path, 'r')
             retval = f.read()
         except:
-            print 'warning: failed to load salt {0}.'.format(path)
+            print 'warning: failed to load salt {0} in {1}.'.format(path, os.path.basename(__file__))
             retval = None
         return retval    
     

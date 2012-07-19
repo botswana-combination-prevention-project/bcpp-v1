@@ -1,10 +1,9 @@
 import os, base64
 from datetime import datetime
-from M2Crypto import Rand, RSA, EVP, m2
+from M2Crypto import Rand, RSA, EVP
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from base import Base
-
 
 class BaseCrypter(Base):
     """ Base class for all classes providing RSA and AES encryption methods."""
@@ -49,9 +48,10 @@ class BaseCrypter(Base):
                     raise AttributeError('Algorithm and mode must be set before attempting to set the public key')
                 keyfile=self.valid_modes.get(algorithm).get(mode).get('public')
             try:
+                
                 self.public_key=RSA.load_pub_key(keyfile)
             except:
-                print 'warning: failed to load public key {0}.'.format(keyfile)
+                print 'warning: failed to load public key {0} in {1}.'.format(keyfile, os.path.basename(__file__))
         return self.public_key!=None
 
     def set_private_key(self, keyfile=None, **kwargs):
@@ -80,7 +80,7 @@ class BaseCrypter(Base):
                 f.close()
                 self.aes_key=self.rsa_decrypt(secret_key, algorithm='rsa', mode='local-rsa')
             except:
-                print 'warning: failed to load aes key {0}.'.format(self._get_aes_keyfile())
+                print 'warning: failed to load aes key {0} in {1}'.format(self._get_aes_keyfile(), os.path.basename(__file__))
         return self.aes_key!=None
             
     def get_local_rsa_private_keyfile(self):
@@ -188,9 +188,7 @@ class BaseCrypter(Base):
         return (v,iv)
 
     def _build_aes_cipher(self, key, iv, op=ENC):
-        cipher = EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
-        #cipher.m2_cipher_ctx_free = m2.cipher_ctx_free
-        return cipher
+        return EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
     
     def is_encrypted(self, value, prefix=hash_prefix):
         """ The value string is considered encrypted if it starts with 'self.hash_prefix' or whichever prefix is passed."""
