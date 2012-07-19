@@ -82,15 +82,21 @@
 
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseCrypter.create_aes_key">
-<tt class="descname">create_aes_key</tt><big>(</big><em>suffix='2012-07-15 22:54:16.093991'</em>, <em>key=None</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.create_aes_key" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">create_aes_key</tt><big>(</big><em>suffix='2012-07-19 16:16:43.065510'</em>, <em>key=None</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.create_aes_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new key and store it safely in a file by using local-rsa-encryption.</p>
 <p>Filename suffix is added to the filename to avoid overwriting an existing key</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseCrypter.create_new_rsa_key_pairs">
-<tt class="descname">create_new_rsa_key_pairs</tt><big>(</big><em>suffix='2012-07-15 22:54:16.093977'</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.create_new_rsa_key_pairs" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">create_new_rsa_key_pairs</tt><big>(</big><em>suffix='2012-07-19 16:16:43.065494'</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.create_new_rsa_key_pairs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new rsa key-pair.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.get_encrypted_salt">
+<tt class="descname">get_encrypted_salt</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.get_encrypted_salt" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the encrypted salt (which is what is stored in the file)</p>
 </dd></dl>
 
 <dl class="method">
@@ -109,6 +115,12 @@
 <dt id="bhp_crypto.classes.BaseCrypter.mask_encrypted">
 <tt class="descname">mask_encrypted</tt><big>(</big><em>value</em>, <em>mask='&lt;encrypted&gt;'</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.mask_encrypted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Help format values for display by masking them if encrypted at the time of display.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseCrypter.preload_all_keys">
+<tt class="descname">preload_all_keys</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseCrypter.preload_all_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force all keys to be loaded and populate dictionary preloaded_keys .</p>
 </dd></dl>
 
 <dl class="method">
@@ -148,21 +160,21 @@
 <dt id="bhp_crypto.classes.Crypter">
 <em class="property">class </em><tt class="descclassname">bhp_crypto.classes.</tt><tt class="descname">Crypter</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base_crypter.BaseCrypter</span></tt></p>
-<p>Subclass to be used with models that expect to stored just the hash and for this class to handle the secret</p>
+<p>Subclass to be used with models that expect to stored just the hash and for this class to handle the secret.</p>
 <dl class="method">
 <dt id="bhp_crypto.classes.Crypter.decrypt">
 <tt class="descname">decrypt</tt><big>(</big><em>secret</em>, <em>secret_is_hash=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter.decrypt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decrypt secret and if secret is a hash, use hash to lookup the real secret first.</p>
 <p>Do not assume secret is an encrypted value, look for hash_prefix or secret prefix.
 By default we expect secret to be the stored field value &#8211; which is a hash.
-If we decide to use this method where the secret is not a hash, then the prefix is 
-the secret_prefix and the lookup is skipped.</p>
+If we use this method for a secret that is not a hash, then the prefix is 
+the secret_prefix and the lookup step is skipped.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_crypto.classes.Crypter.encrypt">
 <tt class="descname">encrypt</tt><big>(</big><em>value</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.Crypter.encrypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>return the encrypted field value (hash+cipher) where secret is secret or secret_iv, do not override</p>
+<dd><p>Return the encrypted field value (hash+secret) where secret is secret or secret+secret_iv.</p>
 </dd></dl>
 
 <dl class="method">

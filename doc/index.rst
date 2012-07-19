@@ -7,7 +7,8 @@ bhp_crypto
    overview
    before_you_begin
    installation
-   protecting_keys_with_truecrypt   
+   protecting_keys_with_truecrypt 
+   preloading_keys  
    generating_keys
    selecting_field_classes
    examples
