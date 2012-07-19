@@ -1,7 +1,6 @@
 from django.db import models
-from django.db.models import get_app, get_models
+from django.db.models import get_app, get_model, get_models
 from bhp_appointment.models import Appointment
-from bhp_entry.models import AdditionalEntryBucket
 from registered_subject import RegisteredSubject
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
@@ -44,6 +43,7 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
                 registered_subject = self.registered_subject, 
                 model_name = self.__class__.__name__.lower(),
                 )
+            AdditionalEntryBucket=get_model('bhp_entry', 'additionalentrybucket')
             AdditionalEntryBucket.objects.update_status(
                 registered_subject = self.registered_subject,    
                 model_instance = self,
