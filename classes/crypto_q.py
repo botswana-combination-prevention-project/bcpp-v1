@@ -1,7 +1,3 @@
-__authors__ = [
-    '"Erik van Widenfelt" <ew2789@gmail.com>',
-]
-
 from django.db.models import Q
 
 from hasher import Hasher

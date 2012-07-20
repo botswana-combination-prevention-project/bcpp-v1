@@ -1,7 +1,3 @@
-__authors__ = [
-    '"Erik van Widenfelt" <ew2789@gmail.com>',
-]
-
 import os
 
 from bhp_string.classes import BaseString

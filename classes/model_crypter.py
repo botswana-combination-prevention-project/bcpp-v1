@@ -1,7 +1,3 @@
-__authors__ = [
-    '"Erik van Widenfelt" <ew2789@gmail.com>',
-]
-
 from base_encrypted_field import BaseEncryptedField
 
 
@@ -42,5 +38,3 @@ class ModelCrypter(object):
             instance = self.decrypt_instance(self, instance,
                                               BaseEncryptedField)
             instance.save()
-
-            
