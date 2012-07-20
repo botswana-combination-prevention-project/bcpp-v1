@@ -121,17 +121,19 @@ class BaseEncryptedField(models.Field):
     def get_db_prep_value(self, value, connection, prepared=False):
         """ Store the hash in the model field and the secret in the
         lookup table (Crypt). """
-        # need to read the docs a bit more as i might be able to
-        # just set prepared=True, etc
-        # https://docs.djangoproject.com/en/dev/howto/custom-model-
-        #    fields/#converting-query-values-to-database-values
+
+        # TODO(erikvw): need to read the docs a bit more as i might be able to
+        #     just set prepared=True, etc
+        #     https://docs.djangoproject.com/en/dev/howto/custom-model-
+        #     fields/#converting-query-values-to-database-values
         if value:
             # call super (which will call get_prep_value)
             hash_secret = super(BaseEncryptedField, self).get_db_prep_value(
                                                               value,
                                                               connection,
                                                               prepared)
-            # update secret lookup table and get back just the hash
+            # switch the returned value from value to hash
+            # because we store the hash, not the value or secret
             hash_text = self.crypter.get_db_prep_value(hash_secret)
             value = hash_text
         return value
