@@ -1,14 +1,11 @@
-"""https://github.com/LaundroMat/django-AuditTrail/blob/master/audit.py"""
+""" https://github.com/LaundroMat/django-AuditTrail/blob/master/audit.py """
 
-from django.dispatch import dispatcher
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import admin
 import copy
 import re
-import types
 
-from importlib import import_module
 from bhp_common.models import MyModelAdmin
 from bhp_base_model.fields import MyUUIDField
 from bhp_sync.classes import SerializeToTransaction
@@ -18,6 +15,7 @@ try:
 except ImportError:
     settings_audit = None
 value_error_re = re.compile("^.+'(.+)'$")
+
 
 class AuditTrail(object):
     def __init__(self, show_in_admin=False, save_change_type=True, audit_deletes=True,
@@ -43,7 +41,7 @@ class AuditTrail(object):
                 # clsAdmin = type(cls_admin_name, (admin.ModelAdmin,),{})
                 # admin.site.register(cls, clsAdmin)
                 # Otherwise, register class with default ModelAdmin
-                admin.site.register(model, MyModelAdmin)                
+                admin.site.register(model, MyModelAdmin)
             descriptor = AuditTrailDescriptor(model._default_manager, sender._meta.pk.attname)
             setattr(sender, name, descriptor)
 
@@ -76,22 +74,21 @@ class AuditTrail(object):
                         kwargs[field_arr[0]] = _audit_track(instance, field_arr)
 
                     model._default_manager.create(**kwargs)
-                    
-            
+
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
             ## Comment this line for pre r8223 Django builds
             models.signals.post_save.connect(_audit, sender=cls, weak=False)
-            
+
             # begin: erikvw added for serialization
-            def _serialize_on_save(sender, instance, **kwargs): 
+            def _serialize_on_save(sender, instance, **kwargs):
                 """ serialize the AUDIT model instance to the outgoing transaction model """
                 serialize_to_transaction = SerializeToTransaction()
-                serialize_to_transaction.serialize(sender, instance,**kwargs)      
-            models.signals.post_save.connect(_serialize_on_save, sender=model, weak=False, dispatch_uid='audit_serialize_on_save')
+                serialize_to_transaction.serialize(sender, instance, **kwargs)
+            models.signals.post_save.connect(_serialize_on_save, sender=model,
+                                             weak=False, dispatch_uid='audit_serialize_on_save')
             # end: erikvw added for serialization
 
-            
             if self.opts['audit_deletes']:
                 def _audit_delete(sender, instance, **kwargs):
                     # Write model changes to the audit model
@@ -113,6 +110,7 @@ class AuditTrail(object):
         ## Comment this line for pre r8223 Django builds
         models.signals.class_prepared.connect(_contribute, sender=cls, weak=False)
 
+
 class AuditTrailDescriptor(object):
     def __init__(self, manager, pk_attribute):
         self.manager = manager
@@ -126,7 +124,8 @@ class AuditTrailDescriptor(object):
             return create_audit_manager_with_pk(self.manager, self.pk_attribute, instance._get_pk_val())
 
     def __set__(self, instance, value):
-        raise AttributeError, "Audit trail may not be edited in this manner."
+        raise AttributeError("Audit trail may not be edited in this manner.")
+
 
 def create_audit_manager_with_pk(manager, pk_attribute, pk):
     """Create an audit trail manager based on the current object"""
@@ -142,6 +141,7 @@ def create_audit_manager_with_pk(manager, pk_attribute, pk):
             return qs
     return AuditTrailWithPkManager()
 
+
 def create_audit_manager_class(manager):
     """Create an audit trail manager based on the current object"""
     class AuditTrailManager(manager.__class__):
@@ -149,6 +149,7 @@ def create_audit_manager_class(manager):
             super(AuditTrailManager, self).__init__(*arg, **kw)
             self.model = manager.model
     return AuditTrailManager()
+
 
 def create_audit_model(cls, **kwargs):
     """Create an audit model for the specific class"""
@@ -179,17 +180,17 @@ def create_audit_model(cls, **kwargs):
     for field in cls._meta.fields:
         #if field.attname in attrs:
         if field.name in attrs:
-            raise ImproperlyConfigured, "%s cannot use %s as it is needed by AuditTrail." % (cls.__name__, field.attname)
+            raise ImproperlyConfigured("%s cannot use %s as it is needed by AuditTrail." % (cls.__name__, field.attname))
         if isinstance(field, models.AutoField):
             # Audit models have a separate AutoField
             attrs[field.name] = models.IntegerField(db_index=True, editable=False)
         # begin erikvw added this as OneToOneField was not handled, causes an IntegrityError
         elif isinstance(field, models.OneToOneField):
             rel = copy.copy(field.rel)
-            new_field = models.ForeignKey(rel.to)            
+            new_field = models.ForeignKey(rel.to)
             new_field.rel.related_name = '_audit_' + field.related_query_name()
             attrs[field.name] = new_field
-            # end erikvw added 
+            # end erikvw added
         else:
             attrs[field.name] = copy.copy(field)
             # If 'unique' is in there, we need to remove it, otherwise the index
@@ -210,8 +211,9 @@ def create_audit_model(cls, **kwargs):
         if track_field['name'] in attrs:
             raise NameError('Field named "%s" already exists in audit version of %s' % (track_field['name'], cls.__name__))
         attrs[track_field['name']] = copy.copy(track_field['field'])
-    
+
     return type(name, (models.Model,), attrs)
+
 
 def _build_track_field(track_item):
     track = {}
@@ -224,10 +226,10 @@ def _build_track_field(track_item):
         raise TypeError('Track fields only support items that are Fields or Models.')
     return track
 
+
 def _track_fields(track_fields=None, unprocessed=False):
     # Add in the fields from the Audit class "track" attribute.
     tracks_found = []
-    
     if settings_audit:
         global_track_fields = getattr(settings_audit, 'GLOBAL_TRACK_FIELDS', [])
         for track_item in global_track_fields:
@@ -235,7 +237,6 @@ def _track_fields(track_fields=None, unprocessed=False):
                 tracks_found.append(track_item)
             else:
                 tracks_found.append(_build_track_field(track_item))
-    
     if track_fields:
         for track_item in track_fields:
             if unprocessed:
