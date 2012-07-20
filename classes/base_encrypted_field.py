@@ -61,7 +61,7 @@ class BaseEncryptedField(models.Field):
                            )
         # set the db field length based on the hash
         defaults = {'max_length': self.crypter.hasher.length +
-            len(self.crypter.hash_prefix) + len(self.crypter.secret_prefix)}
+            len(self.crypter.HASH_PREFIX) + len(self.crypter.SECRET_PREFIX)}
         kwargs.update(defaults)
         super(BaseEncryptedField, self).__init__(*args, **kwargs)
 
