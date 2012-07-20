@@ -6,9 +6,9 @@ from label_printer import LabelPrinter
 class Client(BaseUuidModel):
 
     ip = models.IPAddressField()
-    
+
     name = models.CharField(
-        max_length = 50,
+        max_length=50,
         null=True,
         blank=True,
         )
@@ -17,8 +17,7 @@ class Client(BaseUuidModel):
 
     def __unicode__(self):
         return "%s - %s" % (self.ip, self.name,)
-        
-    class Meta:
-        app_label='lab_barcode'   
-        ordering = ['ip', 'label_printer',]          
 
+    class Meta:
+        app_label = 'lab_barcode'
+        ordering = ['ip', 'label_printer', ]
