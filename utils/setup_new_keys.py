@@ -14,11 +14,11 @@ def setup_new_keys():
     datestring = datetime.today().strftime('%Y%m%d%H%M%S%f')
     crypter = Crypter()
     filenames = []
-    for algorithm, value in crypter.valid_modes.iteritems():
+    for algorithm, value in crypter.VALID_MODES.iteritems():
         if not isinstance(value, dict):
             filenames.append(value)
         else:
-            for filename in crypter.valid_modes.get(algorithm).itervalues():
+            for filename in crypter.VALID_MODES.get(algorithm).itervalues():
                 if not isinstance(filename, dict):
                     filenames.append(filename)
                 else:
