@@ -1,7 +1,3 @@
-__authors__ = [
-    '"Erik van Widenfelt" <ew2789@gmail.com>',
-]
-
 from django.db import models
 
 from crypter import Crypter
@@ -41,12 +37,8 @@ class BaseEncryptedField(models.Field):
         self.crypter.algorithm = self.algorithm
         if self.algorithm not in self.crypter.VALID_MODES.keys():
             raise KeyError('Invalid algorithm \'{algorithm}\'. '
-                           'Must be one of {keys}'
-                           .format(
-                                algorithm=self.algorithm,
-                                keys=', '.join(self.crypter.VALID_MODES.keys())
-                                )
-                           )
+                           'Must be one of {keys}'.format(algorithm=self.algorithm,
+                                                          keys=', '.join(self.crypter.VALID_MODES.keys())))
         self.crypter.mode = self.mode
         if (self.mode not in
             self.crypter.VALID_MODES.get(self.algorithm).iterkeys()):
@@ -55,10 +47,7 @@ class BaseEncryptedField(models.Field):
                            .format(
                                 mode=self.mode,
                                 algorithm=self.algorithm,
-                                keys=', '.join(self.crypter.VALID_MODES.get(
-                                                   self.algorithm).keys())
-                                )
-                           )
+                                keys=', '.join(self.crypter.VALID_MODES.get(self.algorithm).keys())))
         # set the db field length based on the hash
         defaults = {'max_length': self.crypter.hasher.length +
             len(self.crypter.HASH_PREFIX) + len(self.crypter.SECRET_PREFIX)}

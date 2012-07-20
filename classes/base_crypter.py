@@ -33,22 +33,18 @@ class BaseCrypter(Base):
     # names where the keys are stored
     VALID_MODES = {
         'rsa': {'irreversible-rsa': {'public':
-                                     os.path.join(KEY_PATH,
-                                            'user-public-irreversible.pem')},
+                                     os.path.join(KEY_PATH, 'user-public-irreversible.pem')},
                 'restricted-rsa': {'public':
-                                   os.path.join(KEY_PATH,
-                                            'user-public-restricted.pem'),
+                                   os.path.join(KEY_PATH, 'user-public-restricted.pem'),
                                    'private':
-                                   os.path.join(KEY_PATH,
-                                            'user-private-restricted.pem')},
+                                   os.path.join(KEY_PATH, 'user-private-restricted.pem')},
                 'local-rsa': {'public':
-                             os.path.join(KEY_PATH, 'user-public-local.pem'),
-                             'private': os.path.join(KEY_PATH,
-                                                 'user-private-local.pem')},
+                              os.path.join(KEY_PATH, 'user-public-local.pem'),
+                             'private': os.path.join(KEY_PATH, 'user-private-local.pem')},
                 },
         'aes': {'local-aes': os.path.join(KEY_PATH, 'user-aes-local')},
         'salt': os.path.join(KEY_PATH, 'user-encrypted-salt')
-            }
+    }
 
     PRELOADED_KEYS = copy.deepcopy(VALID_MODES)
     PRELOADED = False
@@ -182,11 +178,9 @@ class BaseCrypter(Base):
             key = os.urandom(16)
         # check if public key is set
         if not self.public_key:
-            self.set_public_key(
-                self.VALID_MODES.get('rsa').get('local-rsa').get('public'))
+            self.set_public_key(self.VALID_MODES.get('rsa').get('local-rsa').get('public'))
         filename = self.VALID_MODES.get('aes').get('local-aes') + suffix
-        secret_aes_key = self.rsa_encrypt(
-                             key, algorithm='rsa', mode='local-rsa')
+        secret_aes_key = self.rsa_encrypt(key, algorithm='rsa', mode='local-rsa')
         f = open(filename, 'w')
         f.write(base64.b64encode(secret_aes_key))
         f.close()
@@ -200,8 +194,7 @@ class BaseCrypter(Base):
         if self.is_encrypted(plaintext):
             raise ValueError('Attempt to rsa encrypt an already \
                               encrypted value.')
-        return self.public_key.public_encrypt(plaintext,
-                                              RSA.pkcs1_oaep_padding)
+        return self.public_key.public_encrypt(plaintext, RSA.pkcs1_oaep_padding)
 
     def rsa_decrypt(self, secret, is_encoded=True, **kwargs):
         """ Return plaintext or secret if the private key is not available.
@@ -308,15 +301,13 @@ class BaseCrypter(Base):
                 else:
                     for mode, val in mode_dict.iteritems():
                         if not isinstance(val, dict):
-                            self.PRELOADED_KEYS[
-                                algorithm][mode] = _load_key(algorithm, mode)
+                            self.PRELOADED_KEYS[algorithm][mode] = _load_key(algorithm, mode)
                         else:
                             for key_pair_type in val.iterkeys():
                                 self.PRELOADED_KEYS[
-                                    algorithm][mode][
-                                    key_pair_type] = _load_key(algorithm,
-                                                               mode,
-                                                               key_pair_type)
+                                    algorithm][mode][key_pair_type] = _load_key(algorithm,
+                                                                                mode,
+                                                                                key_pair_type)
             self.PRELOADED = True
 
     def create_new_salt(self, length=12,
