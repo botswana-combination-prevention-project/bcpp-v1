@@ -4,7 +4,7 @@ from lab_barcode.models import ZplTemplate, LabelPrinter
 
 
 class LabelForm(forms.Form):
-    
+
     identifier = forms.CharField(
         max_length=25,
         label="Identifier",
@@ -14,24 +14,20 @@ class LabelForm(forms.Form):
         )
 
 
-# ZplTemplate
-class ZplTemplateForm (BaseModelForm): 
+class ZplTemplateForm (BaseModelForm):
+
     def clean(self):
-    
-        cleaned_data = self.cleaned_data 
-    
+        cleaned_data = self.cleaned_data
         return cleaned_data
-        
+
     class Meta:
         model = ZplTemplate
 
-# LabelPrinter
-class LabelPrinterForm (BaseModelForm): 
+
+class LabelPrinterForm (BaseModelForm):
     def clean(self):
-    
-        cleaned_data = self.cleaned_data 
-    
+        cleaned_data = self.cleaned_data
         return cleaned_data
-        
+
     class Meta:
         model = LabelPrinter

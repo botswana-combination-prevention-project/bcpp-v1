@@ -4,52 +4,43 @@ from lab_barcode.models import ZplTemplate, LabelPrinter, Client
 from forms import ZplTemplateForm, LabelPrinterForm
 from actions import print_test_label
 
-# ZplTemplate
-class ZplTemplateAdmin(MyModelAdmin): 
+
+class ZplTemplateAdmin(MyModelAdmin):
 
     form = ZplTemplateForm
-    
+
     fields = (
         "name",
         "template",
-        "default",        
+        "default",
     )
 
     list_display = ('name', 'default',)
-    
-    radio_fields = {
-        
-    }
-
-    filter_horizontal = (
-        
-    )
-
+    radio_fields = {}
+    filter_horizontal = ()
     actions = [print_test_label]
-
-    """"""
 
 admin.site.register(ZplTemplate, ZplTemplateAdmin)
 
+
 class ClientAdmin(MyModelAdmin):
-    
+
     list_display = (
         "name",
         "ip",
         "label_printer",
     )
-    
-admin.site.register(Client, ClientAdmin)    
-    
+
+admin.site.register(Client, ClientAdmin)
+
 
 class ClientInline(admin.TabularInline):
 
     model = Client
-    extras =3
+    extras = 3
 
 
-# LabelPrinter
-class LabelPrinterAdmin(MyModelAdmin): 
+class LabelPrinterAdmin(MyModelAdmin):
 
     form = LabelPrinterForm
 
@@ -59,16 +50,9 @@ class LabelPrinterAdmin(MyModelAdmin):
         "default",
     )
 
-    radio_fields = {
-        
-    }
-
-    filter_horizontal = (
-        
-    )
-
-    inlines = [ClientInline,]
-
-    list_display = ('cups_printer_name', 'cups_server_ip', 'default' )
+    radio_fields = {}
+    filter_horizontal = ()
+    inlines = [ClientInline, ]
+    list_display = ('cups_printer_name', 'cups_server_ip', 'default')
 
 admin.site.register(LabelPrinter, LabelPrinterAdmin)
