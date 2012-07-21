@@ -69,7 +69,7 @@ class Label(object):
         return (self.message, print_success)
 
     def _update_label_count(self):
-        self.label_counter += 1
+        self.label_count += 1
         if self.label_count_total < self.label_count:
             self.label_count_total = self.label_count
         self.label_context.update(label_count=self.label_count)
