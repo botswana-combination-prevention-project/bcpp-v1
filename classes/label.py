@@ -1,10 +1,12 @@
 import os
 import subprocess
+import threading
 import tempfile
 from datetime import datetime
 from string import Template
 
 from lab_barcode.models import ZplTemplate, LabelPrinter
+from lab_barcode.exceptions import PrinterException
 
 
 class Label(object):
@@ -18,6 +20,7 @@ class Label(object):
     def __init__(self, *args, **kwargs):
 
         self.message = ''
+        self.process = None
         self.printer_error = False
         self.file_name = None
         self.zpl_template = None
@@ -49,35 +52,50 @@ class Label(object):
     def update_label_context(self, **kwargs):
         self.label_context.update(**kwargs)
 
-    def print_label(self, template, remote_addr='127.0.0.1'):
+    def print_label(self, template, remote_addr='127.0.0.1', copies=1):
+        """ Prints the label or throws an exception if the printer is not found. """
         print_success = False
-        self._prepare_label(template)
-        self._update_label_count()
-        if self._label_to_file():
-            if self._set_label_printer(remote_addr):
-                #try:
-                #    # note -r will delete the file after printing ...
-                #    # TODO(erikvw): can i trap an erorr here if lpr for example does not have
-                #    # the -H parameter
-                subprocess.call(['lpr', '-P', self.label_printer.cups_printer_name, '-l',
-                                 self.file_name, '-H', self.label_printer.cups_server_ip],
-                                shell=False)
-                self.message = ('Successfully printed label {0}/{1} to '
-                                '{2}'.format(self.label_count, self.label_count_total,
-                                              self.label_printer.cups_printer_name))
-                print_success = True
+        if self._set_label_printer(remote_addr):
+            self.label_count_total = copies
+            for i in range(copies, 0, -1):
+                self.label_count = i
+                self._prepare_label(template)
+                if self._label_to_file():
+                    # wrap the lpr process in a thread to allow for a timeout if printer not found.
+                    # http://stackoverflow.com/questions/1191374/subprocess-with-timeout
+                    timeout = 5
+                    thread = threading.Thread(target=self._lpr)
+                    thread.start()
+                    thread.join(timeout)
+                    if thread.is_alive():
+                        self.process.terminate()
+                        thread.join()
+                    if self.process.returncode < 0:
+                        # process timed out so throw an exception
+                        self.message = ('Unable to connect to printer '
+                                        '{0} ({1}).'.format(self.label_printer.cups_printer_name,
+                                                            self.process.returncode))
+                        raise PrinterException(self.message)
+                    else:
+                        self.message = ('Successfully printed label {0}/{1} to '
+                                        '{2}'.format(self.label_count, self.label_count_total,
+                                                     self.label_printer.cups_printer_name))
+                    print_success = True
         return (self.message, print_success)
 
-    def _update_label_count(self):
-        self.label_count += 1
-        if self.label_count_total < self.label_count:
-            self.label_count_total = self.label_count
-        self.label_context.update(label_count=self.label_count)
+    def _lpr(self):
+        """ Callback to run lpr in a thread. """
+        self.process = subprocess.Popen(['lpr', '-P', self.label_printer.cups_printer_name, '-l',
+                                        self.file_name, '-H', self.label_printer.cups_server_ip],
+                                        shell=True)
+        self.process.communicate()
 
     def _prepare_label(self, template):
         self._set_label_template(template)
         if not self.label_context:
             self.prepare_label_context()
+        self.label_context.update({'label_count': self.label_count,
+                                   'label_count_total': self.label_count_total})
 
     def _set_label_template(self, template):
         """ Set zpl_template with a zpl_template name or an instance of ZplTemplate. """

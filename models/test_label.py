@@ -13,6 +13,8 @@ class TestLabel(BaseUuidModel):
         blank=True,
         )
 
+    copies = models.IntegerField(default=1)
+
     def label_template(self):
         zpl_template = ZplTemplate.objects.create(
             name='test_label',

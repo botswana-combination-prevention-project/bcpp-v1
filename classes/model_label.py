@@ -9,10 +9,18 @@ from label import Label
 class ModelLabel(Label):
     """ Print a label building the template and context from the model."""
 
-    def print_label(self, request, instance):
+    def print_label(self, request, instance, copies=None):
         self.prepare_label_context(instance=instance)
         template = self.get_template(instance)
-        msg, success = super(ModelLabel, self).print_label(template, request.META.get('REMOTE_ADDR'))
+        if not copies:
+            copies = 1
+            for field in instance._meta.fields:
+                if field.attname == copies:
+                    copies = instance.copies
+                    break
+        msg, success = super(ModelLabel, self).print_label(template,
+                                                           request.META.get('REMOTE_ADDR'),
+                                                           copies)
         if not success:
             messages.add_message(request, messages.ERROR, msg)
         else:
@@ -33,10 +41,7 @@ class ModelLabel(Label):
         return self.label_context
 
     def get_template(self, instance):
-        try:
-            label_template = instance.label_template()
-        except:
-            label_template = 'default_model_label'
+        label_template = instance.label_template()
         try:
             template = ZplTemplate.objects.get(name=label_template)
         except:

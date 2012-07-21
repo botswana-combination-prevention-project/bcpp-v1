@@ -1,7 +1,10 @@
 from django.contrib import admin
+from django.contrib import messages
+
 from bhp_common.models import MyModelAdmin
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client, TestLabel
 from forms import ZplTemplateForm, LabelPrinterForm
+from lab_barcode.exceptions import PrinterException
 from actions import print_test_label
 from classes import ModelLabel
 
@@ -67,7 +70,10 @@ class TestLabelAdmin(MyModelAdmin):
 
     def save_model(self, request, obj, form, change):
         model_label = ModelLabel()
-        model_label.print_label(request, obj)
+        try:
+            model_label.print_label(request, obj)
+        except PrinterException as e:
+            messages.add_message(request, messages.ERROR, e.value)
         super(TestLabelAdmin, self).save_model(request, obj, form, change)
 
 admin.site.register(TestLabel, TestLabelAdmin)
