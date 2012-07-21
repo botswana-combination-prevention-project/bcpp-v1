@@ -5,7 +5,7 @@ from string import Template
 from lab_barcode.models import ZplTemplate, LabelPrinter
 
 
-class Labeller(object):
+class BaseLabelPrinter(object):
 
     """ Prints a label based on a template and it's context.
 

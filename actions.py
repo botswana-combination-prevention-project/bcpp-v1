@@ -21,39 +21,25 @@ def print_test_label(modeladmin, request, queryset):
 print_test_label.short_description = "Print test label to default printer "
 
 
-def print_barcode_labels(modeladmin, request, queryset):
-    #use the remote addr to determine which cups_server_ip to select
-    remote_addr = request.META.get('REMOTE_ADDR')
+def print_requisition_label(modeladmin, request, queryset):
+    label_printer=LabelPrinter()
     if not modeladmin.label_template_name:
         raise ImproperlyConfigured('{0} attribute \'label_template_name\' must be set. '
                                    'Got None.'.format(unicode(modeladmin.__class__.__name__)))
-    template_name = modeladmin.label_template_name
-    if not LabelPrinter.objects.filter(client__ip=remote_addr):
-        messages.add_message(request, messages.ERROR,
-                             'The client {0} is not configured for '
-                             'any printer. See lab_barcode app: label_printer '
-                             'model.'.format(remote_addr,))
-    else:
-        if LabelPrinter.objects.filter(client__ip=remote_addr).count() > 1:
-            messages.add_message(request, messages.ERROR,
-                                 'The client {0} is configured for '
-                                 'more than one printer. See lab_barcode app: '
-                                 'label_printer model.'.format(remote_addr,))
+    n = 0
+    for requisition in queryset:
+        if requisition.is_receive:
+            requisition.print_label(requisition=requisition,
+                                    remote_addr=request.META.get('REMOTE_ADDR'),
+                                    template=modeladmin.label_template_name,
+                                    label_count=n,
+                                    )
+            n += 1
         else:
-            cups_server_ip = LabelPrinter.objects.get(client__ip=remote_addr).cups_server_ip
-            n = 0
-            for requisition in queryset:
-                if requisition.is_receive:
-                    requisition.print_label(requisition=requisition,
-                                            cups_server_ip=cups_server_ip,
-                                            template_name=template_name,
-                                            )
-                    n += 1
-                else:
-                    messages.add_message(request, messages.ERROR,
-                                         'Requisition {0} has not been received. Labels '
-                                         'cannot be printed until the specimen is '
-                                         'received.'.format(requisition.requisition_identifier,))
-            messages.add_message(request, messages.SUCCESS,
-                                 '{0} label(s) have been printed to {1}'.format(n, cups_server_ip,))
-print_barcode_labels.short_description = "LABEL: print label"
+            messages.add_message(request, messages.ERROR,
+                                 'Requisition {0} has not been received. Labels '
+                                 'cannot be printed until the specimen is '
+                                 'received.'.format(requisition.requisition_identifier,))
+    #messages.add_message(request, messages.SUCCESS,
+    #                         '{0} label(s) have been printed to {1}'.format(n, cups_server_ip,))
+print_requisition_label.short_description = "LABEL: print label"
