@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
-
+from django.db.models.query import QuerySet
 from lab_barcode.models import LabelPrinter
 from lab_barcode.classes import Label
 
@@ -57,4 +57,3 @@ def print_barcode_labels(modeladmin, request, queryset):
             messages.add_message(request, messages.SUCCESS,
                                  '{0} label(s) have been printed to {1}'.format(n, cups_server_ip,))
 print_barcode_labels.short_description = "LABEL: print label"
-    

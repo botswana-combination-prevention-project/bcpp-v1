@@ -1,1 +1,2 @@
-from label import Label
+from base_label_printer import BaseLabelPrinter
+from model_label_printer import ModelLabelPrinter
