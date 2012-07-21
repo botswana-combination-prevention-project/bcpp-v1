@@ -1,2 +1,3 @@
-from base_label_printer import BaseLabelPrinter
-from model_label_printer import ModelLabelPrinter
+from label import Label
+from model_label import ModelLabel
+from queryset_label import QuerysetLabel

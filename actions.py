@@ -1,8 +1,7 @@
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models.query import QuerySet
 from lab_barcode.models import LabelPrinter
-from lab_barcode.classes import Label
+from lab_barcode.classes import Label, QuerysetLabel
 
 
 def print_test_label(modeladmin, request, queryset):
@@ -21,25 +20,20 @@ def print_test_label(modeladmin, request, queryset):
 print_test_label.short_description = "Print test label to default printer "
 
 
-def print_requisition_label(modeladmin, request, queryset):
-    label_printer=LabelPrinter()
+def print_requisition_label(modeladmin, request, requisitions):
+    queryset_label = QuerysetLabel()
     if not modeladmin.label_template_name:
         raise ImproperlyConfigured('{0} attribute \'label_template_name\' must be set. '
                                    'Got None.'.format(unicode(modeladmin.__class__.__name__)))
-    n = 0
-    for requisition in queryset:
+    for requisition in requisitions:
         if requisition.is_receive:
-            requisition.print_label(requisition=requisition,
-                                    remote_addr=request.META.get('REMOTE_ADDR'),
-                                    template=modeladmin.label_template_name,
-                                    label_count=n,
-                                    )
-            n += 1
+            queryset_label.print_label(
+                requisition=requisition,
+                remote_addr=request.META.get('REMOTE_ADDR'),
+                template=modeladmin.label_template_name)
         else:
             messages.add_message(request, messages.ERROR,
                                  'Requisition {0} has not been received. Labels '
                                  'cannot be printed until the specimen is '
                                  'received.'.format(requisition.requisition_identifier,))
-    #messages.add_message(request, messages.SUCCESS,
-    #                         '{0} label(s) have been printed to {1}'.format(n, cups_server_ip,))
-print_requisition_label.short_description = "LABEL: print label"
+print_requisition_label.short_description = "LABEL: print requisition label"

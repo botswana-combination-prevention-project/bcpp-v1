@@ -1,11 +1,13 @@
 import os
 import subprocess
 import tempfile
+from datetime import datetime
 from string import Template
+
 from lab_barcode.models import ZplTemplate, LabelPrinter
 
 
-class BaseLabelPrinter(object):
+class Label(object):
 
     """ Prints a label based on a template and it's context.
 
@@ -13,27 +15,44 @@ class BaseLabelPrinter(object):
     If you override prepare_label_context(), you do not need
     to call it."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
 
         self.message = ''
         self.printer_error = False
         self.file_name = None
         self.zpl_template = None
         self.label_printer = None
-        self.item_count = 1
-        self.item_count_total = 1
+        self.label_count = 0
+        self.label_count_total = 0
+        self.barcode_value = '123456789'
         self.is_prepared = False
-        self.label_context = None
+        self.label_context = {}
+        self.default_template_string = ('^XA\n'
+                '^FO325,5^A0N,15,20^FD${label_count}/${label_count_total}^FS\n'
+                '^FO320,20^BY1,3.0^BCN,50,N,N,N\n'
+                '^BY^FD${barcode_value}^FS\n'
+                '^FO320,80^A0N,15,20^FD${barcode_value}^FS\n'
+                '^FO325,152^A0N,20^FD${timestamp}^FS\n'
+                '^XZ')
 
     def prepare_label_context(self, **kwargs):
-        """ Override to set label context to match your template """
-        self.label_context = kwargs
+        """ Users should override to define a label context that matches the template. """
+        if kwargs:
+            self.label_context.update(**kwargs)
         if not self.label_context:
-            self.label_context = {'barcode_value': '123456789'}
+            # set a default context
+            self.label_context = {'barcode_value': self.barcode_value,
+                                  'label_count': self.label_count,
+                                  'label_count_total': self.label_count_total,
+                                  'timestamp': datetime.today().strftime('%Y-%m-%d %H:%M')}
+
+    def update_label_context(self, **kwargs):
+        self.label_context.update(**kwargs)
 
     def print_label(self, template, remote_addr='127.0.0.1'):
         print_success = False
         self._prepare_label(template)
+        self._update_label_count()
         if self._label_to_file():
             if self._set_label_printer(remote_addr):
                 #try:
@@ -43,10 +62,17 @@ class BaseLabelPrinter(object):
                 subprocess.call(['lpr', '-P', self.label_printer.cups_printer_name, '-l',
                                  self.file_name, '-H', self.label_printer.cups_server_ip],
                                 shell=False)
-                self.message = ('Label successfully sent to printer'
-                                ' {0}'.format(self.label_printer.cups_printer_name))
+                self.message = ('Successfully printed label {0}/{1} to '
+                                '{2}'.format(self.label_count, self.label_count_total,
+                                              self.label_printer.cups_printer_name))
                 print_success = True
         return (self.message, print_success)
+
+    def _update_label_count(self):
+        self.label_counter += 1
+        if self.label_count_total < self.label_count:
+            self.label_count_total = self.label_count
+        self.label_context.update(label_count=self.label_count)
 
     def _prepare_label(self, template):
         self._set_label_template(template)
