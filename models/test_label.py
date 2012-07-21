@@ -7,11 +7,7 @@ from zpl_template import ZplTemplate
 
 class TestLabel(BaseUuidModel):
 
-    identifier = models.CharField(
-        max_length=50,
-        null=True,
-        blank=True,
-        )
+    identifier = models.CharField(max_length=50)
 
     copies = models.IntegerField(default=1)
 
