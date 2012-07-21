@@ -2,8 +2,8 @@ from django.contrib import admin
 from bhp_common.models import MyModelAdmin
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client, TestLabel
 from forms import ZplTemplateForm, LabelPrinterForm
-from actions import print_test_label, print_barcode_labels
-from classes import ModelLabelPrinter
+from actions import print_test_label
+from classes import ModelLabel
 
 
 class ZplTemplateAdmin(MyModelAdmin):
@@ -62,12 +62,12 @@ admin.site.register(LabelPrinter, LabelPrinterAdmin)
 class TestLabelAdmin(MyModelAdmin):
 
     list_display = ('identifier', 'user_created', 'created')
-    actions = [print_test_label, print_barcode_labels]
+    actions = [print_test_label, ]
     list_per_page = 25
     label_template_name = 'laboratory'
 
     def save_model(self, request, obj, form, change):
-        model_label_printer = ModelLabelPrinter()
+        model_label_printer = ModelLabel()
         model_label_printer.print_label_on_save_model(request, obj)
         super(TestLabelAdmin, self).save_model(request, obj, form, change)
 
