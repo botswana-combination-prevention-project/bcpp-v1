@@ -9,10 +9,10 @@ from label import Label
 class ModelLabel(Label):
     """ Print a label building the template and context from the model."""
 
-    def print_label_on_save_model(self, request, instance):
+    def print_label(self, request, instance):
         self.prepare_label_context(instance=instance)
         template = self.get_template(instance)
-        msg, success = self.print_label(template, request.META.get('REMOTE_ADDR'))
+        msg, success = super(ModelLabel, self).print_label(template, request.META.get('REMOTE_ADDR'))
         if not success:
             messages.add_message(request, messages.ERROR, msg)
         else:

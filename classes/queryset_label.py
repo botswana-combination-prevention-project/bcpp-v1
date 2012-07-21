@@ -20,10 +20,14 @@ class QuerysetLabel(ModelLabel):
 
     def print_label(self, request, queryset):
         for instance in queryset:
-            super(QuerysetLabel, self).print_label(request, instance)
+            self.prepare_label_context(instance=instance)
+            super(QuerysetLabel, self).print_label(request, request.META.get('REMOTE_ADDR'))
 
     def prepare_label_context(self, **kwargs):
-        """ Add all the model fields to the template context"""
+        """ Add all the model fields for instance to the label context.
+
+        Users may override this to set a custom label context
+        that matches the template."""
         context = {}
         instance = kwargs.get('instance')
         for field in instance._meta.fields:

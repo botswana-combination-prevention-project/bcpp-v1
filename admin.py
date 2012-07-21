@@ -64,11 +64,10 @@ class TestLabelAdmin(MyModelAdmin):
     list_display = ('identifier', 'user_created', 'created')
     actions = [print_test_label, ]
     list_per_page = 25
-    label_template_name = 'laboratory'
 
     def save_model(self, request, obj, form, change):
-        model_label_printer = ModelLabel()
-        model_label_printer.print_label_on_save_model(request, obj)
+        model_label = ModelLabel()
+        model_label.print_label(request, obj)
         super(TestLabelAdmin, self).save_model(request, obj, form, change)
 
 admin.site.register(TestLabel, TestLabelAdmin)
