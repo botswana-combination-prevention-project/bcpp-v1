@@ -118,15 +118,17 @@ class Label(object):
         return self.file_name
 
     def _set_label_printer(self, remote_addr):
-        """ Set the label printer by cups_server_ip, remote_addr or default"""
-        self.label_printer = LabelPrinter.objects.get(client__ip=remote_addr)
+        """ Set the label printer by remote_addr or default"""
+        if LabelPrinter.objects.filter(client__ip=remote_addr):
+            self.label_printer = LabelPrinter.objects.get(client__ip=remote_addr)
         if not self.label_printer:
             if LabelPrinter.objects.filter(default=True):
                 self.label_printer = LabelPrinter.objects.get(default=True)
             # TODO(erikvw): ask cups/system for default printer
             else:
-                self.message = ('Unable to set the label printer. Set at one as the default '
-                                'printer. See model LabelPrinter.')
+                self.message = ('Unable to determine the label printer for client {0}. '
+                                'Set at one printer as the default printer. '
+                                'See model LabelPrinter.'.format(remote_addr))
         return self.label_printer
 
     def _format_label(self):
