@@ -8,7 +8,6 @@ import re
 
 from bhp_common.models import MyModelAdmin
 from bhp_base_model.fields import MyUUIDField
-from bhp_sync.classes import SerializeToTransaction
 
 try:
     import settings_audit
@@ -83,8 +82,12 @@ class AuditTrail(object):
             # begin: erikvw added for serialization
             def _serialize_on_save(sender, instance, **kwargs):
                 """ serialize the AUDIT model instance to the outgoing transaction model """
-                serialize_to_transaction = SerializeToTransaction()
-                serialize_to_transaction.serialize(sender, instance, **kwargs)
+                try:
+                    from bhp_sync.classes import SerializeToTransaction
+                    serialize_to_transaction = SerializeToTransaction()
+                    serialize_to_transaction.serialize(sender, instance, **kwargs)
+                except ImportError:
+                    pass
             models.signals.post_save.connect(_serialize_on_save, sender=model,
                                              weak=False, dispatch_uid='audit_serialize_on_save')
             # end: erikvw added for serialization
