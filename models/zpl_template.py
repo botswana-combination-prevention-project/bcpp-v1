@@ -13,5 +13,11 @@ class ZplTemplate(BaseUuidModel):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.default:
+            # set others to False
+            self.__class__.objects.all().update(default=False)
+        super(ZplTemplate, self).save(*args, **kwargs)
+
     class Meta:
         app_label = 'lab_barcode'

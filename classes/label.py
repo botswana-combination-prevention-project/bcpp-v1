@@ -52,9 +52,11 @@ class Label(object):
     def update_label_context(self, **kwargs):
         self.label_context.update(**kwargs)
 
-    def print_label(self, template, remote_addr='127.0.0.1', copies=1):
+    def print_label(self, template, remote_addr='127.0.0.1', copies=None, label_value=None):
         """ Prints the label or throws an exception if the printer is not found. """
         print_success = False
+        if not copies:
+            copies = 1
         if self._set_label_printer(remote_addr):
             self.label_count_total = copies
             for i in range(copies, 0, -1):
@@ -73,12 +75,12 @@ class Label(object):
                     if self.process.returncode < 0:
                         # process timed out so throw an exception
                         self.message = ('Unable to connect to printer '
-                                        '{0} ({1}).'.format(self.label_printer.cups_printer_name,
+                                        '{0} ({1}).'.format(unicode(self.label_printer),
                                                             self.process.returncode))
                         raise PrinterException(self.message)
                     else:
-                        self.message = ('Successfully printed label {0}/{1} to '
-                                        '{2}'.format(self.label_count, self.label_count_total,
+                        self.message = ('Successfully printed label \'{0}\' {1}/{2} to '
+                                        '{3}'.format(label_value, (copies - i + 1), copies,
                                                      self.label_printer.cups_printer_name))
                     print_success = True
         return (self.message, print_success)
@@ -87,7 +89,7 @@ class Label(object):
         """ Callback to run lpr in a thread. """
         self.process = subprocess.Popen(['lpr', '-P', self.label_printer.cups_printer_name, '-l',
                                         self.file_name, '-H', self.label_printer.cups_server_ip],
-                                        shell=True)
+                                        shell=False)
         self.process.communicate()
 
     def _prepare_label(self, template):

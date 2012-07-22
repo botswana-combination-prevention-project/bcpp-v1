@@ -71,7 +71,7 @@ class TestLabelAdmin(MyModelAdmin):
     def save_model(self, request, obj, form, change):
         model_label = ModelLabel()
         try:
-            model_label.print_label(request, obj)
+            model_label.print_label(request, obj, obj.copies, obj.identifier)
         except PrinterException as e:
             messages.add_message(request, messages.ERROR, e.value)
         super(TestLabelAdmin, self).save_model(request, obj, form, change)

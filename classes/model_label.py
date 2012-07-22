@@ -9,7 +9,7 @@ from label import Label
 class ModelLabel(Label):
     """ Print a label building the template and context from the model."""
 
-    def print_label(self, request, instance, copies=None):
+    def print_label(self, request, instance, copies=None, label_value=None):
         self.prepare_label_context(instance=instance)
         template = self.get_template(instance)
         if not copies:
@@ -20,12 +20,12 @@ class ModelLabel(Label):
                     break
         msg, success = super(ModelLabel, self).print_label(template,
                                                            request.META.get('REMOTE_ADDR'),
-                                                           copies)
+                                                           copies,
+                                                           label_value)
         if not success:
             messages.add_message(request, messages.ERROR, msg)
         else:
-            messages.add_message(request, messages.SUCCESS,
-                                 '{0} for \'{1}\''.format(msg, instance.barcode_value()))
+            messages.add_message(request, messages.SUCCESS, msg)
 
     def prepare_label_context(self, **kwargs):
         """ Add all the model fields to the template context"""
