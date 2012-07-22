@@ -9,44 +9,49 @@ class BaseReferenceListItem(BaseModel):
     test_code = models.ForeignKey(TestCode)
 
     gender = models.CharField(
-        verbose_name = "Gender",
-        choices = GENDER_OF_REFERENCE,
-        max_length=10, 
+        verbose_name="Gender",
+        choices=GENDER_OF_REFERENCE,
+        max_length=10,
         )
+
     lln = models.DecimalField(
-        verbose_name = 'lower',
-        null=True, 
-        max_digits=12, 
-        decimal_places=4, 
+        verbose_name='lower',
+        null=True,
+        max_digits=12,
+        decimal_places=4,
         blank=True)
+
     uln = models.DecimalField(
-        verbose_name = 'upper',
-        null=True, 
-        max_digits=12, 
-        decimal_places=4, 
+        verbose_name='upper',
+        null=True,
+        max_digits=12,
+        decimal_places=4,
         blank=True)
+
     age_low = models.IntegerField(
-        null=True, 
+        null=True,
         blank=True)
+
     age_low_unit = models.CharField(
-        max_length=10, 
+        max_length=10,
         blank=True
         )
+
     age_low_quantifier = models.CharField(max_length=10, blank=True)
-    
+
     age_high = models.IntegerField(null=True, blank=True)
-    
+
     age_high_unit = models.CharField(max_length=10, blank=True)
-    
+
     age_high_quantifier = models.CharField(max_length=10, blank=True)
-    
+
     panic_value_low = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
-    
+
     panic_value_high = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
-      
+
     comment = models.CharField(
-        verbose_name = "Comment", 
-        max_length=250, 
+        verbose_name="Comment",
+        max_length=250,
         blank=True,
         )
 
@@ -54,7 +59,7 @@ class BaseReferenceListItem(BaseModel):
         lower |	upper
         ------|-------------
         m*30  |	(1+m)*30)-1
-        y*365 |	(1+y)*365)-1 
+        y*365 |	(1+y)*365)-1
     """
 
     """
@@ -83,8 +88,8 @@ class BaseReferenceListItem(BaseModel):
     def __unicode__(self):
         return "%s" % (self.test_code)
     """
-    
+
     class Meta:
         abstract = True
-        app_label = 'bhp_lab_core'  
-        ordering = ['test_code', 'age_low', 'age_low_unit']   
+        app_label = 'bhp_lab_core'
+        ordering = ['test_code', 'age_low', 'age_low_unit']
