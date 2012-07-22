@@ -8,18 +8,15 @@ from label import Label
 
 class ModelLabel(Label):
     """ Print a label building the template and context from the model."""
-
     def print_label(self, request, instance, copies=None, label_value=None):
         self.prepare_label_context(instance=instance)
-        template = self.get_template(instance)
         if not copies:
             copies = 1
             for field in instance._meta.fields:
                 if field.attname == copies:
                     copies = instance.copies
                     break
-        msg, success = super(ModelLabel, self).print_label(template,
-                                                           request.META.get('REMOTE_ADDR'),
+        msg, success = super(ModelLabel, self).print_label(request.META.get('REMOTE_ADDR'),
                                                            copies,
                                                            label_value)
         if not success:
@@ -28,7 +25,9 @@ class ModelLabel(Label):
             messages.add_message(request, messages.SUCCESS, msg)
 
     def prepare_label_context(self, **kwargs):
-        """ Add all the model fields to the template context"""
+        """ Add all the model fields to the template context.
+
+        Users may override to set a label context that matches the template. """
         instance = kwargs.get('instance')
         for field in instance._meta.fields:
             if isinstance(getattr(instance, field.attname, field.attname), datetime):
@@ -40,13 +39,13 @@ class ModelLabel(Label):
         self.is_prepared = True
         return self.label_context
 
-    def get_template(self, instance):
-        label_template = instance.label_template()
+    def prepare_label_template(self, template):
+        """ Users may override to set a custom template """
         try:
-            template = ZplTemplate.objects.get(name=label_template)
+            template = ZplTemplate.objects.get(name=template)
         except:
             template = ZplTemplate()
-            template.name = label_template
+            template.name = template
             template.template = ('^XA\n'
                 '^FO325,5^A0N,15,20^FD${item_count}/${item_count_total}^FS\n'
                 '^FO320,20^BY1,3.0^BCN,50,N,N,N\n'

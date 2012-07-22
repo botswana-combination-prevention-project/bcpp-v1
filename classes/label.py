@@ -15,7 +15,7 @@ class Label(object):
 
     Call with kwargs or override prepare_label_context() before printing.
     If you override prepare_label_context(), you do not need
-    to call it."""
+    to explicitly call it."""
 
     def __init__(self, *args, **kwargs):
 
@@ -44,24 +44,29 @@ class Label(object):
             self.label_context.update(**kwargs)
         if not self.label_context:
             # set a default context
-            self.label_context = {'barcode_value': self.barcode_value,
-                                  'label_count': self.label_count,
-                                  'label_count_total': self.label_count_total,
-                                  'timestamp': datetime.today().strftime('%Y-%m-%d %H:%M')}
+            self.label_context = {'barcode_value': self.barcode_value, }
+
+    def prepare_label_template(self):
+        """ Users may override to define the template. """
+        if not self.zpl_template:
+            self._set_label_template()
+        return self.zpl_template
 
     def update_label_context(self, **kwargs):
         self.label_context.update(**kwargs)
 
-    def print_label(self, template, remote_addr='127.0.0.1', copies=None, label_value=None):
+    def print_label(self, remote_addr='127.0.0.1',
+                    copies=None, label_value=None):
         """ Prints the label or throws an exception if the printer is not found. """
         print_success = False
         if not copies:
             copies = 1
         if self._set_label_printer(remote_addr):
             self.label_count_total = copies
+            # reverse order so labels are in order top to bottom on a strip
             for i in range(copies, 0, -1):
                 self.label_count = i
-                self._prepare_label(template)
+                self._prepare_label()
                 if self._label_to_file():
                     # wrap the lpr process in a thread to allow for a timeout if printer not found.
                     # http://stackoverflow.com/questions/1191374/subprocess-with-timeout
@@ -92,14 +97,16 @@ class Label(object):
                                         shell=False)
         self.process.communicate()
 
-    def _prepare_label(self, template):
-        self._set_label_template(template)
+    def _prepare_label(self):
+        if not self.zpl_template:
+            self._set_label_template(self.prepare_label_template())
         if not self.label_context:
             self.prepare_label_context()
         self.label_context.update({'label_count': self.label_count,
-                                   'label_count_total': self.label_count_total})
+                                   'label_count_total': self.label_count_total,
+                                   'timestamp': datetime.today().strftime('%Y-%m-%d %H:%M')})
 
-    def _set_label_template(self, template):
+    def _set_label_template(self, template=None):
         """ Set zpl_template with a zpl_template name or an instance of ZplTemplate. """
         # use either the template name or the template instance
         if isinstance(template, ZplTemplate):
@@ -159,7 +166,8 @@ class Label(object):
                             'See model ZplTemplate.')
         else:
             if not self.label_context:
-                raise TypeError('Cannot format label for printing. Label context not set. Call prepare_label_context() first.')
+                raise TypeError('Cannot format label for printing. Label context not set. '
+                                'Call prepare_label_context() first.')
             # convert old templates
             self.zpl_template.template = self.zpl_template.template.replace('%(', '${').replace(')s', '}')
             self.zpl_template.save()
