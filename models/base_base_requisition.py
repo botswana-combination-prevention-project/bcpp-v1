@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
 except ImportError:
@@ -167,6 +168,13 @@ class BaseBaseRequisition (BaseUuidModel):
     def get_subject_identifier(self):
         return self.get_visit().appointment.registered_subject.subject_identifier
 
+    def barcode_value(self):
+        return self.specimen_identifier
+
+    def label_template(self):
+        raise TypeError('Override method label_template() on the requisition model '
+                        'to return the correct template.')
+
     def save(self, *args, **kwargs):
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
             if not self.requisition_identifier and self.is_drawn.lower() == 'yes':
@@ -178,13 +186,15 @@ class BaseBaseRequisition (BaseUuidModel):
 
     def prepare_specimen_identifier(self, **kwargs):
         """ add protocol, site and check digit"""
+        check_digit = CheckDigit()
         study_specific = StudySpecific.objects.get_query_set()[0]
         #check_digit = CheckDigit()
         self.protocol = study_specific.protocol_code
         opts = {}
         opts.update({'protocol': study_specific.protocol_prefix})
         opts.update({'requisition_identifier': self.requisition_identifier, 'site': self.site})
-        opts.update({'check_digit': check_digit.calculate('{protocol}{site}{requisition_identifier}'.format(opts), modulus=7)})
+        opts.update({'check_digit': check_digit.calculate('{protocol}{site}{requisition_identifier}'.format(opts),
+                                                           modulus=7)})
         return '{protocol}-{site}{requisition_identifier}-{check-digit}'.format(opts)
 
     def prepare_requisition_identifier(self, **kwargs):
@@ -206,33 +216,15 @@ class BaseBaseRequisition (BaseUuidModel):
                                     'all are taken. Increase the length of the random string')
         return requisition_identifier
 
-    def get_label(self, **kwargs):
-        """ Return a "ready to print" label object. """
-        label = RequisitionLabel()
-        return label
-
-    def print_label(self, **kwargs):
+    def print_label(self, request, **kwargs):
         """ print a label using the label class or subclass returned by get_label()"""
-        remote_addr = kwargs.get('remote_addr')
-        cups_server_ip = kwargs.get('cups_server_ip')
-        template_name = kwargs.get('template_name')
-        item_count = kwargs.get('item_count', 1),
         if self.specimen_identifier:
-            for item_count in range(self.item_count_total, 0, -1):
-                try:
-                    label = self.get_label()
-                    label.prepare_label_options(
-                               template_name=template_name,
-                               requisition=self,
-                               client_ip=remote_addr,
-                               cups_server_ip=cups_server_ip,
-                               item_count=item_count)
-                    label.print_label()
-                    self.is_labelled = True
-                    self.modified = datetime.today()
-                    self.save()
-                except ValueError, err:
-                    raise ValueError('Unable to print, is the lab_barcode app configured? %s' % (err,))
+            requisition_label = RequisitionLabel()
+            requisition_label.print_label(request, self, self.item_count_total,
+                                          self.specimen_identifier)
+            self.is_labelled = True
+            self.modified = datetime.today()
+            self.save()
 
     class Meta:
         abstract = True
