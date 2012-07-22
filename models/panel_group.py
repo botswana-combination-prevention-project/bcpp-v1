@@ -5,14 +5,14 @@ from bhp_base_model.classes import BaseModel
 class PanelGroup (BaseModel):
 
     name = models.CharField(
-        verbose_name = "Panel Group Name", 
-        max_length=25,  
+        verbose_name="Panel Group Name",
+        max_length=25,
         unique=True,
         )
 
     def __unicode__(self):
         return self.name
-        
+
     class Meta:
-        app_label = 'lab_panel'  
-        db_table = 'bhp_lab_core_panelgroup'        
+        app_label = 'lab_panel'
+        db_table = 'bhp_lab_core_panelgroup'
