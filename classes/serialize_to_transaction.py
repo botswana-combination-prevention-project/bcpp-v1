@@ -1,10 +1,13 @@
 from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
-from bhp_crypto.classes import Crypter
+try:
+    from bhp_crypto.classes import Crypter
+except ImportError:
+    pass
 from transaction_producer import TransactionProducer
 
-
+ 
 class SerializeToTransaction(Crypter):
     
     def __init__(self, *args, **kwargs):
@@ -47,12 +50,12 @@ class SerializeToTransaction(Crypter):
         action = 'U'
         if kwargs.get('created'):
             action = 'I'
-        transaction_producer = TransactionProducer()    
+        transaction_producer = TransactionProducer()
         #Transaction = get_model('bhp_sync', 'transaction')
         OutgoingTransaction = get_model('bhp_sync', 'outgoingtransaction')
         # 'suppress_autocreate_on_deserialize' is passed by the method that
-        # deserializes a transaction to avoid duplicating autocreated related model instances. 
-        # The conditional was used in the save method of the model that was saved. 
+        # deserializes a transaction to avoid duplicating autocreated related model instances.
+        # The conditional was used in the save method of the model that was saved.
         # It can (and must) now be discarded.
         if 'suppress_autocreate_on_deserialize' in dir(sender):
             del kwargs['suppress_autocreate_on_deserialize']
@@ -62,30 +65,30 @@ class SerializeToTransaction(Crypter):
             use_natural_keys = True
         # Handle proxy models.
         # if this is a proxy model, get to the main model
-        # Note, proxy model itself only returns a pointer to the 
+        # Note, proxy model itself only returns a pointer to the
         # main model.
-        # i do not want both the proxy model and its parent model to 
+        # i do not want both the proxy model and its parent model to
         # trigger a transaction, but make sure the parent "model" has
         # is_serialized=True, otherwise no transaction will be created.
         if instance._meta.proxy_for_model:
             instance = instance._meta.proxy_for_model.objects.get(pk=instance.pk)
         # serialize to json
         # serialize everything? even those transactions you have just consumed?
-        json_tx = serializers.serialize("json", 
-                        [instance,],
-                        ensure_ascii = False, 
-                        use_natural_keys = use_natural_keys)              
+        json_tx = serializers.serialize("json",
+                        [instance, ],
+                        ensure_ascii=False,
+                        use_natural_keys=use_natural_keys)
         #aes encrypt the json_tx string
-        json_tx = self.encrypt(json_tx)
+        try:
+            json_tx = self.encrypt(json_tx)
+        except AttributeError:
+            pass
         # save to Outgoing Transaction.
         OutgoingTransaction.objects.create(
-            tx_name = instance._meta.object_name,
-            tx_pk = instance.pk,
-            tx = json_tx,
-            timestamp = datetime.today().strftime('%Y%m%d%H%M%S%f'),
-            producer = str(transaction_producer),
-            action = action,                
+            tx_name=instance._meta.object_name,
+            tx_pk=instance.pk,
+            tx=json_tx,
+            timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
+            producer=str(transaction_producer),
+            action=action,
             )
-
-            
-       

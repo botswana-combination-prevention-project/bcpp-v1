@@ -2,30 +2,33 @@
 import socket
 from django.core import serializers
 from django.db.utils import IntegrityError
-from bhp_crypto.classes import Crypter
+try:
+    from bhp_crypto.classes import Crypter
+except ImportError:
+    pass
 from transaction_producer import TransactionProducer
 
 
 class DeserializeFromTransaction(Crypter):
-    
+
     def __init__(self, *args, **kwargs):
         super(DeserializeFromTransaction, self).__init__(*args, **kwargs)
-        self.algorithm='aes'
-        self.mode='aes-local'
-        
+        self.algorithm = 'aes'
+        self.mode = 'aes-local'
+
     def deserialize(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
-        for obj in serializers.deserialize("json",self.decrypt(incoming_transaction.tx)):
+        for obj in serializers.deserialize("json", self.decrypt(incoming_transaction.tx)):
         # if you get an error deserializing a datetime, confirm dev version of json.py
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
                 # check if tx originanted from me
                 #print "created %s : modified %s" % (obj.object.hostname_created, obj.object.hostname_modified)
-                if obj.object.hostname_modified == socket.gethostname(): 
+                if obj.object.hostname_modified == socket.gethostname():
                     #print "Ignoring my own transaction %s" % (incoming_transaction.tx_pk)
                     pass
                 else:
                     #print "deserializing %s" % (incoming_transaction.tx_pk)
-                    
+
                     # deserialiser save() method
                     # need to check if the model instance does not already exist as it may have been
                     # auto-created by the CONSUMER on the save of the previous incoming_transaction.
