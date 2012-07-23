@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket
-from lab_requisition.models import BaseBaseRequisition
 from bhp_appointment.models import Appointment
 
 
@@ -30,8 +29,10 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
         else:
             pass
 
-        # requisition_model is required to update ScheduledLabEntryBucket, but if not defined will pass
+        # requisition_model is required to update ScheduledLabEntryBucket,
+        # but if not defined will pass
         if hasattr(self, 'requisition_model'):
+            from lab_requisition.models import BaseBaseRequisition
             #if not set([BaseRequisition, BaseBaseRequisition]).intersection(set(self.requisition_model.__bases__)):
             if not issubclass(self.requisition_model, BaseBaseRequisition):
                 raise ValueError('{0} attribute \'requisition_model\' must be an instance of lab_requisition.models.BaseRequisition.'.format(self))
