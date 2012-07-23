@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.core.urlresolvers import reverse
 from bhp_common.models import MyModelAdmin, MyTabularInline
 from django.db.models import Max
+
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment, Holiday, Configuration
 from bhp_appointment.forms import AppointmentForm
@@ -40,50 +40,6 @@ class AppointmentAdmin(MyModelAdmin):
             else:
                 obj.visit_instance = '0'
         return super(AppointmentAdmin, self).save_model(request, obj, form, change)
-
-    #override, to check if non-default redirect
-    def add_view(self, request, form_url='', extra_context=None):
-
-        result = super(AppointmentAdmin, self).add_view(request, form_url, extra_context)
-
-        if not '_addanother' in request.POST and not '_continue' in request.POST:
-            if request.GET.get('next'):
-                try:
-                    # request.GET is an QueryDict. It is immutable so build a new dict.
-                    kwargs = {}
-                    # Just copying (.copy()) won't work cause i cannot pass kwarg 'next' to reverse
-                    for k in request.GET.iterkeys():
-                        # QueryDict where values are in a list per key, value has to be unicode.
-                        # Convert list value to unicode
-                        kwargs[str(k)] = ''.join(unicode(i) for i in request.GET.get(k))
-                    # delete the 'next' key/value
-                    del kwargs['next']
-                    result['Location'] = reverse(request.GET.get('next'), kwargs=kwargs)
-                except:
-                    pass
-        return result
-
-    #override, to check if non-default redirect
-    def change_view(self, request, object_id, extra_context=None):
-
-        result = super(AppointmentAdmin, self).change_view(request, object_id, extra_context)
-
-        if not '_addanother' in request.POST and not '_continue' in request.POST:
-            if request.GET.get('next'):
-                try:
-                    # request.GET is an QueryDict. It is immutable so build a new dict.
-                    kwargs = {}
-                    # Just copying (.copy()) won't work cause i cannot pass kwarg 'next' to reverse
-                    for k in request.GET.iterkeys():
-                        # QueryDict where values are in a list per key, value has to be unicode.
-                        # Convert list value to unicode
-                        kwargs[str(k)] = ''.join(unicode(i) for i in request.GET.get(k))
-                    # delete the 'next' key/value
-                    del kwargs['next']
-                    result['Location'] = reverse(request.GET.get('next'), kwargs=kwargs)
-                except:
-                    pass
-        return result
 
     #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
