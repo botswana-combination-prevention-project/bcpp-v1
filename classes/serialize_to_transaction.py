@@ -8,15 +8,15 @@ except ImportError:
 from transaction_producer import TransactionProducer
 
  
-class SerializeToTransaction(Crypter):
-    
+class SerializeToTransaction(object):
+
     def __init__(self, *args, **kwargs):
         super(SerializeToTransaction, self).__init__(*args, **kwargs)
         self.algorithm='aes'
         self.mode='aes-local'
         #self.set_private_key(self.get_local_rsa_private_keyfile())
         #self.set_aes_key()
-    
+
     def serialize(self, sender, instance, **kwargs):
     
         """ Serialize the model instance to an encrypted json object and save the json object to the Transaction model. """
@@ -80,7 +80,11 @@ class SerializeToTransaction(Crypter):
                         use_natural_keys=use_natural_keys)
         #aes encrypt the json_tx string
         try:
-            json_tx = self.encrypt(json_tx)
+            crypter = Crypter()
+            json_tx = crypter.encrypt(json_tx)
+            del crypter
+        except NameError:
+            pass
         except AttributeError:
             pass
         # save to Outgoing Transaction.

@@ -9,7 +9,7 @@ except ImportError:
 from transaction_producer import TransactionProducer
 
 
-class DeserializeFromTransaction(Crypter):
+class DeserializeFromTransaction(object):
 
     def __init__(self, *args, **kwargs):
         super(DeserializeFromTransaction, self).__init__(*args, **kwargs)
@@ -18,7 +18,12 @@ class DeserializeFromTransaction(Crypter):
 
     def deserialize(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
-        for obj in serializers.deserialize("json", self.decrypt(incoming_transaction.tx)):
+        try:
+            crypter = Crypter()
+        except NameError:
+            pass
+
+        for obj in serializers.deserialize("json", crypter.decrypt(incoming_transaction.tx)):
         # if you get an error deserializing a datetime, confirm dev version of json.py
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
                 # check if tx originanted from me
