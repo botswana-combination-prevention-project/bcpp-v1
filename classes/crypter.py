@@ -26,7 +26,7 @@ class Crypter(BaseCrypter):
         else:
             if not self.is_encrypted(value):
                 if self.algorithm == 'aes':
-                    encoded_secret = self.iv_prefix.join(map(base64.b64encode, self.aes_encrypt(value)))
+                    encoded_secret = self.IV_PREFIX.join(map(base64.b64encode, self.aes_encrypt(value)))
                 elif self.algorithm == 'rsa':
                     if len(value) >= self.RSA_KEY_LENGTH / 24:
                         raise ValueError('String value to encrypt may not exceed {0} characters. '
@@ -35,7 +35,7 @@ class Crypter(BaseCrypter):
                 else:
                     raise ValueError('Cannot determine algorithm to use for encryption. Valid options are {0}. Got {1}'.format(', '.join(self.valid_modes.keys()), self.algorithm))
                 hash_text = self.get_hash(value)
-                hash_secret = self.hash_prefix + hash_text + self.secret_prefix + encoded_secret
+                hash_secret = self.HASH_PREFIX + hash_text + self.SECRET_PREFIX + encoded_secret
             else:
                 hash_secret = value  # value did not change
         return hash_secret
@@ -43,24 +43,24 @@ class Crypter(BaseCrypter):
     def decrypt(self, secret, secret_is_hash=True, **kwargs):
         """ Decrypt secret and if secret is a hash, use hash to lookup the real secret first.
 
-        Do not assume secret is an encrypted value, look for hash_prefix or secret prefix.
+        Do not assume secret is an encrypted value, look for HASH_PREFIX or secret prefix.
         By default we expect secret to be the stored field value -- which is a hash.
         If we use this method for a secret that is not a hash, then the prefix is
-        the secret_prefix and the lookup step is skipped. """
+        the SECRET_PREFIX and the lookup step is skipped. """
 
         plaintext = secret
         if secret:
-            prefix = lambda x: self.hash_prefix if x else self.secret_prefix
+            prefix = lambda x: self.HASH_PREFIX if x else self.SECRET_PREFIX
             if self.is_encrypted(secret, prefix(secret_is_hash)):
                 if secret_is_hash:
                     hash_text = self.get_hash(secret)
                     secret = self._get_secret_from_hash_secret(secret, hash_text)
                 else:
-                    secret = secret[len(self.secret_prefix):]  # secret is not a hash
+                    secret = secret[len(self.SECRET_PREFIX):]  # secret is not a hash
                 if secret:
                     if self.algorithm == 'aes':
                         if self.set_aes_key():
-                            plaintext = self.aes_decrypt(secret.partition(self.iv_prefix))
+                            plaintext = self.aes_decrypt(secret.partition(self.IV_PREFIX))
                     elif self.algorithm == 'rsa':
                         if self.set_private_key():
                             plaintext = self.rsa_decrypt(secret)
@@ -100,8 +100,8 @@ class Crypter(BaseCrypter):
         """ hash is stored for exact match search functionality as the cipher is never the same twice """
         if self.is_encrypted(value):
             # if value is an encrypted value string, cut out the hash segment
-            hash_text = value[len(self.hash_prefix):][:self.hasher.length]
-            #hash_text = value[len(self.hash_prefix):].split(self.secret_prefix)[0]
+            hash_text = value[len(self.HASH_PREFIX):][:self.hasher.length]
+            #hash_text = value[len(self.HASH_PREFIX):].split(self.SECRET_PREFIX)[0]
         else:
             # if the value is not encrypted, hash it.
             # note that hash must be unique for each mode and algorithm
@@ -112,7 +112,7 @@ class Crypter(BaseCrypter):
         return ret_val
 
     def get_stored_hash(self, value):
-        return self.hash_prefix + self.get_hash(value)
+        return self.HASH_PREFIX + self.get_hash(value)
 
     def _get_secret_from_hash_secret(self, hash_secret, hash_text):
         """ Return the secret from within the hash_secret or from a lookup if hash_secret is just the hash"""
@@ -121,7 +121,7 @@ class Crypter(BaseCrypter):
         else:
             if self.is_encrypted(hash_secret):
                 # split on hash, but if this is a hash only, secret_string will be None
-                secret = hash_secret[len(self.hash_prefix) + len(hash_text) + len(self.secret_prefix):]
+                secret = hash_secret[len(self.HASH_PREFIX) + len(hash_text) + len(self.SECRET_PREFIX):]
                 if not secret:
                     # lookup secret_string for this hash_text
                     secret = self._lookup_secret(hash_text)
@@ -146,4 +146,4 @@ class Crypter(BaseCrypter):
         """ Update the secret lookup and return just the hash."""
         self.update_secret_in_lookup(hash_secret)
         # switch 'value' to just the hash before the save to the DB
-        return self.hash_prefix + self.get_hash(hash_secret)
+        return self.HASH_PREFIX + self.get_hash(hash_secret)
