@@ -12,7 +12,7 @@ class MyUUIDField (UUIDField):
     description = _("Custom Uuid field")
 
     def contribute_to_class(self, cls, name):
-        if self.primary_key == True: 
+        if self.primary_key == True:
             assert not cls._meta.has_auto_field, "A model can't have more than one AutoField: %s %s %s; have %s" % (self,cls,name,cls._meta.auto_field)
             super(MyUUIDField, self).contribute_to_class(cls, name)
             cls._meta.has_auto_field = True
@@ -21,8 +21,8 @@ class MyUUIDField (UUIDField):
             super(MyUUIDField, self).contribute_to_class(cls, name)
 
 
-class HostnameCreationField (CharField):  
-    """ 
+class HostnameCreationField (CharField):
+    """
     HostnameCreationField
 
     By default, sets editable=False, blank=True, default=socket.gethostname()
@@ -38,10 +38,9 @@ class HostnameCreationField (CharField):
         kwargs.setdefault('default', socket.gethostname())
         CharField.__init__(self, *args, **kwargs)
 
-
     def get_internal_type(self):
         return "CharField"
-  
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -51,16 +50,16 @@ class HostnameCreationField (CharField):
         return (field_class, args, kwargs)
 
 
-class HostnameModificationField (CharField):  
-    """ 
+class HostnameModificationField (CharField):
+    """
     HostnameModificationField
 
     By default, sets editable=False, blank=True, default=socket.gethostname()
-    
+
     Sets value to socket.gethostname() on each save of the model.
     """
     description = _("Custom field for hostname modified")
-    
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', False)
         kwargs.setdefault('blank', True)
@@ -76,7 +75,7 @@ class HostnameModificationField (CharField):
 
     def get_internal_type(self):
         return "CharField"
-  
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -84,4 +83,3 @@ class HostnameModificationField (CharField):
         field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
-    

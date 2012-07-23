@@ -1,21 +1,15 @@
-"""
-Erik's custom model fields
-
-... for encryption fields see bhp_crypto
-
-"""
 import re
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import CharField, DateTimeField, DecimalField
 from django.forms import RegexField
 from bhp_common.choices import DATE_ESTIMATED, IDENTITY_TYPE
 
-    
+
 class OtherCharField(CharField):
     """field for "Other specify" options"""
 
     description = _("Custom field for 'Other specify' form field")
-            
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('blank', True)
@@ -57,7 +51,6 @@ class DobField(DateTimeField):
         field_class = "django.db.models.fields.DateTimeField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
-
 
 
 class IsDateEstimatedField(CharField):
