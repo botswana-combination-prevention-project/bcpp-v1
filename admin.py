@@ -1,5 +1,6 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyTabularInline
+from bhp_base_model.classes import BaseModelAdmin
+from bhp_common.models import MyTabularInline
 from django.db.models import Max
 
 from bhp_registration.models import RegisteredSubject
@@ -7,7 +8,7 @@ from bhp_appointment.models import Appointment, Holiday, Configuration
 from bhp_appointment.forms import AppointmentForm
 
 
-class HolidayAdmin(MyModelAdmin):
+class HolidayAdmin(BaseModelAdmin):
     pass
 admin.site.register(Holiday, HolidayAdmin)
 
@@ -17,12 +18,12 @@ class HolidayInlineAdmin(MyTabularInline):
     extra = 0
 
 
-class ConfigurationAdmin(MyModelAdmin):
+class ConfigurationAdmin(BaseModelAdmin):
     inlines = [HolidayInlineAdmin, ]
 admin.site.register(Configuration, ConfigurationAdmin)
 
 
-class AppointmentAdmin(MyModelAdmin):
+class AppointmentAdmin(BaseModelAdmin):
 
     form = AppointmentForm
 
