@@ -29,18 +29,18 @@ class Command(BaseCommand):
                             model_crypter = ModelCrypter()
                             count = model.objects.all().count()
                             instance_count = 0
-                            try:
-                                for instance in model.objects.all():
-                                    instance_count += 1
-                                    instance = model_crypter.encrypt_instance(instance)
-                                    instance.save()
-                                    self.stdout.write("\r\x1b[K" + '{0} / {1} instances ...'.format(instance_count, count))
-                                self.stdout.write('done.\n')
-                                n += 1
-                                break
-                            except:
-                                raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
-                                                                                            model=model._meta.object_name.lower(),
-                                                                                            pk=instance.pk))
+                            #try:
+                            for instance in model.objects.all():
+                                instance_count += 1
+                                instance = model_crypter.encrypt_instance(instance)
+                                instance.save()
+                                self.stdout.write("\r\x1b[K" + '{0} / {1} instances ...'.format(instance_count, count))
+                            self.stdout.write('done.\n')
+                            n += 1
+                            break
+                            #except:
+                            #    raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
+                            #                                                                model=model._meta.object_name.lower(),
+                            #                                                                pk=instance.pk))
                 msg = 'Complete. {0} models encrypted.\n'.format(n)
         self.stdout.write(msg)
