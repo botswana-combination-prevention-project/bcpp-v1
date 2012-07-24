@@ -5,6 +5,9 @@ __authors__ = [
 import os
 import sys
 from datetime import datetime
+
+from django.conf import settings
+
 from bhp_crypto.classes import Crypter
 
 
@@ -26,7 +29,7 @@ def setup_new_keys():
                         filenames.append(filename)
     # backup existing keys
     try:
-        path = 'keys_backup_{0}'.format(datestring)
+        path = os.path.join(settings.KEY_PATH, 'keys_backup_{0}'.format(datestring))
         os.mkdir(path)
         print path
     except:
@@ -34,14 +37,15 @@ def setup_new_keys():
     for filename in filenames:
         try:
             oldpath = os.path.join(os.path.realpath('.'), filename)
-            newpath = os.path.join(os.path.join(
-                                       os.path.realpath('.'), path), filename)
+            # newpath has datestring prefix which will be removed once
+            # confirmed that ALL keys are new
+            newpath = os.path.join(os.path.join(os.path.realpath('.'), path), filename.split('/')[-1:][0])
             if os.path.exists(oldpath):
                 os.rename(oldpath, newpath)
                 print 'copied {0}'.format(filename)
         except OSError as e:
-            print ('Failed to copy {0} to backup '
-                  'folder {1}'.format(filename, path))
+            print ('Failed to copy {0} to {1}'.format(oldpath, newpath))
+            print e
             break
     # confirm target folder has no keys
     old_keys_exist = False
@@ -52,12 +56,26 @@ def setup_new_keys():
             break
 
     if old_keys_exist:
-        print 'Failing. Old keys are still in the target folder. Try moving them manually.'
+        print 'Failing. Old keys are still in the target folder. Try moving them manually to a backup folder.'
     else:
         print 'Creating new keys'
+        # an instance of crypter was created earlier 
         del crypter
+        # now have an empty target folder so guaranteed to
+        # not load old keys
         crypter = Crypter(no_preload=True)
         crypter.create_new_rsa_key_pairs(suffix='')
         crypter.create_new_salt(suffix='')
         crypter.create_aes_key(suffix='')
         sys.stdout.flush()
+
+        missing_key = False
+        for filename in filenames:
+            oldpath = os.path.join(os.path.realpath('.'), filename)
+            if not os.path.exists(oldpath):
+                missing_key = True
+                break
+        if missing_key:
+            print 'Failed. Not all keys were created. Delete all keys from the target folder and try again.'
+        else:
+            print 'Complete. All keys were created successfully.'

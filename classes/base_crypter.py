@@ -56,6 +56,8 @@ class BaseCrypter(Base):
         self.has_encryption_key = False
         if not kwargs.get('no_preload', False):
             self.preload_all_keys()
+        else:
+            self.PRELOADED_KEYS = copy.deepcopy(self.VALID_MODES)
         super(BaseCrypter, self).__init__(*args, **kwargs)
 
     def set_public_key(self, keyfile=None, **kwargs):
