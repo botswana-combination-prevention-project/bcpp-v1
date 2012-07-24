@@ -32,8 +32,8 @@ class Command(BaseCommand):
                             try:
                                 for instance in model.objects.all():
                                     instance_count += 1
-                                    #instance = model_crypter.encrypt_instance(instance)
-                                    #instance.save()
+                                    instance = model_crypter.encrypt_instance(instance)
+                                    instance.save()
                                     self.stdout.write("\r\x1b[K" + '{0} / {1} instances ...'.format(instance_count, count))
                                 self.stdout.write('done.\n')
                                 n += 1
