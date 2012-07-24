@@ -41,6 +41,6 @@ class Command(BaseCommand):
                             except:
                                 raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
                                                                                             model=model._meta.object_name.lower(),
-                                                                                            pk=model.pk))
+                                                                                            pk=instance.pk))
                 msg = 'Complete. {0} models encrypted.\n'.format(n)
         self.stdout.write(msg)
