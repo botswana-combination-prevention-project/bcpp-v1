@@ -1,5 +1,10 @@
 {% extends "base_audit_trail.html"%}
-{% load crypto_tags %}
+{% load friendly_load %}
+
+{% friendly_load crypto_tags %}
+{% ifnot_has_tag encrypted%}
+    {% load dummy_encrypted %}
+{% endifnot_has_tag %}
 
 {% load common_tags %}
 
@@ -19,14 +24,11 @@
     {% include 'audit_trail_form.html' %}
 {% endblock%}
 
-
 {% block history %}
-
-
 
     {% if not display_rows%}
 
-    <p><i>{{ status_message }}</i> </p>
+        <p><i>{{ status_message }}</i> </p>
 
     {% else %}    
 
@@ -57,13 +59,11 @@
         </tbody>
         </table>
 
-
         {% if audit_comments %}
-        
             <H4><A name="audit_comments">Comments logged for {{ audit_subject_identifier }}</H4>
              {% include 'audit_comment_include.html' %}
-             
         {% endif %}
+    
     {% endif %}
     
 {% endblock %}
