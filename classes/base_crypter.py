@@ -38,8 +38,8 @@ class BaseCrypter(Base):
                               os.path.join(KEY_PATH, 'user-public-local.pem'),
                              'private': os.path.join(KEY_PATH, 'user-private-local.pem')},
                 },
-        'aes': {'local-aes': os.path.join(KEY_PATH, 'user-aes-local')},
-        'salt': os.path.join(KEY_PATH, 'user-encrypted-salt')
+        'aes': {'local-aes': os.path.join(KEY_PATH, 'user-aes-local.key')},
+        'salt': os.path.join(KEY_PATH, 'user-encrypted-salt.key')
     }
 
     PRELOADED_KEYS = copy.deepcopy(VALID_MODES)
@@ -53,7 +53,9 @@ class BaseCrypter(Base):
         self.encrypted_salt = None
         self.algorithm = None
         self.mode = None
-        self.preload_all_keys()
+        self.has_encryption_key = False
+        if not kwargs.get('no_preload', False):
+            self.preload_all_keys()
         super(BaseCrypter, self).__init__(*args, **kwargs)
 
     def set_public_key(self, keyfile=None, **kwargs):
@@ -61,6 +63,7 @@ class BaseCrypter(Base):
         algorithm = kwargs.get('algorithm', self.algorithm)
         mode = kwargs.get('mode', self.mode)
         if not self.public_key:
+            self.has_encryption_key = False
             if not keyfile:
                 # keyfile not specified, so get the default for this
                 # algorithm and mode
@@ -75,14 +78,16 @@ class BaseCrypter(Base):
                                              .get('public'), RSA.RSA_pub):
                 self.public_key = (self.PRELOADED_KEYS.get(algorithm)
                                                      .get(mode).get('public'))
+                self.has_encryption_key = True
             else:
                 try:
                     self.public_key = RSA.load_pub_key(keyfile)
-                    print 'successfully loaded {0} {1} \
-                           public key'.format(algorithm, mode)
+                    print ('successfully loaded {0} {1} '
+                           'public key').format(algorithm, mode)
+                    self.has_encryption_key = True
                 except:
-                    print 'warning: failed to load public \
-                           key {0}.'.format(keyfile)
+                    print ('warning: failed to load public '
+                           'key {0}.').format(keyfile)
         return self.public_key is not None
 
     def set_private_key(self, keyfile=None, **kwargs):
@@ -107,20 +112,23 @@ class BaseCrypter(Base):
             else:
                 try:
                     self.private_key = RSA.load_key(keyfile)
-                    print 'successfully loaded {0} {1} private \
-                           key'.format(algorithm, mode)
+                    print ('successfully loaded {0} {1} private '
+                           'key').format(algorithm, mode)
                 except:
                     # if you need a warning here, do so in the subclass
                     pass
         return self.private_key is not None
 
     def set_aes_key(self):
-        """ Retrieve and decrypt the AES key. """
+        """ Retrieve and decrypt the AES key.
+
+        AES key needs to be decrypted using the local-rsa private key """
         if not self.aes_key:
+            self.has_encryption_key = False
             if (self.PRELOADED_KEYS.get('aes').get('local-aes') and
-                self.KEY_PATH not in
-                self.PRELOADED_KEYS.get('aes').get('local-aes')):
+                self.KEY_PATH not in self.PRELOADED_KEYS.get('aes').get('local-aes')):
                 self.aes_key = self.PRELOADED_KEYS.get('aes').get('local-aes')
+                self.has_encryption_key = True
             else:
                 try:
                     f = open(self._get_aes_keyfile(), 'r')
@@ -130,9 +138,13 @@ class BaseCrypter(Base):
                                        secret_key, algorithm='rsa',
                                        mode='local-rsa')
                     print 'successfully loaded aes key'
-                except:
-                    print 'warning: failed to load aes \
-                           key {0}.'.format(self._get_aes_keyfile())
+                    self.has_encryption_key = True
+                except IOError as e:
+                    print ('warning: failed to open aes '
+                          'key file {0}. Got {1}').format(self._get_aes_keyfile(), e)
+                #except:
+                #    print ('warning: failed to load aes '
+                #           'key {0}.').format(self._get_aes_keyfile())
         return self.aes_key != None
 
     def get_local_rsa_private_keyfile(self):
@@ -158,11 +170,14 @@ class BaseCrypter(Base):
             filename = mode_pair.get('public', None)
             # key.save_pub_key('user-private-local.pem'), e.g if suffix=''
             key.save_pub_key(''.join(filename) + suffix)
+            print 'Created new rsa key {0}'.format(filename)
+
             # create and save the private key to file
             filename = mode_pair.get('private', None)
             # key.save_key('user-private-local.pem'), e.g if suffix=''
             if filename:
                 key.save_key(''.join(filename) + suffix, None)
+                print 'Created new rsa key {0}'.format(filename)
 
     def create_aes_key(self, suffix=str(datetime.today()), key=None):
         """ Create a new key and store it safely in a file by using
@@ -172,24 +187,22 @@ class BaseCrypter(Base):
         existing key """
         if not key:
             key = os.urandom(16)
-        # check if public key is set
-        if not self.public_key:
-            self.set_public_key(self.VALID_MODES.get('rsa').get('local-rsa').get('public'))
         filename = self.VALID_MODES.get('aes').get('local-aes') + suffix
         secret_aes_key = self.rsa_encrypt(key, algorithm='rsa', mode='local-rsa')
         f = open(filename, 'w')
         f.write(base64.b64encode(secret_aes_key))
         f.close()
+        print 'Created new aes key {0}'.format(filename)
 
     def rsa_encrypt(self, plaintext, **kwargs):
         """Return an un-encoded secret or fail"""
-        if not self.set_private_key(**kwargs):
+        if not self.set_public_key(**kwargs):
             # FAIL here if key not available and user is trying to save data
-            raise ImproperlyConfigured('RSA key not available, unable to \
-                            encrypt sensitive data using the RSA algorithm.')
+            raise ImproperlyConfigured('RSA key not available, unable to '
+                                       'encrypt sensitive data using the RSA algorithm.')
         if self.is_encrypted(plaintext):
-            raise ValueError('Attempt to rsa encrypt an already \
-                              encrypted value.')
+            raise ValueError('Attempt to rsa encrypt an already '
+                             'encrypted value.')
         return self.public_key.public_encrypt(plaintext, RSA.pkcs1_oaep_padding)
 
     def rsa_decrypt(self, secret, is_encoded=True, **kwargs):
@@ -200,8 +213,8 @@ class BaseCrypter(Base):
         if self.set_private_key(**kwargs):
             if is_encoded:
                 secret = base64.b64decode(secret)
-            retval = (self.private_key.private_decrypt(
-                          secret, RSA.pkcs1_oaep_padding).replace('\x00', ''))
+                retval = self.private_key.private_decrypt(
+                              secret, RSA.pkcs1_oaep_padding).replace('\x00', '')
         return retval
 
     def aes_decrypt(self, secret, is_encoded=True):
@@ -234,12 +247,12 @@ class BaseCrypter(Base):
         not available"""
         if not self.set_aes_key():
             # FAIL here if key not available and user is trying to save data
-            raise ImproperlyConfigured('AES key not available, unable to \
-                                        encrypt sensitive data using the \
-                                        AES algorithm.')
+            raise ImproperlyConfigured('AES key not available, unable to '
+                                       'encrypt sensitive data using the '
+                                       'AES algorithm.')
         if self.is_encrypted(plaintext):
-            raise ValueError('Attempt to aes encrypt an already \
-                              encrypted value.')
+            raise ValueError('Attempt to aes encrypt an already '
+                              'encrypted value.')
         iv = os.urandom(16)
         cipher = self._build_aes_cipher(self.aes_key, iv, self.ENC)
         v = cipher.update(plaintext)
@@ -257,8 +270,8 @@ class BaseCrypter(Base):
             retval = False
         else:
             if value == prefix:
-                raise TypeError('Expected a string value, got just the \
-                                 encryption prefix.')
+                raise TypeError('Expected a string value, got just the '
+                                 'encryption prefix.')
             if value.startswith(prefix):
                 retval = True
             else:
@@ -286,8 +299,7 @@ class BaseCrypter(Base):
             elif algorithm == 'salt':
                 key = self.get_encrypted_salt()
             else:
-                raise TypeError('Unknown algorithm. \
-                                 Got {0}.'.format(algorithm))
+                raise TypeError('Unknown algorithm. Got {0}.'.format(algorithm))
             return key
 
         if not self.PRELOADED:
@@ -307,13 +319,10 @@ class BaseCrypter(Base):
             self.PRELOADED = True
 
     def create_new_salt(self, length=12,
-                        allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGH\
-                                       IJKLMNOPQRSTUVWXYZ0123456789!@#%^&*\
-                                       ()?<>.,[]{}',
+                        allowed_chars=('abcdefghijklmnopqrstuvwxyzABCDEFGH'
+                                       'IJKLMNOPQRSTUVWXYZ0123456789!@#%^&*'
+                                       '()?<>.,[]{}'),
                         suffix=str(datetime.today())):
-        if not self.public_key:
-            self.set_public_key(
-                self.VALID_MODES.get('rsa').get('local-rsa').get('public'))
         salt = self.rsa_encrypt(
             self.make_random_salt(length, allowed_chars),
             algorithm='rsa', mode='local-rsa')
@@ -321,6 +330,7 @@ class BaseCrypter(Base):
         f = open(path, 'w')
         f.write(base64.b64encode(salt))
         f.close()
+        print 'Created new salt {0}'.format(path)
         return base64.b64encode(salt)
 
     def read_salt_from_file(self):
