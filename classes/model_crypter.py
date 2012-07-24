@@ -8,11 +8,11 @@ class ModelCrypter(object):
         field objects in a given model instance. """
         for field in instance._meta.fields:
             if isinstance(field, BaseEncryptedField):
-                #try:
-                setattr(instance, field.attname,
-                        field.encrypt(getattr(instance, field.attname)))
-                #except:
-                #    pass
+                try:
+                    setattr(instance, field.attname,
+                            field.encrypt(getattr(instance, field.attname)))
+                except:
+                    pass
         return instance
 
     def encrypt_model(self, model):
