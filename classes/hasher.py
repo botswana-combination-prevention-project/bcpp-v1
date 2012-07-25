@@ -18,11 +18,8 @@ class Hasher(BaseCrypter):
     def get_salt(self, **kwargs):
         algorithm = kwargs.get('algorithm', None)
         mode = kwargs.get('mode', None)
-        if not self.encrypted_salt:
-            self._get_encrypted_salt(algorithm=algorithm, mode=mode)
-        return self.rsa_decrypt(self.encrypted_salt,
-                                algorithm='rsa',
-                                mode=mode)
+        self.encrypted_salt = self.set_encrypted_salt(algorithm=algorithm, mode=mode)
+        return self._decrypt_salt(self.encrypted_salt)
 
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size
