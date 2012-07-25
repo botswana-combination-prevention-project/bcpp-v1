@@ -15,14 +15,11 @@
 #
 #    """"""
 #
-#    def setUp(self):
+#    def setup(self):
 #        self.value = 'ABCDEF12345'
 #        crypter = Crypter()
-#        crypter.public_key = settings.PUBLIC_KEY_STRONG
-#        crypter.private_key = settings.PRIVATE_KEY_STRONG
-#        
-#    def testEncrypt(self):
 #
+#    def test_encrypt(self):
 #        encrypted_value = self.crypter.encrypt(self.value)
 #        decrypted_value = self.crypter.decrypt(encrypted_value)
 #        self.assertEqual(self.value, decrypted_value)

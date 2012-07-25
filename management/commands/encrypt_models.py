@@ -1,4 +1,5 @@
 import sys
+from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db.models import get_models, get_app
@@ -6,48 +7,56 @@ from bhp_crypto.classes import BaseEncryptedField, ModelCrypter
 
 
 class Command(BaseCommand):
+
     args = '--list'
     help = 'Encrypt fields within any INSTALLED_APP model using an encrypted field object.'
+    option_list = BaseCommand.option_list + (
+        make_option('--list',
+            action='store_true',
+            dest='list',
+            default=False,
+            help='List models using encryption. (list only, do not encrypt any data).'),
+        )
 
     def handle(self, *args, **options):
-
-        msg = 'No models to encrypt.'
-        n = 0
-        for app_name in settings.INSTALLED_APPS:
+        if options['list']:
+            model_crypter = ModelCrypter()
+            n = 0
+            all_encrypted_models = model_crypter.get_all_encrypted_models()
+            for app_name, encrypted_models in all_encrypted_models.iteritems():
+                for meta in encrypted_models.itervalues():
+                    model = meta['model']
+                    encrypted_fields = meta['encrypted_fields']
+                    n += 1
+                    self.stdout.write('{app_name}.{model}. {encrypted_fields} '
+                                      'fields.\n'.format(app_name=app_name,
+                                                         model=model._meta.object_name.lower(),
+                                                         encrypted_fields=len(encrypted_fields)))
+            self.stdout.write('{0} models use encryption.\n'.format(n))
+        else:
+            msg = 'No models to encrypt.'
+            n = 0
+            model_crypter = ModelCrypter()
+            all_encrypted_models = model_crypter.get_all_encrypted_models()
             try:
-                app = get_app(app_name)
+                for app_name, encrypted_models in all_encrypted_models.iteritems():
+                    for model_name, meta in encrypted_models.iteritems():
+                        model = meta['model']
+                        encrypted_fields = meta['encrypted_fields']
+                        self.stdout.write('Encrypting {app_name}.{model}...\n'.format(app_name=app_name, model=model_name))
+                        count = model.objects.all().count()
+                        instance_count = 0
+                        for instance in model.objects.all().order_by('id'):
+                            instance_count += 1
+                            model_crypter.encrypt_instance(instance, encrypted_fields, save=False)
+                            self.stdout.write('\r\x1b[K {0} / {1} instances '
+                                              ' ...'.format(instance_count, count))
+                        self.stdout.write('done.\n')
+                        n += 1
             except:
-                app = None
-            if app:
-                has_encryption_key = False
-                # self.stdout.write(app_name + '\n')
-                for model in get_models(app):
-                    # self.stdout.write(model._meta.object_name + '\n')
-                    if not has_encryption_key:
-                        for field in model._meta.fields:
-                            if isinstance(field, BaseEncryptedField):
-                                if not field.crypter.has_encryption_key:
-                                    raise CommandError('Suspect encryption keys are not loaded. Quitting.')
-                                else:
-                                    has_encryption_key = True
-                    try:
-                        model_crypter = ModelCrypter()
-                        encrypted_fields = model_crypter.get_encrypted_fields(model)
-                        if encrypted_fields:
-                            self.stdout.write('Encrypting {app_name}.{model}...\n'.format(app_name=app_name, model=model._meta.object_name.lower()))
-                            count = model.objects.all().count()
-                            instance_count = 0
-                            for instance in model.objects.all().order_by('id'):
-                                instance_count += 1
-                                model_crypter.encrypt_instance(instance, encrypted_fields)
-                                self.stdout.write('\r\x1b[K {0} / {1} instances '
-                                                  ' ...'.format(instance_count, count))
-                            self.stdout.write('done.\n')
-                            n += 1
-                    except:
-                        print "Unexpected error:", sys.exc_info()[0]
-                        raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
-                                                                                            model=model._meta.object_name.lower(),
-                                                                                            pk=instance.pk))
-                msg = 'Complete. {0} models encrypted.\n'.format(n)
-        self.stdout.write(msg)
+                print "Unexpected error:", sys.exc_info()[0]
+                raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
+                                                                               model=model._meta.object_name.lower(),
+                                                                               pk=instance.pk))
+            msg = 'Complete. {0} models encrypted.\n'.format(n)
+            self.stdout.write(msg)

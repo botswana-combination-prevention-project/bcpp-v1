@@ -1,4 +1,8 @@
-from base_encrypted_field import BaseEncryptedField
+from django.db.models import get_models, get_app
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+
+from bhp_crypto.classes import BaseEncryptedField
 
 
 class ModelCrypter(object):
@@ -18,14 +22,39 @@ class ModelCrypter(object):
         return instance
 
     def get_encrypted_fields(self, model):
+        """ Returns a list of encrypted field objects """
         encrypted_fields = []
         for field in model._meta.fields:
             if isinstance(field, BaseEncryptedField):
                 encrypted_fields.append(field)
         return encrypted_fields
 
+    def get_encrypted_models(self, app_name):
+        """ Returns a list of model objects that contain encrypted fields """
+        encrypted_models = {}
+        try:
+            app = get_app(app_name)
+        except ImproperlyConfigured:
+            app = None
+            pass
+        if app:
+            for model in get_models(get_app(app_name)):
+                encrypted_fields = self.get_encrypted_fields(model)
+                if encrypted_fields:
+                    encrypted_models[model._meta.object_name.lower()] = {'model': model, 'encrypted_fields': encrypted_fields}
+        return encrypted_models
+
+    def get_all_encrypted_models(self):
+        """ Returns a dictionary of { app_name:  [encrypted_models, ...]} """
+        all_encrypted_models = {}
+        for app_name in settings.INSTALLED_APPS:
+            encrypted_models = self.get_encrypted_models(app_name)
+            if encrypted_models:
+                all_encrypted_models[app_name] = encrypted_models
+        return all_encrypted_models
+
     def encrypt_model(self, model):
-        """ Encrypt field objects that are an instance of BaseEncryptedField
+        """ Encrypts field objects that are an instance of BaseEncryptedField
         in a given model. """
         encrypted_fields = []
         for field in model._meta.fields:
