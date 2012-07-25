@@ -59,13 +59,13 @@ def setup_new_keys():
         print 'Failing. Old keys are still in the target folder. Try moving them manually to a backup folder.'
     else:
         print 'Creating new keys'
-        # an instance of crypter was created earlier 
+        # an instance of crypter was created earlier
         del crypter
         # now have an empty target folder so guaranteed to
         # not load old keys
         crypter = Crypter(no_preload=True)
         crypter.create_new_rsa_key_pairs(suffix='')
-        crypter.create_new_salt(suffix='')
+        #crypter.create_new_salt(suffix='')
         crypter.create_aes_key(suffix='')
         sys.stdout.flush()
 

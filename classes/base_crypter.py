@@ -28,19 +28,19 @@ class BaseCrypter(Base):
     # valid algorithms, algorithm modes and the corresponding file
     # names where the keys are stored
     VALID_MODES = {
-        'rsa': {'irreversible-rsa': {'public':
-                                     os.path.join(KEY_PATH, 'user-public-irreversible.pem')},
-                'restricted-rsa': {'public':
-                                   os.path.join(KEY_PATH, 'user-public-restricted.pem'),
-                                   'private':
-                                   os.path.join(KEY_PATH, 'user-private-restricted.pem')},
-                'local-rsa': {'public':
-                              os.path.join(KEY_PATH, 'user-public-local.pem'),
-                             'private': os.path.join(KEY_PATH, 'user-private-local.pem')},
+        'rsa': {'irreversible': {'public': os.path.join(KEY_PATH, 'user-rsa-irreversible-public.pem'),
+                                 'salt': os.path.join(KEY_PATH, 'user-rsa-irreversible-salt.key')},
+                'restricted': {'public': os.path.join(KEY_PATH, 'user-rsa-restricted-public.pem'),
+                               'private': os.path.join(KEY_PATH, 'user-rsa-restricted-private.pem'),
+                               'salt': os.path.join(KEY_PATH, 'user-rsa-restricted-salt.key')},
+                'local': {'public': os.path.join(KEY_PATH, 'user-rsa-local-public.pem'),
+                         'private': os.path.join(KEY_PATH, 'user-rsa-local-private.pem'),
+                         'salt': os.path.join(KEY_PATH, 'user-rsa-local-salt.key')},
                 },
-        'aes': {'local-aes': os.path.join(KEY_PATH, 'user-aes-local.key')},
-        'salt': os.path.join(KEY_PATH, 'user-encrypted-salt.key')
-    }
+        'aes': {'local': {'key': os.path.join(KEY_PATH, 'user-aes-local-key.key'),
+                          'salt': os.path.join(KEY_PATH, 'user-aes-local-salt.key')},
+                }
+       }
 
     PRELOADED_KEYS = copy.deepcopy(VALID_MODES)
     PRELOADED = False
@@ -50,7 +50,7 @@ class BaseCrypter(Base):
         self.public_key = None
         self.private_key = None
         self.aes_key = None
-        self.encrypted_salt = None
+        self.encrypted_salt = {}
         self.algorithm = None
         self.mode = None
         self.has_encryption_key = False
@@ -121,41 +121,47 @@ class BaseCrypter(Base):
                     pass
         return self.private_key is not None
 
-    def set_aes_key(self):
+    def set_aes_key(self, **kwargs):
         """ Retrieve and decrypt the AES key.
 
-        AES key needs to be decrypted using the local-rsa private key """
+        AES key needs to be decrypted using the \'mode\'-rsa private key """
+        algorithm = kwargs.get('algorithm', self.algorithm)
+        mode = kwargs.get('mode', self.mode)
+        if algorithm != 'aes':
+            raise TypeError('Invalid algorithm. Expected \'aes\', Got {0}'.format(algorithm))
         if not self.aes_key:
             self.has_encryption_key = False
-            if (self.PRELOADED_KEYS.get('aes').get('local-aes') and
-                self.KEY_PATH not in self.PRELOADED_KEYS.get('aes').get('local-aes')):
-                self.aes_key = self.PRELOADED_KEYS.get('aes').get('local-aes')
+            if (self.PRELOADED_KEYS.get(algorithm).get(mode) and
+                self.KEY_PATH not in self.PRELOADED_KEYS.get(algorithm).get(mode)):
+                self.aes_key = self.PRELOADED_KEYS.get(algorithm).get(mode)
                 self.has_encryption_key = True
             else:
                 try:
-                    f = open(self._get_aes_keyfile(), 'r')
+                    f = open(self._get_aes_keyfile(algorithm=algorithm, mode=mode), 'r')
                     secret_key = f.read()
                     f.close()
                     self.aes_key = self.rsa_decrypt(
                                        secret_key, algorithm='rsa',
-                                       mode='local-rsa')
-                    print 'successfully loaded aes key'
+                                       mode=mode)
+                    print 'successfully loaded {0} aes key'.format(mode)
                     self.has_encryption_key = True
                 except IOError as e:
-                    print ('warning: failed to open aes '
-                          'key file {0}. Got {1}').format(self._get_aes_keyfile(), e)
+                    print ('warning: failed to open {0} aes '
+                          'key file {0}. Got {1}').format(mode, self._get_aes_keyfile(algorithm=algorithm, mode=mode), e)
                 #except:
                 #    print ('warning: failed to load aes '
                 #           'key {0}.').format(self._get_aes_keyfile())
         return self.aes_key != None
 
-    def get_local_rsa_private_keyfile(self):
-        """Return the local-rsa key filename."""
-        return self.VALID_MODES.get('rsa').get('local-rsa').get('private')
+    #def get_local_rsa_private_keyfile(self):
+    #    """Return the rsa local key filename."""
+    #    return self.VALID_MODES.get('rsa').get('local').get('private')
 
-    def _get_aes_keyfile(self):
+    def _get_aes_keyfile(self, **kwargs):
         """ Return the aes key filename."""
-        return self.VALID_MODES.get('aes').get('local-aes')
+        algorithm = kwargs.get('algorithm', self.algorithm)
+        mode = kwargs.get('mode', self.mode)
+        return self.VALID_MODES.get(algorithm).get(mode).get('key')
 
     def create_new_rsa_key_pairs(self, suffix=str(datetime.today())):
         """ Create a new rsa key-pair. """
@@ -163,7 +169,7 @@ class BaseCrypter(Base):
             "Replace the default dashes as output upon key generation"
             return
 
-        for mode_pair in self.VALID_MODES.get('rsa').itervalues():
+        for mode, mode_pair in self.VALID_MODES.get('rsa').iteritems():
             # Random seed
             Rand.rand_seed(os.urandom(self.RSA_KEY_LENGTH))
             # Generate key pair
@@ -180,21 +186,24 @@ class BaseCrypter(Base):
             if filename:
                 key.save_key(''.join(filename) + suffix, None)
                 print 'Created new rsa key {0}'.format(filename)
+            self.create_new_salt(suffix=suffix, algorithm='rsa', mode=mode)
 
     def create_aes_key(self, suffix=str(datetime.today()), key=None):
         """ Create a new key and store it safely in a file by using
-        local-rsa-encryption.
+        rsa local encryption.
 
         Filename suffix is added to the filename to avoid overwriting an
         existing key """
-        if not key:
-            key = os.urandom(16)
-        filename = self.VALID_MODES.get('aes').get('local-aes') + suffix
-        secret_aes_key = self.rsa_encrypt(key, algorithm='rsa', mode='local-rsa')
-        f = open(filename, 'w')
-        f.write(base64.b64encode(secret_aes_key))
-        f.close()
-        print 'Created new aes key {0}'.format(filename)
+        for mode in self.VALID_MODES.get('aes').iterkeys():
+            if not key:
+                key = os.urandom(16)
+            filename = self.VALID_MODES.get('aes').get(mode).get('key') + suffix
+            secret_aes_key = self.rsa_encrypt(key, algorithm='rsa', mode=mode)
+            f = open(filename, 'w')
+            f.write(base64.b64encode(secret_aes_key))
+            f.close()
+            print 'Created new {0} aes key {1}'.format(mode, filename)
+            self.create_new_salt(suffix=suffix, algorithm='aes', mode=mode)
 
     def rsa_encrypt(self, plaintext, **kwargs):
         """Return an un-encoded secret or fail"""
@@ -219,19 +228,21 @@ class BaseCrypter(Base):
                               secret, RSA.pkcs1_oaep_padding).replace('\x00', '')
         return retval
 
-    def aes_decrypt(self, secret, is_encoded=True):
+    def aes_decrypt(self, secret, is_encoded=True, **kwargs):
         """ AES encrypt using the random iv stored with the secret where
         secret is a tuple (secret_text, sep, iv).
 
         Will return plaintext or the original secret tuple  """
+        algorithm = kwargs.get('algorithm', self.algorithm)
+        mode = kwargs.get('mode', self.mode)
         retval = secret
         if isinstance(secret, (list, tuple)):
             #cipher_tuple is (cipher, sep, iv)
             secret_text, iv = secret[0], secret[2]
         else:
-            print 'warning: aes cipher_value should be a list or tuple'
+            print 'warning: {algorithm} {mode} cipher_value should be a list or tuple'.format(algorithm, mode)
             secret_text, iv = base64.b64decode(secret), '\0' * 16
-        if self.set_aes_key():
+        if self.set_aes_key(algorithm=algorithm, mode=mode):
             if is_encoded:
                 secret_text = base64.b64decode(secret_text)
                 iv = base64.b64decode(iv)
@@ -242,12 +253,14 @@ class BaseCrypter(Base):
             retval = v.replace('\x00', '')
         return retval
 
-    def aes_encrypt(self, plaintext):
+    def aes_encrypt(self, plaintext, **kwargs):
         """ Return secret as a tuple (secret,iv) or fail.
 
         Important to not allow any data to be saved if the keys are
         not available"""
-        if not self.set_aes_key():
+        algorithm = kwargs.get('algorithm', self.algorithm)
+        mode = kwargs.get('mode', self.mode)
+        if not self.set_aes_key(algorithm=algorithm, mode=mode):
             # FAIL here if key not available and user is trying to save data
             raise ImproperlyConfigured('AES key not available, unable to '
                                        'encrypt sensitive data using the '
@@ -283,77 +296,88 @@ class BaseCrypter(Base):
     def preload_all_keys(self):
         """ Force all keys to be loaded into preload dictionary . """
 
-        def _load_key(algorithm, mode=None, key_pair_type=None):
+        def _load_key(algorithm, mode=None, key_type=None):
             """ Helper method to load one key for load_all_keys. """
             if algorithm == 'rsa':
-                if key_pair_type == 'public':
+                if key_type == 'public':
                     self.set_public_key(algorithm=algorithm, mode=mode)
                     key = self.public_key
                     self.public_key = None
-                elif key_pair_type == 'private':
+                elif key_type == 'private':
                     self.set_private_key(algorithm=algorithm, mode=mode)
                     key = self.private_key
                     self.private_key = None
+                elif key_type == 'salt':
+                    self.get_encrypted_salt(algorithm=algorithm, mode=mode)
+                    key = self.get_encrypted_salt(algorithm=algorithm, mode=mode)
+                else:
+                    raise TypeError('Unexpected key type for {algorithm} {mode}.'
+                                    'Got {key_type}'.format(algorithm=algorithm, mode=mode, key_type=key_type))
             elif algorithm == 'aes':
-                self.set_aes_key()
-                key = self.aes_key
-                self.aes_key = None
-            elif algorithm == 'salt':
-                key = self.get_encrypted_salt()
+                if key_type == 'key':
+                    self.set_aes_key(algorithm=algorithm, mode=mode)
+                    key = self.aes_key
+                    self.aes_key = None
+                elif key_type == 'salt':
+                    self.get_encrypted_salt(algorithm=algorithm, mode=mode)
+                    key = self.get_encrypted_salt(algorithm=algorithm, mode=mode)
+                else:
+                    raise TypeError('Unexpected key type for {algorithm} {mode}.'
+                                    'Got {key_type}'.format(algorithm=algorithm, mode=mode, key_type=key_type))
             else:
                 raise TypeError('Unknown algorithm. Got {0}.'.format(algorithm))
             return key
 
         if not self.PRELOADED:
             for algorithm, mode_dict in self.VALID_MODES.iteritems():
-                if not isinstance(mode_dict, dict):
-                    self.PRELOADED_KEYS[algorithm] = _load_key(algorithm)
-                else:
-                    for mode, val in mode_dict.iteritems():
-                        if not isinstance(val, dict):
-                            self.PRELOADED_KEYS[algorithm][mode] = _load_key(algorithm, mode)
-                        else:
-                            for key_pair_type in val.iterkeys():
-                                self.PRELOADED_KEYS[
-                                    algorithm][mode][key_pair_type] = _load_key(algorithm,
-                                                                                mode,
-                                                                                key_pair_type)
+                for mode, key_and_filename in mode_dict.iteritems():
+                    for key_type in key_and_filename.iterkeys():
+                        self.PRELOADED_KEYS[algorithm][mode][key_type] = _load_key(algorithm,
+                                                                                    mode,
+                                                                                    key_type)
             self.PRELOADED = True
 
     def create_new_salt(self, length=12,
                         allowed_chars=('abcdefghijklmnopqrstuvwxyzABCDEFGH'
                                        'IJKLMNOPQRSTUVWXYZ0123456789!@#%^&*'
                                        '()?<>.,[]{}'),
-                        suffix=str(datetime.today())):
+                        suffix=str(datetime.today()),
+                        **kwargs):
+        algorithm = kwargs.get('algorithm', None)
+        mode = kwargs.get('mode', None)
         salt = self.rsa_encrypt(
             self.make_random_salt(length, allowed_chars),
-            algorithm='rsa', mode='local-rsa')
-        path = '{0}{1}'.format(self.VALID_MODES.get('salt'), suffix)
+            algorithm='rsa', mode=mode)
+        path = '{0}{1}'.format(self.VALID_MODES.get(algorithm).get(mode).get('salt'), suffix)
         f = open(path, 'w')
         f.write(base64.b64encode(salt))
         f.close()
-        print 'Created new salt {0}'.format(path)
+        print 'Created new {0} {1} salt {2}'.format(algorithm, mode, path)
         return base64.b64encode(salt)
 
-    def read_salt_from_file(self):
-        path = self.VALID_MODES.get('salt')
+    def read_salt_from_file(self, **kwargs):
+        algorithm = kwargs.get('algorithm', None)
+        mode = kwargs.get('mode', None)
+        path = self.VALID_MODES.get(algorithm).get(mode).get('salt')
         try:
             f = open(path, 'r')
             retval = f.read()
-            print 'successfully loaded salt'
+            print 'successfully loaded {0} {1} salt'.format(algorithm, mode)
         except:
-            print 'warning: failed to load salt {0}.'.format(path)
+            print 'warning: failed to load {0} {1} salt {2}.'.format(algorithm, mode, path)
             retval = None
         return retval
 
-    def get_encrypted_salt(self):
+    def get_encrypted_salt(self, **kwargs):
         """ This is the encrypted salt (which is what's stored in the file) """
+        algorithm = kwargs.get('algorithm', None)
+        mode = kwargs.get('mode', None)
         if not self.encrypted_salt:
-            if (self.PRELOADED_KEYS.get('salt') and self.KEY_PATH not in
-                self.PRELOADED_KEYS.get('salt')):
-                self.encrypted_salt = self.PRELOADED_KEYS.get('salt')
+            if (self.PRELOADED_KEYS.get(algorithm).get(mode).get('salt') and self.KEY_PATH not in
+                self.PRELOADED_KEYS.get(algorithm).get(mode).get('salt')):
+                self.encrypted_salt = self.PRELOADED_KEYS.get(algorithm).get(mode).get('salt')
             else:
-                self.encrypted_salt = self.read_salt_from_file()
+                self.encrypted_salt = self.read_salt_from_file(algorithm=algorithm, mode=mode)
         return self.encrypted_salt
 
     def mask_encrypted(self, value, mask='<encrypted>'):

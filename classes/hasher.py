@@ -15,22 +15,26 @@ class Hasher(BaseCrypter):
     def new_hasher(self, value=''):
         return hashlib.sha256(value)
 
-    def get_salt(self):
+    def get_salt(self, **kwargs):
+        algorithm = kwargs.get('algorithm', None)
+        mode = kwargs.get('mode', None)
         if not self.encrypted_salt:
-            self._get_encrypted_salt()
+            self._get_encrypted_salt(algorithm=algorithm, mode=mode)
         return self.rsa_decrypt(self.encrypted_salt,
                                 algorithm='rsa',
-                                mode='local-rsa')
+                                mode=mode)
 
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size
 
-    def get_hash(self, value):
+    def get_hash(self, value, **kwargs):
         """ for a given value, return a salted SHA256 hash """
+        algorithm = kwargs.get('algorithm', None)
+        mode = kwargs.get('mode', None)
         if not value:
             retval = None
         else:
-            salt = self.get_salt()
+            salt = self.get_salt(algorithm=algorithm, mode=mode)
             if not isinstance(salt, str):
                 raise ValidationError('The Encryption keys are not available '
                                       'to this system. Unable to save '
