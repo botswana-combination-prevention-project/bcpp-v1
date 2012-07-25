@@ -30,20 +30,20 @@ class Command(BaseCommand):
                                     raise CommandError('Suspect encryption keys are not loaded. Quitting.')
                                 else:
                                     has_encryption_key = True
-                    self.stdout.write('Encrypting {app_name}.{model}...\n'.format(app_name=app_name, model=model._meta.object_name.lower()))
-                    model_crypter = ModelCrypter()
-                    count = model.objects.all().count()
-                    instance_count = 0
                     try:
+                        model_crypter = ModelCrypter()
                         encrypted_fields = model_crypter.get_encrypted_fields(model)
-                        for instance in model.objects.all().order_by('id'):
-                            instance_count += 1
-                            model_crypter.encrypt_instance(instance, encrypted_fields)
-                            self.stdout.write('\r\x1b[K {0} / {1} instances '
-                                              ' ...'.format(instance_count, count))
-                        self.stdout.write('done.\n')
-                        n += 1
-                        break
+                        if encrypted_fields:
+                            self.stdout.write('Encrypting {app_name}.{model}...\n'.format(app_name=app_name, model=model._meta.object_name.lower()))
+                            count = model.objects.all().count()
+                            instance_count = 0
+                            for instance in model.objects.all().order_by('id'):
+                                instance_count += 1
+                                model_crypter.encrypt_instance(instance, encrypted_fields)
+                                self.stdout.write('\r\x1b[K {0} / {1} instances '
+                                                  ' ...'.format(instance_count, count))
+                            self.stdout.write('done.\n')
+                            n += 1
                     except:
                         print "Unexpected error:", sys.exc_info()[0]
                         raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
