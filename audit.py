@@ -6,8 +6,11 @@ from django.contrib import admin
 import copy
 import re
 
-from bhp_common.models import MyModelAdmin
+from bhp_sync.classes import SerializeToTransaction
+from bhp_sync.classes import BaseSyncModel
+from bhp_base_model.classes import BaseModelAdmin
 from bhp_base_model.fields import MyUUIDField
+from bhp_crypto.classes import BaseEncryptedField
 
 try:
     import settings_audit
@@ -40,7 +43,7 @@ class AuditTrail(object):
                 # clsAdmin = type(cls_admin_name, (admin.ModelAdmin,),{})
                 # admin.site.register(cls, clsAdmin)
                 # Otherwise, register class with default ModelAdmin
-                admin.site.register(model, MyModelAdmin)
+                admin.site.register(model, BaseModelAdmin)
             descriptor = AuditTrailDescriptor(model._default_manager, sender._meta.pk.attname)
             setattr(sender, name, descriptor)
 
@@ -72,24 +75,23 @@ class AuditTrail(object):
                     for field_arr in model._audit_track:
                         kwargs[field_arr[0]] = _audit_track(instance, field_arr)
 
-                    model._default_manager.create(**kwargs)
+                    audit_model = model._default_manager.create(**kwargs)
+                    if isinstance(audit_model, BaseSyncModel):
+                        serialize_to_transaction = SerializeToTransaction()
+                        serialize_to_transaction.serialize(sender, audit_model, **kwargs)
 
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
             ## Comment this line for pre r8223 Django builds
             models.signals.post_save.connect(_audit, sender=cls, weak=False)
 
-            # begin: erikvw added for serialization
-            def _serialize_on_save(sender, instance, **kwargs):
-                """ serialize the AUDIT model instance to the outgoing transaction model """
-                try:
-                    from bhp_sync.classes import SerializeToTransaction
-                    serialize_to_transaction = SerializeToTransaction()
-                    serialize_to_transaction.serialize(sender, instance, **kwargs)
-                except ImportError:
-                    pass
-            models.signals.post_save.connect(_serialize_on_save, sender=model,
-                                             weak=False, dispatch_uid='audit_serialize_on_save')
+            #begin: erikvw added for serialization
+#            def _serialize_on_save(sender, instance, **kwargs):
+#                """ serialize the AUDIT model instance to the outgoing transaction model """
+#                serialize_to_transaction = SerializeToTransaction()
+#                serialize_to_transaction.serialize(sender, instance, **kwargs)
+#            models.signals.post_save.connect(_serialize_on_save, sender=model,
+#                                             weak=False, dispatch_uid='audit_serialize_on_save')
             # end: erikvw added for serialization
 
             if self.opts['audit_deletes']:
@@ -194,6 +196,8 @@ def create_audit_model(cls, **kwargs):
             new_field.rel.related_name = '_audit_' + field.related_query_name()
             attrs[field.name] = new_field
             # end erikvw added
+        elif isinstance(field, BaseEncryptedField):
+            attrs[field.name] = models.CharField(max_length=field.get_max_length())
         else:
             attrs[field.name] = copy.copy(field)
             # If 'unique' is in there, we need to remove it, otherwise the index
