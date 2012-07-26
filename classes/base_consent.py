@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
-from bhp_crypto.classes import Crypter
+from bhp_crypto.utils import mask_encrypted
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
@@ -48,8 +48,7 @@ class BaseConsent(BaseSubject):
         )
 
     def __unicode__(self):
-        crypter = Crypter()
-        return "{0} {1} {2}".format(self.subject_identifier, crypter.mask_encrypted(self.first_name), self.initials)
+        return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
 
     def save(self, *args, **kwargs):
         """ create or get a subject identifier and update registered subject """
