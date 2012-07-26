@@ -66,7 +66,15 @@ class AuditTrail(object):
                     kwargs = {}
                     for field in sender._meta.fields:
                         #kwargs[field.attname] = getattr(instance, field.attname)
-                        kwargs[field.name] = getattr(instance, field.name)
+                        if isinstance(field, BaseEncryptedField):
+                            # slip hash in to silence encryption
+                            value = getattr(instance, field.name)
+                            if not field.field_crypter.is_encrypted(value):
+                                kwargs[field.name] = field.field_crypter.get_hash_with_prefix(value)
+                            else:
+                                kwargs[field.name] = value
+                        else:
+                            kwargs[field.name] = getattr(instance, field.name)
                     if self.opts['save_change_type']:
                         if created:
                             kwargs['_audit_change_type'] = 'I'
@@ -76,9 +84,6 @@ class AuditTrail(object):
                         kwargs[field_arr[0]] = _audit_track(instance, field_arr)
 
                     model._default_manager.create(**kwargs)
-                    #if isinstance(audit_model, BaseSyncModel):
-                    #    serialize_to_transaction = SerializeToTransaction()
-                    #    serialize_to_transaction.serialize(sender, audit_model, **kwargs)
 
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
@@ -88,9 +93,11 @@ class AuditTrail(object):
             #begin: erikvw added for serialization
             def _serialize_on_save(sender, instance, **kwargs):
                 """ serialize the AUDIT model instance to the outgoing transaction model """
-                if isinstance(instance, BaseSyncModel):
-                    serialize_to_transaction = SerializeToTransaction()
-                    serialize_to_transaction.serialize(sender, instance, **kwargs)
+                if not kwargs.get('raw'):
+                    model = models.get_model(instance._meta.app_label, instance._meta.object_name.lower().replace('audit', ''))
+                    if issubclass(model, BaseSyncModel):
+                        serialize_to_transaction = SerializeToTransaction()
+                        serialize_to_transaction.serialize(sender, instance, **kwargs)
             models.signals.post_save.connect(_serialize_on_save, sender=model,
                                              weak=False, dispatch_uid='audit_serialize_on_save')
             # end: erikvw added for serialization
@@ -197,8 +204,8 @@ def create_audit_model(cls, **kwargs):
             new_field.rel.related_name = '_audit_' + field.related_query_name()
             attrs[field.name] = new_field
             # end erikvw added
-        elif isinstance(field, BaseEncryptedField):
-            attrs[field.name] = models.CharField(max_length=field.get_max_length(), null=True, editable=False)
+        #elif isinstance(field, BaseEncryptedField):
+        #    attrs[field.name] = models.CharField(max_length=field.get_max_length(), null=True, editable=False)
         else:
             attrs[field.name] = copy.copy(field)
             # If 'unique' is in there, we need to remove it, otherwise the index
