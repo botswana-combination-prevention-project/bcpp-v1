@@ -3,25 +3,21 @@ BLANK_CHOICE_DASH = [('', '---------')]
 
 """ Try to keep this in alphabetical order """
 
-
 ABSENTEE_STATUS = (
     ('ABSENT', 'Absent'),
     ('NOT_ABSENT', 'No longer absent'),
 )
-
 
 ACU_EST = (
     ('Acute', 'Acute'),
     ('Established', 'Established'),
 )
 
-
 ACU_EST_NEG = (
     ('Acute', 'Acute'),
     ('Established', 'Established'),
     ('Negative', 'Negative'),
 )
-
 
 ALIVE_DEAD = (
     ('alive', 'Alive'),
@@ -53,7 +49,6 @@ ART_STATUS_CONFIRM = (
     ('Pills', '2. Show Pills'),
     ('Pic', '3. Identify Pictorial'),
 )
-
 
 CONFIRMED_SUSPECTED = (
     ('CONFIRMED', 'Confirmed'),
@@ -118,9 +113,8 @@ GENDER = (
 GENDER_UNDETERMINED = (
     ('M', 'Male'),
     ('F', 'Female'),
-    ('U' , 'Undetermined'),
+    ('U', 'Undetermined'),
 )
-
 
 """do not change without inspecting implication to check_omang_field() in utils.py"""
 IDENTITY_TYPE = (
@@ -149,13 +143,11 @@ NORMAL_ABNORMAL_NOTEVALUATED = (
     ('NOT_EVAL', 'Not Evaluated'),
 )
 
-
 POS_NEG = (
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
     ('IND', 'Indeterminate'),
 )
-
 
 POS_NEG_REFUSED = (
     ('POS', 'Positive'),
@@ -188,7 +180,6 @@ POS_NEG_ACU = (
     ('Indeterminate', 'Indeterminate'),
 )
 
-
 POS_NEG_NOTESTED = (
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
@@ -213,8 +204,6 @@ SEXUAL_DEBUT = (
     ('>=18', '18 or above'),
 )
 
-
-
 TIME_UNITS = (
     ('TODAY', 'Today'),
     ('DAYS', 'Days'),
@@ -222,7 +211,6 @@ TIME_UNITS = (
     ('MONTHS', 'Months'),
     ('YEARS', 'Years'),
 )
-
 
 WILL_DECL = (
     ('WILLING', 'Willing'),
