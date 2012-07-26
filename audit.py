@@ -75,10 +75,10 @@ class AuditTrail(object):
                     for field_arr in model._audit_track:
                         kwargs[field_arr[0]] = _audit_track(instance, field_arr)
 
-                    audit_model = model._default_manager.create(**kwargs)
-                    if isinstance(audit_model, BaseSyncModel):
-                        serialize_to_transaction = SerializeToTransaction()
-                        serialize_to_transaction.serialize(sender, audit_model, **kwargs)
+                    model._default_manager.create(**kwargs)
+                    #if isinstance(audit_model, BaseSyncModel):
+                    #    serialize_to_transaction = SerializeToTransaction()
+                    #    serialize_to_transaction.serialize(sender, audit_model, **kwargs)
 
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
@@ -86,12 +86,12 @@ class AuditTrail(object):
             models.signals.post_save.connect(_audit, sender=cls, weak=False)
 
             #begin: erikvw added for serialization
-#            def _serialize_on_save(sender, instance, **kwargs):
-#                """ serialize the AUDIT model instance to the outgoing transaction model """
-#                serialize_to_transaction = SerializeToTransaction()
-#                serialize_to_transaction.serialize(sender, instance, **kwargs)
-#            models.signals.post_save.connect(_serialize_on_save, sender=model,
-#                                             weak=False, dispatch_uid='audit_serialize_on_save')
+            def _serialize_on_save(sender, instance, **kwargs):
+                """ serialize the AUDIT model instance to the outgoing transaction model """
+                serialize_to_transaction = SerializeToTransaction()
+                serialize_to_transaction.serialize(sender, instance, **kwargs)
+            models.signals.post_save.connect(_serialize_on_save, sender=model,
+                                             weak=False, dispatch_uid='audit_serialize_on_save')
             # end: erikvw added for serialization
 
             if self.opts['audit_deletes']:
@@ -197,7 +197,7 @@ def create_audit_model(cls, **kwargs):
             attrs[field.name] = new_field
             # end erikvw added
         elif isinstance(field, BaseEncryptedField):
-            attrs[field.name] = models.CharField(max_length=field.get_max_length())
+            attrs[field.name] = models.CharField(max_length=field.get_max_length(), null=True, editable=False)
         else:
             attrs[field.name] = copy.copy(field)
             # If 'unique' is in there, we need to remove it, otherwise the index
