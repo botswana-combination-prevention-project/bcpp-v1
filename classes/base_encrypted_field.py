@@ -40,6 +40,10 @@ class BaseEncryptedField(models.Field):
 #            retval = True
 #        return retval
 
+    def get_max_length(self):
+        return (self.field_crypter.hasher.length + len(self.field_crypter.crypter.HASH_PREFIX) +
+               len(self.field_crypter.crypter.SECRET_PREFIX))
+
     def is_encrypted(self, value):
         """ wrap the crypter method of same name """
         return self.field_crypter.is_encrypted(value)

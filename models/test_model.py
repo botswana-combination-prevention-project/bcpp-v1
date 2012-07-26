@@ -26,7 +26,7 @@ class TestModel(BaseModel):
 
     text3 = EncryptedTextField()
 
-    history = AuditTrail()
+    history = AuditTrail(show_in_admin=True)
 
     def get_subject_identifier(self):
         return ''
