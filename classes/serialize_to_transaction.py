@@ -1,10 +1,10 @@
 from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
-#try:
-#    from bhp_crypto.classes import Crypter
-#except ImportError:
-#    pass
+try:
+    from bhp_crypto.classes import Crypter
+except ImportError:
+    pass
 from transaction_producer import TransactionProducer
 
 
@@ -12,8 +12,6 @@ class SerializeToTransaction(object):
 
     def __init__(self, *args, **kwargs):
         super(SerializeToTransaction, self).__init__(*args, **kwargs)
-        self.algorithm = 'aes'
-        self.mode = 'local'
 
     def serialize(self, sender, instance, **kwargs):
 
@@ -42,7 +40,7 @@ class SerializeToTransaction(object):
                         serialize_to_transaction.serialize(sender, instance,**kwargs)
         """
 
-        # watch out for this. The producer is the device that created 
+        # watch out for this. The producer is the device that created
         # the "transaction" instance and not necessarily the one that created the model instance
         # so just using the hostname created or hostname modified would not necessarily work.
         action = 'U'
@@ -76,15 +74,17 @@ class SerializeToTransaction(object):
                         [instance, ],
                         ensure_ascii=False,
                         use_natural_keys=use_natural_keys)
-        #aes encrypt the json_tx string
-#        try:
-#            crypter = Crypter(preload=False)
-#            json_tx = crypter.encrypt(json_tx)
-#            del crypter
-#        except NameError:
-#            pass
-#        except AttributeError:
-#            pass
+        try:
+            #aes encrypt the json_tx string
+            crypter = Crypter(preload=False)
+            json_tx = crypter.aes_encrypt(json_tx, algorithm='aes', mode='local')
+            del crypter
+        except NameError:
+            pass
+        except AttributeError:
+            pass
+        except:
+            raise
         # save to Outgoing Transaction.
         OutgoingTransaction.objects.create(
             tx_name=instance._meta.object_name,
