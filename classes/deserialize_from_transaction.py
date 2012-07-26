@@ -2,10 +2,7 @@
 import socket
 from django.core import serializers
 from django.db.utils import IntegrityError
-try:
-    from bhp_crypto.classes import Crypter
-except ImportError:
-    pass
+from bhp_crypto.classes import FieldCrypter
 from transaction_producer import TransactionProducer
 
 
@@ -16,14 +13,8 @@ class DeserializeFromTransaction(object):
 
     def deserialize(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
-        try:
-            crypter = Crypter(algorithm='aes', mode='local', preload=False)
-        except NameError:
-            pass
-        except:
-            raise
 
-        for obj in serializers.deserialize("json", crypter.aes_decrypt(incoming_transaction.tx, algorithm='aes', mode='local')):
+        for obj in serializers.deserialize("json", FieldCrypter(algorithm='aes', mode='local').decrypt(incoming_transaction.tx)):
         # if you get an error deserializing a datetime, confirm dev version of json.py
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
                 # check if tx originanted from me
