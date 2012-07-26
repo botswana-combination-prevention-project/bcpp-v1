@@ -1,2 +1,1 @@
 from base_subject import BaseSubject
-#from subject_descriptor import SubjectDescriptor
