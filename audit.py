@@ -88,8 +88,9 @@ class AuditTrail(object):
             #begin: erikvw added for serialization
             def _serialize_on_save(sender, instance, **kwargs):
                 """ serialize the AUDIT model instance to the outgoing transaction model """
-                serialize_to_transaction = SerializeToTransaction()
-                serialize_to_transaction.serialize(sender, instance, **kwargs)
+                if isinstance(instance, BaseSyncModel):
+                    serialize_to_transaction = SerializeToTransaction()
+                    serialize_to_transaction.serialize(sender, instance, **kwargs)
             models.signals.post_save.connect(_serialize_on_save, sender=model,
                                              weak=False, dispatch_uid='audit_serialize_on_save')
             # end: erikvw added for serialization
