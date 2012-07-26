@@ -64,20 +64,20 @@ class Command(BaseCommand):
 
     def _encrypt_model(self, model, encrypted_fields):
 
-        class CrypterThread(threading.Thread):
-            def __init__(self, command, model_crypter, instance, encrypted_fields, instance_count, save):
-                #print 'new thread {0}'.format(instance_count)
-                self.model_crypter = model_crypter
-                self.instance = instance
-                self.encrypted_fields = encrypted_fields
-                self.command = command
-                self.save = save
-                threading.Thread.__init__(self)
-
-            def run(self):
-                self.model_crypter.encrypt_instance(self.instance,
-                                               self.encrypted_fields,
-                                               save=self.save)
+#        class CrypterThread(threading.Thread):
+#            def __init__(self, command, model_crypter, instance, encrypted_fields, instance_count, save):
+#                #print 'new thread {0}'.format(instance_count)
+#                self.model_crypter = model_crypter
+#                self.instance = instance
+#                self.encrypted_fields = encrypted_fields
+#                self.command = command
+#                self.save = save
+#                threading.Thread.__init__(self)
+#
+#            def run(self):
+#                self.model_crypter.encrypt_instance(self.instance,
+#                                               self.encrypted_fields,
+#                                               save=self.save)
         n = 0
         model_crypter = ModelCrypter()
         try:
@@ -96,10 +96,8 @@ class Command(BaseCommand):
 #                    crypter_thread.start()
 #                    self.stdout.write('\r\x1b[K {0} / {1} instances '
 #                                          ' ...'.format(instance_count, count))
-                    self.stdout.flush()
-                    
-                    #pass the crypter to encrypt_instance
-                    model_crypter.encrypt_instance(instance, encrypted_fields, save=self.save)
+                    if self.save:
+                        instance.save()
                     self.stdout.write('\r\x1b[K {0} / {1} instances '
                                       ' ...'.format(instance_count, count))
                     self.stdout.flush()

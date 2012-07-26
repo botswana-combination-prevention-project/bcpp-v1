@@ -6,7 +6,7 @@ def encrypt(modeladmin, request, queryset, **kwargs):
     model_crypter = ModelCrypter()
     for qs in queryset:
         model_crypter.encrypt_instance(qs)
-        qs.save()
+        #qs.save()
 encrypt.short_description = "Encrypt a model that has \'Encrypted\' Fields"
 
 

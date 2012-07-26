@@ -87,11 +87,16 @@ class BaseEncryptedField(models.Field):
         return retval
 
     def get_prep_value(self, value, encrypt=True):
-        """ Returns the hashed_value with prefix (or None) and, if needed, updates the secret lookup."""
+        """ Returns the hashed_value with prefix (or None) and, if needed, updates the secret lookup.
+
+        Keyword arguments:
+        encrypt -- if False, the value is returned as is (default True)
+
+        """
         retval = value
         if value and encrypt:
             encrypted_value = self.encrypt(value)
-            retval = self.field_crypter.get_prep_value(encrypted_value, value, update_lookup=False)
+            retval = self.field_crypter.get_prep_value(encrypted_value, value)
         return retval
 
     def get_prep_lookup(self, lookup_type, value):

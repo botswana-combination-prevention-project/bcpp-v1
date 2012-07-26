@@ -10,16 +10,17 @@ class ModelCrypter(object):
     def encrypt_instance(self, instance, encrypted_fields=None, save=True):
         """ Returns a modified instance (not saved), encrypt all un-encrypted
         field objects in a given model instance. """
-        if not encrypted_fields:
-            encrypted_fields = self.get_encrypted_fields(instance)
-        for field in encrypted_fields:
-            field_value = getattr(instance, field.attname)
-            if field_value:
-                if not field.is_encrypted(field_value):
-                    encrypted_field_value = field.encrypt(field_value)
-                    setattr(instance, field.attname, encrypted_field_value)
-                    if save:
-                        instance.save()
+        #if not encrypted_fields:
+        #    encrypted_fields = self.get_encrypted_fields(instance)
+        #for field in encrypted_fields:
+        #    field_value = getattr(instance, field.attname)
+        #    if field_value:
+        #        if not field.is_encrypted(field_value):
+        #            encrypted_field_value = field.encrypt(field_value)
+        #            setattr(instance, field.attname, encrypted_field_value)
+        if save:
+            instance.save()
+            # instance.save_base(force_update=True, raw=True)
         return instance
 
     def get_encrypted_fields(self, model):
@@ -105,12 +106,15 @@ class ModelCrypter(object):
                                                                             field_name=encrypted_field.attname,)
                     is_encrypted = False
                 elif model.objects.all().count() == 0:
-                    print ('( ) {model_name}.{field_name}. (empty)').format(model_name=model._meta.object_name.lower(),
+                    if not suppress_messages:
+                        print ('( ) {model_name}.{field_name}. (empty)').format(model_name=model._meta.object_name.lower(),
                                                                             field_name=encrypted_field.attname,)
                 else:
                     if not suppress_messages:
                         print ('(*) {model_name}.{field_name}').format(model_name=model._meta.object_name.lower(),
                                                                        field_name=encrypted_field.attname,)
-                    else:
-                        print '{model_name} is already encrypted'.format(model_name=model._meta.object_name.lower())
+                    #else:
+                    #    print '{model_name} is already encrypted'.format(model_name=model._meta.object_name.lower())
+        if is_encrypted:
+            print ' {model_name} is already encrypted or empty'.format(model_name=model._meta.object_name.lower())
         return is_encrypted
