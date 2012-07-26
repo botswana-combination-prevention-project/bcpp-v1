@@ -12,18 +12,15 @@ def serialize_m2m_on_save(sender, instance, **kwargs):
         if isinstance(instance, BaseSyncModel):
             if instance.is_serialized() and not instance._meta.proxy:
                 serialize_to_transaction = SerializeToTransaction()
-                serialize_to_transaction.serialize(sender, instance,**kwargs)
-                   
+                serialize_to_transaction.serialize(sender, instance, **kwargs)
+
+
 @receiver(post_save, weak=False, dispatch_uid='serialize_on_save')
 def serialize_on_save(sender, instance, **kwargs):
     """ Serialize the model instance to the outgoing transaction model for consumption by another application. """
     if isinstance(instance, BaseSyncModel):
         hostname = socket.gethostname()
-        #print "%s %s %s" % (hostname, instance.hostname_created, instance.hostname_modified)
-        if (instance.hostname_created == hostname and not instance.hostname_modified) \
-                                          or (instance.hostname_modified == hostname):
+        if (instance.hostname_created == hostname and not instance.hostname_modified) or (instance.hostname_modified == hostname):
             if instance.is_serialized() and not instance._meta.proxy:
                 serialize_to_transaction = SerializeToTransaction()
                 serialize_to_transaction.serialize(sender, instance, **kwargs)
-
-

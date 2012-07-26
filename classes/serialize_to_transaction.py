@@ -1,31 +1,29 @@
 from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
-try:
-    from bhp_crypto.classes import Crypter
-except ImportError:
-    pass
+#try:
+#    from bhp_crypto.classes import Crypter
+#except ImportError:
+#    pass
 from transaction_producer import TransactionProducer
 
- 
+
 class SerializeToTransaction(object):
 
     def __init__(self, *args, **kwargs):
         super(SerializeToTransaction, self).__init__(*args, **kwargs)
-        self.algorithm='aes'
-        self.mode='aes-local'
-        #self.set_private_key(self.get_local_rsa_private_keyfile())
-        #self.set_aes_key()
+        self.algorithm = 'aes'
+        self.mode = 'local'
 
     def serialize(self, sender, instance, **kwargs):
-    
+
         """ Serialize the model instance to an encrypted json object and save the json object to the Transaction model. """
-        
+
         """Transaction producer name is based on the hostname (created
-        or modified) field.     
-        
+        or modified) field.
+
         Call this using the post_save and m2m_changed signal.
-        
+
         For example, for models that inherit from BasicUuidModel
 
             @receiver(m2m_changed,)
@@ -35,7 +33,7 @@ class SerializeToTransaction(object):
                         if instance.is_serialized() and not instance._meta.proxy:
                             serialize_to_transaction = SerializeToTransaction()
                             serialize_to_transaction.serialize(sender, instance,**kwargs)
-                               
+
             @receiver(post_save,)
             def serialize_on_save(sender, instance, **kwargs):
                 if isinstance(instance, MyBasicUuidModel):
@@ -79,14 +77,14 @@ class SerializeToTransaction(object):
                         ensure_ascii=False,
                         use_natural_keys=use_natural_keys)
         #aes encrypt the json_tx string
-        try:
-            crypter = Crypter()
-            json_tx = crypter.encrypt(json_tx)
-            del crypter
-        except NameError:
-            pass
-        except AttributeError:
-            pass
+#        try:
+#            crypter = Crypter(preload=False)
+#            json_tx = crypter.encrypt(json_tx)
+#            del crypter
+#        except NameError:
+#            pass
+#        except AttributeError:
+#            pass
         # save to Outgoing Transaction.
         OutgoingTransaction.objects.create(
             tx_name=instance._meta.object_name,
