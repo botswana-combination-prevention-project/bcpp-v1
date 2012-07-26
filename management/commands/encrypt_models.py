@@ -1,4 +1,4 @@
-import sys
+#import sys
 import threading
 
 from optparse import make_option
@@ -90,21 +90,17 @@ class Command(BaseCommand):
                 instance_count = 0
                 for instance in model.objects.all().order_by('id'):
                     instance_count += 1
-                    maxconnections = 50
-                    pool_sema = BoundedSemaphore(value=maxconnections)
-                    pool_sema.acquire()
-                    crypter_thread = CrypterThread(self, model_crypter, instance,
-                                                   encrypted_fields, instance_count,
-                                                   save=self.save)
-                    crypter_thread.start()
-                    pool_sema.release()
-                    self.stdout.write('\r\x1b[K {0} / {1} instances '
-                                          ' ...'.format(instance_count, count))
-                    self.stdout.flush()
-#                    model_crypter.encrypt_instance(instance, encrypted_fields, save=False)
+#                    crypter_thread = CrypterThread(self, model_crypter, instance,
+#                                                   encrypted_fields, instance_count,
+#                                                   save=self.save)
+#                    crypter_thread.start()
 #                    self.stdout.write('\r\x1b[K {0} / {1} instances '
-#                                      ' ...'.format(instance_count, count))
-#                    self.stdout.flush()
+#                                          ' ...'.format(instance_count, count))
+                    self.stdout.flush()
+                    model_crypter.encrypt_instance(instance, encrypted_fields, save=False)
+                    self.stdout.write('\r\x1b[K {0} / {1} instances '
+                                      ' ...'.format(instance_count, count))
+                    self.stdout.flush()
                 self.stdout.write('done.\n')
                 n += 1
                 self.stdout.flush()
