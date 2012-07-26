@@ -17,9 +17,11 @@ class DeserializeFromTransaction(object):
     def deserialize(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
         try:
-            crypter = Crypter()
+            crypter = Crypter(algorithm='aes', mode='local', preload=False)
         except NameError:
             pass
+        except:
+            raise
 
         for obj in serializers.deserialize("json", crypter.aes_decrypt(incoming_transaction.tx, algorithm='aes', mode='local')):
         # if you get an error deserializing a datetime, confirm dev version of json.py

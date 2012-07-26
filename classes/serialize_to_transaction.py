@@ -76,7 +76,7 @@ class SerializeToTransaction(object):
                         use_natural_keys=use_natural_keys)
         try:
             #aes encrypt the json_tx string
-            crypter = Crypter(preload=False)
+            crypter = Crypter(algorithm='aes', mode='local', preload=False)
             json_tx = crypter.aes_encrypt(json_tx, algorithm='aes', mode='local')
             del crypter
         except NameError:
