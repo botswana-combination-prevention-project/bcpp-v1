@@ -18,11 +18,11 @@ class BaseCrypterModelAdmin (BaseModelAdmin):
         super(BaseCrypterModelAdmin, self).get_readonly_fields(request, obj)
 
         # make crypter fields readonly if no private key and in edit mode
-        if obj:  # In edit mode
-            for field in obj._meta.fields:
-                if isinstance(field, BaseEncryptedField):
-                    if (not field.have_decryption_key() and
-                        field.attname not in self.readonly_fields):
-                        self.readonly_fields = ((field.attname,) +
-                            self.readonly_fields)
+#        if obj:  # In edit mode
+#            for field in obj._meta.fields:
+#                if isinstance(field, BaseEncryptedField):
+#                    if (not field.have_decryption_key() and
+#                        field.attname not in self.readonly_fields):
+#                        self.readonly_fields = ((field.attname,) +
+#                            self.readonly_fields)
         return self.readonly_fields

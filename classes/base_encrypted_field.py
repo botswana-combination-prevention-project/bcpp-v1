@@ -1,6 +1,6 @@
 from django.db import models
-
-from crypter import Crypter
+from django.core.exceptions import ValidationError
+from field_crypter import FieldCrypter
 
 
 class BaseEncryptedField(models.Field):
@@ -19,67 +19,38 @@ class BaseEncryptedField(models.Field):
 
     # see https://docs.djangoproject.com/en/dev/howto/
     #  custom-model-fields/#the-subfieldbase-metaclass
-    description = 'Field to encrypt and decrypt values that are stored \
-                   as encrypted'
+    description = 'Field class that stores values as encrypted'
+
     __metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kwargs):
-        """
-        The required field attribute 'encryption_method' guides in loading
-        public and private keys
-
-        1. restricted key-pair: use on values that should be less convenient
-           to decrypt. Private key is not
-           allowed on mobile devices (settings.IS_SECURE_DEVICE).
-        2. local key-pair: same as restricted key-pair but the private key
-           is expected to be available and is not checked for """
-        self.crypter = Crypter()
-        self.crypter.algorithm = self.algorithm
-        if self.algorithm not in self.crypter.VALID_MODES.keys():
-            raise KeyError('Invalid algorithm \'{algorithm}\'. '
-                           'Must be one of {keys}'.format(algorithm=self.algorithm,
-                                                          keys=', '.join(self.crypter.VALID_MODES.keys())))
-        self.crypter.mode = self.mode
-        if (self.mode not in
-            self.crypter.VALID_MODES.get(self.algorithm).iterkeys()):
-            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}.'
-                           ' Must be one of {keys}'
-                           .format(
-                                mode=self.mode,
-                                algorithm=self.algorithm,
-                                keys=', '.join(self.crypter.VALID_MODES.get(self.algorithm).keys())))
+        """ """
+        self.field_crypter = FieldCrypter(self.algorithm, self.mode)
         # set the db field length based on the hash
-        defaults = {'max_length': self.crypter.hasher.length +
-            len(self.crypter.HASH_PREFIX) + len(self.crypter.SECRET_PREFIX)}
+        defaults = {'max_length': self.field_crypter.hasher.length +
+                                  len(self.field_crypter.crypter.HASH_PREFIX) +
+                                  len(self.field_crypter.crypter.SECRET_PREFIX)}
         kwargs.update(defaults)
         super(BaseEncryptedField, self).__init__(*args, **kwargs)
 
-    def have_decryption_key(self):
-        """ """
-        retval = False
-        if self.crypter.private_key:
-            retval = True
-        return retval
-
-    def get_public_keyfile(self):
-        return self.crypter.VALID_MODES.get(
-            self.algorithm).get(self.mode).get('public')
-
-    def get_private_keyfile(self):
-        return self.crypter.VALID_MODES.get(
-            self.algorithm).get(self.mode).get('private')
+#    def have_decryption_key(self):
+#        """ """
+#        retval = False
+#        if self.field_crypter.private_key:
+#            retval = True
+#        return retval
 
     def is_encrypted(self, value):
         """ wrap the crypter method of same name """
-        return self.crypter.is_encrypted(value)
+        return self.field_crypter.is_encrypted(value)
 
     def decrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        return self.crypter.decrypt(value)
+        return self.field_crypter.decrypt(value)
 
     def encrypt(self, value, **kwargs):
         """ wrap the crypter method of same name """
-        return self.crypter.encrypt(value)
+        return self.field_crypter.encrypt(value)
 
     def validate_with_cleaned_data(self, attname, cleaned_data):
         """ May be overridden to test field data against other values
@@ -92,40 +63,46 @@ class BaseEncryptedField(models.Field):
         pass
 
     def to_python(self, value):
-        """ Returns the decrypted value IF the private key is found,
-        otherwise returns the encrypted value. """
-        if isinstance(value, basestring):
-            retval = self.decrypt(value)
-            self.readonly = retval is not value
-        else:
-            retval = value
+        """ Returns the decrypted value IF the private key is found, otherwise returns
+        the encrypted value.
+
+        Value comes from DB as a hash (e.g. <hash_prefix><hashed_value>). If DB value is being
+        acccessed for the first time, value is not an encrypted value (not a prefix+hashed_value)."""
+        retval = value
+        if value:
+            if isinstance(value, basestring):
+                if not self.algorithm or not self.mode:
+                    raise ValidationError('Algorithm and mode not set for encrypted field')
+                # decrypt will check if is_encrypted (e.g. enc1::<hash>)
+                retval = self.decrypt(value)
+                # if it did not decrypt, set field to read only
+                self.readonly = retval is not value
+            else:
+                # at this point, only handling string types
+                raise TypeError('Expected basestring. Got {0}'.format(value))
         return retval
 
-    def get_prep_value(self, value):
-        """ Always returns the encrypted value. """
-        if value:
-            value = self.encrypt(value)
-        return super(BaseEncryptedField, self).get_prep_value(value)
+    def get_prep_value(self, value, encrypt=True):
+        """ Returns the hashed_value with prefix (or None) and, if needed, updates the secret lookup."""
+        retval = value
+        if value and encrypt:
+            encrypted_value = self.encrypt(value)
+            retval = self.field_crypter.get_prep_value(encrypted_value, value)
+        return retval
 
-    def get_db_prep_value(self, value, connection, prepared=False):
-        """ Store the hash in the model field and the secret in the
-        lookup table (Crypt). """
-
-        # TODO(erikvw): need to read the docs a bit more as i might be able to
-        #     just set prepared=True, etc
-        #     https://docs.djangoproject.com/en/dev/howto/custom-model-
-        #     fields/#converting-query-values-to-database-values
-        if value:
-            # call super (which will call get_prep_value)
-            hash_secret = super(BaseEncryptedField, self).get_db_prep_value(
-                                                              value,
-                                                              connection,
-                                                              prepared)
-            # switch the returned value from value to hash
-            # because we store the hash, not the value or secret
-            hash_text = self.crypter.get_db_prep_value(hash_secret)
-            value = hash_text
-        return value
+    def get_prep_lookup(self, lookup_type, value):
+        # We only handle 'exact' and 'in' but we'll except 'icontains'
+        # as if it is 'exact' so that the admin search fields can work.
+        # All others are errors.
+        if lookup_type == 'exact' or lookup_type == 'icontains':
+            return self.get_prep_value(value)
+        elif lookup_type == 'startswith' and value == self.field_crypter.crypter.HASH_PREFIX:
+            # allow to test field value for the hash_prefix
+            return self.get_prep_value(value, encrypt=False)
+        elif lookup_type == 'in':
+            return [self.get_prep_value(v) for v in value]
+        else:
+            raise TypeError('Lookup type %r not supported.' % lookup_type)
 
     def get_internal_type(self):
         """This is a Charfield as we only ever store the hash, which is a \

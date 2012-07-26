@@ -1,6 +1,5 @@
 from django.db.models import get_models, get_app
 from django.conf import settings
-from django.db.models import Q
 from django.core.exceptions import ImproperlyConfigured
 
 from bhp_crypto.classes import BaseEncryptedField
@@ -17,7 +16,8 @@ class ModelCrypter(object):
             field_value = getattr(instance, field.attname)
             if field_value:
                 if not field.is_encrypted(field_value):
-                    setattr(instance, field.attname, field.encrypt(field_value))
+                    encrypted_field_value = field.encrypt(field_value)
+                    setattr(instance, field.attname, encrypted_field_value)
                     if save:
                         instance.save()
         return instance
@@ -90,7 +90,7 @@ class ModelCrypter(object):
         else:
             for encrypted_field in encrypted_fields:
                 field_startswith = '{0}__startswith'.format(encrypted_field.attname)
-                this_value = encrypted_field.crypter.HASH_PREFIX
+                this_value = encrypted_field.field_crypter.crypter.HASH_PREFIX
                 if model.objects.exclude(**{field_startswith: this_value}).count() != 0:
                     if model.objects.exclude(**{field_startswith: this_value}).count() != model.objects.all().count():
                         if not suppress_messages:
@@ -104,6 +104,9 @@ class ModelCrypter(object):
                             print ('( ) {model_name}.{field_name}').format(model_name=model._meta.object_name.lower(),
                                                                             field_name=encrypted_field.attname,)
                     is_encrypted = False
+                elif model.objects.all().count() == 0:
+                    print ('( ) {model_name}.{field_name}. (empty)').format(model_name=model._meta.object_name.lower(),
+                                                                            field_name=encrypted_field.attname,)
                 else:
                     if not suppress_messages:
                         print ('(*) {model_name}.{field_name}').format(model_name=model._meta.object_name.lower(),

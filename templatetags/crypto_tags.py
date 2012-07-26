@@ -1,12 +1,12 @@
 from django import template
-from bhp_crypto.classes import Crypter
+from bhp_crypto.utils import mask_encrypted
 
 register = template.Library()
 
+
 @register.filter(name='encrypted')
 def encrypted(value):
-    retval = value  
-    crypter = Crypter()
+    retval = value
     if isinstance(value, basestring):
-        retval = crypter.mask_encrypted(value)
-    return retval 
+        retval = mask_encrypted(value)
+    return retval

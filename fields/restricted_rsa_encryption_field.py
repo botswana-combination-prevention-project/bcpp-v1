@@ -14,14 +14,14 @@ class RestrictedRsaEncryptionField(BaseEncryptedField):
         # set alg, mode and defaults
         self.algorithm = 'rsa'
         self.mode = 'restricted'
-        defaults = {'help_text': kwargs.get('help_text', '') + ' (Encryption: %s)' % (self.mode,)}
+        defaults = {'help_text': kwargs.get('help_text', '') + ' (Encryption: {0} {1})'.format(self.algorithm, self.mode,)}
         kwargs.update(defaults)
         super(RestrictedRsaEncryptionField, self).__init__(*args, **kwargs)
         # setup the rsa keys
-        self.crypter.set_public_key()
-        self.crypter.set_private_key()
+        #self.crypter.set_public_key()
+        #self.crypter.set_private_key()
         # private key should not be on an insecure device
-        if self.crypter.private_key:
-            if not settings.IS_SECURE_DEVICE:
-                print ('warning: {0} key {1} should not be installed '
-                       'on an insecure device!').format(self.mode, self.get_private_keyfile())
+        #if self.crypter.private_key:
+        #    if not settings.IS_SECURE_DEVICE:
+        ##        print ('warning: {0} key {1} should not be installed '
+        #               'on an insecure device!').format(self.mode, self.get_private_keyfile())

@@ -1,9 +1,9 @@
 from django.db.models import CharField
-from bhp_crypto.classes import Salter
+#from bhp_crypto.classes import BaseCrypter
 
 
-class SaltField (CharField):  
-    """ 
+class SaltField (CharField):
+    """
     HostnameCreationField
 
     By default, sets editable=False, blank=True, default=socket.gethostname()
@@ -12,18 +12,17 @@ class SaltField (CharField):
     description = "Custom field for hostname created"
 
     def __init__(self, *args, **kwargs):
-        salter = Salter()
+        #base_crypter = BaseCrypter()
         kwargs.setdefault('editable', False)
         kwargs.setdefault('blank', False)
         kwargs.setdefault('max_length', 25)
         kwargs.setdefault('verbose_name', 'Salt')
-        kwargs.setdefault('default', salter.make_random_salt())
+        #kwargs.setdefault('default', base_crypter.make_random_salt())
         CharField.__init__(self, *args, **kwargs)
-
 
     def get_internal_type(self):
         return "CharField"
-  
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.

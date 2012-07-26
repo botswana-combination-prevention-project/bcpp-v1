@@ -2,36 +2,32 @@ import hashlib
 
 from django.core.exceptions import ValidationError
 
-from base_crypter import BaseCrypter
+#from base_crypter import BaseCrypter
 
 
-class Hasher(BaseCrypter):
+class Hasher(object):
     """ handle all hashing """
     def __init__(self, *args, **kwargs):
         self.length = self._get_hash_length()
         self.iterations = 40
-        super(Hasher, self).__init__(*args, **kwargs)
+        #super(Hasher, self).__init__(*args, **kwargs)
 
     def new_hasher(self, value=''):
         return hashlib.sha256(value)
 
-    def get_salt(self, **kwargs):
-        algorithm = kwargs.get('algorithm', None)
-        mode = kwargs.get('mode', None)
-        self.encrypted_salt = self.set_encrypted_salt(algorithm=algorithm, mode=mode)
-        return self._decrypt_salt(self.encrypted_salt)
+    #def get_salt(self, algorithm, mode, _decrypt_salt):
+    #    self.encrypted_salt = self.set_encrypted_salt(algorithm, mode)
+    #    return _decrypt_salt(self.encrypted_salt)
 
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size
 
-    def get_hash(self, value, **kwargs):
+    def get_hash(self, value, algorithm, mode, salt):
         """ for a given value, return a salted SHA256 hash """
-        algorithm = kwargs.get('algorithm', None)
-        mode = kwargs.get('mode', None)
         if not value:
             retval = None
         else:
-            salt = self.get_salt(algorithm=algorithm, mode=mode)
+            #salt = self.get_salt(algorithm, mode, _decrypt_salt)
             if not isinstance(salt, str):
                 raise ValidationError('The Encryption keys are not available '
                                       'to this system. Unable to save '

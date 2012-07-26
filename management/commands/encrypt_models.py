@@ -1,8 +1,8 @@
-import sys
-import threading
+#import sys
+#import threading
 
 from optparse import make_option
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand  # CommandError
 from bhp_crypto.classes import ModelCrypter
 
 
@@ -53,22 +53,22 @@ class Command(BaseCommand):
 
     def _encrypt_model(self, model, encrypted_fields):
 
-        class CrypterThread(threading.Thread):
-            def __init__(self, command, model_crypter, instance, encrypted_fields, instance_count):
-                #print 'new thread {0}'.format(instance_count)
-                self.model_crypter = model_crypter
-                self.instance = instance
-                self.encrypted_fields = encrypted_fields
-                self.command = command
-                threading.Thread.__init__(self)
-
-            def run(self):
-                self.model_crypter.encrypt_instance(self.instance,
-                                               self.encrypted_fields,
-                                               save=True)
-                self.command.stdout.write('\r\x1b[K {0} / {1} instances '
-                                      ' ...'.format(instance_count, count))
-                self.command.stdout.flush()
+#        class CrypterThread(threading.Thread):
+#            def __init__(self, command, model_crypter, instance, encrypted_fields, instance_count):
+#                #print 'new thread {0}'.format(instance_count)
+#                self.model_crypter = model_crypter
+#                self.instance = instance
+#                self.encrypted_fields = encrypted_fields
+#                self.command = command
+#                threading.Thread.__init__(self)
+#
+#            def run(self):
+#                self.model_crypter.encrypt_instance(self.instance,
+#                                               self.encrypted_fields,
+#                                               save=False)
+#                self.command.stdout.write('\r\x1b[K {0} / {1} instances '
+#                                      ' ...'.format(instance_count, count))
+#                self.command.stdout.flush()
 
         n = 0
         model_crypter = ModelCrypter()
@@ -82,21 +82,22 @@ class Command(BaseCommand):
                 instance_count = 0
                 for instance in model.objects.all().order_by('id'):
                     instance_count += 1
-                    crypter_thread = CrypterThread(self, model_crypter, instance,
-                                                   encrypted_fields, instance_count)
-                    crypter_thread.start()
-#                    model_crypter.encrypt_instance(instance, encrypted_fields, save=False)
-#                    self.stdout.write('\r\x1b[K {0} / {1} instances '
-#                                      ' ...'.format(instance_count, count))
-#                    self.stdout.flush()
+#                    crypter_thread = CrypterThread(self, model_crypter, instance,
+#                                                   encrypted_fields, instance_count)
+#                    crypter_thread.start()
+                    model_crypter.encrypt_instance(instance, encrypted_fields, save=False)
+                    self.stdout.write('\r\x1b[K {0} / {1} instances '
+                                      ' ...'.format(instance_count, count))
+                    self.stdout.flush()
                 self.stdout.write('done.\n')
                 n += 1
                 self.stdout.flush()
         except:
-            print "Unexpected error:", sys.exc_info()[0]
-            raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
-                                                                           model=model._meta.object_name.lower(),
-                                                                           pk=instance.pk))
+            raise
+            #print "Unexpected error:", sys.exc_info()[0]
+            #raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
+            #                                                               model=model._meta.object_name.lower(),
+            #                                                               pk=instance.pk))
 
     def _list_encrypted_models(self):
         model_crypter = ModelCrypter()
