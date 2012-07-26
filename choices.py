@@ -6,33 +6,33 @@ BLANK_CHOICE_DASH = [('', '---------')]
 
 ABSENTEE_STATUS = (
     ('ABSENT', 'Absent'),
-    ('NOT_ABSENT', 'No longer absent'),    
+    ('NOT_ABSENT', 'No longer absent'),
 )
 
 
 ACU_EST = (
-    ('Acute','Acute'),
-    ('Established','Established'),
-)    
+    ('Acute', 'Acute'),
+    ('Established', 'Established'),
+)
 
 
 ACU_EST_NEG = (
-    ('Acute','Acute'),
-    ('Established','Established'),
+    ('Acute', 'Acute'),
+    ('Established', 'Established'),
     ('Negative', 'Negative'),
-)    
+)
 
 
 ALIVE_DEAD = (
     ('alive', 'Alive'),
     ('dead', 'Dead'),
-    )     
+    )
 
 ALIVE_DEAD_UNKNOWN = (
     ('alive', 'Alive'),
     ('dead', 'Dead'),
     ('unknown', 'Unknown'),
-    )  
+    )
 
 ART_STATUS = (
     ('ON', 'Yes, ON ART'),
@@ -44,21 +44,21 @@ ART_STATUS_UNKNOWN = (
     ('ON', 'ON ART'),
     ('STOPPED', 'Stopped'),
     ('NAIVE', 'Naive'),
-    ('UNKNOWN', 'Unknown'),    
-    
+    ('UNKNOWN', 'Unknown'),
+
 )
 
 ART_STATUS_CONFIRM = (
-    ( 'OPD', '1. Show OPD/IDCC card' ),
-    ( 'Pills','2. Show Pills'),
-    ( 'Pic', '3. Identify Pictorial'),
+    ('OPD', '1. Show OPD/IDCC card'),
+    ('Pills', '2. Show Pills'),
+    ('Pic', '3. Identify Pictorial'),
 )
 
 
 CONFIRMED_SUSPECTED = (
     ('CONFIRMED', 'Confirmed'),
     ('SUSPECTED', 'Suspected'),
-)    
+)
 
 COUNTRY = (
     ('botswana', 'Botswana'),
@@ -68,18 +68,18 @@ COUNTRY = (
     ('namibia', 'Namibia'),
     ('nigeria', 'Nigeria'),
     ('china', 'China'),
-    ('india', 'India'),    
-    ('OTHER', 'Other'),    
+    ('india', 'India'),
+    ('OTHER', 'Other'),
     )
 
 DATE_ESTIMATED = (
     ('-', 'No'),
-    ('D', 'Yes, estimated the Day'),            
+    ('D', 'Yes, estimated the Day'),
     ('MD', 'Yes, estimated Month and Day'),
-    ('YMD', 'Yes, estimated Year, Month and Day'),            
+    ('YMD', 'Yes, estimated Year, Month and Day'),
 )
 
-    
+
 DRUG_FORMULATION = (
     ('11', 'Tablet'),
     ('12', 'Capsule'),
@@ -93,7 +93,7 @@ DRUG_FORMULATION = (
     ('20', 'Patch'),
     ('99', 'Other'),
 )
-    
+
 DRUG_ROUTE = (
     ('1', 'Intramuscular'),
     ('2', 'Intravenous'),
@@ -107,7 +107,7 @@ DRUG_ROUTE = (
 
 FEEDING = (
    ('BF', 'Breast Feed'),
-   ('FF', 'Formula Feed'),   
+   ('FF', 'Formula Feed'),
 )
 
 GENDER = (
@@ -127,37 +127,37 @@ IDENTITY_TYPE = (
     ('OMANG', 'Omang'),
     ('DRIVERS', 'Driver\'s License'),
     ('PASSPORT', 'Passport'),
-    ('OMANG_RCPT', 'Omang Receipt'),                    
-    ('OTHER', 'Other'),                        
+    ('OMANG_RCPT', 'Omang Receipt'),
+    ('OTHER', 'Other'),
 )
 
 
-NORMAL_ABNORMAL =(
+NORMAL_ABNORMAL = (
     ('NORMAL', 'Normal'),
     ('ABNORMAL', 'Abnormal'),
 )
 
-NORMAL_ABNORMAL_NOEXAM =(
+NORMAL_ABNORMAL_NOEXAM = (
     ('NORMAL', 'Normal'),
     ('ABNORMAL', 'Abnormal'),
     ('NO_EXAM', 'No Exam Performed'),
 )
 
-NORMAL_ABNORMAL_NOTEVALUATED =(
+NORMAL_ABNORMAL_NOTEVALUATED = (
     ('NORMAL', 'Normal'),
     ('ABNORMAL', 'Abnormal'),
     ('NOT_EVAL', 'Not Evaluated'),
 )
 
-    
-POS_NEG =(
+
+POS_NEG = (
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
     ('IND', 'Indeterminate'),
 )
 
 
-POS_NEG_REFUSED =(
+POS_NEG_REFUSED = (
     ('POS', 'Positive'),
     ('NEG', 'Negative'),
     ('IND', 'Indeterminate'),
@@ -186,7 +186,7 @@ POS_NEG_ACU = (
     ('Negative', 'Negative'),
     ('Possible Acute', 'Possible Acute'),
     ('Indeterminate', 'Indeterminate'),
-)    
+)
 
 
 POS_NEG_NOTESTED = (
@@ -197,30 +197,30 @@ POS_NEG_NOTESTED = (
 
 
 REFUSAL_STATUS = (
-    ('REFUSED','Refused'),
-    ('NOT_REFUSED','No longer refusing'),    
-)    
+    ('REFUSED', 'Refused'),
+    ('NOT_REFUSED', 'No longer refusing'),
+)
 
 SEVERITY_LEVEL = (
     ('mild', 'Mild'),
     ('moderate', 'Moderate'),
     ('severe', 'Severe'),
-)    
+)
 
 SEXUAL_DEBUT = (
-    ('<=14','14 or under'),
-    ('15-17',' 15 - 17'),
-    ('>=18','18 or above'),
+    ('<=14', '14 or under'),
+    ('15-17', ' 15 - 17'),
+    ('>=18', '18 or above'),
 )
 
 
-   
+
 TIME_UNITS = (
     ('TODAY', 'Today'),
     ('DAYS', 'Days'),
     ('WEEKS', 'Weeks'),
     ('MONTHS', 'Months'),
-    ('YEARS', 'Years'),    
+    ('YEARS', 'Years'),
 )
 
 
@@ -243,52 +243,52 @@ YES_NO_REFUSED = (
 YES_NO_NA_SPECIFY = (
     ('Yes', 'Yes, (Specify below)'),
     ('No', 'No'),
-    ('N/A', 'Not applicable'),    
+    ('N/A', 'Not applicable'),
 )
 
 YES_NO_NA = (
     ('Yes', 'Yes'),
     ('No', 'No'),
-    ('N/A', 'Not applicable'),    
+    ('N/A', 'Not applicable'),
 )
 
 YES_NO_NOT_EVALUATED = (
     ('Yes', 'Yes'),
     ('No', 'No'),
-    ('Not_evaluated', 'Not evaluated'),    
+    ('Not_evaluated', 'Not evaluated'),
 )
 
 YES_NO_NOT_EVALUATED_NA = (
     ('Yes', 'Yes'),
     ('No', 'No'),
     ('Not_evaluated', 'Not evaluated'),
-    ('N/A', 'Not applicable'),    
+    ('N/A', 'Not applicable'),
 )
 
 YES_NO_NOT_DONE = (
     ('Yes', 'Yes'),
     ('No', 'No'),
-    ('Not_done', 'Not Done'),    
+    ('Not_done', 'Not Done'),
 )
 
-YES_NO_DOESNT_WORK =(
+YES_NO_DOESNT_WORK = (
     ('Yes', 'Yes'),
     ('No', 'No'),
     ('DontWork', 'Doesn\'t work'),
-)    
+)
 
-YES_NO_UNKNOWN =(
+YES_NO_UNKNOWN = (
     ('Yes', 'Yes'),
     ('No', 'No'),
     ('Unknown', 'Unknown'),
-)    
+)
 
-YES_NO_UNKNOWN_NA =(
+YES_NO_UNKNOWN_NA = (
     ('Yes', 'Yes'),
     ('No', 'No'),
     ('Unknown', 'Unknown'),
     ('N/A', 'Not applicable'),
-)    
+)
 
 YES_NO_UNSURE = (
     ('Yes', 'Yes'),
@@ -312,5 +312,5 @@ YES_NO_DONT_KNOW = (
 YES_NO_DOESNT_WORK = (
     ('Yes', 'Yes'),
     ('No', 'No'),
-    ('Doesnt_work', 'Doesnt Work'),    
+    ('Doesnt_work', 'Doesnt Work'),
 )
