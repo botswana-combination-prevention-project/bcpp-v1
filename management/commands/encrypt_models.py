@@ -1,5 +1,5 @@
-#import sys
-#import threading
+import sys
+import threading
 
 from optparse import make_option
 from django.core.management.base import BaseCommand  # CommandError
@@ -31,8 +31,19 @@ class Command(BaseCommand):
             default=False,
             help='Check if all fields models are encrypted. (checks only, does not encrypt any data).'),
         )
+    option_list += (
+            make_option('--dry-run',
+                action='store_true',
+                dest='dry_run',
+                default=False,
+                help='Encrypt but do not save to the DB'),
+            )
 
     def handle(self, *args, **options):
+
+        self.save = True
+        if options['dry_run']:
+            self.save = False
         if options['list']:
             self._list_encrypted_models()
         elif options['check']:
@@ -53,23 +64,20 @@ class Command(BaseCommand):
 
     def _encrypt_model(self, model, encrypted_fields):
 
-#        class CrypterThread(threading.Thread):
-#            def __init__(self, command, model_crypter, instance, encrypted_fields, instance_count):
-#                #print 'new thread {0}'.format(instance_count)
-#                self.model_crypter = model_crypter
-#                self.instance = instance
-#                self.encrypted_fields = encrypted_fields
-#                self.command = command
-#                threading.Thread.__init__(self)
-#
-#            def run(self):
-#                self.model_crypter.encrypt_instance(self.instance,
-#                                               self.encrypted_fields,
-#                                               save=False)
-#                self.command.stdout.write('\r\x1b[K {0} / {1} instances '
-#                                      ' ...'.format(instance_count, count))
-#                self.command.stdout.flush()
+        class CrypterThread(threading.Thread):
+            def __init__(self, command, model_crypter, instance, encrypted_fields, instance_count, save):
+                #print 'new thread {0}'.format(instance_count)
+                self.model_crypter = model_crypter
+                self.instance = instance
+                self.encrypted_fields = encrypted_fields
+                self.command = command
+                self.save = save
+                threading.Thread.__init__(self)
 
+            def run(self):
+                self.model_crypter.encrypt_instance(self.instance,
+                                               self.encrypted_fields,
+                                               save=self.save)
         n = 0
         model_crypter = ModelCrypter()
         try:
@@ -82,13 +90,21 @@ class Command(BaseCommand):
                 instance_count = 0
                 for instance in model.objects.all().order_by('id'):
                     instance_count += 1
-#                    crypter_thread = CrypterThread(self, model_crypter, instance,
-#                                                   encrypted_fields, instance_count)
-#                    crypter_thread.start()
-                    model_crypter.encrypt_instance(instance, encrypted_fields, save=False)
+                    maxconnections = 50
+                    pool_sema = BoundedSemaphore(value=maxconnections)
+                    pool_sema.acquire()
+                    crypter_thread = CrypterThread(self, model_crypter, instance,
+                                                   encrypted_fields, instance_count,
+                                                   save=self.save)
+                    crypter_thread.start()
+                    pool_sema.release()
                     self.stdout.write('\r\x1b[K {0} / {1} instances '
-                                      ' ...'.format(instance_count, count))
+                                          ' ...'.format(instance_count, count))
                     self.stdout.flush()
+#                    model_crypter.encrypt_instance(instance, encrypted_fields, save=False)
+#                    self.stdout.write('\r\x1b[K {0} / {1} instances '
+#                                      ' ...'.format(instance_count, count))
+#                    self.stdout.flush()
                 self.stdout.write('done.\n')
                 n += 1
                 self.stdout.flush()
