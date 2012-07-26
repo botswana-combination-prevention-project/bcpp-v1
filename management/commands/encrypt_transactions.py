@@ -21,9 +21,9 @@ class Command(BaseCommand):
             self.encrypt_tx(crypter, get_model('bhp_sync', 'outgoingtransaction'))
         else:
             for model_name in args:
-                if model_name.lower == 'outgoing':
+                if model_name.lower() == 'outgoing':
                     model = get_model('bhp_sync', 'outgoingtransaction')
-                elif model_name.lower == 'incoming':
+                elif model_name.lower() == 'incoming':
                     model = get_model('bhp_sync', 'incomingtransaction')
                 else:
                     raise CommandError('Model {} not found'.format(model_name))
