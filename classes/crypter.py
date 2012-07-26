@@ -359,16 +359,16 @@ class Crypter(BaseCrypter):
 
     def _encrypt_salt(self, plain_salt):
         """Encrypts a given salt using the 'salter' rsa key pair """
-        public_key = copy.copy(self.public_key)
+        #public_key = copy.copy(self.public_key)
         encrypted_salt = self.rsa_encrypt(plain_salt, algorithm='rsa', mode='salter')
-        self.public_key = public_key
+        #self.public_key = public_key
         return encrypted_salt
 
     def _decrypt_salt(self, encrypted_salt):
         """Decrypts a given salt using the 'salter' rsa key pair """
-        public_key = copy.copy(self.public_key)
+        #public_key = copy.copy(self.public_key)
         plain_salt = self.rsa_decrypt(encrypted_salt, algorithm='rsa', mode='salter')
-        self.public_key = public_key
+        #self.public_key = public_key
         return plain_salt
 
     def _read_encrypted_salt_from_file(self, **kwargs):
