@@ -97,6 +97,8 @@ class Command(BaseCommand):
 #                    self.stdout.write('\r\x1b[K {0} / {1} instances '
 #                                          ' ...'.format(instance_count, count))
                     self.stdout.flush()
+                    
+                    #pass the crypter to encrypt_instance
                     model_crypter.encrypt_instance(instance, encrypted_fields, save=self.save)
                     self.stdout.write('\r\x1b[K {0} / {1} instances '
                                       ' ...'.format(instance_count, count))
