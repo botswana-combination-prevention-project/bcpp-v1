@@ -91,7 +91,7 @@ class BaseEncryptedField(models.Field):
         retval = value
         if value and encrypt:
             encrypted_value = self.encrypt(value)
-            retval = self.field_crypter.get_prep_value(encrypted_value, value)
+            retval = self.field_crypter.get_prep_value(encrypted_value, value, update_lookup=False)
         return retval
 
     def get_prep_lookup(self, lookup_type, value):

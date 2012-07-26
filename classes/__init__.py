@@ -1,6 +1,7 @@
 from hasher import Hasher
 from crypter import Crypter
 from base_crypter import BaseCrypter
+from field_crypter import FieldCrypter
 from base_encrypted_field import BaseEncryptedField
 from model_crypter import ModelCrypter
 from base_crypter_model_admin import BaseCrypterModelAdmin

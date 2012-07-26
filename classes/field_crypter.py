@@ -24,7 +24,7 @@ class FieldCrypter(object):
         else:
             if not self.is_encrypted(value):
                 if self.algorithm == 'aes':
-                    encoded_secret = self.crypter.IV_PREFIX.join(map(base64.b64encode, self.crypter.aes_encrypt(value)))
+                    encoded_secret = self.crypter.IV_PREFIX.join(self.crypter.aes_encrypt(value))
                 elif self.algorithm == 'rsa':
                     if len(value) >= self.crypter.RSA_KEY_LENGTH / 24:
                         raise ValueError('String value to encrypt may not exceed {0} characters. '
@@ -113,11 +113,13 @@ class FieldCrypter(object):
     def get_hash_with_prefix(self, value):
         return self.crypter.HASH_PREFIX + self.get_hash(value)
 
-    def get_prep_value(self, encrypted_value, value):
+    def get_prep_value(self, encrypted_value, value, **kwargs):
         """ Gets the hash from encrypted value for the DB """
+        update_lookup = kwargs.get('update_lookup', True)
         if encrypted_value != value:
             # encrypted_value is a hashed_value + secret, use this to put the secret into the lookup for this hashed_value.
-            self.update_secret_in_lookup(encrypted_value)
+            if update_lookup:
+                self.update_secret_in_lookup(encrypted_value)
         hashed_value = self.get_hash(encrypted_value)
         return self.crypter.HASH_PREFIX + hashed_value
 

@@ -275,6 +275,7 @@ class Crypter(BaseCrypter):
             v = v + cipher.final()
             del cipher
             retval = (v, iv)
+            retval = map(base64.b64encode, retval)
         return retval
 
     def _build_aes_cipher(self, key, iv, op=ENC):
@@ -452,7 +453,7 @@ class Crypter(BaseCrypter):
                 if algorithm == 'rsa':
                     plaintext = self.rsa_decrypt(encrypted_text, False, algorithm=algorithm, mode=mode)
                 elif algorithm == 'aes':
-                    plaintext = self.aes_decrypt(encrypted_text, False, algorithm=algorithm, mode=mode)
+                    plaintext = self.aes_decrypt(encrypted_text, algorithm=algorithm, mode=mode)
                 else:
                     raise TypeError('Encryption error for {0}'.format(algorithm))
             except TypeError as e:
