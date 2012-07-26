@@ -19,7 +19,7 @@ class OtherCharField(CharField):
 
     def get_internal_type(self):
         return "CharField"
-  
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -27,23 +27,23 @@ class OtherCharField(CharField):
         field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
-        
+
 
 class DobField(DateTimeField):
     """field for date of birth"""
 
     description = _("Custom field for date of birth")
-            
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('verbose_name', _('Date of Birth'))
         kwargs.setdefault('editable', True)
         kwargs.setdefault('help_text', _('Format is YYYY-MM-DD'))
         #self.validators.append(datetime_is_not_future)
         DateTimeField.__init__(self, *args, **kwargs)
-    
+
     def get_internal_type(self):
         return "DateTimeField"
-  
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -54,21 +54,21 @@ class DobField(DateTimeField):
 
 
 class IsDateEstimatedField(CharField):
-    
+
     """field to question if date is estimated"""
 
     description = _("Custom field to question if date is estimated")
-            
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
-        kwargs.setdefault('max_length', 25)        
+        kwargs.setdefault('max_length', 25)
         kwargs.setdefault('choices', DATE_ESTIMATED)
         kwargs.setdefault('help_text', _('If the exact date is not known, please indicate which part of the date is estimated.'))
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
         return "CharField"
-  
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -80,19 +80,19 @@ class IsDateEstimatedField(CharField):
 
 
 class NameField(CharField):
-   
+
     description = _("Custom field for Name of person")
-    
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('verbose_name', _('Name'))
-        kwargs.setdefault('max_length',50)        
+        kwargs.setdefault('max_length', 50)
         kwargs.setdefault('help_text', _('Type only letters, all in uppercase and no spaces'))
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
         return "CharField"
-    
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,
@@ -116,20 +116,20 @@ class NameField(CharField):
 
 
 class InitialsField(CharField):
-   
+
     description = _("Custom field for a person\'s initials")
-    
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('verbose_name', _('Initials'))
-        kwargs.setdefault('max_length',3)
+        kwargs.setdefault('max_length', 3)
         #kwargs.setdefault('unique',True)                        
         kwargs.setdefault('help_text', _('Type 2-3 letters, all in uppercase and no spaces'))
         CharField.__init__(self, *args, **kwargs)
-    
+
     def get_internal_type(self):
         return "CharField"
-    
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,
@@ -155,17 +155,17 @@ class WeightField(DecimalField):
     """field for weight"""
 
     description = _("Custom field for weight")
-            
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_digits', 5)
-        kwargs.setdefault('decimal_places', 2)                        
+        kwargs.setdefault('decimal_places', 2)
         kwargs.setdefault('help_text', _('Report in kg. Format is 9.99, 99.99, etc'))
         DecimalField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
         return "DecimalField"
-  
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -177,24 +177,24 @@ class WeightField(DecimalField):
 
 
 class OmangField(CharField):
-    
+
     """See EncryptedIdentityField!
         field for omang. If getting an ID that may alos be something other than an Omang, 
         use IdentityField along with IdentityTypeField
     """
 
     description = _("Custom field for Botswana Omang")
-               
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
-        kwargs.setdefault('unique', True)        
+        kwargs.setdefault('unique', True)
         kwargs.setdefault('max_length', 9)
         kwargs.setdefault('help_text', _('Format is 9999[12]9999'))
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
         return "CharField"
-  
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,
@@ -206,7 +206,7 @@ class OmangField(CharField):
         }
         defaults.update(kwargs)
         return super(OmangField, self).formfield(**defaults)
-    
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -219,7 +219,7 @@ class OmangField(CharField):
 
 
 class IdentityTypeField(CharField):
-    
+
     """
         have IdentityTypeField immediately follow an identity field:
         
@@ -243,18 +243,18 @@ class IdentityTypeField(CharField):
     """
 
     description = _("Custom field for Identity Type")
-               
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('verbose_name', _('What type of identity number is this?'))
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_length', 15)
-        kwargs.setdefault('choices', IDENTITY_TYPE)        
+        kwargs.setdefault('choices', IDENTITY_TYPE)
         #kwargs.setdefault('help_text', _('Format is 9999[12]9999'))
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
         return "CharField"
-      
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -277,9 +277,9 @@ class CellPhoneField(CharField):
     """
 
     description = _("Custom field for Cellphone numuber")
-               
+
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('verbose_name', _('Mobile'))    
+        kwargs.setdefault('verbose_name', _('Mobile'))
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_length', 8)
         kwargs.setdefault('help_text', _('The format is 99999999'))
@@ -287,7 +287,7 @@ class CellPhoneField(CharField):
 
     def get_internal_type(self):
         return "CharField"
-  
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,
@@ -298,7 +298,7 @@ class CellPhoneField(CharField):
         }
         defaults.update(kwargs)
         return super(CellPhoneField, self).formfield(**defaults)
-        
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -309,13 +309,13 @@ class CellPhoneField(CharField):
 
 
 class BloodPressureField(CharField):
-    
+
     """
         Custom field for blood pressure, measured as systolic/diastolic
     """
 
     description = _("Custom field for Blood Pressure")
-               
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('max_length', 7)
@@ -324,7 +324,7 @@ class BloodPressureField(CharField):
 
     def get_internal_type(self):
         return "CharField"
-  
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': RegexField,

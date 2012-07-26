@@ -13,7 +13,7 @@ class MyUUIDField (UUIDField):
 
     def contribute_to_class(self, cls, name):
         if self.primary_key == True:
-            assert not cls._meta.has_auto_field, "A model can't have more than one AutoField: %s %s %s; have %s" % (self,cls,name,cls._meta.auto_field)
+            assert not cls._meta.has_auto_field, "A model can't have more than one AutoField: %s %s %s; have %s" % (self, cls, name, cls._meta.auto_field)
             super(MyUUIDField, self).contribute_to_class(cls, name)
             cls._meta.has_auto_field = True
             cls._meta.auto_field = self
