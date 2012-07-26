@@ -97,7 +97,8 @@ class Command(BaseCommand):
 #                    self.stdout.write('\r\x1b[K {0} / {1} instances '
 #                                          ' ...'.format(instance_count, count))
                     if self.save:
-                        instance.save()
+                        # instance.save()
+                        instance.save_base(force_update=True, raw=True)
                     self.stdout.write('\r\x1b[K {0} / {1} instances '
                                       ' ...'.format(instance_count, count))
                     self.stdout.flush()
