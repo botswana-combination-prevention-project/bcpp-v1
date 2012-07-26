@@ -8,15 +8,15 @@ class Consent(BaseConsent):
     """ Standard consent model, may prefer to use the local model, e.g bhp_botswana.classes.base_consent """
 
     identity = EncryptedIdentityField(
-        unique = True,
+        unique=True,
         null=True,
         blank=True,
         )
-    
+
     identity_type = IdentityTypeField()
 
     def __unicode__(self):
         return unicode(self.subject_identifier)
 
     class Meta:
-        abstract = True  
+        abstract = True
