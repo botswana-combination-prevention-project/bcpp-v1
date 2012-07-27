@@ -235,7 +235,8 @@ class Crypter(BaseCrypter):
         if secret:
             #cipher_tuple is (cipher, sep, iv)
             if isinstance(secret, (basestring)):
-                print 'warning: decrypt {algorithm} {mode} expects secret to be a list or tuple. Got basestring'.format(algorithm=algorithm, mode=mode)
+                print ('warning: decrypt {algorithm} {mode} expects secret to be a list or tuple. '
+                      'Got basestring').format(algorithm=algorithm, mode=mode)
                 secret_text, iv = secret, '\0' * 16
             try:
                 secret_text, iv = secret[0], secret[2]
@@ -274,8 +275,7 @@ class Crypter(BaseCrypter):
             v = cipher.update(plaintext)
             v = v + cipher.final()
             del cipher
-            retval = (v, iv)
-            retval = map(base64.b64encode, retval)
+            retval = map(base64.b64encode, (v, iv))
         return retval
 
     def _build_aes_cipher(self, key, iv, op=ENC):

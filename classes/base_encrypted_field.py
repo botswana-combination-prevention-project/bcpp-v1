@@ -103,7 +103,7 @@ class BaseEncryptedField(models.Field):
         # We only handle 'exact' and 'in' but we'll except 'icontains'
         # as if it is 'exact' so that the admin search fields can work.
         # All others are errors.
-        if lookup_type == 'exact' or lookup_type == 'icontains':
+        if lookup_type == 'exact' or lookup_type == 'icontains' or lookup_type == 'isnull':
             return self.get_prep_value(value)
         elif lookup_type == 'startswith' and value == self.field_crypter.crypter.HASH_PREFIX:
             # allow to test field value for the hash_prefix

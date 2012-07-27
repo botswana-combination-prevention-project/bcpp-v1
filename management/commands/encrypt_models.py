@@ -47,7 +47,7 @@ class Command(BaseCommand):
         if options['list']:
             self._list_encrypted_models()
         elif options['check']:
-            self._are_models_encrypted()
+            self._check_models_encrypted()
         else:
             msg = 'No models to encrypt.'
             n = 0
@@ -62,55 +62,19 @@ class Command(BaseCommand):
                 msg = 'Complete. {0} models encrypted.\n'.format(n)
             self.stdout.write(msg)
 
-    def _encrypt_model(self, model, encrypted_fields):
+    def _encrypt_model(self, model, save=True):
+        """ Encrypts all unencrypted instances for given model.
 
-#        class CrypterThread(threading.Thread):
-#            def __init__(self, command, model_crypter, instance, encrypted_fields, instance_count, save):
-#                #print 'new thread {0}'.format(instance_count)
-#                self.model_crypter = model_crypter
-#                self.instance = instance
-#                self.encrypted_fields = encrypted_fields
-#                self.command = command
-#                self.save = save
-#                threading.Thread.__init__(self)
-#
-#            def run(self):
-#                self.model_crypter.encrypt_instance(self.instance,
-#                                               self.encrypted_fields,
-#                                               save=self.save)
-        n = 0
+        You may need to run this more than once if any instances
+        are partially encrypted"""
         model_crypter = ModelCrypter()
-        try:
-            app_name = model._meta.app_label
-            model_name = model._meta.object_name.lower()
-            self.stdout.write('Encrypting {app_name}.{model}...\n'.format(app_name=app_name,
-                                                                          model=model_name))
-            if not model_crypter.is_model_encrypted(model, suppress_messages=True):
-                count = model.objects.all().count()
-                instance_count = 0
-                for instance in model.objects.all().order_by('id'):
-                    instance_count += 1
-#                    crypter_thread = CrypterThread(self, model_crypter, instance,
-#                                                   encrypted_fields, instance_count,
-#                                                   save=self.save)
-#                    crypter_thread.start()
-#                    self.stdout.write('\r\x1b[K {0} / {1} instances '
-#                                          ' ...'.format(instance_count, count))
-                    if self.save:
-                        # instance.save()
-                        instance.save_base(force_update=True, raw=True)
-                    self.stdout.write('\r\x1b[K {0} / {1} instances '
-                                      ' ...'.format(instance_count, count))
-                    self.stdout.flush()
-                self.stdout.write('done.\n')
-                n += 1
-                self.stdout.flush()
-        except:
-            raise
-            #print "Unexpected error:", sys.exc_info()[0]
-            #raise CommandError('Failed on {app_name}.{model}.{pk}.'.format(app_name=app_name,
-            #                                                               model=model._meta.object_name.lower(),
-            #                                                               pk=instance.pk))
+        app_name = model._meta.app_label
+        model_name = model._meta.object_name.lower()
+        self.stdout.write('Encrypting {app_name}.{model}...\n'.format(app_name=app_name,
+                                                                      model=model_name))
+        model_crypter.encrypt_model(model, save)
+        self.stdout.write('done.\n')
+        self.stdout.flush()
 
     def _list_encrypted_models(self):
         model_crypter = ModelCrypter()
@@ -127,11 +91,11 @@ class Command(BaseCommand):
                                                      encrypted_fields=len(encrypted_fields)))
         self.stdout.write('{0} models use encryption.\n'.format(n))
 
-    def _are_models_encrypted(self):
+    def _check_models_encrypted(self):
         model_crypter = ModelCrypter()
         all_encrypted_models = model_crypter.get_all_encrypted_models()
         for app_name, encrypted_models in all_encrypted_models.iteritems():
             print '\n' + app_name.upper()
             for meta in encrypted_models.itervalues():
                 model = meta['model']
-                model_crypter.is_model_encrypted(model)
+                model_crypter.is_model_encrypted(model=model)
