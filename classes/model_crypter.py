@@ -129,9 +129,9 @@ class ModelCrypter(object):
             encryption_prefix = encrypted_field.field_crypter.crypter.HASH_PREFIX
             field_isnull = '{0}__isnull'.format(encrypted_field.attname)
             field_exact = '{0}__exact'.format(encrypted_field.attname)
-            unencrypted_instances = model.objects.exclude(**{field_startswith: encryption_prefix,
-                                                             field_isnull: True,
-                                                             field_exact: ''})
+            unencrypted_instances = (model.objects.filter(**{field_isnull: False}).
+                                                   exclude(**{field_startswith: encryption_prefix,
+                                                              field_exact: ''}))
             if unencrypted_instances.count() > 0:
                 return unencrypted_instances, field_name
         return model.objects.none(), field_name
