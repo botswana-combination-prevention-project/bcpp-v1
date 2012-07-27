@@ -127,7 +127,11 @@ class ModelCrypter(object):
             field_name = encrypted_field.attname
             field_startswith = '{0}__startswith'.format(encrypted_field.attname)
             encryption_prefix = encrypted_field.field_crypter.crypter.HASH_PREFIX
-            unencrypted_instances = model.objects.exclude(**{field_startswith: encryption_prefix})
+            field_isnull = '{0}__isnull'.format(encrypted_field.attname)
+            field_exact = '{0}__exact'.format(encrypted_field.attname)
+            unencrypted_instances = model.objects.exclude(**{field_startswith: encryption_prefix,
+                                                             field_isnull: True,
+                                                             field_exact: ''})
             if unencrypted_instances.count() > 0:
                 return unencrypted_instances, field_name
         return model.objects.none(), field_name
@@ -222,7 +226,7 @@ class ModelCrypter(object):
                     is_encrypted = True
                     if not suppress_messages:
                         print ('(*) {model_name}. (empty!)').format(model_name=model_name,
-                                                                                 field_name=field_name)
+                                                                    field_name=field_name)
                 else:
                     is_encrypted = True
                     if not suppress_messages:

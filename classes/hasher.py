@@ -1,5 +1,4 @@
 import hashlib
-
 from django.core.exceptions import ValidationError
 
 #from base_crypter import BaseCrypter
@@ -13,13 +12,13 @@ class Hasher(object):
         #super(Hasher, self).__init__(*args, **kwargs)
 
     def new_hasher(self, value=''):
-        # encode as utf-8 to avoid UnicodeEncodeError.
+        # decode as asciii to avoid UnicodeEncodeError.
         # for example: 'ascii' codec can't encode character u'\xb4' in position 60:
         # ordinal not in range(128)
-        return hashlib.sha256(value.encode('utf-8'))
+        return hashlib.sha256(value.decode('ascii', 'ignore'))
 
     def _get_hash_length(self):
-        return hashlib.sha256('Foo').block_size
+        return hashlib.sha256(u'Foo').block_size
 
     def get_hash(self, value, algorithm, mode, salt):
         """ for a given value, return a salted SHA256 hash """
@@ -31,7 +30,7 @@ class Hasher(object):
                 raise ValidationError('The Encryption keys are not available '
                                       'to this system. Unable to save '
                                       'sensitive data.')
-            digest = self.new_hasher(salt + value).digest()
+            digest = self.new_hasher('{0}{1}'.format(salt, value)).digest()
             # iterate
             for x in range(0, self.iterations - 1):
                 digest = self.new_hasher(digest).digest()
