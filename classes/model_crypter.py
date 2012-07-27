@@ -71,7 +71,7 @@ class ModelCrypter(object):
         if not unencrypted_instances:
             instance_total = model.objects.all().count()
             if print_on_save:
-                sys.stdout.write('{0} / {1} encrypted.\n'.format(instance_total, instance_total))
+                sys.stdout.write('{0} / {1} to encrypt.\n'.format(instance_total, instance_total))
         else:
             instance_total = unencrypted_instances.count()
             instance_count = 0

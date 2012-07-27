@@ -327,7 +327,7 @@ class Crypter(BaseCrypter):
             return key
 
         if not self.is_preloaded_with_keys():
-            print 'Preloading keys ...'
+            print '/* Preloading keys ...'
             for algorithm, mode_dict in self.VALID_MODES.iteritems():
                 for mode, key_dict in mode_dict.iteritems():
                     for key_name in key_dict.iterkeys():
@@ -336,9 +336,9 @@ class Crypter(BaseCrypter):
             if self.is_preloaded_with_keys('warning: failed to preload {algorithm} {mode} {key_name}'):
                 # run some tests
                 self.test()
-                print 'Done preloading keys.'
+                print 'Done preloading keys. */\n'
             else:
-                print 'No keys found to load.'
+                print 'No keys found to load. */\n'
             return True
 
     def _create_new_salts(self, length=12,

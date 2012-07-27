@@ -13,11 +13,10 @@ class Hasher(object):
         #super(Hasher, self).__init__(*args, **kwargs)
 
     def new_hasher(self, value=''):
-        return hashlib.sha256(value)
-
-    #def get_salt(self, algorithm, mode, _decrypt_salt):
-    #    self.encrypted_salt = self.set_encrypted_salt(algorithm, mode)
-    #    return _decrypt_salt(self.encrypted_salt)
+        # encode as utf-8 to avoid UnicodeEncodeError.
+        # for example: 'ascii' codec can't encode character u'\xb4' in position 60:
+        # ordinal not in range(128)
+        return hashlib.sha256(value.encode('utf-8'))
 
     def _get_hash_length(self):
         return hashlib.sha256('Foo').block_size
