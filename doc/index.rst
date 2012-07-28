@@ -16,6 +16,7 @@ bhp_crypto
    actions
    searching
    settings
+   management
    base_classes
    field_classes
    field_subclasses

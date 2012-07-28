@@ -100,13 +100,26 @@ class BaseEncryptedField(models.Field):
         return retval
 
     def get_prep_lookup(self, lookup_type, value):
-        # We only handle 'exact' and 'in' but we'll except 'icontains'
-        # as if it is 'exact' so that the admin search fields can work.
-        # All others are errors.
-        if lookup_type == 'exact' or lookup_type == 'icontains' or lookup_type == 'isnull':
+        """ Only decrypts the stored value to handle 'exact' and 'in'
+        but excepts 'icontains' as if it is 'exact' so that the admin
+        search fields work.
+
+        Also, 'startswith' does not decrypt and may only be used to check for the hash_prefix.
+        All others are errors.
+        """
+        if lookup_type == 'exact' or lookup_type == 'icontains':
             return self.get_prep_value(value)
-        elif lookup_type == 'startswith' and value == self.field_crypter.crypter.HASH_PREFIX:
-            # allow to test field value for the hash_prefix
+        elif lookup_type == 'isnull':
+            if type(value) != bool:
+                raise TypeError(('Value for lookup type \'{0}\' must be a boolean '
+                                 'for fields using encryption. Got {1}').format(lookup_type, value))
+            return self.get_prep_value(value, encrypt=False)
+        elif lookup_type == 'startswith':
+            # allow to test field value for the hash_prefix only, NO searching on the hash
+            if value != self.field_crypter.crypter.HASH_PREFIX:
+                raise TypeError(('Value for lookup type {0} may only be \'{1}\' for '
+                                 'fields using encryption.').format(lookup_type,
+                                                                    self.field_crypter.crypter.HASH_PREFIX))
             return self.get_prep_value(value, encrypt=False)
         elif lookup_type == 'in':
             return [self.get_prep_value(v) for v in value]
