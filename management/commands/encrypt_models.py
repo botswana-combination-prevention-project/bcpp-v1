@@ -222,7 +222,7 @@ class Command(BaseCommand):
                 unencrypted_values_set, field_name = model_crypter.get_unencrypted_values_set(meta['model'])
                 unencrypted_instances += unencrypted_values_set.count()
         counts.update({'unencrypted_instances': unencrypted_instances})
-        hours, minutes = divmod(unencrypted_instances / 800, 60)
+        hours, minutes = divmod(unencrypted_instances / 120, 60)
         counts.update({'estimated_time': '{0} hour {1} minutes.'.format(hours, minutes)})
         self.stdout.write('Models: {models}\nFields: {fields}\nTotal instance: {instances}\n'
                           'Unencrypted instances {unencrypted_instances}\n'
