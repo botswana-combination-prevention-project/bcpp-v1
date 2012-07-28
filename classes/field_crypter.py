@@ -111,7 +111,11 @@ class FieldCrypter(object):
         return hashed_value
 
     def get_hash_with_prefix(self, value):
-        return self.crypter.HASH_PREFIX + self.get_hash(value)
+        if value:
+            retval = self.crypter.HASH_PREFIX + self.get_hash(value)
+        else:
+            retval = None
+        return retval
 
     def get_prep_value(self, encrypted_value, value, **kwargs):
         """ Gets the hash from encrypted value for the DB """

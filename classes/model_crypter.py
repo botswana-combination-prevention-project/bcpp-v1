@@ -72,22 +72,23 @@ class ModelCrypter(object):
         print_on_save = kwargs.get('print_on_save', True)
         save_message = kwargs.get('save_message', '\r\x1b[K {0} / {1} instances encrypted...')
         unencrypted_instances, field_name = self.get_unencrypted_query_set(model, **kwargs)
+        instance_total = model.objects.all().count()
         if not unencrypted_instances:
-            instance_total = model.objects.all().count()
             if print_on_save:
-                sys.stdout.write('{0} / {1} instances encrypted.'.format(instance_total, instance_total))
+                sys.stdout.write(' {0}/{0} instances already encrypted...'.format(instance_total))
         else:
-            instance_total = unencrypted_instances.count()
+            unencrypted_instance_total = unencrypted_instances.count()
+            if (instance_total - unencrypted_instance_total) > 0:
+                sys.stdout.write(' {0}/{1} instances already encrypted.\n'.format((instance_total - unencrypted_instance_total), instance_total))
+                sys.stdout.flush()
             instance_count = 0
             for unencrypted_instance in unencrypted_instances:
                 instance_count += 1
                 if save:
                     self.encrypt_instance(unencrypted_instance, save)
                 if print_on_save:
-                    if not save:
-                        save_message = '{0} (not saved)'.format(save_message)
                     try:
-                        sys.stdout.write(save_message.format(instance_count, instance_total))
+                        sys.stdout.write(save_message.format(instance_count, unencrypted_instance_total))
                     except IndexError:
                         sys.stdout.write(save_message)
                     sys.stdout.flush()
