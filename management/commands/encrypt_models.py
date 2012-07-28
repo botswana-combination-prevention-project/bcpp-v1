@@ -1,9 +1,10 @@
 #import sys
-import threading
+#import threading
 
 from optparse import make_option
 from django.core.management.base import BaseCommand  # CommandError
-from bhp_crypto.classes import ModelCrypter
+from bhp_crypto.classes import ModelCrypter, FieldCrypter
+from bhp_crypto.models import Crypt
 
 
 class Command(BaseCommand):
@@ -37,6 +38,13 @@ class Command(BaseCommand):
                 dest='dry_run',
                 default=False,
                 help='Encrypts without saving. (Safe. Does not encrypt any data)'),
+            )
+    option_list += (
+            make_option('--verify-lookup',
+                action='store_true',
+                dest='dry_run',
+                default=False,
+                help='Verify secrets and hashing in lookup table, bhp_crypto.models.crypt. (Safe. Does not encrypt any data)'),
             )
 
     def handle(self, *args, **options):
@@ -107,3 +115,35 @@ class Command(BaseCommand):
             for meta in encrypted_models.itervalues():
                 model = meta['model']
                 model_crypter.is_model_encrypted(model=model)
+
+    def verify_secrets(self, *args, **options):
+        self.stdout.write('Verify secrets and hashes stored in lookup model '
+                          '(bhp_crypto.models.crypt)...\n')
+        self.stdout.write('Verify from newest to oldest.\n')
+        n = 0
+        verified = 0
+        failed_hash = 0
+        failed_decrypt = 0
+        total = Crypt.objects.all().count()
+        for instance in Crypt.objects.all().order_by('-modified'):
+            self.stdout.write('\r\x1b[K {0} / {1} verifying...'.format(n, total))
+            n += 1
+            field_crypter = FieldCrypter(instance.algorithm, instance.mode)
+            try:
+                plain_text = field_crypter.decrypt(field_crypter.crypter.HASH_PREFIX +
+                                                   instance.hash +
+                                                   field_crypter.crypter.SECRET_PREFIX +
+                                                   instance.secret)
+                test_hash = field_crypter.get_hash(plain_text)
+                if test_hash != instance.hash:
+                    failed_hash += 1
+                    self.stdout.write('pk=\'{0}\' failed on hash comparison\n'.format(instance.id))
+                else:
+                    verified += 1
+            except:
+                self.stdout.write('pk=\'{0}\' failed on decrypt\n'.format(instance.id))
+                failed_decrypt += 1
+            del field_crypter
+            self.stdout.flush()
+        self.stdout.write(('Total: {0}\nVerified: {1}\nFailed decrypt: {2}\nFailed decrypt: '
+                          ' {3}\nDone.').format(n, verified, failed_decrypt, failed_hash))
