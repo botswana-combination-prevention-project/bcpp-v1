@@ -49,7 +49,7 @@ class Command(BaseCommand):
         elif options['check']:
             self._check_models_encrypted()
         elif options['list_fields']:
-            self._list_fields_encrypted()
+            self._list_encrypted_fields()
         else:
             msg = 'No models to encrypt.'
             n = 0
@@ -92,12 +92,12 @@ class Command(BaseCommand):
                                                      model=model._meta.object_name.lower(),
                                                      encrypted_fields=len(encrypted_fields)))
                 if list_fields:
-                    self.stdout.write('{encrypted_fields}\n'.format(encrypted_fields=str([field.attname for field in encrypted_fields])))
+                    self.stdout.write('  {encrypted_fields}\n'.format(encrypted_fields=' \n  '.join(([' '.join((field.attname, '-'.join((field.algorithm, field.mode)))) for field in encrypted_fields]))))
 
         self.stdout.write('{0} models use encryption.\n'.format(n))
 
     def _list_encrypted_fields(self):
-            self._list_encrypted_models(self, list_fields=True)
+            self._list_encrypted_models(True)
 
     def _check_models_encrypted(self):
         model_crypter = ModelCrypter()
