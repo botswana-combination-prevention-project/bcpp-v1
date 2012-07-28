@@ -8,35 +8,35 @@ from bhp_crypto.classes import ModelCrypter
 
 class Command(BaseCommand):
 
-    args = '--model <model_name> --list --check'
+    args = '--list-models --list-fields --check --dry-run'
     help = 'Encrypt fields within any INSTALLED_APP model using an encrypted field object.'
     option_list = BaseCommand.option_list + (
-        make_option('--list',
+        make_option('--list-models',
             action='store_true',
             dest='list',
             default=False,
-            help='List models using encryption. (list only, does not encrypt any data).'),
+            help='Lists models using encryption. (Safe. Lists only, does not encrypt any data).'),
         )
     option_list += (
         make_option('--check',
             action='store_true',
             dest='check',
             default=False,
-            help='Check if all fields models are encrypted. (checks only, does not encrypt any data).'),
+            help='Checks if all instances of each model are encrypted. (checks only, does not encrypt any data).'),
         )
     option_list += (
-        make_option('--model',
+        make_option('--list-fields',
             action='store_true',
-            dest='model',
+            dest='list_fields',
             default=False,
-            help='Check if all fields models are encrypted. (checks only, does not encrypt any data).'),
+            help='Lists the fields in each model using encryption. (Safe. Lists only, does not encrypt any data)..'),
         )
     option_list += (
             make_option('--dry-run',
                 action='store_true',
                 dest='dry_run',
                 default=False,
-                help='Encrypt but do not save to the DB'),
+                help='Encrypts without saving. (Safe. Does not encrypt any data)'),
             )
 
     def handle(self, *args, **options):
@@ -48,6 +48,8 @@ class Command(BaseCommand):
             self._list_encrypted_models()
         elif options['check']:
             self._check_models_encrypted()
+        elif options['list_fields']:
+            self._list_fields_encrypted()
         else:
             msg = 'No models to encrypt.'
             n = 0
@@ -76,7 +78,7 @@ class Command(BaseCommand):
         self.stdout.write('done.\n')
         self.stdout.flush()
 
-    def _list_encrypted_models(self):
+    def _list_encrypted_models(self, list_fields=False):
         model_crypter = ModelCrypter()
         n = 0
         all_encrypted_models = model_crypter.get_all_encrypted_models()
@@ -89,7 +91,13 @@ class Command(BaseCommand):
                                   'fields.\n'.format(app_name=app_name,
                                                      model=model._meta.object_name.lower(),
                                                      encrypted_fields=len(encrypted_fields)))
+                if list_fields:
+                    self.stdout.write('{encrypted_fields}\n'.format(encrypted_fields=str([field.attname for field in encrypted_fields])))
+
         self.stdout.write('{0} models use encryption.\n'.format(n))
+
+    def _list_encrypted_fields(self):
+            self._list_encrypted_models(self, list_fields=True)
 
     def _check_models_encrypted(self):
         model_crypter = ModelCrypter()
