@@ -9,9 +9,6 @@ class BaseCrypter(BaseString):
     SECRET_PREFIX = 'enc2:::'  # like django-extensions does
     IV_PREFIX = 'iv:::'
 
-    def __init__(self):
-        super(BaseCrypter, self).__init__()
-
     def is_encrypted(self, value, prefix=None):
         """ The value string is considered encrypted if it starts
         with 'self.HASH_PREFIX' or whichever prefix is passed."""

@@ -8,15 +8,15 @@ from datetime import datetime
 
 from django.conf import settings
 
-from bhp_crypto.classes import Crypter
+from bhp_crypto.classes import KeyGenerator
 
 
 def setup_new_keys():
 
     """ Utility to generate all new keys for the project."""
     datestring = datetime.today().strftime('%Y%m%d%H%M%S%f')
-    crypter = Crypter(preload=False)
-    paths = crypter.get_key_paths()
+    key_generator = KeyGenerator()
+    paths = key_generator.get_key_paths()
     # backup existing keys
     try:
         backup_path = os.path.join(settings.KEY_PATH, 'keys_backup_{0}'.format(datestring))
@@ -50,11 +50,11 @@ def setup_new_keys():
     else:
         print 'Creating new keys'
         # an instance of crypter was created earlier
-        del crypter
+        del key_generator
         # now have an empty target folder so guaranteed to
         # not load old keys
-        crypter = Crypter(preload=False)
-        crypter.create_new_keys()
+        key_generator = KeyGenerator()
+        key_generator.create_new_keys()
         sys.stdout.flush()
 
         missing_key = False

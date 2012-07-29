@@ -43,7 +43,7 @@ class Crypter(BaseCrypter):
     PRELOADED_KEYS = copy.deepcopy(VALID_MODES)
     IS_PRELOADED = False
 
-    def __init__(self, algorithm, mode, **kwargs):
+    def __init__(self, algorithm, mode=None, **kwargs):
 
         self.public_key = None
         self.private_key = None
@@ -57,10 +57,11 @@ class Crypter(BaseCrypter):
             raise KeyError('Invalid algorithm \'{algorithm}\'. '
                            'Must be one of {keys}'.format(algorithm=self.algorithm,
                                                           keys=', '.join(self.VALID_MODES.keys())))
-        if (self.mode not in
-            self.VALID_MODES.get(self.algorithm).iterkeys()):
-            raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}.'
-                           ' Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm,
+        if self.mode:
+            if (self.mode not in
+                self.VALID_MODES.get(self.algorithm).iterkeys()):
+                raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}.'
+                               ' Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm,
                                                            keys=', '.join(self.VALID_MODES.get(self.algorithm).keys())))
         if kwargs.get('preload', True):
             if not self.IS_PRELOADED:
@@ -328,16 +329,6 @@ class Crypter(BaseCrypter):
         else:
             encrypted_salt = self._read_encrypted_salt_from_file(algorithm=algorithm, mode=mode)
         return encrypted_salt
-
-    def get_key_paths(self):
-        """ Returns a list of key pathnames """
-        paths = []
-        for algorithm, mode_dict in self.VALID_MODES.iteritems():
-            for mode, key_dict in mode_dict.iteritems():
-                for key_name in key_dict.iterkeys():
-                    if self.VALID_MODES.get(algorithm).get(mode).get(key_name):
-                        paths.append(self.VALID_MODES.get(algorithm).get(mode).get(key_name))
-        return paths
 
     def is_preloaded_with_keys(self, msg=None):
         """ Checks if keys are preloaded and returns False on the first missing key.
