@@ -44,7 +44,8 @@ class ModelCrypter(object):
             for model in get_models(get_app(app_name)):
                 encrypted_fields = self.get_encrypted_fields(model)
                 if encrypted_fields:
-                    encrypted_models[model._meta.object_name.lower()] = {'model': model, 'encrypted_fields': encrypted_fields}
+                    encrypted_models[model._meta.object_name.lower()] = {'model': model, 
+                                                                         'encrypted_fields': encrypted_fields}
         return encrypted_models
 
     def get_all_encrypted_models(self):
@@ -75,11 +76,15 @@ class ModelCrypter(object):
         instance_total = model.objects.all().count()
         if not unencrypted_instances:
             if print_on_save:
-                sys.stdout.write(' {0}/{0} instances already encrypted...'.format(instance_total))
+                sys.stdout.write(' {0}/{0} instances already encrypted ({1})...'.format(instance_total,
+                                                                                        field_name))
         else:
             unencrypted_instance_total = unencrypted_instances.count()
             if (instance_total - unencrypted_instance_total) > 0:
-                sys.stdout.write(' {0}/{1} instances already encrypted.\n'.format((instance_total - unencrypted_instance_total), instance_total))
+                sys.stdout.write(' {0}/{1} instances already encrypted ({2}).\n'.format((instance_total -
+                                                                                         unencrypted_instance_total),
+                                                                                         instance_total,
+                                                                                         field_name))
                 sys.stdout.flush()
             instance_count = 0
             for unencrypted_instance in unencrypted_instances:
@@ -88,7 +93,8 @@ class ModelCrypter(object):
                     self.encrypt_instance(unencrypted_instance, save)
                 if print_on_save:
                     try:
-                        sys.stdout.write(save_message.format(instance_count, unencrypted_instance_total))
+                        sys.stdout.write(save_message.format(instance_count,
+                                                             unencrypted_instance_total))
                     except IndexError:
                         sys.stdout.write(save_message)
                     sys.stdout.flush()

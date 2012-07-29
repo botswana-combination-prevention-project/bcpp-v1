@@ -16,49 +16,52 @@ class Command(BaseCommand):
             action='store_true',
             dest='encrypt',
             default=False,
-            help='Encrypt data in all models that use encryption. (DATA WILL BE CHANGED.).'),
+            help=('Encrypts data in all models that use encryption. (DATA WILL BE CHANGED.).')),
          )
     option_list += (
         make_option('--list-models',
             action='store_true',
             dest='list',
             default=False,
-            help='Lists models using encryption. (Safe. Lists only, does not encrypt any data).'),
+            help=('Lists models using encryption. (Safe. Lists only, does not encrypt any data).')),
         )
     option_list += (
         make_option('--check',
             action='store_true',
             dest='check',
             default=False,
-            help='Checks if all instances of each model are encrypted. (checks only, does not encrypt any data).'),
+            help=('Checks if all instances of each model are encrypted. (checks only, does not encrypt any data).')),
         )
     option_list += (
         make_option('--list-fields',
             action='store_true',
             dest='list_fields',
             default=False,
-            help='Lists the fields in each model using encryption. (Safe. Lists only, does not encrypt any data)..'),
+            help=('Lists the fields in each model using encryption. (Safe. Lists only, '
+                  'does not encrypt any data)..')),
         )
     option_list += (
             make_option('--dry-run',
                 action='store_true',
                 dest='dry_run',
                 default=False,
-                help='Encrypts without saving. (Safe. Does not encrypt any data)'),
+                help=('Encrypts without saving. (Safe. Does not encrypt any data)')),
             )
     option_list += (
             make_option('--verify-lookup',
                 action='store_true',
                 dest='verify_lookup',
                 default=False,
-                help='Verify secrets and hashing in lookup table, bhp_crypto.models.crypt. (Safe. Does not encrypt any data)'),
+                help=('Verifies secrets and hashing in lookup table, bhp_crypto.models.crypt. '
+                      '(Safe. Does not encrypt any data)')),
             )
     option_list += (
             make_option('--describe-plan',
                 action='store_true',
                 dest='describe',
                 default=False,
-                help='Describe encryption plan by showing number of models, fields and instances to be encrypted. (Safe. Does not encrypt any data)'),
+                help=('Describes encryption plan by showing number of models, fields and '
+                      'instances to be encrypted. (Safe. Does not encrypt any data)')),
             )
 
     def handle(self, *args, **options):
@@ -87,7 +90,7 @@ class Command(BaseCommand):
         self._list_encrypted_models(count_only=True)
         self.describe()
         if not save:
-            self.stdout.write('This is a dry-run, no data will be changed.')
+            self.stdout.write('This is a dry-run, no data will be changed.\n')
         msg = 'No models to encrypt.'
         n = 0
         model_crypter = ModelCrypter()
@@ -98,6 +101,7 @@ class Command(BaseCommand):
                     self._encrypt_model(encrypted_model['model'], save)
             msg = 'Complete. {0} models encrypted.\n'.format(n)
         self.stdout.write(msg)
+        self.stdout.flush()
 
     def _encrypt_model(self, model, save=True):
         """ Encrypts all instances for given model that are not yet encrypted."""
@@ -105,14 +109,17 @@ class Command(BaseCommand):
         app_name = model._meta.app_label
         model_name = model._meta.object_name.lower()
         start = datetime.today()
-        self.stdout.write('Encrypting {app_name}.{model}...started {start}\n'.format(app_name=app_name,
-                                                                      model=model_name,
-                                                                      start=start.strftime("%H:%M:%S")))
+        self.stdout.write('Encrypting {app_name}.{model}...'
+                          'started {start}\n'.format(app_name=app_name,
+                                                     model=model_name,
+                                                     start=start.strftime("%H:%M:%S")))
         model_crypter.encrypt_model(model, save)
         end = datetime.today()
         hours, remainder = divmod((end - start).seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        self.stdout.write('done in {0}:{1}:{2}.\n'.format(hours, minutes, seconds))
+        self.stdout.write('done in {0}:{1}:{2}.\n'.format(str(hours).rjust(2, '0'),
+                                                          str(minutes).rjust(2, '0'),
+                                                          str(seconds).rjust(2, '0')))
         self.stdout.flush()
 
     def _list_encrypted_models(self, **kwargs):
