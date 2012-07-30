@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
 #try:
-from bhp_crypto.classes import FieldCrypter
+from bhp_crypto.classes import FieldCryptor
 #except ImportError:
 #    pass
 from transaction_producer import TransactionProducer
@@ -75,7 +75,7 @@ class SerializeToTransaction(object):
                         ensure_ascii=False,
                         use_natural_keys=use_natural_keys)
         try:
-            json_tx = FieldCrypter(algorithm='aes', mode='local').encrypt(json_tx)
+            json_tx = FieldCryptor(algorithm='aes', mode='local').encrypt(json_tx)
         except NameError:
             pass
         except AttributeError:
