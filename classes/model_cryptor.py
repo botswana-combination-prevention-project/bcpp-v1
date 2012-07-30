@@ -6,7 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from bhp_crypto.classes import BaseEncryptedField
 
 
-class ModelCrypter(object):
+class ModelCryptor(object):
 
     def encrypt_instance(self, instance, save=True):
         """ Encrypts the instance by calling save_base (not save!). """
@@ -150,7 +150,7 @@ class ModelCrypter(object):
         for encrypted_field in encrypted_fields:
             field_name = encrypted_field.attname
             field_startswith = '{0}__startswith'.format(encrypted_field.attname)
-            encryption_prefix = encrypted_field.field_crypter.crypter.HASH_PREFIX
+            encryption_prefix = encrypted_field.field_cryptor.cryptor.HASH_PREFIX
             #field_isnull = '{0}__isnull'.format(encrypted_field.attname)
             field_exact = '{0}__exact'.format(encrypted_field.attname)
             if query_set == 'values_set':

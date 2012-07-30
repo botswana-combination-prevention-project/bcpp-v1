@@ -2,11 +2,11 @@ import base64
 
 from django.db.models import get_model
 
-from crypter import Crypter
+from cryptor import Cryptor
 from hasher import Hasher
 
 
-class FieldCrypter(object):
+class FieldCryptor(object):
 
     """ Subclass to be used with models that expect to stored just the hash and for this class to handle the secret. """
 
@@ -14,7 +14,7 @@ class FieldCrypter(object):
 
         self.algorithm = algorithm
         self.mode = mode
-        self.crypter = Crypter(algorithm=algorithm, mode=mode)
+        self.cryptor = Cryptor(algorithm=algorithm, mode=mode)
         self.hasher = Hasher(algorithm=algorithm, mode=mode)
 
     def encrypt(self, value, **kwargs):
@@ -24,17 +24,17 @@ class FieldCrypter(object):
         else:
             if not self.is_encrypted(value):
                 if self.algorithm == 'aes':
-                    encoded_secret = self.crypter.IV_PREFIX.join(self.crypter.aes_encrypt(value))
+                    encoded_secret = self.cryptor.IV_PREFIX.join(self.cryptor.aes_encrypt(value))
                 elif self.algorithm == 'rsa':
-                    if len(value) >= self.crypter.RSA_KEY_LENGTH / 24:
+                    if len(value) >= self.cryptor.RSA_KEY_LENGTH / 24:
                         raise ValueError('String value to encrypt may not exceed {0} characters. '
-                                         'Got {1}.'.format(self.crypter.RSA_KEY_LENGTH / 24, len(value)))
-                    secret = self.crypter.rsa_encrypt(value)
+                                         'Got {1}.'.format(self.cryptor.RSA_KEY_LENGTH / 24, len(value)))
+                    secret = self.cryptor.rsa_encrypt(value)
                     encoded_secret = base64.b64encode(secret)
                 else:
-                    raise ValueError('Cannot determine algorithm to use for encryption. Valid options are {0}. Got {1}'.format(', '.join(self.crypter.VALID_MODES.keys()), self.algorithm))
+                    raise ValueError('Cannot determine algorithm to use for encryption. Valid options are {0}. Got {1}'.format(', '.join(self.cryptor.VALID_MODES.keys()), self.algorithm))
                 hashed_value = self.get_hash(value)
-                hash_secret = self.crypter.HASH_PREFIX + hashed_value + self.crypter.SECRET_PREFIX + encoded_secret
+                hash_secret = self.cryptor.HASH_PREFIX + hashed_value + self.cryptor.SECRET_PREFIX + encoded_secret
             else:
                 hash_secret = value  # value did not change
         return hash_secret
@@ -49,23 +49,23 @@ class FieldCrypter(object):
 
         plaintext = secret
         if secret:
-            prefix = lambda x: self.crypter.HASH_PREFIX if x else self.crypter.SECRET_PREFIX
+            prefix = lambda x: self.cryptor.HASH_PREFIX if x else self.cryptor.SECRET_PREFIX
             if self.is_encrypted(secret, prefix(secret_is_hash)):
                 if secret_is_hash:
                     hashed_value = self.get_hash(secret)
                     secret = self._get_secret_from_hash_secret(secret, hashed_value)
                 else:
-                    secret = secret[len(self.crypter.SECRET_PREFIX):]  # secret is not a hash
+                    secret = secret[len(self.cryptor.SECRET_PREFIX):]  # secret is not a hash
                 if secret:
                     if self.algorithm == 'aes':
-                        if self.crypter.set_aes_key():
-                            plaintext = self.crypter.aes_decrypt(secret.partition(self.crypter.IV_PREFIX))
+                        if self.cryptor.set_aes_key():
+                            plaintext = self.cryptor.aes_decrypt(secret.partition(self.cryptor.IV_PREFIX))
                     elif self.algorithm == 'rsa':
-                        if self.crypter.set_private_key():
-                            plaintext = self.crypter.rsa_decrypt(secret)
+                        if self.cryptor.set_private_key():
+                            plaintext = self.cryptor.rsa_decrypt(secret)
                     else:
                         raise ValueError('Cannot determine algorithm for decryption.'
-                                         ' Valid options are {0}. Got {1}'.format(', '.join(self.crypter.VALID_MODES.keys()),
+                                         ' Valid options are {0}. Got {1}'.format(', '.join(self.cryptor.VALID_MODES.keys()),
                                                                                   self.algorithm))
                 else:
                     raise ValueError('When decrypting from hash, could not find secret'
@@ -73,7 +73,7 @@ class FieldCrypter(object):
         return plaintext
 
     def is_encrypted(self, value, prefix=None):
-        return self.crypter.is_encrypted(value, prefix)
+        return self.cryptor.is_encrypted(value, prefix)
 
     def update_secret_in_lookup(self, hash_secret):
         """ Given a hash+secret string, updates lookup with hashed_value and secret pairs """
@@ -104,15 +104,15 @@ class FieldCrypter(object):
         """ Returns the hashed value without hash_prefix by either splitting it from value or hashing value."""
         if self.is_encrypted(value):
             # if value is an encrypted value string, split to get hashed_value segment (less hash_prefix ans secret)
-            hashed_value = value[len(self.crypter.HASH_PREFIX):][:self.hasher.length]
+            hashed_value = value[len(self.cryptor.HASH_PREFIX):][:self.hasher.length]
         else:
-            encrypted_salt = self.crypter.get_encrypted_salt(self.algorithm, self.mode)
-            hashed_value = self.hasher.get_hash(value, self.algorithm, self.mode, self.crypter._decrypt_salt(encrypted_salt))
+            encrypted_salt = self.cryptor.get_encrypted_salt(self.algorithm, self.mode)
+            hashed_value = self.hasher.get_hash(value, self.algorithm, self.mode, self.cryptor._decrypt_salt(encrypted_salt))
         return hashed_value
 
     def get_hash_with_prefix(self, value):
         if value:
-            retval = self.crypter.HASH_PREFIX + self.get_hash(value)
+            retval = self.cryptor.HASH_PREFIX + self.get_hash(value)
         else:
             retval = None
         return retval
@@ -125,7 +125,7 @@ class FieldCrypter(object):
             if update_lookup:
                 self.update_secret_in_lookup(encrypted_value)
         hashed_value = self.get_hash(encrypted_value)
-        return self.crypter.HASH_PREFIX + hashed_value
+        return self.cryptor.HASH_PREFIX + hashed_value
 
     def _get_secret_from_hash_secret(self, value, hashed_value):
         """ Returns the secret by splitting value on the hashed_value if value is hash+secret otherwise value is the prefix+hashed_value. """
@@ -134,7 +134,7 @@ class FieldCrypter(object):
         else:
             if self.is_encrypted(value):
                 # split on hash, but if this is a hash only, secret_string will be None
-                secret = value[len(self.crypter.HASH_PREFIX) + len(hashed_value) + len(self.crypter.SECRET_PREFIX):]
+                secret = value[len(self.cryptor.HASH_PREFIX) + len(hashed_value) + len(self.cryptor.SECRET_PREFIX):]
                 if not secret:
                     # lookup secret_string for this hashed_value
                     secret = self._lookup_secret(hashed_value)

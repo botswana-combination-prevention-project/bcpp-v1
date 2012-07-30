@@ -23,14 +23,14 @@ class Command(BaseCommand):
             action='store_true',
             dest='old_class',
             default=False,
-            help='Original field class. Existing values were encrypted with this field class crypter algorithm.'),
+            help='Original field class. Existing values were encrypted with this field class cryptor algorithm.'),
         )
     option_list += (
         make_option('--new-class',
             action='store_true',
             dest='new_class',
             default=False,
-            help='New field class (confirmed). This field class will re-encrypt existing values using its crypter algorithm.'),
+            help='New field class (confirmed). This field class will re-encrypt existing values using its cryptor algorithm.'),
         )
 
     def __init__(self, *args, **kwargs):

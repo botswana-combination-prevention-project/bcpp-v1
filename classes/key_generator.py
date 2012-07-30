@@ -1,8 +1,9 @@
 import os
 import base64
 from M2Crypto import Rand, RSA, EVP
+from django.conf import settings
 
-from crypter import Crypter
+from cryptor import Cryptor
 
 
 class KeyGenerator(object):
@@ -12,23 +13,26 @@ class KeyGenerator(object):
         self._create_new_aes_keys()
         self._create_new_salts()
         self.test_keys()
+        if self.load_success:
+            print 'New keys are stored in \'{0}\''.format(settings.KEY_PATH)
 
     def test_keys(self):
         """ Tests keys """
-        for algorithm, mode_dict in Crypter.VALID_MODES.iteritems():
+        for algorithm, mode_dict in Cryptor.VALID_MODES.iteritems():
             for mode in mode_dict.iterkeys():
-                crypter = Crypter(algorithm, mode)
-                crypter.preload_all_keys()
+                cryptor = Cryptor(algorithm, mode, preload=False)
+                self.load_success = cryptor.preload_all_keys()
                 break
+            break
 
     def get_key_paths(self):
         """ Returns a list of key pathnames """
         paths = []
-        for algorithm, mode_dict in Crypter.VALID_MODES.iteritems():
+        for algorithm, mode_dict in Cryptor.VALID_MODES.iteritems():
             for mode, key_dict in mode_dict.iteritems():
                 for key_name in key_dict.iterkeys():
-                    if Crypter.VALID_MODES.get(algorithm).get(mode).get(key_name):
-                        paths.append(Crypter.VALID_MODES.get(algorithm).get(mode).get(key_name))
+                    if Cryptor.VALID_MODES.get(algorithm).get(mode).get(key_name):
+                        paths.append(Cryptor.VALID_MODES.get(algorithm).get(mode).get(key_name))
         return paths
 
     def _create_new_aes_keys(self, key=None):
@@ -37,13 +41,13 @@ class KeyGenerator(object):
         Filename suffix is added to the filename to avoid overwriting an
         existing key """
         algorithm = 'aes'
-        for mode in Crypter.VALID_MODES.get(algorithm).iterkeys():
+        for mode in Cryptor.VALID_MODES.get(algorithm).iterkeys():
             if not key:
                 key = os.urandom(16)
-            path = Crypter.VALID_MODES.get(algorithm).get(mode).get('key')
-            crypter = Crypter(algorithm, mode, preload=False)
-            encrypted_aes = crypter._encrypt_aes_key(key, mode)
-            del crypter
+            path = Cryptor.VALID_MODES.get(algorithm).get(mode).get('key')
+            cryptor = Cryptor(algorithm, mode, preload=False)
+            encrypted_aes = cryptor._encrypt_aes_key(key, mode)
+            del cryptor
             if os.path.exists(path):
                 print ('( ) Failed to create new {0} {1} key. File exists. {2}'.format(algorithm, mode, path))
             else:
@@ -59,11 +63,11 @@ class KeyGenerator(object):
             "Replace the default dashes as output upon key generation"
             return
         algorithm = 'rsa'
-        for mode, key_pair in Crypter.VALID_MODES.get(algorithm).iteritems():
+        for mode, key_pair in Cryptor.VALID_MODES.get(algorithm).iteritems():
             # Random seed
-            Rand.rand_seed(os.urandom(Crypter.RSA_KEY_LENGTH))
+            Rand.rand_seed(os.urandom(Cryptor.RSA_KEY_LENGTH))
             # Generate key pair
-            key = RSA.gen_key(Crypter.RSA_KEY_LENGTH, 65537, _blank_callback)
+            key = RSA.gen_key(Cryptor.RSA_KEY_LENGTH, 65537, _blank_callback)
             # create and save the public key to file
             filename = key_pair.get('public', None)
             if key.save_pub_key(''.join(filename)) > 0:
@@ -86,13 +90,13 @@ class KeyGenerator(object):
         Algorithm and mode are needed to get the filename from VAILD_MODES.
         """
         # create a salt for each algorithm and mode
-        for algorithm, mode_dict in Crypter.VALID_MODES.iteritems():
+        for algorithm, mode_dict in Cryptor.VALID_MODES.iteritems():
             for mode in mode_dict.iterkeys():
-                if Crypter.VALID_MODES.get(algorithm).get(mode).get('salt'):
-                    path = Crypter.VALID_MODES.get(algorithm).get(mode).get('salt')
-                    crypter = Crypter(algorithm, mode, preload=False)
-                    salt = crypter._encrypt_salt(crypter.make_random_salt(length, allowed_chars))
-                    del crypter
+                if Cryptor.VALID_MODES.get(algorithm).get(mode).get('salt'):
+                    path = Cryptor.VALID_MODES.get(algorithm).get(mode).get('salt')
+                    cryptor = Cryptor(algorithm, mode, preload=False)
+                    salt = cryptor._encrypt_salt(cryptor.make_random_salt(length, allowed_chars))
+                    del cryptor
                     f = open(path, 'w')
                     f.write(base64.b64encode(salt))
                     f.close()

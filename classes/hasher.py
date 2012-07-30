@@ -1,8 +1,6 @@
 import hashlib
 from django.core.exceptions import ValidationError
 
-#from base_crypter import BaseCrypter
-
 
 class Hasher(object):
     """ handle all hashing """

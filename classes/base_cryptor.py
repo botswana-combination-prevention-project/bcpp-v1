@@ -1,7 +1,7 @@
 from bhp_string.classes import BaseString
 
 
-class BaseCrypter(BaseString):
+class BaseCryptor(BaseString):
 
     # prefix for each segment of an encrypted value, also used to calculate
     # field length for model.

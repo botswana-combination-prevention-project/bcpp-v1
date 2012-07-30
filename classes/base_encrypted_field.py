@@ -1,6 +1,7 @@
 from django.db import models
+from django.conf import settings
 from django.core.exceptions import ValidationError
-from field_crypter import FieldCrypter
+from field_cryptor import FieldCryptor
 
 
 class BaseEncryptedField(models.Field):
@@ -24,37 +25,62 @@ class BaseEncryptedField(models.Field):
     __metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kwargs):
-        """ """
-        self.field_crypter = FieldCrypter(self.algorithm, self.mode)
-        # set the db field length based on the hash
-        defaults = {'max_length': self.field_crypter.hasher.length +
-                                  len(self.field_crypter.crypter.HASH_PREFIX) +
-                                  len(self.field_crypter.crypter.SECRET_PREFIX)}
+        """
+        Keyword Arguments (listing those of note only):
+        max_length -- length of table field for database. If settings.FIELD_MAX_LENGTH='default',
+                      sets max_length to the default. If settings.FIELD_MAX_LENGTH='migration',
+                      sets to default if less than default otherwise to the value given.
+                      (default: length of hash plus prefixes e.g. 78L)
+        widget -- a custom widget (default: default django widget)
+        """
+        self.field_cryptor = FieldCryptor(self.algorithm, self.mode)
+        # set the db field length based on the hash length (default length)
+        # if converting a DB, longtext fields should not be set to
+        # the default length until after the conversion is complete
+        default_max_length = (self.field_cryptor.hasher.length +
+                              len(self.field_cryptor.cryptor.HASH_PREFIX) +
+                              len(self.field_cryptor.cryptor.SECRET_PREFIX))
+        if not 'FIELD_MAX_LENGTH' in dir(settings):
+            raise TypeError('Settings attribute \'FIELD_MAX_LENGTH\' not found. '
+                            'Set FIELD_MAX_LENGTH=\'migration\' before migrating an existing '
+                            'DB to use Encrypted Fields. Migrate, encrypt, then set FIELD_MAX_LENGTH=\'default\','
+                            'create a new schemamigration, and migrate again.')
+        if settings.FIELD_MAX_LENGTH == 'default':
+            max_length = default_max_length
+        elif settings.FIELD_MAX_LENGTH == 'migration':
+            max_length = kwargs.get('max_length', default_max_length)
+            if max_length < default_max_length:
+                max_length = default_max_length
+        else:
+            raise TypeError('Invalid value for settings attribute FIELD_MAX_LENGTH. '
+                           'Valid options are \'migration\' and \'default\'. '
+                           'Got {0}'.format(settings.FIELD_MAX_LENGTH))
+        defaults = {'max_length': max_length}
         kwargs.update(defaults)
         super(BaseEncryptedField, self).__init__(*args, **kwargs)
 
 #    def have_decryption_key(self):
 #        """ """
 #        retval = False
-#        if self.field_crypter.private_key:
+#        if self.field_cryptor.private_key:
 #            retval = True
 #        return retval
 
     def get_max_length(self):
-        return (self.field_crypter.hasher.length + len(self.field_crypter.crypter.HASH_PREFIX) +
-               len(self.field_crypter.crypter.SECRET_PREFIX))
+        return (self.field_cryptor.hasher.length + len(self.field_cryptor.cryptor.HASH_PREFIX) +
+               len(self.field_cryptor.cryptor.SECRET_PREFIX))
 
     def is_encrypted(self, value):
-        """ wrap the crypter method of same name """
-        return self.field_crypter.is_encrypted(value)
+        """ wrap the cryptor method of same name """
+        return self.field_cryptor.is_encrypted(value)
 
     def decrypt(self, value, **kwargs):
-        """ wrap the crypter method of same name """
-        return self.field_crypter.decrypt(value)
+        """ wrap the cryptor method of same name """
+        return self.field_cryptor.decrypt(value)
 
     def encrypt(self, value, **kwargs):
-        """ wrap the crypter method of same name """
-        return self.field_crypter.encrypt(value)
+        """ wrap the cryptor method of same name """
+        return self.field_cryptor.encrypt(value)
 
     def validate_with_cleaned_data(self, attname, cleaned_data):
         """ May be overridden to test field data against other values
@@ -96,7 +122,7 @@ class BaseEncryptedField(models.Field):
         retval = value
         if value and encrypt:
             encrypted_value = self.encrypt(value)
-            retval = self.field_crypter.get_prep_value(encrypted_value, value)
+            retval = self.field_cryptor.get_prep_value(encrypted_value, value)
         return retval
 
     def get_prep_lookup(self, lookup_type, value):
@@ -116,10 +142,10 @@ class BaseEncryptedField(models.Field):
             return self.get_prep_value(value, encrypt=False)
         elif lookup_type == 'startswith':
             # allow to test field value for the hash_prefix only, NO searching on the hash
-            if value != self.field_crypter.crypter.HASH_PREFIX:
+            if value != self.field_cryptor.cryptor.HASH_PREFIX:
                 raise TypeError(('Value for lookup type {0} may only be \'{1}\' for '
                                  'fields using encryption.').format(lookup_type,
-                                                                    self.field_crypter.crypter.HASH_PREFIX))
+                                                                    self.field_cryptor.cryptor.HASH_PREFIX))
             return self.get_prep_value(value, encrypt=False)
         elif lookup_type == 'in':
             return [self.get_prep_value(v) for v in value]

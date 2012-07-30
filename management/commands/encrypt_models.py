@@ -3,7 +3,7 @@
 from datetime import datetime
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
-from bhp_crypto.classes import ModelCrypter, FieldCrypter
+from bhp_crypto.classes import ModelCryptor, FieldCryptor
 from bhp_crypto.models import Crypt
 
 
@@ -93,8 +93,8 @@ class Command(BaseCommand):
             self.stdout.write('This is a dry-run, no data will be changed.\n')
         msg = 'No models to encrypt.'
         n = 0
-        model_crypter = ModelCrypter()
-        all_encrypted_models = model_crypter.get_all_encrypted_models()
+        model_cryptor = ModelCryptor()
+        all_encrypted_models = model_cryptor.get_all_encrypted_models()
         if all_encrypted_models:
             for encrypted_models in all_encrypted_models.itervalues():
                 for encrypted_model in encrypted_models.itervalues():
@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
     def _encrypt_model(self, model, save=True):
         """ Encrypts all instances for given model that are not yet encrypted."""
-        model_crypter = ModelCrypter()
+        model_cryptor = ModelCryptor()
         app_name = model._meta.app_label
         model_name = model._meta.object_name.lower()
         start = datetime.today()
@@ -113,7 +113,7 @@ class Command(BaseCommand):
                           'started {start}\n'.format(app_name=app_name,
                                                      model=model_name,
                                                      start=start.strftime("%H:%M:%S")))
-        model_crypter.encrypt_model(model, save)
+        model_cryptor.encrypt_model(model, save)
         end = datetime.today()
         hours, remainder = divmod((end - start).seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
@@ -132,11 +132,11 @@ class Command(BaseCommand):
         """
         list_fields = kwargs.get('list_fields', False)
         count_only = kwargs.get('count_only', False)
-        model_crypter = ModelCrypter()
+        model_cryptor = ModelCryptor()
         n = 0
         field_count = 0
         instance_count_total = 0
-        all_encrypted_models = model_crypter.get_all_encrypted_models()
+        all_encrypted_models = model_cryptor.get_all_encrypted_models()
         for app_name, encrypted_models in all_encrypted_models.iteritems():
             for meta in encrypted_models.itervalues():
                 model = meta['model']
@@ -164,13 +164,13 @@ class Command(BaseCommand):
 
     def _check_models_encrypted(self):
         """Checks the encryption status of each instance in each model. """
-        model_crypter = ModelCrypter()
-        all_encrypted_models = model_crypter.get_all_encrypted_models()
+        model_cryptor = ModelCryptor()
+        all_encrypted_models = model_cryptor.get_all_encrypted_models()
         for app_name, encrypted_models in all_encrypted_models.iteritems():
             print '\n' + app_name.upper()
             for meta in encrypted_models.itervalues():
                 model = meta['model']
-                model_crypter.is_model_encrypted(model=model)
+                model_cryptor.is_model_encrypted(model=model)
 
     def verify_lookup(self, **kwargs):
         """Verifies the hashes and secrets in the lookup model Crypt by decrypting the secrets,
@@ -190,13 +190,13 @@ class Command(BaseCommand):
             if print_messages:
                 self.stdout.write('\r\x1b[K {0} / {1} verifying...'.format(n, total))
             n += 1
-            field_crypter = FieldCrypter(instance.algorithm, instance.mode)
+            field_cryptor = FieldCryptor(instance.algorithm, instance.mode)
             try:
-                plain_text = field_crypter.decrypt(field_crypter.crypter.HASH_PREFIX +
+                plain_text = field_cryptor.decrypt(field_cryptor.cryptor.HASH_PREFIX +
                                                    instance.hash +
-                                                   field_crypter.crypter.SECRET_PREFIX +
+                                                   field_cryptor.cryptor.SECRET_PREFIX +
                                                    instance.secret)
-                test_hash = field_crypter.get_hash(plain_text)
+                test_hash = field_cryptor.get_hash(plain_text)
                 if test_hash != instance.hash:
                     failed_hash += 1
                     if print_messages:
@@ -209,7 +209,7 @@ class Command(BaseCommand):
                 else:
                     print 'pk=\'{0}\' failed on decrypt\n'.format(instance.id)
                 failed_decrypt += 1
-            del field_crypter
+            del field_cryptor
             if print_messages:
                 self.stdout.flush()
         msg = ('Total secrets: {0}\nVerified: {1}\nFailed decrypt: {2}\nFailed hash comparison: '
@@ -220,13 +220,13 @@ class Command(BaseCommand):
             print msg
 
     def describe(self):
-        model_crypter = ModelCrypter()
+        model_cryptor = ModelCryptor()
         counts = self._list_encrypted_models(count_only=True)
-        all_encrypted_models = model_crypter.get_all_encrypted_models()
+        all_encrypted_models = model_cryptor.get_all_encrypted_models()
         unencrypted_instances = 0
         for encrypted_models in all_encrypted_models.itervalues():
             for meta in encrypted_models.itervalues():
-                unencrypted_values_set, field_name = model_crypter.get_unencrypted_values_set(meta['model'])
+                unencrypted_values_set, field_name = model_cryptor.get_unencrypted_values_set(meta['model'])
                 unencrypted_instances += unencrypted_values_set.count()
         counts.update({'unencrypted_instances': unencrypted_instances})
         hours, minutes = divmod(unencrypted_instances / 120, 60)

@@ -1,6 +1,6 @@
-from bhp_crypto.classes import BaseCrypter
+from bhp_crypto.classes import BaseCryptor
 
 
 def mask_encrypted(value):
-    base_crypter = BaseCrypter()
-    return base_crypter.mask(value)
+    base_cryptor = BaseCryptor()
+    return base_cryptor.mask(value)

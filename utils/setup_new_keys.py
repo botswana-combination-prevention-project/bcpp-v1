@@ -49,7 +49,7 @@ def setup_new_keys():
         print 'Failing. Old keys are still in the target folder. Try moving them manually to a backup folder.'
     else:
         print 'Creating new keys'
-        # an instance of crypter was created earlier
+        # an instance of cryptor was created earlier
         del key_generator
         # now have an empty target folder so guaranteed to
         # not load old keys

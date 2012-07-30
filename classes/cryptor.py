@@ -7,10 +7,10 @@ from M2Crypto import Rand, RSA, EVP
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 
-from base_crypter import BaseCrypter
+from base_cryptor import BaseCryptor
 
 
-class Crypter(BaseCrypter):
+class Cryptor(BaseCryptor):
     """ Base class for all classes providing RSA and AES encryption methods."""
     RSA_KEY_LENGTH = 2048
     ENC = 1
@@ -68,7 +68,7 @@ class Crypter(BaseCrypter):
                 self.preload_all_keys()
         else:
             self.PRELOADED_KEYS = copy.deepcopy(self.VALID_MODES)
-        super(Crypter, self).__init__()
+        super(Cryptor, self).__init__()
 
     def set_public_key(self, keyfile=None, **kwargs):
         """ Load the rsa public key. """
@@ -387,6 +387,7 @@ class Crypter(BaseCrypter):
             return plaintext
 
         plaintext = '123456789ABCDEFG'
+        print 'Testing keys...'
         for algorithm, mode_dict in self.VALID_MODES.iteritems():
             for mode in mode_dict.iterkeys():
                 #print 'Testing {algorithm} {mode}...'.format(algorithm=algorithm, mode=mode)
@@ -398,3 +399,5 @@ class Crypter(BaseCrypter):
                     print '( ) Encrypt/Decrypt failed for {algorithm} {mode}.'.format(algorithm=algorithm, mode=mode)
                 else:
                     print '(*) Encrypt/Decrypt works for {algorithm} {mode}'.format(algorithm=algorithm, mode=mode)
+        print 'Testing complete.'
+

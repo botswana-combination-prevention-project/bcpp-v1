@@ -3,7 +3,7 @@ from bhp_crypto.actions import encrypt, decrypt
 from bhp_crypto.classes import BaseEncryptedField
 
 
-class BaseCrypterModelAdmin (BaseModelAdmin):
+class BaseCryptorModelAdmin (BaseModelAdmin):
 
     """ Overide ModelAdmin to force username to be saved on add/change and
     other stuff. """
@@ -11,13 +11,13 @@ class BaseCrypterModelAdmin (BaseModelAdmin):
     def __init__(self, *args, **kwargs):
         self.actions.append(encrypt)
         self.actions.append(decrypt)
-        super(BaseCrypterModelAdmin, self).__init__(*args, **kwargs)
+        super(BaseCryptorModelAdmin, self).__init__(*args, **kwargs)
 
     def get_readonly_fields(self, request, obj=None):
 
-        super(BaseCrypterModelAdmin, self).get_readonly_fields(request, obj)
+        super(BaseCryptorModelAdmin, self).get_readonly_fields(request, obj)
 
-        # make crypter fields readonly if no private key and in edit mode
+        # make cryptor fields readonly if no private key and in edit mode
 #        if obj:  # In edit mode
 #            for field in obj._meta.fields:
 #                if isinstance(field, BaseEncryptedField):
