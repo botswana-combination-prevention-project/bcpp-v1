@@ -2,7 +2,7 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import ForeignKey
 
-from bhp_crypto.classes import BaseCrypterModelAdmin as BaseModelAdmin
+from bhp_crypto.classes import BaseCryptorModelAdmin as BaseModelAdmin
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 
@@ -34,7 +34,7 @@ class BaseConsentModelAdmin(BaseModelAdmin):
 
         if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
             if request.GET.get('next'):
-                url_parameters = { 'subject_identifier':request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'), }
+                url_parameters = {'subject_identifier': request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'),}
                 result['Location'] = reverse(request.GET.get('next'), kwargs=url_parameters)
         return result
 
@@ -44,7 +44,7 @@ class BaseConsentModelAdmin(BaseModelAdmin):
 
         if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
             if request.GET.get('next'):
-                url_parameters = { 'subject_identifier':request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'), }
+                url_parameters = {'subject_identifier': request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'),}
                 result['Location'] = reverse(request.GET.get('next'), kwargs=url_parameters)
 
         return result

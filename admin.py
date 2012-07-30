@@ -1,7 +1,5 @@
 from django.contrib import admin
-from bhp_crypto.classes import BaseCrypterModelAdmin as BaseModelAdmin
-#from bhp_registration.utils import AllocateIdentifier
-#from models import BaseLocator
+from bhp_crypto.classes import BaseCryptorModelAdmin as BaseModelAdmin
 
 
 class BaseSubjectConsentAdmin(BaseModelAdmin):
