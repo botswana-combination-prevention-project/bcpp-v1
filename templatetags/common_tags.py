@@ -2,6 +2,7 @@ import socket
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
+from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
@@ -17,11 +18,15 @@ def hostname():
 
 @register.simple_tag
 def project_title():
+    if 'PROJECT_TITLE' not in dir(settings):
+        raise ImproperlyConfigured('Attribute settings.PROJECT_TITLE not found. Please add PROJECT_TITLE=\'<long name of my project>\' to the settings file.')
     return settings.PROJECT_TITLE
 
 
 @register.simple_tag
 def app_name():
+    if 'APP_NAME' not in dir(settings):
+        raise ImproperlyConfigured('Attribute settings.APP_NAME not found. Please add APP_NAME=\'<short name of my project>\' to the settings file.')
     return settings.APP_NAME
 
 
