@@ -69,8 +69,8 @@ class AuditTrail(object):
                         if isinstance(field, BaseEncryptedField):
                             # slip hash in to silence encryption
                             value = getattr(instance, field.name)
-                            if not field.field_crypter.is_encrypted(value):
-                                kwargs[field.name] = field.field_crypter.get_hash_with_prefix(value)
+                            if not field.field_cryptor.is_encrypted(value):
+                                kwargs[field.name] = field.field_cryptor.get_hash_with_prefix(value)
                             else:
                                 kwargs[field.name] = value
                         else:
