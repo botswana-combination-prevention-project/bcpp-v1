@@ -1,5 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Q, get_app, get_model
+from django.db.models import Q
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.classes import BaseConsent
 from bhp_crypto.classes import BaseEncryptedField
@@ -77,13 +77,15 @@ class BaseSearchByWord(BaseSearch):
                 Q(user_modified__icontains=search_term_or_hash.get('user_modified'))
                 )
         else:
-            raise ImproperlyConfigured('Search models must have a foreign key to model RegisteredSubject or be a subclass of BaseConsent. Got model {0}.'.format(model_name))
+            raise ImproperlyConfigured('Search models must have a foreign key to model '
+                                       'RegisteredSubject or be a subclass of BaseConsent. '
+                                       'Got model {0}.'.format(model._meta.object_name.lower()))
         search_result = model.objects.filter(qset).order_by(self.context.get('order_by'))
         return search_result
 
     def hash_for_encrypted_fields(self, search_term, model_instance):
-        """ Using the model's field objects and the search term, create a dictionary of {field_name, search term}
-            where search term is hashed if this is an encrypted field """
+        """ Using the model's field objects and the search term, create a dictionary of
+        {field_name, search term} where search term is hashed if this is an encrypted field """
         terms = {}
         for field in model_instance._meta.fields:
             if isinstance(field, BaseEncryptedField):
