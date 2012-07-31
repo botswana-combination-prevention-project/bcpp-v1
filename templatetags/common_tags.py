@@ -1,15 +1,34 @@
+import socket
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from bhp_common.utils import formatted_age, round_up
 
 register = template.Library()
 
+
+@register.simple_tag
+def hostname():
+    return socket.gethostname()
+
+
+@register.simple_tag
+def project_title():
+    return settings.PROJECT_TITLE
+
+
+@register.simple_tag
+def app_name():
+    return settings.APP_NAME
+
+
 @register.simple_tag
 def get_model_name(model):
     return model._meta.module_name
+
 
 @register.simple_tag
 def get_app_label(model):
@@ -20,12 +39,14 @@ def get_app_label(model):
 def model_verbose_name(contenttype):
     return contenttype.model_class()._meta.verbose_name
 
+
 @register.filter(name='add_nbsp')
 def add_nbsp(value):
     if value:
         return value.replace(' ', '&nbsp;')
-    return ''    
-    
+    return ''
+
+
 @register.filter(name='admin_url_from_contenttype')
 def admin_url_from_contenttype(contenttype):
     view = 'admin:%s_%s_add' % (contenttype.app_label, contenttype.model)
@@ -33,27 +54,29 @@ def admin_url_from_contenttype(contenttype):
     try:
         rev_url = reverse(view)
     except:
-        raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (contenttype.app_label, contenttype.model))    
+        raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (contenttype.app_label, contenttype.model))
     return rev_url
-    
+
+
 @register.filter(name='user_full_name')
 def user_full_name(username):
     if not username:
         return ''
-    else:    
+    else:
         try:
-            user=User.objects.get(username__iexact=username)
+            user = User.objects.get(username__iexact=username)
             return '%s %s (%s)' % (user.first_name, user.last_name, user.get_profile().initials)
         except:
             return username
+
 
 @register.filter(name='user_initials')
 def user_initials(username):
     if not username:
         return ''
-    else:    
+    else:
         try:
-            user=User.objects.get(username__iexact=username)
+            user = User.objects.get(username__iexact=username)
             return user.get_profile().initials
         except:
             return username
@@ -64,6 +87,7 @@ def user_initials(username):
 def age(born):
     reference_date = date.today()
     return formatted_age(born, reference_date)
+
 
 @register.filter(name='dob_or_dob_estimated')
 def dob_or_dob_estimated(dob, is_dob_estimated):
@@ -90,18 +114,19 @@ def gender(value):
     elif value.lower() == '-9':
         return '?'
     else:
-        return value    
-        
-        
+        return value
+
+
 @register.filter(name='roundup')
 def roundup(d, digits):
-    return round_up(d, digits)   
+    return round_up(d, digits)
+
 
 @register.filter
 def divide_by(x, y):
     if x == 0 or y == 0:
         return 0
     else:
-        return x/y
+        return x / y
 
 

@@ -1,0 +1,13 @@
+{% extends "base_site_mpepu.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'home' %}">{% trans 'Home' %}</a></div>{% endblock %}
+
+{% block content %}
+
+<p>A error has occured</p>
+
+<p>{{ exception }}</p>
+
+{% endblock %}
