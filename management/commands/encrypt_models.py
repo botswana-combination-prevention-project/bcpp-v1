@@ -9,7 +9,7 @@ from bhp_crypto.models import Crypt
 
 class Command(BaseCommand):
 
-    args = '--list-models --list-fields --check --dry-run'
+    args = '--list-models --list-fields --check --dry-run --verify-lookup --decribe'
     help = 'Encrypt fields within any INSTALLED_APP model using an encrypted field object.'
     option_list = BaseCommand.option_list + (
         make_option('--encrypt',
@@ -192,10 +192,17 @@ class Command(BaseCommand):
             n += 1
             field_cryptor = FieldCryptor(instance.algorithm, instance.mode)
             try:
-                plain_text = field_cryptor.decrypt(field_cryptor.cryptor.HASH_PREFIX +
+                stored_secret = (field_cryptor.cryptor.HASH_PREFIX +
                                                    instance.hash +
                                                    field_cryptor.cryptor.SECRET_PREFIX +
                                                    instance.secret)
+                plain_text = field_cryptor.decrypt(stored_secret)
+                plain_text_encrypt_decrypt = field_cryptor.decrypt(field_cryptor.encrypt(plain_text))
+                if plain_text != plain_text_encrypt_decrypt:
+                    self.stdout.write('pk=\'{0}\' failed on secrets comparison\n'.format(instance.id))
+                    print plain_text + '\n\n'
+                    print plain_text_encrypt_decrypt + '\n\n'
+                    return
                 test_hash = field_cryptor.get_hash(plain_text)
                 if test_hash != instance.hash:
                     failed_hash += 1

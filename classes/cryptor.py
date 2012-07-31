@@ -237,15 +237,21 @@ class Cryptor(BaseCryptor):
         return EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
 
     def _decrypt_aes_key(self, encrypted_aes, mode):
-        public_key = copy.copy(self.public_key)
+        #public_key = copy.copy(self.public_key)
         plain_aes = self.rsa_decrypt(encrypted_aes, algorithm='rsa', mode=mode)
-        self.public_key = public_key
-        return plain_aes
+        #self.public_key = public_key
+        if encrypted_aes == plain_aes:
+            retval = None
+        else:
+            retval = plain_aes
+        return retval
 
     def _encrypt_aes_key(self, plain_aes, mode):
-        private_key = copy.copy(self.private_key)
+        #private_key = copy.copy(self.private_key)
         encrypted_aes = self.rsa_encrypt(plain_aes, algorithm='rsa', mode=mode)
-        self.private_key = private_key
+        #self.private_key = private_key
+        if encrypted_aes == plain_aes:
+            raise ImproperlyConfigured('Keys are not available to encrypt the aes key.')
         return encrypted_aes
 
     def preload_all_keys(self):
