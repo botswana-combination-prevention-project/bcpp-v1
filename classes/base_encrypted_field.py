@@ -29,7 +29,7 @@ class BaseEncryptedField(models.Field):
         Keyword Arguments (listing those of note only):
         max_length -- length of table field for database. If settings.FIELD_MAX_LENGTH='default',
                       sets max_length to the default. If settings.FIELD_MAX_LENGTH='migration',
-                      sets to default if less than default otherwise to the value given.
+                      sets to default if less than default otherwise to the value defined on the model.
                       (default: length of hash plus prefixes e.g. 78L)
         widget -- a custom widget (default: default django widget)
         """
