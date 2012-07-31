@@ -1,5 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Q
+from django.db.models import Q, get_app, get_model
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.classes import BaseConsent
 from bhp_crypto.classes import BaseEncryptedField
@@ -23,22 +23,31 @@ class BaseSearchByWord(BaseSearch):
         if self.ready:
             self.update_context(search_result_title='Results for \'{0}\''.format(','.join([v for v in self.context.get('form').cleaned_data.itervalues()])))
 
-    def search(self, request, **kwargs):
-        """get word or search term queryset object based on a name or 'queryset_label'"""
-        for model_name, model in self.search_model.iteritems():
-            if not isinstance(model(), RegisteredSubject):
-                if not 'registered_subject' in dir(model()) and not isinstance(model(), BaseConsent):
-                    raise ImproperlyConfigured('Search models must have a foreign key to model RegisteredSubject or be a subclass of BaseConsent. Got model {0}.'.format(model_name))
+    def get_search_prep(self, request, **kwargs):
+        """Gets word or search term queryset object based on a name or 'queryset_label'.
+
+        Keyword Arguments:
+        search_name --
+
+        """
+        search_name = kwargs.get('search_name')
+        model = self.get_search_model(search_name)
+        if not isinstance(model(), RegisteredSubject):
+            if not 'registered_subject' in dir(model()) and not isinstance(model(), BaseConsent):
+                raise ImproperlyConfigured('Search models must have a foreign key to '
+                                               'model RegisteredSubject or be a subclass of '
+                                               'BaseConsent. Got model {0}.'.format(model._meta.object_name.lower()))
         if not self.context.get('dbname', None):
             self.update_context(dbname='default')
         # expect a single k,v pair so that we have just one search term
         if len(self.context.get('form').fields) != 1:
-            raise TypeError("Search-by-word form {0} should have a single field only. Got {1}".format(self.context.get('form').__class__, len(self.context.get('form').fields)))
+            raise TypeError('Search-by-word form {0} should have a single field only. '
+                            'Got {1}'.format(self.context.get('form').__class__,
+                                             len(self.context.get('form').fields)))
         for field_name in self.context.get('form').fields.iterkeys():
             search_term = self.context.get('form').cleaned_data.get(field_name)
         if not search_term:
             raise TypeError('Search method should only be called if the \'search_term\' is known. Got None')
-        model = self.search_model.get(self.search_model_name)
         search_term_or_hash = {}
         if 'registered_subject' in dir(model()):
             # model has a key to registered subject
@@ -70,8 +79,7 @@ class BaseSearchByWord(BaseSearch):
         else:
             raise ImproperlyConfigured('Search models must have a foreign key to model RegisteredSubject or be a subclass of BaseConsent. Got model {0}.'.format(model_name))
         search_result = model.objects.filter(qset).order_by(self.context.get('order_by'))
-        kwargs.update({'search_result': search_result})
-        super(BaseSearchByWord, self).search(request, **kwargs)
+        return search_result
 
     def hash_for_encrypted_fields(self, search_term, model_instance):
         """ Using the model's field objects and the search term, create a dictionary of {field_name, search term}
@@ -80,10 +88,8 @@ class BaseSearchByWord(BaseSearch):
         for field in model_instance._meta.fields:
             if isinstance(field, BaseEncryptedField):
                 # change the search term to a hash using the hasher on the field
-                terms[field.attname] = field.crypter.get_stored_hash(search_term)
+                terms[field.attname] = field.field_cryptor.get_hash_with_prefix(search_term)
             else:
                 # use the original search term
                 terms[field.attname] = search_term
         return terms
-
-
