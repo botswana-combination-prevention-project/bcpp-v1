@@ -8,7 +8,7 @@ class BaseSubjectConsentAdmin(BaseModelAdmin):
 
         super(BaseSubjectConsentAdmin, self).__init__(*args, **kwargs)
         self.search_fields = ['id', 'subject_identifier', 'first_name', 'last_name', 'identity', ]
-        self.list_display = ['subject_identifier', 'firstname', 'initials', 'gender', 'dob',
+        self.list_display = ['subject_identifier', 'first_name', 'initials', 'gender', 'dob',
                              'consent_datetime', 'created', 'modified', 'user_created', 'user_modified', ]
 
         self.list_filter = [
