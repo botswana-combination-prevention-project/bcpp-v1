@@ -13,15 +13,16 @@ def audit_trail_view(request, **kwargs):
 
     """ Using app_label and model_name present the cls+'_audit' table"""
 
+    options = kwargs or {}
+    for k, v in request.GET.iteritems():
+        options.update({k: v})
     section_name = kwargs.get('section_name')
 
     audit_subject_identifier = request.GET.get('audit_subject_identifier', kwargs.get('audit_subject_identifier'))
-
     if audit_subject_identifier:
         audit_comments = AuditComment.objects.filter(audit_subject_identifier=audit_subject_identifier)
     else:
         audit_comments = AuditComment.objects.none()
-
     dashboard_type = request.GET.get('dashboard_type', kwargs.get('dashboard_type'))
     back_url_name = request.GET.get('back_url_name', kwargs.get('back_url_name'))
 
@@ -34,7 +35,8 @@ def audit_trail_view(request, **kwargs):
     app_label = ''
     model_name = ''
     verbose_name = ''
-    template = 'audit_trail.html'
+    template = kwargs.get('audit_trail_template', 'audit_trail')
+    template = '{0}.html'.format(template)
     err_message = ''
     status_message = ''
 
@@ -44,7 +46,6 @@ def audit_trail_view(request, **kwargs):
         form = AuditTrailForm(request.POST)
 
         if form.is_valid():
-
             app_label = form.cleaned_data['app_label']
             model_name = form.cleaned_data['model_name']
             audit_subject_identifier = form.cleaned_data['audit_subject_identifier']
@@ -125,9 +126,7 @@ def audit_trail_view(request, **kwargs):
 
             else:
                 status_message = 'There are no entries in the audit trail for this model.'
-
     else:
-
         app_label = request.GET.get('app_label', kwargs.get('app_label'))
         model_name = request.GET.get('model_name', kwargs.get('model_name'))
         audit_subject_identifier = request.GET.get('audit_subject_identifier', kwargs.get('audit_subject_identifier'))
@@ -139,17 +138,15 @@ def audit_trail_view(request, **kwargs):
         form.fields['audit_subject_identifier'].initial = audit_subject_identifier
 
         model_selector = ModelSelector(app_label, model_name)
-
         # these parameters are ugly, they couple to bhp_dashboard! Same in form and template
         dashboard_type = request.GET.get('dashboard_type', kwargs.get('dashboard_type'))
         visit_code = request.GET.get('visit_code', kwargs.get('visit_code'))
         visit_instance = request.GET.get('visit_instance', kwargs.get('visit_instance'))
         back_url_name = request.GET.get('back_url_name', kwargs.get('back_url_name'))
-
-        if not back_url_name and visit_code and visit_instance:
+        if not back_url_name and options.get('visit_code', None) and options.get('visit_instance', None):
             back_url_name = 'dashboard_visit_url'
 
-    return render_to_response(template, {
+    options.update({
         'section_name': section_name,
         'report_title': report_title,
         'verbose_name': verbose_name,
@@ -170,4 +167,5 @@ def audit_trail_view(request, **kwargs):
         'back_url_name': back_url_name,
         'app_labels': model_selector.app_labels,
         'model_names': model_selector.model_names,
-        }, context_instance=RequestContext(request))
+        })
+    return render_to_response(template, options, context_instance=RequestContext(request))
