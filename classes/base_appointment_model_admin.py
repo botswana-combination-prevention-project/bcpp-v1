@@ -59,7 +59,7 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
                             'created',
                             'modified',
                             'user_created',
-                            'user_modified'
+                            'user_modified',
                             'hostname_created']
 
     def save_model(self, request, obj, form, change):
