@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.contrib import admin
 from django.core.urlresolvers import reverse
+from django.core.urlresolvers import NoReverseMatch
 from django.http import HttpResponseRedirect
 try:
     from bhp_sync.actions import serialize
@@ -36,7 +37,7 @@ class BaseModelAdmin (admin.ModelAdmin):
         Important:
         1. the value of next is NOT a url but a 'url name' where kwargs has
            the keyword/values needed to reverse the 'url name'.
-        2. All keyword/values must be used for the reverse (except 'next' and 'csrfmiddlewaretoken'). 
+        2. All keyword/values must be used for the reverse (except 'next' and 'csrfmiddlewaretoken').
 
         Example:
             In your urls.py a named url such as "survey_section_url":
@@ -68,11 +69,14 @@ class BaseModelAdmin (admin.ModelAdmin):
                                 except:
                                     pass
                     del kwargs['next']
-                    del kwargs['csrfmiddlewaretoken']
+                    if 'csrfmiddlewaretoken' in kwargs.keys():
+                        del kwargs['csrfmiddlewaretoken']
                     http_response_redirect = HttpResponseRedirect(reverse(request.GET.get('next'), kwargs=kwargs))
-                except:
+                except NoReverseMatch:
                     print 'warning: response_add failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs)
                     pass
+                except:
+                    raise
         return http_response_redirect
 
     def response_change(self, request, obj, post_url_continue=None):
@@ -87,9 +91,13 @@ class BaseModelAdmin (admin.ModelAdmin):
                     for k in request.GET.iterkeys():
                         kwargs[str(k)] = ''.join(unicode(i) for i in request.GET.get(k))
                     del kwargs['next']
-                    del kwargs['csrfmiddlewaretoken']
+                    if 'csrfmiddlewaretoken' in kwargs.keys():
+                        del kwargs['csrfmiddlewaretoken']
                     http_response_redirect = HttpResponseRedirect(reverse(request.GET.get('next'), kwargs=kwargs))
-                except:
+                except NoReverseMatch:
                     print 'warning: response_change failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs)
                     pass
+                except:
+                    raise
         return http_response_redirect
+
