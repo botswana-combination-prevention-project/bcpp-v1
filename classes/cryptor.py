@@ -3,11 +3,14 @@ import base64
 import copy
 import sys
 from M2Crypto import Rand, RSA, EVP
+import logging
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 
 from base_cryptor import BaseCryptor
+
+logger = logging.getLogger(__name__)
 
 
 class Cryptor(BaseCryptor):
@@ -89,12 +92,11 @@ class Cryptor(BaseCryptor):
         else:
             try:
                 self.public_key = RSA.load_pub_key(keyfile)
-                print ('successfully loaded {0} {1} '
-                       'public key').format(algorithm, mode)
+                logger.info('successfully loaded {0} {1} '
+                            'public key'.format(algorithm, mode))
                 self.has_encryption_key = True
             except:
-                print ('warning: failed to load public '
-                       'key {0}.').format(keyfile)
+                logger.warning('warning: failed to load public key {0}.'.format(keyfile))
         return self.public_key is not None
 
     def set_private_key(self, keyfile=None, **kwargs):
@@ -116,8 +118,8 @@ class Cryptor(BaseCryptor):
             try:
                 if keyfile:
                     self.private_key = RSA.load_key(keyfile)
-                    print ('successfully loaded {0} {1} private '
-                           'key').format(algorithm, mode)
+                    logger.info('successfully loaded {0} {1} private '
+                                'key'.format(algorithm, mode))
             except:
                 # if you need a warning here, do so in the subclass
                 pass
@@ -139,15 +141,15 @@ class Cryptor(BaseCryptor):
                 encrypted_aes = f.read()
                 f.close()
                 self.aes_key = self._decrypt_aes_key(encrypted_aes, mode)
-                print 'successfully loaded {0} aes key'.format(mode)
+                logger.info( 'successfully loaded {0} aes key'.format(mode))
             except IOError as e:
-                print ('warning: failed to open {0} aes '
-                      'key file {0}. Got {1}').format(mode, path, e)
+                logger.warning('warning: failed to open {0} aes '
+                               'key file {0}. Got {1}'.format(mode, path, e))
             except RSA.RSAError as e:
-                print 'RSA Error: failed to decrypt {0} {1} key from {2}'.format(algorithm, mode, path)
+                logger.error('RSA Error: failed to decrypt {0} {1} key from {2}'.format(algorithm, mode, path))
                 raise
             except:
-                print "Unexpected error:", sys.exc_info()[0]
+                logger.critical("Unexpected error:", sys.exc_info()[0])
                 raise
         return self.aes_key != None
 
@@ -190,8 +192,8 @@ class Cryptor(BaseCryptor):
         if secret:
             #cipher_tuple is (cipher, sep, iv)
             if isinstance(secret, (basestring)):
-                print ('warning: decrypt {algorithm} {mode} expects secret to be a list or tuple. '
-                      'Got basestring').format(algorithm=algorithm, mode=mode)
+                logger.warning('warning: decrypt {algorithm} {mode} expects secret to be a list or tuple. '
+                               'Got basestring'.format(algorithm=algorithm, mode=mode))
                 secret_text, iv = secret, '\0' * 16
             try:
                 secret_text, iv = secret[0], secret[2]
@@ -288,7 +290,7 @@ class Cryptor(BaseCryptor):
             return key
 
         if not self.is_preloaded_with_keys():
-            print '/* Preloading keys ...'
+            logger.info('/* Preloading keys ...')
             for algorithm, mode_dict in self.VALID_MODES.iteritems():
                 for mode, key_dict in mode_dict.iteritems():
                     for key_name in key_dict.iterkeys():
@@ -297,9 +299,9 @@ class Cryptor(BaseCryptor):
             if self.is_preloaded_with_keys('warning: failed to preload {algorithm} {mode} {key_name}'):
                 # run some tests
                 self.test()
-                print 'Done preloading keys. */\n'
+                logger.info('Done preloading keys. */\n')
             else:
-                print 'No keys found to load. */\n'
+                logger.info('No keys found to load. */\n')
             return True
 
     def _encrypt_salt(self, plain_salt):
@@ -319,9 +321,9 @@ class Cryptor(BaseCryptor):
         try:
             f = open(path, 'r')
             encrypted_salt = f.read()
-            print 'successfully loaded {0} {1} salt from file'.format(algorithm, mode)
+            logger.info('successfully loaded {0} {1} salt from file'.format(algorithm, mode))
         except:
-            print 'warning: failed to load {0} {1} salt {2} from file'.format(algorithm, mode, path)
+            logger.warning('warning: failed to load {0} {1} salt {2} from file'.format(algorithm, mode, path))
             encrypted_salt = None
         return encrypted_salt
 
@@ -348,14 +350,14 @@ class Cryptor(BaseCryptor):
                     if not isinstance(self.PRELOADED_KEYS[algorithm][mode][key_name], (RSA.RSA_pub, RSA.RSA, basestring)):
                         preloaded = False
                         if msg:
-                            print msg.format(algorithm=algorithm, mode=mode, key_name=key_name)
+                            logger.warning(msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
                         else:
                             break
                     elif isinstance(self.PRELOADED_KEYS[algorithm][mode][key_name], basestring):
                         if self.KEY_PATH in self.PRELOADED_KEYS[algorithm][mode][key_name]:
                             preloaded = False
                             if msg:
-                                print msg.format(algorithm=algorithm, mode=mode, key_name=key_name)
+                                logger.warning(msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
                             else:
                                 break
                     else:
@@ -373,7 +375,7 @@ class Cryptor(BaseCryptor):
                 else:
                     raise TypeError('Encryption error for {0}'.format(algorithm))
             except TypeError as e:
-                print 'Encrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e)
+                logger.error('Encrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e))
                 encrypted_text = None
                 pass
             return encrypted_text
@@ -387,23 +389,23 @@ class Cryptor(BaseCryptor):
                 else:
                     raise TypeError('Encryption error for {0}'.format(algorithm))
             except TypeError as e:
-                print 'Decrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e)
+                logger.error('Decrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e))
                 plaintext = None
                 pass
             return plaintext
 
         plaintext = '123456789ABCDEFG'
-        print 'Testing keys...'
+        logger.info('Testing keys...')
         for algorithm, mode_dict in self.VALID_MODES.iteritems():
             for mode in mode_dict.iterkeys():
-                #print 'Testing {algorithm} {mode}...'.format(algorithm=algorithm, mode=mode)
+                #logger.warning( 'Testing {algorithm} {mode}...'.format(algorithm=algorithm, mode=mode)
                 encrypted_text = _encrypt(self, plaintext, algorithm, mode)
                 decrypted_text = _decrypt(self, encrypted_text, algorithm, mode)
                 if encrypted_text == decrypted_text and decrypted_text is not None:
                     decrypted_text = base64.b64encode(decrypted_text)
                 if decrypted_text != plaintext:
-                    print '( ) Encrypt/Decrypt failed for {algorithm} {mode}.'.format(algorithm=algorithm, mode=mode)
+                    logger.info('( ) Encrypt/Decrypt failed for {algorithm} {mode}.'.format(algorithm=algorithm, mode=mode))
                 else:
-                    print '(*) Encrypt/Decrypt works for {algorithm} {mode}'.format(algorithm=algorithm, mode=mode)
-        print 'Testing complete.'
+                    logger.info('(*) Encrypt/Decrypt works for {algorithm} {mode}'.format(algorithm=algorithm, mode=mode))
+        logger.info('Testing complete.')
 
