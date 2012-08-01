@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
@@ -320,6 +320,17 @@ class RegisteredSubjectDashboard(Dashboard):
                 'dashboard',
                 name="dashboard_visit_url"
                 ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<appointment>{pk})/$'.format(**regex),
+                'dashboard',
+                name="dashboard_visit_url"
+                ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<content_type_map>{content_type_map})/$'.format(**regex),
+                'dashboard',
+                name="dashboard_visit_url"
+                ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<appointment>{pk})/$'.format(**regex),
+                'dashboard',
+                name="dashboard_visit_url"),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/$'.format(**regex),
                 'dashboard',
                 name="dashboard_visit_url"
@@ -327,10 +338,8 @@ class RegisteredSubjectDashboard(Dashboard):
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/$'.format(**regex),
                 'dashboard',
                 name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<appointment>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"))
+                ))
+        
         for visit_field_name in visit_field_names:
             regex['visit_field_name'] = visit_field_name
             urlpatterns += patterns(view,
@@ -346,15 +355,8 @@ class RegisteredSubjectDashboard(Dashboard):
                     'dashboard',
                     name="dashboard_visit_add_url"
                     ))
+
         urlpatterns += patterns(view,
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<appointment>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<content_type_map>{content_type_map})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registered_subject>{pk})/(?P<visit_definition>{pk})/(?P<visit_instance>{visit_instance})/$'.format(**regex),
                 'dashboard',
                 name="dashboard_url"
