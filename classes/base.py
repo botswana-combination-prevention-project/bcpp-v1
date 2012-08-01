@@ -35,7 +35,7 @@ class Base(object):
         padding = options.get('padding', 4)
         identifier_format = options.get('identifier_format', "{prefix}-{site}{device_id}{sequence}")
         modulus = options.get('modulus', 7)
-        prefix = options.get('prefix', settings.PROJECT_NUMBER)
+        prefix = options.get('prefix', settings.PROJECT_IDENTIFIER_PREFIX)
 
         IdentifierModel = get_model(app_name, model_name)
         identifier_model = IdentifierModel.objects.create(seed=0, padding=padding)

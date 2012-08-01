@@ -1,3 +1,4 @@
+import re
 
 
 class CheckDigit(object):
@@ -6,6 +7,13 @@ class CheckDigit(object):
 
     def calculate(self, number, modulus=7):
 
+        if isinstance(number, basestring):
+            number = re.search(r'\d+', number).group(0)
+            try:
+                number = int(number)
+            except:
+                raise TypeError('Number must be an integer or a string containing numbers '
+                                'that will implicitly convert to an integer. Got {0}'.format(number))
         # using the integer segment, calculate the check digit
         check_digit = number % modulus
 
