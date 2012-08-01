@@ -100,16 +100,17 @@ class BaseEncryptedField(models.Field):
         acccessed for the first time, value is not an encrypted value (not a prefix+hashed_value)."""
         retval = value
         if value:
-            if isinstance(value, basestring):
-                if not self.algorithm or not self.mode:
-                    raise ValidationError('Algorithm and mode not set for encrypted field')
-                # decrypt will check if is_encrypted (e.g. enc1::<hash>)
-                retval = self.decrypt(value)
-                # if it did not decrypt, set field to read only
-                self.readonly = retval is not value
-            else:
-                # at this point, only handling string types
-                raise TypeError('Expected basestring. Got {0}'.format(value))
+            if not isinstance(value, basestring):
+                try:
+                    value = str(value)
+                except:
+                    raise TypeError('Expected basestring. Got {0}'.format(value))
+            if not self.algorithm or not self.mode:
+                raise ValidationError('Algorithm and mode not set for encrypted field')
+            # decrypt will check if is_encrypted (e.g. enc1::<hash>)
+            retval = self.decrypt(value)
+            # if it did not decrypt, set field to read only
+            self.readonly = retval is not value
         return retval
 
     def get_prep_value(self, value, encrypt=True):
