@@ -1,6 +1,7 @@
 from django.contrib import admin
-
-from bhp_common.models import MyModelAdmin
+from django.db.models import ForeignKey
+from django.core.urlresolvers import reverse
+from bhp_base_model.classes import BaseModelAdmin
 from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_visit_tracking.classes import VisitModelHelper
 from lab_panel.models import Panel
@@ -8,7 +9,7 @@ from lab_requisition.actions import flag_as_received, flag_as_not_received, flag
 from lab_requisition.actions import print_requisition_label
 
 
-class BaseRequisitionModelAdmin(MyModelAdmin):
+class BaseRequisitionModelAdmin(BaseModelAdmin):
     actions = [flag_as_received,
                flag_as_not_received,
                flag_as_not_labelled,
@@ -109,3 +110,26 @@ class BaseRequisitionModelAdmin(MyModelAdmin):
             action='delete',
             )
         return super(BaseRequisitionModelAdmin, self).delete_model(request, obj)
+
+    def delete_view(self, request, object_id, extra_context=None):
+
+        """ Tries to redirect if enough information is available in the admin model."""
+
+        if not self.visit_model:
+            raise AttributeError('visit_model cannot be None. Specify in the ModelAdmin class. '
+                                 'e.g. visit_model = \'maternal_visit\'')
+        if not self.dashboard_type:
+            raise AttributeError('dashboard_type cannot be None. Specify in the ModelAdmin '
+                                 'class. e.g. dashboard_type = \'subject\'')
+            self.dashboard_type = 'subject'
+        visit_fk_name = [fk for fk in [f for f in self.model._meta.fields if isinstance(f, ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name][0].name
+        pk = self.model.objects.values(visit_fk_name).get(pk=object_id)
+        visit_instance = self.visit_model.objects.get(pk=pk[visit_fk_name])
+        subject_identifier = visit_instance.appointment.registered_subject.subject_identifier
+        visit_code = visit_instance.appointment.visit_definition.code
+        result = super(BaseRequisitionModelAdmin, self).delete_view(request, object_id, extra_context)
+        result['Location'] = reverse('dashboard_visit_url', kwargs={'dashboard_type': self.dashboard_type,
+                                                                     'subject_identifier': subject_identifier,
+                                                                     'appointment': visit_instance.appointment.pk,
+                                                                     'visit_code': unicode(visit_code)})
+        return result

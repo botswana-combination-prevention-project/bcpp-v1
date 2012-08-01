@@ -1,5 +1,7 @@
+import re
 from datetime import datetime
 from django.db import models
+from django.conf import settings
 
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
@@ -7,7 +9,7 @@ except ImportError:
     from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.fields import InitialsField
 from bhp_common.choices import YES_NO
-from bhp_variables.models import StudySite, StudySpecific
+from bhp_variables.models import StudySite
 from bhp_device.classes import Device
 from bhp_string.classes import BaseString
 from bhp_identifier.classes import CheckDigit
@@ -186,16 +188,14 @@ class BaseBaseRequisition (BaseUuidModel):
 
     def prepare_specimen_identifier(self, **kwargs):
         """ add protocol, site and check digit"""
-        check_digit = CheckDigit()
-        study_specific = StudySpecific.objects.get_query_set()[0]
-        #check_digit = CheckDigit()
-        self.protocol = study_specific.protocol_code
+        self.protocol = settings.PROJECT_NUMBER
         opts = {}
-        opts.update({'protocol': study_specific.protocol_prefix})
-        opts.update({'requisition_identifier': self.requisition_identifier, 'site': self.site})
-        opts.update({'check_digit': check_digit.calculate('{protocol}{site}{requisition_identifier}'.format(opts),
-                                                           modulus=7)})
-        return '{protocol}-{site}{requisition_identifier}-{check-digit}'.format(opts)
+        opts['prefix'] = settings.PROJECT_IDENTIFIER_PREFIX
+        opts['requisition_identifier'] = self.requisition_identifier
+        opts['site'] = self.site.site_code
+        base_identifier = '{prefix}{site}{requisition_identifier}'.format(**opts)
+        opts['check_digit'] = CheckDigit().calculate(re.search(r'\d+', base_identifier).group(0), modulus=7)
+        return '{prefix}-{site}{requisition_identifier}-{check_digit}'.format(**opts)
 
     def prepare_requisition_identifier(self, **kwargs):
         """Generate and return a locally unique requisition identifier for a device (adds device id)"""
