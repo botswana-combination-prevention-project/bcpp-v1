@@ -10,7 +10,7 @@ class Hasher(object):
         #super(Hasher, self).__init__(*args, **kwargs)
 
     def new_hasher(self, value=''):
-        return hashlib.sha256(value)
+        return hashlib.sha256(value.decode('ascii', 'ignore'))
 
     def remove_non_ascii(self, s):
         return "".join(i for i in s if ord(i) < 128)
@@ -23,12 +23,15 @@ class Hasher(object):
         if not value:
             retval = None
         else:
-            value = self.remove_non_ascii(value)
             if not isinstance(salt, str):
                 raise ValidationError('The Encryption keys are not available '
                                       'to this system. Unable to save '
                                       'sensitive data.')
-            digest = self.new_hasher('{0}{1}'.format(salt, value)).digest()
+            try:
+                digest = self.new_hasher('{0}{1}'.format(salt, value)).digest()
+            except:
+                value = self.remove_non_ascii(value)
+                digest = self.new_hasher('{0}{1}'.format(salt, value)).digest()
             # iterate
             for x in range(0, self.iterations - 1):
                 digest = self.new_hasher(digest).digest()
