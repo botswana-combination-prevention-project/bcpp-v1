@@ -28,26 +28,26 @@ class BaseConsentModelAdmin(BaseModelAdmin):
 
         return super(BaseConsentModelAdmin, self).save_model(request, obj, form, change)
 
-    def add_view(self, request, form_url='', extra_context=None):
-
-        result = super(BaseConsentModelAdmin, self).add_view(request, form_url, extra_context)
-
-        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
-            if request.GET.get('next'):
-                url_parameters = {'subject_identifier': request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'),}
-                result['Location'] = reverse(request.GET.get('next'), kwargs=url_parameters)
-        return result
-
-    def change_view(self, request, object_id, extra_context=None):
-
-        result = super(BaseConsentModelAdmin, self).change_view(request, object_id, extra_context)
-
-        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
-            if request.GET.get('next'):
-                url_parameters = {'subject_identifier': request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'),}
-                result['Location'] = reverse(request.GET.get('next'), kwargs=url_parameters)
-
-        return result
+#    def add_view(self, request, form_url='', extra_context=None):
+#
+#        result = super(BaseConsentModelAdmin, self).add_view(request, form_url, extra_context)
+#
+#        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+#            if request.GET.get('next'):
+#                url_parameters = {'subject_identifier': request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'),}
+#                result['Location'] = reverse(request.GET.get('next'), kwargs=url_parameters)
+#        return result
+#
+#    def change_view(self, request, object_id, extra_context=None):
+#
+#        result = super(BaseConsentModelAdmin, self).change_view(request, object_id, extra_context)
+#
+#        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+#            if request.GET.get('next'):
+#                url_parameters = {'subject_identifier': request.GET.get('subject_identifier'), 'dashboard_type':request.GET.get('dashboard_type'),}
+#                result['Location'] = reverse(request.GET.get('next'), kwargs=url_parameters)
+#
+#        return result
 
     #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
