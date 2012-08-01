@@ -9,4 +9,6 @@ from encrypted_aes_char_field import EncryptedAesCharField
 from encrypted_other_char_field import EncryptedOtherCharField
 from encrypted_text_field import EncryptedTextField
 from salt_field import SaltField
+from encrypted_integer_field import EncryptedIntegerField
+from encrypted_decimal_field import EncryptedDecimalField
 
