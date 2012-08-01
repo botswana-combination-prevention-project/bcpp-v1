@@ -35,7 +35,7 @@ class EncryptedDecimalField(LocalRsaEncryptionField):
     def to_python(self, value):
         """ Returns as integer """
         retval = super(EncryptedDecimalField, self).to_python(value)
-        if value:
-            if not self.field_cryptor.is_encrypted(value):
+        if retval:
+            if not self.field_cryptor.is_encrypted(retval):
                 retval = Decimal(retval)
         return retval
