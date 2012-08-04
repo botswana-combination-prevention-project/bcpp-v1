@@ -99,85 +99,85 @@ class DmisReceive(object):
             return type('OrderRow', (object,), attrs)
 
         import_history = ImportHistory(self.lab_db, kwargs.get('subject_identifier', None) or kwargs.get('protocol', None))
-        import_history.start()
-        # start with the receiving records. If a receiving record (LAB01) has not been modified
-        # on the dmis, nothing further will happen to it nor any of its related data (order, result, resultitem, ...).
-        dmis_receive_rows = self._fetch_dmis_receive_rows(import_history)
-        if dmis_receive_rows:
-            # some of the structure here is to limit the number of calls to the SQL Server
-            rowcount = len(dmis_receive_rows)
-            received = []
-            protocol = None
-            sites = {}
-            patients = {}
-            panel_ids = {}
-            accounts = {}
-            for dmis_receive_row in dmis_receive_rows:
-                rowcount -= 1
-                if not dmis_receive_row.receive_identifier in received:
-                    # for each protocol, site or account check if it is in the list first.
-                    # If not, fetch or create and add to the list.
-                    received.append(dmis_receive_row.receive_identifier)
-                    if not protocol:
-                        protocol = self.fetch_or_create_protocol(dmis_receive_row.protocol_identifier)
-                    if dmis_receive_row.site_identifier not in [site_identifier for site_identifier in sites.iterkeys()]:
-                        sites[dmis_receive_row.site_identifier] = self.fetch_or_create_site(dmis_receive_row.site_identifier)
-                    if dmis_receive_row.protocol_identifier not in [account_name for account_name in accounts.iterkeys()]:
-                        accounts[dmis_receive_row.protocol_identifier] = self.fetch_or_create_account(dmis_receive_row.protocol_identifier)
-                    # for a patient, just fetch or create, no need for a list
-                    patients[dmis_receive_row.subject_identifier] = self._create_or_update(Patient, 
-                        account=accounts[dmis_receive_row.protocol_identifier],
-                        subject_identifier=dmis_receive_row.subject_identifier,
-                        gender=dmis_receive_row.gender,
-                        dob=dmis_receive_row.dob,
-                        initials=dmis_receive_row.initials)
-                    # pass this row to its own class
-                    rcv_row = receive_row(dmis_receive_row)
-                    rcv_row.protocol = protocol
-                    rcv_row.site = sites[dmis_receive_row.site_identifier]
-                    rcv_row.patient = patients[dmis_receive_row.subject_identifier]
-                    receive = self._create_or_update(Receive, rcv_row, rowcount=rowcount)
-                    del rcv_row
-                # create or update the order
-                ord_row = order_row(dmis_receive_row)
-                #panel may come from panel_id or tid
-                if dmis_receive_row.panel_id:
-                    if dmis_receive_row.panel_id not in [panel_id for panel_id in panel_ids.iterkeys()]:
-                        panel_ids[dmis_receive_row.panel_id] = self.fetch_or_create_panel(panel_id=dmis_receive_row.panel_id,
-                                                                             tid=ord_row.tid,
-                                                                             receive_identifier=receive.receive_identifier)
-                    ord_row.panel = panel_ids[dmis_receive_row.panel_id]
-                else:
-                    if dmis_receive_row.tid not in [tid for tid in panel_ids.iterkeys()]:
-                        panel_ids[dmis_receive_row.tid] = self.fetch_or_create_panel(panel_id=dmis_receive_row.panel_id,
-                                                                        tid=ord_row.tid,
-                                                                        receive_identifier=receive.receive_identifier)
-                    ord_row.panel = panel_ids[dmis_receive_row.tid]
-                ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive_row.tid)
-                if ord_row.order_identifier:
-                    order = self._create_or_update(Order, ord_row)
-                    if order:
-                        result = self._create_or_update(Result, order)
-                        if result:
-                            resultitem_rows = self._fetch_dmis_resultitem_rows(result.order.order_identifier)
-                            max_validation_datetime = None
-                            max_validation_user = None
-                            for ritem in resultitem_rows:
-                                result_item = self._create_or_update(ResultItem, result, ritem)
-                                result_item = self.validate_result_item(result, result_item)
-                                if not max_validation_datetime:
-                                    max_validation_datetime = result_item.validation_datetime
-                                    max_validation_user = result_item.validation_username
-                                if result_item.validation_datetime:
-                                    if max_validation_datetime < result_item.validation_datetime:
+        if import_history.start():
+            # start with the receiving records. If a receiving record (LAB01) has not been modified
+            # on the dmis, nothing further will happen to it nor any of its related data (order, result, resultitem, ...).
+            dmis_receive_rows = self._fetch_dmis_receive_rows(import_history)
+            if dmis_receive_rows:
+                # some of the structure here is to limit the number of calls to the SQL Server
+                rowcount = len(dmis_receive_rows)
+                received = []
+                protocol = None
+                sites = {}
+                patients = {}
+                panel_ids = {}
+                accounts = {}
+                for dmis_receive_row in dmis_receive_rows:
+                    rowcount -= 1
+                    if not dmis_receive_row.receive_identifier in received:
+                        # for each protocol, site or account check if it is in the list first.
+                        # If not, fetch or create and add to the list.
+                        received.append(dmis_receive_row.receive_identifier)
+                        if not protocol:
+                            protocol = self.fetch_or_create_protocol(dmis_receive_row.protocol_identifier)
+                        if dmis_receive_row.site_identifier not in [site_identifier for site_identifier in sites.iterkeys()]:
+                            sites[dmis_receive_row.site_identifier] = self.fetch_or_create_site(dmis_receive_row.site_identifier)
+                        if dmis_receive_row.protocol_identifier not in [account_name for account_name in accounts.iterkeys()]:
+                            accounts[dmis_receive_row.protocol_identifier] = self.fetch_or_create_account(dmis_receive_row.protocol_identifier)
+                        # for a patient, just fetch or create, no need for a list
+                        patients[dmis_receive_row.subject_identifier] = self._create_or_update(Patient, 
+                            account=accounts[dmis_receive_row.protocol_identifier],
+                            subject_identifier=dmis_receive_row.subject_identifier,
+                            gender=dmis_receive_row.gender,
+                            dob=dmis_receive_row.dob,
+                            initials=dmis_receive_row.initials)
+                        # pass this row to its own class
+                        rcv_row = receive_row(dmis_receive_row)
+                        rcv_row.protocol = protocol
+                        rcv_row.site = sites[dmis_receive_row.site_identifier]
+                        rcv_row.patient = patients[dmis_receive_row.subject_identifier]
+                        receive = self._create_or_update(Receive, rcv_row, rowcount=rowcount)
+                        del rcv_row
+                    # create or update the order
+                    ord_row = order_row(dmis_receive_row)
+                    #panel may come from panel_id or tid
+                    if dmis_receive_row.panel_id:
+                        if dmis_receive_row.panel_id not in [panel_id for panel_id in panel_ids.iterkeys()]:
+                            panel_ids[dmis_receive_row.panel_id] = self.fetch_or_create_panel(panel_id=dmis_receive_row.panel_id,
+                                                                                 tid=ord_row.tid,
+                                                                                 receive_identifier=receive.receive_identifier)
+                        ord_row.panel = panel_ids[dmis_receive_row.panel_id]
+                    else:
+                        if dmis_receive_row.tid not in [tid for tid in panel_ids.iterkeys()]:
+                            panel_ids[dmis_receive_row.tid] = self.fetch_or_create_panel(panel_id=dmis_receive_row.panel_id,
+                                                                            tid=ord_row.tid,
+                                                                            receive_identifier=receive.receive_identifier)
+                        ord_row.panel = panel_ids[dmis_receive_row.tid]
+                    ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive_row.tid)
+                    if ord_row.order_identifier:
+                        order = self._create_or_update(Order, ord_row)
+                        if order:
+                            result = self._create_or_update(Result, order)
+                            if result:
+                                resultitem_rows = self._fetch_dmis_resultitem_rows(result.order.order_identifier)
+                                max_validation_datetime = None
+                                max_validation_user = None
+                                for ritem in resultitem_rows:
+                                    result_item = self._create_or_update(ResultItem, result, ritem)
+                                    result_item = self.validate_result_item(result, result_item)
+                                    if not max_validation_datetime:
                                         max_validation_datetime = result_item.validation_datetime
                                         max_validation_user = result_item.validation_username
-                            if max_validation_datetime and max_validation_user:
-                                self.release_result(result, max_validation_datetime, max_validation_user)
-                            else:
-                                logger.info('    NOT RELEASING {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
-
-            import_history.finish()
+                                    if result_item.validation_datetime:
+                                        if max_validation_datetime < result_item.validation_datetime:
+                                            max_validation_datetime = result_item.validation_datetime
+                                            max_validation_user = result_item.validation_username
+                                if max_validation_datetime and max_validation_user:
+                                    self.release_result(result, max_validation_datetime, max_validation_user)
+                                else:
+                                    logger.info('    NOT RELEASING {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
+    
+                import_history.finish()
         return None
 
     def _fetch_or_create(self, cls, value=None, **kwargs):
