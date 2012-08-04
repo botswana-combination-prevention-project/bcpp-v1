@@ -12,7 +12,7 @@ class DmisLock(object):
     def get_lock(self, lock_name):
         if not self.lock:
             try:
-                self.lock = DmisLockModel.objects.using(self.db).create(lock_name=self.lock_name)
+                self.lock = DmisLockModel.objects.using(self.db).create(lock_name=lock_name)
             except:
                 self.lock = None
         return self.lock

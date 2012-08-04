@@ -10,7 +10,7 @@ class DmisLock(BaseModel):
 
     ..seealso:: :class:DmisLock."""
 
-    lock_name = models.CharField(max_length=25, null=True)
+    lock_name = models.CharField(max_length=50, unique=True)
 
     objects = models.Manager()
 

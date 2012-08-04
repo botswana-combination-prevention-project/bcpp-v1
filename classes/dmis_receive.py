@@ -35,9 +35,9 @@ nullhandler = logger.addHandler(NullHandler())
 
 class DmisReceive(object):
 
-    def __init__(self, debug=False, **kwargs):
+    def __init__(self, lab_db, debug=False, **kwargs):
         self.debug = debug
-        self.lab_db = kwargs.get('lab_db', 'default')
+        self.lab_db = lab_db
         self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
 
     def import_from_dmis(self, **kwargs):
