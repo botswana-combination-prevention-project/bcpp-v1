@@ -35,6 +35,8 @@ class Command(BaseCommand):
             raise CommandError('Try --help for a list of valid options')
         args = list(args)
         db = args.pop(0)
+        if not db:
+            raise CommandError('Missing argument \'db\', Try --help for a list of valid arguments and options')
         if not args:
             args = [None]
         dmis_lock = DmisLock(db)
@@ -45,12 +47,12 @@ class Command(BaseCommand):
             for lock_name in args:
                 self.unlock(dmis_lock, lock_name)
         elif options['import']:
-            self.import_from_dmis()
+            self.import_from_dmis(db)
         else:
             raise CommandError('Unknown option, Try --help for a list of valid options')
 
-    def import_from_dmis(self):
-        dmis = Dmis('lab_api')
+    def import_from_dmis(self, db):
+        dmis = Dmis(db)
         dmis.import_from_dmis(protocol=settings.PROJECT_NUMBER)
 
     def unlock(self, dmis_lock, lock_name):
