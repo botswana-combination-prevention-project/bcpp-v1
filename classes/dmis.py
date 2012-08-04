@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 from django.conf import settings
-from django.db.models import Max, Q
+from django.db.models import Max
 
 from lab_receive.models import Receive
 from lab_order.models import Order
@@ -33,7 +33,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class DmisReceive(object):
+class Dmis(object):
 
     def __init__(self, lab_db, debug=False, **kwargs):
         self.debug = debug
@@ -102,7 +102,7 @@ class DmisReceive(object):
         if import_history.start():
             # start with the receiving records. If a receiving record (LAB01) has not been modified
             # on the dmis, nothing further will happen to it nor any of its related data (order, result, resultitem, ...).
-            dmis_receive_rows = self._fetch_dmis_receive_rows(import_history)
+            dmis_receive_rows = self._fetch_dmis_receive_rows(import_history, **kwargs)
             if dmis_receive_rows:
                 # some of the structure here is to limit the number of calls to the SQL Server
                 rowcount = len(dmis_receive_rows)
@@ -119,13 +119,13 @@ class DmisReceive(object):
                         # If not, fetch or create and add to the list.
                         received.append(dmis_receive_row.receive_identifier)
                         if not protocol:
-                            protocol = self.fetch_or_create_protocol(dmis_receive_row.protocol_identifier)
+                            protocol = self._fetch_or_create(Protocol, dmis_receive_row.protocol_identifier)
                         if dmis_receive_row.site_identifier not in [site_identifier for site_identifier in sites.iterkeys()]:
-                            sites[dmis_receive_row.site_identifier] = self.fetch_or_create_site(dmis_receive_row.site_identifier)
+                            sites[dmis_receive_row.site_identifier] = self._fetch_or_create(Site, dmis_receive_row.site_identifier)
                         if dmis_receive_row.protocol_identifier not in [account_name for account_name in accounts.iterkeys()]:
-                            accounts[dmis_receive_row.protocol_identifier] = self.fetch_or_create_account(dmis_receive_row.protocol_identifier)
+                            accounts[dmis_receive_row.protocol_identifier] = self._fetch_or_create(Account, dmis_receive_row.protocol_identifier)
                         # for a patient, just fetch or create, no need for a list
-                        patients[dmis_receive_row.subject_identifier] = self._create_or_update(Patient, 
+                        patients[dmis_receive_row.subject_identifier] = self._create_or_update(Patient,
                             account=accounts[dmis_receive_row.protocol_identifier],
                             subject_identifier=dmis_receive_row.subject_identifier,
                             gender=dmis_receive_row.gender,
@@ -136,20 +136,20 @@ class DmisReceive(object):
                         rcv_row.protocol = protocol
                         rcv_row.site = sites[dmis_receive_row.site_identifier]
                         rcv_row.patient = patients[dmis_receive_row.subject_identifier]
-                        receive = self._create_or_update(Receive, rcv_row, rowcount=rowcount)
+                        receive = self._create_or_update(Receive, rcv_row, rowcount)
                         del rcv_row
                     # create or update the order
                     ord_row = order_row(dmis_receive_row)
                     #panel may come from panel_id or tid
                     if dmis_receive_row.panel_id:
                         if dmis_receive_row.panel_id not in [panel_id for panel_id in panel_ids.iterkeys()]:
-                            panel_ids[dmis_receive_row.panel_id] = self.fetch_or_create_panel(panel_id=dmis_receive_row.panel_id,
+                            panel_ids[dmis_receive_row.panel_id] = self._fetch_or_create(Panel, panel_id=dmis_receive_row.panel_id,
                                                                                  tid=ord_row.tid,
                                                                                  receive_identifier=receive.receive_identifier)
                         ord_row.panel = panel_ids[dmis_receive_row.panel_id]
                     else:
                         if dmis_receive_row.tid not in [tid for tid in panel_ids.iterkeys()]:
-                            panel_ids[dmis_receive_row.tid] = self.fetch_or_create_panel(panel_id=dmis_receive_row.panel_id,
+                            panel_ids[dmis_receive_row.tid] = self._fetch_or_create(Panel, panel_id=dmis_receive_row.panel_id,
                                                                             tid=ord_row.tid,
                                                                             receive_identifier=receive.receive_identifier)
                         ord_row.panel = panel_ids[dmis_receive_row.tid]
@@ -164,7 +164,7 @@ class DmisReceive(object):
                                 max_validation_user = None
                                 for ritem in resultitem_rows:
                                     result_item = self._create_or_update(ResultItem, result, ritem)
-                                    result_item = self.validate_result_item(result, result_item)
+                                    result_item = self._validate_result_item(result, result_item)
                                     if not max_validation_datetime:
                                         max_validation_datetime = result_item.validation_datetime
                                         max_validation_user = result_item.validation_username
@@ -173,27 +173,14 @@ class DmisReceive(object):
                                             max_validation_datetime = result_item.validation_datetime
                                             max_validation_user = result_item.validation_username
                                 if max_validation_datetime and max_validation_user:
-                                    self.release_result(result, max_validation_datetime, max_validation_user)
+                                    self._release_result(result, max_validation_datetime, max_validation_user)
                                 else:
                                     logger.info('    NOT RELEASING {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
-    
+
                 import_history.finish()
         return None
 
     def _fetch_or_create(self, cls, value=None, **kwargs):
-
-        if isinstance(cls, Protocol):
-            return fetch_or_create_protocol(value, self.lab_db)
-        elif isinstance(cls, Account):
-            return fetch_or_create_account(value, self.lab_db)
-        elif isinstance(cls, Panel):
-            return fetch_or_create_panel(self.lab_db, self.dmis_data_source, **kwargs)
-        elif isinstance(cls, ResultSource):
-            return fetch_or_create_resultsource(self.lab_db, **kwargs)
-        elif isinstance(cls, Site):
-            return fetch_or_create_site(value, self.lab_db)
-        else:
-            raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
 
         def fetch_or_create_protocol(protocol_identifier, lab_db):
             protocols = Protocol.objects.using(lab_db).values('pk').filter(protocol_identifier__iexact=protocol_identifier)
@@ -316,23 +303,25 @@ class DmisReceive(object):
                 site = Site.objects.using(lab_db).create(site_identifier=site_identifier, name=site_identifier, location=location)
             return site
 
-    def _create_or_update(self, cls, value=None, **kwargs):
-
-        if isinstance(cls, Patient):
-            return create_or_update_patient(self.lab_db)
-        elif isinstance(cls, Aliquot):
-            return create_or_update_aliquot(self, value, self.lab_db)
-        elif isinstance(cls, Receive):
-            return create_or_update_receive(value, self.lab_db, **kwargs)
-        elif isinstance(cls, Order):
-            return create_or_update_order(value, self.lab_db, **kwargs)
-        elif isinstance(cls, Result):
-            return create_or_update_result(value, create_or_update_resultitem, self.lab_db, self.dmis_data_source, **kwargs)
+        if cls == Protocol:
+            return fetch_or_create_protocol(value, self.lab_db)
+        elif cls == Account:
+            return fetch_or_create_account(value, self.lab_db)
+        elif cls == Panel:
+            return fetch_or_create_panel(self.lab_db, self.dmis_data_source, **kwargs)
+        elif cls == ResultSource:
+            return fetch_or_create_resultsource(self.lab_db, **kwargs)
+        elif cls == Site:
+            return fetch_or_create_site(value, self.lab_db)
         else:
             raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
 
-        def create_or_update_receive(row, lab_db, **kwargs):
-            rowcount = kwargs.get('rowcount')
+    def _create_or_update(self, cls, *args, **kwargs):
+
+        lab_db = self.lab_db
+        dmis_data_source = self.dmis_data_source
+
+        def create_or_update_receive(row, rowcount):
             #is this receiving record on file
             receives = Receive.objects.using(lab_db).values('pk').filter(receive_identifier=row.receive_identifier)
             if receives:
@@ -348,7 +337,6 @@ class DmisReceive(object):
                     receive.clinician_initials = row.clinician_initials
                     receive.dmis_reference = row.dmis_reference
                     receive.requisition_identifier = row.edc_specimen_identifier or row.other_pat_ref
-                    #receive.dmis_panel_name = row.dmis_panel_name
                     receive.receive_condition = row.condition
                     receive.save()
                     logger.info('  dmis - receive: {rowcount} sample {receive_identifier} exists and updating '
@@ -361,7 +349,6 @@ class DmisReceive(object):
                                                                receive_identifier=row.receive_identifier,
                                                                subject_identifier=row.subject_identifier))
             else:
-                #account = self.fetch_or_create_account(row.protocol_identifier)
                 receive = Receive.objects.using(lab_db).create(
                     protocol=row.protocol,
                     receive_identifier=row.receive_identifier,
@@ -377,16 +364,14 @@ class DmisReceive(object):
                     dmis_reference=row.dmis_reference,
                     clinician_initials=row.clinician_initials,
                     requisition_identifier=row.edc_specimen_identifier or row.other_pat_ref,
-                    #dmis_panel_name=row.dmis_panel_name,
-                    receive_condition=row.condition,
-                    )
+                    receive_condition=row.condition)
                 logger.info('  dmis - receive: {rowcount} creating '
                             '{receive_identifier} for {subject_identifier}'.format(rowcount=rowcount,
                                                                                    receive_identifier=row.receive_identifier,
                                                                                    subject_identifier=row.subject_identifier))
             return receive
 
-        def create_or_update_order(row, lab_db, **kwargs):
+        def create_or_update_order(row):
             orders = Order.objects.using(lab_db).filter(order_identifier=row.order_identifier)
             if orders:
                 order = Order.objects.using(lab_db).get(order_identifier=row.order_identifier)
@@ -407,7 +392,7 @@ class DmisReceive(object):
                 logger.info('    order: created {order_identifier}'.format(order_identifier=row.order_identifier))
             return order
 
-        def create_or_update_result(order, create_or_update_resultitem, lab_db, dmis_data_source, **kwargs):
+        def create_or_update_result(order):
             """ Updates the dmis result using the given \'order\' by querying the dmis server on the order_identifier for
             a dmis result (LAB21) that has result_items (LAB21D)"""
             cnxn2 = pyodbc.connect(dmis_data_source)
@@ -450,11 +435,11 @@ class DmisReceive(object):
                         created=row.created,
                         dmis_result_guid=row.result_guid)
                     logger.info('    result: created result for order {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
-                    self.fetch_or_create_resultsource()
+                    self._fetch_or_create(ResultSource)
                     # create or update the result items for this result
             return result
 
-        def create_or_update_resultitem(result, ritem, lab_db):
+        def create_or_update_resultitem(result, ritem):
             """ Creates a result item for the given ritem from the dmis.
 
             ..note:: dmis item overwrites and existing django-lis item. The dmis sql statement is
@@ -485,49 +470,49 @@ class DmisReceive(object):
                     user = dmis_user
                 return user
 
-            def get_ritem_validation(self, ritem):
+            def get_ritem_validation(ritem):
                 result_item_source = ''
                 result_item_source_reference = ''
                 validation_reference = ''
                 # evaluate validation_reference
                 if ritem.validation_reference == '-9':
                     # this is an item from GetResults TCP connected to PSM
-                    result_item_source = self.fetch_or_create_resultsource(interface='psm_interface')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='psm_interface')
                     result_item_source_reference = ''
                     validation_reference = 'dmis-auto'
                 elif ritem.validation_reference == 'LAB21:MANUAL':
                     # manual entry and no validation -- straight to LAB21 tableset
-                    result_item_source = self.fetch_or_create_resultsource(interface='manual_entry')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'
                 elif re.search('^rad[0-9A-F]{5}\.tmp$', ritem.validation_reference):
                     # this is an item from GetResults Flatfile and validated via the LAB05 path
-                    result_item_source = self.fetch_or_create_resultsource(interface='cd4_interface')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='cd4_interface')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'lab05'
                 elif re.search('^LAB23:', ritem.validation_reference):
                     # manual entry and validated via the LAB23 validation path
-                    result_item_source = self.fetch_or_create_resultsource(interface='manual_entry')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'lab23'
                 elif re.search('^IMPORT', ritem.validation_reference):
                     # manual entry and validated via the LAB23 validation path
-                    result_item_source = self.fetch_or_create_resultsource(interface='direct_import')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'
                 elif re.search('^LB003:', ritem.validation_reference):
                     # manual import
-                    result_item_source = self.fetch_or_create_resultsource(interface='direct_import')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'
                 elif re.search('^LB004:', ritem.validation_reference):
                     # manual import
-                    result_item_source = self.fetch_or_create_resultsource(interface='direct_import')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'
                 elif re.search('^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$', ritem.validation_reference):
                     # manual import
-                    result_item_source = self.fetch_or_create_resultsource(interface='manual_entry')
+                    result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
                     result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                     validation_reference = 'auto'
                 else:
@@ -541,9 +526,9 @@ class DmisReceive(object):
             code = ritem.code.strip(' \t\n\r')
             # delete from django-lis the one result item for this result (should only be one)
             ResultItem.objects.using(self.lab_db).filter(result=result, test_code__code=code).delete()
-            test_code = self.fetch_or_create_testcode(code, lab_db)
-            user = self.get_ritem_user(ritem.user_created)
-            validation = self.get_ritem_validation(ritem)
+            test_code = fetch_or_create_testcode(code, lab_db)
+            user = get_ritem_user(ritem.user_created)
+            validation = get_ritem_validation(ritem)
             # create a new result item. set validation to 'P', we'll import
             # full validation information later
             result_item = ResultItem.objects.using(self.lab_db).create(
@@ -562,7 +547,7 @@ class DmisReceive(object):
             logger.info('      created item {0}'.format(code, ritem.result_item_datetime.strftime("%Y-%m-%d")))
             return result_item
 
-        def create_or_update_patient(lab_db, **kwargs):
+        def create_or_update_patient(**kwargs):
             subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
             initials = kwargs.get('initials').strip(' \t\n\r')
             if not initials:
@@ -590,7 +575,7 @@ class DmisReceive(object):
                 patient.account.add(account)
             return patient
 
-        def create_or_update_aliquot(receive, tid, lab_db):
+        def create_or_update_aliquot(receive, tid):
 
             def create_or_update_aliquotcondition(condition, lab_db):
                 if AliquotCondition.objects.using(lab_db).values('pk').filter(short_name__exact=condition):
@@ -646,6 +631,21 @@ class DmisReceive(object):
                     comment=create['comment'],
                     )
             return primary_aliquot
+
+        if cls == Patient:
+            return create_or_update_patient(**kwargs)
+        elif cls == Aliquot:
+            return create_or_update_aliquot(args[0], args[1])
+        elif cls == Receive:
+            return create_or_update_receive(args[0], args[1])
+        elif cls == Order:
+            return create_or_update_order(args[0])
+        elif cls == Result:
+            return create_or_update_result(args[0])
+        elif cls == ResultItem:
+            return create_or_update_resultitem(args[0], args[1])
+        else:
+            raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
 
     def _validate_result_item(self, result, result_item, **kwargs):
         """ Imports result item validation information from the dmis.
@@ -754,26 +754,29 @@ class DmisReceive(object):
         dmis_import_history.save()
         return dmis_import_history
 
-    def _get_receive_where_clause(self, clause=None, **kwargs):
+    def _fetch_dmis_receive_rows(self, import_history, **kwargs):
+
+        def _get_dmis_receive_where_clause(clause=None, **kwargs):
+            subject_identifier = kwargs.get('subject_identifier', None)
+            protocol = kwargs.get('protocol', None)
+            where_clause = []
+            if clause:
+                where_clause.append(clause)
+            if subject_identifier:
+                where_clause.append('l.pat_id like \'%{subject_identifier}%\''.format(subject_identifier=subject_identifier))
+            if protocol:
+                where_clause.append('sample_protocolnumber=\'{protocol}\''.format(protocol=protocol))
+            if where_clause:
+                where_clause = 'where {0}'.format(' and '.join(where_clause))
+            else:
+                where_clause = ''
+            return where_clause
+
         subject_identifier = kwargs.get('subject_identifier', None)
         protocol = kwargs.get('protocol', None)
-        where_clause = []
-        if clause:
-            where_clause.append(clause)
-        if subject_identifier:
-            where_clause.append('l.pat_id like \'%{subject_identifier}%\''.format(subject_identifier=subject_identifier))
-        if protocol:
-            where_clause.append('sample_protocolnumber=\'{protocol}\''.format(protocol=protocol))
-        if where_clause:
-            where_clause = 'where {0}'.format(' and '.join(where_clause))
-        else:
-            where_clause = ''
-        return where_clause
-
-    def _get_receive_cursor(self, conditional_clause=None):
         cnxn = pyodbc.connect(self.dmis_data_source)
         cursor = cnxn.cursor()
-        where_clause = self._get_receive_where_clause(conditional_clause)
+        where_clause = _get_dmis_receive_where_clause(import_history.conditional_clause, **kwargs)
         if where_clause is None:
             where_clause = ''
         sql = ('select '
@@ -803,7 +806,15 @@ class DmisReceive(object):
                 'left join lab21response as l21 on l.pid=l21.pid '
                 ' {where_clause} '
                 'order by l.pat_id, l.datelastmodified desc').format(where_clause=where_clause)
-        return cursor.execute(str(sql)).fetchall()
+        rows = cursor.execute(str(sql)).fetchall()
+        if len(rows) == 0:
+            logger.info('  dmis - receive: nothing received for {subject_identifier}'
+                        '{protocol} since '
+                        '{last_import_datetime}.'.format(subject_identifier=subject_identifier or '',
+                                                   protocol=protocol or '',
+                                                   dmis_data_source='lab',
+                                                   last_import_datetime=import_history.last_import_datetime))
+        return rows
 
     def _fetch_dmis_resultitem_rows(self, order_identifier):
         # get list of result items for this result from DMIS (LAB21ResponseQ001X0)
@@ -827,19 +838,3 @@ class DmisReceive(object):
                 'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
                 'where l21.id=\'%s\' and l21d.id is not null order by l21d.datelastmodified') % order_identifier
         return cursor_resultitem.execute(str(sql))
-
-    def _fetch_dmis_receive_rows(self, import_history, **kwargs):
-        subject_identifier = kwargs.get('subject_identifier', None)
-        protocol = kwargs.get('protocol', None)
-        rows = self._get_receive_cursor(import_history.filter_clause)
-        if len(rows) == 0:
-            logger.info('  dmis - receive: nothing received for {subject_identifier}'
-                        '{protocol} since '
-                        '{last_import_datetime}.'.format(subject_identifier=subject_identifier or '',
-                                                   protocol=protocol or '',
-                                                   dmis_data_source='lab',
-                                                   last_import_datetime=import_history.last_import_datetime))
-            return None
-        else:
-            return rows
-

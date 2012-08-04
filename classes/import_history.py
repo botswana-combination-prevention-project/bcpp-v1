@@ -20,24 +20,20 @@ class ImportHistory(object):
         self.dmis_import_history = None
         self.last_import_datetime = None
         self.conditional_clause = None
-        self.started = False
+        self._lock = None
         self.lock_name = lock_name
-        self.lock = DmisLock(db)
+        self.db = db
 
     def start(self, **kwargs):
-        if not self.started:
-            if self._prepare(**kwargs):
-                self.started = True
-            else:
-                self.started = False
+        if not self._lock:
+            self._prepare(**kwargs)
+        return self._lock is not None
 
     def finish(self):
-        if not self.started:
-            raise TypeError('Call start before finish.')
-        else:
+        if self._lock:
             self.dmis_import_history.end_datetime = datetime.today()
             self.dmis_import_history.save()
-            self.lock.release()
+            self._lock.release()
             self._clean_up()
 
     def _prepare(self, **kwargs):
@@ -60,34 +56,31 @@ class ImportHistory(object):
             """ Returns a fragment for the sql WHERE clause if last_import_datetime is not None."""
             if last_import_datetime:
                 self.conditional_clause = 'l.datelastmodified >= \'{last_import_datetime}\' '.format(last_import_datetime=last_import_datetime.strftime('%Y-%m-%d %H:%M'))
-
         retval = True
-        if not self.lock_name:
-            raise TypeError('Need either protocol or subject_identifier. Got None.')
-        if DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=False):
-            if self.lock.get_lock(self.lock_name):
+        self._lock = DmisLock(self.db)
+        if self._lock.get_lock(self.lock_name):
+            if not self.lock_name:
+                raise TypeError('Need either protocol or subject_identifier. Got None.')
+            if DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=False):
                 self.last_import_datetime = get_last_import_datetime(self.lock_name)
                 self.dmis_import_history = DmisImportHistory.objects.get(lock_name=self.lock_name, end_datetime__isnull=False)
-        elif DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=True):
-            # found an open history instance, check if it is locked
-            if self.lock.get_lock(self.lock_name):
+            elif DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=True):
+                # found an open history instance, check if it is locked
                 self.dmis_import_history = DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=True).order_by('-start_datetime')[0]
                 self.last_import_datetime = get_last_import_datetime(self.lock_name)
             else:
-                self.dmis_import_history = None
-                logger.info('Unable to lock django-lis to import from django-lis for lock_name {0}.'.format(self.lock_name))
-                retval = False
+                self.dmis_import_history = DmisImportHistory.objects.create(lock_name=self.lock_name)
+                self.dmis_import_history.save()
+                self.last_import_datetime = get_last_import_datetime(self.lock_name)
+            if self.last_import_datetime:
+                self.prepare_clause(self.last_import_datetime)
         else:
-            self.dmis_import_history = DmisImportHistory.objects.create(lock_name=self.lock_name)
-            self.dmis_import_history.save()
-            self.last_import_datetime = get_last_import_datetime(self.lock_name)
-        if self.last_import_datetime:
-            self.prepare_clause(self.last_import_datetime)
+            self._clean_up()
+            retval = False
         return retval
 
     def _clean_up(self):
         self.dmis_import_history = None
         self.last_import_datetime = None,
         self.conditional_clause = None
-        self.started = False
-        self.lock = None
+        self._lock = None

@@ -25,6 +25,7 @@ class DmisLock(object):
                 self.lock = DmisLockModel.objects.using(self.db).create(lock_name=lock_name)
             except:
                 self.lock = None
+                logger.warning('  Warning: Unable to set a lock to import from dmis for {0}. One already exists.'.format(lock_name))
         return self.lock
 
     def release(self, lock_name=None):
@@ -38,8 +39,11 @@ class DmisLock(object):
                 self.lock = DmisLockModel.objects.using(self.db).get(lock_name=lock_name)
         if self.lock:
             self.lock.delete()
+            logger.info('  Lock {0} has been released.'.format(lock_name))
             self.lock = None
             self.is_locked = False
+        else:
+            logger.info('  Lock {0} does not exist.'.format(lock_name))
         return self.lock is None
 
     def check(self):
