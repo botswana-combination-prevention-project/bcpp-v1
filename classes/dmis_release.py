@@ -2,6 +2,7 @@ from django.db.models import Max
 from lab_result.models import Result
 from lab_result_item.models import ResultItem
 
+
 class DmisRelease(object):
 
     def __init__(self, debug=False):
