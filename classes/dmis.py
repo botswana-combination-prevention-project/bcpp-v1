@@ -18,7 +18,6 @@ from lab_aliquot.models import Aliquot
 from lab_aliquot_list.models import AliquotType, AliquotCondition, AliquotMedium
 from lab_patient.models import Patient
 from lab_account.models import Account
-from lab_import_dmis.models import DmisImportHistory
 from import_history import ImportHistory
 
 from bhp_research_protocol.models import Protocol, Site, Location
@@ -654,28 +653,35 @@ class Dmis(object):
         CD4 results the LAB05 path is used, while for all other results the LAB23 path id used. Additionally, for
         results that are auto validated, like those coming from PSM, the information comes from LAB21 directly.
         """
+        def _validate_l21(result_item, result):
+            result_item.result_item_operator = result.user_created.strip('BHP\\bhp\\')
+            result_item.validation_status = 'F'
+            result_item.validation_datetime = result_item.result_item_datetime or result_item.validation_datetime
+            result_item.validation_username = 'auto'
+            result_item.save()
+
+        def _validate_l23(result_item, row):
+            result_item.result_item_operator = row.operator.strip('BHP\\bhp\\')
+            result_item.validation_status = 'F'
+            result_item.validation_datetime = row.validation_datetime
+            result_item.validation_username = row.validation_username.strip('BHP\\bhp\\')
+            result_item.save()
+
+        def _validate_l5(result_item, row):
+            _validate_l23(result_item, row)
+
         cnxn2 = pyodbc.connect(self.dmis_data_source)
         cursor_result = cnxn2.cursor()
-
+        # if you know the 'interface' then you know how validation occurs
         cd4_interface = ResultSource.objects.using(self.lab_db).get(name__iexact='cd4_interface')
         psm_interface = ResultSource.objects.using(self.lab_db).get(name__iexact='psm_interface')
         direct_interface = ResultSource.objects.using(self.lab_db).get(name__iexact='direct_import')
         manual_interface = ResultSource.objects.using(self.lab_db).get(name__iexact='manual_entry')
-
+        #the validation process depends on the 'interface'.
         if result_item.result_item_source == psm_interface:
-            #use lab21 information for PSM, Manual, Import
-            result_item.result_item_operator = result.user_created.strip('BHP\\bhp\\')
-            result_item.validation_status = 'F'
-            result_item.validation_datetime = result_item.result_item_datetime or result_item.validation_datetime
-            result_item.validation_username = 'auto'
-            result_item.save()
+            _validate_l21(result_item, result)
         elif result_item.result_item_source == direct_interface:
-            #use lab21 information for Import
-            result_item.result_item_operator = result.user_created.strip('BHP\\bhp\\')
-            result_item.validation_status = 'F'
-            result_item.validation_datetime = result_item.result_item_datetime or result_item.validation_datetime
-            result_item.validation_username = 'auto'
-            result_item.save()
+            _validate_l21(result_item, result)
         elif result_item.result_item_source == cd4_interface:
             #this returns only one record per result, only, so update all items as one
             # hmmm ... all imported results are from LAB21 which implies result_accepted=1, add "where result_accepted=1"
@@ -690,46 +696,35 @@ class Dmis(object):
             cursor_result = cnxn2.cursor()
             cursor_result.execute(str(sql))
             for row in cursor_result:
-                result_item.result_item_operator = row.operator.strip('BHP\\bhp\\')
-                result_item.validation_status = 'F'
-                result_item.validation_datetime = row.validation_datetime
-                result_item.validation_username = row.validation_username.strip('BHP\\bhp\\')
-                result_item.save()
+                _validate_l5(result_item, row)
         elif result_item.result_item_source == manual_interface and result_item.validation_reference.lower() != 'lab23':
-            #use lab21 information for PSM, Manual, Import
-            result_item.result_item_operator = result.user_created.strip('BHP\\bhp\\')
-            result_item.validation_status = 'F'
-            result_item.validation_datetime = result_item.result_item_datetime or result_item.validation_datetime
-            result_item.validation_username = 'auto'
-            result_item.save()
+            _validate_l21(result_item, result)
         elif result_item.result_item_source == manual_interface and result_item.validation_reference.lower() == 'lab23':
             #this returns one record per result, only, so update all items as one
-            sql = "select lower(L23.operator) as operator, \
-                    lower(l23d.checkbatch_user) as validation_username, \
-                    l23d.datelastmodified as validation_datetime, \
-                    convert(varchar, l23.id) as validation_reference \
-                    from bhplab.dbo.lab23response as l23 \
-                    left join bhplab.dbo.lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0 \
-                    where result_accepted=1 and upper(ltrim(rtrim(utestid)))='%s' and convert(varchar(36),result_guid)='%s'" % (result_item.test_code.code, result.dmis_result_guid)
+            sql = ('select lower(L23.operator) as operator, '
+                   'lower(l23d.checkbatch_user) as validation_username, '
+                   'l23d.datelastmodified as validation_datetime, '
+                   'convert(varchar, l23.id) as validation_reference '
+                   'from bhplab.dbo.lab23response as l23 '
+                   'left join bhplab.dbo.lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0 '
+                   'where result_accepted=1 and upper(ltrim(rtrim(utestid)))=\'{code}\' and '
+                   'convert(varchar(36),result_guid)=\'{result_guid}\'').format(code=result_item.test_code.code,
+                                                                                result_guid=result.dmis_result_guid)
             cursor_result = cnxn2.cursor()
             cursor_result.execute(str(sql))
             for row in cursor_result:
-                result_item.result_item_operator = row.operator.strip('BHP\\bhp\\')
-                result_item.validation_reference = row.validation_reference
-                result_item.validation_status = 'F'
-                result_item.validation_datetime = row.validation_datetime
-                result_item.validation_username = row.validation_username.strip('BHP\\bhp\\')
-                result_item.save()
+                _validate_l23(result_item, row)
         else:
-            raise TypeError('Unknown case result_item_source in dmis validation. Got \'%s\' from result %s.' % (result.resultitem.result_item_source, result))
+            raise TypeError('Unknown case result_item_source in dmis validation. '
+                            'Got \'%s\' from result %s.' % (result.resultitem.result_item_source, result))
         logger.info('      validated item %s %s' % (result_item.test_code.code, result_item.result_item_source))
-
         return result_item
 
     def _release_result(self, result, validation_datetime, validation_username, **kwargs):
 
         if not validation_datetime:
-            raise TypeError('Expected a date for validation_datetime for result {0}. Got None.'.format(result.result_identifier))
+            raise TypeError('Expected a date for validation_datetime for '
+                            'result {0}. Got None.'.format(result.result_identifier))
         if validation_username == 'auto' or not validation_username:
             validation_username = unicode('smoyo')
 
@@ -740,19 +735,9 @@ class Dmis(object):
         result.release_datetime = validation_datetime
         result.release_username = validation_username
         result.save()
-        logger.info('      released by {validation_username} on {validation_datetime}'.format(validation_username=validation_username, validation_datetime=validation_datetime))
-
-    def _update_import_history(self, dmis_import_history=None, **kwargs):
-        if not dmis_import_history:
-            dmis_import_history = DmisImportHistory.objects.create(
-               start_datetime=datetime.today(),
-               protocol=kwargs.get('protocol', None),
-               subject_identifier=kwargs.get('subject_identifier', None),
-               )
-        else:
-            dmis_import_history.end_datetime = datetime.today()
-        dmis_import_history.save()
-        return dmis_import_history
+        logger.info('      released by {validation_username} on '
+                    '{validation_datetime}'.format(validation_username=validation_username,
+                                                   validation_datetime=validation_datetime))
 
     def _fetch_dmis_receive_rows(self, import_history, **kwargs):
 

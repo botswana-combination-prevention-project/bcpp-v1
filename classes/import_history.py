@@ -15,6 +15,14 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class ImportHistory(object):
+    """ Helps track data import from the dmis to the django-lis by managing access to the
+    history model DmisImportHistory and the lock class DmisLock.
+
+    * Call start() to get a lock from DmisLock. If a lock is aquired, a instance of model DmisImportHistory is created
+      with the current start_datetime.
+    * Call finish() when the import is complete to release the lock and update model DmisImportHistory
+      instance with the end_datetime.
+    """
 
     def __init__(self, db, lock_name):
         self.dmis_import_history = None
@@ -24,9 +32,9 @@ class ImportHistory(object):
         self.lock_name = lock_name
         self.db = db
 
-    def start(self, **kwargs):
+    def start(self):
         if not self._lock:
-            self._prepare(**kwargs)
+            self._prepare()
         return self._lock is not None
 
     def finish(self):
@@ -36,8 +44,9 @@ class ImportHistory(object):
             self._lock.release()
             self._clean_up()
 
-    def _prepare(self, **kwargs):
-        """ Tries to get or create an instance of DmisImportHistory locally and lock the django-lis for this lock_name.
+    def _prepare(self):
+        """ Tries to get or create an instance of DmisImportHistory locally and lock the
+        django-lis for self.lock_name.
 
         KeyWord Arguments:
             * subject_identifier -- used as the lock name
@@ -56,6 +65,7 @@ class ImportHistory(object):
             """ Returns a fragment for the sql WHERE clause if last_import_datetime is not None."""
             if last_import_datetime:
                 self.conditional_clause = 'l.datelastmodified >= \'{last_import_datetime}\' '.format(last_import_datetime=last_import_datetime.strftime('%Y-%m-%d %H:%M'))
+
         retval = True
         self._lock = DmisLock(self.db)
         if self._lock.get_lock(self.lock_name):
@@ -80,6 +90,7 @@ class ImportHistory(object):
         return retval
 
     def _clean_up(self):
+        """ Sets everything to None."""
         self.dmis_import_history = None
         self.last_import_datetime = None,
         self.conditional_clause = None
