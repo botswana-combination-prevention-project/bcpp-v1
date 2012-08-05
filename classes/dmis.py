@@ -18,7 +18,7 @@ from lab_aliquot.models import Aliquot
 from lab_aliquot_list.models import AliquotType, AliquotCondition, AliquotMedium
 from lab_patient.models import Patient
 from lab_account.models import Account
-from import_history import ImportHistory, DmisLock
+from import_history import ImportHistory
 
 from bhp_research_protocol.models import Protocol, Site, Location
 
@@ -161,6 +161,9 @@ class Dmis(object):
                         if order:
                             result, result_modified = self._create_or_update(Result, order)
                             if result and result_modified:
+                                # delete existing result items. The dmis is the master, so if
+                                # a item is added or removed from dmis it must reflect
+                                ResultItem.objects.using(self.lab_db).filter(result=result).delete()
                                 resultitem_rows = self._fetch_dmis_resultitem_rows(result.order.order_identifier)
                                 max_validation_datetime = None
                                 max_validation_user = None
@@ -419,7 +422,7 @@ class Dmis(object):
                'l21.keyopcreated as user_created, '
                'l21.keyoplastmodified as user_modified, '
                'l21.datecreated as created, '
-               'l21.datecreated as modified, '
+               'l21.datelastmodified as modified, '
                'convert(varchar(36), l21.result_guid) as result_guid '
                'from BHPLAB.DBO.LAB21Response as L21 '
                'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
@@ -446,12 +449,12 @@ class Dmis(object):
                         if result.modified < row.modified:
                             #result.result_identifier = result_identifier, # allocated by django-lis
                             #result.order = order,
-                            result.result_datetime = row.result_datetime,
-                            result.comment = '',
-                            result.user_created = row.user_created,
-                            result.user_modified = row.user_modified,
-                            result.created = row.created,
-                            result.modified = row.modified,
+                            result.result_datetime = row.result_datetime
+                            result.comment = ''
+                            result.user_created = row.user_created
+                            result.user_modified = row.user_modified
+                            result.created = row.created
+                            result.modified = row.modified
                             result.dmis_result_guid = row.result_guid
                             result.save()
                             result_is_modified = True
@@ -466,7 +469,9 @@ class Dmis(object):
                             result_datetime=row.result_datetime,
                             comment='',
                             user_created=row.user_created,
+                            user_modified=row.user_modified,
                             created=row.created,
+                            modified=row.modified,
                             dmis_result_guid=row.result_guid)
                         result_is_modified = True
                         #self._fetch_or_create(ResultSource)
@@ -516,7 +521,7 @@ class Dmis(object):
 #                    self._fetch_or_create(ResultSource)
 #            return result
 
-        def create_or_update_resultitem(result, ritem):
+        def create_or_update_resultitem(result, ritem, delete=False):
             """ Creates a result item for the given ritem from the dmis.
 
             ..note:: dmis item overwrites and existing django-lis item. The dmis sql statement is
@@ -601,8 +606,10 @@ class Dmis(object):
                         'result_item_source_reference': result_item_source_reference}
 
             code = ritem.code.strip(' \t\n\r')
-            # delete from django-lis the one result item for this result (should only be one)
-            ResultItem.objects.using(self.lab_db).filter(result=result, test_code__code=code).delete()
+            # usually delete all items as soon as the result instance is known.
+            if delete:
+                # delete from django-lis the one result item for this result (should only be one)
+                ResultItem.objects.using(self.lab_db).filter(result=result, test_code__code=code).delete()
             test_code = fetch_or_create_testcode(code, lab_db)
             user = get_ritem_user(ritem.user_created)
             validation = get_ritem_validation(ritem)
@@ -823,8 +830,8 @@ class Dmis(object):
             subject_identifier = kwargs.get('subject_identifier', None)
             protocol = kwargs.get('protocol', None)
             where_clause = []
-            if import_history.clause:
-                where_clause.append(import_history.clause)
+            if import_history.conditional_clause:
+                where_clause.append(import_history.conditional_clause)
             if subject_identifier:
                 where_clause.append('l.pat_id like \'%{subject_identifier}%\''.format(subject_identifier=subject_identifier))
             if protocol:

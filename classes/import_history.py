@@ -36,6 +36,10 @@ class ImportHistory(object):
     def locked(self):
         return self._lock.locked
 
+    @property
+    def clause(self):
+        return self.conditional_clause
+
     def start(self):
         if not self._lock:
             self._prepare()
