@@ -24,22 +24,22 @@ class LabContextDescriptor(object):
             'is_dob_estimated': instance.registered_subject.is_dob_estimated,
             'gender': instance.registered_subject.gender,
             'initials': instance.registered_subject.initials,
-            'site_identifier':instance.registered_subject.study_site.site_name,
-            'clinicians_initials': instance.lab.clinician_initials,        
+            'site_identifier': instance.registered_subject.study_site.site_name,
+            'clinicians_initials': instance.lab.clinician_initials,
             'drawn_datetime': instance.lab.drawn_datetime,
             'panel_name': instance.lab.panel,
-            'receive_identifier': instance.lab.receive_identifier,        
-            'receive_datetime': instance.lab.receive_datetime,        
+            'receive_identifier': instance.lab.receive_identifier,
+            'receive_datetime': instance.lab.receive_datetime,
             'aliquot_identifier': instance.lab.aliquot_identifier,
-            'order_identifier': instance.lab.order_identifier,        
+            'order_identifier': instance.lab.order_identifier,
             'order_datetime': instance.lab.order_datetime,
-            'condition': instance.lab.condition,                
+            'condition': instance.lab.condition,
             'result_items': [],
-            'action':"view",        
+            'action': "view",
             'section_name': instance.section_name,
-            'search_name': instance.search_name,        
+            'search_name': instance.search_name,
             'result_include_file': "detail.html",
-            'receiving_include_file':"receiving.html",
+            'receiving_include_file': "receiving.html",
             'orders_include_file': "orders.html",
             'result_items_include_file': "result_items.html",
             'top_result_include_file': "result_include.html",
@@ -49,16 +49,15 @@ class LabContextDescriptor(object):
 class LabContext(object):
 
     context = LabContextDescriptor()
-    
+
     def __init__(self, **kwargs):
         self.section_name = kwargs.get('section_name')
-        self.search_name = kwargs.get('search_name')        
+        self.search_name = kwargs.get('search_name')
         self.receive_identifier = kwargs.get('receive_identifier')
         if self.receive_identifier:
             if Lab.objects.filter(receive_identifier__exact=self.receive_identifier):
                 self.lab = Lab.objects.filter(receive_identifier__exact=self.receive_identifier)[0]
-                self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.lab.subject_identifier)        
+                self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.lab.subject_identifier)
             else:
                 self.lab = None
-                self.registered_subject = None                
-
+                self.registered_subject = None

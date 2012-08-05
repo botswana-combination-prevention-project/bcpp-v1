@@ -24,22 +24,22 @@ class ContextDescriptor(object):
             'is_dob_estimated': instance.registered_subject.is_dob_estimated,
             'gender': instance.registered_subject.gender,
             'initials': instance.registered_subject.initials,
-            'site_identifier':instance.registered_subject.study_site.site_name,
-            'clinicians_initials': instance.result.lab.clinician_initials,        
+            'site_identifier': instance.registered_subject.study_site.site_name,
+            'clinicians_initials': instance.result.lab.clinician_initials,
             'drawn_datetime': instance.result.lab.drawn_datetime,
             'panel_name': instance.result.lab.panel,
-            'receive_identifier': instance.result.lab.receive_identifier,        
-            'receive_datetime': instance.result.lab.receive_datetime,        
+            'receive_identifier': instance.result.lab.receive_identifier,
+            'receive_datetime': instance.result.lab.receive_datetime,
             'aliquot_identifier': instance.result.lab.aliquot_identifier,
-            'order_identifier': instance.result.lab.order_identifier,        
+            'order_identifier': instance.result.lab.order_identifier,
             'order_datetime': instance.result.lab.order_datetime,
-            'condition': instance.result.lab.condition,                
+            'condition': instance.result.lab.condition,
             'result_items': instance.result_items,
-            'action':"view",        
+            'action': "view",
             'section_name': instance.section_name,
-            'search_name': instance.search_name,        
+            'search_name': instance.search_name,
             'result_include_file': "detail.html",
-            'receiving_include_file':"receiving.html",
+            'receiving_include_file': "receiving.html",
             'orders_include_file': "orders.html",
             'result_items_include_file': "result_items.html",
             'top_result_include_file': "result_include.html",
@@ -49,20 +49,18 @@ class ContextDescriptor(object):
 class ResultContext(object):
 
     context = ContextDescriptor()
-    
+
     def __init__(self, **kwargs):
         self.section_name = kwargs.get('section_name')
-        self.search_name = kwargs.get('search_name')        
+        self.search_name = kwargs.get('search_name')
         self.result_identifier = kwargs.get('result_identifier')
         if self.result_identifier:
             if Result.objects.filter(lab__result_identifier__exact=self.result_identifier):
                 # get first one only, in coase of duplicates
                 self.result = Result.objects.filter(lab__result_identifier__exact=self.result_identifier)[0]
                 self.result_items = ResultItem.objects.filter(result=self.result)
-                self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.result.lab.subject_identifier)        
+                self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.result.lab.subject_identifier)
             else:
-                self.result= None
+                self.result = None
                 self.result_items = None
                 self.registered_subject = None
-                
-                
