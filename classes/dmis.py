@@ -340,13 +340,13 @@ class Dmis(object):
                     receive.requisition_identifier = row.edc_specimen_identifier or row.other_pat_ref
                     receive.receive_condition = row.condition
                     receive.save()
-                    logger.info('  dmis - receive: {rowcount} sample {receive_identifier} exists and updating '
+                    logger.info('  dmis - receive: {rowcount} updating {receive_identifier} '
                                 'for {subject_identifier}.'.format(rowcount=rowcount,
                                                                    receive_identifier=row.receive_identifier,
                                                                    subject_identifier=row.subject_identifier))
                 else:
-                    logger.info('  dmis - receive: {rowcount} sample {receive_identifier} exists but not modified for '
-                                '{subject_identifier}.'.format(rowcount=rowcount,
+                    logger.info('  dmis - receive: {rowcount} found {receive_identifier} for '
+                                '{subject_identifier} (not modified).'.format(rowcount=rowcount,
                                                                receive_identifier=row.receive_identifier,
                                                                subject_identifier=row.subject_identifier))
             else:
@@ -373,10 +373,23 @@ class Dmis(object):
             return receive
 
         def create_or_update_order(row):
-            orders = Order.objects.using(lab_db).filter(order_identifier=row.order_identifier)
-            if orders:
+            if Order.objects.using(lab_db).filter(order_identifier=row.order_identifier):
                 order = Order.objects.using(lab_db).get(order_identifier=row.order_identifier)
-                logger.info('    order: found existing {order_identifier}'.format(order_identifier=row.order_identifier))
+                if order.modified < row.modified:
+                    order.order_identifier = row.order_identifier
+                    order.order_datetime = row.order_datetime
+                    order.aliquot = row.aliquot
+                    order.panel = row.panel
+                    order.comment = '',
+                    order.created = row.created
+                    order.modified = row.modified
+                    order.user_created = row.user_created
+                    order.user_modified = row.user_modified
+                    order.dmis_reference = row.dmis_reference
+                    order.save()
+                    logger.info('    order: updated {order_identifier}'.format(order_identifier=row.order_identifier))
+                else:
+                    logger.info('    order: found {order_identifier} (not modified)'.format(order_identifier=row.order_identifier))
             else:
                 order = Order.objects.using(lab_db).create(
                     order_identifier=row.order_identifier,
