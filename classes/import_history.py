@@ -70,20 +70,20 @@ class ImportHistory(object):
         self._lock = DmisLock(self.db)
         if self._lock.get_lock(self.lock_name):
             if not self.lock_name:
-                raise TypeError('Need either protocol or subject_identifier. Got None.')
-            if DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=False):
-                self.last_import_datetime = get_last_import_datetime(self.lock_name)
-                self.dmis_import_history = DmisImportHistory.objects.get(lock_name=self.lock_name, end_datetime__isnull=False)
-            elif DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=True):
-                # found an open history instance, check if it is locked
-                self.dmis_import_history = DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=True).order_by('-start_datetime')[0]
-                self.last_import_datetime = get_last_import_datetime(self.lock_name)
-            else:
-                self.dmis_import_history = DmisImportHistory.objects.create(lock_name=self.lock_name)
-                self.dmis_import_history.save()
-                self.last_import_datetime = get_last_import_datetime(self.lock_name)
+                raise TypeError('Need a lock name. Got None.')
+            #if DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=False):
+            #    self.last_import_datetime = get_last_import_datetime(self.lock_name)
+            #    self.dmis_import_history = DmisImportHistory.objects.get(lock_name=self.lock_name, end_datetime__isnull=False)
+            #elif DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=True):
+            #    # found an open history instance, check if it is locked
+            #    self.dmis_import_history = DmisImportHistory.objects.filter(lock_name=self.lock_name, end_datetime__isnull=True).order_by('-start_datetime')[0]
+            #    self.last_import_datetime = get_last_import_datetime(self.lock_name)
+            #else:
+            self.dmis_import_history = DmisImportHistory.objects.using(self.db).create(lock_name=self.lock_name, start_datetime=self._lock.created)
+            self.dmis_import_history.save()
+            self.last_import_datetime = get_last_import_datetime(self.lock_name)
             if self.last_import_datetime:
-                self.prepare_clause(self.last_import_datetime)
+                prepare_clause(self.last_import_datetime)
         else:
             self._clean_up()
             retval = False
@@ -95,3 +95,6 @@ class ImportHistory(object):
         self.last_import_datetime = None,
         self.conditional_clause = None
         self._lock = None
+
+    def history(self):
+        return DmisImportHistory.objects.using(self.db).filter(lock_name=self.lock_name).order_by('-start_datetime')

@@ -1,12 +1,12 @@
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from lab_import_dmis.classes import DmisLock, Dmis
+from lab_import_dmis.classes import DmisLock, Dmis, ImportHistory
 
 
 class Command(BaseCommand):
 
-    args = 'db --list-locks <lock_name> --unlock <lock_name> --import'
+    args = 'db --list-locks <lock_name> --unlock <lock_name> --import --show-history <lock_name>'
     help = 'Manage dmis import.'
     option_list = BaseCommand.option_list + (
         make_option('--list-locked',
@@ -27,7 +27,14 @@ class Command(BaseCommand):
             action='store_true',
             dest='import',
             default=False,
-            help=('Import labs from dmis.')),
+            help=('Initiate import of labs from dmis into django-lis.')),
+        )
+    option_list += (
+        make_option('--show-history',
+            action='store_true',
+            dest='show_history',
+            default=False,
+            help=('Show history of data import for lock name.')),
         )
 
     def handle(self, *args, **options):
@@ -42,12 +49,15 @@ class Command(BaseCommand):
         dmis_lock = DmisLock(db)
         if options['list-locked']:
             for lock_name in args:
-                self.list(dmis_lock, lock_name)
+                self.list_locked(dmis_lock, lock_name)
         elif options['unlock']:
             for lock_name in args:
                 self.unlock(dmis_lock, lock_name)
         elif options['import']:
             self.import_from_dmis(db)
+        elif options['show_history']:
+            for lock_name in args:
+                self.show_history(db, dmis_lock, lock_name)
         else:
             raise CommandError('Unknown option, Try --help for a list of valid options')
 
@@ -61,11 +71,22 @@ class Command(BaseCommand):
         else:
             print 'Unable to released lock {0}. Try --list for a list of valid locks.'.format(lock_name)
 
-    def list(self, dmis_lock, lock_name):
+    def list_locked(self, dmis_lock, lock_name):
         qs = dmis_lock.list(lock_name)
         if qs:
             print 'Existing Locks:'
             for q in qs:
-                print '  {0} created {1}'.format(q.lock_name, q.created)
+                print '  {0} {1}'.format(q.lock_name, q.created)
         else:
-            print 'No locks exist.'
+            print 'No locks exist for lock name \'{0}\'.'.format(lock_name)
+
+    def show_history(self, db, dmis_lock, lock_name):
+        history = ImportHistory(db, lock_name).history()
+        if not history:
+            print 'No import history for lock name \'{0}\''.format(lock_name)
+        else:
+            print 'Import History:'
+            print '  (lock name -- start -- finish)'
+            for h in history:
+                print '  {0} {1} {2}'.format(h.lock_name, h.start_datetime, h.end_datetime or 'Open')
+        self.list_locked(dmis_lock, lock_name)

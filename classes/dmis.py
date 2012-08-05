@@ -112,6 +112,8 @@ class Dmis(object):
                 panel_ids = {}
                 accounts = {}
                 for dmis_receive_row in dmis_receive_rows:
+                    #if import_history.unlocked:
+                    #    break
                     rowcount -= 1
                     if not dmis_receive_row.receive_identifier in received:
                         # for each protocol, site or account check if it is in the list first.
@@ -176,7 +178,7 @@ class Dmis(object):
                                 else:
                                     logger.info('    NOT RELEASING {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
 
-                import_history.finish()
+        import_history.finish()
         return None
 
     def _fetch_or_create(self, cls, value=None, **kwargs):
