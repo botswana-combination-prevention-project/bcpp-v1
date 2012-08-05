@@ -158,8 +158,8 @@ class Dmis(object):
                     if ord_row.order_identifier:
                         order = self._create_or_update(Order, ord_row)
                         if order:
-                            result = self._create_or_update(Result, order)
-                            if result:
+                            result, result_modified = self._create_or_update(Result, order)
+                            if result and result_modified:
                                 resultitem_rows = self._fetch_dmis_resultitem_rows(result.order.order_identifier)
                                 max_validation_datetime = None
                                 max_validation_user = None
@@ -374,6 +374,7 @@ class Dmis(object):
 
         def create_or_update_order(row):
             if Order.objects.using(lab_db).filter(order_identifier=row.order_identifier):
+                # order identifier is unique
                 order = Order.objects.using(lab_db).get(order_identifier=row.order_identifier)
                 if order.modified < row.modified:
                     order.order_identifier = row.order_identifier
@@ -409,49 +410,106 @@ class Dmis(object):
         def create_or_update_result(order):
             """ Updates the dmis result using the given \'order\' by querying the dmis server on the order_identifier for
             a dmis result (LAB21) that has result_items (LAB21D)"""
+
             cnxn2 = pyodbc.connect(dmis_data_source)
             cursor_result = cnxn2.cursor()
-            result = Result.objects.using(lab_db).filter(order=order).order_by('-modified')
-            if result:
-                if result.count() > 1:
-                    # get rid of duplicates
-                    logger.warning('    result: warning: more than one result found for %s' % (result[0].result_identifier,))
-                # take most recent
-                result = Result.objects.using(lab_db).filter(order=order).order_by('-modified')[0]
-                logger.warning('    result: result found for {0} resulted on {1}'.format(order.order_identifier, result.result_datetime.strftime("%Y-%m-%d")))
+            sql = ('select distinct headerdate as result_datetime, '
+               'l21.keyopcreated as user_created, '
+               'l21.datecreated as created, '
+               'l21.datecreated as modified, '
+               'convert(varchar(36), l21.result_guid) as result_guid '
+               'from BHPLAB.DBO.LAB21Response as L21 '
+               'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
+               'where l21.id=\'{order_identifier}\' and '
+               'l21d.id is not null').format(order_identifier=order.order_identifier)
+            rows = cursor_result.execute(str(sql))
+            # on dmis exists, same as django - do nothing
+            # on dmis exists, older on django - update
+            # on dmis was deleted, still exists on django - delete
+            # on dmis exists, not on dkjango  - create
+            if not rows:
+                # i am not sure it's possible to reach this
+                logger.warning('    result: deleted for order {order_identifier}'.format(order_identifier=order.order_identifier))
+                for result in Result.objects.using(lab_db).filter(order=order):
+                    result.delete()
+                    result_is_modified = True  # ??
             else:
-                # create new result
-                # fetch the order/result from DMIS (note in DMIS orders are generated when a
-                # result is available so orders always have results)
-                sql = ('select distinct headerdate as result_datetime, '
-                       'l21.keyopcreated as user_created, '
-                       'l21.datecreated as created, '
-                       'convert(varchar(36), l21.result_guid) as result_guid '
-                       'from BHPLAB.DBO.LAB21Response as L21 '
-                       'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
-                       'where l21.id=\'{order_identifier}\' and '
-                       'l21d.id is not null').format(order_identifier=order.order_identifier)
-                cursor_result.execute(str(sql))  # should return 0 or 1 row because l21.id is a primary key
-                n = 0
-                for row in cursor_result:
-                    n += 1
-                    # allocate a result identifier for this new result
-                    result_identifier = AllocateResultIdentifier(order)
-                    if n > 1:
-                        logger.warning('    result: warning - more than one result created for {0}'.format(order.order_identifier,))
-                    # create the result record
-                    result = Result.objects.using(lab_db).create(
-                        result_identifier=result_identifier,
-                        order=order,
-                        result_datetime=row.result_datetime,
-                        comment='',
-                        user_created=row.user_created,
-                        created=row.created,
-                        dmis_result_guid=row.result_guid)
-                    logger.info('    result: created result for order {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
-                    self._fetch_or_create(ResultSource)
-                    # create or update the result items for this result
-            return result
+                # most likely just one row
+                for row in rows:
+                    if Result.objects.using(lab_db).filter(order=order):
+                        # result identifier is unique and an order should only have one result
+                        result = Result.objects.using(lab_db).get(order=order)
+                        if result.modified < row.modified:
+                            #result.result_identifier = result_identifier, # allocated by django-lis
+                            #result.order = order,
+                            result.result_datetime = row.result_datetime,
+                            result.comment = '',
+                            result.user_created = row.user_created,
+                            result.user_created = row.user_created,
+                            result.created = row.created,
+                            result.dmis_result_guid = row.result_guid
+                            result.save()
+                            result_is_modified = True
+                            logger.info('    result: updated {result_identifier}'.format(result_identifier=result.result_identifier))
+                        else:
+                            result_is_modified = False
+                            logger.info('    result: found {result_identifier} (not modified)'.format(result_identifier=result.result_identifier))
+                    else:
+                        result = Result.objects.using(lab_db).create(
+                            result_identifier=AllocateResultIdentifier(order),
+                            order=order,
+                            result_datetime=row.result_datetime,
+                            comment='',
+                            user_created=row.user_created,
+                            created=row.created,
+                            dmis_result_guid=row.result_guid)
+                        result_is_modified = True
+                        #self._fetch_or_create(ResultSource)
+                        logger.info('    result: created {result_identifier}'.format(result_identifier=row.result_identifier))
+            return result, result_is_modified
+
+#            cnxn2 = pyodbc.connect(dmis_data_source)
+#            cursor_result = cnxn2.cursor()
+#            result = Result.objects.using(lab_db).filter(order=order).order_by('-modified')
+#            if result:
+#                if result.count() > 1:
+#                    # get rid of duplicates
+#                    logger.warning('    result: warning: more than one result found for %s' % (result[0].result_identifier,))
+#                # take most recent
+#                result = Result.objects.using(lab_db).filter(order=order).order_by('-modified')[0]
+#                logger.warning('    result: result found for {0} resulted on {1}'.format(order.order_identifier, result.result_datetime.strftime("%Y-%m-%d")))
+#            else:
+#                # create new result
+#                # fetch the order/result from DMIS (note in DMIS orders are generated when a
+#                # result is available so orders always have results)
+#                sql = ('select distinct headerdate as result_datetime, '
+#                       'l21.keyopcreated as user_created, '
+#                       'l21.datecreated as created, '
+#                       'convert(varchar(36), l21.result_guid) as result_guid '
+#                       'from BHPLAB.DBO.LAB21Response as L21 '
+#                       'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
+#                       'where l21.id=\'{order_identifier}\' and '
+#                       'l21d.id is not null').format(order_identifier=order.order_identifier)
+#                cursor_result.execute(str(sql))  # should return 0 or 1 row because l21.id is a primary key
+#                n = 0
+#                for row in cursor_result:
+#                    n += 1
+#                    # allocate a result identifier for this new result
+#                    result_identifier = AllocateResultIdentifier(order)
+#                    if n > 1:
+#                        logger.warning('    result: warning - more than one result created for {0}'.format(order.order_identifier,))
+#                    # create the result record
+#                    result = Result.objects.using(lab_db).create(
+#                        result_identifier=result_identifier,
+#                        order=order,
+#                        result_datetime=row.result_datetime,
+#                        comment='',
+#                        user_created=row.user_created,
+#                        created=row.created,
+#                        dmis_result_guid=row.result_guid)
+#                    logger.info('    result: created result for order {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
+#                    self._fetch_or_create(ResultSource)
+#            return result
 
         def create_or_update_resultitem(result, ritem):
             """ Creates a result item for the given ritem from the dmis.
