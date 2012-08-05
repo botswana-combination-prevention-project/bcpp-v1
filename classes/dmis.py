@@ -411,6 +411,7 @@ class Dmis(object):
             """ Updates the dmis result using the given \'order\' by querying the dmis server on the order_identifier for
             a dmis result (LAB21) that has result_items (LAB21D)"""
             result = None
+            result_is_modified = False
             cnxn2 = pyodbc.connect(dmis_data_source)
             cursor = cnxn2.cursor()
             sql = ('select distinct headerdate as result_datetime, '
