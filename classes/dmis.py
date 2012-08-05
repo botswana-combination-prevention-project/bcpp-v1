@@ -412,9 +412,10 @@ class Dmis(object):
             a dmis result (LAB21) that has result_items (LAB21D)"""
 
             cnxn2 = pyodbc.connect(dmis_data_source)
-            cursor_result = cnxn2.cursor()
+            cursor = cnxn2.cursor()
             sql = ('select distinct headerdate as result_datetime, '
                'l21.keyopcreated as user_created, '
+               'l21.keyoplastmodified as user_modified, '
                'l21.datecreated as created, '
                'l21.datecreated as modified, '
                'convert(varchar(36), l21.result_guid) as result_guid '
@@ -422,20 +423,20 @@ class Dmis(object):
                'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
                'where l21.id=\'{order_identifier}\' and '
                'l21d.id is not null').format(order_identifier=order.order_identifier)
-            rows = cursor_result.execute(str(sql))
+            # cursor.execute(str(sql))
             # on dmis exists, same as django - do nothing
             # on dmis exists, older on django - update
             # on dmis was deleted, still exists on django - delete
             # on dmis exists, not on dkjango  - create
-            if not rows:
-                # i am not sure it's possible to reach this
+            if not cursor.execute(str(sql)).fetchone():
+                # there is an order with no result (that is, no result items l21d.id is null)
                 logger.warning('    result: deleted for order {order_identifier}'.format(order_identifier=order.order_identifier))
                 for result in Result.objects.using(lab_db).filter(order=order):
                     result.delete()
                     result_is_modified = True  # ??
             else:
                 # most likely just one row
-                for row in rows:
+                for row in cursor.execute(str(sql)):
                     if Result.objects.using(lab_db).filter(order=order):
                         # result identifier is unique and an order should only have one result
                         result = Result.objects.using(lab_db).get(order=order)
@@ -445,8 +446,9 @@ class Dmis(object):
                             result.result_datetime = row.result_datetime,
                             result.comment = '',
                             result.user_created = row.user_created,
-                            result.user_created = row.user_created,
+                            result.user_modified = row.user_modified,
                             result.created = row.created,
+                            result.modified = row.modified,
                             result.dmis_result_guid = row.result_guid
                             result.save()
                             result_is_modified = True
