@@ -139,7 +139,7 @@ class Dmis(object):
                         rcv_row.patient = patients[dmis_receive_row.subject_identifier]
                         receive = self._create_or_update(Receive, rcv_row, rowcount)
                         del rcv_row
-                    # create or update the order
+                    # create or update the order, dmis_receive_row has the order information in it as well
                     ord_row = order_row(dmis_receive_row)
                     #panel may come from panel_id or tid
                     if dmis_receive_row.panel_id:
@@ -155,6 +155,7 @@ class Dmis(object):
                                                                             receive_identifier=receive.receive_identifier)
                         ord_row.panel = panel_ids[dmis_receive_row.tid]
                     ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive_row.tid)
+
                     if ord_row.order_identifier:
                         order = self._create_or_update(Order, ord_row)
                         if order:
@@ -822,8 +823,8 @@ class Dmis(object):
             subject_identifier = kwargs.get('subject_identifier', None)
             protocol = kwargs.get('protocol', None)
             where_clause = []
-            if clause:
-                where_clause.append(clause)
+            if import_history.clause:
+                where_clause.append(import_history.clause)
             if subject_identifier:
                 where_clause.append('l.pat_id like \'%{subject_identifier}%\''.format(subject_identifier=subject_identifier))
             if protocol:

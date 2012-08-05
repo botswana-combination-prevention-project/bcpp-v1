@@ -74,7 +74,8 @@ class ImportHistory(object):
         def prepare_clause(last_import_datetime):
             """ Returns a fragment for the sql WHERE clause if last_import_datetime is not None."""
             if last_import_datetime:
-                self.conditional_clause = 'l.datelastmodified >= \'{last_import_datetime}\' '.format(last_import_datetime=last_import_datetime.strftime('%Y-%m-%d %H:%M'))
+                self.conditional_clause = (' (l.datelastmodified >= \'{last_import_datetime}\' or '
+                                           'l21.datelastmodified >= \'{last_import_datetime}\') ').format(last_import_datetime=last_import_datetime.strftime('%Y-%m-%d %H:%M'))
 
         retval = True
         self._lock = DmisLock(self.db)
