@@ -463,8 +463,9 @@ class Dmis(object):
                             result_is_modified = False
                             logger.info('    result: found {result_identifier} (not modified)'.format(result_identifier=result.result_identifier))
                     else:
+                        result_identifier = AllocateResultIdentifier(order)
                         result = Result.objects.using(lab_db).create(
-                            result_identifier=AllocateResultIdentifier(order),
+                            result_identifier=result_identifier,
                             order=order,
                             result_datetime=row.result_datetime,
                             comment='',
@@ -475,7 +476,7 @@ class Dmis(object):
                             dmis_result_guid=row.result_guid)
                         result_is_modified = True
                         #self._fetch_or_create(ResultSource)
-                        logger.info('    result: created {result_identifier}'.format(result_identifier=row.result_identifier))
+                        logger.info('    result: created {result_identifier}'.format(result_identifier=result_identifier))
             return result, result_is_modified
 
 #            cnxn2 = pyodbc.connect(dmis_data_source)
