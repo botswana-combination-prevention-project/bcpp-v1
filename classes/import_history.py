@@ -54,8 +54,8 @@ class ImportHistory(object):
         """
         def get_last_import_datetime(lock_name):
             """ Returns the end datetime of the last successful dmis import for this lock"""
-            if DmisImportHistory.objects.filter(lock_name=lock_name, end_datetime__isnull=False):
-                agg = DmisImportHistory.objects.filter(lock_name=lock_name).aggregate(Max('end_datetime'))
+            if DmisImportHistory.objects.using(self.db).filter(lock_name=lock_name, end_datetime__isnull=False):
+                agg = DmisImportHistory.objects.using(self.db).filter(lock_name=lock_name).aggregate(Max('end_datetime'))
                 retval = agg['end_datetime__max']
             else:
                 retval = None

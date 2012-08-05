@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from lab_import_dmis.models import DmisLock as DmisLockModel, DmisImportHistory
 
 logger = logging.getLogger(__name__)
@@ -44,7 +43,7 @@ class DmisLock(object):
         if lock_name and self.lock is None:
             if DmisLockModel.objects.using(self.db).filter(lock_name=lock_name):
                 self.lock = DmisLockModel.objects.using(self.db).get(lock_name=lock_name)
-                DmisImportHistory.objects.filter(lock_name=lock_name, end_datetime__isnull=True).delete()
+                DmisImportHistory.objects.using(self.db).filter(lock_name=lock_name, end_datetime__isnull=True).delete()
                 logger.info('  Removed incomplete history record(s) for lock {0}.'.format(lock_name))
 
         if self.lock:
