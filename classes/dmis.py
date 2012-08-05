@@ -430,9 +430,10 @@ class Dmis(object):
             # on dmis exists, not on dkjango  - create
             if not cursor.execute(str(sql)).fetchone():
                 # there is an order with no result (that is, no result items l21d.id is null)
-                logger.warning('    result: deleted for order {order_identifier}'.format(order_identifier=order.order_identifier))
+                logger.warning('    result: no result on source for order {order_identifier}'.format(order_identifier=order.order_identifier))
                 for result in Result.objects.using(lab_db).filter(order=order):
                     result.delete()
+                    logger.warning('    result: deleted from target for order {order_identifier}'.format(order_identifier=order.order_identifier))
                     result_is_modified = True  # ??
             else:
                 # most likely just one row
