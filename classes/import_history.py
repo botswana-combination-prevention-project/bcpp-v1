@@ -32,6 +32,10 @@ class ImportHistory(object):
         self.lock_name = lock_name
         self.db = db
 
+    @property
+    def locked(self):
+        return self._lock.locked
+
     def start(self):
         if not self._lock:
             self._prepare()
@@ -39,8 +43,14 @@ class ImportHistory(object):
 
     def finish(self):
         if self._lock:
-            self.dmis_import_history.end_datetime = datetime.today()
-            self.dmis_import_history.save()
+            # only update the history if the lock still exists in the db,
+            # as someone may have deleted it to stop the process
+            # before was able to completed
+            if self.locked:
+                self.dmis_import_history.end_datetime = datetime.today()
+                self.dmis_import_history.save()
+            else:
+                self.dmis_import_history.delete()
             self._lock.release()
             self._clean_up()
 

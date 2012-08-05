@@ -18,7 +18,7 @@ from lab_aliquot.models import Aliquot
 from lab_aliquot_list.models import AliquotType, AliquotCondition, AliquotMedium
 from lab_patient.models import Patient
 from lab_account.models import Account
-from import_history import ImportHistory
+from import_history import ImportHistory, DmisLock
 
 from bhp_research_protocol.models import Protocol, Site, Location
 
@@ -112,8 +112,8 @@ class Dmis(object):
                 panel_ids = {}
                 accounts = {}
                 for dmis_receive_row in dmis_receive_rows:
-                    #if import_history.unlocked:
-                    #    break
+                    if not import_history.locked:
+                        break
                     rowcount -= 1
                     if not dmis_receive_row.receive_identifier in received:
                         # for each protocol, site or account check if it is in the list first.

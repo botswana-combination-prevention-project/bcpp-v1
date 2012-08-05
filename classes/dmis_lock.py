@@ -16,7 +16,7 @@ class DmisLock(object):
     def __init__(self, db):
         self.db = db
         self.lock = None
-        self.is_locked = False
+        self.lock_name = None
 
     @property
     def created(self):
@@ -24,10 +24,19 @@ class DmisLock(object):
             return self.lock.created
         return None
 
+    @property
+    def locked(self):
+        retval = False
+        if self.lock:
+            if DmisLockModel.objects.using(self.db).filter(lock_name=self.lock_name):
+                retval = True
+        return retval
+
     def get_lock(self, lock_name):
         if not self.lock:
             try:
                 self.lock = DmisLockModel.objects.using(self.db).create(lock_name=lock_name)
+                self.lock_name = lock_name
             except:
                 self.lock = None
                 logger.warning('  Warning: Unable to set a lock to import from dmis for {0}. '
@@ -48,15 +57,11 @@ class DmisLock(object):
 
         if self.lock:
             self.lock.delete()
-            logger.info('  Lock {0} has been released.'.format(lock_name))
+            logger.info('  Lock {0} has been released.'.format(lock_name or self.lock_name))
             self.lock = None
-            self.is_locked = False
         else:
             logger.info('  Lock {0} does not exist.'.format(lock_name))
         return self.lock is None
-
-    def check(self):
-        return self.is_locked
 
     def list(self, lock_name=None):
         """ Return an ordered queryset of all locks or just those for given lock name."""
