@@ -1,6 +1,9 @@
 from django.db import models
 #from bhp_common.classes import LockableObject
-from bhp_sync.classes import BaseSyncModel
+try:
+    from bhp_sync.classes import BaseSyncModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel as BaseSyncModel
 
 
 class IdentifierTracker(BaseSyncModel): #, LockableObject):
