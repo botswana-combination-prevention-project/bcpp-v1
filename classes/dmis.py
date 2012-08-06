@@ -249,7 +249,7 @@ class Dmis(object):
                                 'or panel_id={panel_id} protocol '
                                 '{protocol}. Perhaps add one.'.format(tid=tid, panel_id=panel_id,
                                                     protocol=settings.PROJECT_NUMBER))
-            logger.info('    panel is {panel} from tid={tid} or panel_id={panel_id}'.format(panel=panel.name, tid=tid, panel_id=panel_id))
+            logger.info('      panel is {panel} from tid={tid} or panel_id={panel_id}'.format(panel=panel.name, tid=tid, panel_id=panel_id))
             return panel
 
         def fetch_or_create_resultsource(lab_db, **kwargs):
