@@ -142,18 +142,20 @@ class Dmis(object):
                     # create or update the order, dmis_receive_row has the order information in it as well
                     ord_row = order_row(dmis_receive_row)
                     #panel may come from panel_id or tid
-                    if dmis_receive_row.panel_id:
+                    if dmis_receive_row.tid and dmis_receive_row.tid != '-9':
+                        if dmis_receive_row.tid not in [tid for tid in panel_ids.iterkeys()]:
+                            panel_ids[dmis_receive_row.tid] = self._fetch_or_create(Panel, panel_id=dmis_receive_row.panel_id,
+                                                                            tid=ord_row.tid,
+                                                                            receive_identifier=receive.receive_identifier)
+                            ord_row.panel = panel_ids[dmis_receive_row.tid]
+                    elif dmis_receive_row.panel_id and dmis_receive_row.panel_id != '-9':
                         if dmis_receive_row.panel_id not in [panel_id for panel_id in panel_ids.iterkeys()]:
                             panel_ids[dmis_receive_row.panel_id] = self._fetch_or_create(Panel, panel_id=dmis_receive_row.panel_id,
                                                                                  tid=ord_row.tid,
                                                                                  receive_identifier=receive.receive_identifier)
                         ord_row.panel = panel_ids[dmis_receive_row.panel_id]
                     else:
-                        if dmis_receive_row.tid not in [tid for tid in panel_ids.iterkeys()]:
-                            panel_ids[dmis_receive_row.tid] = self._fetch_or_create(Panel, panel_id=dmis_receive_row.panel_id,
-                                                                            tid=ord_row.tid,
-                                                                            receive_identifier=receive.receive_identifier)
-                    ord_row.panel = panel_ids[dmis_receive_row.tid]
+                        pass
                     ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive_row.tid)
                     Order.objects.using(self.lab_db).filter(aliquot__receive=receive).delete()
 
