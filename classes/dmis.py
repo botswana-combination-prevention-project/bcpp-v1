@@ -155,6 +155,7 @@ class Dmis(object):
                                                                             receive_identifier=receive.receive_identifier)
                         ord_row.panel = panel_ids[dmis_receive_row.tid]
                     ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive_row.tid)
+                    Order.objects.using(self.lab_db).filter(aliquot__receive=receive).delete()
 
                     if ord_row.order_identifier:
                         order = self._create_or_update(Order, ord_row)
@@ -218,13 +219,15 @@ class Dmis(object):
 
         def fetch_or_create_panel(lab_db, dmis_data_source, **kwargs):
             panel_id = kwargs.get('panel_id')
-            tid = kwargs.get('panel_id')
+            if panel_id == '-9':
+                panel_id = None
+            tid = kwargs.get('tid')
             receive_identifier = kwargs.get('receive_identifier')
             panel = None
             panel_group_name = None
             # use either panel_id or panel_group_name to either get or create a panel
             # if you have receive_identifier, this may help
-            if panel_id and not panel_id == '-9':
+            if panel_id:
                 # try to get using row.panel_id
                 panels = Panel.objects.using(lab_db).filter(dmis_panel_identifier=panel_id)
                 if panels:
