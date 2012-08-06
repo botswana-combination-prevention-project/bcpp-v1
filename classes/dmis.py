@@ -155,7 +155,7 @@ class Dmis(object):
                                                                                  receive_identifier=receive.receive_identifier)
                         ord_row.panel = panel_ids[dmis_receive_row.panel_id]
                     else:
-                        pass
+                        ord_row.panel = Panel()
                     ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive_row.tid)
                     Order.objects.using(self.lab_db).filter(aliquot__receive=receive).delete()
 
