@@ -17,6 +17,12 @@ class BaseCryptor(BaseString):
         if not value:
             retval = False
         else:
+            if not isinstance(value, basestring):
+                try:
+                    value = str(value)
+                except:
+                    raise TypeError('Expected basestring. Got {0}'.format(value))
+
             if value == prefix:
                 raise TypeError('Expected a string value, got just the '
                                  'encryption prefix.')
