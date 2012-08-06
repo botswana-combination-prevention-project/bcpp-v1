@@ -1,7 +1,16 @@
-#from datetime import date, datetime
+import logging
 from lab_clinic_api.models import Lab, Result, ResultItem
 #from lab_clinic_api.classes import ResultContext, LabContext
 #from lab_import_dmis.classes import Dmis, DmisReceive, DmisOrder
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
+
 
 """
 
@@ -27,6 +36,7 @@ class DmisResults(object):
             #dmis.fetch(subject_identifier=self.subject_identifier, lab_db='lab_api')
             #dmis = DmisOrder()
             #dmis.fetch(subject_identifier=self.subject_identifier, lab_db='lab_api')
+            logger.info(self.subject_identifier)
             labs = Lab.objects.fetch(subject_identifier=self.subject_identifier)
             if labs:
                 results = Result.objects.fetch(subject_identifier=self.subject_identifier, labs=labs)

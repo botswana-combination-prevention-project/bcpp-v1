@@ -16,7 +16,7 @@ class ContextDescriptor(object):
     def __set__(self, instance):
         self.value = {
             'last_updated': instance.result.modified,
-            'review_form': ReviewForm(),
+            #'review_form': ReviewForm(),
             'result': instance.result,
             'protocol_identifier': instance.result.lab.protocol_identifier,
             'subject_identifier': instance.result.lab.subject_identifier,

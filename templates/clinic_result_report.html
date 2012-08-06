@@ -14,30 +14,31 @@ Private Bag BO 320, Gaborone, Botswana * Tel: 3902671 ext 2003 * Fax: 3901284
 <tr><td><center><H3>Clinician Review Information</H3></center></td></tr>
 <tr><td>
 
-<form action="." method="POST">
-<div style='display:none'>  
-  {% csrf_token %}
-</div>
-<table>
-{% for f in review_form %}
-    <tr><td class="field">
-        {{ f.errors }}
-        <label for="id_{{f.name}}">{{f.label}}</label>
-    </td>
-    <td class="field">{{ f }}</td></tr>
-{% endfor %}
-</tr><td>
-    <input type="submit" value="Submit" class="default" name="submit" />
-</td></tr>
-
-<script type="text/javascript">document.getElementById("id_app_label").focus();</script>
-<script type="text/javascript">
-    (function($) {
-        var field = null;
-    })(django.jQuery);
-</script>
-</table>
-</form>
-
+{% if review_form %}
+    <form action="." method="POST">
+    <div style='display:none'>  
+      {% csrf_token %}
+    </div>
+    <table>
+    {% for f in review_form %}
+        <tr><td class="field">
+            {{ f.errors }}
+            <label for="id_{{f.name}}">{{f.label}}</label>
+        </td>
+        <td class="field">{{ f }}</td></tr>
+    {% endfor %}
+    </tr><td>
+        <input type="submit" value="Submit" class="default" name="submit" />
+    </td></tr>
+    
+    <script type="text/javascript">document.getElementById("id_app_label").focus();</script>
+    <script type="text/javascript">
+        (function($) {
+            var field = null;
+        })(django.jQuery);
+    </script>
+    </table>
+    </form>
+{% endif %}
 </td></tr>
 </table>
