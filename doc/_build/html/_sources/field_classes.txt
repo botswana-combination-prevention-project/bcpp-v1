@@ -7,6 +7,10 @@ Field Base Classes
     :members:    
     :show-inheritance:
 
+.. autoclass:: bhp_crypto.fields.IrreversibleRsaEncryptionField
+    :members:    
+    :show-inheritance:
+
 .. autoclass:: bhp_crypto.fields.RestrictedRsaEncryptionField
     :members:    
     :show-inheritance:

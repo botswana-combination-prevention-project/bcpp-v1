@@ -1,9 +1,12 @@
 import base64
+import logging
 
 from django.db.models import get_model
 
 from cryptor import Cryptor
 from hasher import Hasher
+
+logger = logging.getLogger(__name__)
 
 
 class FieldCryptor(object):
@@ -104,7 +107,7 @@ class FieldCryptor(object):
                     # if the hash is not in the crypt model and you do not have a secret
                     # update: if performing a search, instead of data entry, the hash will not
                     # exist, so this print should eventually be removed
-                    print 'hash not found in crypt model. {0} {1} {2}'.format(self.algorithm, self.mode, hashed_value)
+                    logger.warning('hash not found in crypt model. {0} {1} {2}'.format(self.algorithm, self.mode, hashed_value))
 
     def get_hash(self, value):
         """ Returns the hashed value without hash_prefix by either splitting it from value or hashing value."""

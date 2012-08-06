@@ -18,8 +18,7 @@ class ModelCryptor(object):
         """ Returns a list of field objects that use encryption.
 
         Keyword Arguments:
-        field_name -- return a list with field object of this attname only.
-                      Name is ignored if not a field using encrytion.
+        field_name -- return a list with field object of this attname only. Name is ignored if not a field using encrytion.
         """
         encrypted_fields = []
         field_name = kwargs.get('field_name', None)
@@ -65,9 +64,8 @@ class ModelCryptor(object):
 
         Keyword Arguments:
         print_on_save -- print a message to stdout on each save (default: True)
-        save_message -- message to print after each instance is saved which
-                        may include {0} and {1} for 'instance_count', 'instance_total'
-                        (default: 37/35666 instances encrypted ...).
+        save_message -- message to print after each instance is saved which may include {0}
+        and {1} for 'instance_count', 'instance_total' (default: 37/35666 instances encrypted ...).
         field_name -- filter unencrypted instances on the field object with this attname only.
         """
         print_on_save = kwargs.get('print_on_save', True)

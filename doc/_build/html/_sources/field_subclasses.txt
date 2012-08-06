@@ -30,10 +30,18 @@ In all cases, all private keys may be removed to disable the rsa_decrypt() metho
 .. autoclass:: bhp_crypto.fields.EncryptedCharField
     :members:    
     :show-inheritance:
+
+.. autoclass:: bhp_crypto.fields.EncryptedIntegerField
+    :members:    
+    :show-inheritance: 
+       
+.. autoclass:: bhp_crypto.fields.EncryptedDecimalField
+    :members:    
+    :show-inheritance:    
     
 AES Encryption
 ++++++++++++++
-AES Encryption supports long text field but the keys, though protected, are on the device running the application.
+AES Encryption supports long text field. The keys, though protected, are on the device running the application.
 
 .. autoclass:: bhp_crypto.fields.EncryptedAesCharField
     :members:    

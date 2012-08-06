@@ -1,6 +1,5 @@
 from bhp_base_model.classes import BaseModelAdmin
-from bhp_crypto.actions import encrypt, decrypt
-from bhp_crypto.classes import BaseEncryptedField
+from bhp_crypto import actions
 
 
 class BaseCryptorModelAdmin (BaseModelAdmin):
@@ -9,8 +8,8 @@ class BaseCryptorModelAdmin (BaseModelAdmin):
     other stuff. """
 
     def __init__(self, *args, **kwargs):
-        self.actions.append(encrypt)
-        self.actions.append(decrypt)
+        self.actions.append(actions.encrypt)
+        self.actions.append(actions.decrypt)
         super(BaseCryptorModelAdmin, self).__init__(*args, **kwargs)
 
     def get_readonly_fields(self, request, obj=None):

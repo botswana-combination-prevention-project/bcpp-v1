@@ -3,14 +3,20 @@ import base64
 import copy
 import sys
 from M2Crypto import Rand, RSA, EVP
-#import logging
+import logging
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 
 from base_cryptor import BaseCryptor
 
-#logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class Cryptor(BaseCryptor):
@@ -74,7 +80,13 @@ class Cryptor(BaseCryptor):
         super(Cryptor, self).__init__()
 
     def set_public_key(self, keyfile=None, **kwargs):
-        """ Load the rsa public key. """
+        """ Load the rsa public key.
+
+        Keyword Arguments
+         - algorithm: rsa, aes (default: no default).
+         - mode: the mode dictionary key. For example local (default: no default).
+
+        """
         algorithm = kwargs.get('algorithm', self.algorithm)
         mode = kwargs.get('mode', self.mode)
         self.public_key = None
@@ -92,15 +104,26 @@ class Cryptor(BaseCryptor):
         else:
             try:
                 self.public_key = RSA.load_pub_key(keyfile)
-                print >>sys.stderr, ('successfully loaded {0} {1} '
+                logger.info('successfully loaded {0} {1} '
                             'public key'.format(algorithm, mode))
                 self.has_encryption_key = True
             except:
-                print >>sys.stderr, ('warning: failed to load public key {0}.'.format(keyfile))
+                logger.warning('warning: failed to load public '
+                               'key {0}.'.format(keyfile))
         return self.public_key is not None
 
     def set_private_key(self, keyfile=None, **kwargs):
-        """ Load the rsa private key. """
+        """ Load the rsa private key and return True, if available, otherwise return False.
+
+        'irreversible' does not have a private key so:
+         >>> keyfile = self.VALID_MODES.get(algorithm).get(mode).get('private', None)
+         >>> keyfile
+         >>> None
+
+        Keyword Arguments:
+         - algorithm -- rsa, aes (default: no default). 
+         - mode -- the mode dictionary key. For example local (default: no default).
+        """
         algorithm = kwargs.get('algorithm', self.algorithm)
         mode = kwargs.get('mode', self.mode)
         self.private_key = None
@@ -110,15 +133,15 @@ class Cryptor(BaseCryptor):
                 raise AttributeError('Algorithm and mode must be set '
                                      'before attempting to set the '
                                      'private key')
-            keyfile = self.VALID_MODES.get(algorithm).get(mode).get('private')
+            keyfile = self.VALID_MODES.get(algorithm).get(mode).get('private', None)
         # either load from IS_PRELOADED or from file
-        if isinstance(self.PRELOADED_KEYS.get(algorithm).get(mode).get('private'), RSA.RSA):
-            self.private_key = (self.PRELOADED_KEYS.get(algorithm).get(mode).get('private'))
+        if isinstance(self.PRELOADED_KEYS.get(algorithm).get(mode).get('private', None), RSA.RSA):
+            self.private_key = (self.PRELOADED_KEYS.get(algorithm).get(mode).get('private', None))
         else:
             try:
                 if keyfile:
                     self.private_key = RSA.load_key(keyfile)
-                    print >>sys.stderr, ('successfully loaded {0} {1} private '
+                    logger.info('successfully loaded {0} {1} private '
                                 'key'.format(algorithm, mode))
             except:
                 # if you need a warning here, do so in the subclass
@@ -126,7 +149,15 @@ class Cryptor(BaseCryptor):
         return self.private_key is not None
 
     def set_aes_key(self, **kwargs):
-        """ Decrypted and set the AES key using the rsa private key for the given mode."""
+        """ Decrypted and set the AES key using the rsa private key for the given mode.
+
+        Keyword Arguments:
+         - algorithm -- must be 'aes' (default: no default). 
+         - mode -- the mode dictionary key. For example local (default: no default).
+
+        .. Note:: have not implemented default values for keyword args as a precaution for an incorrectly configured instance. 
+
+        """
         algorithm = kwargs.get('algorithm', self.algorithm)
         mode = kwargs.get('mode', self.mode)
         if algorithm != 'aes':
@@ -141,26 +172,20 @@ class Cryptor(BaseCryptor):
                 encrypted_aes = f.read()
                 f.close()
                 self.aes_key = self._decrypt_aes_key(encrypted_aes, mode)
-                print >>sys.stderr, ('successfully loaded {0} aes key'.format(mode))
+                logger.info('successfully loaded {0} aes key'.format(mode))
             except IOError as e:
-                print >>sys.stderr, ('warning: failed to open {0} aes '
+                logger.warning('warning: failed to open {0} aes '
                                'key file {0}. Got {1}'.format(mode, path, e))
             except RSA.RSAError as e:
-                print >>sys.stderr, ('RSA Error: failed to decrypt {0} {1} key from {2}'.format(algorithm, mode, path))
+                logger.error('RSA Error: failed to decrypt {0} {1} key from {2}'.format(algorithm, mode, path))
                 raise
             except:
-                print >>sys.stderr, ("Unexpected error:", sys.exc_info()[0])
+                logger.critical("Unexpected error:", sys.exc_info()[0])
                 raise
         return self.aes_key != None
 
-    #def _get_aes_keyfile(self, **kwargs):
-    #    """ Return the aes key filename."""
-    #    algorithm = kwargs.get('algorithm', self.algorithm)
-    #    mode = kwargs.get('mode', self.mode)
-    #    return self.VALID_MODES.get(algorithm).get(mode).get('key')
-
     def rsa_encrypt(self, plaintext, **kwargs):
-        """Return an un-encoded secret or fail"""
+        """Return an un-encoded secret or fail. """
         if not self.set_public_key(**kwargs):
             # FAIL here if key not available and user is trying to save data
             raise ImproperlyConfigured('RSA key not available, unable to '
@@ -171,9 +196,10 @@ class Cryptor(BaseCryptor):
         return self.public_key.public_encrypt(plaintext, RSA.pkcs1_oaep_padding)
 
     def rsa_decrypt(self, secret, is_encoded=True, **kwargs):
-        """ Return plaintext or secret if the private key is not available.
+        """ Returns plaintext or secret if the private key is not available.
 
-        Secret is base64 encoded unless 'is_encoded' is false"""
+        Secret is base64 encoded unless 'is_encoded' is false.
+        """
         retval = secret
         if self.set_private_key(**kwargs):
             if is_encoded:
@@ -182,17 +208,18 @@ class Cryptor(BaseCryptor):
         return retval
 
     def aes_decrypt(self, secret, is_encoded=True, **kwargs):
-        """ AES decrypt a value using the random iv stored with the secret where
+        """ AES decrypts a value using the random iv stored with the secret where
         secret is a tuple (secret_text, sep, iv).
 
-        Will return plaintext or the original secret tuple  """
+        Will return plaintext or the original secret tuple
+        """
         algorithm = kwargs.get('algorithm', self.algorithm)
         mode = kwargs.get('mode', self.mode)
         retval = secret
         if secret:
             #cipher_tuple is (cipher, sep, iv)
             if isinstance(secret, (basestring)):
-                print >>sys.stderr, ('warning: decrypt {algorithm} {mode} expects secret to be a list or tuple. '
+                logger.warning('warning: decrypt {algorithm} {mode} expects secret to be a list or tuple. '
                                'Got basestring'.format(algorithm=algorithm, mode=mode))
                 secret_text, iv = secret, '\0' * 16
             try:
@@ -211,10 +238,7 @@ class Cryptor(BaseCryptor):
         return retval
 
     def aes_encrypt(self, plaintext, **kwargs):
-        """ Return secret as a tuple (secret,iv) or fail.
-
-        Important to not allow any data to be saved if the keys are
-        not available"""
+        """ Returns secret as a tuple (secret,iv) or fail."""
         algorithm = kwargs.get('algorithm', self.algorithm)
         mode = kwargs.get('mode', self.mode)
         retval = plaintext
@@ -239,9 +263,8 @@ class Cryptor(BaseCryptor):
         return EVP.Cipher(alg='aes_128_cbc', key=key, iv=iv, op=op)
 
     def _decrypt_aes_key(self, encrypted_aes, mode):
-        #public_key = copy.copy(self.public_key)
+        """Decrypts the AES key using the rsa private key created for the AES key of this mode."""
         plain_aes = self.rsa_decrypt(encrypted_aes, algorithm='rsa', mode=mode)
-        #self.public_key = public_key
         if encrypted_aes == plain_aes:
             retval = None
         else:
@@ -249,16 +272,14 @@ class Cryptor(BaseCryptor):
         return retval
 
     def _encrypt_aes_key(self, plain_aes, mode):
-        #private_key = copy.copy(self.private_key)
+        """Decrypts the AES key using the rsa public key created for the AES key of this mode."""
         encrypted_aes = self.rsa_encrypt(plain_aes, algorithm='rsa', mode=mode)
-        #self.private_key = private_key
         if encrypted_aes == plain_aes:
             raise ImproperlyConfigured('Keys are not available to encrypt the aes key.')
         return encrypted_aes
 
     def preload_all_keys(self):
-        """ Force all keys to be loaded into preload dictionary . """
-
+        """ Forces all keys to be loaded into preload dictionary . """
         def load_key(algorithm, mode=None, key_name=None):
             """ Helper method to load one key for load_all_keys. """
             if algorithm == 'rsa':
@@ -290,7 +311,7 @@ class Cryptor(BaseCryptor):
             return key
 
         if not self.is_preloaded_with_keys():
-            print >>sys.stderr, ('/* Preloading keys ...')
+            logger.info('/* Preloading keys ...')
             for algorithm, mode_dict in self.VALID_MODES.iteritems():
                 for mode, key_dict in mode_dict.iteritems():
                     for key_name in key_dict.iterkeys():
@@ -299,9 +320,9 @@ class Cryptor(BaseCryptor):
             if self.is_preloaded_with_keys('warning: failed to preload {algorithm} {mode} {key_name}'):
                 # run some tests
                 self.test()
-                print >>sys.stderr, ('Done preloading keys. */\n')
+                logger.info('Done preloading keys. */')
             else:
-                print >>sys.stderr, ('No keys found to load. */\n')
+                logger.info('No keys found to load. */')
             return True
 
     def _encrypt_salt(self, plain_salt):
@@ -321,9 +342,9 @@ class Cryptor(BaseCryptor):
         try:
             f = open(path, 'r')
             encrypted_salt = f.read()
-            print >>sys.stderr, ('successfully loaded {0} {1} salt from file'.format(algorithm, mode))
+            logger.info('successfully loaded {0} {1} salt from file'.format(algorithm, mode))
         except:
-            print >>sys.stderr, ('warning: failed to load {0} {1} salt {2} from file'.format(algorithm, mode, path))
+            logger.warning('warning: failed to load {0} {1} salt {2} from file'.format(algorithm, mode, path))
             encrypted_salt = None
         return encrypted_salt
 
@@ -350,14 +371,14 @@ class Cryptor(BaseCryptor):
                     if not isinstance(self.PRELOADED_KEYS[algorithm][mode][key_name], (RSA.RSA_pub, RSA.RSA, basestring)):
                         preloaded = False
                         if msg:
-                            print >>sys.stderr, (msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
+                            logger.warning(msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
                         else:
                             break
                     elif isinstance(self.PRELOADED_KEYS[algorithm][mode][key_name], basestring):
                         if self.KEY_PATH in self.PRELOADED_KEYS[algorithm][mode][key_name]:
                             preloaded = False
                             if msg:
-                                print >>sys.stderr, (msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
+                                logger.warning(msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
                             else:
                                 break
                     else:
@@ -375,7 +396,7 @@ class Cryptor(BaseCryptor):
                 else:
                     raise TypeError('Encryption error for {0}'.format(algorithm))
             except TypeError as e:
-                print >>sys.stderr, ('Encrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e))
+                logger.error('Encrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e))
                 encrypted_text = None
                 pass
             return encrypted_text
@@ -389,23 +410,22 @@ class Cryptor(BaseCryptor):
                 else:
                     raise TypeError('Encryption error for {0}'.format(algorithm))
             except TypeError as e:
-                print >>sys.stderr, ('Decrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e))
+                logger.error('Decrypt error for {0} {1}. Got \'{2}\''.format(algorithm, mode, e))
                 plaintext = None
                 pass
             return plaintext
 
         plaintext = '123456789ABCDEFG'
-        print >>sys.stderr, ('Testing keys...')
+        logger.info('Testing keys...')
         for algorithm, mode_dict in self.VALID_MODES.iteritems():
             for mode in mode_dict.iterkeys():
-                #print >>sys.stderr, ( 'Testing {algorithm} {mode}...'.format(algorithm=algorithm, mode=mode)
+                #logger.warning( 'Testing {algorithm} {mode}...'.format(algorithm=algorithm, mode=mode)
                 encrypted_text = _encrypt(self, plaintext, algorithm, mode)
                 decrypted_text = _decrypt(self, encrypted_text, algorithm, mode)
                 if encrypted_text == decrypted_text and decrypted_text is not None:
                     decrypted_text = base64.b64encode(decrypted_text)
                 if decrypted_text != plaintext:
-                    print >>sys.stderr, ('( ) Encrypt/Decrypt failed for {algorithm} {mode}.'.format(algorithm=algorithm, mode=mode))
+                    logger.info('( ) Encrypt/Decrypt failed for {algorithm} {mode}.'.format(algorithm=algorithm, mode=mode))
                 else:
-                    print >>sys.stderr, ('(*) Encrypt/Decrypt works for {algorithm} {mode}'.format(algorithm=algorithm, mode=mode))
-        print >>sys.stderr, ('Testing complete.')
-
+                    logger.info('(*) Encrypt/Decrypt works for {algorithm} {mode}'.format(algorithm=algorithm, mode=mode))
+        logger.info('Testing complete.')

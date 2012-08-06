@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="bhp_crypto 1.0 documentation" href="index.html" />
     <link rel="next" title="Choosing a Field Class for Your Model" href="selecting_field_classes.html" />
-    <link rel="prev" title="Protecting Keys with Truecrypt" href="protecting_keys_with_truecrypt.html" /> 
+    <link rel="prev" title="Pre-loading Keys" href="preloading_keys.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="selecting_field_classes.html" title="Choosing a Field Class for Your Model"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="protecting_keys_with_truecrypt.html" title="Protecting Keys with Truecrypt"
+          <a href="preloading_keys.html" title="Pre-loading Keys"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">bhp_crypto 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -60,17 +60,17 @@
 <p class="first admonition-title">Warning</p>
 <p class="last">Keys should be safely stored and properly backed up.</p>
 </div>
-<p>The EDC is often deployed on disconnected mobile devices. In this environment the keys are stored on the device inside a mountable <em>truecrypt</em> file
-(see also <a class="reference internal" href="protecting_keys_with_truecrypt.html"><em>Protecting Keys with Truecrypt</em></a>).</p>
+<p>The EDC is often deployed on disconnected mobile devices. In this environment the keys are stored on the device
+and should be secured inside a mountable <em>truecrypt</em> file (see also <a class="reference internal" href="protecting_keys_with_truecrypt.html"><em>Protecting Keys with Truecrypt</em></a>).</p>
 <p>Use the <em>settings</em> attribute <em>KEY_PATH</em> to indicate the location of the mounted truecrypt file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">KEY_PATH</span><span class="o">=</span><span class="s">&#39;/Volume/project_keys/keys&#39;</span>
 </pre></div>
 </div>
 <p>With the KEY_PATH attribute set, generate new keys:</p>
-<div class="highlight-python"><pre>from bhp_crypto.utils import setup_new_keys()
-setup_new_keys()</pre>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">generate_keys</span>
+</pre></div>
 </div>
-<p>The new keys will be in the folder:</p>
+<p>The new keys will be in the KEY_PATH folder:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">user</span><span class="o">-</span><span class="n">aes</span><span class="o">-</span><span class="n">local</span>
 <span class="n">user</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">salt</span>
 <span class="n">user</span><span class="o">-</span><span class="n">public</span><span class="o">-</span><span class="n">irreversible</span><span class="o">.</span><span class="n">pem</span>
@@ -79,6 +79,10 @@ setup_new_keys()</pre>
 <span class="n">user</span><span class="o">-</span><span class="n">public</span><span class="o">-</span><span class="n">local</span><span class="o">.</span><span class="n">pem</span>
 <span class="n">user</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">local</span><span class="o">.</span><span class="n">pem</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Keys load from the files into memory when apache is started on a netbook after which the key files may be removed. To avoid storing keys on the device, set the KEY_PATH to a remote drive and disconnect from the remote drive once apache is started.</p>
 </div>
 </div>
 
@@ -89,8 +93,8 @@ setup_new_keys()</pre>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="protecting_keys_with_truecrypt.html"
-                        title="previous chapter">Protecting Keys with Truecrypt</a></p>
+  <p class="topless"><a href="preloading_keys.html"
+                        title="previous chapter">Pre-loading Keys</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="selecting_field_classes.html"
                         title="next chapter">Choosing a Field Class for Your Model</a></p>
@@ -129,7 +133,7 @@ setup_new_keys()</pre>
           <a href="selecting_field_classes.html" title="Choosing a Field Class for Your Model"
              >next</a> |</li>
         <li class="right" >
-          <a href="protecting_keys_with_truecrypt.html" title="Protecting Keys with Truecrypt"
+          <a href="preloading_keys.html" title="Pre-loading Keys"
              >previous</a> |</li>
         <li><a href="index.html">bhp_crypto 1.0 documentation</a> &raquo;</li> 
       </ul>

@@ -62,52 +62,58 @@
 <dt id="bhp_crypto.classes.BaseEncryptedField">
 <em class="property">class </em><tt class="descclassname">bhp_crypto.classes.</tt><tt class="descname">BaseEncryptedField</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">django.db.models.fields.Field</span></tt></p>
-<p>A base field class to store sensitive data at rest in an encrypted format.</p>
+<p>A base field class to store sensitive data at rest in an encrypted
+format.</p>
 <ul class="simple">
-<li>To maintain uniqueness and searchability, only the hash is ever stored in the model field.</li>
-<li>The cipher is stored with the hash in the <a class="reference internal" href="models.html#bhp_crypto.models.Crypt" title="bhp_crypto.models.Crypt"><tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.models.Crypt</span></tt></a> cipher lookup model and will be
-made available when required for decryption (e.g. the private key is available)</li>
-<li>Salt, public key filename and private key filename are referred to via the settings file</li>
+<li>To maintain uniqueness and searchability, only the hash is ever
+stored in the model field.</li>
+<li>The cipher is stored with the hash in the <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.models.</span>
+<span class="pre">Crypt</span></tt> cipher lookup model and will be
+made available when required for decryption (e.g. the private key is
+available)</li>
+<li>Salt, public key filename and private key filename are referred to
+via the settings file</li>
 </ul>
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseEncryptedField.decrypt">
 <tt class="descname">decrypt</tt><big>(</big><em>value</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.decrypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>wrap the crypter method of same name</p>
+<dd><p>wrap the cryptor method of same name</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseEncryptedField.encrypt">
 <tt class="descname">encrypt</tt><big>(</big><em>value</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.encrypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>wrap the crypter method of same name</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="bhp_crypto.classes.BaseEncryptedField.get_db_prep_value">
-<tt class="descname">get_db_prep_value</tt><big>(</big><em>value</em>, <em>connection</em>, <em>prepared=False</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.get_db_prep_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Store the hash in the model field and the secret in the lookup table (Crypt).</p>
+<dd><p>wrap the cryptor method of same name</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseEncryptedField.get_internal_type">
 <tt class="descname">get_internal_type</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.get_internal_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a Charfield as we only ever store the hash, which is a fixed length char.</p>
+<dd><p>This is a Charfield as we only ever store the hash, which is a         fixed length char.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_crypto.classes.BaseEncryptedField.get_prep_lookup">
+<tt class="descname">get_prep_lookup</tt><big>(</big><em>lookup_type</em>, <em>value</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.get_prep_lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only decrypts the stored value to handle &#8216;exact&#8217; and &#8216;in&#8217;
+but excepts &#8216;icontains&#8217; as if it is &#8216;exact&#8217; so that the admin
+search fields work.</p>
+<p>Also, &#8216;startswith&#8217; does not decrypt and may only be used to check for the hash_prefix.
+All others are errors.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseEncryptedField.get_prep_value">
-<tt class="descname">get_prep_value</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.get_prep_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Always returns the encrypted value.</p>
+<tt class="descname">get_prep_value</tt><big>(</big><em>value</em>, <em>encrypt=True</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.get_prep_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the hashed_value with prefix (or None) and, if needed, updates the secret lookup.</p>
+<p>Keyword arguments:
+encrypt &#8211; if False, the value is returned as is (default True)</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="bhp_crypto.classes.BaseEncryptedField.have_decryption_key">
-<tt class="descname">have_decryption_key</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.have_decryption_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseEncryptedField.is_encrypted">
 <tt class="descname">is_encrypted</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.is_encrypted" title="Permalink to this definition">¶</a></dt>
-<dd><p>wrap the crypter method of same name</p>
+<dd><p>wrap the cryptor method of same name</p>
 </dd></dl>
 
 <dl class="method">
@@ -119,13 +125,17 @@ made available when required for decryption (e.g. the private key is available)<
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseEncryptedField.to_python">
 <tt class="descname">to_python</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.to_python" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the decrypted value IF the private key is found, otherwise returns the encrypted value.</p>
+<dd><p>Returns the decrypted value IF the private key is found, otherwise returns
+the encrypted value.</p>
+<p>Value comes from DB as a hash (e.g. &lt;hash_prefix&gt;&lt;hashed_value&gt;). If DB value is being
+acccessed for the first time, value is not an encrypted value (not a prefix+hashed_value).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_crypto.classes.BaseEncryptedField.validate_with_cleaned_data">
 <tt class="descname">validate_with_cleaned_data</tt><big>(</big><em>attname</em>, <em>cleaned_data</em><big>)</big><a class="headerlink" href="#bhp_crypto.classes.BaseEncryptedField.validate_with_cleaned_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>May be overridden to test field data against other values in cleaned data.</p>
+<dd><p>May be overridden to test field data against other values
+in cleaned data.</p>
 <p>Should raise a forms.ValidationError if the test fails</p>
 <ol class="arabic simple">
 <li>&#8216;attname&#8217; is the key in cleaned_data for the value to be tested,</li>
@@ -133,6 +143,13 @@ made available when required for decryption (e.g. the private key is available)<
 </ol>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_crypto.fields.IrreversibleRsaEncryptionField">
+<em class="property">class </em><tt class="descclassname">bhp_crypto.fields.</tt><tt class="descname">IrreversibleRsaEncryptionField</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.fields.IrreversibleRsaEncryptionField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base_encrypted_field.BaseEncryptedField</span></tt></p>
+<p>Sames as Restricted except the private key does not exist so values can never be decrypted..</p>
 </dd></dl>
 
 <dl class="class">
@@ -146,7 +163,6 @@ made available when required for decryption (e.g. the private key is available)<
 <dt id="bhp_crypto.fields.LocalRsaEncryptionField">
 <em class="property">class </em><tt class="descclassname">bhp_crypto.fields.</tt><tt class="descname">LocalRsaEncryptionField</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_crypto.fields.LocalRsaEncryptionField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base_encrypted_field.BaseEncryptedField</span></tt></p>
-<p>Private key is expected to be available</p>
 </dd></dl>
 
 <dl class="class">
