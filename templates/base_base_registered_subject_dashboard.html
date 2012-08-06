@@ -113,7 +113,12 @@
                 {% block locator %}{% endblock locator %}                                                
                 {% block household_structure_members %}{% endblock household_structure_members %}                                                
                 {% block clinic_plots %}{% endblock %}
-                {% block summaries %}<span name="x_summaries" id="x_summaries">{{ summary_links }}</span>{% endblock %}
+                
+                {% block summaries %}
+                <tr name="middle right" ><td>                
+                <span name="x_summaries" id="x_summaries">{{ summary_links }}</span>
+                </td></tr>
+                {% endblock %}
                 <tr name="middle right" ><td><H4>Laboratory</H4></td></tr>                
                 {% block lab_plots %}{% endblock %}
                 {% block lab_results %}
