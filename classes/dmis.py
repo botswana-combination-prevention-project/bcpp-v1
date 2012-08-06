@@ -379,9 +379,9 @@ class Dmis(object):
                     order.user_modified = row.user_modified
                     order.dmis_reference = row.dmis_reference
                     order.save()
-                    logger.info('    order: updated {order_identifier}'.format(order_identifier=row.order_identifier))
+                    logger.info('    order: updated {order_identifier} {panel}'.format(order_identifier=row.order_identifier, panel=row.panel.name))
                 else:
-                    logger.info('    order: found {order_identifier} (not modified)'.format(order_identifier=row.order_identifier))
+                    logger.info('    order: found {order_identifier} {panel} (not modified)'.format(order_identifier=row.order_identifier, panel=row.panel.name))
             else:
                 order = Order.objects.using(lab_db).create(
                     order_identifier=row.order_identifier,
@@ -395,7 +395,7 @@ class Dmis(object):
                     user_modified=row.user_modified,
                     dmis_reference=row.dmis_reference,
                     )
-                logger.info('    order: created {order_identifier}'.format(order_identifier=row.order_identifier))
+                logger.info('    order: created {order_identifier} {panel}'.format(order_identifier=row.order_identifier, panel=row.panel.name))
             return order
 
         def create_or_update_result(order):
