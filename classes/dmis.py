@@ -214,7 +214,6 @@ class Dmis(object):
                     user_created='auto',
                     created=datetime.today(),
                     comment='auto created / imported from DMIS')
-                account.save()
             return account
 
         def fetch_or_create_panel(lab_db, dmis_data_source, **kwargs):
@@ -277,7 +276,6 @@ class Dmis(object):
                         short_name=interface,
                         display_index=display_index + 10,
                         )
-                    result_source.save()
             # create a new one if given argument and does not exist already
             if kwargs.get('interface'):
                 if not ResultSource.objects.using(lab_db).filter(name__iexact=kwargs.get('interface')):
@@ -286,7 +284,6 @@ class Dmis(object):
                         short_name=kwargs.get('interface'),
                         display_index=display_index + 11,
                         )
-                    result_source.save()
                 else:
                     result_source = ResultSource.objects.using(lab_db).get(name__iexact=kwargs.get('interface'))
             else:
@@ -676,7 +673,6 @@ class Dmis(object):
                         short_name=condition,
                         display_index=display_index,
                         )
-                    aliquot_condition.save()
                 return aliquot_condition
 
             if receive.receive_condition:
