@@ -43,6 +43,8 @@ class Panel(BaseModel):
         blank=True,
         )
 
+    objects = models.Manager()
+
     def __unicode__(self):
         return self.name
 

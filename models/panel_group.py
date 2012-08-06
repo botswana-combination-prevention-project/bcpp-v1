@@ -10,6 +10,8 @@ class PanelGroup (BaseModel):
         unique=True,
         )
 
+    objects = models.Manager()
+
     def __unicode__(self):
         return self.name
 
