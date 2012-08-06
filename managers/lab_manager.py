@@ -59,7 +59,7 @@ class LabManager(models.Manager):
                     lab.clinician_initials = lis_receive.clinician_initials
                     lab.protocol_identifier = lis_receive.protocol.protocol_identifier
                     lab.release_status = 'received'
-                    lab.panel = lis_receive.dmis_panel_name
+                    lab.panel = lis_receive.aliquot.order.panel.name or 'Pending'
                     lab.aliquot_identifier = None  # lis_receive.aliquot.aliquot_identifier
                     lab.condition = condition_name
                     lab.receive_datetime = lis_receive.receive_datetime
@@ -85,7 +85,7 @@ class LabManager(models.Manager):
                         protocol_identifier=lis_receive.protocol.protocol_identifier,
                         clinician_initials=lis_receive.clinician_initials,
                         release_status='received',
-                        panel=lis_receive.dmis_panel_name,
+                        panel=lis_receive.aliquot.order.panel.name or 'Pending',
                         drawn_datetime=lis_receive.drawn_datetime,
                         receive_datetime=lis_receive.receive_datetime,
                         receive_identifier=lis_receive.receive_identifier,
