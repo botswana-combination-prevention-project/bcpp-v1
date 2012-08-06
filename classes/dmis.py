@@ -219,17 +219,19 @@ class Dmis(object):
 
         def fetch_or_create_panel(lab_db, dmis_data_source, **kwargs):
             """ Determines the panel given a tid or panel_id."""
-            panel_id = kwargs.get('panel_id')
+            panel_id = kwargs.get('panel_id', None)
             if panel_id == '-9':
                 panel_id = None
-            tid = kwargs.get('tid')
+            tid = kwargs.get('tid', None)
+            if tid == '-9':
+                tid = None
             panel = None
             if tid:
                 panels = Panel.objects.using(lab_db).filter(panel_group__name__exact=tid).order_by('name')
                 if panels:
                     panel = panels[0]
                     for p in panels:
-                        if re.search(settings.PROTOCOL_NUMBER, panel.name):
+                        if re.search(settings.PROJECT_NUMBER, panel.name):
                             panel = p
                             break
                     if not panel:
@@ -239,27 +241,14 @@ class Dmis(object):
                             if panels:
                                 panel = panels[0]
                                 for p in panels:
-                                    if re.search(settings.PROTOCOL_NUMBER, panel.name):
+                                    if re.search(settings.PROJECT_NUMBER, panel.name):
                                         panel = p
                                         break
-
-#            if not panel and receive_identifier:
-#                # go back to the receving record and get the TID of the first record,
-#                # usually only one record returned, but not always...
-#                cnxn1 = pyodbc.connect(dmis_data_source)
-#                cursor_panel = cnxn1.cursor()
-#                sql = 'select top 1 tid as panel_group_name from lab01response where pid=\'%s\' order by datecreated' % (receive_identifier,)
-#                cursor_panel.execute(str(sql))
-#                for row in cursor_panel:
-#                    panel_group_name = row.panel_group_name
-#                    panels = Panel.objects.using(lab_db).filter(panel_group__name__exact=panel_group_name)
-#                    if panels:
-#                        panel = panels[0]
             if not panel:
                 raise TypeError('Could not determine panel for tid={tid} '
                                 'or panel_id={panel_id} protocol '
                                 '{protocol}. Perhaps add one.'.format(tid=tid, panel_id=panel_id,
-                                                    protocol=settings.PROTOCOL_NUMBER)
+                                                    protocol=settings.PROJECT_NUMBER))
             return panel
 
         def fetch_or_create_resultsource(lab_db, **kwargs):
