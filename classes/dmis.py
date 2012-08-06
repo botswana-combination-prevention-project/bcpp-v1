@@ -159,6 +159,7 @@ class Dmis(object):
 
                     if ord_row.order_identifier:
                         order = self._create_or_update(Order, ord_row)
+                        del ord_row
                         if order:
                             result, result_modified = self._create_or_update(Result, order)
                             if result and result_modified:
