@@ -50,6 +50,8 @@ class TestCode(BaseModel):
         blank=True,
         )
 
+    objects = models.Manager()
+
     def __unicode__(self):
         return "%s" % (self.name)
 
