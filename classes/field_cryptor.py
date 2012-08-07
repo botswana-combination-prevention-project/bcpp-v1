@@ -25,8 +25,11 @@ class FieldCryptor(object):
         if not value:
             hash_secret = value   # value is None
         else:
+            if not isinstance(value, basestring):
+                raise TypeError('Expected basestring. Convert your non-null value to basetring '
+                                'before calling encrypt.')
             if not self.is_encrypted(value):
-                value = self.to_string(value)
+                #value = self.to_string(value)
                 if self.algorithm == 'aes':
                     encoded_secret = self.cryptor.IV_PREFIX.join(self.cryptor.aes_encrypt(value))
                 elif self.algorithm == 'rsa':
