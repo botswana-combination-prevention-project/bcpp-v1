@@ -49,6 +49,7 @@ class BaseSearch(object):
     #@login_required
     def view(self, request, **kwargs):
         """Renders the view."""
+        self._context = {}
         self.prepare(request, **kwargs)
         self.prepare_form(request, **kwargs)
         if self.ready:
@@ -157,10 +158,11 @@ class BaseSearch(object):
         keyword Arguments:
         results_per_page -- (default: 25)
         """
-        results_per_page = kwargs.get('results_per_page', 25)
-        paginator = Paginator(search_result, results_per_page)
-        try:
-            search_result = paginator.page(page)
-        except (EmptyPage, InvalidPage):
-            search_result = paginator.page(paginator.num_pages)
+        if search_result:
+            results_per_page = kwargs.get('results_per_page', 25)
+            paginator = Paginator(search_result, results_per_page)
+            try:
+                search_result = paginator.page(page)
+            except (EmptyPage, InvalidPage):
+                search_result = paginator.page(paginator.num_pages)
         return search_result
