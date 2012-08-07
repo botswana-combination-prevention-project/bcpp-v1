@@ -173,10 +173,6 @@ class BaseBaseRequisition (BaseUuidModel):
     def barcode_value(self):
         return self.specimen_identifier
 
-    def label_template(self):
-        raise TypeError('Override method label_template() on the requisition model '
-                        'to return the correct template.')
-
     def save(self, *args, **kwargs):
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
             if not self.requisition_identifier and self.is_drawn.lower() == 'yes':
@@ -217,10 +213,11 @@ class BaseBaseRequisition (BaseUuidModel):
         return requisition_identifier
 
     def print_label(self, request, **kwargs):
-        """ print a label using the label class or subclass returned by get_label()"""
+        """ Print a labels"""
         if self.specimen_identifier:
             requisition_label = RequisitionLabel()
-            requisition_label.print_label(request, self, self.item_count_total,
+            requisition_label.print_label(request,
+                                          self, self.item_count_total,
                                           self.specimen_identifier)
             self.is_labelled = True
             self.modified = datetime.today()

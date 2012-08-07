@@ -37,9 +37,9 @@ flag_as_not_labelled.short_description = "UN-LABEL: flag as NOT labelled"
 
 
 def print_requisition_label(modeladmin, request, requisitions):
-    if not modeladmin.label_template:
-        raise ImproperlyConfigured('{0} attribute \'label_template\' must be set. '
-                                   'Got None.'.format(unicode(modeladmin.__class__.__name__)))
+    #if not modeladmin.label_template:
+    #    raise ImproperlyConfigured('{0} attribute \'label_template\' must be set. '
+    #                              'Got None.'.format(unicode(modeladmin.__class__.__name__)))
     try:
         for requisition in requisitions:
             if requisition.is_receive:

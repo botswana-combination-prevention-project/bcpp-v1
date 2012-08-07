@@ -10,11 +10,11 @@ from lab_requisition.actions import print_requisition_label
 
 
 class BaseRequisitionModelAdmin(BaseModelAdmin):
+
     actions = [flag_as_received,
                flag_as_not_received,
                flag_as_not_labelled,
                print_requisition_label, ]
-    label_template_name = None
 
     def __init__(self, *args, **kwargs):
         self.fields = [
