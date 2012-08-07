@@ -15,24 +15,26 @@ class Migration(SchemaMigration):
         db.create_index('bhp_lab_core_order', ['hostname_modified'])
 
         # Adding index on 'OrderIdentifierTracker', fields ['hostname_created']
-        db.create_index('bhp_lab_core_orderidentifiertracker', ['hostname_created'])
+        #db.create_index('bhp_lab_core_orderidentifiertracker', ['hostname_created'])
 
         # Adding index on 'OrderIdentifierTracker', fields ['hostname_modified']
-        db.create_index('bhp_lab_core_orderidentifiertracker', ['hostname_modified'])
+        #db.create_index('bhp_lab_core_orderidentifiertracker', ['hostname_modified'])
 
 
     def backwards(self, orm):
-        # Removing index on 'OrderIdentifierTracker', fields ['hostname_modified']
-        db.delete_index('bhp_lab_core_orderidentifiertracker', ['hostname_modified'])
-
-        # Removing index on 'OrderIdentifierTracker', fields ['hostname_created']
-        db.delete_index('bhp_lab_core_orderidentifiertracker', ['hostname_created'])
-
-        # Removing index on 'Order', fields ['hostname_modified']
-        db.delete_index('bhp_lab_core_order', ['hostname_modified'])
-
-        # Removing index on 'Order', fields ['hostname_created']
-        db.delete_index('bhp_lab_core_order', ['hostname_created'])
+        
+        pass
+#        # Removing index on 'OrderIdentifierTracker', fields ['hostname_modified']
+#        db.delete_index('bhp_lab_core_orderidentifiertracker', ['hostname_modified'])
+#
+#        # Removing index on 'OrderIdentifierTracker', fields ['hostname_created']
+#        db.delete_index('bhp_lab_core_orderidentifiertracker', ['hostname_created'])
+#
+#        # Removing index on 'Order', fields ['hostname_modified']
+#        db.delete_index('bhp_lab_core_order', ['hostname_modified'])
+#
+#        # Removing index on 'Order', fields ['hostname_created']
+#        db.delete_index('bhp_lab_core_order', ['hostname_created'])
 
 
     models = {
