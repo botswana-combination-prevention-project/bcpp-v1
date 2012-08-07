@@ -3,21 +3,21 @@ from django.db import models
 from django.conf import settings
 from lab_test_code.models import TestCode, TestCodeGroup
 from lab_result_item.models import ResultItem as LisResultItem
-from bhp_poll_mysql.poll_mysql import PollMySQL
+#from bhp_poll_mysql.poll_mysql import PollMySQL
 from lab_clinic_api.models import UpdateLog
 
 
 class ResultItemManager(models.Manager):
 
-    def connected(self):
-        host = settings.DATABASES['lab_api']['HOST']
-        if not host:
-            host = 'localhost'
-        port = settings.DATABASES['lab_api']['PORT']
-        if not port:
-            port = '3306'
-        poll = PollMySQL(host, int(port))
-        return poll.is_server_active()
+#    def connected(self):
+#        host = settings.DATABASES['lab_api']['HOST']
+#        if not host:
+#            host = 'localhost'
+#        port = settings.DATABASES['lab_api']['PORT']
+#        if not port:
+#            port = '3306'
+#        poll = PollMySQL(host, int(port))
+#        return poll.is_server_active()
 
     def update(self, **kwargs):
         """
