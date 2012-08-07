@@ -8,7 +8,7 @@ from django.db.models import Max
 
 from lab_receive.models import Receive
 from lab_order.models import Order
-from lab_panel.models import Panel, PanelGroup
+from lab_panel.models import Panel
 from lab_result.models import Result
 from lab_result.models import ResultSource
 from lab_result_item.models import ResultItem
@@ -97,69 +97,89 @@ class Dmis(object):
                     'aliquot': None}
             return type('OrderRow', (object,), attrs)
 
+        #import_as_new = kwargs.get('import_as_new', None)
         import_history = ImportHistory(self.lab_db, kwargs.get('subject_identifier', None) or kwargs.get('protocol', None))
         if import_history.start():
             # start with the receiving records. If a receiving record (LAB01) has not been modified
             # on the dmis, nothing further will happen to it nor any of its related data (order, result, resultitem, ...).
-            dmis_receive_rows = self._fetch_dmis_receive_rows(import_history, **kwargs)
-            if dmis_receive_rows:
+            dmis_receives = self._fetch_dmis_receive_rows(import_history, **kwargs)
+            if dmis_receives:
                 # some of the structure here is to limit the number of calls to the SQL Server
-                rowcount = len(dmis_receive_rows)
-                received = []
+                rowcount = len(dmis_receives)
+                already_received = []
                 protocol = None
                 sites = {}
                 patients = {}
                 panel_ids = {}
                 accounts = {}
-                for dmis_receive_row in dmis_receive_rows:
+                for dmis_receive in dmis_receives:
+                    # check for the lock and stop everything if not found
                     if not import_history.locked:
+                        # lock was deleted by another user
                         break
                     rowcount -= 1
-                    if not dmis_receive_row.receive_identifier in received:
+                    # create one receive record per sample (dmis may have more than one for
+                    # the same sample!)
+                    if not dmis_receive.receive_identifier in already_received:
                         # for each protocol, site or account check if it is in the list first.
                         # If not, fetch or create and add to the list.
-                        received.append(dmis_receive_row.receive_identifier)
+                        already_received.append(dmis_receive.receive_identifier)
                         if not protocol:
-                            protocol = self._fetch_or_create(Protocol, dmis_receive_row.protocol_identifier)
-                        if dmis_receive_row.site_identifier not in [site_identifier for site_identifier in sites.iterkeys()]:
-                            sites[dmis_receive_row.site_identifier] = self._fetch_or_create(Site, dmis_receive_row.site_identifier)
-                        if dmis_receive_row.protocol_identifier not in [account_name for account_name in accounts.iterkeys()]:
-                            accounts[dmis_receive_row.protocol_identifier] = self._fetch_or_create(Account, dmis_receive_row.protocol_identifier)
+                            protocol = self._fetch_or_create(Protocol, dmis_receive.protocol_identifier)
+                        if dmis_receive.site_identifier not in [site_identifier for site_identifier in sites.iterkeys()]:
+                            sites[dmis_receive.site_identifier] = self._fetch_or_create(Site, dmis_receive.site_identifier)
+                        if dmis_receive.protocol_identifier not in [account_name for account_name in accounts.iterkeys()]:
+                            accounts[dmis_receive.protocol_identifier] = self._fetch_or_create(Account, dmis_receive.protocol_identifier)
                         # for a patient, just fetch or create, no need for a list
-                        patients[dmis_receive_row.subject_identifier] = self._create_or_update(Patient,
-                            account=accounts[dmis_receive_row.protocol_identifier],
-                            subject_identifier=dmis_receive_row.subject_identifier,
-                            gender=dmis_receive_row.gender,
-                            dob=dmis_receive_row.dob,
-                            initials=dmis_receive_row.initials)
-                        # pass this row to its own class
-                        rcv_row = receive_row(dmis_receive_row)
+                        patients[dmis_receive.subject_identifier] = self._create_or_update(Patient,
+                            account=accounts[dmis_receive.protocol_identifier],
+                            subject_identifier=dmis_receive.subject_identifier,
+                            gender=dmis_receive.gender,
+                            dob=dmis_receive.dob,
+                            initials=dmis_receive.initials)
+                        # gather everything needed to create a new Receive instance into rcv_row
+                        rcv_row = receive_row(dmis_receive)
                         rcv_row.protocol = protocol
-                        rcv_row.site = sites[dmis_receive_row.site_identifier]
-                        rcv_row.patient = patients[dmis_receive_row.subject_identifier]
+                        rcv_row.site = sites[dmis_receive.site_identifier]
+                        rcv_row.patient = patients[dmis_receive.subject_identifier]
                         receive = self._create_or_update(Receive, rcv_row, rowcount)
                         del rcv_row
-                    # create or update the order, dmis_receive_row has the order information in it as well
-                    ord_row = order_row(dmis_receive_row)
-                    #panel may come from panel_id or tid
-                    if dmis_receive_row.tid and dmis_receive_row.tid != '-9':
-                        if dmis_receive_row.tid not in [tid for tid in panel_ids.iterkeys()]:
-                            panel_ids[dmis_receive_row.tid] = self._fetch_or_create(Panel, panel_id=dmis_receive_row.panel_id,
+                    # gather what is needed to create an order instance,
+                    # note: dmis_receive has the order information in it as well
+                    ord_row = order_row(dmis_receive)
+                    # data model is receive -> aliquot -> order
+                    ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive.tid)
+                    # determine the order.panel from tid or else panel_id
+                    if dmis_receive.tid and dmis_receive.tid != '-9':
+                        if dmis_receive.tid not in [tid for tid in panel_ids.iterkeys()]:
+                            panel_ids[dmis_receive.tid] = self._fetch_or_create(Panel, panel_id=dmis_receive.panel_id,
                                                                             tid=ord_row.tid,
                                                                             receive_identifier=receive.receive_identifier)
-                            ord_row.panel = panel_ids[dmis_receive_row.tid]
-                    elif dmis_receive_row.panel_id and dmis_receive_row.panel_id != '-9':
-                        if dmis_receive_row.panel_id not in [panel_id for panel_id in panel_ids.iterkeys()]:
-                            panel_ids[dmis_receive_row.panel_id] = self._fetch_or_create(Panel, panel_id=dmis_receive_row.panel_id,
+                        ord_row.panel = panel_ids[dmis_receive.tid]
+                    elif dmis_receive.panel_id and dmis_receive.panel_id != '-9':
+                        if dmis_receive.panel_id not in [panel_id for panel_id in panel_ids.iterkeys()]:
+                            panel_ids[dmis_receive.panel_id] = self._fetch_or_create(Panel, panel_id=dmis_receive.panel_id,
                                                                                  tid=ord_row.tid,
                                                                                  receive_identifier=receive.receive_identifier)
-                        ord_row.panel = panel_ids[dmis_receive_row.panel_id]
+                        ord_row.panel = panel_ids[dmis_receive.panel_id]
                     else:
+                        # this will cause an error
                         ord_row.panel = None
-                    ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive_row.tid)
+
+                    #if 'order' in import_as_new:
+                        # force an order to be recreated on import
                     Order.objects.using(self.lab_db).filter(aliquot__receive=receive).delete()
 
-                    if ord_row.order_identifier:
+                    if not ord_row.order_identifier:
+                        # create a PENDING order instance using the receive_identifier
+                        # as the order_identifier. (Dmis has no corresponding record)
+                        ord_row.order_identifier = dmis_receive.receive_identifier
+                        order = self._create_or_update(Order, ord_row)
+                    else:
+                        # delete the PENDING order instance created above. (Dmis created the
+                        # order when the results became available.)
+                        # Order.objects.using(self.lab_db).filter(order_identifier=dmis_receive.receive_identifier).delete()
+                        # create the order using the dmis order_identifier
                         order = self._create_or_update(Order, ord_row)
                         del ord_row
                         if order:
@@ -374,6 +394,7 @@ class Dmis(object):
                     order.order_identifier = row.order_identifier
                     order.order_datetime = row.order_datetime
                     order.aliquot = row.aliquot
+                    status = 'COMPLETE'
                     order.panel = row.panel
                     order.comment = '',
                     order.created = row.created
@@ -385,11 +406,35 @@ class Dmis(object):
                     logger.info('    order: updated {order_identifier} {panel}'.format(order_identifier=row.order_identifier, panel=row.panel.name))
                 else:
                     logger.info('    order: found {order_identifier} {panel} (not modified)'.format(order_identifier=row.order_identifier, panel=row.panel.name))
+            elif Order.objects.using(lab_db).filter(order_identifier=row.receive_identifier):
+                # update PENDING order previously created by django-lis identified by the receive_identifier
+                order = Order.objects.using(lab_db).get(order_identifier=row.receive_identifier)
+                order.order_identifier = row.order_identifier
+                order.order_datetime = row.order_datetime
+                order.aliquot = row.aliquot
+                status = 'COMPLETE'
+                order.panel = row.panel
+                order.comment = '',
+                order.created = row.created
+                order.modified = row.modified
+                order.user_created = row.user_created
+                order.user_modified = row.user_modified
+                order.dmis_reference = row.dmis_reference
+                order.save()
+                logger.info('    order: updated pending {receive_identifier} {panel}. '
+                            'order_identifier is now {order_identifier}'.format(receive_identifier=row.receive_identifier,
+                                                                                      order_identifier=row.order_identifier,
+                                                                                      panel=row.panel.name))
             else:
+                if row.receive_identifier == row.order_identifier:
+                    status = 'PENDING'
+                else:
+                    status = 'COMPLETE'
                 order = Order.objects.using(lab_db).create(
                     order_identifier=row.order_identifier,
                     order_datetime=row.order_datetime,
                     aliquot=row.aliquot,
+                    status=status,
                     panel=row.panel,
                     comment='',
                     created=row.created,
