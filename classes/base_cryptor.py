@@ -10,27 +10,23 @@ class BaseCryptor(BaseString):
     IV_PREFIX = 'iv:::'
 
     def is_encrypted(self, value, prefix=None):
-        """ The value string is considered encrypted if it starts
+        """ Determines that a value string is encrypted if it starts
         with 'self.HASH_PREFIX' or whichever prefix is passed."""
-        if prefix is None:
-            prefix = self.HASH_PREFIX
         if not value:
-            retval = False
+            is_encrypted = False
         else:
             if not isinstance(value, basestring):
-                try:
-                    value = str(value)
-                except:
-                    raise TypeError('Expected basestring. Got {0}'.format(value))
-
+                raise TypeError('Expected basestring. Got {0}'.format(value))
+            if prefix is None:
+                prefix = self.HASH_PREFIX
             if value == prefix:
                 raise TypeError('Expected a string value, got just the '
                                  'encryption prefix.')
             if value.startswith(prefix):
-                retval = True
+                is_encrypted = True
             else:
-                retval = False
-        return retval
+                is_encrypted = False
+        return is_encrypted
 
     def mask(self, value, mask='<encrypted>'):
         """ Help format values for display by masking them if encrypted

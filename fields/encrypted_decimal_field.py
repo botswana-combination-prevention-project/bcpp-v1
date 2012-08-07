@@ -32,6 +32,11 @@ class EncryptedDecimalField(LocalRsaEncryptionField):
         self.decimal_decimal_places = decimal_decimal_places
         self.decimal_max_digits = decimal_max_digits
 
+    def to_string(self, value):
+        if isinstance(value, basestring):
+            raise TypeError('Expected basestring. Got {0}'.format(value))
+        return str(value)
+
     def to_python(self, value):
         """ Returns as integer """
         retval = super(EncryptedDecimalField, self).to_python(value)

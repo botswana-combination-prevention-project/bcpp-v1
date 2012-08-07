@@ -72,7 +72,11 @@ class BaseEncryptedField(models.Field):
 
     def is_encrypted(self, value):
         """ wrap the cryptor method of same name """
-        return self.field_cryptor.is_encrypted(value)
+        return self.field_cryptor.is_encrypted(self.to_string(value))
+
+    def to_string(self, value):
+        """ Users can override for non-string data types. """
+        return value
 
     def decrypt(self, value, **kwargs):
         """ wrap the cryptor method of same name """
