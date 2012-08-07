@@ -10,6 +10,8 @@ class ZplTemplate(BaseUuidModel):
 
     default = models.BooleanField(default=False)
 
+    objects = models.Manager()
+
     def __unicode__(self):
         return self.name
 
