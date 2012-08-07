@@ -14,7 +14,7 @@ class DeserializeFromTransaction(object):
     def deserialize(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
 
-        for obj in serializers.deserialize("json", FieldCryptor(algorithm='aes', mode='local').decrypt(incoming_transaction.tx)):
+        for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)):
         # if you get an error deserializing a datetime, confirm dev version of json.py
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
                 # check if tx originanted from me

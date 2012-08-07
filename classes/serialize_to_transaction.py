@@ -75,7 +75,7 @@ class SerializeToTransaction(object):
                         ensure_ascii=False,
                         use_natural_keys=use_natural_keys)
         try:
-            json_tx = FieldCryptor(algorithm='aes', mode='local').encrypt(json_tx)
+            json_tx = FieldCryptor('aes', 'local').encrypt(json_tx)
         except NameError:
             pass
         except AttributeError:
