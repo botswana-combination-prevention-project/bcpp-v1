@@ -46,10 +46,10 @@ class Label(object):
             # set a default context
             self.label_context = {'barcode_value': self.barcode_value, }
 
-    def prepare_label_template(self):
+    def prepare_label_template(self, template):
         """ Users may override to define the template. """
         if not self.zpl_template:
-            self._set_label_template()
+            self._set_label_template(template)
         return self.zpl_template
 
     def update_label_context(self, **kwargs):
@@ -97,9 +97,17 @@ class Label(object):
                                         shell=False)
         self.process.communicate()
 
+    def get_template_prep(self):
+        """ Gets or creates a label instance and returns it.
+
+        Users may override, otherwise the `default` is returned
+        from :method:`_set_label_template()`."""
+
+        return None
+
     def _prepare_label(self):
         if not self.zpl_template:
-            self._set_label_template(self.prepare_label_template())
+            self._set_label_template(self.get_template_prep())
         if not self.label_context:
             self.prepare_label_context()
         self.label_context.update({'label_count': self.label_count,
@@ -107,7 +115,8 @@ class Label(object):
                                    'timestamp': datetime.today().strftime('%Y-%m-%d %H:%M')})
 
     def _set_label_template(self, template=None):
-        """ Set zpl_template with a zpl_template name or an instance of ZplTemplate. """
+        """ Set zpl_template with a zpl_template name or an instance of ZplTemplate
+        otherwise return the default template. """
         # use either the template name or the template instance
         if isinstance(template, ZplTemplate):
             self.zpl_template = template

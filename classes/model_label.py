@@ -39,13 +39,14 @@ class ModelLabel(Label):
         self.is_prepared = True
         return self.label_context
 
-    def prepare_label_template(self, template):
-        """ Users may override to set a custom template """
+    def get_template_prep(self):
+        """Users may override."""
         try:
-            template = ZplTemplate.objects.get(name=template)
+            template = ZplTemplate.objects.get(default=True)
         except:
             template = ZplTemplate()
             template.name = template
+            template.default = True
             template.template = ('^XA\n'
                 '^FO325,5^A0N,15,20^FD${item_count}/${item_count_total}^FS\n'
                 '^FO320,20^BY1,3.0^BCN,50,N,N,N\n'
@@ -64,4 +65,5 @@ class ModelLabel(Label):
                 ^FO325,130^A0N,15,20^FDCD4^FS
                 ^FO325,150^A0N,20^FD${created}^FS
                 ^XZ"""
+            template.save()
         return template

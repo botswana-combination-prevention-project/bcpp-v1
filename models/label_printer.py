@@ -10,6 +10,8 @@ class LabelPrinter(BaseUuidModel):
 
     default = models.BooleanField(default=False)
 
+    objects = models.Manager()
+
     def __unicode__(self):
         return '%s@%s' % (self.cups_printer_name, self.cups_server_ip,)
 
