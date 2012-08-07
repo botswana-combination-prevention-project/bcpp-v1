@@ -22,7 +22,7 @@ from lab_requisition.classes import RequisitionLabel
 
 class BaseBaseRequisition (BaseUuidModel):
 
-    """ does not include additional tests """
+    """ ..todo:: TODO: does not include additional tests """
 
     requisition_identifier = models.CharField(
         verbose_name='Requisition Id',
@@ -183,7 +183,7 @@ class BaseBaseRequisition (BaseUuidModel):
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
     def prepare_specimen_identifier(self, **kwargs):
-        """ add protocol, site and check digit"""
+        """ Adds protocol, site and check digit to the identifier"""
         self.protocol = settings.PROJECT_NUMBER
         opts = {}
         opts['prefix'] = settings.PROJECT_IDENTIFIER_PREFIX
@@ -194,7 +194,7 @@ class BaseBaseRequisition (BaseUuidModel):
         return '{prefix}-{site}{requisition_identifier}-{check_digit}'.format(**opts)
 
     def prepare_requisition_identifier(self, **kwargs):
-        """Generate and return a locally unique requisition identifier for a device (adds device id)"""
+        """Generate and returns a locally unique requisition identifier for a device (adds device id)"""
         device = Device()
         string = BaseString()
         length = 5
@@ -213,7 +213,8 @@ class BaseBaseRequisition (BaseUuidModel):
         return requisition_identifier
 
     def print_label(self, request, **kwargs):
-        """ Print a labels"""
+        """ Prints a label for and flags as 'labelled' this model instance using the
+        :func:`print label` method on the :class:`RequisitionLabel` class."""
         if self.specimen_identifier:
             requisition_label = RequisitionLabel()
             requisition_label.print_label(request,

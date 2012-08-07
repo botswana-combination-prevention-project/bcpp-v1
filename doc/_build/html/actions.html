@@ -50,9 +50,13 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-lab_requisition.actions">
-<span id="actions"></span><h1>Actions<a class="headerlink" href="#module-lab_requisition.actions" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+  <div class="section" id="actions">
+<h1>Actions<a class="headerlink" href="#actions" title="Permalink to this headline">¶</a></h1>
+<p>The actions handle sequential events of receiving, labeling, and packing.
+A specimen must be flagged as received before a label may be printed. The
+specimen identifier is allocated when the specimen is flagged as received.
+A specimen may not be packed without a specimen identifier.</p>
+<span class="target" id="module-lab_requisition.actions"></span><dl class="function">
 <dt id="lab_requisition.actions.flag_as_not_labelled">
 <tt class="descclassname">lab_requisition.actions.</tt><tt class="descname">flag_as_not_labelled</tt><big>(</big><em>modeladmin</em>, <em>request</em>, <em>queryset</em><big>)</big><a class="headerlink" href="#lab_requisition.actions.flag_as_not_labelled" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -65,8 +69,15 @@
 <dl class="function">
 <dt id="lab_requisition.actions.flag_as_received">
 <tt class="descclassname">lab_requisition.actions.</tt><tt class="descname">flag_as_received</tt><big>(</big><em>modeladmin</em>, <em>request</em>, <em>queryset</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.actions.flag_as_received" title="Permalink to this definition">¶</a></dt>
-<dd><p>flag as received and generate a globally unique identifier.
-Note the model is a SubjectRequisition</p>
+<dd><p>Flags specimen(s) as received and generates a globally
+specimen identifier.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lab_requisition.actions.print_requisition_label">
+<tt class="descclassname">lab_requisition.actions.</tt><tt class="descname">print_requisition_label</tt><big>(</big><em>modeladmin</em>, <em>request</em>, <em>requisitions</em><big>)</big><a class="headerlink" href="#lab_requisition.actions.print_requisition_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints a specimen label for a received specimen using the <tt class="xref py py-func docutils literal"><span class="pre">print_label()</span></tt>
+method attached to the requisition model.</p>
 </dd></dl>
 
 </div>

@@ -66,13 +66,6 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>created</strong> (<em>CreationDateTimeField</em>) &#8211; Created</li>
-<li><strong>modified</strong> (<em>ModificationDateTimeField</em>) &#8211; Modified</li>
-<li><strong>user_created</strong> (<em>CharField</em>) &#8211; User created</li>
-<li><strong>user_modified</strong> (<em>CharField</em>) &#8211; User modified</li>
-<li><strong>hostname_created</strong> (<em>HostnameCreationField</em>) &#8211; Hostname</li>
-<li><strong>hostname_modified</strong> (<em>HostnameModificationField</em>) &#8211; Hostname</li>
-<li><strong>id</strong> (<em>MyUUIDField</em>) &#8211; Id</li>
 <li><strong>requisition_identifier</strong> (<em>CharField</em>) &#8211; Requisition id</li>
 <li><strong>requisition_datetime</strong> (<em>DateTimeField</em>) &#8211; Requisition date</li>
 <li><strong>specimen_identifier</strong> (<em>CharField</em>) &#8211; Specimen id</li>
@@ -101,12 +94,6 @@
 </tbody>
 </table>
 <dl class="method">
-<dt id="lab_requisition.models.BaseBaseRequisition.get_label">
-<tt class="descname">get_label</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.models.BaseBaseRequisition.get_label" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a &#8220;ready to print&#8221; label object.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="lab_requisition.models.BaseBaseRequisition.prepare_requisition_identifier">
 <tt class="descname">prepare_requisition_identifier</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.models.BaseBaseRequisition.prepare_requisition_identifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate and return a locally unique requisition identifier for a device (adds device id)</p>
@@ -120,8 +107,8 @@
 
 <dl class="method">
 <dt id="lab_requisition.models.BaseBaseRequisition.print_label">
-<tt class="descname">print_label</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.models.BaseBaseRequisition.print_label" title="Permalink to this definition">¶</a></dt>
-<dd><p>print a label using the label class or subclass returned by get_label()</p>
+<tt class="descname">print_label</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.models.BaseBaseRequisition.print_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a labels using the <tt class="xref py py-func docutils literal"><span class="pre">print</span> <span class="pre">label()</span></tt> method on the <tt class="xref py py-class docutils literal"><span class="pre">RequisitionLabel</span></tt> class.</p>
 </dd></dl>
 
 </dd></dl>
@@ -135,13 +122,6 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>created</strong> (<em>CreationDateTimeField</em>) &#8211; Created</li>
-<li><strong>modified</strong> (<em>ModificationDateTimeField</em>) &#8211; Modified</li>
-<li><strong>user_created</strong> (<em>CharField</em>) &#8211; User created</li>
-<li><strong>user_modified</strong> (<em>CharField</em>) &#8211; User modified</li>
-<li><strong>hostname_created</strong> (<em>HostnameCreationField</em>) &#8211; Hostname</li>
-<li><strong>hostname_modified</strong> (<em>HostnameModificationField</em>) &#8211; Hostname</li>
-<li><strong>id</strong> (<em>MyUUIDField</em>) &#8211; Id</li>
 <li><strong>requisition_identifier</strong> (<em>CharField</em>) &#8211; Requisition id</li>
 <li><strong>requisition_datetime</strong> (<em>DateTimeField</em>) &#8211; Requisition date</li>
 <li><strong>specimen_identifier</strong> (<em>CharField</em>) &#8211; Specimen id</li>
@@ -180,13 +160,6 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>created</strong> (<em>CreationDateTimeField</em>) &#8211; Created</li>
-<li><strong>modified</strong> (<em>ModificationDateTimeField</em>) &#8211; Modified</li>
-<li><strong>user_created</strong> (<em>CharField</em>) &#8211; User created</li>
-<li><strong>user_modified</strong> (<em>CharField</em>) &#8211; User modified</li>
-<li><strong>hostname_created</strong> (<em>HostnameCreationField</em>) &#8211; Hostname</li>
-<li><strong>hostname_modified</strong> (<em>HostnameModificationField</em>) &#8211; Hostname</li>
-<li><strong>id</strong> (<em>MyUUIDField</em>) &#8211; Id</li>
 <li><strong>requisition_identifier</strong> (<em>CharField</em>) &#8211; Requisition id</li>
 <li><strong>requisition_datetime</strong> (<em>DateTimeField</em>) &#8211; Requisition date</li>
 <li><strong>specimen_identifier</strong> (<em>CharField</em>) &#8211; Specimen id</li>

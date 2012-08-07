@@ -7,8 +7,8 @@ from lab_barcode.exceptions import PrinterException
 
 
 def flag_as_received(modeladmin, request, queryset, **kwargs):
-    """ flag as received and generate a globally unique identifier.
-    Note the model is a SubjectRequisition"""
+    """ Flags specimen(s) as received and generates a globally
+    specimen identifier."""
 
     for qs in queryset:
         #if not qs.specimen_identifier:
@@ -37,9 +37,8 @@ flag_as_not_labelled.short_description = "UN-LABEL: flag as NOT labelled"
 
 
 def print_requisition_label(modeladmin, request, requisitions):
-    #if not modeladmin.label_template:
-    #    raise ImproperlyConfigured('{0} attribute \'label_template\' must be set. '
-    #                              'Got None.'.format(unicode(modeladmin.__class__.__name__)))
+    """ Prints a specimen label for a received specimen using the :func:`print_label`
+    method attached to the requisition model."""
     try:
         for requisition in requisitions:
             if requisition.is_receive:

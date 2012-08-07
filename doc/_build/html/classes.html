@@ -59,10 +59,10 @@
 <dl class="class">
 <dt id="lab_requisition.classes.BaseRequisitionModelAdmin">
 <em class="property">class </em><tt class="descclassname">lab_requisition.classes.</tt><tt class="descname">BaseRequisitionModelAdmin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.classes.BaseRequisitionModelAdmin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_common.models.my_model_admin.MyModelAdmin</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_model_admin.BaseModelAdmin</span></tt></p>
 <dl class="attribute">
 <dt id="lab_requisition.classes.BaseRequisitionModelAdmin.actions">
-<tt class="descname">actions</tt><em class="property"> = [&lt;function flag_as_received at 0x1104c7c08&gt;, &lt;function flag_as_not_received at 0x1104c7c80&gt;, &lt;function flag_as_not_labelled at 0x1104c7cf8&gt;, &lt;function print_barcode_labels at 0x110f1e398&gt;]</em><a class="headerlink" href="#lab_requisition.classes.BaseRequisitionModelAdmin.actions" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">actions</tt><em class="property"> = [&lt;function flag_as_received at 0x109b22500&gt;, &lt;function flag_as_not_received at 0x109fb3758&gt;, &lt;function flag_as_not_labelled at 0x109fb37d0&gt;, &lt;function print_requisition_label at 0x109fb3848&gt;]</em><a class="headerlink" href="#lab_requisition.classes.BaseRequisitionModelAdmin.actions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -71,13 +71,14 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="lab_requisition.classes.BaseRequisitionModelAdmin.delete_view">
+<tt class="descname">delete_view</tt><big>(</big><em>request</em>, <em>object_id</em>, <em>extra_context=None</em><big>)</big><a class="headerlink" href="#lab_requisition.classes.BaseRequisitionModelAdmin.delete_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to redirect if enough information is available in the admin model.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="lab_requisition.classes.BaseRequisitionModelAdmin.formfield_for_foreignkey">
 <tt class="descname">formfield_for_foreignkey</tt><big>(</big><em>db_field</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.classes.BaseRequisitionModelAdmin.formfield_for_foreignkey" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="lab_requisition.classes.BaseRequisitionModelAdmin.label_template_name">
-<tt class="descname">label_template_name</tt><em class="property"> = None</em><a class="headerlink" href="#lab_requisition.classes.BaseRequisitionModelAdmin.label_template_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -94,11 +95,17 @@
 
 <dl class="class">
 <dt id="lab_requisition.classes.RequisitionLabel">
-<em class="property">class </em><tt class="descclassname">lab_requisition.classes.</tt><tt class="descname">RequisitionLabel</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.classes.RequisitionLabel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lab_barcode.classes.label.Label</span></tt></p>
+<em class="property">class </em><tt class="descclassname">lab_requisition.classes.</tt><tt class="descname">RequisitionLabel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.classes.RequisitionLabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lab_barcode.classes.model_label.ModelLabel</span></tt></p>
 <dl class="method">
-<dt id="lab_requisition.classes.RequisitionLabel.prepare_label_options">
-<tt class="descname">prepare_label_options</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.classes.RequisitionLabel.prepare_label_options" title="Permalink to this definition">¶</a></dt>
+<dt id="lab_requisition.classes.RequisitionLabel.get_template_prep">
+<tt class="descname">get_template_prep</tt><big>(</big><big>)</big><a class="headerlink" href="#lab_requisition.classes.RequisitionLabel.get_template_prep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets or creates a label instance and returns it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_requisition.classes.RequisitionLabel.prepare_label_context">
+<tt class="descname">prepare_label_context</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_requisition.classes.RequisitionLabel.prepare_label_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>A label subclass with the required key,value pairs expected by the label template.</p>
 <p>Receive the requisition instance, template and item count. Update kwargs
 with any key, values expected by the template</p>

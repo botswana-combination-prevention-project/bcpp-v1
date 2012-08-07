@@ -121,7 +121,6 @@ model and appear on the subject's dashboard.::
         visit_model = InfantVisit
         visit_fieldname = 'infant_visit'
         dashboard_type = 'infant'   
-        label_template_name = 'clinic specimen label small'             
         
 and::
 
@@ -134,7 +133,6 @@ and::
         visit_model = MaternalVisit
         visit_fieldname = 'maternal_visit'
         dashboard_type = 'maternal'    
-        label_template_name = 'clinic specimen label small'
 
 
 Then add the ModelAdmin classes to the admin.py including a reference to the form::
