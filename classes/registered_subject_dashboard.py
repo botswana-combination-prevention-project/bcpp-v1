@@ -339,7 +339,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 'dashboard',
                 name="dashboard_visit_url"
                 ))
-        
+
         for visit_field_name in visit_field_names:
             regex['visit_field_name'] = visit_field_name
             urlpatterns += patterns(view,
@@ -365,15 +365,11 @@ class RegisteredSubjectDashboard(Dashboard):
                 'dashboard',
                 name="dashboard_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<appointment>{pk})/$'.format(**regex),
                 'dashboard',
                 name="dashboard_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registered_subject>{pk})/$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/$'.format(**regex),
                 'dashboard',
                 name="dashboard_url"
                 ),
