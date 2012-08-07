@@ -11,10 +11,10 @@ def flag_as_received(modeladmin, request, queryset, **kwargs):
     Note the model is a SubjectRequisition"""
 
     for qs in queryset:
-        if not qs.specimen_identifier:
-            qs.is_receive = True
-            qs.is_receive_datetime = datetime.today()
-            qs.save()
+        #if not qs.specimen_identifier:
+        qs.is_receive = True
+        qs.is_receive_datetime = datetime.today()
+        qs.save()
 
 flag_as_received.short_description = "RECEIVE as received against requisition"
 
