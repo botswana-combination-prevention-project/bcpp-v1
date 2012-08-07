@@ -2,6 +2,7 @@ from django.db import models
 from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.validators import datetime_not_future
 from lab_panel.models import Panel
+from lab_order.choices import ORDER_STATUS
 
 
 class BaseOrder(BaseUuidModel):
@@ -19,6 +20,13 @@ class BaseOrder(BaseUuidModel):
         validators=[datetime_not_future],
         db_index=True,
         )
+
+    status = models.CharField(
+        verbose_name='Status',
+        max_length=25,
+        choices=ORDER_STATUS,
+        null=True,
+        blank=False)
 
     panel = models.ForeignKey(Panel)
 
