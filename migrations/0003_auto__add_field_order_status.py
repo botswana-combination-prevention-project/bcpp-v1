@@ -150,19 +150,19 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'})
         },
-#        'lab_order.orderidentifiertracker': {
-#            'Meta': {'ordering': "['yyyymm', 'counter']", 'unique_together': "(['yyyymm', 'counter'],)", 'object_name': 'OrderIdentifierTracker', 'db_table': "'bhp_lab_core_orderidentifiertracker'"},
-#            'counter': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
-#            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-#            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-#            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-#            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-#            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-#            'order_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
-#            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
-#            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
-#            'yyyymm': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'})
-#        },
+        'lab_order.orderidentifiertracker': {
+            'Meta': {'ordering': "['yyyymm', 'counter']", 'unique_together': "(['yyyymm', 'counter'],)", 'object_name': 'OrderIdentifierTracker', 'db_table': "'bhp_lab_core_orderidentifiertracker'"},
+            'counter': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'order_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250'}),
+            'yyyymm': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'})
+        },
         'lab_panel.panel': {
             'Meta': {'ordering': "['name']", 'object_name': 'Panel', 'db_table': "'bhp_lab_core_panel'"},
             'account': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['lab_account.Account']", 'null': 'True', 'blank': 'True'}),
