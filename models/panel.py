@@ -1,19 +1,12 @@
 from django.db import models
-from bhp_base_model.classes import BaseModel
 from lab_account.models import Account
 from lab_test_code.models import TestCode
 from lab_aliquot_list.models import AliquotType
 from panel_group import PanelGroup
+from base_panel import BasePanel
 
 
-class Panel(BaseModel):
-
-    name = models.CharField(
-        verbose_name="Panel Name",
-        max_length=50,
-        unique=True,
-        db_index=True,
-        )
+class Panel(BasePanel):
 
     panel_group = models.ForeignKey(PanelGroup)
 
@@ -21,7 +14,6 @@ class Panel(BaseModel):
         verbose_name='Test Codes',
         help_text='Choose all that apply',
         )
-
     aliquot_type = models.ManyToManyField(AliquotType,
         help_text='Choose all that apply',
         )
@@ -29,12 +21,6 @@ class Panel(BaseModel):
     account = models.ManyToManyField(Account,
         null=True,
         blank=True
-        )
-
-    comment = models.CharField(
-        verbose_name="Comment",
-        max_length=250,
-        blank=True,
         )
 
     dmis_panel_identifier = models.CharField(
