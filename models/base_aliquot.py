@@ -2,7 +2,6 @@ import datetime
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
 from lab_aliquot_list.models import AliquotCondition, AliquotType
-from lab_aliquot.managers import AliquotManager
 from lab_aliquot.choices import ALIQUOT_STATUS, SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
 
 
@@ -32,7 +31,8 @@ class BaseAliquot (BaseUuidModel):
         null=True,
         )
 
-    aliquot_type = models.ForeignKey(AliquotType,
+    aliquot_type = models.ForeignKey(AliquotType, 
+        related_name='+',
         verbose_name="Aliquot Type",
         )
 
@@ -63,6 +63,7 @@ class BaseAliquot (BaseUuidModel):
         )
 
     aliquot_condition = models.ForeignKey(AliquotCondition,
+        related_name='+',
         verbose_name="Aliquot Condition",
         default=10,
         null=True,
