@@ -3,21 +3,19 @@ from django.db import models
 from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.validators import datetime_not_future
 from bhp_base_model.fields import InitialsField
-from bhp_research_protocol.models import Protocol, Site
-from lab_patient.models import Patient
 
 
 class BaseReceive (BaseUuidModel):
 
     """ Lab receiving table.    """
 
-    protocol = models.ForeignKey(Protocol)
     receive_identifier = models.CharField(
         verbose_name='Receiving Identifier',
         max_length=25,
         null=True,
         editable=False,
         db_index=True,
+        unique=True,
         )
     requisition_identifier = models.CharField(
         verbose_name='Requisition Identifier',
@@ -26,7 +24,6 @@ class BaseReceive (BaseUuidModel):
         blank=True,
         db_index=True,
         )
-    patient = models.ForeignKey(Patient)
     drawn_datetime = models.DateTimeField("Date and time drawn",
         validators=[
             datetime_not_future, ],
@@ -37,7 +34,6 @@ class BaseReceive (BaseUuidModel):
         validators=[
             datetime_not_future, ],
         db_index=True)
-    site = models.ForeignKey(Site)
     visit = models.CharField(
         verbose_name="Visit Code",
         max_length=25)
@@ -46,11 +42,6 @@ class BaseReceive (BaseUuidModel):
         verbose_name='Condition of primary tube',
         max_length=50,
         null=True)
-    dmis_panel_name = models.CharField(
-        verbose_name='Panel name on dmis receive record',
-        max_length=50,
-        null=True)
-    dmis_reference = models.IntegerField()
 
     def __unicode__(self):
         return '%s' % (self.receive_identifier)
