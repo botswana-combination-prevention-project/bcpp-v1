@@ -2,7 +2,20 @@ from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_base_model.classes import BaseModelAdmin
 from forms import LabForm, ResultForm, ResultItemForm, ReviewForm
-from models import Lab, Result, ResultItem, Review, UpdateLog
+from models import Lab, Receive, Result, ResultItem, Review, UpdateLog, LisImportError
+
+
+class ReceiveAdmin(BaseModelAdmin):
+    list_display = ('registered_subject', "receive_identifier", "receive_datetime", 'created', 'modified')
+    search_fields = ('registered_subject__subject_identifier', "receive_identifier",)
+admin.site.register(Receive, ReceiveAdmin)
+
+
+class LisImportErrorAdmin(BaseModelAdmin):
+    list_display = ('model_name', "identifier", "error_message")
+    list_filter = ('model_name',)
+    search_fields = ("identifier", "error_message")
+admin.site.register(LisImportError, LisImportErrorAdmin)
 
 
 class UpdateLogAdmin(BaseModelAdmin):

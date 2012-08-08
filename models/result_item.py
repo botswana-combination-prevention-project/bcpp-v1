@@ -10,14 +10,14 @@ from lab_clinic_api.managers import ResultItemManager
 
 class ResultItem(BaseResultItem):
 
-    test_code = models.ForeignKey(TestCode, related_name='test_code_clinic')
+    test_code = models.ForeignKey(TestCode, related_name='+')
 
     result = models.ForeignKey(Result)
 
     objects = ResultItemManager()
 
     def __unicode__(self):
-        return '%s %s %s' % (unicode(self.result.lab), unicode(self.result), unicode(self.test_code))
+        return unicode(self.test_code)
 
     def save(self, *args, **kwargs):
         #longitudinal_history.update(self)
