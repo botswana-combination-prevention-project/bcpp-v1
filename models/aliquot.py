@@ -1,5 +1,6 @@
 from django.db import models
 from lab_receive.models import Receive
+from lab_aliquot_list.models import AliquotCondition, AliquotType
 from lab_aliquot.managers import AliquotManager
 from base_aliquot import BaseAliquot
 
@@ -7,6 +8,16 @@ from base_aliquot import BaseAliquot
 class Aliquot (BaseAliquot):
 
     receive = models.ForeignKey(Receive)
+
+    aliquot_type = models.ForeignKey(AliquotType,
+        verbose_name="Aliquot Type",
+        )
+
+    aliquot_condition = models.ForeignKey(AliquotCondition,
+        verbose_name="Aliquot Condition",
+        default=10,
+        null=True,
+        )
 
     objects = AliquotManager()
 

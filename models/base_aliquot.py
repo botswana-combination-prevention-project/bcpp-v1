@@ -1,7 +1,6 @@
 import datetime
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
-from lab_aliquot_list.models import AliquotCondition, AliquotType
 from lab_aliquot.choices import ALIQUOT_STATUS, SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
 
 
@@ -31,11 +30,6 @@ class BaseAliquot (BaseUuidModel):
         null=True,
         )
 
-    aliquot_type = models.ForeignKey(AliquotType, 
-        related_name='+',
-        verbose_name="Aliquot Type",
-        )
-
     medium = models.CharField(
         verbose_name='Medium',
         max_length=25,
@@ -60,13 +54,6 @@ class BaseAliquot (BaseUuidModel):
         max_length=25,
         choices=SPECIMEN_MEASURE_UNITS,
         default='mL',
-        )
-
-    aliquot_condition = models.ForeignKey(AliquotCondition,
-        related_name='+',
-        verbose_name="Aliquot Condition",
-        default=10,
-        null=True,
         )
 
     status = models.CharField(
