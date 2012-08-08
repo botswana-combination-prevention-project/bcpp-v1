@@ -1,7 +1,6 @@
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
 from bhp_base_model.validators import datetime_not_future
-from lab_panel.models import Panel
 from lab_order.choices import ORDER_STATUS
 
 
@@ -28,16 +27,9 @@ class BaseOrder(BaseUuidModel):
         null=True,
         blank=False)
 
-    panel = models.ForeignKey(Panel)
-
     comment = models.CharField(
         verbose_name='Comment',
         max_length=150,
-        null=True,
-        blank=True,
-        )
-
-    dmis_reference = models.IntegerField(
         null=True,
         blank=True,
         )

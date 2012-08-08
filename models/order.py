@@ -1,12 +1,20 @@
 from django.db import models
 from lab_order.managers import OrderManager
 from lab_aliquot.models import Aliquot
+from lab_panel.models import Panel
 from base_order import BaseOrder
 
 
 class Order(BaseOrder):
 
     aliquot = models.ForeignKey(Aliquot)
+
+    panel = models.ForeignKey(Panel)
+
+    dmis_reference = models.IntegerField(
+        null=True,
+        blank=True,
+        )
 
     objects = OrderManager()
 
