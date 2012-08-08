@@ -28,6 +28,7 @@
             <td><A href="/admin{{ aliquot.receive.protocol.get_absolute_url }}">{{ aliquot.receive.protocol|escape}}</A></td>
         	  <td><A href="/admin{{ aliquot.receive.patient.get_absolute_url }}">{{ aliquot.receive.patient }}</td>
          	  <td>{{ aliquot.aliquot_type }}</td>
+              <td>{{ aliquot.aliquot_condition }}</td>
          	  <td>{{ aliquot.medium }}</td>
          	  <td>{{ aliquot.user_created }}</td>
           	  <td>{{ aliquot.modified|date:"Y-m-d" }}</td>         	  

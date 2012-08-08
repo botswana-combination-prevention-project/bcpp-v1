@@ -62,7 +62,7 @@ class BaseAliquot (BaseUuidModel):
         default='mL',
         )
 
-    condition = models.ForeignKey(AliquotCondition,
+    aliquot_condition = models.ForeignKey(AliquotCondition,
         verbose_name="Aliquot Condition",
         default=10,
         null=True,
@@ -79,8 +79,6 @@ class BaseAliquot (BaseUuidModel):
         null=True,
         blank=True,
         )
-
-    objects = AliquotManager()
 
     def __unicode__(self):
         return '%s' % (self.aliquot_identifier)
