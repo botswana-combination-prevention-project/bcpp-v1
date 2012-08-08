@@ -26,7 +26,7 @@ class Infant(object):
 
         # maternal identifier should exist in SubjectIdentifier
         maternal_identifier = kwargs.get('maternal_identifier')
-        if not SubjectIdentifier.objects.filter(subject_identifier=maternal_identifier):
+        if not SubjectIdentifier.objects.filter(identifier=maternal_identifier):
             raise ValidationError('Unknown maternal_identifier {0}.'.format(maternal_identifier))
         # differentiate between live and live to register
         # as mother may not wish to include all in study
