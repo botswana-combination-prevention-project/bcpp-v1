@@ -38,7 +38,5 @@ class Subject(Base):
                                                            self.modulus))
         # re-save the SubjectIdentifier model instance
         subject_identifier.save()
-        # set this instance attribute to the identifier string
-        self.subject_identifier = subject_identifier.identifier
         # return just the attribute value
-        return self.subject_identifier
+        return subject_identifier.identifier
