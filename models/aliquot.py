@@ -19,6 +19,12 @@ class Aliquot (BaseAliquot):
         null=True,
         )
 
+    parent_identifier = models.ForeignKey('self',
+        to_field='aliquot_identifier',
+        blank=True,
+        null=True,
+        )
+
     objects = AliquotManager()
 
     def get_absolute_url(self):

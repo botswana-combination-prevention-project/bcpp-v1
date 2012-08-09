@@ -24,12 +24,6 @@ class BaseAliquot (BaseUuidModel):
         null=True
         )
 
-    parent_identifier = models.ForeignKey('self',
-        to_field='aliquot_identifier',
-        blank=True,
-        null=True,
-        )
-
     medium = models.CharField(
         verbose_name='Medium',
         max_length=25,
