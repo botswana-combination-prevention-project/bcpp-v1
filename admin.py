@@ -58,8 +58,8 @@ class ResultAdmin(BaseModelAdmin):
         "release_datetime",
         "release_username",
         "comment",
-        "dmis_result_guid",
-        "lab")
+        "dmis_result_guid")
+
     radio_fields = {"release_status": admin.VERTICAL}
     list_filter = ("release_status", "result_datetime",)
 admin.site.register(Result, ResultAdmin)
