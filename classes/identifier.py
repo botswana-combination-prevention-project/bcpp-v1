@@ -47,7 +47,7 @@ class ProtocolCodeDescriptor(Descr):
 class RootSegmentDescriptor(Descr):
     """self.root_segment descriptor that must be int of given length."""
     def __init__(self, root_length):
-        super(RootSegmentDescriptor, self).__init__()    
+        super(RootSegmentDescriptor, self).__init__()
         self.name = 'root_segment'
         self.re = r'^[1-9]{1}[0-9]{%s}$' % (root_length - 1)
         self.msg = 'Must be %s digit numeric not starting with \'0\'.' % root_length
@@ -78,7 +78,7 @@ class IdentifierStringDescriptor(Descr):
 class IdentifierDescriptor(Descr):
     """Identifier descriptor that must be alphanumeric of given length."""
     def __init__(self, length=7):
-        super(IdentifierDescriptor, self).__init__()    
+        super(IdentifierDescriptor, self).__init__()
         self.name = 'identifier'
         self.re = r'^[A-Z0-9]{1,%s}' % length
         self.msg = 'Must be an alphanumeric in uppercase of character length %s. Check counter padding or root length before encoding.' % length

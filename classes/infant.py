@@ -8,51 +8,57 @@ class Infant(object):
 
     """ Create subject identifier(s) for an infant(s) by calling get_identifier() with the maternal identifier and return a dictionary {infant order: identifier}. """
 
-    def __init__(self):
-        pass
-
     def consent_required(self):
         return False
 
-    def get_identifier(self, user, **kwargs):
+    def get_identifier_prep(self, *kwargs):
+        """Prepares to create an identifier consisting of the the maternal identifier and a
+        suffix determined by the number of live infants from this delivery.
 
-        """ Return identifier or a tuple of identifiers (if twins).
-
-            * Information comes from a delivery form usually, not a consent.
-            * Names, initials, gender and DOB are not expected to be known yet.
-            * Subject Identifier is derived from the maternal identifier so the SubjectIdentifier
-              model is not updated.
-            """
+        For example:
+          maternal_identifier=056-19800001-3 -> 2 live infants -> 056-19800001-3-
+          """
+        options = {}
+        birth_order = kwargs.get('birth_order')
+        live_infants = kwargs.get('live_infants')
+        live_infants_to_register = kwargs.get('live_infants_to_register')
 
         # maternal identifier should exist in SubjectIdentifier
         maternal_identifier = kwargs.get('maternal_identifier')
         if not SubjectIdentifier.objects.filter(identifier=maternal_identifier):
             raise ValidationError('Unknown maternal_identifier {0}.'.format(maternal_identifier))
-        # differentiate between live and live to register
-        # as mother may not wish to include all in study
-        maternal_study_site = kwargs.get('maternal_study_site')
-        subject_type = kwargs.get('subject_type')
-        live_infants = kwargs.get('live_infants')
-        live_infants_to_register = kwargs.get('live_infants_to_register')
         # some checks on logic of live and live to register
         if live_infants_to_register == 0:
             raise ValidationError("Number of live_infants_to_register may not be 0!.")
         if live_infants_to_register > live_infants:
-            raise ValidationError("Number of infants to register may not exceed number of live infants.")
-        # get a starting suffix based on number of live_infants
+            raise ValidationError('Number of infants to register ({0}) may not exceed '
+                                  'number of live infants ({1}).'.format(live_infants_to_register, live_infants))
+        if birth_order > live_infants:
+            raise ValidationError("Invalid birth order if number of live infants is {0}.".format(live_infants))
+        options.update(
+            app_name='bhp_identifier',
+            models_name='derived_subject_identifier',
+            maternal_identifier=kwargs.get('maternal_identifier'),
+            suffix=self._get_suffix(birth_order, live_infants),
+            identifier_format="{maternal_identifier}-{suffix}",
+            subject_type='infant',
+            live_infants=kwargs.get('live_infants'),
+            live_infants_to_register=kwargs.get('live_infants_to_register'),
+            )
+
+    def get_identifier_post(self, consent, attrname, **kwargs):
+        """ Updates registered subject after a new subject identifier is created."""
+
+        # the model, for creating a new instance
+        self.RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+        # access registered subject manager method
+        self.RegisteredSubject.objects.update_with(consent, attrname, **kwargs)
+
+    def _get_suffix(self, birth_order, live_infants, live_infants_to_register):
         suffix = self._get_base_suffix(live_infants)
-        subject_identifier = {}
-        for infant_order in range(0, live_infants_to_register):
-            # if more than one infant, increment suffix by 10's
-            suffix += (infant_order) * 10
-            # infant identifier is the maternal identifier plus a suffix
-            subject_identifier.update({infant_order: "{maternal_identifier}-{suffix}".format(maternal_identifier=maternal_identifier, suffix=suffix)})
-            # save to  DerivedSubjectIdentifier model which enforces uniqueness
-            DerivedSubjectIdentifier.objects.create(subject_identifier=subject_identifier.get(infant_order),
-                                                    base_identifier=maternal_identifier)
-        self._register_infants(user, maternal_identifier, maternal_study_site, subject_type, live_infants, live_infants_to_register)
-        #return a dictionary { infant order: identifier }
-        return subject_identifier
+        for birth_order in range(0, birth_order):
+            suffix += (birth_order) * 10
+        return suffix
 
     def _register_infants(self, user, maternal_identifier, maternal_study_site, subject_type, live_infants, live_infants_to_register):
 
