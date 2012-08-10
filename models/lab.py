@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
-from lab_clinic_api.managers import LabManager
+#from lab_clinic_api.managers import LabManager
 
 
 class Lab(BaseUuidModel):
@@ -65,7 +65,7 @@ class Lab(BaseUuidModel):
         blank=True,
         null=True
         )
-    objects = LabManager()
+    #objects = LabManager()
 
     def __unicode__(self):
         return '%s order %s for %s drawn %s [%s]' % (self.subject_identifier, self.order_identifier, self.panel, self.drawn_datetime.strftime('%Y-%m-%d'), self.release_status)

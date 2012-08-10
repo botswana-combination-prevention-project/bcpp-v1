@@ -1,11 +1,18 @@
+import logging
 from django.db import models
-from lab_test_code.models import TestCode
 from lab_result_item.models import BaseResultItem
 from lab_reference.classes import ReferenceFlag
 from lab_grading.classes import GradeFlag
-from bhp_registration.models import RegisteredSubject
+from test_code import TestCode
 from result import Result
-from lab_clinic_api.managers import ResultItemManager
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class ResultItem(BaseResultItem):
@@ -14,37 +21,38 @@ class ResultItem(BaseResultItem):
 
     result = models.ForeignKey(Result)
 
-    objects = ResultItemManager()
+    objects = models.Manager()
 
     def __unicode__(self):
         return unicode(self.test_code)
 
+    def get_subject_identifier(self):
+        return self.result.order.aliquot.receive.registered_subject.subject_identifier
+
     def save(self, *args, **kwargs):
-        #longitudinal_history.update(self)
-        subject_identifier = self.result.lab.subject_identifier
-        if RegisteredSubject.objects.filter(subject_identifier=subject_identifier):
-            dob = RegisteredSubject.objects.get(subject_identifier=subject_identifier).dob
-            gender = RegisteredSubject.objects.get(subject_identifier=subject_identifier).gender
-            hiv_status = RegisteredSubject.objects.get(subject_identifier=subject_identifier).hiv_status
-            if not hiv_status:
-                #TODO: hiv status should be tracked elsewhere than the resultitem
-                hiv_status = 'any'
-                #raise TypeError('Hiv Status unknown for subject_identifier %s ' % (subject_identifier,))
-            reference = ReferenceFlag()
-            reference.result_item_value = self.result_item_value
-            reference.dob = dob
-            reference.gender = gender
-            reference.drawn_datetime = self.result.lab.drawn_datetime
-            reference.test_code = self.test_code
-            if reference.flag:
-                self.reference_range = '%s - %s' % (reference.flag['range']['lln'], reference.flag['range']['uln'])
-                self.reference_flag = reference.flag['flag']
+
+        # save the result to update the modified datetime
+        #self.result.save()
+
+        if not self.result.order.aliquot.receive.registered_subject:
+            logger.warning('ResultItem expected registered subject from the receive instance. Got None')
+        else:
+            reference_flag = ReferenceFlag()
+            reference_flag.result_item_value = self.result_item_value
+            reference_flag.dob = self.result.order.aliquot.receive.registered_subject.dob
+            reference_flag.gender = self.result.order.aliquot.receive.registered_subject.gender
+            reference_flag.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
+            reference_flag.test_code = self.test_code
+            if reference_flag.flag:
+                self.reference_range = '%s - %s' % (reference_flag.flag['range']['lln'], reference_flag.flag['range']['uln'])
+                self.reference_flag = reference_flag.flag['flag']
             grade = GradeFlag()
             grade.result_item_value = self.result_item_value
-            grade.dob = dob
-            grade.gender = gender
-            grade.drawn_datetime = self.result.lab.drawn_datetime
-            grade.hiv_status = hiv_status
+            grade.dob = self.result.order.aliquot.receive.registered_subject.dob
+            grade.gender = self.result.order.aliquot.receive.registered_subject.gender
+            grade.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
+            # ..todo:: TODO: if more than one test, hiv status is not correct
+            grade.hiv_status = self.result.order.aliquot.receive.registered_subject.hiv_status or 'any'
             grade.test_code = self.test_code
             if grade.flag:
                 self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])

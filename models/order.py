@@ -12,6 +12,12 @@ class Order(BaseOrder):
 
     objects = models.Manager()
 
+    def subject_identifier(self):
+        if self.aliquot.receive.registered_subject is not None:
+            return self.aliquot.receive.registered_subject.subject_identifier
+        else:
+            return 'unknown'
+
     def __unicode__(self):
         return '%s' % (self.order_identifier)
 
