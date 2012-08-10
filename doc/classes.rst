@@ -3,6 +3,7 @@ Classes
 
 .. automodule:: lab_requisition.classes
     :members:
+    :show-inheritance:
     :undoc-members:
 
 .. autoclass:: BaseRequisitionModelAdmin     
