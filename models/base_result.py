@@ -55,5 +55,8 @@ class BaseResult(BaseUuidModel):
         help_text='dmis import value. N/A unless data imported from old system'
         )
 
+    def __unicode__(self):
+        return '%s' % (self.result_identifier)
+
     class Meta:
         abstract = True

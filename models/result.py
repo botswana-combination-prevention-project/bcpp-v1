@@ -9,9 +9,6 @@ class Result(BaseResult):
 
     objects = models.Manager()
 
-    def __unicode__(self):
-        return '%s' % (self.result_identifier)
-
     def get_absolute_url(self):
         return "/lab_result/result/%s/" % self.id
 
