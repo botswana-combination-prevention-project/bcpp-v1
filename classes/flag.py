@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from lab_test_code.models import TestCode
+from lab_test_code.models import BaseTestCode
 
 
 class FlagDescriptor(object):
@@ -50,7 +50,7 @@ class ResultItemValueDescriptor(BaseDescriptor):
 
 class TestCodeDescriptor(BaseDescriptor):
     def __set__(self, instance, value):
-        if isinstance(value, (TestCode)) or value is None:
+        if isinstance(value, (BaseTestCode)) or value is None:
             self.value = value
             instance.dirty = True
         else:
