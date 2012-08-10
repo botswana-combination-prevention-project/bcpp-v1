@@ -2,7 +2,6 @@ from django.db import models
 from bhp_base_model.classes import BaseModel
 
 
-
 class BasePanel(BaseModel):
 
     name = models.CharField(
