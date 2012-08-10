@@ -18,17 +18,23 @@ class Base(object):
         return True
 
     def get_identifier_prep(self):
-        """ Users may override to pass non-default keyword arguments."""
+        """ Users may override to pass non-default keyword arguments to get_identifier.
+
+        See _prepare_identifier for list of allowed Keyword Arguments."""
         options = {}
         return options
 
-    def get_identifier(self):
-        """ Returns a formatted identifier.
-
-        Keyword Arguments:
-        """
-
+    def _prepare_identifier(self):
         options = self.get_identifier_prep()
+        allowed_keys = ['seed', 'padding', 'site', 'app_name', 'model_name', 'identifier_format', 'modulus', 'prefix']
+        diff = set(options.keys()).difference(allowed_keys)
+        if diff:
+            raise KeyError('Invalid keyword argument(s) {0}.'.format(' ,'.join(diff)))
+        return options
+
+    def get_identifier(self):
+        """ Returns a formatted identifier."""
+        options = self._prepare_identifier()
         app_name = options.get('app_name', 'bhp_identifier')
         model_name = options.get('model_name', 'subject_identifier')
         site = options.get('site', '')
@@ -37,7 +43,6 @@ class Base(object):
         identifier_format = options.get('identifier_format', "{prefix}-{site}{device_id}{sequence}")
         modulus = options.get('modulus', 7)
         prefix = options.get('prefix', settings.PROJECT_IDENTIFIER_PREFIX)
-
         IdentifierModel = get_model(app_name, model_name)
         identifier_model = IdentifierModel.objects.create(seed=seed, padding=padding)
         device = Device()
