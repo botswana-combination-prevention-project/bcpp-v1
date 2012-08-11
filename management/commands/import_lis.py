@@ -6,9 +6,9 @@ from lab_clinic_api.classes import LisLock, ImportHistory, Lis
 
 class Command(BaseCommand):
 
-    args = (' --list-locks <lock_name> --unlock <lock_name> --import '
+    args = (' --list-locks <lock_name> --unlock <lock_name> --import <subject_identifier>'
             '--show-history <lock_name>')
-    help = 'Manage django-lis import.'
+    help = 'Manage importing data from django-lis into your Edc using your \'lab_api\' database connection. '
     option_list = BaseCommand.option_list + (
         make_option('--list-locked',
             action='store_true',
@@ -28,16 +28,10 @@ class Command(BaseCommand):
             action='store_true',
             dest='import',
             default=False,
-            help=('Initiate import of labs from django-lis into django-edc.')),
+            help=('Initiate import of labs from django-lis into your Edc. '
+                  'You may specify a subject_identifier to limit the import to just one subject. '
+                  'Otherwise, the default is to import all for current protocol.')),
         )
-#    option_list += (
-#        make_option('--import_as_new',
-#            action='store_true',
-#            dest='import_as_new',
-##            default=False,
-##            help=('Initiate import of labs from dmis into django-lis. '
-#                  'Force listed models to be recreated')),
-#        )
     option_list += (
         make_option('--show-history',
             action='store_true',
@@ -47,12 +41,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if not args:
-            raise CommandError('Try --help for a list of valid options')
-        #args = list(args)
-        #db = args.pop(0)
-        #if not db:
-        #    raise CommandError('Missing argument \'db\', Try --help for a list of valid arguments and options')
+        #if not args:
+        #    raise CommandError('Try --help for a list of valid options')
         db = 'lab_api'
         if not args:
             args = [None]
