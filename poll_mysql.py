@@ -19,12 +19,18 @@ PORT = settings.DATABASES['lab_api']['PORT']
 CURR_DIR = os.path.dirname(__file__)
 LOGFILE = os.path.join(CURR_DIR, 'poll.log')
 
+
 class PollMySQL(object):
-    def __init__(self, host=None, port=None):
-        self.host = host
-        self.port = port
+    def __init__(self, host=None, port=None, **kwargs):
+        if kwargs.get('db', None):
+            db = kwargs.get('db')
+            self.host = settings.DATABASES[db]['HOST']
+            self.port = int(settings.DATABASES[db]['PORT'])
+        else:
+            self.host = host
+            self.port = port
         self.server_response = False
-        
+
     def poll(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -40,15 +46,18 @@ class PollMySQL(object):
         self.poll()
         return self.server_response
 
+
 def main(argv):
-   host = HOST or argv[1]
-   port = PORT or argv[2]
-   if host and port:
+
+    host = HOST or argv[1]
+    port = PORT or argv[2]
+    if host and port:
         server_activity = PollMySQL(host, port).is_server_active()
         print server_activity
-   else:
+    else:
         show_help()
         sys.exit(0)
+
 
 def show_help():
     """
@@ -56,11 +65,10 @@ def show_help():
         polling script
     """
     print """Usage: ./polling.py [HOST] [PORT]
-        
-        HOST: The HOST of the server 
+
+        HOST: The HOST of the server
         PORT: The PORt used for MySQL Server
     """
 
 if __name__ == '__main__':
     main(sys.argv)
-
