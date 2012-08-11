@@ -119,14 +119,17 @@
                 <span name="x_summaries" id="x_summaries">{{ summary_links }}</span>
                 </td></tr>
                 {% endblock %}
-                <tr name="middle right" ><td><H4>Laboratory</H4></td></tr>                
+                <tr name="middle right" >
+                <td style="line-height: 10px; padding:0;"><table><tr>
+                <td style="font-size: 10px;line-height: 10px; padding:0;"><H4>Laboratory</H4></td>
+                <td style="font-size: 10px;line-height: 10px; padding:0;">&nbsp;&nbsp;<input name="fetch" id="fetch" value="Update" type="button" onclick="Dajaxice.lab_clinic_api.updating(Dajax.process);Dajaxice.lab_clinic_api.update_result_status(Dajax.process,{'subject_identifier':'{{ subject_identifier }}'});"></td>                
+                </td></tr></table>
+                </tr>                
                 {% block lab_plots %}{% endblock %}
                 {% block lab_results %}
-                <tr name="middle right" ><td>                
-                        <span name="x_results" id="x_results">{{ local_results }}</span>
-                        <input name="fetch" id="fetch" value="Update" type="button" onclick="Dajaxice.lab_clinic_api.updating(Dajax.process);Dajaxice.lab_clinic_api.update_result_status(Dajax.process,{'subject_identifier':'{{ subject_identifier }}'});">                
-                    </td>
-                </tr>
+                <tr name="middle right"><td style="font-size: 10px;line-height: 10px; padding:0;">           
+                    <span name="x_results" id="x_results">{{ local_results }}</span>
+                </td></tr>
                 {% endblock %}
                 <tr name="bottom right" >
                     <td>

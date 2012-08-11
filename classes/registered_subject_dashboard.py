@@ -9,6 +9,7 @@ from bhp_visit.models import ScheduleGroup, VisitDefinition
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
 from bhp_subject_summary.models import Link
+from lab_clinic_api.classes import EdcLab
 
 
 class RegisteredSubjectDescriptor(object):
@@ -288,6 +289,11 @@ class RegisteredSubjectDashboard(Dashboard):
             keyed_membership_forms=self.membership_forms['keyed'],
             unkeyed_membership_forms=self.membership_forms['unkeyed'],
             )
+
+    def render_labs(self, update=False):
+        # prepare results for dashboard sidebar
+        edc_lab = EdcLab()
+        return edc_lab.render(self.subject_identifier, False)
 
     def get_urlpatterns(self, view, regex, **kwargs):
 
