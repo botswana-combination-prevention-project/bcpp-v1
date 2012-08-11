@@ -73,7 +73,7 @@ class Command(BaseCommand):
 
     def import_from_lis(self, db, import_as_new=None):
         lis = Lis(db)
-        lis.import_from_lis(settings.PROJECT_NUMBER)
+        lis.import_from_lis(protocol_identifier=settings.PROJECT_NUMBER)
 
     def unlock(self, lis_lock, lock_name):
         if lock_name:

@@ -9,6 +9,9 @@ class Result(BaseResult):
 
     objects = models.Manager()
 
+    def subject_identifier(self):
+        return self.order.aliquot.receive.registered_subject
+
     class Meta:
         app_label = 'lab_clinic_api'
-        #ordering =['result_identifier']
+        ordering = ['result_identifier']

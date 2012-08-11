@@ -2,12 +2,17 @@ from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_base_model.classes import BaseModelAdmin
 from forms import ResultForm, ResultItemForm, ReviewForm
-from models import Receive, Result, ResultItem, Review, UpdateLog, LisImportError, Order
+from models import Receive, Result, ResultItem, Review, UpdateLog, LisImportError, Order, Panel
+from actions import recalculate_grading
 
 
 class ReceiveAdmin(BaseModelAdmin):
     list_display = ('registered_subject', "receive_identifier", "receive_datetime", 'created', 'modified')
     search_fields = ('registered_subject__subject_identifier', "receive_identifier",)
+
+    def get_readonly_fields(self, request, obj):
+        return [field.name for field in obj._meta.fields if field.editable and field.name not in ['requisition_identifier']]
+
 admin.site.register(Receive, ReceiveAdmin)
 
 
@@ -15,6 +20,9 @@ class OrderAdmin(BaseModelAdmin):
     list_display = ("order_identifier", "subject_identifier", "panel", "order_datetime", 'created', 'modified')
     search_fields = ('aliquot__receive__registered_subject__subject_identifier', "order_identifier",)
     list_filter = ('status', 'panel__name')
+
+    def get_readonly_fields(self, request, obj):
+        return ['aliquot', 'panel', 'status', 'order_datetime', 'comment']
 admin.site.register(Order, OrderAdmin)
 
 
@@ -33,37 +41,32 @@ class UpdateLogAdmin(BaseModelAdmin):
 admin.site.register(UpdateLog, UpdateLogAdmin)
 
 
-#class LabAdmin(BaseModelAdmin):
-#    form = LabForm
-#    list_display = ('subject_identifier', "receive_identifier", 'panel', "drawn_datetime", "release_status", 'result_identifier', "release_datetime")
-#    list_filter = ("release_status", 'drawn_datetime', "receive_datetime", 'panel')
-#    search_fields = ('subject_identifier', 'panel', 'receive_identifier', 'result_identifier')
-#    fields = (
-#        "subject_identifier",
-#        "release_status",
-#        "panel",
-#        "aliquot_identifier",
-#        "receive_datetime",
-#        "receive_identifier",
-#        "drawn_datetime",
-#        "order_identifier",
-#        "release_datetime")
-#admin.site.register(Lab, LabAdmin)
+class PanelAdmin(BaseModelAdmin):
+    list_display = ('name', 'edc_name')
+admin.site.register(Panel, PanelAdmin)
 
 
 class ResultAdmin(BaseModelAdmin):
+
+    def __init__(self, *args, **kwargs):
+        self.actions.append(recalculate_grading)
+        super(ResultAdmin, self).__init__(*args, **kwargs)
+
     form = ResultForm
     search_fields = ("result_identifier", "order__aliquot__receive__registered_subject__subject_identifier", "order__aliquot__receive__receive_identifier")
 
     list_display = (
-        "order",
         "result_identifier",
+        "subject_identifier",
         "result_datetime",
         "release_status",
         "release_datetime",)
 
     radio_fields = {"release_status": admin.VERTICAL}
     list_filter = ("release_status", "result_datetime",)
+
+    def get_readonly_fields(self, request, obj):
+        return [field.name for field in obj._meta.fields if field.editable]
 
 admin.site.register(Result, ResultAdmin)
 
@@ -102,6 +105,10 @@ class ResultItemAdmin(BaseModelAdmin):
             {'gender': 'result__lab__gender'},
             {'dob': 'result__lab__dob'},
             ]), ]
+
+    def get_readonly_fields(self, request, obj):
+        return [field.name for field in obj._meta.fields if field.editable]
+
 admin.site.register(ResultItem, ResultItemAdmin)
 
 

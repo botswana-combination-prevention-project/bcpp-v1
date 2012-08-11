@@ -34,30 +34,29 @@ class ResultItem(BaseResultItem):
         # save the result to update the modified datetime
         #self.result.save()
 
-        if not self.result.order.aliquot.receive.registered_subject:
-            logger.warning('ResultItem expected registered subject from the receive instance. Got None')
-        else:
-            reference_flag = ReferenceFlag()
-            reference_flag.result_item_value = self.result_item_value
-            reference_flag.dob = self.result.order.aliquot.receive.registered_subject.dob
-            reference_flag.gender = self.result.order.aliquot.receive.registered_subject.gender
-            reference_flag.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
-            reference_flag.test_code = self.test_code
-            if reference_flag.flag:
-                self.reference_range = '%s - %s' % (reference_flag.flag['range']['lln'], reference_flag.flag['range']['uln'])
-                self.reference_flag = reference_flag.flag['flag']
-            grade = GradeFlag()
-            grade.result_item_value = self.result_item_value
-            grade.dob = self.result.order.aliquot.receive.registered_subject.dob
-            grade.gender = self.result.order.aliquot.receive.registered_subject.gender
-            grade.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
-            # ..todo:: TODO: if more than one test, hiv status is not correct
-            grade.hiv_status = self.result.order.aliquot.receive.registered_subject.hiv_status or 'any'
-            grade.test_code = self.test_code
-            if grade.flag:
-                self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])
-                self.grade_flag = grade.flag['flag']
-
+        #if not self.result.order.aliquot.receive.registered_subject:
+        #    logger.warning('ResultItem expected registered subject from the receive instance. Got None')
+        #else:
+        reference_flag = ReferenceFlag()
+        reference_flag.result_item_value = self.result_item_value
+        reference_flag.dob = self.result.order.aliquot.receive.registered_subject.dob
+        reference_flag.gender = self.result.order.aliquot.receive.registered_subject.gender
+        reference_flag.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
+        reference_flag.test_code = self.test_code
+        if reference_flag.flag:
+            self.reference_range = '%s - %s' % (reference_flag.flag['range']['lln'], reference_flag.flag['range']['uln'])
+            self.reference_flag = reference_flag.flag['flag']
+        grade = GradeFlag()
+        grade.result_item_value = self.result_item_value
+        grade.dob = self.result.order.aliquot.receive.registered_subject.dob
+        grade.gender = self.result.order.aliquot.receive.registered_subject.gender
+        grade.drawn_datetime = self.result.order.aliquot.receive.drawn_datetime
+        # ..todo:: TODO: if more than one test, hiv status is not correct
+        grade.hiv_status = self.result.order.aliquot.receive.registered_subject.hiv_status or 'any'
+        grade.test_code = self.test_code
+        if grade.flag:
+            self.grade_range = '%s - %s' % (grade.flag['range']['lln'], grade.flag['range']['uln'])
+            self.grade_flag = grade.flag['flag']
         return super(ResultItem, self).save(*args, **kwargs)
 
     class Meta:

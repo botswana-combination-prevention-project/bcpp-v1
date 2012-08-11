@@ -23,4 +23,4 @@ class Order(BaseOrder):
 
     class Meta:
         app_label = 'lab_clinic_api'
-        #ordering =['result_identifier']
+        ordering = ['order_identifier']

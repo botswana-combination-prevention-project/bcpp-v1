@@ -1,7 +1,7 @@
 import logging
 from django.db.models import Q
 from django.db.models import ForeignKey
-
+from bhp_poll_mysql.poll_mysql import PollMySQL
 from bhp_research_protocol.models import Protocol
 from lab_receive.models import Receive as LisReceive
 from lab_aliquot.models import Aliquot as LisAliquot
@@ -29,7 +29,15 @@ class Lis(object):
     def __init__(self, db, **kwargs):
         self.db = db
 
-    def import_from_lis(self, protocol_identifier=None, **kwargs):
+    def update_from_lis(self, subject_identifier):
+        poll_mysql = PollMySQL(db=self.db)
+        if poll_mysql.is_server_active():
+            import_history = ImportHistory(self.db, subject_identifier)
+            import_history.force_release(subject_identifier)
+            return self.import_from_lis(subject_identifier=subject_identifier)
+        return None
+
+    def import_from_lis(self, **kwargs):
         """Imports data from the django-lis for each model in the relational model including list
         models.
 
@@ -46,28 +54,50 @@ class Lis(object):
         For example target.panel != source.panel yet the attribute values of panel instance on
         target and source are the same (see isinstance() test for ForeignKey fields below).
         """
-        import_history = ImportHistory(self.db, kwargs.get('subject_identifier', None) or protocol_identifier)
+
+        subject_identifier = kwargs.get('subject_identifier', None)
+        protocol_identifier = kwargs.get('protocol_identifier', None)
+
+        import_history = ImportHistory(self.db, subject_identifier or protocol_identifier)
         if import_history.start():
             # import all received
-            protocol = Protocol.objects.using(self.db).get(protocol_identifier__iexact=protocol_identifier)
-            if import_history.last_import_datetime:
+            modified_aliquots = []
+            modified_orders = []
+            modified_results = []
+            if subject_identifier:
+                registered_subject = RegisteredSubject.objects.get(subject_identifier__iexact=subject_identifier)
+                if import_history.last_import_datetime:
+                    qset = Q()
+                    q = (Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime))
+                    qset.add(q, Q.AND)
+                    modified_aliquots = self._get_modified(LisAliquot, self.db, 'aliquot_identifier', qset, Q(receive__patient=registered_subject.subject_identifier))
+                    qset = Q()
+                    qset.add(q, Q.AND)
+                    modified_orders = self._get_modified(LisOrder, self.db, 'order_identifier', qset, Q(aliquot__receive__patient=registered_subject.subject_identifier))
+                    qset = Q()
+                    qset.add(q, Q.AND)
+                    modified_results = self._get_modified(LisResult, self.db, 'result_identifier', qset, Q(order__aliquot__receive__patient=registered_subject.subject_identifier))
+                qset = Q(patient__subject_identifier=registered_subject.subject_identifier)
+            elif protocol_identifier:
+                protocol = Protocol.objects.using(self.db).get(protocol_identifier__iexact=protocol_identifier)
+                if import_history.last_import_datetime:
+                    qset = Q()
+                    q = (Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime))
+                    qset.add(q, Q.AND)
+                    modified_aliquots = self._get_modified(LisAliquot, self.db, 'aliquot_identifier', qset, Q(receive__protocol=protocol))
+                    qset = Q()
+                    qset.add(q, Q.AND)
+                    modified_orders = self._get_modified(LisOrder, self.db, 'order_identifier', qset, Q(aliquot__receive__protocol=protocol))
+                    qset = Q()
+                    qset.add(q, Q.AND)
+                    modified_results = self._get_modified(LisResult, self.db, 'result_identifier', qset, Q(order__aliquot__receive__protocol=protocol))
+                qset = Q(protocol=protocol)
+            else:
                 qset = Q()
-                q = (Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime))
-                qset.add(q, Q.AND)
-                modified_aliquots = self._get_modified(LisAliquot, self.db, 'aliquot_identifier', qset,
-                                                       Q(receive__protocol=protocol))
-                qset = Q()
-                qset.add(q, Q.AND)
-                modified_orders = self._get_modified(LisOrder, self.db, 'order_identifier', qset,
-                                                     Q(aliquot__receive__protocol=protocol))
-                qset = Q()
-                qset.add(q, Q.AND)
-                modified_results = self._get_modified(LisResult, self.db, 'result_identifier', qset,
-                                                      Q(order__aliquot__receive__protocol=protocol))
             # start by filtering at the top of the relational mode (receive) and
             # adding updating anything down the cascade
-            qset = Q(protocol=protocol)
-            qset.add((Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime)), Q.AND)
+            if import_history.last_import_datetime:
+                qset.add((Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime)), Q.AND)
             for lis_receive in LisReceive.objects.using(self.db).filter(qset):
                 if not import_history.locked:
                     # lock was deleted by another user
@@ -79,15 +109,24 @@ class Lis(object):
                 for lis_aliquot in LisAliquot.objects.using(self.db).filter(receive__receive_identifier=receive.receive_identifier):
                     aliquot = self._import_model(lis_aliquot, Aliquot, 'aliquot_identifier',
                                                  exclude_fields=None, receive=receive)
-                    modified_aliquots.remove(aliquot.aliquot_identifier)
+                    try:
+                        modified_aliquots.remove(aliquot.aliquot_identifier)
+                    except ValueError:
+                        pass
                     for lis_order in LisOrder.objects.using(self.db).filter(aliquot__aliquot_identifier=aliquot.aliquot_identifier):
                         order = self._import_model(lis_order, Order, 'order_identifier',
                                                    exclude_fields=None, aliquot=aliquot)
-                        modified_orders.remove(order.order_identifier)
+                        try:
+                            modified_orders.remove(order.order_identifier)
+                        except ValueError:
+                            pass
                         for lis_result in LisResult.objects.using(self.db).filter(order__order_identifier=order.order_identifier):
                             result = self._import_model(lis_result, Result, 'result_identifier',
                                                         exclude_fields=None, order=order)
-                            modified_results.remove(result.result_identifier)
+                            try:
+                                modified_results.remove(result.result_identifier)
+                            except ValueError:
+                                pass
                             for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
                                 self._import_result_item_model(lis_result_item, result)
             # update any left in the modified lists that was not covered
@@ -112,9 +151,7 @@ class Lis(object):
                     modified_results.remove(result.result_identifier)
                     for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
                         self._import_result_item_model(lis_result_item, result)
-
-        import_history.finish()
-        return None
+        return import_history.finish()
 
     def _import_model(self, lis_source, target_cls, target_identifier_name, exclude_fields, **kwargs):
         """ Transfers values between two models for matching attributes.
@@ -216,7 +253,7 @@ class Lis(object):
             logger.info('    {0} exists, found {1}'.format(name, obj))
         return obj
 
-    def _target_field_custom_handler(self, lis_source, target, target_identifier_name, field):
+    def _target_field_custom_handler(self, lis_source, target_cls, target_identifier_name, field):
         """ Handles a field and value in a custom manner. """
         value = None
         if field.name == 'registered_subject':
@@ -224,15 +261,15 @@ class Lis(object):
             # specific to those source and target models
             if RegisteredSubject.objects.filter(subject_identifier=lis_source.patient.subject_identifier):
                 value = RegisteredSubject.objects.get(subject_identifier=lis_source.patient.subject_identifier)
-                self._add_or_remove_warning(lis_source, target, target_identifier_name, None)
+                self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, None)
             else:
                 warning = ('warning: {target_identifier} has an unknown subject identifier '
                        '{subject_identifier}').format(target_identifier=getattr(lis_source, target_identifier_name),
                                                       subject_identifier=lis_source.patient.subject_identifier)
-                self._add_or_remove_warning(lis_source, target, target_identifier_name, warning)
+                self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, warning)
         return value
 
-    def _add_or_remove_warning(self, lis_source, target, target_identifier_name, warning=None):
+    def _add_or_remove_warning(self, lis_source, target_cls, target_identifier_name, warning=None):
         """ Logs an error message or removes a previously logged message.
 
         An existing message is deleted if identifier matches and warning is None.
@@ -241,13 +278,13 @@ class Lis(object):
 
         if warning:
             LisImportError.objects.create(
-                 model_name=target._meta.object_name,
+                 model_name=target_cls()._meta.object_name,
                  identifier=getattr(lis_source, target_identifier_name),
                  subject_identifier=lis_source.patient.subject_identifier,
                  error_message=warning)
             logger.warning('  {0}'.format(warning))
         else:
-            LisImportError.objects.filter(identifier=getattr(target, target_identifier_name)).delete()
+            LisImportError.objects.filter(identifier=getattr(target_cls(), target_identifier_name)).delete()
 
     def _get_modified(self, model, using, identifier_name, qset, q):
         """ Returns a list of identifiers for instances that match the criteria qset."""

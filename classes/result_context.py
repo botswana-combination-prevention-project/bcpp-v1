@@ -1,6 +1,5 @@
-from bhp_registration.models import RegisteredSubject
+from django.conf import settings
 from lab_clinic_api.models import Result, ResultItem
-from lab_clinic_api.forms import ReviewForm
 
 
 class ContextDescriptor(object):
@@ -16,24 +15,24 @@ class ContextDescriptor(object):
     def __set__(self, instance):
         self.value = {
             'last_updated': instance.result.modified,
-            #'review_form': ReviewForm(),
             'result': instance.result,
-            'protocol_identifier': instance.result.lab.protocol_identifier,
-            'subject_identifier': instance.result.lab.subject_identifier,
+            'protocol_identifier': settings.PROJECT_NUMBER,
+            'subject_identifier': instance.registered_subject.subject_identifier,
             'dob': instance.registered_subject.dob,
             'is_dob_estimated': instance.registered_subject.is_dob_estimated,
             'gender': instance.registered_subject.gender,
+            'visit': instance.result.order.aliquot.receive.visit,
             'initials': instance.registered_subject.initials,
             'site_identifier': instance.registered_subject.study_site.site_name,
-            'clinicians_initials': instance.result.lab.clinician_initials,
-            'drawn_datetime': instance.result.lab.drawn_datetime,
-            'panel_name': instance.result.lab.panel,
-            'receive_identifier': instance.result.lab.receive_identifier,
-            'receive_datetime': instance.result.lab.receive_datetime,
-            'aliquot_identifier': instance.result.lab.aliquot_identifier,
-            'order_identifier': instance.result.lab.order_identifier,
-            'order_datetime': instance.result.lab.order_datetime,
-            'condition': instance.result.lab.condition,
+            'clinicians_initials': instance.result.order.aliquot.receive.clinician_initials,
+            'drawn_datetime': instance.result.order.aliquot.receive.drawn_datetime,
+            'panel_name': instance.result.order.panel.edc_name,
+            'receive_identifier': instance.result.order.aliquot.receive.receive_identifier,
+            'receive_datetime': instance.result.order.aliquot.receive.receive_datetime,
+            'aliquot_identifier': instance.result.order.aliquot.aliquot_identifier,
+            'order_identifier': instance.result.order.order_identifier,
+            'order_datetime': instance.result.order.order_datetime,
+            'condition': instance.result.order.aliquot.receive.receive_condition,
             'result_items': instance.result_items,
             'action': "view",
             'section_name': instance.section_name,
@@ -55,11 +54,11 @@ class ResultContext(object):
         self.search_name = kwargs.get('search_name')
         self.result_identifier = kwargs.get('result_identifier')
         if self.result_identifier:
-            if Result.objects.filter(lab__result_identifier__exact=self.result_identifier):
+            if Result.objects.filter(result_identifier__exact=self.result_identifier):
                 # get first one only, in coase of duplicates
-                self.result = Result.objects.filter(lab__result_identifier__exact=self.result_identifier)[0]
+                self.result = Result.objects.filter(result_identifier__exact=self.result_identifier)[0]
                 self.result_items = ResultItem.objects.filter(result=self.result)
-                self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.result.lab.subject_identifier)
+                self.registered_subject = self.result.order.aliquot.receive.registered_subject
             else:
                 self.result = None
                 self.result_items = None
