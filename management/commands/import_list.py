@@ -1,6 +1,15 @@
 from optparse import make_option
+import logging
 from django.core.management.base import BaseCommand, CommandError
 from lab_clinic_reference.classes import ImportGrading, ImportReferenceRange
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class Command(BaseCommand):

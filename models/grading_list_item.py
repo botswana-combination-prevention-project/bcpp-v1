@@ -20,6 +20,8 @@ class GradingListItem(BaseReferenceListItem):
 
     grade = models.IntegerField()
 
+    import_datetime = models.DateTimeField(null=True)
+
     """
         lower |    upper
         ------|-------------

@@ -1,25 +1,35 @@
+import logging
 from django.conf import settings
 from lab_test_code.models import TestCodeReferenceList, TestCodeReferenceListItem
 from lab_clinic_reference.models import ReferenceRangeList, ReferenceRangeListItem
+from base_import import BaseImport
+
+logger = logging.getLogger(__name__)
 
 
-class ImportReferenceRange(object):
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
-    def __init__(self, db):
-        self.db = db
 
-    def import_list(self):
+class ImportReferenceRange(BaseImport):
 
-        for test_code_reference_list in TestCodeReferenceList.objects.using(self.db).filter(name=settings.REFERENCE_RANGE_LIST):
-            reference_range_list, created = ReferenceRangeList.objects.get_or_create(name=settings.REFERENCE_RANGE_LIST)
-            for field in reference_range_list._meta.fields:
-                if field.name in [field.name for field in test_code_reference_list._meta.fields if field.name != 'id']:
-                    setattr(reference_range_list, field.name, getattr(test_code_reference_list, field.name))
-            reference_range_list.save()
+    def get_or_create_list_item(self, test_code, list_obj, lis_list_item_obj, defaults):
+        return ReferenceRangeListItem.objects.get_or_create(
+            reference_range_list=list_obj,
+            test_code=test_code,
+            uln=lis_list_item_obj.uln,
+            lln=lis_list_item_obj.lln,
+            age_low=lis_list_item_obj.age_low,
+            age_low_unit=lis_list_item_obj.age_low_unit,
+            defaults=defaults)
 
-            for test_code_reference_list_item in TestCodeReferenceListItem.objects.using(self.db).filter(test_code_reference_list=test_code_reference_list):
-                reference_range_list_item, created = ReferenceRangeListItem.objects.get_or_create(reference_range_list=reference_range_list)
-                for field in reference_range_list_item._meta.fields:
-                    if field.name in [field.name for field in test_code_reference_list_item._meta.fields if field.name != 'id']:
-                        setattr(reference_range_list_item, field.name, getattr(test_code_reference_list_item, field.name))
-                reference_range_list.save()
+    def import_prep(self):
+        self.lis_list_cls = TestCodeReferenceList
+        self.lis_list_item_cls = TestCodeReferenceListItem
+        self.lis_list_key_name = 'test_code_reference_list'
+        self.list_name = settings.REFERENCE_RANGE_LIST
+        self.local_list_cls = ReferenceRangeList
+        self.local_list_item_cls = ReferenceRangeListItem
+        self.local_list_item_key_field_names = ['id', 'test_code', 'test_code_reference_list', 'uln', 'lln', 'age_low', 'age_low_unit']
