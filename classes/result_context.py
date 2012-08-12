@@ -49,14 +49,14 @@ class ResultContext(object):
 
     context = ContextDescriptor()
 
-    def __init__(self, result, result_items, **kwargs):
+    def __init__(self, result_identifier, **kwargs):
         self.section_name = kwargs.get('section_name')
         self.search_name = kwargs.get('search_name')
-        self.result_identifier = result.result_identifier
+        self.result_identifier = result_identifier
         if self.result_identifier:
             # get first one only, in coase of duplicates
-            self.result = Result.objects.filter(result_identifier=self.result_identifier)
-            self.result_items = ResultItem.objects.filter(result=result)
+            self.result = Result.objects.get(result_identifier=self.result_identifier)
+            self.result_items = ResultItem.objects.filter(result=self.result)
             self.registered_subject = self.result.order.aliquot.receive.registered_subject
         else:
             self.result = None

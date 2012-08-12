@@ -63,6 +63,7 @@ class ResultAdmin(BaseModelAdmin):
     list_display = (
         "result_identifier",
         "subject_identifier",
+        'receive_identifier',
         "result_datetime",
         "release_status",
         "release_datetime",)

@@ -243,7 +243,11 @@ class Lis(object):
             if created:
                 logger.info('    created panel {0}'.format(obj.name))
         elif name == 'test_code':
-            obj, created = TestCode.objects.get_or_create(code=lis_obj.code, defaults={'name': lis_obj.name})
+            test_code, created = TestCode.objects.get_or_create(code=lis_obj.code)
+            for field in test_code._meta.fields:
+                if field.name in [fld.name for fld in lis_obj._meta.fields if fld.name not in ['id', 'code']]:
+                    setattr(test_code, field.name, getattr(lis_obj, field.name))
+            test_code.save()
             if created:
                 logger.info('    created test_code {0}'.format(obj.code))
         elif name == 'aliquot_type':
