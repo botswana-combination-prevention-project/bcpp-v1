@@ -1,72 +1,38 @@
+from math import ceil
 from django.db.models import Q
-from bhp_common.utils import round_up, get_age_in_days
+from django.conf import settings
 from lab_flag.classes import Flag
-from lab_grading.models import GradingListItem
-
-
 
 
 class GradeFlag(Flag):
 
-    """
-from datetime import datetime, date
-from lab_grading.classes import GradeFlag
-flag = GradeFlag()
-flag
-flag.__dict__
-flag.flag
-flag.flag = 'pp'
-flag.dob=datetime.today()
-flag.gender='F'
-flag.hiv_status='ANY'
-g=GradingListItem.objects.filter(lln__isnull=False)
-test_code=g[0].test_code
-flag.test_code=test_code
-flag.drawn_datetime=datetime.today()
-flag.result_item_value = 9
-flag.flag
-flag.result_item_value = 55
-flag.flag
-    """
-
-    
-
-    def __init__(self, **kwargs):
-
-        self.REFLIST = 'DAIDS_2004'
-        super(GradeFlag, self).__init__(**kwargs)
-
-    def get_flag(self):
-
-        #get age in days using the collection date as a reference
-        age_in_days = get_age_in_days(self.drawn_datetime, self.dob)
-        
-                
-        #filter for the reference items for this list and this testcode, gender
+    def get_list_prep(self):
+        """Returns a filtered list of GradingListItem for this ."""
         if self.hiv_status:
-            qset = (Q(hiv_status__iexact=self.hiv_status.lower()) | Q(hiv_status__iexact='any'))
+            qset = (Q(hiv_status__iexact=self.hiv_status.lower()) | Q(hiv_status__iexact='ANY'))
         else:
-            qset = (Q(hiv_status__iexact='any'))                
-        grading_list_items = GradingListItem.objects.filter(
-                                qset,
-                                grading_list__name__iexact=self.REFLIST,
-                                test_code=self.test_code, 
-                                gender__icontains=self.gender,
-                                )    
-        
-        
-        grade = {'flag':'', 'range':{'lln':'', 'uln':''}}        
-        if grading_list_items:
-            for reference_list_item in grading_list_items:
-                #find the record for this age 
-                if reference_list_item.age_low_days() <= age_in_days and reference_list_item.age_high_days() >= age_in_days:
-                    if not grade['flag']:
-                        grade['flag'] = '0'
-                    #see if value is in the of range of a grade
-                    if round_up(self.result_item_value, self.test_code.display_decimal_places) >= round_up(reference_list_item.lln, self.test_code.display_decimal_places) \
-                            and round_up(self.result_item_value, self.test_code.display_decimal_places) <= round_up(reference_list_item.uln, self.test_code.display_decimal_places):
-                        grade['flag'] = reference_list_item.grade        
-                        grade['range']['lln'] = round_up(reference_list_item.lln,self.test_code.display_decimal_places)
-                        grade['range']['uln'] = round_up(reference_list_item.uln,self.test_code.display_decimal_places)
-        return grade
-        
+            qset = (Q(hiv_status__iexact='ANY'))
+        list_items = self.list_item_model_cls.objects.filter(
+            qset,
+            **{'{0}__name__iexact'.format(self.list_name): settings.GRADING_LIST,
+               'grading_list__name__iexact': settings.GRADING_LIST,
+               'test_code': self.test_code,
+               'gender__icontains': self.gender})
+        return list_items
+
+    def get_evaluate_prep(self, value, list_item):
+        """ Determines if the value falls within one of the graded ranges."""
+        flag, lower, upper = None, None, None
+        if list_item.age_low_days() <= self.age_in_days and list_item.age_high_days() >= self.age_in_days:
+            # round up all values
+            if not self.test_code.display_decimal_places:
+                # this might be worth a warning
+                places = 0
+            lower_limit = ceil(list_item.lln * (10 ** places)) / (10 ** places)
+            upper_limit = ceil(list_item.uln * (10 ** places)) / (10 ** places)
+            value = ceil(value * (10 ** places)) / (10 ** places)
+            if value >= lower_limit and value <= upper_limit:
+                flag = list_item.grade
+                lower = lower_limit
+                upper = upper_limit
+        return flag, lower, upper
