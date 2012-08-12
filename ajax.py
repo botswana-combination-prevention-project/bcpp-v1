@@ -1,5 +1,6 @@
 from django.template.loader import render_to_string
 from dajax.core import Dajax
+from django.db.models import get_model
 from dajaxice.decorators import dajaxice_register
 from lab_clinic_api.classes import EdcLab, ResultContext
 
@@ -34,7 +35,11 @@ def update_result_status(request, subject_identifier, output=True):
 @dajaxice_register
 def view_result_report(request, result_identifier):
     dajax = Dajax()
-    result_context = ResultContext(result_identifier=result_identifier)
+    Result = get_model('lab_clinic_api', 'result')
+    ResultItem = get_model('lab_clinic_api', 'resultitem')
+    result = Result.objects.filter(result_identifier=result_identifier)
+    result_items = ResultItem.objects.filter(result=result)
+    result_context = ResultContext(result, result_items)
     rendered = render_to_string('clinic_result_report.html', result_context.context)
     dajax.assign('#left_table', 'innerHTML', rendered)
     return dajax.json()

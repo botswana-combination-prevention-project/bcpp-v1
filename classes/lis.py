@@ -30,6 +30,7 @@ class Lis(object):
         self.db = db
 
     def update_from_lis(self, subject_identifier):
+        """ Update the Edc labs for a given subject_identifier from the Lis."""
         poll_mysql = PollMySQL(db=self.db)
         if poll_mysql.is_server_active():
             import_history = ImportHistory(self.db, subject_identifier)
@@ -105,30 +106,32 @@ class Lis(object):
                 logger.info('Receiving {receive_identifier} for '
                             '{subject_identifier}'.format(receive_identifier=lis_receive.receive_identifier,
                                                           subject_identifier=lis_receive.patient.subject_identifier))
-                receive = self._import_model(lis_receive, Receive, 'receive_identifier', exclude_fields=None)
-                for lis_aliquot in LisAliquot.objects.using(self.db).filter(receive__receive_identifier=receive.receive_identifier):
-                    aliquot = self._import_model(lis_aliquot, Aliquot, 'aliquot_identifier',
-                                                 exclude_fields=None, receive=receive)
-                    try:
-                        modified_aliquots.remove(aliquot.aliquot_identifier)
-                    except ValueError:
-                        pass
-                    for lis_order in LisOrder.objects.using(self.db).filter(aliquot__aliquot_identifier=aliquot.aliquot_identifier):
-                        order = self._import_model(lis_order, Order, 'order_identifier',
-                                                   exclude_fields=None, aliquot=aliquot)
+                registered_subject = self._registered_subject_handler(lis_receive, Receive, 'receive_identifier')
+                if registered_subject:
+                    receive = self._import_model(lis_receive, Receive, 'receive_identifier', exclude_fields=None, registered_subject=registered_subject)
+                    for lis_aliquot in LisAliquot.objects.using(self.db).filter(receive__receive_identifier=receive.receive_identifier):
+                        aliquot = self._import_model(lis_aliquot, Aliquot, 'aliquot_identifier',
+                                                     exclude_fields=None, receive=receive)
                         try:
-                            modified_orders.remove(order.order_identifier)
+                            modified_aliquots.remove(aliquot.aliquot_identifier)
                         except ValueError:
                             pass
-                        for lis_result in LisResult.objects.using(self.db).filter(order__order_identifier=order.order_identifier):
-                            result = self._import_model(lis_result, Result, 'result_identifier',
-                                                        exclude_fields=None, order=order)
+                        for lis_order in LisOrder.objects.using(self.db).filter(aliquot__aliquot_identifier=aliquot.aliquot_identifier):
+                            order = self._import_model(lis_order, Order, 'order_identifier',
+                                                       exclude_fields=None, aliquot=aliquot)
                             try:
-                                modified_results.remove(result.result_identifier)
+                                modified_orders.remove(order.order_identifier)
                             except ValueError:
                                 pass
-                            for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
-                                self._import_result_item_model(lis_result_item, result)
+                            for lis_result in LisResult.objects.using(self.db).filter(order__order_identifier=order.order_identifier):
+                                result = self._import_model(lis_result, Result, 'result_identifier',
+                                                            exclude_fields=None, order=order)
+                                try:
+                                    modified_results.remove(result.result_identifier)
+                                except ValueError:
+                                    pass
+                                for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
+                                    self._import_result_item_model(lis_result_item, result)
             # update any left in the modified lists that was not covered
             # since the receive record was not modified
             for lis_aliquot in LisAliquot.objects.using(self.db).filter(aliquot_identifier__in=modified_aliquots):
@@ -180,12 +183,12 @@ class Lis(object):
         list_fields = ['panel', 'aliquot_type', 'aliquot_condition']
         for field in target_cls._meta.fields:
             if field.name not in exclude_fields:
-                if field.name in custom_fields:
-                    value = self._target_field_custom_handler(lis_source, target_cls, target_identifier_name, field)
+                if kwargs.get(field.name, None):
+                    value = kwargs.get(field.name)
                 elif field.name in list_fields:
                     value = self._get_or_create_list_field_instance(field.name, getattr(lis_source, field.name))
-                elif kwargs.get(field.name, None):
-                    value = kwargs.get(field.name)
+                elif field.name in custom_fields:
+                    value = self._target_field_custom_handler(lis_source, target_cls, target_identifier_name, field)
                 else:
                     # target value is source value for this attribute
                     value = getattr(lis_source, field.name)
@@ -204,9 +207,13 @@ class Lis(object):
     def _import_result_item_model(self, lis_result_item, result):
         """ Imports from result_items from source to target.
 
-        Same as _import_model except result_item does not have a result_item_identifier
-        and instead uses a result instance as its key. But the result instance on target
-        is not of the same class as result instance on source. """
+        'tartget_cls' is in module lab_clinic_api and not lab_result_item.
+        Do not use value for result, test_code from 'lis_result_item' as it is
+        of the wrong class.  On 'target_cls' the attributes refer to instances in
+        lab_clinic_api.
+
+        Also, 'tartget_cls' does not have a \'result_item_identifier\' attr
+        and instead uses a result instance as its key."""
         options = {}
         defaults = {}
         target_cls = ResultItem
@@ -236,7 +243,7 @@ class Lis(object):
             if created:
                 logger.info('    created panel {0}'.format(obj.name))
         elif name == 'test_code':
-            obj, created = TestCode.objects.get_or_create(code=lis_obj.code)
+            obj, created = TestCode.objects.get_or_create(code=lis_obj.code, defaults={'name': lis_obj.name})
             if created:
                 logger.info('    created test_code {0}'.format(obj.code))
         elif name == 'aliquot_type':
@@ -257,16 +264,20 @@ class Lis(object):
         """ Handles a field and value in a custom manner. """
         value = None
         if field.name == 'registered_subject':
-            # only 'receive' has registered subject, so this code is
-            # specific to those source and target models
-            if RegisteredSubject.objects.filter(subject_identifier=lis_source.patient.subject_identifier):
-                value = RegisteredSubject.objects.get(subject_identifier=lis_source.patient.subject_identifier)
-                self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, None)
-            else:
-                warning = ('warning: {target_identifier} has an unknown subject identifier '
-                       '{subject_identifier}').format(target_identifier=getattr(lis_source, target_identifier_name),
-                                                      subject_identifier=lis_source.patient.subject_identifier)
-                self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, warning)
+            self._registered_subject_handler(lis_source, target_cls, target_identifier_name)
+        return value
+
+    def _registered_subject_handler(self, lis_source, target_cls, target_identifier_name):
+        """ Returns a registered_subject instance or none and updates the error log."""
+        value = None
+        if RegisteredSubject.objects.filter(subject_identifier=lis_source.patient.subject_identifier):
+            value = RegisteredSubject.objects.get(subject_identifier=lis_source.patient.subject_identifier)
+            self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, None)
+        else:
+            warning = ('warning: {target_identifier} has an unknown subject identifier '
+                   '{subject_identifier}').format(target_identifier=getattr(lis_source, target_identifier_name),
+                                                  subject_identifier=lis_source.patient.subject_identifier)
+            self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, warning)
         return value
 
     def _add_or_remove_warning(self, lis_source, target_cls, target_identifier_name, warning=None):
