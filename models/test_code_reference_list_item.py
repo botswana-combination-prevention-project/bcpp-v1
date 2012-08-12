@@ -3,12 +3,17 @@ from django.db import models
 from audit_trail.audit import AuditTrail
 from lab_reference.models import BaseReferenceListItem
 from lab_reference.utils import get_lower_range_days, get_upper_range_days
-from lab_test_code.models import TestCodeReferenceList
+from test_code_reference_list import TestCodeReferenceList
+from test_code import TestCode
 
 
 class TestCodeReferenceListItem(BaseReferenceListItem):
 
+    test_code = models.ForeignKey(TestCode)
+
     test_code_reference_list = models.ForeignKey(TestCodeReferenceList)
+
+    objects = models.Manager()
 
     history = AuditTrail()
 
