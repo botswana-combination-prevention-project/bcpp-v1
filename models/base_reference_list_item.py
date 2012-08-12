@@ -1,12 +1,11 @@
 from django.db import models
 from bhp_base_model.classes import BaseModel
-from lab_test_code.models import TestCode
 from lab_reference.choices import GENDER_OF_REFERENCE
 
 
 class BaseReferenceListItem(BaseModel):
 
-    test_code = models.ForeignKey(TestCode)
+    code = models.CharField(max_length=25, null=True)
 
     gender = models.CharField(
         verbose_name="Gender",
@@ -89,7 +88,7 @@ class BaseReferenceListItem(BaseModel):
         return "%s" % (self.test_code)
     """
 
+    objects = models.Manager()
+
     class Meta:
         abstract = True
-        app_label = 'bhp_lab_core'
-        ordering = ['test_code', 'age_low', 'age_low_unit']

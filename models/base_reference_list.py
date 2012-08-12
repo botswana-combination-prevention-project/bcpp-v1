@@ -21,6 +21,8 @@ class BaseReferenceList(BaseModel):
         blank=True,
         )
 
+    objects = models.Manager()
+
     class Meta:
         abstract = True
         app_label = "bhp_grading"
