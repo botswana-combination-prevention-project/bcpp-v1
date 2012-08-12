@@ -18,9 +18,7 @@ class ReferenceFlag(Flag):
         flag, lln, uln = None, None, None
         if list_item.age_low_days() <= self.age_in_days and list_item.age_high_days() >= self.age_in_days:
             # round up all values
-            if not self.test_code.display_decimal_places:
-                # this might be worth a warning
-                places = 0
+            places = self.test_code.display_decimal_places or 0  # might be worth a warning if None
             lln = ceil(list_item.lln * (10 ** places)) / (10 ** places)
             uln = ceil(list_item.uln * (10 ** places)) / (10 ** places)
             value = ceil(value * (10 ** places)) / (10 ** places)
