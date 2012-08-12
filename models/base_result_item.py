@@ -1,7 +1,10 @@
 import re
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
+from lab_grading.models import GradingListItem
+from lab_test_code.models import TestCodeReferenceListItem
 from lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
+from lab_result_item.classes import ResultItemFlag
 
 
 class BaseResultItem(BaseUuidModel):
@@ -117,15 +120,33 @@ class BaseResultItem(BaseUuidModel):
     def get_visit(self):
         return ''
 
+    def get_grading_list(self):
+        return ('grading_list', GradingListItem)
+
+    def get_reference_list(self):
+        return ('test_code_reference_list', TestCodeReferenceListItem)
+
+    def get_cls_reference_flag(self):
+        """ Users must override this."""
+        raise TypeError('Method must be overridden by the child class.')
+        return None
+
+    def get_cls_grade_flag(self):
+        """ Users must override this."""
+        raise TypeError('Method must be overridden by the child class.')
+        return None
+
     def save(self, *args, **kwargs):
 
-        # if value can be converted to a numeric, then do so and store as float
+        value = None
         if re.search(r'\d+\.?\d*', self.result_item_value):
             try:
-                self.result_item_value_as_float = float(self.result_item_value)
+                value = float(self.result_item_value)
             except:
-                self.result_item_value_as_float = None
-
+                value = None
+        if value:
+            self.result_item_value_as_float = value
+            self, modified = ResultItemFlag().calculate(self)
         super(BaseResultItem, self).save(*args, **kwargs)
 
     class Meta:
