@@ -1,5 +1,4 @@
 import logging
-from math import ceil
 from bhp_common.utils import get_age_in_days
 from lab_test_code.models import BaseTestCode
 from lab_reference.models import BaseReferenceListItem
@@ -53,18 +52,10 @@ class Flag(object):
             for list_item in list_items:
                 if not isinstance(list_item, BaseReferenceListItem):
                     raise TypeError('List item must be an instance of BaseReferenceListItem.')
-                if list_item.code != self.test_code.code:
-                    raise TypeError('Test codes in list \'{0}\' do not match those in TestCode. Got \'{1}\' != \'{2}\''.format(self.list_item_model_cls._meta.object_name, list_item.code, self.test_code.code))
                 flag, lower_limit, upper_limit = self.get_evaluate_prep(value, list_item)
+                retdict['lower_limit'], retdict['upper_limit'] = lower_limit, upper_limit
                 if flag:
-                    if not self.test_code.display_decimal_places:
-                        logger.warning('No value specified for display_decimal_places for {0}. Assuming 0.'.format(self.test_code.code))
-                        places = 0
-                    if lower_limit:
-                        lower_limit = ceil(lower_limit * (10 ** places)) / (10 ** places)
-                    if upper_limit:
-                        upper_limit = ceil(upper_limit * (10 ** places)) / (10 ** places)
-                    retdict['flag'], retdict['lower_limit'], retdict['upper_limit'] = flag, lower_limit, upper_limit
+                    retdict['flag'] = flag
                     break
         self._cleanup()
         return retdict
