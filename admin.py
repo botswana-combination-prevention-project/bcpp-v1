@@ -60,10 +60,10 @@ class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
             kwargs["queryset"] = Order.objects.filter(id__exact=request.GET.get('order', 0))
         return super(ResultAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)   
 
-    list_display = ('result_identifier', 'result_datetime',  'release_status', 'order', )
-    
-    search_fields = ('result_identifier', 'release_status')    
-    
+    list_display = ('result_identifier', 'receive_identifier', 'result_datetime', 'release_status', 'order', )
+
+    search_fields = ('result_identifier', 'release_status', 'order__aliquot__receive__receive_identifier')
+
     list_filter = ('release_status', 'result_datetime', 'release_status')
 
     

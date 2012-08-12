@@ -58,5 +58,8 @@ class BaseResult(BaseUuidModel):
     def __unicode__(self):
         return '%s' % (self.result_identifier)
 
+    def receive_identifier(self):
+        return self.order.aliquot.receive.receive_identifier
+
     class Meta:
         abstract = True
