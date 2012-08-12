@@ -22,17 +22,15 @@ class GradeFlag(Flag):
 
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
-        flag, lower, upper = None, None, None
+        flag, lower_limit, upper_limit = None, None, None
         if list_item.age_low_days() <= self.age_in_days and list_item.age_high_days() >= self.age_in_days:
             # round up all values
-            if not self.test_code.display_decimal_places:
-                # this might be worth a warning
-                places = 0
+            places = self.test_code.display_decimal_places or 0  # this might be worth a warning in None
             lower_limit = ceil(list_item.lln * (10 ** places)) / (10 ** places)
             upper_limit = ceil(list_item.uln * (10 ** places)) / (10 ** places)
             value = ceil(value * (10 ** places)) / (10 ** places)
             if value >= lower_limit and value <= upper_limit:
                 flag = list_item.grade
-                lower = lower_limit
-                upper = upper_limit
-        return flag, lower, upper
+                #lower = lower_limit
+                #upper = upper_limit
+        return flag, lower_limit, upper_limit
