@@ -1,7 +1,5 @@
-from decimal import Decimal, ROUND_HALF_UP
+from math import ceil
 
-def round_up(d, digits):
-    try:
-        return Decimal(d).quantize(Decimal("1") / (Decimal('10') ** digits), ROUND_HALF_UP) 
-    except:
-        return d  
+
+def round_up(value, digits):
+    ceil(value*(10**digits))/(10**digits)

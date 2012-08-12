@@ -1,4 +1,5 @@
 import socket
+from math import ceil
 from datetime import *
 from dateutil.relativedelta import *
 from django import template
@@ -87,7 +88,6 @@ def user_initials(username):
             return username
 
 
-
 @register.filter(name='age')
 def age(born):
     reference_date = date.today()
@@ -123,8 +123,12 @@ def gender(value):
 
 
 @register.filter(name='roundup')
-def roundup(d, digits):
-    return round_up(d, digits)
+def roundup(num, places):
+    if isinstance(num, (int, float)):
+        fl = float(num)
+        return ceil(fl * (10 ** places)) / (10 ** places)
+    else:
+        return num
 
 
 @register.filter
