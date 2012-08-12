@@ -1,2 +1,1 @@
-from flag import Flag, BaseDescriptor
-
+from flag import Flag

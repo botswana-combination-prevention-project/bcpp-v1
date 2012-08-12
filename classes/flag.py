@@ -1,115 +1,80 @@
-from datetime import datetime, date
+import logging
+from math import ceil
+from bhp_common.utils import get_age_in_days
 from lab_test_code.models import BaseTestCode
+from lab_reference.models import BaseReferenceListItem
+
+logger = logging.getLogger(__name__)
 
 
-class FlagDescriptor(object):
-
-    """Get/Set a dictionary with keys 'flag' and 'range' where key
-    'range has keys 'uln' and 'lln'. """
-
-    def __init__(self):
-        self.value = None
-
-    def __get__(self, instance, owner):
-        if instance.dirty:
-            self.__set__(instance)
-        return self.value
-
-    def __set__(self, instance):
-        if instance.result_item_value and instance.dob \
-                and instance.gender \
-                and instance.drawn_datetime \
-                and instance.test_code \
-                and instance.hiv_status:
-            # set reference_flag dictionary
-            value = instance.get_flag()
-            #raise TypeError(instance)
-            if not isinstance(value, dict):
-                raise TypeError('flag must be of type Dictionary, Got %s' % type(value))
-            instance.dirty = False
-            self.value = value
-        else:
-            self.value = {'flag': '', 'range': {'lln': '', 'uln': ''}}
-
-
-class BaseDescriptor(object):
-    def __init__(self):
-        self.value = None
-
-    def __get__(self, instance, owner):
-        return self.value
-
-    def __set__(self, instance, value):
-        self.value = value
-        instance.dirty = True
-
-
-class ResultItemValueDescriptor(BaseDescriptor):
-    pass
-
-
-class TestCodeDescriptor(BaseDescriptor):
-    def __set__(self, instance, value):
-        if isinstance(value, (BaseTestCode)) or value is None:
-            self.value = value
-            instance.dirty = True
-        else:
-            raise TypeError('%s expected type TestCode, Got %s' % (self, type(value)))
-
-
-class HivStatusDescriptor(BaseDescriptor):
-    def __set__(self, instance, value):
-        if isinstance(value, (basestring)) or value is None:
-            self.value = value
-            instance.dirty = True
-        else:
-            raise TypeError('%s expected type string, Got %s' % (self, type(value)))
-
-
-class DobDescriptor(BaseDescriptor):
-    def __set__(self, instance, value):
-        if isinstance(value, (date, datetime)) or value is None:
-            self.value = value
-            instance.dirty = True
-        else:
-            raise TypeError('%s expected type date or datetime, Got %s' % (self, type(value)))
-
-
-class GenderDescriptor(BaseDescriptor):
-    def __set__(self, instance, value):
-        if isinstance(value, (basestring)) or value is None:
-            self.value = value
-            instance.dirty = True
-        else:
-            raise TypeError('%s expected type string, Got %s' % (self, type(value)))
-
-
-class DrawnDatetimeDescriptor(BaseDescriptor):
-    def __set__(self, instance, value):
-        if isinstance(value, (datetime)) or value is None:
-            self.value = value
-            instance.dirty = True
-        else:
-            raise TypeError('%s expected type datetime, Got %s' % (self, type(value)))
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class Flag(object):
 
-    """ A base class to handle reference and grade flags. Child class must define get_flag method"""
+    def __init__(self, reference_list, test_code, gender, dob, reference_datetime, hiv_status=None, **kwargs):
+        self.dirty = False
+        self.list_name, self.list_item_model_cls = reference_list
+        self.test_code = test_code
+        if not isinstance(test_code, BaseTestCode):
+            raise TypeError('Parameter \'test_code\' must be an instance of \'BaseTestCode\'.')
+        self.gender = gender
+        self.dob = dob
+        self.reference_datetime = reference_datetime
+        self.hiv_status = hiv_status
+        self.age_in_days = get_age_in_days(self.reference_datetime, self.dob)
 
-    flag = FlagDescriptor()
+    def get_list_prep(self):
+        """Returns a filtered list of list items .
 
-    hiv_status = HivStatusDescriptor()
-    dob = DobDescriptor()
-    gender = GenderDescriptor()
-    drawn_datetime = DrawnDatetimeDescriptor()
-    test_code = TestCodeDescriptor()
-    result_item_value = ResultItemValueDescriptor()
+        Users should override this."""
+        return None
 
-    def __init__(self, **kwargs):
+    def get_evaluate_prep(self, value, list_item):
+        """Returns a tuple of the calculated flag, lower limit, upper limit.
+
+        Users should override this."""
+        return None, None, None
+
+    def evaluate(self, value):
+        """ Determines the flag for value."""
+        if self.dirty:
+            raise ValueError('Instance has already been evaluated. Initialize a new instance before evaluating again.')
+        if not isinstance(value, (int, float, long)):
+            raise TypeError('Value must be an instance of int, float, long.')
+        retdict = {}
+        list_items = self.get_list_prep()
+        if not list_items:
+            logger.warning('No {0} items for {1}.'.format(self.list_name, self.test_code.code))
+        else:
+            for list_item in list_items:
+                if not isinstance(list_item, BaseReferenceListItem):
+                    raise TypeError('List item must be an instance of BaseReferenceListItem.')
+                if list_item.code != self.test_code.code:
+                    raise TypeError('Test codes in list \'{0}\' do not match those in TestCode. Got \'{1}\' != \'{2}\''.format(self.list_item_model_cls._meta.object_name, list_item.code, self.test_code.code))
+                flag, lower_limit, upper_limit = self.get_evaluate_prep(value, list_item)
+                if flag:
+                    if not self.test_code.display_decimal_places:
+                        logger.warning('No value specified for display_decimal_places for {0}. Assuming 0.'.format(self.test_code.code))
+                        places = 0
+                    if lower_limit:
+                        lower_limit = ceil(lower_limit * (10 ** places)) / (10 ** places)
+                    if upper_limit:
+                        upper_limit = ceil(upper_limit * (10 ** places)) / (10 ** places)
+                    retdict['flag'], retdict['lower_limit'], retdict['upper_limit'] = flag, lower_limit, upper_limit
+                    break
+        self._cleanup()
+        return retdict
+
+    def _cleanup(self):
+        """ Clean up instance variables in case you forget to re-init."""
         self.dirty = True
-        self.value = kwargs.get('result_item_value')
-
-    def get_flag(self):
-        """ override this method to calculate the values need to set self.flag. See flag descriptor """
-        return self.flag
+        self.test_code = None
+        self.gender = None
+        self.dob = None
+        self.reference_datetime = None
+        self.hiv_status = None
+        self.age_in_days = None
