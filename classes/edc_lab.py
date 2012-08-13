@@ -6,13 +6,17 @@ from lab_clinic_api.classes import Lis
 
 class EdcLab(object):
 
+    """ Accesses local lab data by subject."""
+
     def update(self, subject_identifier):
+        """ Updates the local lab data with that from the Lis. """
         lis = Lis('lab_api')
         last_updated = lis.update_from_lis(subject_identifier=subject_identifier)
         return last_updated
 
     def render(self, subject_identifier, update=False):
-        # prepare results for dashboard sidebar
+        """ Renders local lab data for the subject's dashboard."""
+        template = 'result_status_bar.html'
         last_updated = None
         if update:
             last_updated = self.update(subject_identifier)
@@ -27,4 +31,4 @@ class EdcLab(object):
         ordered = (Order.objects.filter(aliquot__receive__registered_subject__subject_identifier=subject_identifier)
                                 .exclude(order_identifier__in=[result.order.order_identifier for result in resulted])
                                 .order_by('-aliquot__receive__drawn_datetime'))
-        return render_to_string('result_status_bar.html', {'resulted': resulted, 'ordered': ordered, 'last_updated': last_updated})
+        return render_to_string(template, {'resulted': resulted, 'ordered': ordered, 'last_updated': last_updated})

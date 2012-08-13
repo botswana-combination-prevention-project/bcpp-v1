@@ -2,7 +2,7 @@ from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_base_model.classes import BaseModelAdmin
 from forms import ResultForm, ResultItemForm, ReviewForm
-from models import Receive, Result, ResultItem, Review, UpdateLog, LisImportError, Order, Panel, TestCode
+from models import Receive, Result, ResultItem, Review, UpdateLog, Order, Panel, TestCode
 from actions import recalculate_grading
 
 
@@ -25,12 +25,6 @@ class OrderAdmin(BaseModelAdmin):
         return ['aliquot', 'panel', 'status', 'order_datetime', 'comment']
 admin.site.register(Order, OrderAdmin)
 
-
-class LisImportErrorAdmin(BaseModelAdmin):
-    list_display = ('model_name', "identifier", "error_message")
-    list_filter = ('model_name',)
-    search_fields = ("identifier", "error_message")
-admin.site.register(LisImportError, LisImportErrorAdmin)
 
 
 class UpdateLogAdmin(BaseModelAdmin):
