@@ -17,6 +17,13 @@ class Partner(object):
         *Subject Identifier is derived from the index identifier so the
         SubjectIdentifier model is referenced but not updated.""" 
         # index_identifier identifier should exist in SubjectIdentifier
+        
+        #..todo: TODO: for maikalelo, this needs to be updated
+        # STOP!!
+        raise TypeError('You may not overrise get_identifier.')
+        consent=None
+        
+        
         if not SubjectIdentifier.objects.filter(subject_identifier=index_identifier):
             raise ValidationError('Unknown index_identifier {0}.'.format(index_identifier))
         subject_identifier = "{}-10",format(index_identifier)
