@@ -1,7 +1,7 @@
 from django.template.loader import render_to_string
 from lab_result_item.classes import ResultItemFlag
 from lab_clinic_api.models import Result, Order, ResultItem
-from lab_clinic_api.classes import Lis
+from lab_import_lis.classes import Lis
 
 
 class EdcLab(object):
