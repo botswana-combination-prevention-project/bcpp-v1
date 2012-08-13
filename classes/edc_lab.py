@@ -20,7 +20,7 @@ class EdcLab(object):
         for result in resulted:
             for result_item in ResultItem.objects.filter(result=result):
                 if result_item.result_item_value_as_float:
-                    result_item, modified = ResultItemFlag().calculate(self)
+                    result_item, modified = ResultItemFlag().calculate(result_item)
                     if modified:
                         result_item.save()
         ordered = (Order.objects.filter(aliquot__receive__registered_subject__subject_identifier=subject_identifier)
