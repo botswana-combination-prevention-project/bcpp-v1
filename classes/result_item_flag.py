@@ -6,6 +6,13 @@ class ResultItemFlag(object):
         """Takes a result_item instance and evaluates the reference and grade flags.
 
         Gets flag classes from model methods get_cls_reference_flag() and get_grading_list().
+
+        You can review grades in SQL like this:
+            >>>select tc.code, grade_flag, count(*)
+            >>>from lab_clinic_api_resultitem as ri
+            >>>left join lab_clinic_api_testcode as tc on ri.test_code_id=tc.id
+            >>>where grade_flag>=0
+            >>>group by tc.code, grade_flag;
         """
         before = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
         value = result_item.result_item_value_as_float
@@ -17,7 +24,7 @@ class ResultItemFlag(object):
             result_item.reference_range = None
         else:
             result_item.reference_range = range_
-        if kw.get('flag', None):
+        if kw.get('flag'):
             result_item.reference_flag = kw.get('flag')
         else:
             result_item.reference_flag = None
