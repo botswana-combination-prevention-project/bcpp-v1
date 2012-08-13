@@ -24,8 +24,14 @@ class PollMySQL(object):
     def __init__(self, host=None, port=None, **kwargs):
         if kwargs.get('db', None):
             db = kwargs.get('db')
-            self.host = settings.DATABASES[db]['HOST']
-            self.port = int(settings.DATABASES[db]['PORT'])
+            if not settings.DATABASES[db]['HOST']:
+                self.host = '127.0.0.1'
+            else:
+                self.host = settings.DATABASES[db]['HOST']
+            if not settings.DATABASES[db]['PORT']:
+                self.port = 3306
+            else:
+                self.port = int(settings.DATABASES[db]['PORT'])
         else:
             self.host = host
             self.port = port
