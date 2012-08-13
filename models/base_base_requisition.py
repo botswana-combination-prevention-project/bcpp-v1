@@ -183,15 +183,13 @@ class BaseBaseRequisition (BaseUuidModel):
         return super(BaseBaseRequisition, self).save(*args, **kwargs)
 
     def prepare_specimen_identifier(self, **kwargs):
-        """ Adds protocol, site and check digit to the identifier"""
+        """ Adds protocol, site to the identifier"""
         self.protocol = settings.PROJECT_NUMBER
         opts = {}
         opts['prefix'] = settings.PROJECT_IDENTIFIER_PREFIX
         opts['requisition_identifier'] = self.requisition_identifier
         opts['site'] = self.site.site_code
-        base_identifier = '{prefix}{site}{requisition_identifier}'.format(**opts)
-        opts['check_digit'] = CheckDigit().calculate(re.search(r'\d+', base_identifier).group(0), modulus=7)
-        return '{prefix}-{site}{requisition_identifier}-{check_digit}'.format(**opts)
+        return '{prefix}{site}{requisition_identifier}'.format(**opts)
 
     def prepare_requisition_identifier(self, **kwargs):
         """Generate and returns a locally unique requisition identifier for a device (adds device id)"""
