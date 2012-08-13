@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from django.contrib import admin
 from django.core.urlresolvers import reverse
@@ -7,6 +8,14 @@ try:
     from bhp_sync.actions import serialize
 except ImportError:
     pass
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class BaseModelAdmin (admin.ModelAdmin):
@@ -73,7 +82,7 @@ class BaseModelAdmin (admin.ModelAdmin):
                         del kwargs['csrfmiddlewaretoken']
                     http_response_redirect = HttpResponseRedirect(reverse(request.GET.get('next'), kwargs=kwargs))
                 except NoReverseMatch:
-                    print 'warning: response_add failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs)
+                    logger.warning('Warning: response_add failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs))
                     pass
                 except:
                     raise
@@ -95,9 +104,8 @@ class BaseModelAdmin (admin.ModelAdmin):
                         del kwargs['csrfmiddlewaretoken']
                     http_response_redirect = HttpResponseRedirect(reverse(request.GET.get('next'), kwargs=kwargs))
                 except NoReverseMatch:
-                    print 'warning: response_change failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs)
+                    logger.warning('Warning: response_change failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs))
                     pass
                 except:
                     raise
         return http_response_redirect
-
