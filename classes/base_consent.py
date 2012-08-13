@@ -61,7 +61,10 @@ class BaseConsent(BaseSubject):
             if registered_subject:
                 self.subject_identifier = self.registered_subject.subject_identifier
             if not self.subject_identifier:
-                self.subject_identifier = consented_subject_identifier.get_identifier(consent=self, consent_attrname='subject_identifier', site_code=self.study_site.site_code)
+                self.subject_identifier = consented_subject_identifier.get_identifier(consent=self, 
+                                                                                      consent_attrname='subject_identifier',
+                                                                                      registration_status='consented',
+                                                                                      site_code=self.study_site.site_code)
                 #self.get_subject_type(),
                 #self.study_site.site_code)
         super(BaseConsent, self).save(*args, **kwargs)
