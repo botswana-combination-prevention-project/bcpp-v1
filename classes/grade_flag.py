@@ -31,6 +31,4 @@ class GradeFlag(Flag):
             value = ceil(value * (10 ** places)) / (10 ** places)
             if value >= lower_limit and value <= upper_limit:
                 flag = list_item.grade
-                #lower = lower_limit
-                #upper = upper_limit
         return flag, lower_limit, upper_limit
