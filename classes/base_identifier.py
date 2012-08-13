@@ -84,7 +84,7 @@ class BaseIdentifier(object):
             check_digit = CheckDigit()
             new_identifier = "{base}-{check_digit}".format(
                              base=base,
-                             check_digit=check_digit.calculate(int(re.search('\d+', base).group(0)), modulus))
+                             check_digit=check_digit.calculate(int(re.search('\d+', base.replace('-', '')).group(0)), modulus))
             identifier_model.identifier = new_identifier
         # update the identifier instance
         identifier_model.save()
