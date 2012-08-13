@@ -61,5 +61,8 @@ class BaseResult(BaseUuidModel):
     def receive_identifier(self):
         return self.order.aliquot.receive.receive_identifier
 
+    def panel(self):
+        return unicode(self.order.panel)
+
     class Meta:
         abstract = True
