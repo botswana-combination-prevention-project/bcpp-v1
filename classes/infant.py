@@ -2,9 +2,10 @@ from datetime import datetime
 from django.forms import ValidationError
 from django.db.models import get_model
 from bhp_identifier.models import SubjectIdentifier, DerivedSubjectIdentifier
+from base_identifier import BaseIdentifier
 
 
-class Infant(object):
+class Infant(BaseIdentifier):
 
     """ Create subject identifier(s) for an infant(s) by calling get_identifier() with the maternal identifier and return a dictionary {infant order: identifier}. """
 
