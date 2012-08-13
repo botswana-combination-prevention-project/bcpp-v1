@@ -12,7 +12,7 @@ class Infant(BaseIdentifier):
     def consent_required(self):
         return False
 
-    def get_identifier_prep(self, *kwargs):
+    def get_identifier_prep(self, **kwargs):
         """Prepares to create an identifier consisting of the the maternal identifier and a
         suffix determined by the number of live infants from this delivery.
 
@@ -40,22 +40,33 @@ class Infant(BaseIdentifier):
             app_name='bhp_identifier',
             models_name='derived_subject_identifier',
             maternal_identifier=kwargs.get('maternal_identifier'),
+            maternal_study_site=kwargs.get('maternal_study_site'),
+            user=kwargs.get('user'),
             suffix=self._get_suffix(birth_order, live_infants),
             identifier_format="{maternal_identifier}-{suffix}",
             subject_type='infant',
             live_infants=kwargs.get('live_infants'),
             live_infants_to_register=kwargs.get('live_infants_to_register'),
             )
+        return options
 
-    def get_identifier_post(self, consent, attrname, **kwargs):
+    def get_identifier_post(self, new_identifier, **kwargs):
         """ Updates registered subject after a new subject identifier is created."""
+        RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+        RegisteredSubject.objects.create(
+                subject_identifier=new_identifier,
+                registration_datetime=datetime.now(),
+                subject_type='infant',
+                user_created=kwargs.get('user'),
+                created=datetime.now(),
+                first_name='',
+                initials='',
+                registration_status='registered',
+                relative_identifier=kwargs.get('maternal_identifier'),
+                study_site=kwargs.get('maternal_study_site'),
+                )
 
-        # the model, for creating a new instance
-        self.RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-        # access registered subject manager method
-        self.RegisteredSubject.objects.update_with(consent, attrname, **kwargs)
-
-    def _get_suffix(self, birth_order, live_infants, live_infants_to_register):
+    def _get_suffix(self, birth_order, live_infants):
         suffix = self._get_base_suffix(live_infants)
         for birth_order in range(0, birth_order):
             suffix += (birth_order) * 10

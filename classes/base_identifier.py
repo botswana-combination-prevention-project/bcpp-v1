@@ -7,7 +7,7 @@ from check_digit import CheckDigit
 
 class BaseIdentifier(object):
 
-    def get_identifier_prep(self):
+    def get_identifier_prep(self, **kwargs):
         """ Users may override to pass non-default keyword arguments to get_identifier
         before the identifier is created."""
         options = {}
@@ -55,7 +55,7 @@ class BaseIdentifier(object):
           """
         options = {}
         # set default options
-        add_check_digit = options.pop('add_check_digit', True)
+        #add_check_digit = options.pop('add_check_digit', True)
         options.update(app_name=kwargs.get('app_name', 'bhp_identifier'))
         options.update(model_name=kwargs.get('model_name', 'subjectidentifier'))
         options.update(site=kwargs.get('site_code', ''))
@@ -86,6 +86,8 @@ class BaseIdentifier(object):
                              base=base,
                              check_digit=check_digit.calculate(int(re.search('\d+', base.replace('-', '')).group(0)), modulus))
             identifier_model.identifier = new_identifier
+        else:
+            new_identifier = new_identifier = "{base}".format(base=base)
         # update the identifier instance
         identifier_model.save()
         # call custom post method
