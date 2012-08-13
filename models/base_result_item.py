@@ -138,16 +138,16 @@ class BaseResultItem(BaseUuidModel):
 
     def save(self, *args, **kwargs):
 
-        value = None
         if re.search(r'\d+\.?\d*', self.result_item_value):
             try:
-                value = float(self.result_item_value)
+                self.result_item_value_as_float = float(self.result_item_value)
             except:
-                value = None
-        if value:
-            self.result_item_value_as_float = value
-            self, modified = ResultItemFlag().calculate(self)
+                self.result_item_value_as_float = None
         super(BaseResultItem, self).save(*args, **kwargs)
+        if self.result_item_value_as_float:
+            self, modified = ResultItemFlag().calculate(self)
+            if modified:
+                self.save()
 
     class Meta:
         abstract = True
