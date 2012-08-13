@@ -147,7 +147,7 @@ class BaseResultItem(BaseUuidModel):
         if self.result_item_value_as_float:
             self, modified = ResultItemFlag().calculate(self)
             if modified:
-                self.save()
+                super(BaseResultItem, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True
