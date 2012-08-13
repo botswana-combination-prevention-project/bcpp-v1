@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+        pass        
         # Adding unique constraint on 'RegisteredSubject', fields ['identity']
         #db.create_unique('bhp_registration_registeredsubject', ['identity'])
 
