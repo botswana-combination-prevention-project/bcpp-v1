@@ -1,0 +1,162 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Management Tools &mdash; lab_clinic_api 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="lab_clinic_api 1.0 documentation" href="index.html" />
+    <link rel="next" title="Classes" href="classes.html" />
+    <link rel="prev" title="ModelAdmin Actions" href="actions.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="actions.html" title="ModelAdmin Actions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">lab_clinic_api 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="management-tools">
+<h1>Management Tools<a class="headerlink" href="#management-tools" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>import_lis</li>
+<li>import_test_codes</li>
+<li>recalculate_resultitems</li>
+</ul>
+</div>
+<div class="section" id="management-classes">
+<h1>Management Classes<a class="headerlink" href="#management-classes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descclassname">lab_clinic_api.classes.</tt><tt class="descname">Lis</tt><big>(</big><em>db</em>, <em>**kwargs</em><big>)</big></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Import from django-lis</p>
+<dl class="method">
+<dt>
+<tt class="descclassname">Lis.</tt><tt class="descname">import_from_lis</tt><big>(</big><em>**kwargs</em><big>)</big></dt>
+<dd><p>Imports data from the django-lis for each model in the relational model including list
+models.</p>
+<p>The relational model is <tt class="xref py py-class docutils literal"><span class="pre">Receive</span></tt> &gt; <tt class="xref py py-class docutils literal"><span class="pre">Aliquot</span></tt> &gt; <tt class="xref py py-class docutils literal"><span class="pre">Order</span></tt> &gt;
+<tt class="xref py py-class docutils literal"><span class="pre">Result</span></tt> &gt; <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt>
+List models are panel, test_code, aliquot_type, aliquot_condition</p>
+<p>Using get_or_create(), if instances do not exist they will be created.</p>
+<p>If the source patient identifier cannot be linked to an instance of registered
+subject, the data is not imported and an error is loggged in model <tt class="xref py py-class docutils literal"><span class="pre">LisImportError</span></tt>.</p>
+<p>Note: List models on the target (edc) are not the same models as source. That is list models
+on target come from lab_clinic_api and on source come from lab_panel, lab_aliquot_list, etc.
+For example target.panel != source.panel yet the attribute values of panel instance on
+target and source are the same (see isinstance() test for ForeignKey fields below).</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descclassname">Lis.</tt><tt class="descname">update_from_lis</tt><big>(</big><em>subject_identifier</em><big>)</big></dt>
+<dd><p>Update the Edc labs for a given subject_identifier from the Lis.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Management Tools</a></li>
+<li><a class="reference internal" href="#management-classes">Management Classes</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="actions.html"
+                        title="previous chapter">ModelAdmin Actions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="classes.html"
+                        title="next chapter">Classes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/management.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="actions.html" title="ModelAdmin Actions"
+             >previous</a> |</li>
+        <li><a href="index.html">lab_clinic_api 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, erik van widenfelt.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
