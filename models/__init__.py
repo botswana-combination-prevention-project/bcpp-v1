@@ -1,4 +1,3 @@
-from update_log import UpdateLog
 from lab import Lab
 from aliquot_type import AliquotType
 from aliquot_condition import AliquotCondition

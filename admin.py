@@ -2,7 +2,7 @@ from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_base_model.classes import BaseModelAdmin
 from forms import ResultForm, ResultItemForm, ReviewForm
-from models import Receive, Result, ResultItem, Review, UpdateLog, Order, Panel, TestCode
+from models import Receive, Result, ResultItem, Review, Order, Panel, TestCode
 from actions import recalculate_grading
 
 
@@ -26,13 +26,12 @@ class OrderAdmin(BaseModelAdmin):
 admin.site.register(Order, OrderAdmin)
 
 
-
-class UpdateLogAdmin(BaseModelAdmin):
-    list_display = ('subject_identifier', 'update_datetime')
-    fields = ('subject_identifier', 'update_datetime')
-    list_filter = ('update_datetime',)
-    search_fields = ('subject_identifier',)
-admin.site.register(UpdateLog, UpdateLogAdmin)
+#class UpdateLogAdmin(BaseModelAdmin):
+#    list_display = ('subject_identifier', 'update_datetime')
+#    fields = ('subject_identifier', 'update_datetime')
+#    list_filter = ('update_datetime',)
+#    search_fields = ('subject_identifier',)
+#admin.site.register(UpdateLog, UpdateLogAdmin)
 
 
 class PanelAdmin(BaseModelAdmin):

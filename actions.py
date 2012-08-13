@@ -1,5 +1,3 @@
-#from django.contrib import messages
-#from django.core.exceptions import ImproperlyConfigured
 from models import ResultItem
 
 
