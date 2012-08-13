@@ -7,6 +7,6 @@ class SubjectIdentifier(BaseIdentifier):
         """Changes the identifier model and format for subject identifiers."""
         options = {}
         options.update(app_name='bhp_identifier',
-                       model_name='subject_identifier',
+                       model_name='subjectidentifier',
                        identifier_format='{prefix}-{site}{device_id}{sequence}')
         return options

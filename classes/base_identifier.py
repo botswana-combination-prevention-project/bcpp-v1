@@ -13,7 +13,7 @@ class BaseIdentifier(object):
         options = {}
         return options
 
-    def get_identifier_post(self):
+    def get_identifier_post(self, *args, **kwargs):
         """ Users may override to run something after the identifier is created."""
         return
 
@@ -56,14 +56,14 @@ class BaseIdentifier(object):
         options = {}
         # set default options
         add_check_digit = options.pop('add_check_digit', True)
-        options.update('app_name', 'bhp_identifier')
-        options.update('model_name', 'subject_identifier')
-        options.update('site', '')
-        options.update('padding', 4)
-        options.update('seed', 0)
-        options.update('modulus', settings.PROJECT_IDENTIFIER_MODULUS)
-        options.update('prefix', settings.PROJECT_IDENTIFIER_PREFIX)
-        options.update('identifier_format', "{prefix}-{site}{device_id}{sequence}")
+        options.update(app_name=kwargs.get('app_name', 'bhp_identifier'))
+        options.update(model_name=kwargs.get('model_name', 'subjectidentifier'))
+        options.update(site=kwargs.get('site_code', ''))
+        options.update(padding=kwargs.get('padding', 4))
+        options.update(seed=kwargs.get('seed', 0))
+        options.update(modulus=kwargs.get('modulus', settings.PROJECT_IDENTIFIER_MODULUS))
+        options.update(prefix=kwargs.get('prefix', settings.PROJECT_IDENTIFIER_PREFIX))
+        options.update(identifier_format=kwargs.get('identifier_format', "{prefix}-{site}{device_id}{sequence}"))
         # check for custom options
         options = self._prepare_identifier(options, **kwargs)
         # use and pop key/values that are obviously not needed by format()
