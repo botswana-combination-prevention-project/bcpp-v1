@@ -1,7 +1,7 @@
 from lab_import.models import BaseLockModel
 
 
-class DmisLock(BaseLockModel):
+class DmisLockModel(BaseLockModel):
 
     """ Track who is updating from dmis to django-lis.
 
