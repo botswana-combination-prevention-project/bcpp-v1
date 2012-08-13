@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Adding unique constraint on 'RegisteredSubject', fields ['identity']
-        db.create_unique('bhp_registration_registeredsubject', ['identity'])
+        #db.create_unique('bhp_registration_registeredsubject', ['identity'])
 
 
     def backwards(self, orm):
