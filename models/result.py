@@ -12,6 +12,9 @@ class Result(BaseResult):
     def subject_identifier(self):
         return self.order.aliquot.receive.registered_subject
 
+    def panel(self):
+        return unicode(self.order.panel.edc_name)
+
     class Meta:
         app_label = 'lab_clinic_api'
         ordering = ['result_identifier']

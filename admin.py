@@ -64,6 +64,7 @@ class ResultAdmin(BaseModelAdmin):
         "result_identifier",
         "subject_identifier",
         'receive_identifier',
+        'panel',
         "result_datetime",
         "release_status",
         "release_datetime",)

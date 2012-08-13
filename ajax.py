@@ -40,11 +40,11 @@ def view_result_report(request, result_identifier):
     return dajax.json()
 
 
-@dajaxice_register
-def view_receive_ajax(request, receive_identifier):
-    #print receive_identifier
-    dajax = Dajax()
-    lab_context = LabContext(receive_identifier=receive_identifier)
-    rendered = render_to_string('clinic_result_report.html', lab_context.context)
-    dajax.assign('#left_table', 'innerHTML', rendered)
-    return dajax.json()
+#@dajaxice_register
+#def view_receive_ajax(request, receive_identifier):
+#    #print receive_identifier
+#    dajax = Dajax()
+#    lab_context = LabContext(receive_identifier=receive_identifier)
+#    rendered = render_to_string('clinic_result_report.html', lab_context.context)
+#    dajax.assign('#left_table', 'innerHTML', rendered)
+#    return dajax.json()
