@@ -51,7 +51,10 @@ class RegisteredSubjectManager(models.Manager):
             registered_subject = super(RegisteredSubjectManager, self).create(
                 # relative_identifier = kwargs.get('relative_identifier', None),
                 # subject_identifier = kwargs.get('subject_identifier'),
-                # registration_datetime = instance.created,
+                subject_consent_id=None,
+                registration_status=kwargs.get('registration_status', None),
+                registration_datetime=datetime.today(),
+                subject_identifier=getattr(instance, attrname),
                 user_created=instance.user_created,
                 created=datetime.today(),
                 first_name=instance.first_name,
