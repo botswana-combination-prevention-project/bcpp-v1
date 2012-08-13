@@ -45,7 +45,8 @@ class BaseConsent(BaseSubject):
 
     comment = EncryptedTextField("Comment",
         max_length=250,
-        blank=True
+        blank=True,
+        null=True
         )
 
     def __unicode__(self):
