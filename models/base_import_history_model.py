@@ -3,7 +3,7 @@ from django.db import models
 from bhp_base_model.classes import BaseUuidModel
 
 
-class BaseImportHistory(BaseUuidModel):
+class BaseImportHistoryModel(BaseUuidModel):
 
     start_datetime = models.DateTimeField(default=datetime.today())
     end_datetime = models.DateTimeField(null=True)
@@ -11,7 +11,7 @@ class BaseImportHistory(BaseUuidModel):
     objects = models.Manager()
 
     def __unicode__(self):
-        return '%s on %s' % (self.start_datetime, self.end_datetime)
+        return '{0} on {1}'.format(self.start_datetime, self.end_datetime)
 
     class Meta:
         abstract = True

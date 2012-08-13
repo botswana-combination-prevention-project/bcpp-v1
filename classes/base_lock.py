@@ -70,4 +70,4 @@ class BaseLock(object):
             lock_model_queryset = self.lock_model.objects.using(self.db).filter(lock_name=lock_name).order_by('-created')
         else:
             lock_model_queryset = self.lock_model.objects.using(self.db).filter().order_by('-created')
-        return lock_model_queryset 
+        return lock_model_queryset
