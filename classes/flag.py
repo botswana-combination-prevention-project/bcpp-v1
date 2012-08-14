@@ -47,7 +47,7 @@ class Flag(object):
         retdict = {}
         list_items = self.get_list_prep()
         if not list_items:
-            logger.warning('No {0} items for {1}.'.format(self.list_name, self.test_code.code))
+            logger.warning('    No {0} items for {1}.'.format(self.list_name, self.test_code.code))
         else:
             for list_item in list_items:
                 if not isinstance(list_item, BaseReferenceListItem):
