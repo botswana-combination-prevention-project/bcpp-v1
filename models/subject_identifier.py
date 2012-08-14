@@ -8,3 +8,4 @@ class SubjectIdentifier(BaseIdentifierModel):
 
     class Meta:
         app_label = "bhp_identifier"
+        ordering = ['-created']
