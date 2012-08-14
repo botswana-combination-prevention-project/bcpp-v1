@@ -23,8 +23,14 @@ class BaseImportHistory(object):
     """
 
     def __init__(self, db, lock_name, obj_lock, import_history_model):
+        """
+        Arguments:
+          db: key in settings.DATABASES for the connection to the Lis database, usually 'lab_api'.
+          lock_name: either the protocol identifier or a subject identifier
+          obj_lock: an instance of the lock class such as LisLock or DmisLock
+          import_history_model: the import_history_model model class.
+        """
         self.last_import_datetime = None
-        self.conditional_clause = None
         self._lock = None
         if not issubclass(obj_lock, BaseLock):
             raise TypeError('Lock must be a subclass of BaseLock.')
@@ -92,7 +98,6 @@ class BaseImportHistory(object):
         last_import_datetime = self.last_import_datetime
         self.import_history_model = None
         self.last_import_datetime = None
-        self.conditional_clause = None
         self._lock = None
         return last_import_datetime
 

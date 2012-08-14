@@ -1,4 +1,5 @@
 import logging
+from django.db import DatabaseError, IntegrityError
 
 logger = logging.getLogger(__name__)
 
@@ -38,10 +39,14 @@ class BaseLock(object):
             try:
                 self.lock = self.lock_model.objects.using(self.db).create(lock_name=lock_name)
                 self.lock_name = lock_name
-            except:
+            except IntegrityError:
                 self.lock = None
                 logger.warning('  Warning: Unable to set a lock to import for {0}. '
                                'One already exists.'.format(lock_name))
+            except DatabaseError as e:
+                raise e
+            except:
+                raise
         return self.lock
 
     def release(self, lock_name=None):
