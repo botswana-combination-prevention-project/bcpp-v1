@@ -21,6 +21,8 @@ class ResultItem(BaseResultItem):
 
     result = models.ForeignKey(Result)
 
+    import_datetime = models.DateTimeField(null=True)
+
     objects = models.Manager()
 
     def __unicode__(self):

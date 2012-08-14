@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.urlresolvers import reverse
+
 from lab_receive.models import BaseReceive
 from bhp_registration.models import RegisteredSubject
 
@@ -7,7 +9,12 @@ class Receive(BaseReceive):
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True)
 
+    import_datetime = models.DateTimeField(null=True)
+
     objects = models.Manager()
+
+    def get_absolute_url(self):
+        return reverse('admin:lab_clinic_api_receive_change', args=(self.id,))
 
     def __unicode__(self):
         return '%s' % (self.receive_identifier)

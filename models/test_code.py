@@ -1,5 +1,6 @@
 from django.db import models
 from lab_test_code.models import BaseTestCode
+from test_code_group import TestCodeGroup
 
 
 class TestCode(BaseTestCode):
@@ -7,6 +8,8 @@ class TestCode(BaseTestCode):
     edc_code = models.CharField(max_length=25, null=True)
 
     edc_name = models.CharField(max_length=50, null=True)
+
+    test_code_group = models.ForeignKey(TestCodeGroup, null=True)
 
     def __unicode__(self):
         return self.code

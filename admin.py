@@ -2,13 +2,15 @@ from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_base_model.classes import BaseModelAdmin
 from forms import ResultForm, ResultItemForm, ReviewForm
-from models import Receive, Result, ResultItem, Review, Order, Panel, TestCode
+from models import Receive, Aliquot, Result, ResultItem, Review, Order, Panel, TestCode
+from models import AliquotType, TestCodeGroup
 from actions import recalculate_grading
 
 
 class ReceiveAdmin(BaseModelAdmin):
-    list_display = ('registered_subject', "receive_identifier", "receive_datetime", 'created', 'modified')
+    list_display = ('registered_subject', "receive_identifier", "receive_datetime", 'created', 'modified', 'import_datetime')
     search_fields = ('registered_subject__subject_identifier', "receive_identifier",)
+    list_filter = ('created', 'import_datetime', )
 
     def get_readonly_fields(self, request, obj):
         return [field.name for field in obj._meta.fields if field.editable and field.name not in ['requisition_identifier']]
@@ -16,10 +18,21 @@ class ReceiveAdmin(BaseModelAdmin):
 admin.site.register(Receive, ReceiveAdmin)
 
 
+class AliquotAdmin(BaseModelAdmin):
+    list_display = ("aliquot_identifier", 'receive', "aliquot_type", 'aliquot_condition', 'created', 'modified', 'import_datetime')
+    search_fields = ('aliquot_identifier', 'receive', )
+    list_filter = ('created', 'import_datetime', 'aliquot_type', )
+
+    def get_readonly_fields(self, request, obj):
+        return [field.name for field in obj._meta.fields if field.editable]
+
+admin.site.register(Aliquot, AliquotAdmin)
+
+
 class OrderAdmin(BaseModelAdmin):
-    list_display = ("order_identifier", "subject_identifier", "panel", "order_datetime", 'created', 'modified')
+    list_display = ("order_identifier", "subject_identifier", "panel", "order_datetime", 'created', 'modified', 'import_datetime')
     search_fields = ('aliquot__receive__registered_subject__subject_identifier', "order_identifier",)
-    list_filter = ('status', 'panel__name')
+    list_filter = ('status', 'import_datetime', 'panel__edc_name')
 
     def get_readonly_fields(self, request, obj):
         return ['aliquot', 'panel', 'status', 'order_datetime', 'comment']
@@ -34,6 +47,11 @@ admin.site.register(Order, OrderAdmin)
 #admin.site.register(UpdateLog, UpdateLogAdmin)
 
 
+class AliquotTypeAdmin(BaseModelAdmin):
+    list_display = ('name', 'alpha_code', 'numeric_code')
+admin.site.register(AliquotType, AliquotTypeAdmin)
+
+
 class PanelAdmin(BaseModelAdmin):
     list_display = ('name', 'edc_name')
 admin.site.register(Panel, PanelAdmin)
@@ -42,6 +60,11 @@ admin.site.register(Panel, PanelAdmin)
 class TestCodeAdmin(BaseModelAdmin):
     list_display = ('code', 'name', 'edc_code', 'edc_name')
 admin.site.register(TestCode, TestCodeAdmin)
+
+
+class TestCodeGroupAdmin(BaseModelAdmin):
+    list_display = ('code', 'name')
+admin.site.register(TestCodeGroup, TestCodeGroupAdmin)
 
 
 class ResultAdmin(BaseModelAdmin):
@@ -56,14 +79,16 @@ class ResultAdmin(BaseModelAdmin):
     list_display = (
         "result_identifier",
         "subject_identifier",
-        'receive_identifier',
+        'received',
+        'ordered',
         'panel',
         "result_datetime",
         "release_status",
-        "release_datetime",)
+        "release_datetime",
+        'import_datetime')
 
     radio_fields = {"release_status": admin.VERTICAL}
-    list_filter = ("release_status", "result_datetime",)
+    list_filter = ("release_status", "result_datetime", 'import_datetime')
 
     def get_readonly_fields(self, request, obj):
         return [field.name for field in obj._meta.fields if field.editable]
@@ -88,9 +113,10 @@ class ResultItemAdmin(BaseModelAdmin):
         "reference_range",
         "created",
         "modified",
+        'import_datetime'
         )
 
-    list_filter = ('grade_flag', 'reference_flag', "result_item_datetime", "test_code", "created", "modified")
+    list_filter = ('grade_flag', 'reference_flag', "result_item_datetime", "test_code", "created", "modified", 'import_datetime')
     search_fields = ('test_code__code', 'result__result_identifier',
                      "result__order__aliquot__receive__registered_subject__subject_identifier",
                      "result__order__aliquot__receive__receive_identifier")
