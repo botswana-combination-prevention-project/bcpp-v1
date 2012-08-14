@@ -5,7 +5,7 @@ from bhp_identifier.models import SubjectIdentifier, IdentifierTracker
 
 class SubjectIdentifierAdmin(BaseModelAdmin):
 
-    list_display = ('identifier', 'seed', 'padding', 'created', 'user_created')
+    list_display = ('identifier', 'created', 'user_created', 'hostname_created')
     search_fields = ('identifier', )
     list_filter = ('created', 'user_created')
 
