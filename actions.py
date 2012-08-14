@@ -17,3 +17,25 @@ def recalculate_grading(modeladmin, request, queryset):
             modeladmin.message_user(request, 'Nothing to do. Must be either a result or result item.')
             break
 recalculate_grading.short_description = "Recalculate grading and references"
+
+
+def flag_as_reviewed(modeladmin, request, queryset):
+    for qs in queryset:
+        qs.reviewed = True
+        if not qs.review:
+            qs.save()
+        qs.review.review_status = 'REVIEWED'
+        qs.review.save()
+        qs.save()
+flag_as_reviewed.short_description = "Review: flag as reviewed"
+
+
+def unflag_as_reviewed(modeladmin, request, queryset):
+    for qs in queryset:
+        qs.reviewed = False
+        if not qs.review:
+            qs.save()
+        qs.review.review_status = 'REQUIRES_REVIEWED'
+        qs.review.save()
+        qs.save()
+unflag_as_reviewed.short_description = "Review: flag as NOT reviewed"

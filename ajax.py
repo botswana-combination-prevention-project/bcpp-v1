@@ -35,7 +35,7 @@ def update_result_status(request, subject_identifier, output=True):
 def view_result_report(request, result_identifier):
     dajax = Dajax()
     result_context = ResultContext(result_identifier)
-    rendered = render_to_string('clinic_result_report.html', result_context.context)
+    rendered = render_to_string('clinic_result_report_include.html', result_context.context)
     dajax.assign('#left_table', 'innerHTML', rendered)
     return dajax.json()
 

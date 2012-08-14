@@ -4,7 +4,7 @@ from bhp_base_model.classes import BaseModelAdmin
 from forms import ResultForm, ResultItemForm, ReviewForm
 from models import Receive, Aliquot, Result, ResultItem, Review, Order, Panel, TestCode
 from models import AliquotType, TestCodeGroup
-from actions import recalculate_grading
+from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed
 
 
 class ReceiveAdmin(BaseModelAdmin):
@@ -67,10 +67,19 @@ class TestCodeGroupAdmin(BaseModelAdmin):
 admin.site.register(TestCodeGroup, TestCodeGroupAdmin)
 
 
+class ReviewAdmin(BaseModelAdmin):
+    list_display = ('title', 'review_status', 'created', 'modified', 'user_created', 'user_modified')
+    fields = ('title', 'review_status', 'comment')
+    readonly_fields = ('title', 'review_status')
+admin.site.register(Review, ReviewAdmin)
+
+
 class ResultAdmin(BaseModelAdmin):
 
     def __init__(self, *args, **kwargs):
         self.actions.append(recalculate_grading)
+        self.actions.append(flag_as_reviewed)
+        self.actions.append(unflag_as_reviewed)
         super(ResultAdmin, self).__init__(*args, **kwargs)
 
     form = ResultForm
@@ -78,6 +87,8 @@ class ResultAdmin(BaseModelAdmin):
 
     list_display = (
         "result_identifier",
+        'report',
+        'reviewed',
         "subject_identifier",
         'received',
         'ordered',
@@ -88,7 +99,8 @@ class ResultAdmin(BaseModelAdmin):
         'import_datetime')
 
     radio_fields = {"release_status": admin.VERTICAL}
-    list_filter = ("release_status", "result_datetime", 'import_datetime')
+    list_filter = ("release_status", 'reviewed', "result_datetime", 'import_datetime')
+    list_per_page = 15
 
     def get_readonly_fields(self, request, obj):
         return [field.name for field in obj._meta.fields if field.editable]
@@ -106,6 +118,7 @@ class ResultItemAdmin(BaseModelAdmin):
         "result_item_value",
         "result_item_quantifier",
         "result_item_datetime",
+        "to_result",
         "result_item_operator",
         "grade_range",
         "grade_flag",
@@ -116,7 +129,7 @@ class ResultItemAdmin(BaseModelAdmin):
         'import_datetime'
         )
 
-    list_filter = ('grade_flag', 'reference_flag', "result_item_datetime", "test_code", "created", "modified", 'import_datetime')
+    list_filter = ('grade_flag', 'reference_flag', "result_item_datetime", "created", "modified", 'import_datetime', "test_code")
     search_fields = ('test_code__code', 'result__result_identifier',
                      "result__order__aliquot__receive__registered_subject__subject_identifier",
                      "result__order__aliquot__receive__receive_identifier")
@@ -131,16 +144,9 @@ class ResultItemAdmin(BaseModelAdmin):
             {'gender': 'result__lab__gender'},
             {'dob': 'result__lab__dob'},
             ]), ]
+    list_per_page = 35
 
     def get_readonly_fields(self, request, obj):
         return [field.name for field in obj._meta.fields if field.editable]
 
 admin.site.register(ResultItem, ResultItemAdmin)
-
-
-class ReviewAdmin(BaseModelAdmin):
-
-    form = ReviewForm
-
-    radio_fields = {"review_status": admin.VERTICAL}
-admin.site.register(Review, ReviewAdmin)

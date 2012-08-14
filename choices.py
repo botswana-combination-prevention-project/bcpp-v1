@@ -1,5 +1,4 @@
 REVIEW_STATUS = (
-    ('NOT_REVIEWED', 'Not reviewed'),
+    ('REQUIRES_REVIEW', 'Requires Review'),
     ('REVIEWED', 'Reviewed'),
-    ('QUERY', 'Query'),
     )
