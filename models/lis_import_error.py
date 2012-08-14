@@ -16,3 +16,4 @@ class LisImportError(BaseUuidModel):
 
     class Meta:
         app_label = 'lab_import_lis'
+        ordering = ['-created']

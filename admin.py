@@ -4,7 +4,7 @@ from models import LisImportError
 
 
 class LisImportErrorAdmin(BaseModelAdmin):
-    list_display = ('model_name', "identifier", "error_message")
-    list_filter = ('model_name',)
+    list_display = ('model_name', "identifier", 'created', "error_message")
+    list_filter = ('model_name', 'created')
     search_fields = ("identifier", "error_message")
 admin.site.register(LisImportError, LisImportErrorAdmin)

@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from django.db.models import Q
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import ForeignKey
@@ -11,7 +12,7 @@ from lab_result.models import Result as LisResult
 from lab_result_item.models import ResultItem as LisResultItem
 from bhp_registration.models import RegisteredSubject
 from lab_clinic_api.models import Receive, Aliquot, Order, Result, ResultItem
-from lab_clinic_api.models import Panel, TestCode, AliquotType, AliquotCondition
+from lab_clinic_api.models import Panel, TestCode, AliquotType, AliquotCondition, TestCodeGroup
 from lab_import_lis.models import LisImportError
 from import_history import ImportHistory
 
@@ -104,7 +105,7 @@ class Lis(object):
                 qset.add((Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime)), Q.AND)
             total = LisReceive.objects.using(self.db).filter(qset).count()
             n = 0
-            for lis_receive in LisReceive.objects.using(self.db).filter(qset).order_by('receive_identifier'):
+            for lis_receive in LisReceive.objects.using(self.db).filter(qset).order_by('receive_datetime'):
                 n += 1
                 if not import_history.locked:
                     # lock was deleted by another user
@@ -186,9 +187,11 @@ class Lis(object):
         defaults = {}
         target = None
         if not exclude_fields:
-            exclude_fields = ['id']
+            # import_datetime does not exist in Lis models
+            exclude_fields = ['id', 'import_datetime']
         else:
             exclude_fields.append('id')
+            exclude_fields.append('import_datetime')
         custom_fields = ['registered_subject']
         list_fields = ['panel', 'aliquot_type', 'aliquot_condition']
         for field in target_cls._meta.fields:
@@ -205,6 +208,7 @@ class Lis(object):
                     if isinstance(value, ForeignKey):
                         raise TypeError('ForeignKey instances on source are not of the same class as FK instances on target.')
                 defaults.update({field.name: value})
+        defaults.update({'import_datetime': datetime.today()})
         options.update({'defaults': defaults})
         options.update({target_identifier_name: getattr(lis_source, target_identifier_name)})
         try:
@@ -212,6 +216,13 @@ class Lis(object):
             if created:
                 logger.info('    created {0} {1}'.format(target._meta.object_name, target))
             else:
+                # get_or_create did a get, so update the instance with 'defaults' dict
+                defaults = options.get('defaults')
+                for field in target._meta.fields:
+                    # exclude the only key field (identifier) plus others
+                    if field.name in [fld_name for fld_name in defaults.iterkeys() if fld_name not in ['id', 'created', 'user_created', 'hostname_created', target_identifier_name]]:
+                        setattr(target, field.name, defaults.get(field.name))
+                target.save()
                 logger.info('    updated {0} {1}'.format(target._meta.object_name, target))
         except MultipleObjectsReturned as e:
             self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, e)
@@ -234,7 +245,7 @@ class Lis(object):
         target_cls = ResultItem
         list_fields = ['test_code']
         for field in target_cls._meta.fields:
-            if field.name not in ['id', 'result', 'test_code']:
+            if field.name not in ['id', 'result', 'test_code', 'import_datetime']:
                 if field.name in list_fields:
                     value = self._get_or_create_list_field_instance(field.name, getattr(lis_result_item, field.name))
                 else:
@@ -242,12 +253,20 @@ class Lis(object):
                 defaults.update({field.name: value})
             if field.name == 'test_code':
                 test_code = self._get_or_create_list_field_instance(field.name, getattr(lis_result_item, 'test_code'))
+        defaults.update({'import_datetime': datetime.today()})
         options.update({'defaults': defaults})
         options.update({'result': result, 'test_code': test_code})
         target, created = target_cls.objects.get_or_create(**options)
         if created:
             logger.info('    created {0} {1}'.format(target._meta.object_name, target))
         else:
+            # get_or_create did a get, so update the instance with 'defaults' dict
+            defaults = options.get('defaults')
+            for field in target._meta.fields:
+                # exclude the key fields ('result', 'test_code') plus others
+                if field.name in [fld_name for fld_name in defaults.iterkeys() if fld_name not in ['id', 'created', 'user_created', 'hostname_created', 'result', 'test_code']]:
+                    setattr(target, field.name, defaults.get(field.name))
+            target.save()
             logger.info('    updated {0} {1}'.format(target._meta.object_name, target))
         return target
 
@@ -261,13 +280,16 @@ class Lis(object):
             obj, created = TestCode.objects.get_or_create(code=lis_obj.code)
             if created:
                 for field in obj._meta.fields:
-                    if field.name in [fld.name for fld in lis_obj._meta.fields if fld.name not in ['id', 'code']]:
+                    if field.name in [fld.name for fld in lis_obj._meta.fields if fld.name not in ['id', 'code', 'test_code_group']]:
                         setattr(obj, field.name, getattr(lis_obj, field.name))
+                    if field.name == 'test_code_group':
+                        test_code_group, x = TestCodeGroup.objects.get_or_create(name=lis_obj.test_code_group.name, code=lis_obj.test_code_group.code)
+                        setattr(obj, field.name, test_code_group)
                 obj.save()
             if created:
                 logger.info('    created test_code {0}'.format(obj.code))
         elif name == 'aliquot_type':
-            obj, created = AliquotType.objects.get_or_create(name=lis_obj.name)
+            obj, created = AliquotType.objects.get_or_create(name=lis_obj.name, alpha_code=lis_obj.alpha_code, numeric_code=lis_obj.numeric_code)
             if created:
                 logger.info('    created aliquot_type {0}'.format(obj.name))
         elif name == 'aliquot_condition':
@@ -308,7 +330,7 @@ class Lis(object):
         Note: so far this is always a receive instance where identifier is the receive_identifier."""
 
         if warning:
-            LisImportError.objects.create(
+            LisImportError.objects.get_or_create(
                  model_name=target_cls()._meta.object_name,
                  identifier=getattr(lis_source, target_identifier_name),
                  subject_identifier='-',
