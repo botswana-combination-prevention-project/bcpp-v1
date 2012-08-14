@@ -90,6 +90,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_code = kwargs.get('visit_code', self.visit_code)
         self.visit_instance = kwargs.get("visit_instance", self.visit_instance)
         self.visit_model = kwargs.get('visit_model', self.visit_model)
+        if self.extra_url_context == {}:
+            self.extra_url_context = ''
         self.context.add(
             visit_model=self.visit_model,
             visit_instance=self.visit_instance,
