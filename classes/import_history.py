@@ -18,7 +18,6 @@ class ImportHistory(BaseImportHistory):
     def __init__(self, db, lock_name):
         self.dmis_import_history = None
         self.last_import_datetime = None
-        self.conditional_clause = None
         self._lock = None
         self.lock_name = lock_name
         self.db = db
