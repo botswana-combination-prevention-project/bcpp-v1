@@ -69,7 +69,7 @@ class Command(BaseCommand):
         if lock_name:
             lis_lock.release(lock_name)
         else:
-            print 'Unable to released lock {0}. Try --list for a list of valid locks.'.format(lock_name)
+            print 'Unable to released lock {0}. Try --list-locked for a list of valid locks.'.format(lock_name)
 
     def list_locked(self, lis_lock, lock_name):
         qs = lis_lock.list(lock_name)
