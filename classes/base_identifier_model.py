@@ -18,7 +18,7 @@ class BaseIdentifierModel(BaseModel):
         >>> ALTER TABLE `bhp_identifier_subjectidentifier` AUTO_INCREMENT = 1;
     """
 
-    identifier = models.CharField(max_length=25, unique=True, editable=False)
+    identifier = models.CharField(max_length=36, unique=True, editable=False)
     seed = models.IntegerField(editable=False)
     padding = models.IntegerField(default=4, editable=False)
 

@@ -1,4 +1,5 @@
 import re
+import uuid
 from django.db.models import get_model
 from django.conf import settings
 from bhp_device.classes import Device
@@ -69,7 +70,7 @@ class BaseIdentifier(object):
         # use and pop key/values that are obviously not needed by format()
         modulus = options.pop('modulus')
         IdentifierModel = get_model(options.pop('app_name'), options.pop('model_name'))
-        identifier_model = IdentifierModel.objects.create(seed=options.pop('seed'), padding=options.pop('padding'))
+        identifier_model = IdentifierModel.objects.create(identifier=str(uuid.uuid4()), seed=options.pop('seed'), padding=options.pop('padding'))
         options.update(sequence=identifier_model.sequence)
         identifier_format = options.pop('identifier_format')
         device = Device()
