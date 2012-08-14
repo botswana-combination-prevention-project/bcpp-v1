@@ -143,11 +143,9 @@ class BaseResultItem(BaseUuidModel):
                 self.result_item_value_as_float = float(self.result_item_value)
             except:
                 self.result_item_value_as_float = None
+        if self.result_item_value_as_float:
+            self.reference_range, self.reference_flag, self.grade_range, self.grade_flag = ResultItemFlag().calculate(self)
         super(BaseResultItem, self).save(*args, **kwargs)
-        #if self.result_item_value_as_float:
-        #    self, modified = ResultItemFlag().calculate(self)
-        #    if modified:
-        #        super(BaseResultItem, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True

@@ -41,6 +41,6 @@ class ResultItemFlag(object):
         else:
             result_item.grade_range = None
             result_item.grade_flag = None
-        after = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
-        modified = (before == after) is False
-        return result_item, modified
+        #after = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
+        #modified = (before == after) is False
+        return result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag
