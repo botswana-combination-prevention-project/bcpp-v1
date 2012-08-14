@@ -1,21 +1,7 @@
-from django.db import models
-from bhp_base_model.classes import BaseModel
+from base_test_code_group import BaseTestCodeGroup
 
 
-class TestCodeGroup(BaseModel):
-
-    code = models.CharField(max_length=3)
-
-    name = models.CharField(
-        max_length=25,
-        null=True,
-        blank=True,
-        )
-
-    objects = models.Manager()
-
-    def __unicode__(self):
-        return self.code
+class TestCodeGroup(BaseTestCodeGroup):
 
     class Meta:
         app_label = 'lab_test_code'
