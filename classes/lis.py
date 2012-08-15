@@ -105,6 +105,7 @@ class Lis(object):
                 qset.add((Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime)), Q.AND)
             total = LisReceive.objects.using(self.db).filter(qset).count()
             n = 0
+            logger.info('Preparing initial receive query...')
             for lis_receive in LisReceive.objects.using(self.db).filter(qset).order_by('receive_datetime'):
                 n += 1
                 if not import_history.locked:
