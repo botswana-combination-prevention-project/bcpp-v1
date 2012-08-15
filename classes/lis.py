@@ -199,6 +199,7 @@ class Lis(object):
             exclude_fields.append('import_datetime')
         custom_fields = ['registered_subject']
         list_fields = ['panel', 'aliquot_type', 'aliquot_condition']
+        lis_source_fields = [field.name for field in lis_source._meta.fields]
         for field in target_cls._meta.fields:
             if field.name not in exclude_fields:
                 if kwargs.get(field.name, None):
@@ -209,9 +210,10 @@ class Lis(object):
                     value = self._target_field_custom_handler(lis_source, target_cls, target_identifier_name, field)
                 else:
                     # target value is source value for this attribute
-                    value = getattr(lis_source, field.name)
-                    if isinstance(value, ForeignKey):
-                        raise TypeError('ForeignKey instances on source are not of the same class as FK instances on target.')
+                    if field.name in lis_source_fields:
+                        value = getattr(lis_source, field.name)
+                        if isinstance(value, ForeignKey):
+                            raise TypeError('ForeignKey instances on source are not of the same class as FK instances on target.')
                 defaults.update({field.name: value})
         defaults.update({'import_datetime': datetime.today()})
         options.update({'defaults': defaults})
