@@ -51,51 +51,6 @@ class Dmis(object):
             a result instance with the same data (LAB21). Result item instances are attached to
             the result instance.
         """
-        def receive_row(row):
-            """ Holds the receiving record from the DMIS (LAB01). """
-            attrs = {'__str__': lambda self: '{0} as of {1}'.format(self.receive_identifier, self.modified),
-                     'dmis_reference': row[0],
-                    'receive_identifier': row[1],
-                    'tid': row[2],
-                     'condition': row[3],
-                     'visit': row[4],
-                     'site_identifier': row[5],
-                     'protocol_identifier': row[6],
-                    'gender': row[7],
-                    'dob': row[8],
-                    'subject_identifier': row[9],
-                    'initials': row[10],
-                    'clinician_initials': row[11],
-                    'user_created': row[12],
-                    'user_modified': row[13],
-                    'receive_datetime': row[14],
-                    'drawn_datetime': row[15],
-                    'created': row[16],
-                    'modified': row[17],
-                    'order_identifier': row[18],
-                    'panel_id': row[19],
-                    'edc_specimen_identifier': row[20],
-                    'other_pat_ref': row[21],
-                    'site': None,
-                    'patient': None,
-                    'protocol': None}
-            return type('ReceiveRow', (object,), attrs)
-
-        def order_row(row):
-            """ Holds the order record from the DMIS (LAB21). """
-            attrs = {'__str__': lambda self: '{0} as of {1}'.format(self.order_identifier, self.modified),
-                     'dmis_reference': row[0],
-                    'receive_identifier': row[1],
-                    'tid': row[2],
-                    'user_created': row[12],
-                    'user_modified': row[13],
-                    'order_datetime': row[15],
-                    'created': row[16],
-                    'modified': row[17],
-                    'order_identifier': row[18],
-                    'panel': None,
-                    'aliquot': None}
-            return type('OrderRow', (object,), attrs)
 
         #import_as_new = kwargs.get('import_as_new', None)
         import_history = ImportHistory(self.lab_db, kwargs.get('subject_identifier', None) or kwargs.get('protocol', None))
@@ -138,7 +93,7 @@ class Dmis(object):
                             dob=dmis_receive.dob,
                             initials=dmis_receive.initials)
                         # gather everything needed to create a new Receive instance into rcv_row
-                        rcv_row = receive_row(dmis_receive)
+                        rcv_row = self.get_receive_row_from_cursor(dmis_receive)
                         rcv_row.protocol = protocol
                         rcv_row.site = sites[dmis_receive.site_identifier]
                         rcv_row.patient = patients[dmis_receive.subject_identifier]
@@ -146,7 +101,7 @@ class Dmis(object):
                         del rcv_row
                     # gather what is needed to create an order instance,
                     # note: dmis_receive has the order information in it as well
-                    ord_row = order_row(dmis_receive)
+                    ord_row = self.get_order_row_from_cursor(dmis_receive)
                     # data model is receive -> aliquot -> order
                     ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive.tid)
                     # determine the order.panel from tid or else panel_id
