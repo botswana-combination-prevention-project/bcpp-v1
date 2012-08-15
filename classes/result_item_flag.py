@@ -14,7 +14,7 @@ class ResultItemFlag(object):
             >>>where grade_flag>=0
             >>>group by tc.code, grade_flag;
         """
-        before = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
+        #before = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
         value = result_item.result_item_value_as_float
         ReferenceFlag = result_item.get_cls_reference_flag()
         flag = ReferenceFlag(result_item.get_reference_list(), result_item)
