@@ -865,8 +865,8 @@ class Dmis(object):
             subject_identifier = kwargs.get('subject_identifier', None)
             protocol = kwargs.get('protocol', None)
             where_clause = []
-            if import_history.conditional_clause:
-                where_clause.append(import_history.conditional_clause)
+            if import_history.clause:
+                where_clause.append(import_history.clause)
             if subject_identifier:
                 where_clause.append('l.pat_id like \'%{subject_identifier}%\''.format(subject_identifier=subject_identifier))
             if protocol:
@@ -881,7 +881,7 @@ class Dmis(object):
         protocol = kwargs.get('protocol', None)
         cnxn = pyodbc.connect(self.dmis_data_source)
         cursor = cnxn.cursor()
-        where_clause = _get_dmis_receive_where_clause(import_history.conditional_clause, **kwargs)
+        where_clause = _get_dmis_receive_where_clause(import_history.clause, **kwargs)
         if where_clause is None:
             where_clause = ''
         sql = ('select '
