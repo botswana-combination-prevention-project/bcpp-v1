@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from django.db.models import Q
+from django.db.models.fields import NOT_PROVIDED
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import ForeignKey
 from bhp_poll_mysql.poll_mysql import PollMySQL
@@ -201,6 +202,10 @@ class Lis(object):
         list_fields = ['panel', 'aliquot_type', 'aliquot_condition']
         lis_source_fields = [field.name for field in lis_source._meta.fields]
         for field in target_cls._meta.fields:
+            if field.default == NOT_PROVIDED:
+                value = None
+            else:
+                value = field.default
             value = field.default or None
             if field.name not in exclude_fields:
                 if kwargs.get(field.name, None):
