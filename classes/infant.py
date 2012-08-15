@@ -7,7 +7,28 @@ from base_identifier import BaseIdentifier
 
 class Infant(BaseIdentifier):
 
-    """ Create subject identifier(s) for an infant(s) by calling get_identifier() with the maternal identifier and return a dictionary {infant order: identifier}. """
+    """ Creates an infant identifier derived from the maternal identifier, considers the number of infants
+    during this registration session and their birth order and returns a dictionary {infant order: identifier}.
+
+    Usage::
+        >>>if not change:
+        >>>    obj.user_created = request.user
+        >>>    obj.save()
+        >>>    if obj.live_infants_to_register > 0:
+        >>>        #Allocate Infant Identifier
+        >>>        infant = Infant()
+        >>>        for self.infant_order in range(0, obj.live_infants_to_register):
+        >>>            infant.get_identifier(
+        >>>                add_check_digit=False,
+        >>>                is_derived=True,
+        >>>                maternal_identifier=obj.maternal_visit.appointment.registered_subject.subject_identifier,
+        >>>                maternal_study_site=obj.maternal_visit.appointment.registered_subject.study_site,
+        >>>                user=request.user,
+        >>>                birth_order=self.infant_order,
+        >>>                live_infants=obj.live_infants,
+        >>>                live_infants_to_register=obj.live_infants_to_register,
+        >>>                subject_type='infant')
+    """
 
     def consent_required(self):
         return False
