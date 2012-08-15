@@ -293,7 +293,7 @@ class Lis(object):
             if created:
                 logger.info('    created aliquot_type {0}'.format(obj.name))
         elif name == 'aliquot_condition':
-            obj, created = AliquotCondition.objects.get_or_create(name=lis_obj.name)
+            obj, created = AliquotCondition.objects.get_or_create(name=lis_obj.name, short_name=lis_obj.short_name)
             if created:
                 logger.info('    created aliquot_condition {0}'.format(obj.name))
         else:
