@@ -11,56 +11,46 @@ class BaseAliquot (BaseUuidModel):
         max_length=25,
         unique=True,
         help_text="Aliquot identifier",
-        editable=False,
-        )
-
+        editable=False)
     aliquot_datetime = models.DateTimeField(
         verbose_name="Date and time aliquot created",
-        default=datetime.datetime.today(),
-        )
-
+        default=datetime.datetime.today())
     count = models.IntegerField(
         editable=False,
-        null=True
-        )
-
+        null=True)
     medium = models.CharField(
         verbose_name='Medium',
         max_length=25,
         choices=SPECIMEN_MEDIUM,
-        default='TUBE',
-        #help_text = "Indicate such as dbs card, tube, swab, etc",
-        )
-
+        default='TUBE')
     original_measure = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default='5.00',
-        )
-
+        default='5.00')
     current_measure = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default='5.00',
-        )
-
+        default='5.00')
     measure_units = models.CharField(
         max_length=25,
         choices=SPECIMEN_MEASURE_UNITS,
-        default='mL',
-        )
-
+        default='mL')
     status = models.CharField(
         max_length=25,
         choices=ALIQUOT_STATUS,
-        default='available',
-        )
-
+        default='available')
     comment = models.CharField(
         max_length=50,
         null=True,
-        blank=True,
-        )
+        blank=True)
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
+    import_datetime = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        self.receive_identifier = self.aliquot.receive_identifier
+        super(BaseAliquot, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '%s' % (self.aliquot_identifier)
