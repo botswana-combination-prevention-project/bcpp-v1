@@ -17,10 +17,14 @@ class Result(BaseResult):
         editable=False,
         db_index=True,
         help_text="non-user helper field to simplify search and filtering")
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.order.aliquot.receive.registered_subject.subject_identifier
+        self.receive_identifier = self.order.aliquot.receive.receive_identifier
         if not self.review:
             self.review = Review.objects.create(title='{0} for {1}'.format(self.result_identifier, self.order.aliquot.receive.registered_subject.subject_identifier))
         super(Result, self).save(*args, **kwargs)

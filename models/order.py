@@ -17,10 +17,14 @@ class Order(BaseOrder):
         editable=False,
         db_index=True,
         help_text="non-user helper field to simplify search and filtering")
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
+        self.receive_identifier = self.aliquot.receive_identifier
         super(Order, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

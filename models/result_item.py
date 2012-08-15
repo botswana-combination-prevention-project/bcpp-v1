@@ -25,10 +25,14 @@ class ResultItem(BaseResultItem):
         editable=False,
         db_index=True,
         help_text="non-user helper field to simplify search and filtering")
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.result.order.aliquot.registered_subject.subject_identifier
+        self.receive_identifier = self.result.order.aliquot.receive.receive_identifier
         super(ResultItem, self).save(*args, **kwargs)
 
     def __unicode__(self):
