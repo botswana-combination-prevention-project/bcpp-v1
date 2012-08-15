@@ -4,6 +4,8 @@ Models
 Main Models
 +++++++++++++
 
+ROARR: relational model made up of Receive, Aliquot, Order, Result and ResultItem.
+
 .. autoclass:: lab_clinic_api.models.receive.Receive
     :members:  
     :show-inheritance: 
@@ -42,3 +44,7 @@ Supporting Models
 .. autoclass:: lab_clinic_api.models.TestCode
     :members:  
     :show-inheritance:    
+
+.. autoclass:: lab_clinic_api.models.TestCodeGroup
+    :members:  
+    :show-inheritance:  

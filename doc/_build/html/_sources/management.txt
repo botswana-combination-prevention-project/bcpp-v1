@@ -1,7 +1,7 @@
 Management Tools
 ================
 
-* import_lis
+* 
 * import_test_codes
 * recalculate_resultitems
 
@@ -9,7 +9,6 @@ Management Tools
 Management Classes
 ==================
 
-.. autoclass:: lab_clinic_api.classes.Lis
+.. automodule:: management.commands
     :members:
     :show-inheritance: 
-    :noindex:

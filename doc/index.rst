@@ -13,8 +13,8 @@ Contents:
 
    overview
    installation
-   importing_data
    result_report
+   reviewing_results
    actions
    management
    classes

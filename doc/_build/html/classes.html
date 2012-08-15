@@ -57,51 +57,22 @@
   <span class="target" id="module-lab_clinic_api.classes"></span><div class="section" id="classes">
 <h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="lab_clinic_api.classes.Lis">
-<em class="property">class </em><tt class="descclassname">lab_clinic_api.classes.</tt><tt class="descname">Lis</tt><big>(</big><em>db</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_clinic_api.classes.Lis" title="Permalink to this definition">¶</a></dt>
+<dt id="lab_clinic_api.classes.edc_lab.EdcLab">
+<em class="property">class </em><tt class="descclassname">lab_clinic_api.classes.edc_lab.</tt><tt class="descname">EdcLab</tt><a class="reference internal" href="_modules/lab_clinic_api/classes/edc_lab.html#EdcLab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lab_clinic_api.classes.edc_lab.EdcLab" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>Import from django-lis</p>
+<p>Accesses local lab data by subject.</p>
 <dl class="method">
-<dt id="lab_clinic_api.classes.Lis.import_from_lis">
-<tt class="descname">import_from_lis</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_clinic_api.classes.Lis.import_from_lis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Imports data from the django-lis for each model in the relational model including list
-models.</p>
-<p>The relational model is <tt class="xref py py-class docutils literal"><span class="pre">Receive</span></tt> &gt; <tt class="xref py py-class docutils literal"><span class="pre">Aliquot</span></tt> &gt; <tt class="xref py py-class docutils literal"><span class="pre">Order</span></tt> &gt;
-<tt class="xref py py-class docutils literal"><span class="pre">Result</span></tt> &gt; <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt>
-List models are panel, test_code, aliquot_type, aliquot_condition</p>
-<p>Using get_or_create(), if instances do not exist they will be created.</p>
-<p>If the source patient identifier cannot be linked to an instance of registered
-subject, the data is not imported and an error is loggged in model <tt class="xref py py-class docutils literal"><span class="pre">LisImportError</span></tt>.</p>
-<p>Note: List models on the target (edc) are not the same models as source. That is list models
-on target come from lab_clinic_api and on source come from lab_panel, lab_aliquot_list, etc.
-For example target.panel != source.panel yet the attribute values of panel instance on
-target and source are the same (see isinstance() test for ForeignKey fields below).</p>
+<dt id="lab_clinic_api.classes.edc_lab.EdcLab.render">
+<tt class="descname">render</tt><big>(</big><em>subject_identifier</em>, <em>update=False</em><big>)</big><a class="reference internal" href="_modules/lab_clinic_api/classes/edc_lab.html#EdcLab.render"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lab_clinic_api.classes.edc_lab.EdcLab.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders local lab data for the subject&#8217;s dashboard.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="lab_clinic_api.classes.Lis.update_from_lis">
-<tt class="descname">update_from_lis</tt><big>(</big><em>subject_identifier</em><big>)</big><a class="headerlink" href="#lab_clinic_api.classes.Lis.update_from_lis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the Edc labs for a given subject_identifier from the Lis.</p>
+<dt id="lab_clinic_api.classes.edc_lab.EdcLab.update">
+<tt class="descname">update</tt><big>(</big><em>subject_identifier</em><big>)</big><a class="reference internal" href="_modules/lab_clinic_api/classes/edc_lab.html#EdcLab.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lab_clinic_api.classes.edc_lab.EdcLab.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the local lab data with that from the Lis.</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="class">
-<dt id="lab_clinic_api.classes.LisLock">
-<em class="property">class </em><tt class="descclassname">lab_clinic_api.classes.</tt><tt class="descname">LisLock</tt><big>(</big><em>db</em><big>)</big><a class="headerlink" href="#lab_clinic_api.classes.LisLock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lab_import.classes.base_lock.BaseLock</span></tt></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="lab_clinic_api.classes.ImportHistory">
-<em class="property">class </em><tt class="descclassname">lab_clinic_api.classes.</tt><tt class="descname">ImportHistory</tt><big>(</big><em>db</em>, <em>lock_name</em><big>)</big><a class="headerlink" href="#lab_clinic_api.classes.ImportHistory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lab_import.classes.base_import_history.BaseImportHistory</span></tt></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="lab_clinic_api.classes.EdcLab">
-<em class="property">class </em><tt class="descclassname">lab_clinic_api.classes.</tt><tt class="descname">EdcLab</tt><a class="headerlink" href="#lab_clinic_api.classes.EdcLab" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 </dd></dl>
 
 </div>

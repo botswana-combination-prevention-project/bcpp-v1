@@ -6,11 +6,10 @@ from bhp_registration.models import RegisteredSubject
 
 
 class Receive(BaseReceive):
+    """ Stores receiving information and is linked to :class:`bhp_registration.RegisteredSubject` for patient
+    identification and demographics."""
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True)
-
-    import_datetime = models.DateTimeField(null=True)
-
     objects = models.Manager()
 
     def get_absolute_url(self):
@@ -21,4 +20,3 @@ class Receive(BaseReceive):
 
     class Meta:
         app_label = 'lab_clinic_api'
-        #ordering =['result_identifier']

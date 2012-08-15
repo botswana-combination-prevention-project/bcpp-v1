@@ -2,21 +2,8 @@
 
 Classes
 ================== 
-
-
-.. autoclass:: lab_clinic_api.classes.Lis
-    :members:
-    :show-inheritance: 
-
-.. autoclass:: lab_clinic_api.classes.LisLock
-    :members:
-    :show-inheritance: 
-
-.. autoclass:: lab_clinic_api.classes.ImportHistory
-    :members:
-    :show-inheritance:
-    
-.. autoclass:: lab_clinic_api.classes.EdcLab
+   
+.. autoclass:: lab_clinic_api.classes.edc_lab.EdcLab
     :members:    
     :show-inheritance:
  

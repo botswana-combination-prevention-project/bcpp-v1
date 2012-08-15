@@ -7,19 +7,23 @@ from review import Review
 
 
 class Result(BaseResult):
-
+    """Stores result information in a one-to-many relation with :class:`ResultItem`."""
     order = models.ForeignKey(Order)
-
-    import_datetime = models.DateTimeField(null=True)
-
     review = models.OneToOneField(Review, null=True)
-
     reviewed = models.BooleanField(default=False)
-
+    subject_identifier = models.CharField(
+        max_length=25,
+        null=True,
+        editable=False,
+        db_index=True,
+        help_text="non-user helper field to simplify search and filtering")
     objects = models.Manager()
 
-    def subject_identifier(self):
-        return self.order.aliquot.receive.registered_subject
+    def save(self, *args, **kwargs):
+        self.subject_identifier = self.order.aliquot.receive.registered_subject.subject_identifier
+        if not self.review:
+            self.review = Review.objects.create(title='{0} for {1}'.format(self.result_identifier, self.order.aliquot.receive.registered_subject.subject_identifier))
+        super(Result, self).save(*args, **kwargs)
 
     def panel(self):
         return unicode(self.order.panel.edc_name)
@@ -46,20 +50,6 @@ class Result(BaseResult):
         one = """<a href="{url}" class="add-another" id="add_id_report" onclick="return showAddAnotherPopup(this);"> <img src="/static/admin/img/icon_addlink.gif" width="10" height="10" alt="View report"/></a>""".format(url=url)
         return '{one}&nbsp;{two}'.format(one=one, two=two)
     report.allow_tags = True
-
-#    def rvw(self):
-#        url_review = reverse('admin:lab_clinic_api_review_add')
-#        if self.review:
-#            url = self.review.get_absolute_url()
-#            if self.review.review_status == 'REVIEWED':
-#                label = self.review.get_review_status_display()
-#        return """<a href="{url}" class="add-another" id="add_id_review" onclick="return showAddAnotherPopup(this);"> {label}</a>""".format(url=url, label=label)
-#    rvw.allow_tags = True
-
-    def save(self, *args, **kwargs):
-        if not self.review:
-            self.review = Review.objects.create(title='{0} for {1}'.format(self.result_identifier, self.order.aliquot.receive.registered_subject.subject_identifier))
-        super(Result, self).save(*args, **kwargs)
 
     def ordered(self):
         return '<a href="{0}">{1}</a>'.format(self.order.get_absolute_url(), self.order)
