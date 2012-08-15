@@ -12,10 +12,14 @@ class Result(BaseResult):
         editable=False,
         db_index=True,
         help_text="non-user helper field to simplify search and filtering")
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.order.aliquot.patient.subject_identifier
+        self.receive_identifier = self.order.aliquot.receive.receive_identifier
         if not self.result_identifier:
             self.result_identifier = self.get_identifier(self.order)
         super(Result, self).save(*args, **kwargs)

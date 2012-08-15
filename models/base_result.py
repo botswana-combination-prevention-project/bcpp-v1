@@ -41,14 +41,7 @@ class BaseResult(BaseUuidModel):
         blank=True,
         editable=False,
         help_text='dmis import value. N/A unless data imported from old system')
-    receive_identifier = models.CharField(
-        max_length=25, editable=False, null=True, db_index=True,
-        help_text="non-user helper field to simplify search and filter")
     import_datetime = models.DateTimeField(null=True)
-
-    def save(self, *args, **kwargs):
-        self.receive_identifier = self.order.aliquot.receive.receive_identifier
-        super(BaseResult, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '%s' % (self.result_identifier)
