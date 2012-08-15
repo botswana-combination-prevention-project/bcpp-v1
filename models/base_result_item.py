@@ -86,9 +86,6 @@ class BaseResultItem(BaseUuidModel):
         null=True,
         blank=True,
         help_text='')
-    receive_identifier = models.CharField(
-        max_length=25, editable=False, null=True, db_index=True,
-        help_text="non-user helper field to simplify search and filter")
     import_datetime = models.DateTimeField(null=True)
 
     def get_subject_identifier(self):
@@ -114,7 +111,6 @@ class BaseResultItem(BaseUuidModel):
         return None
 
     def save(self, *args, **kwargs):
-        self.receive_identifier = self.result.order.aliquot.receive.receive_identifier
         if re.search(r'\d+\.?\d*', self.result_item_value):
             try:
                 self.result_item_value_as_float = float(self.result_item_value)
