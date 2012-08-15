@@ -20,7 +20,7 @@ class Order(BaseOrder):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        self.subject_identifier = self.aliquot.registered_subject.subject_identifier
+        self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
         if not self.result_identifier:
             self.result_identifier = self.get_identifier(self.order)
         super(Order, self).save(*args, **kwargs)
