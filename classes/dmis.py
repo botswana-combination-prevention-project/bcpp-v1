@@ -734,7 +734,7 @@ class Dmis(object):
                     aliquot_type = AliquotType.objects.using(lab_db).get(numeric_code__exact=create['type'])
                     primary_aliquot.modified = receive.modified
                     primary_aliquot.aliquot_type = aliquot_type
-                    primary_aliquot.condition = aliquot_condition
+                    primary_aliquot.aliquot_condition = aliquot_condition
                     primary_aliquot.save()
             else:
                 create['comment'] = 'auto created on import from DMIS'
@@ -746,7 +746,7 @@ class Dmis(object):
                     count=1,
                     aliquot_type=aliquot_type,
                     medium=aliquot_medium,
-                    condition=aliquot_condition,
+                    aliquot_condition=aliquot_condition,
                     comment=create['comment'],
                     )
             return primary_aliquot
