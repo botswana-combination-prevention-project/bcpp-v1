@@ -206,7 +206,6 @@ class Lis(object):
                 value = None
             else:
                 value = field.default
-            value = field.default or None
             if field.name not in exclude_fields:
                 if kwargs.get(field.name, None):
                     value = kwargs.get(field.name)
