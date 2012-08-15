@@ -18,14 +18,14 @@ class ResultAutocomplete(AutocompleteSettings):
 
 class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
 
-    def save_model(self, request, obj, form, change):
-        if not change:
-            obj.result_identifier = AllocateResultIdentifier(
-                request.user,
-                request.POST.get('order'),
-                )
-        save = super(ResultAdmin, self).save_model(request, obj, form, change)
-        return save
+#    def save_model(self, request, obj, form, change):
+#        if not change:
+#            obj.result_identifier = AllocateResultIdentifier(
+#                request.user,
+#                request.POST.get('order'),
+##                )
+#        save = super(ResultAdmin, self).save_model(request, obj, form, change)
+#        return save
 
     def change_view(self, request, object_id, extra_context=None):
 
@@ -50,11 +50,9 @@ class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
             kwargs["queryset"] = Order.objects.filter(id__exact=request.GET.get('order', 0))
         return super(ResultAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    list_display = ('result_identifier', 'receive_identifier', 'result_datetime', 'release_status', 'order',)
-
-    search_fields = ('result_identifier', 'release_status', 'order__aliquot__receive__receive_identifier')
-
+    list_display = ('result_identifier', 'receive_identifier', 'subject_identifier', 'result_datetime', 'release_status', 'order',)
+    search_fields = ('result_identifier', 'release_status', 'receive_identifier', 'subject_identifier')
     list_filter = ('release_status', 'result_datetime', 'release_status')
-
+    list_per_page = 15
 admin.site.register(Result, ResultAdmin)
 

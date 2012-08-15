@@ -6,8 +6,25 @@ from base_result import BaseResult
 class Result(BaseResult):
 
     order = models.ForeignKey(Order)
-
+    subject_identifier = models.CharField(
+        max_length=25,
+        null=True,
+        editable=False,
+        db_index=True,
+        help_text="non-user helper field to simplify search and filtering")
     objects = models.Manager()
+
+    def save(self, *args, **kwargs):
+        self.subject_identifier = self.order.aliquot.patient.subject_identifier
+        if not self.result_identifier:
+            self.result_identifier = self.get_identifier(self.order)
+        super(Result, self).save(*args, **kwargs)
+
+    def get_identifier(self, order):
+        """ Prepares a result_identifier based on order_identifier. """
+        cnt = self.__class__.objects.filter(order=order).count()
+        cnt += 1
+        return '{order_identifier}-{cnt}'.format(order_identifier=order.order_identifier, cnt=cnt.rjust(2, '0'))
 
     def get_absolute_url(self):
         return "/lab_result/result/%s/" % self.id
@@ -21,4 +38,4 @@ class Result(BaseResult):
     class Meta:
         app_label = 'lab_result'
         db_table = 'bhp_lab_core_result'
-        ordering = ['result_identifier', 'order', 'result_datetime']
+        ordering = ['-result_identifier']
