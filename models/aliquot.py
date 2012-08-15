@@ -20,14 +20,18 @@ class Aliquot(BaseAliquot):
         editable=False,
         db_index=True,
         help_text="non-user helper field to simplify search and filtering")
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
     objects = models.Manager()
-
-    def __unicode__(self):
-        return '%s' % (self.aliquot_identifier)
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.receive.registered_subject.subject_identifier
+        self.receive_identifier = self.receive.receive_identifier
         super(Aliquot, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return '%s' % (self.aliquot_identifier)
 
     class Meta:
         app_label = 'lab_clinic_api'
