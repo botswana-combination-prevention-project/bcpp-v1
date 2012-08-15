@@ -104,7 +104,7 @@ class BaseSubject (BaseUuidModel):
         if not self.pk and self.subject_identifier:
             if self.__class__.objects.filter(subject_identifier=self.subject_identifier):
                 raise ValidationError('Attempt to insert duplicate value for'
-                                      'subject_identifier {0} when saving {1}.').format(self.subject_identifier, self)
+                                      'subject_identifier {0} when saving {1}.'.format(self.subject_identifier, self))
         super(BaseSubject, self).save(*args, **kwargs)
 
     def __unicode__(self):
