@@ -43,14 +43,7 @@ class BaseAliquot (BaseUuidModel):
         max_length=50,
         null=True,
         blank=True)
-    receive_identifier = models.CharField(
-        max_length=25, editable=False, null=True, db_index=True,
-        help_text="non-user helper field to simplify search and filter")
     import_datetime = models.DateTimeField(null=True)
-
-    def save(self, *args, **kwargs):
-        self.receive_identifier = self.aliquot.receive_identifier
-        super(BaseAliquot, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '%s' % (self.aliquot_identifier)
