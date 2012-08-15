@@ -201,6 +201,7 @@ class Lis(object):
         list_fields = ['panel', 'aliquot_type', 'aliquot_condition']
         lis_source_fields = [field.name for field in lis_source._meta.fields]
         for field in target_cls._meta.fields:
+            value = None
             if field.name not in exclude_fields:
                 if kwargs.get(field.name, None):
                     value = kwargs.get(field.name)
