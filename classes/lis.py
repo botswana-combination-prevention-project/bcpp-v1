@@ -145,18 +145,22 @@ class Lis(object):
                                                 self._import_result_item_model(lis_result_item, result)
             # update any left in the modified lists that was not covered
             # since the receive record was not modified
+            logger.info('Checking for data modified after the receiving instances...')
+            logger.info('    Aliquots...')
             for lis_aliquot in LisAliquot.objects.using(self.db).filter(aliquot_identifier__in=modified_aliquots):
                 if Receive.objects.filter(receive_identifier=lis_aliquot.receive.receive_identifier):
                     receive = Receive.objects.get(receive_identifier=lis_aliquot.receive.receive_identifier)
                     aliquot = self._import_model(lis_aliquot, Aliquot, 'aliquot_identifier',
                                                  exclude_fields=None, receive=receive)
                     modified_aliquots.remove(aliquot.aliquot_identifier)
+            logger.info('    Orders...')
             for lis_order in LisOrder.objects.using(self.db).filter(order_identifier__in=modified_orders):
                 if Aliquot.objects.filter(aliquot_identifier=lis_order.aliquot.aliquot_identifier):
                     aliquot = Aliquot.objects.get(aliquot_identifier=lis_order.aliquot.aliquot_identifier)
                     order = self._import_model(lis_order, Order, 'order_identifier',
                                                exclude_fields=None, aliquot=aliquot)
                     modified_orders.remove(order.order_identifier)
+            logger.info('    Results and ResultItems...')
             for lis_result in LisResult.objects.using(self.db).filter(result_identifier__in=modified_results):
                 if Order.objects.filter(order_identifier=lis_result.order.order_identifier):
                     order = Order.objects.get(order_identifier=lis_result.order.order_identifier)
