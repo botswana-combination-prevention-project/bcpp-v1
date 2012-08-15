@@ -47,14 +47,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if not args:
-            raise CommandError('Try --help for a list of valid options')
-        args = list(args)
-        db = args.pop(0)
-        if not db:
-            raise CommandError('Missing argument \'db\', Try --help for a list of valid arguments and options')
+        #if not args:
+        #    raise CommandError('Try --help for a list of valid options')
+        #args = list(args)
         if not args:
             args = [None]
+        db = 'lab_api'
         dmis_lock = DmisLock(db)
         if options['list-locked']:
             for lock_name in args:
