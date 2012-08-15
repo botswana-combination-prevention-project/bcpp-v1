@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_base_model.classes import BaseModelAdmin
-from forms import ResultForm, ResultItemForm, ReviewForm
+from forms import ResultForm, ResultItemForm
 from models import Receive, Aliquot, Result, ResultItem, Review, Order, Panel, TestCode
-from models import AliquotType, TestCodeGroup
+from models import AliquotType, TestCodeGroup, AliquotCondition
 from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed
 
 
@@ -50,6 +50,11 @@ admin.site.register(Order, OrderAdmin)
 class AliquotTypeAdmin(BaseModelAdmin):
     list_display = ('name', 'alpha_code', 'numeric_code')
 admin.site.register(AliquotType, AliquotTypeAdmin)
+
+
+class AliquotConditionAdmin(BaseModelAdmin):
+    list_display = ('name', 'short_name')
+admin.site.register(AliquotCondition, AliquotConditionAdmin)
 
 
 class PanelAdmin(BaseModelAdmin):
