@@ -29,7 +29,7 @@ class BaseIdentifier(object):
         self.get_identifier_post(identifier, **kwargs)
         return None
 
-    def get_identifier(self, add_check_digit=True, **kwargs):
+    def get_identifier(self, add_check_digit=True, is_derived=False, **kwargs):
         """ Returns a formatted identifier based on the identifier format and the dictionary
         of options.
 
@@ -38,6 +38,9 @@ class BaseIdentifier(object):
         Arguments:
           add_check_digit: if true adds a check digit calculated using the numbers in the
             identifier. Letters are stripped out if they exist. (default: True)
+          is_derived: identifier is derived from an existing identifier so get a sequence
+            from the identifier_model. For example, an infant identifier is derived from the
+            maternal identifier. (default: False)
 
         Keyword Arguments:
           * app_name: app_label for model_name below. (default: 'bhp_identifier')
@@ -69,11 +72,17 @@ class BaseIdentifier(object):
         options = self._prepare_identifier(options, **kwargs)
         # use and pop key/values that are obviously not needed by format()
         modulus = options.pop('modulus')
-        IdentifierModel = get_model(options.pop('app_name'), options.pop('model_name'))
-        # put a random uuid temporarily in the identifier field
-        # to maintain unique constraint on identifier field.
-        identifier_model = IdentifierModel.objects.create(identifier=str(uuid.uuid4()), seed=options.pop('seed'), padding=options.pop('padding'))
-        options.update(sequence=identifier_model.sequence)
+        if not is_derived:
+            IdentifierModel = get_model(options.pop('app_name'), options.pop('model_name'))
+            # put a random uuid temporarily in the identifier field
+            # to maintain unique constraint on identifier field.
+            identifier_model = IdentifierModel.objects.create(identifier=str(uuid.uuid4()), seed=options.pop('seed'), padding=options.pop('padding'))
+            options.update(sequence=identifier_model.sequence)
+        else:
+            # the identifier is derived from an existing one. no need for
+            # a sequence, therefore no need for the identifier_model
+            identifier_model = None
+            options.update(sequence='')
         identifier_format = options.pop('identifier_format')
         device = Device()
         options.update(device_id=device.device_id)
@@ -88,11 +97,13 @@ class BaseIdentifier(object):
             new_identifier = "{base}-{check_digit}".format(
                              base=base,
                              check_digit=check_digit.calculate(int(re.search('\d+', base.replace('-', '')).group(0)), modulus))
-            identifier_model.identifier = new_identifier
+            if identifier_model:
+                identifier_model.identifier = new_identifier
         else:
             new_identifier = new_identifier = "{base}".format(base=base)
         # update the identifier instance
-        identifier_model.save()
+        if identifier_model:
+            identifier_model.save()
         # call custom post method
         self._post_identifier(new_identifier, **kwargs)
         return new_identifier

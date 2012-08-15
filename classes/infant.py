@@ -67,9 +67,9 @@ class Infant(BaseIdentifier):
                 )
 
     def _get_suffix(self, birth_order, live_infants):
+        """ Returns a suffix for the identifier."""
         suffix = self._get_base_suffix(live_infants)
-        for birth_order in range(0, birth_order):
-            suffix += (birth_order) * 10
+        suffix += (birth_order) * 10
         return suffix
 
     def _register_infants(self, user, maternal_identifier, maternal_study_site, subject_type, live_infants, live_infants_to_register):
@@ -109,10 +109,10 @@ class Infant(BaseIdentifier):
             return identifier
 
     def _get_base_suffix(self, live_infants):
-
         """ Return a two digit suffix based on the number of live infants.
 
-            In the case of twins, triplets, ... will be incremented by 10's during registration for each subsequent infant registered. """
+        In the case of twins, triplets, ... will be incremented by 10's during registration for each subsequent infant registered.
+        """
 
         if live_infants == 1:
             suffix = 10  # singlet 10
