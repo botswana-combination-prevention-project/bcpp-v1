@@ -53,7 +53,7 @@ admin.site.register(AliquotType, AliquotTypeAdmin)
 
 
 class AliquotConditionAdmin(BaseModelAdmin):
-    list_display = ('name', 'short_name')
+    list_display = ('display_index', 'name', 'short_name')
 admin.site.register(AliquotCondition, AliquotConditionAdmin)
 
 
