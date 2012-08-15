@@ -8,15 +8,21 @@ from base_order import BaseOrder
 class Order(BaseOrder):
 
     aliquot = models.ForeignKey(Aliquot)
-
     panel = models.ForeignKey(Panel)
-
     dmis_reference = models.IntegerField(
         null=True,
-        blank=True,
-        )
-
+        blank=True)
+    subject_identifier = models.CharField(
+        max_length=25,
+        null=True,
+        editable=False,
+        db_index=True,
+        help_text="non-user helper field to simplify search and filtering")
     objects = OrderManager()
+
+    def save(self, *args, **kwargs):
+        self.subject_identifier = self.aliquot.receive.patient.subject_identifier
+        super(Order, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return "/lab_order/order/%s/" % self.id

@@ -11,28 +11,30 @@ class BaseOrder(BaseUuidModel):
         max_length=25,
         help_text='Allocated internally',
         db_index=True,
-        editable=False,
-        )
-
+        editable=False)
     order_datetime = models.DateTimeField(
         verbose_name='Order Date',
         validators=[datetime_not_future],
-        db_index=True,
-        )
-
+        db_index=True)
     status = models.CharField(
         verbose_name='Status',
         max_length=25,
         choices=ORDER_STATUS,
         null=True,
         blank=False)
-
     comment = models.CharField(
         verbose_name='Comment',
         max_length=150,
         null=True,
-        blank=True,
-        )
+        blank=True)
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
+    import_datetime = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        self.receive_identifier = self.order.aliquot.receive_identifier
+        super(BaseOrder, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '%s %s' % (self.order_identifier, self.panel)
