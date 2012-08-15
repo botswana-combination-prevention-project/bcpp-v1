@@ -25,8 +25,7 @@ class ImportHistory(BaseImportHistory):
 
     @property
     def clause(self):
-        clause = self._prepare_clause
-        return clause
+        return self._prepare_clause()
 
     def _prepare_clause(self):
         """ Returns a fragment for the sql WHERE clause if last_import_datetime is not None."""
