@@ -297,6 +297,11 @@ class RegisteredSubjectDashboard(Dashboard):
         edc_lab = EdcLab()
         return edc_lab.render(self.subject_identifier, False)
 
+    def render_locator(self, locator_instance, template=None):
+        if not template:
+            template = 'locator_include.html'
+        return render_to_string(template, {'locator': locator_instance})
+
     def get_urlpatterns(self, view, regex, **kwargs):
 
         """ Generates dashboard urls.
