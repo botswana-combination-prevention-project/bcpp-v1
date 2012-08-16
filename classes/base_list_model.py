@@ -7,22 +7,21 @@ class BaseListModel(BaseModel):
     """Basic model for list data used in dropdown and radio widgets having display value and store value pairs."""
 
     name = models.CharField(
-        verbose_name='display name',
+        verbose_name='Display value',
         max_length=250,
         unique=True,
         help_text='This is displayed value, shown to the user (40 characters max.)',
         )
 
     short_name = models.CharField(
-        verbose_name="store name",
+        verbose_name="Stored value",
         max_length=250,
         unique=True,
         help_text='This is the stored value, required',
         )
 
     display_index = models.IntegerField(
-        verbose_name="display order index",
-        #unique=True,
+        verbose_name="display index",
         default=0,
         help_text='Index to control display order if not alphabetical, not required',
         )
