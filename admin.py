@@ -8,9 +8,9 @@ from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed
 
 
 class ReceiveAdmin(BaseModelAdmin):
-    list_display = ('registered_subject', "receive_identifier", "receive_datetime", 'created', 'modified', 'import_datetime')
-    search_fields = ('registered_subject__subject_identifier', "receive_identifier",)
-    list_filter = ('created', 'import_datetime', )
+    list_display = ('registered_subject', "receive_identifier", "receive_datetime", "requisition_identifier", "drawn_datetime", 'created', 'modified', 'import_datetime')
+    search_fields = ('registered_subject__subject_identifier', "receive_identifier", "requisition_identifier",)
+    list_filter = ('created', "receive_datetime", "drawn_datetime", 'modified', 'import_datetime', )
 
     def get_readonly_fields(self, request, obj):
         return [field.name for field in obj._meta.fields if field.editable and field.name not in ['requisition_identifier']]
