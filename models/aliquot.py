@@ -30,6 +30,13 @@ class Aliquot(BaseAliquot):
         self.receive_identifier = self.receive.receive_identifier
         super(Aliquot, self).save(*args, **kwargs)
 
+    def drawn(self):
+        return self.receive.drawn_datetime
+
+    def to_receive(self):
+        return '<a href="/admin/lab_clinic_api/receive/?q={receive_identifier}">{receive_identifier}</a>'.format(receive_identifier=self.receive.receive_identifier)
+    to_receive.allow_tags = True
+
     def __unicode__(self):
         return '%s' % (self.aliquot_identifier)
 
