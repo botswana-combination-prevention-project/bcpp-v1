@@ -8,7 +8,7 @@ from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed
 
 
 class ReceiveAdmin(BaseModelAdmin):
-    list_display = ('registered_subject', "receive_identifier", "receive_datetime", "requisition_identifier", "drawn_datetime", 'created', 'modified', 'import_datetime')
+    list_display = ('registered_subject', "receive_identifier", "receive_datetime", "requisition_identifier", "drawn_datetime", 'to_order', 'created', 'modified', 'import_datetime')
     search_fields = ('registered_subject__subject_identifier', "receive_identifier", "requisition_identifier",)
     list_filter = ('created', "receive_datetime", "drawn_datetime", 'modified', 'import_datetime', )
 
