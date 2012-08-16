@@ -6,17 +6,16 @@ from bhp_consent.classes import BaseConsent as BaseBaseConsent
 
 
 class BaseConsent(BaseBaseConsent):
-    
+
     """ because of the identity field, this is a Botswana model """
 
     identity = EncryptedOmangField(
-        verbose_name = _("Identity number (OMANG, etc)"), 
-        unique = True,
-        help_text = _("Use Omang, Passport number, driver's license number or Omang receipt number")
+        verbose_name=_("Identity number (OMANG, etc)"),
+        unique=True,
+        help_text=_("Use Omang, Passport number, driver's license number or Omang receipt number")
         )
 
     identity_type = IdentityTypeField()
 
     class Meta:
         abstract = True
-
