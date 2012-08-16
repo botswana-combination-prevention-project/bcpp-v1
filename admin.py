@@ -19,9 +19,9 @@ admin.site.register(Receive, ReceiveAdmin)
 
 
 class AliquotAdmin(BaseModelAdmin):
-    list_display = ("aliquot_identifier", 'receive', 'subject_identifier', "aliquot_type", 'aliquot_condition', 'created', 'modified', 'import_datetime')
+    list_display = ("aliquot_identifier", 'to_receive', 'subject_identifier', 'drawn', "aliquot_type", 'aliquot_condition', 'created', 'modified', 'import_datetime')
     search_fields = ('aliquot_identifier', 'receive', )
-    list_filter = ('created', 'import_datetime', 'aliquot_type', 'aliquot_condition')
+    list_filter = ('drawn', 'created', 'import_datetime', 'aliquot_type', 'aliquot_condition')
 
     def get_readonly_fields(self, request, obj):
         return [field.name for field in obj._meta.fields if field.editable]
