@@ -32,9 +32,13 @@ class Result(BaseResult):
     def panel(self):
         return unicode(self.order.panel.edc_name)
 
-    def received(self):
-        return '<a href="{0}">{1}</a>'.format(self.order.aliquot.receive.get_absolute_url(), self.order.aliquot.receive)
-    received.allow_tags = True
+    def to_order(self):
+        return '<a href="/admin/lab_clinic_api/order/?q={order_identifier}">order</a>'.format(order_identifier=self.order.order_identifier)
+    to_order.allow_tags = True
+
+    def to_items(self):
+        return '<a href="/admin/lab_clinic_api/resultitem/?q={result_identifier}">items</a>'.format(result_identifier=self.result_identifier)
+    to_items.allow_tags = True
 
     def review_status(self):
         retval = False

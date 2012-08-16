@@ -28,8 +28,12 @@ class Order(BaseOrder):
         super(Order, self).save(*args, **kwargs)
 
     def to_receive(self):
-        return '<a href="/admin/lab_clinic_api/receive/?q={receive_identifier}">{receive_identifier}</a>'.format(receive_identifier=self.receive_identifier)
+        return '<a href="/admin/lab_clinic_api/receive/?q={receive_identifier}">receive</a>'.format(receive_identifier=self.aliquot.receive.receive_identifier)
     to_receive.allow_tags = True
+
+    def to_result(self):
+        return '<a href="/admin/lab_clinic_api/result/?q={order_identifier}">result</a>'.format(order_identifier=self.order_identifier)
+    to_result.allow_tags = True
 
     def get_absolute_url(self):
         return reverse('admin:lab_clinic_api_order_change', args=(self.id,))

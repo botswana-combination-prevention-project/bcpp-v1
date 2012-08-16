@@ -8,7 +8,7 @@ from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed
 
 
 class ReceiveAdmin(BaseModelAdmin):
-    list_display = ('registered_subject', "receive_identifier", "receive_datetime", "requisition_identifier", "drawn_datetime", 'to_order', 'created', 'modified', 'import_datetime')
+    list_display = ('registered_subject', 'to_order', "receive_identifier", "receive_datetime", "requisition_identifier", "drawn_datetime", 'created', 'modified', 'import_datetime')
     search_fields = ('registered_subject__subject_identifier', "receive_identifier", "requisition_identifier",)
     list_filter = ('created', "receive_datetime", "drawn_datetime", 'modified', 'import_datetime', )
 
@@ -30,8 +30,8 @@ admin.site.register(Aliquot, AliquotAdmin)
 
 
 class OrderAdmin(BaseModelAdmin):
-    list_display = ("order_identifier", "subject_identifier", "panel", "order_datetime", 'created', 'modified', 'import_datetime')
-    search_fields = ('aliquot__receive__registered_subject__subject_identifier', "order_identifier",)
+    list_display = ("order_identifier", "to_receive", "to_result", "subject_identifier", "panel", "order_datetime", 'created', 'modified', 'import_datetime')
+    search_fields = ('aliquot__receive__registered_subject__subject_identifier', "order_identifier", "aliquot__receive__receive_identifier")
     list_filter = ('status', 'import_datetime', 'panel__edc_name')
 
     def get_readonly_fields(self, request, obj):
@@ -88,17 +88,19 @@ class ResultAdmin(BaseModelAdmin):
         super(ResultAdmin, self).__init__(*args, **kwargs)
 
     form = ResultForm
-    search_fields = ("result_identifier", "order__aliquot__receive__registered_subject__subject_identifier", "order__aliquot__receive__receive_identifier")
+    search_fields = ("result_identifier", "order__aliquot__receive__registered_subject__subject_identifier",
+                     "order__aliquot__receive__receive_identifier",
+                     "order__order_identifier")
 
     list_display = (
         "result_identifier",
         'report',
         'reviewed',
         "subject_identifier",
-        'received',
-        'ordered',
         'panel',
         "result_datetime",
+        'to_order',
+        'to_items',
         "release_status",
         "release_datetime",
         'import_datetime')

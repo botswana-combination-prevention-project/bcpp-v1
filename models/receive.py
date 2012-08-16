@@ -13,7 +13,7 @@ class Receive(BaseReceive):
     objects = models.Manager()
 
     def to_order(self):
-        return '<a href="/admin/lab_clinic_api/order/?q={receive_identifier}">{receive_identifier}</a>'.format(receive_identifier=self.receive_identifier)
+        return '<a href="/admin/lab_clinic_api/order/?q={receive_identifier}">order</a>'.format(receive_identifier=self.receive_identifier)
     to_order.allow_tags = True
 
     def get_absolute_url(self):
