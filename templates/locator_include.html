@@ -1,0 +1,35 @@
+<tr style="background:lightyellow;">
+   <td><H4>Contact Info</H4></td><tr>
+   <tr style="background:lightyellow;">
+   {% if not locator %}
+    <td>locator not found!
+   {% else %}
+       <td>
+       <BR><b>May follow-up?</b> {{locator.may_follow_up }}       
+       {% if locator.may_follow_up.lower == 'yes' %}   
+            <BR><b>Home visits?</b> {{locator.home_visit_permission }}
+            <BR>Address: {{locator.physical_address|wordwrap:25}}
+            <BR>Tel: {{locator.subject_phone|default:''}}, {{locator.subject_phone_alt|default:''}}
+            <BR>Cell: {{locator.subject_cell|default:''}}, {{locator.subject_cell_alt|default:''}}
+            <BR><B>Call work?</B> {{locator.may_call_work}}
+            {% if locator.may_call_work.lower == 'yes' %}       
+            <BR>{{locator.subject_work_place }}
+            <BR>{{locator.subject_work_phone }}            
+            {% endif%}
+            <BR><b>Contact anyone else?</b>{{locator.may_contact_someone}}           
+            {% if locator.may_contact_someone.lower == 'yes' %}
+               <BR>Name: {{ locator.contact_name }}
+               <BR>Relation: {{ locator.contact_rel }}
+               <BR>Address: {{ locator.contact_physical_address }}               
+               <BR>Cell: {{ locator.contact_cell }}
+               <BR>Tel: {{ locator.contact_tel }}
+            {% endif%}            
+            <BR><b>Contact next of kin?</b> {{locator.has_alt_contact}}
+            {% if locator.has_alt_contact.lower == 'yes' %}
+               <BR>Name: {{ locator.alt_contact_name }}
+               <BR>Cell: {{ locator.alt_contact_cell }}
+               <BR>Tel: {{ locator.alt_contact_tel }}
+           {% endif%}
+       {% endif%}           
+   {% endif %}
+   </td></tr>
