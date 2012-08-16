@@ -12,6 +12,10 @@ class Receive(BaseReceive):
     registered_subject = models.ForeignKey(RegisteredSubject, null=True)
     objects = models.Manager()
 
+    def to_order(self):
+        return '<a href="/admin/lab_clinic_api/order/?q={receive_identifier}">{receive_identifier}</a>'.format(receive_identifier=self.receive_identifier)
+    to_order.allow_tags = True
+
     def get_absolute_url(self):
         return reverse('admin:lab_clinic_api_receive_change', args=(self.id,))
 
