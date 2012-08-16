@@ -284,34 +284,35 @@ class Lis(object):
 
     def _get_or_create_list_field_instance(self, name, lis_obj):
         obj = None
-        if name == 'panel':
-            obj, created = Panel.objects.get_or_create(name=lis_obj.name)
-            if created:
-                logger.info('    created panel {0}'.format(obj.name))
-        elif name == 'test_code':
-            obj, created = TestCode.objects.get_or_create(code=lis_obj.code)
-            if created:
-                for field in obj._meta.fields:
-                    if field.name in [fld.name for fld in lis_obj._meta.fields if fld.name not in ['id', 'code', 'test_code_group']]:
-                        setattr(obj, field.name, getattr(lis_obj, field.name))
-                    if field.name == 'test_code_group':
-                        test_code_group, x = TestCodeGroup.objects.get_or_create(name=lis_obj.test_code_group.name, code=lis_obj.test_code_group.code)
-                        setattr(obj, field.name, test_code_group)
-                obj.save()
-            if created:
-                logger.info('    created test_code {0}'.format(obj.code))
-        elif name == 'aliquot_type':
-            obj, created = AliquotType.objects.get_or_create(name=lis_obj.name, alpha_code=lis_obj.alpha_code, numeric_code=lis_obj.numeric_code)
-            if created:
-                logger.info('    created aliquot_type {0}'.format(obj.name))
-        elif name == 'aliquot_condition':
-            obj, created = AliquotCondition.objects.get_or_create(name=lis_obj.name, short_name=lis_obj.short_name)
-            if created:
-                logger.info('    created aliquot_condition {0}'.format(obj.name))
-        else:
-            raise TypeError('Unknown list name. Got {0}'.format(name))
-        if not created:
-            logger.info('    {0} exists, found {1}'.format(name, obj))
+        if lis_obj:
+            if name == 'panel':
+                obj, created = Panel.objects.get_or_create(name=lis_obj.name)
+                if created:
+                    logger.info('    created panel {0}'.format(obj.name))
+            elif name == 'test_code':
+                obj, created = TestCode.objects.get_or_create(code=lis_obj.code)
+                if created:
+                    for field in obj._meta.fields:
+                        if field.name in [fld.name for fld in lis_obj._meta.fields if fld.name not in ['id', 'code', 'test_code_group']]:
+                            setattr(obj, field.name, getattr(lis_obj, field.name))
+                        if field.name == 'test_code_group':
+                            test_code_group, x = TestCodeGroup.objects.get_or_create(name=lis_obj.test_code_group.name, code=lis_obj.test_code_group.code)
+                            setattr(obj, field.name, test_code_group)
+                    obj.save()
+                if created:
+                    logger.info('    created test_code {0}'.format(obj.code))
+            elif name == 'aliquot_type':
+                obj, created = AliquotType.objects.get_or_create(name=lis_obj.name, alpha_code=lis_obj.alpha_code, numeric_code=lis_obj.numeric_code)
+                if created:
+                    logger.info('    created aliquot_type {0}'.format(obj.name))
+            elif name == 'aliquot_condition':
+                obj, created = AliquotCondition.objects.get_or_create(name=lis_obj.name, short_name=lis_obj.short_name)
+                if created:
+                    logger.info('    created aliquot_condition {0}'.format(obj.name))
+            else:
+                raise TypeError('Unknown list name. Got {0}'.format(name))
+            if not created:
+                logger.info('    {0} exists, found {1}'.format(name, obj))
         return obj
 
     def _target_field_custom_handler(self, lis_source, target_cls, target_identifier_name, field):
