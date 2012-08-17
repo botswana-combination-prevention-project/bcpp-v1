@@ -142,7 +142,8 @@ class Lis(object):
                                                 modified_results.remove(result.result_identifier)
                                             except ValueError:
                                                 pass
-                                            for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
+                                            for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier, validation_status='F'):
+                                                # only importing where validation_status='F'.
                                                 self._import_result_item_model(lis_result_item, result)
             # update any left in the modified lists that was not covered
             # since the receive record was not modified
