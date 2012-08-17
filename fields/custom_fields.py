@@ -78,7 +78,6 @@ class IsDateEstimatedField(CharField):
         return (field_class, args, kwargs)
 
 
-
 class NameField(CharField):
 
     description = _("Custom field for Name of person")
@@ -114,7 +113,6 @@ class NameField(CharField):
         return (field_class, args, kwargs)
 
 
-
 class InitialsField(CharField):
 
     description = _("Custom field for a person\'s initials")
@@ -123,7 +121,6 @@ class InitialsField(CharField):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('verbose_name', _('Initials'))
         kwargs.setdefault('max_length', 3)
-        #kwargs.setdefault('unique',True)                        
         kwargs.setdefault('help_text', _('Type 2-3 letters, all in uppercase and no spaces'))
         CharField.__init__(self, *args, **kwargs)
 
@@ -175,11 +172,10 @@ class WeightField(DecimalField):
         return (field_class, args, kwargs)
 
 
-
 class OmangField(CharField):
 
     """See EncryptedIdentityField!
-        field for omang. If getting an ID that may alos be something other than an Omang, 
+        field for omang. If getting an ID that may alos be something other than an Omang,
         use IdentityField along with IdentityTypeField
     """
 
@@ -216,30 +212,28 @@ class OmangField(CharField):
         return (field_class, args, kwargs)
 
 
-
-
 class IdentityTypeField(CharField):
 
     """
         have IdentityTypeField immediately follow an identity field:
-        
-        For example, 
+
+        For example,
 
         ...
-        
+
         identity = models.CharField(
             verbose_name=_("Identity number (OMANG, etc)"), 
-            max_length=25, 
+            max_length=25,
             unique=True,
             help_text=_("Use Omang, Passport number, driver's license number or Omang receipt number")
             )
-            
-        identity_type = IdentityTypeField()            
-        
+
+        identity_type = IdentityTypeField()
+
         ...
-        
+
         Use the value of identity_type to check the cleaned value of identity at the form level.
-        
+
     """
 
     description = _("Custom field for Identity Type")
@@ -263,19 +257,11 @@ class IdentityTypeField(CharField):
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
 
-#class MyEncryptedCharField(EncryptedCharField):        
-#    
-#    def get_db_prep_value(self, value):
-#        #if not value.startswith(self.prefix):
-#        #    value = self.prefix + self.crypt.Encrypt(value)
-#        return value
-
 
 class CellPhoneField(CharField):
     """
         Custom field for bw cellphone numuber
     """
-
     description = _("Custom field for Cellphone numuber")
 
     def __init__(self, *args, **kwargs):
@@ -336,6 +322,7 @@ class BloodPressureField(CharField):
         }
         defaults.update(kwargs)
         return super(BloodPressureField, self).formfield(**defaults)
+
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
@@ -343,7 +330,3 @@ class BloodPressureField(CharField):
         field_class = "django.db.models.fields.CharField"
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
-
-
-
-
