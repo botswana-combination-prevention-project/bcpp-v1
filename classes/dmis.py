@@ -465,7 +465,7 @@ class Dmis(BaseDmis):
                             dmis_result_guid=row.result_guid)
                         result_is_modified = True
                         #self._fetch_or_create(ResultSource)
-                        logger.info('    result: created {result_identifier}'.format(result_identifier=result_identifier))
+                        logger.info('    result: created {result_identifier}'.format(result_identifier=result.result_identifier))
             return result, result_is_modified
 
 #            cnxn2 = pyodbc.connect(dmis_data_source)
