@@ -18,7 +18,7 @@ class Result(BaseResult):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        self.subject_identifier = self.order.aliquot.patient.subject_identifier
+        self.subject_identifier = self.order.aliquot.receive.patient.subject_identifier
         self.receive_identifier = self.order.aliquot.receive.receive_identifier
         if not self.result_identifier:
             self.result_identifier = self.get_identifier(self.order)
