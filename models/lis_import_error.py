@@ -10,7 +10,7 @@ class LisImportError(BaseUuidModel):
 
     subject_identifier = models.CharField(max_length=25, null=True)
 
-    error_message = models.CharField(max_length=250)
+    error_message = models.TextField(max_length=250)
 
     objects = models.Manager()
 
