@@ -13,7 +13,7 @@ from lab_result.models import Result
 from lab_result.models import ResultSource
 from lab_result_item.models import ResultItem
 from lab_test_code.models import TestCode, TestCodeGroup
-from lab_common.utils import AllocateResultIdentifier
+#from lab_common.utils import AllocateResultIdentifier
 from lab_aliquot.models import Aliquot
 from lab_aliquot_list.models import AliquotType, AliquotCondition, AliquotMedium
 from lab_patient.models import Patient
@@ -453,9 +453,7 @@ class Dmis(object):
                             result_is_modified = False
                             logger.info('    result: found {result_identifier} (not modified)'.format(result_identifier=result.result_identifier))
                     else:
-                        result_identifier = AllocateResultIdentifier(order)
                         result = Result.objects.using(lab_db).create(
-                            result_identifier=result_identifier,
                             order=order,
                             result_datetime=row.result_datetime,
                             comment='',
