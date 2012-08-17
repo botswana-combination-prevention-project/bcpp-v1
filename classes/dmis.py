@@ -21,6 +21,7 @@ from lab_account.models import Account
 from import_history import ImportHistory
 
 from bhp_research_protocol.models import Protocol, Site, Location
+from base_dmis import BaseDmis
 
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class Dmis(object):
+class Dmis(BaseDmis):
 
     def __init__(self, lab_db, debug=False, **kwargs):
         self.debug = debug
