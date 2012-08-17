@@ -35,7 +35,7 @@ class ResultItem(BaseResultItem):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        self.subject_identifier = self.result.order.aliquot.registered_subject.subject_identifier
+        self.subject_identifier = self.result.order.aliquot.receive.patient.subject_identifier
         self.receive_identifier = self.result.order.aliquot.receive.receive_identifier
         super(ResultItem, self).save(*args, **kwargs)
 
