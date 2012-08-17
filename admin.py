@@ -119,8 +119,9 @@ class ResultItemAdmin(BaseModelAdmin):
         "result_item_operator",
         "grade_range",
         "grade_flag",
-        "reference_flag",
         "reference_range",
+        "reference_flag",
+        'validation_status',
         "created",
         "modified",
         'import_datetime')
