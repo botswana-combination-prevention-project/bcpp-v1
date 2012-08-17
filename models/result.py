@@ -28,7 +28,7 @@ class Result(BaseResult):
         """ Prepares a result_identifier based on order_identifier. """
         cnt = self.__class__.objects.filter(order=order).count()
         cnt += 1
-        return '{order_identifier}-{cnt}'.format(order_identifier=order.order_identifier, cnt=cnt.rjust(2, '0'))
+        return '{order_identifier}-{cnt}'.format(order_identifier=order.order_identifier, cnt=str(cnt).rjust(2, '0'))
 
     def get_absolute_url(self):
         return "/lab_result/result/%s/" % self.id
