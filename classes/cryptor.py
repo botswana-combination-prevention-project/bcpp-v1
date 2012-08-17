@@ -7,6 +7,7 @@ import logging
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+#from django.contrib.auth.models import User
 
 from base_cryptor import BaseCryptor
 
@@ -30,8 +31,9 @@ class Cryptor(BaseCryptor):
     except KeyError:
         KEY_PATH = ''
     # valid algorithms, algorithm modes and the corresponding file
-    # names where the keys are stored
-    VALID_MODES = {
+    # names where the keys are stored.
+    # ..note:: The model :class:`UserProfile` expects this dictionary structure as well
+    _VALID_MODES = {
         # algorithm : {mode: {key:path}}
         'rsa': {'irreversible': {'public': os.path.join(KEY_PATH, 'user-rsa-irreversible-public.pem'),
                                  'salt': os.path.join(KEY_PATH, 'user-rsa-irreversible-salt.key')},
@@ -49,7 +51,7 @@ class Cryptor(BaseCryptor):
                 },
        }
 
-    PRELOADED_KEYS = copy.deepcopy(VALID_MODES)
+    _PRELOADED_KEYS = copy.deepcopy(_VALID_MODES)
     IS_PRELOADED = False
 
     def __init__(self, algorithm, mode=None, **kwargs):
@@ -62,21 +64,21 @@ class Cryptor(BaseCryptor):
         self.algorithm = algorithm
         self.mode = mode
         # check algorithm and mode
-        if self.algorithm not in self.VALID_MODES.keys():
+        if self.algorithm not in self._get_keypaths().keys():
             raise KeyError('Invalid algorithm \'{algorithm}\'. '
                            'Must be one of {keys}'.format(algorithm=self.algorithm,
-                                                          keys=', '.join(self.VALID_MODES.keys())))
+                                                          keys=', '.join(self._get_keypaths().keys())))
         if self.mode:
             if (self.mode not in
-                self.VALID_MODES.get(self.algorithm).iterkeys()):
+                self._get_keypaths().get(self.algorithm).iterkeys()):
                 raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}.'
                                ' Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm,
-                                                           keys=', '.join(self.VALID_MODES.get(self.algorithm).keys())))
+                                                           keys=', '.join(self._get_keypaths().get(self.algorithm).keys())))
         if kwargs.get('preload', True):
             if not self.IS_PRELOADED:
                 self.preload_all_keys()
         else:
-            self.PRELOADED_KEYS = copy.deepcopy(self.VALID_MODES)
+            self._PRELOADED_KEYS = copy.deepcopy(self._get_keypaths())
         super(Cryptor, self).__init__()
 
     def set_public_key(self, keyfile=None, **kwargs):
@@ -97,10 +99,10 @@ class Cryptor(BaseCryptor):
                 raise AttributeError('Algorithm and mode must be set \
                                       before attempting to set the \
                                       public key')
-            keyfile = (self.VALID_MODES.get(algorithm).get(mode)
+            keyfile = (self._get_keypaths().get(algorithm).get(mode)
                                                      .get('public'))
-        if isinstance(self.PRELOADED_KEYS.get(algorithm).get(mode).get('public'), RSA.RSA_pub):
-            self.public_key = (self.PRELOADED_KEYS.get(algorithm).get(mode).get('public'))
+        if isinstance(self._get_preloaded_keypaths().get(algorithm).get(mode).get('public'), RSA.RSA_pub):
+            self.public_key = (self._get_preloaded_keypaths().get(algorithm).get(mode).get('public'))
         else:
             try:
                 self.public_key = RSA.load_pub_key(keyfile)
@@ -116,12 +118,12 @@ class Cryptor(BaseCryptor):
         """ Load the rsa private key and return True, if available, otherwise return False.
 
         'irreversible' does not have a private key so:
-         >>> keyfile = self.VALID_MODES.get(algorithm).get(mode).get('private', None)
+         >>> keyfile = self._get_keypaths().get(algorithm).get(mode).get('private', None)
          >>> keyfile
          >>> None
 
         Keyword Arguments:
-         - algorithm -- rsa, aes (default: no default). 
+         - algorithm -- rsa, aes (default: no default).
          - mode -- the mode dictionary key. For example local (default: no default).
         """
         algorithm = kwargs.get('algorithm', self.algorithm)
@@ -133,10 +135,10 @@ class Cryptor(BaseCryptor):
                 raise AttributeError('Algorithm and mode must be set '
                                      'before attempting to set the '
                                      'private key')
-            keyfile = self.VALID_MODES.get(algorithm).get(mode).get('private', None)
+            keyfile = self._get_keypaths().get(algorithm).get(mode).get('private', None)
         # either load from IS_PRELOADED or from file
-        if isinstance(self.PRELOADED_KEYS.get(algorithm).get(mode).get('private', None), RSA.RSA):
-            self.private_key = (self.PRELOADED_KEYS.get(algorithm).get(mode).get('private', None))
+        if isinstance(self._get_preloaded_keypaths().get(algorithm).get(mode).get('private', None), RSA.RSA):
+            self.private_key = (self._get_preloaded_keypaths().get(algorithm).get(mode).get('private', None))
         else:
             try:
                 if keyfile:
@@ -163,11 +165,11 @@ class Cryptor(BaseCryptor):
         if algorithm != 'aes':
             raise TypeError('Invalid algorithm. Expected \'aes\', Got {0}'.format(algorithm))
         self.has_encryption_key = False
-        if self.PRELOADED_KEYS.get(algorithm).get(mode).get('key') and self.KEY_PATH not in self.PRELOADED_KEYS.get(algorithm).get(mode).get('key'):
-            self.aes_key = self.PRELOADED_KEYS.get(algorithm).get(mode).get('key')
+        if self._get_preloaded_keypaths().get(algorithm).get(mode).get('key') and self.KEY_PATH not in self._get_preloaded_keypaths().get(algorithm).get(mode).get('key'):
+            self.aes_key = self._get_preloaded_keypaths().get(algorithm).get(mode).get('key')
         else:
             try:
-                path = self.VALID_MODES.get(algorithm).get(mode).get('key')
+                path = self._get_keypaths().get(algorithm).get(mode).get('key')
                 f = open(path, 'r')
                 encrypted_aes = f.read()
                 f.close()
@@ -312,10 +314,10 @@ class Cryptor(BaseCryptor):
 
         if not self.is_preloaded_with_keys():
             logger.info('/* Preloading keys ...')
-            for algorithm, mode_dict in self.VALID_MODES.iteritems():
+            for algorithm, mode_dict in self._get_keypaths().iteritems():
                 for mode, key_dict in mode_dict.iteritems():
                     for key_name in key_dict.iterkeys():
-                        self.PRELOADED_KEYS[algorithm][mode][key_name] = load_key(algorithm, mode, key_name)
+                        self._get_preloaded_keypaths()[algorithm][mode][key_name] = load_key(algorithm, mode, key_name)
             # are all keys preloaded now?
             if self.is_preloaded_with_keys('warning: failed to preload {algorithm} {mode} {key_name}'):
                 # run some tests
@@ -338,7 +340,7 @@ class Cryptor(BaseCryptor):
     def _read_encrypted_salt_from_file(self, **kwargs):
         algorithm = kwargs.get('algorithm', None)
         mode = kwargs.get('mode', None)
-        path = self.VALID_MODES.get(algorithm).get(mode).get('salt')
+        path = self._get_keypaths().get(algorithm).get(mode).get('salt')
         try:
             f = open(path, 'r')
             encrypted_salt = f.read()
@@ -351,10 +353,10 @@ class Cryptor(BaseCryptor):
     def get_encrypted_salt(self, algorithm, mode):
         """ Sets and returns the encrypted_salt for the given algorithm and mode.
 
-        Gets from PRELOADED_KEYS or reads from the file but will always reset it."""
-        if (self.PRELOADED_KEYS.get(algorithm).get(mode).get('salt') and
-                self.KEY_PATH not in self.PRELOADED_KEYS.get(algorithm).get(mode).get('salt')):
-            encrypted_salt = self.PRELOADED_KEYS.get(algorithm).get(mode).get('salt')
+        Gets from _get_preloaded_keypaths() or reads from the file but will always reset it."""
+        if (self._get_preloaded_keypaths().get(algorithm).get(mode).get('salt') and
+                self.KEY_PATH not in self._get_preloaded_keypaths().get(algorithm).get(mode).get('salt')):
+            encrypted_salt = self._get_preloaded_keypaths().get(algorithm).get(mode).get('salt')
         else:
             encrypted_salt = self._read_encrypted_salt_from_file(algorithm=algorithm, mode=mode)
         return encrypted_salt
@@ -365,17 +367,17 @@ class Cryptor(BaseCryptor):
         If msg is passed, will run through all keys displaying a message for each
         missing key."""
         preloaded = True
-        for algorithm, mode_dict in self.VALID_MODES.iteritems():
+        for algorithm, mode_dict in self._get_keypaths().iteritems():
             for mode, key_dict in mode_dict.iteritems():
                 for key_name in key_dict.iterkeys():
-                    if not isinstance(self.PRELOADED_KEYS[algorithm][mode][key_name], (RSA.RSA_pub, RSA.RSA, basestring)):
+                    if not isinstance(self._get_preloaded_keypaths()[algorithm][mode][key_name], (RSA.RSA_pub, RSA.RSA, basestring)):
                         preloaded = False
                         if msg:
                             logger.warning(msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
                         else:
                             break
-                    elif isinstance(self.PRELOADED_KEYS[algorithm][mode][key_name], basestring):
-                        if self.KEY_PATH in self.PRELOADED_KEYS[algorithm][mode][key_name]:
+                    elif isinstance(self._get_preloaded_keypaths()[algorithm][mode][key_name], basestring):
+                        if self.KEY_PATH in self._get_preloaded_keypaths()[algorithm][mode][key_name]:
                             preloaded = False
                             if msg:
                                 logger.warning(msg.format(algorithm=algorithm, mode=mode, key_name=key_name))
@@ -417,7 +419,7 @@ class Cryptor(BaseCryptor):
 
         plaintext = '123456789ABCDEFG'
         logger.info('Testing keys...')
-        for algorithm, mode_dict in self.VALID_MODES.iteritems():
+        for algorithm, mode_dict in self._get_keypaths().iteritems():
             for mode in mode_dict.iterkeys():
                 #logger.warning( 'Testing {algorithm} {mode}...'.format(algorithm=algorithm, mode=mode)
                 encrypted_text = _encrypt(self, plaintext, algorithm, mode)
@@ -429,3 +431,17 @@ class Cryptor(BaseCryptor):
                 else:
                     logger.info('(*) Encrypt/Decrypt works for {algorithm} {mode}'.format(algorithm=algorithm, mode=mode))
         logger.info('Testing complete.')
+
+    def _get_keypaths(self):
+        return self.filter_keypaths_for_user(self._VALID_MODES)
+
+    def _get_preloaded_keypaths(self):
+        return self.filter_keypaths_for_user(self._PRELOADED_KEYS)
+
+    def filter_keypaths_for_user(self, key_paths):
+        """Knocks out any paths for keys that the user is not permitted to access as indicated in the user profile."""
+        # ..todo:: TODO: probably use something like Marty Alchin's current user app
+        # to get access to the current user and then their profile
+        # is user profile secure? can the current user edit it?
+        allowed_keypaths = key_paths
+        return allowed_keypaths
