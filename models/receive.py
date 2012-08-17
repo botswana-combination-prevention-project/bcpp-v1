@@ -1,8 +1,8 @@
 from django.db import models
-from lab_receive.managers import ReceiveManager
 from lab_patient.models import Patient
 from bhp_research_protocol.models import Protocol
 from bhp_research_protocol.models import Site
+from lab_receive.classes import ReceiveIdentifier
 from base_receive import BaseReceive
 
 
@@ -20,7 +20,12 @@ class Receive (BaseReceive):
         null=True)
     dmis_reference = models.IntegerField()
 
-    objects = ReceiveManager()
+    objects = models.Manager()
+
+    def save(self, *args, **kwargs):
+        if not self.receive_identifier:
+            self.receive_identifier = ReceiveIdentifier().get_identifier()
+        super(Receive, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return "/lab_receive/receive/%s/" % self.id
