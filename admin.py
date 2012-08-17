@@ -76,12 +76,7 @@ admin.site.register(Review, ReviewAdmin)
 
 class ResultAdmin(BaseModelAdmin):
 
-    def __init__(self, *args, **kwargs):
-        super(ResultAdmin, self).__init__(*args, **kwargs)
-        self.actions.append(recalculate_grading)
-        self.actions.append(flag_as_reviewed)
-        self.actions.append(unflag_as_reviewed)
-
+    actions = [flag_as_reviewed, unflag_as_reviewed]
     form = ResultForm
     search_fields = ("result_identifier", "subject_identifier",
                      "receive_identifier",
@@ -112,7 +107,6 @@ class ResultItemAdmin(BaseModelAdmin):
 
     def __init__(self, *args, **kwargs):
         super(ResultItemAdmin, self).__init__(*args, **kwargs)
-        self.actions.append(recalculate_grading)
 
     form = ResultItemForm
     list_display = (
@@ -137,13 +131,15 @@ class ResultItemAdmin(BaseModelAdmin):
     radio_fields = {
         "result_item_quantifier": admin.VERTICAL,
         "validation_status": admin.VERTICAL}
-    actions = [export_as_csv_action("CSV Export: ...with basic demographics",
-        fields=[],
-        exclude=['id', ],
-        extra_fields=[
-            {'gender': 'result__order__aliquot__receive__registered_subject__gender'},
-            {'dob': 'result__order__aliquot__receive__registered_subject__dob'},
-            ]), ]
+    actions = [
+        export_as_csv_action("CSV Export: (adds subject_identifier, gender, dob",
+            fields=[],
+            exclude=['id', ],
+            extra_fields=[
+                {'gender': 'result__order__aliquot__receive__registered_subject__gender'},
+                {'dob': 'result__order__aliquot__receive__registered_subject__dob'},
+                ]),
+       recalculate_grading, ]
     list_per_page = 35
 
     def get_readonly_fields(self, request, obj):
