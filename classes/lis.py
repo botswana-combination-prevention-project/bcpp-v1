@@ -350,17 +350,19 @@ class Lis(object):
                     subject_identifier='-',
                     error_message=warning)
             except MultipleObjectsReturned as e:
+                warning = 'MultipleObjectsReturned: {0} ({1})'.format(e, warning)
                 LisImportError.objects.get_or_create(
                     model_name=target_cls()._meta.object_name,
                     identifier=getattr(lis_source, target_identifier_name)[0],
                     subject_identifier='-',
-                    error_message=e)
-            except e:
+                    error_message=warning)
+            except Exception as e:
+                warning = 'Exception: {0} ({1})'.format(e, warning)
                 LisImportError.objects.get_or_create(
                     model_name=target_cls()._meta.object_name,
                     identifier=target_identifier_name,
                     subject_identifier='-',
-                    error_message=e)
+                    error_message=warning)
             logger.warning('  {0}'.format(warning))
         else:
             LisImportError.objects.filter(identifier=getattr(target_cls(), target_identifier_name)).delete()
