@@ -343,11 +343,24 @@ class Lis(object):
         Note: so far this is always a receive instance where identifier is the receive_identifier."""
 
         if warning:
-            LisImportError.objects.get_or_create(
-                 model_name=target_cls()._meta.object_name,
-                 identifier=getattr(lis_source, target_identifier_name),
-                 subject_identifier='-',
-                 error_message=warning)
+            try:
+                LisImportError.objects.get_or_create(
+                    model_name=target_cls()._meta.object_name,
+                    identifier=getattr(lis_source, target_identifier_name),
+                    subject_identifier='-',
+                    error_message=warning)
+            except MultipleObjectsReturned as e:
+                LisImportError.objects.get_or_create(
+                    model_name=target_cls()._meta.object_name,
+                    identifier=getattr(lis_source, target_identifier_name)[0],
+                    subject_identifier='-',
+                    error_message=e)
+            except e:
+                LisImportError.objects.get_or_create(
+                    model_name=target_cls()._meta.object_name,
+                    identifier=target_identifier_name,
+                    subject_identifier='-',
+                    error_message=e)
             logger.warning('  {0}'.format(warning))
         else:
             LisImportError.objects.filter(identifier=getattr(target_cls(), target_identifier_name)).delete()
