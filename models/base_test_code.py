@@ -49,8 +49,5 @@ class BaseTestCode(BaseModel):
 
     objects = models.Manager()
 
-    def __unicode__(self):
-        return "%s" % (self.name)
-
     class Meta:
         abstract = True
