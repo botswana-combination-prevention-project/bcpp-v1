@@ -100,8 +100,8 @@ class Lis(object):
                 qset = Q(protocol=protocol)
             else:
                 qset = Q()
-            # start by filtering at the top of the relational mode (receive) and
-            # adding updating anything down the cascade
+            # start by filtering at the top of the relational model with Receive and
+            # adding and/or updating anything down the cascade
             if import_history.last_import_datetime:
                 qset.add((Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime)), Q.AND)
             total = LisReceive.objects.using(self.db).filter(qset).count()
@@ -386,7 +386,7 @@ class Lis(object):
         Will not delete an order that has a result.
 
         The dmis re-identifies orders/results if unvalidated then re-validated. In this case, the EDC
-        will have two order instances and two result instances for a single "result". Only one result instance will have
+        will,, upon import, end up with two order instances and maybe two result instances for a single "result". Only one result instance will have
         resultitem instances. The now orphaned order and result instances have status Pending and New respectively.
         Since they no longer exist in the DMIS, they need to be deleted.
         """
