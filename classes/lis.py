@@ -408,4 +408,4 @@ class Lis(object):
                             order.delete()
                         else:
                             logger.warning('Warning: \'Final\' result items exist for a \'New\' result, cannot remove \'Pending\' order {0}.'.format(order.order_identifier))
-        logger.info('    removed {0} pending orders where a complete order instance exists.'.format(m))
+        logger.info('    removed {0} pending orders.'.format(m))
