@@ -290,11 +290,11 @@ class Lis(object):
         convert_lis_attr = ConvertLisAttr()
         if lis_obj:
             if name == 'panel':
-                obj, created = convert_lis_attr.panel(lis_obj.name)
+                obj, created = convert_lis_attr.panel(lis_obj)
                 if created:
                     logger.info('    created panel {0}'.format(obj.name))
             elif name == 'test_code':
-                obj, created = convert_lis_attr.test_code(lis_obj.name)
+                obj, created = convert_lis_attr.test_code(lis_obj)
                 if created:
                     logger.info('    created test_code {0}'.format(obj.code))
             elif name == 'aliquot_type':
