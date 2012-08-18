@@ -386,7 +386,7 @@ class Lis(object):
         """
         orders = Order.objects.filter(status='Pending').order_by('aliquot__receive__receive_identifier')
         tot = orders.count()
-        logger.info('Have {0} potentially pending orders...'.format(tot))
+        logger.info('Scanning {0} pending orders to be removed if complete ...'.format(tot))
         m = 0
         ri_tot = ResultItem.objects.filter(validation_status__iexact='P').count()
         if ri_tot > 0:
