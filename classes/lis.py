@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from django.db import connection
 from django.db.models import Q
 from django.db.models.fields import NOT_PROVIDED
 from django.core.exceptions import MultipleObjectsReturned
@@ -172,10 +171,7 @@ class Lis(object):
                     modified_results.remove(result.result_identifier)
                     for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
                         self._import_result_item_model(lis_result_item, result)
-
-        # clean up any "New" results that are now "Released" but have different result identifiers
-        # find multiple orders for same receive with same order datetime and panel
-        #self._delete_pending_yet_fufilled_orphans()
+        self.delete_pending_orphans()
         return import_history.finish()
 
     def _import_model(self, lis_source, target_cls, target_identifier_name, exclude_fields, **kwargs):
@@ -382,32 +378,40 @@ class Lis(object):
             modified.append(getattr(instance, identifier_name))
         return modified
 
-#    def _delete_pending_yet_fufilled_orphans(self):
-#        """ Deletes New and Pending where a Complete order and Released result has come in but has different order/result identifiers.
-#
-#        Assumption is that there is only one order for a given receive identifier, order panel and order date.
-#
-#        The dmis re-identifies orders/results if unvalidated then re-validated. In this case, the EDC
-#        will have two order instances and two result instances for a single "result". Only one result instance will have
-#        resultitem instances. The now orphaned order and result instances have status Pending and New respectively.
-#        Since they no longer exist in the DMIS, they need to be deleted.
-#        """
-#orders = Order.objects.filter(status='Pending').order_by('aliquot__receive__receive_identifier')
-#tot = orders.count()
-#print 'Have {0} pending orders.'.format(tot)
-#n = 0
-#for order in orders:
-#    n += 1
-#    #print '{0} / {1} pending {2}'.format(n, tot, order.order_identifier)
-#    if Order.objects.filter(aliquot__receive=order.aliquot.receive, status__iexact='complete'):
-#        results = Result.objects.filter(order__aliquot__receive=order.aliquot.receive, release_status__iexact='new')
-#        if not results:
-#            print '{0} No results with release status New'.format(order.aliquot.receive.receive_identifier)
-#        for result in results:
-#            if not ResultItem.objects.filter(result=result):
-#                print result.result_identifier
-#                print order.order_identifier
-#            else:
-#                print 'Cannot delete, items exist'
-#                    result.delete()
-#                    order.delete()
+    def delete_pending_orphans(self):
+        """ Deletes pending orders where a complete order has come in but with a different order identifier for the same receive, panel and order_idenifier.
+
+        Assumption is that there is only one order for a given receive identifier, order panel and order date.
+
+        Will not delete an order that has a result.
+
+        The dmis re-identifies orders/results if unvalidated then re-validated. In this case, the EDC
+        will have two order instances and two result instances for a single "result". Only one result instance will have
+        resultitem instances. The now orphaned order and result instances have status Pending and New respectively.
+        Since they no longer exist in the DMIS, they need to be deleted.
+        """
+        orders = Order.objects.filter(status='Pending').order_by('aliquot__receive__receive_identifier')
+        tot = orders.count()
+        logger.info('Have {0} pending orders.'.format(tot))
+        m = 0
+        for order in orders:
+            if Order.objects.filter(aliquot__receive=order.aliquot.receive, panel=order.panel, order_datetime=order.order_datetime, status__iexact='complete'):
+                results = Result.objects.filter(order=order)
+                if not results:
+                    # no result so just delete the order.
+                    m += 1
+                    order.delete()
+                else:
+                    for result in results:
+                        # inspect for result items
+                        for result_item in ResultItem.objects.filter(result=result, validation_status='P'):
+                            #delete preliminary result items
+                            result_item.delete()
+                        if not ResultItem.objects.filter(result=result):
+                            # no result items left, so delete the result and order.
+                            m += 1
+                            result.delete()
+                            order.delete()
+                        else:
+                            logger.warning('Warning: \'Final\' result items exist for a \'New\' result, cannot remove \'Pending\' order {0}.'.format(order.order_identifier))
+        logger.info('Removed {0} pending order where a complete order instance exists.')
