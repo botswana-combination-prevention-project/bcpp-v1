@@ -54,6 +54,7 @@ admin.site.register(AliquotCondition, AliquotConditionAdmin)
 
 class PanelAdmin(BaseModelAdmin):
     list_display = ('name', 'edc_name')
+    filter_horizontal = ("test_code", )
 admin.site.register(Panel, PanelAdmin)
 
 
@@ -126,9 +127,11 @@ class ResultItemAdmin(BaseModelAdmin):
         "modified",
         'import_datetime')
     list_filter = ('grade_flag', 'reference_flag', "validation_status", "result_item_datetime", "created", "modified", 'import_datetime', "test_code")
-    search_fields = ('test_code__code', 'result__result_identifier',
+    search_fields = ('test_code__code',
+                     'result__result_identifier',
                      "subject_identifier",
-                     "receive_identifier")
+                     "receive_identifier",
+                     "result_item_value")
     radio_fields = {
         "result_item_quantifier": admin.VERTICAL,
         "validation_status": admin.VERTICAL}

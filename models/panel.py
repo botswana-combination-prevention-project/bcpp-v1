@@ -1,10 +1,13 @@
 from django.db import models
 from lab_panel.models import BasePanel
+from test_code import TestCode
 
 
 class Panel(BasePanel):
 
     edc_name = models.CharField(max_length=50, null=True)
+
+    test_code = models.ManyToManyField(TestCode, null=True, blank=True)
 
     objects = models.Manager()
 

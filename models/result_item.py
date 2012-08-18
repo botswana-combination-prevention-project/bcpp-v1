@@ -39,7 +39,7 @@ class ResultItem(BaseResultItem):
         return unicode(self.test_code)
 
     def to_result(self):
-        return '<a href="/admin/lab_clinic_api/result/?q={result_identifier}">{result_identifier}</a>'.format(result_identifier=self.result.result_identifier)
+        return '<a href="/admin/lab_clinic_api/result/?q={result_identifier}">result</a>'.format(result_identifier=self.result.result_identifier)
     to_result.allow_tags = True
 
     def get_grading_list(self):

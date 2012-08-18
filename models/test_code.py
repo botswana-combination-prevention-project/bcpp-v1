@@ -5,14 +5,14 @@ from test_code_group import TestCodeGroup
 
 class TestCode(BaseTestCode):
 
-    edc_code = models.CharField(max_length=25, null=True)
+    edc_code = models.CharField(max_length=25, null=True, db_index=True)
 
-    edc_name = models.CharField(max_length=50, null=True)
+    edc_name = models.CharField(max_length=50, null=True, db_index=True)
 
     test_code_group = models.ForeignKey(TestCodeGroup, null=True)
 
     def __unicode__(self):
-        return self.code
+        return unicode(self.edc_code)
 
     def save(self, *args, **kwargs):
 
@@ -23,5 +23,5 @@ class TestCode(BaseTestCode):
         super(TestCode, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ["edc_code"]
+        ordering = ["edc_name"]
         app_label = 'lab_clinic_api'

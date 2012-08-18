@@ -32,7 +32,10 @@ class Order(BaseOrder):
     to_receive.allow_tags = True
 
     def to_result(self):
-        return '<a href="/admin/lab_clinic_api/result/?q={order_identifier}">result</a>'.format(order_identifier=self.order_identifier)
+        if self.status.lower() != 'pending':
+            return '<a href="/admin/lab_clinic_api/result/?q={order_identifier}">result</a>'.format(order_identifier=self.order_identifier)
+        else:
+            return ''
     to_result.allow_tags = True
 
     def get_absolute_url(self):
