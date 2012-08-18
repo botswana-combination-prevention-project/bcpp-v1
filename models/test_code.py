@@ -12,7 +12,7 @@ class TestCode(BaseTestCode):
     test_code_group = models.ForeignKey(TestCodeGroup, null=True)
 
     def __unicode__(self):
-        return unicode(self.edc_code)
+        return unicode(self.edc_name)
 
     def save(self, *args, **kwargs):
 

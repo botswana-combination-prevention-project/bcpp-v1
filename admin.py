@@ -60,6 +60,8 @@ admin.site.register(Panel, PanelAdmin)
 
 class TestCodeAdmin(BaseModelAdmin):
     list_display = ('code', 'name', 'edc_code', 'edc_name')
+    list_filter = ('test_code_group', )
+    search_fields = ('code', 'name', 'edc_code', 'edc_name', 'test_code_group')
 admin.site.register(TestCode, TestCodeAdmin)
 
 
@@ -81,7 +83,8 @@ class ResultAdmin(BaseModelAdmin):
     form = ResultForm
     search_fields = ("result_identifier", "subject_identifier",
                      "receive_identifier",
-                     "order__order_identifier")
+                     "order__order_identifier",
+                     'order__panel__name')
     list_display = (
         "result_identifier",
         'report',
