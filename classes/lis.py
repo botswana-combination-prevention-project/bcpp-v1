@@ -392,8 +392,12 @@ class Lis(object):
         """
         orders = Order.objects.filter(status='Pending').order_by('aliquot__receive__receive_identifier')
         tot = orders.count()
-        logger.info('Have {0} pending orders.'.format(tot))
+        logger.info('Have {0} potentially pending orders...'.format(tot))
         m = 0
+        ri_tot = ResultItem.objects.filter(validation_status__iexact='P').count()
+        if ri_tot > 0:
+            ResultItem.objects.filter(validation_status__iexact='P').delete()
+            logger.info('    removed {0} preliminary result items...'.format(ri_tot))
         for order in orders:
             if Order.objects.filter(aliquot__receive=order.aliquot.receive, panel=order.panel, order_datetime=order.order_datetime, status__iexact='complete'):
                 results = Result.objects.filter(order=order)
@@ -403,10 +407,6 @@ class Lis(object):
                     order.delete()
                 else:
                     for result in results:
-                        # inspect for result items
-                        for result_item in ResultItem.objects.filter(result=result, validation_status='P'):
-                            #delete preliminary result items
-                            result_item.delete()
                         if not ResultItem.objects.filter(result=result):
                             # no result items left, so delete the result and order.
                             m += 1
@@ -414,4 +414,4 @@ class Lis(object):
                             order.delete()
                         else:
                             logger.warning('Warning: \'Final\' result items exist for a \'New\' result, cannot remove \'Pending\' order {0}.'.format(order.order_identifier))
-        logger.info('Removed {0} pending order where a complete order instance exists.'.format(m))
+        logger.info('    removed {0} pending orders where a complete order instance exists.'.format(m))
