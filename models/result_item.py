@@ -38,6 +38,12 @@ class ResultItem(BaseResultItem):
     def __unicode__(self):
         return unicode(self.test_code)
 
+    def result_value(self):
+        if self.result_item_value_as_float:
+            return self.result_item_value_as_float
+        else:
+            return self.result_item_value
+
     def to_result(self):
         return '<a href="/admin/lab_clinic_api/result/?q={result_identifier}">result</a>'.format(result_identifier=self.result.result_identifier)
     to_result.allow_tags = True

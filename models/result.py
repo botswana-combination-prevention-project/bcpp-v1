@@ -37,7 +37,10 @@ class Result(BaseResult):
     to_order.allow_tags = True
 
     def to_items(self):
-        return '<a href="/admin/lab_clinic_api/resultitem/?q={result_identifier}">items</a>'.format(result_identifier=self.result_identifier)
+        if self.release_status == 'New':
+            return None
+        else:
+            return '<a href="/admin/lab_clinic_api/resultitem/?q={result_identifier}">items</a>'.format(result_identifier=self.result_identifier)
     to_items.allow_tags = True
 
     def review_status(self):
