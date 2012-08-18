@@ -13,9 +13,10 @@ from lab_result.models import Result as LisResult
 from lab_result_item.models import ResultItem as LisResultItem
 from bhp_registration.models import RegisteredSubject
 from lab_clinic_api.models import Receive, Aliquot, Order, Result, ResultItem
-from lab_clinic_api.models import Panel, TestCode, AliquotType, AliquotCondition, TestCodeGroup
+from lab_clinic_api.models import AliquotType, AliquotCondition
 from lab_import_lis.models import LisImportError
 from import_history import ImportHistory
+from convert_lis_attr import ConvertLisAttr
 
 
 logger = logging.getLogger(__name__)
@@ -145,7 +146,7 @@ class Lis(object):
                                             for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier, validation_status='F'):
                                                 # only importing where validation_status='F'.
                                                 self._import_result_item_model(lis_result_item, result)
-            # update any left in the modified lists that was not covered
+            # update any left in the modified lists that were not included above
             # since the receive record was not modified
             logger.info('Checking for data modified after the receiving instances...')
             logger.info('    Aliquots...')
@@ -286,21 +287,14 @@ class Lis(object):
 
     def _get_or_create_list_field_instance(self, name, lis_obj):
         obj = None
+        convert_lis_attr = ConvertLisAttr()
         if lis_obj:
             if name == 'panel':
-                obj, created = Panel.objects.get_or_create(name=lis_obj.name)
+                obj, created = convert_lis_attr.panel(lis_obj.name)
                 if created:
                     logger.info('    created panel {0}'.format(obj.name))
             elif name == 'test_code':
-                obj, created = TestCode.objects.get_or_create(code=lis_obj.code)
-                if created:
-                    for field in obj._meta.fields:
-                        if field.name in [fld.name for fld in lis_obj._meta.fields if fld.name not in ['id', 'code', 'test_code_group']]:
-                            setattr(obj, field.name, getattr(lis_obj, field.name))
-                        if field.name == 'test_code_group':
-                            test_code_group, x = TestCodeGroup.objects.get_or_create(name=lis_obj.test_code_group.name, code=lis_obj.test_code_group.code)
-                            setattr(obj, field.name, test_code_group)
-                    obj.save()
+                obj, created = convert_lis_attr.test_code(lis_obj.name)
                 if created:
                     logger.info('    created test_code {0}'.format(obj.code))
             elif name == 'aliquot_type':
