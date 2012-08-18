@@ -37,7 +37,7 @@ class Result(BaseResult):
     to_order.allow_tags = True
 
     def to_items(self):
-        if self.release_status == 'New':
+        if self.release_status.lower() == 'new':
             return None
         else:
             return '<a href="/admin/lab_clinic_api/resultitem/?q={result_identifier}">items</a>'.format(result_identifier=self.result_identifier)
