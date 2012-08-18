@@ -7,9 +7,6 @@ class TestCode(BaseTestCode):
 
     test_code_group = models.ForeignKey(TestCodeGroup)
 
-    def __unicode__(self):
-        return "%s" % (self.name)
-
     class Meta:
         ordering = ['name']
         app_label = 'lab_test_code'
