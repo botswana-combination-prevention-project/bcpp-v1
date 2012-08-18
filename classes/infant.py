@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.forms import ValidationError
 from django.db.models import get_model
-from bhp_identifier.models import SubjectIdentifier, DerivedSubjectIdentifier
+from bhp_identifier.models import SubjectIdentifier
 from base_identifier import BaseIdentifier
 
 
@@ -44,7 +44,6 @@ class Infant(BaseIdentifier):
         birth_order = kwargs.get('birth_order')
         live_infants = kwargs.get('live_infants')
         live_infants_to_register = kwargs.get('live_infants_to_register')
-
         # maternal identifier should exist in SubjectIdentifier
         maternal_identifier = kwargs.get('maternal_identifier')
         if not SubjectIdentifier.objects.filter(identifier=maternal_identifier):
@@ -67,8 +66,7 @@ class Infant(BaseIdentifier):
             identifier_format="{maternal_identifier}-{suffix}",
             subject_type='infant',
             live_infants=kwargs.get('live_infants'),
-            live_infants_to_register=kwargs.get('live_infants_to_register'),
-            )
+            live_infants_to_register=kwargs.get('live_infants_to_register'))
         return options
 
     def get_identifier_post(self, new_identifier, **kwargs):
@@ -84,8 +82,7 @@ class Infant(BaseIdentifier):
                 initials='',
                 registration_status='registered',
                 relative_identifier=kwargs.get('maternal_identifier'),
-                study_site=kwargs.get('maternal_study_site'),
-                )
+                study_site=kwargs.get('maternal_study_site'))
 
     def _get_suffix(self, birth_order, live_infants):
         """ Returns a suffix for the identifier."""
@@ -122,8 +119,7 @@ class Infant(BaseIdentifier):
                 initials='',
                 registration_status='registered',
                 relative_identifier=maternal_identifier,
-                study_site=maternal_study_site,
-                )
+                study_site=maternal_study_site)
         if len(identifier) == 1:
             return identifier[0]
         else:

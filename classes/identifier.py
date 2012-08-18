@@ -140,12 +140,9 @@ class Identifier(object):
         self.modulus = 7
         self.has_check_digit = False
         self.counter = 0
-
         self.site_code = kwargs.get('site_code', '')
         self.protocol_code = kwargs.get('protocol_code', '')
-
         self.given_root_segment = kwargs.get('root_segment', '')
-
         # padding length for counter segment of un-encoded identifier
         # this will affect total number of unique identifiers for the
         # current root_segement, e.g. 4 => 0-9999. (If root_segement
@@ -153,7 +150,6 @@ class Identifier(object):
         # if counter_length == 0, will not add a counter_segment
         self.counter_length = kwargs.get('counter_length', 5)
         self.counter_segment = CounterSegmentDescriptor(self.counter_length, self.pad_char)
-
         self.identifier_type = kwargs.get('identifier_type', 'unknown')
         self.identifier_tracker = None
         self.identifier = None
@@ -164,28 +160,20 @@ class Identifier(object):
 
     def create(self):
         """Create a new identifier based on the given site_code"""
-
         # root segement length is site_code + protocol_code + 4 (MMYY)
         self.root_length = len(self.site_code) + len(self.protocol_code) + 4
         self.root_segment = RootSegmentDescriptor(self.root_length)
-
         self.set_root_segment()
-
         #before encoding, increment counter for this root_segment and create an IdentifierTracker record
         self.increment()
-
         # put together a string for encoding
         self.set_identifier_string()
-
         # encode the string
         self.encode()
-
         # update the IdentifierTracker record created when you incremented the counter
         self.update_tracker()
-
         # flag as created (in case you call next())
         self.created = True
-
         return self.identifier
 
     def create_with_root(self, given_root_segment, counter_length=0):
@@ -194,30 +182,23 @@ class Identifier(object):
         with or without a counter segment depending on the value of
         counter_length.
         """
-
         given_root_segment = str(given_root_segment)
         self.counter_length = counter_length
         self.root_length = len(given_root_segment)
         self.root_segment = RootSegmentDescriptor(self.root_length)
         self.root_segment = given_root_segment
-
         #before encoding, increment counter for this root_segment and create an
         #IdentifierTracker record
         self.increment()
-
         # put together a string for encoding
         self.set_identifier_string()
-
         # encode the string
         self.encode()
-
         # update the IdentifierTracker record created when you incremented
         # the counter
         self.update_tracker()
-
         # flag as created (in case you call next())
         self.created = True
-
         return self.identifier
 
     def lock(self):
@@ -231,17 +212,14 @@ class Identifier(object):
         """ add check_digit using the final identifier_string """
         if not number:
             number = int(self.identifier_string)
-
         return number % self.modulus
 
     def is_valid(self, identifier=None, encoded=True):
         """Returns True if modulus of encoded/decoded identifier
         (less last digit) equals the check_digit (last digit).
         """
-
         if not identifier:
             identifier = self.identifier
-
         if encoded:
             x = self.decode(identifier)
         else:
@@ -250,16 +228,13 @@ class Identifier(object):
             x = identifier
 
         check_digit = int(str(x)[-1])
-
         x = int(str(x)[0:-1])
-
         return x % self.modulus == check_digit
 
     def increment(self):
 
         """Increment last counter by 1 using last counter (or None) from IdentifierTracker model 
            for given root_segment and create a new IdentifierTracker record."""
-
         if self.counter_length == 0:
             self.counter = 0
         else:
@@ -270,7 +245,6 @@ class Identifier(object):
                 self.unlock()
             else:
                 self.counter = 1
-
         try:
             # create record, we'll update with the identifier later
             self.identifier_tracker = IdentifierTracker(
@@ -285,7 +259,6 @@ class Identifier(object):
             self.unlock()
             self.counter = 0
             raise TypeError('Failed to save() to IdentifierTracker table, your identifier was not created. Is it unique?')
-
         self.set_counter_segment()
 
     def update_tracker(self):
@@ -315,16 +288,12 @@ class Identifier(object):
     def encode(self, number=None, has_check_digit=False, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 
         #coder = Coder()
-
         #coder.encode(number, has_check_digit, alphabet )
-
         """Convert positive integer to a base36 string."""
-
         # access internally as encode()
         # access and pass a number to encode, check_digit not part of the number
         # access and pass a number to encode, which includes a check_digit
         # always add check_digit (or add it back) before encoding
-
         if number:
             self.identifier_string = number
             # is last digit a check digit?
@@ -336,27 +305,21 @@ class Identifier(object):
                 else:
                     # no
                     raise ValueError('Invalid identifier. Last digit should be %s which is the modulus %s of %s, Got %s' % (int(str(number)[0:-1]) % self.modulus, self.modulus, str(number)[0:-1], str(number)[-1]))
-
         # we don't store the check_digit as part of the identifier_string, so add it back
         number = int(self.identifier_string + str(self.check_digit()))
-
         if not isinstance(number, (int, long)):
             raise TypeError('number must be an integer')
-
         # Special case for zero
         if number == 0:
             return alphabet[0]
-
         base36 = ''
         sign = ''
         if number < 0:
             sign = '-'
             number = -number
-
         while number != 0:
             number, i = divmod(number, len(alphabet))
             base36 = alphabet[i] + base36
-
         self.identifier = sign + base36
         return self.identifier
 
@@ -365,9 +328,7 @@ class Identifier(object):
         if base36:
             self.has_check_digit = has_check_digit
             self.identifier = base36
-
         decoded_number = str(int(self.identifier, 36))
-
         if self.has_check_digit:
             # assume last digit is the check digit
             if int(decoded_number[0:-1]) % self.modulus == int(decoded_number[-1]):
@@ -377,5 +338,4 @@ class Identifier(object):
                                  'Invalid identifier. Last digit should be {0} which is the modulus {1} of {2}, Got {3}'.format(decoded_number[0:-1] % self.modulus, self.modulus, decoded_number[0:-1], decoded_number[-1]))
         else:
             self.identifier_string = decoded_number
-
         return self.identifier_string
