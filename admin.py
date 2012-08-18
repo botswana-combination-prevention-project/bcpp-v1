@@ -116,7 +116,8 @@ class ResultItemAdmin(BaseModelAdmin):
     list_display = (
         "test_code",
         "result",
-        "result_value",
+        "result_item_value",
+        "result_item_value_as_float",
         "result_item_quantifier",
         "result_item_datetime",
         "to_result",
