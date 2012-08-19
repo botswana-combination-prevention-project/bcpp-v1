@@ -44,7 +44,7 @@ class History(object):
                                                                         defaults=defaults)
             if not created:
                 if result_item.result:
-                    history_model.value = result_item.result
+                    history_model.value = result_item.result_item_value
                     history_model.save()
         return test_key
 
