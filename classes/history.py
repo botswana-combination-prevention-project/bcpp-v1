@@ -4,18 +4,25 @@ from lab_longitudinal.models import HistoryModel
 
 class History(object):
 
+    def __init__(self):
+        self.value_map = self._get_value_map()
+
     def get(self, subject_identifier):
         test_key = self._update(subject_identifier)
         return [l.value for l in HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=test_key).order_by('value_datetime')]
 
     def get_prep(self):
-        """Returns a tuple of test_code, test_key where test_code may be a list.
+        """Returns a tuple of (test_code, test_key) where test_code may be a list.
 
-        Users should override."""
-        return (None, None)
+        This method defines:
+          test_code: a list of test_codes to search for in :class:`ResultItem`.
+          test_key: the common key for all instances of the HistoryModel for the subclass.
+
+        Users should override this."""
+        return ([], None)
 
     def update_prep(self, subject_identifier, test_key):
-        """ Updates the LongitudinalHistoryModel if the user has other sources to include.
+        """ Updates the HistoryModel if the user has other sources to include.
 
         Users may override."""
         pass
@@ -23,18 +30,58 @@ class History(object):
     def _update(self, subject_identifier):
         """Updates the HistoryModel with the subject's values."""
         test_code, test_key = self.get_prep()
+        if not test_key:
+            raise TypeError('Parameter \'test_key\' cannot be None. See method get_prep().')
         if not isinstance(test_code, list):
             test_code = [test_code]
         self.update_prep(subject_identifier, test_key)
         for result_item in ResultItem.objects.filter(result__subject_identifier=subject_identifier, test_code__code__in=test_code):
             defaults = {'value': result_item.result}
-            longitudinal_history_model, created = HistoryModel.objects.get_or_create(subject_identifier=subject_identifier,
-                                                                                           test_key=test_key,
-                                                                                           test_code=result_item.test_code.code,
-                                                                                           value_datetime=result_item.assay_datetime,
-                                                                                           defaults=defaults)
+            history_model, created = HistoryModel.objects.get_or_create(subject_identifier=subject_identifier,
+                                                                        test_key=test_key,
+                                                                        test_code=result_item.test_code.code,
+                                                                        value_datetime=result_item.result_item_datetime,
+                                                                        defaults=defaults)
             if not created:
                 if result_item.result:
-                    longitudinal_history_model.value = result_item.result
-                    longitudinal_history_model.save()
+                    history_model.value = result_item.result
+                    history_model.save()
         return test_key
+
+    def get_value_map_prep(self):
+        """Returns a dictionary that may be used to map values for storage in the :class:`HistoryModel` to value formats used in :class:`ResultItem` model.
+
+        Format {given this value: store this value}.
+
+        This is useful if update_prep adds results that are not described in the same format as the :class:`ResultItem` model.
+
+        For example:
+            {'A': 'POS', 'B': NEG} will store POS and NEG given A, B. POS, NEG is how it is stored in the :class:`ResultItem` model.
+        Also, the map is inverted to generate a string of values using this map returning 'AB' instead of 'POSNEG'.
+
+        Users may override."""
+        return {}
+
+    def _get_value_map(self):
+        """Gets and returns a value_map if one has been defined."""
+        return self.get_value_map_prep()
+
+    def get_as_string(self, subject_identifier, mapped=True):
+        """Returns a subject's qualitative values joined as a string in chronological order.
+
+        If mapped is True and a value_map is defined, map is inverted and a string of values is generated from the map."""
+        if not self.value_map:
+            mapped = False
+        retlst = []
+        inv_value_map = {}
+        lst = self.get(subject_identifier)
+        if mapped:
+            for k, v in self.value_map.iteritems():
+                inv_value_map[v] = inv_value_map.get(v, [])
+                inv_value_map[v].append(k)
+        for l in lst:
+            if mapped:
+                retlst.append(inv_value_map[l][0].lower())
+            else:
+                retlst.append(l)
+        return ''.join(retlst)
