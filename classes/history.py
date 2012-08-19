@@ -36,7 +36,7 @@ class History(object):
             test_code = [test_code]
         self.update_prep(subject_identifier, test_key)
         for result_item in ResultItem.objects.filter(result__subject_identifier=subject_identifier, test_code__code__in=test_code):
-            defaults = {'value': result_item.result}
+            defaults = {'value': result_item.result_item_value}
             history_model, created = HistoryModel.objects.get_or_create(subject_identifier=subject_identifier,
                                                                         test_key=test_key,
                                                                         test_code=result_item.test_code.code,
