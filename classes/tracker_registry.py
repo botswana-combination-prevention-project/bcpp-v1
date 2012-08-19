@@ -12,7 +12,7 @@ class NotRegistered(Exception):
     pass
 
 
-class Registry(object):
+class TrackerRegistry(object):
 
     def __init__(self):
         self._registry = {}
@@ -34,11 +34,11 @@ class Registry(object):
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             try:
-                before_import_registry = copy.copy(lab_tracker._registry)
+                before_import_registry = copy.copy(tracker._registry)
                 import_module('%s.lab_tracker' % app)
             except:
-                lab_tracker._registry = before_import_registry
-                if module_has_submodule(mod, 'lab_tracker'):
+                tracker._registry = before_import_registry
+                if module_has_submodule(mod, 'tracker'):
                     raise
 
-lab_tracker = Registry()
+tracker = TrackerRegistry()

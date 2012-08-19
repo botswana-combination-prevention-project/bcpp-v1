@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'HistoryModel'
-        db.create_table('lab_longitudinal_historymodel', (
+        db.create_table('lab_tracker_historymodel', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
@@ -22,16 +22,16 @@ class Migration(SchemaMigration):
             ('value', self.gf('django.db.models.fields.CharField')(max_length=25)),
             ('value_datetime', self.gf('django.db.models.fields.DateTimeField')()),
         ))
-        db.send_create_signal('lab_longitudinal', ['HistoryModel'])
+        db.send_create_signal('lab_tracker', ['HistoryModel'])
 
 
     def backwards(self, orm):
         # Deleting model 'HistoryModel'
-        db.delete_table('lab_longitudinal_historymodel')
+        db.delete_table('lab_tracker_historymodel')
 
 
     models = {
-        'lab_longitudinal.historymodel': {
+        'lab_tracker.historymodel': {
             'Meta': {'object_name': 'HistoryModel'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
@@ -47,4 +47,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['lab_longitudinal']
+    complete_apps = ['lab_tracker']

@@ -9,18 +9,18 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding field 'HistoryModel.test_key'
-        db.add_column('lab_longitudinal_historymodel', 'test_key',
+        db.add_column('lab_tracker_historymodel', 'test_key',
                       self.gf('django.db.models.fields.CharField')(default='0', max_length=25),
                       keep_default=False)
 
 
     def backwards(self, orm):
         # Deleting field 'HistoryModel.test_key'
-        db.delete_column('lab_longitudinal_historymodel', 'test_key')
+        db.delete_column('lab_tracker_historymodel', 'test_key')
 
 
     models = {
-        'lab_longitudinal.historymodel': {
+        'lab_tracker.historymodel': {
             'Meta': {'object_name': 'HistoryModel'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
@@ -37,4 +37,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['lab_longitudinal']
+    complete_apps = ['lab_tracker']
