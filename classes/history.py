@@ -9,7 +9,31 @@ class History(object):
 
     def get(self, subject_identifier):
         test_key = self._update(subject_identifier)
-        return [l.value for l in HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=test_key).order_by('value_datetime')]
+        return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=test_key).order_by('value_datetime')
+
+    def get_as_list(self, subject_identifier):
+        queryset = self.get(subject_identifier)
+        return [qs.value for qs in queryset]
+
+    def get_as_string(self, subject_identifier, mapped=True):
+        """Returns a subject's qualitative values joined as a string in chronological order.
+
+        If mapped is True and a value_map is defined, map is inverted and a string of values is generated from the map."""
+        if not self.value_map:
+            mapped = False
+        retlst = []
+        inv_value_map = {}
+        lst = self.get_as_list(subject_identifier)
+        if mapped:
+            for k, v in self.value_map.iteritems():
+                inv_value_map[v] = inv_value_map.get(v, [])
+                inv_value_map[v].append(k)
+        for l in lst:
+            if mapped:
+                retlst.append(inv_value_map[l][0].lower())
+            else:
+                retlst.append(l)
+        return ''.join(retlst)
 
     def get_prep(self):
         """Returns a tuple of (test_code, test_key) where test_code may be a list.
@@ -66,22 +90,3 @@ class History(object):
         """Gets and returns a value_map if one has been defined."""
         return self.get_value_map_prep()
 
-    def get_as_string(self, subject_identifier, mapped=True):
-        """Returns a subject's qualitative values joined as a string in chronological order.
-
-        If mapped is True and a value_map is defined, map is inverted and a string of values is generated from the map."""
-        if not self.value_map:
-            mapped = False
-        retlst = []
-        inv_value_map = {}
-        lst = self.get(subject_identifier)
-        if mapped:
-            for k, v in self.value_map.iteritems():
-                inv_value_map[v] = inv_value_map.get(v, [])
-                inv_value_map[v].append(k)
-        for l in lst:
-            if mapped:
-                retlst.append(inv_value_map[l][0].lower())
-            else:
-                retlst.append(l)
-        return ''.join(retlst)
