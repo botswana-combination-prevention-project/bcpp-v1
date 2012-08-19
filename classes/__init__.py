@@ -1,1 +1,1 @@
-from longitudinal_history_controller import LongitudinalHistory, longitudinal_history
+from history import History

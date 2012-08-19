@@ -1,1 +1,1 @@
-from history import History
+from history_model import HistoryModel
