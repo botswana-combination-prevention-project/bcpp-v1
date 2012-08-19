@@ -6,6 +6,8 @@ class HistoryModel(BaseUuidModel):
 
     subject_identifier = models.CharField(max_length=25)
 
+    test_key = models.CharField(max_length=25)
+
     test_code = models.CharField(max_length=25)
 
     value = models.CharField(max_length=25)
