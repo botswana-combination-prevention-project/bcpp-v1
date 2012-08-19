@@ -21,7 +21,7 @@ class History(object):
         pass
 
     def _update(self, subject_identifier):
-        """Updates the HistoryModel with the subjects values."""
+        """Updates the HistoryModel with the subject's values."""
         test_code, test_key = self.get_prep()
         if not isinstance(test_code, list):
             test_code = [test_code]

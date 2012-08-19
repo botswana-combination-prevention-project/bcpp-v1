@@ -14,7 +14,12 @@ class HistoryModel(BaseUuidModel):
 
     value_datetime = models.DateTimeField()
 
+    current = models.CharField(max_length=50, null=True)
+
     objects = models.Manager()
+
+#    def save(self, *args, **kwargs):
+#        super(HistoryModel, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'lab_longitudinal'
