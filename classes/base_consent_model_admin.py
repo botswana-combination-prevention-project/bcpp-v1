@@ -49,7 +49,6 @@ class BaseConsentModelAdmin(BaseModelAdmin):
         'is_dob_estimated',
         'identity',
         'identity_type',
-        'confirm_identity',
         'may_store_samples',
         'comment',
         ]
