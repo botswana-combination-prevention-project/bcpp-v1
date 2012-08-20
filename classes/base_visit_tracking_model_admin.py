@@ -67,8 +67,6 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
 
         self.actions.append(update_entry_bucket_rules)
 
-
-
     def save_model(self, request, obj, form, change):
 
         if not self.visit_model:
@@ -120,54 +118,17 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
                                                                      'visit_code': unicode(visit_code)})
         return result
 
-#    def delete_view(self, request, object_id, extra_context=None):
-#
-#        kwargs = {}
-#        next_url = None
-#        if self.dashboard_type:
-#            kwargs = {'dashboard_type': self.dashboard_type}
-#            next_url_name = 'dashboard_url'
-#            try:
-#                #try for subject_identifier, registered_subject or a visit_model
-#                if 'registered_subject' in [field.attname for field in self.model._meta.fields]:
-#                    kwargs['registered_subject'] = self.model.objects.get(pk=object_id).registered_subject.pk
-#                elif 'visit_model' in dir(self) and 'visit_fieldname' in dir(self):
-#                    next_url_name = 'dashboard_visit_url'
-#                    field_name = self.visit_fieldname
-#                    visit_model_instance = getattr(self.model.objects.get(pk=object_id), field_name)
-#                    kwargs['subject_identifier'] = visit_model_instance.appointment.registered_subject.subject_identifier
-#                    kwargs[self.visit_fieldname] = visit_model_instance.pk
-#                    kwargs['visit_vode'] = visit_model_instance.visit_definition.code
-#                    kwargs['visit_instance'] = visit_model_instance.visit_instance
-#                #elif 'subject_identifier' in [field.attname for field in self.model._meta.fields]:
-#                #    kwargs['registered_subject'] = visit_model_instance.appointment.registered_subject.pk
-#                else:
-#                    pass
-#                next_url = reverse(next_url_name, kwargs=kwargs)
-#            except NoReverseMatch:
-#                print 'warning: delete_view failed to reverse \'{0}\' with kwargs {1}'.format(next_url_name, kwargs)
-#                next_url = None
-#                pass
-#            except:
-#                raise
-#        result = super(BaseModelAdmin, self).delete_view(request, object_id, extra_context)
-#        if next_url:
-#            result['Location'] = next_url
-#
-#        return result
-
-
-
     #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
 
         visit_model_helper = VisitModelHelper()
         if db_field.name == visit_model_helper.get_visit_field(model=self.model, visit_model=self.visit_model):
-            kwargs["queryset"] = visit_model_helper.set_visit_queryset(
+            if not request.GET.get('subject_identifier', None):
+                raise TypeError('Subject identifier cannot be none when accessing {0}.'.format(db_field.name))
+            kwargs["queryset"] = visit_model_helper.set_visit_queryset(pk=request.GET.get(db_field.name, None),
                                                             subject_identifier=request.GET.get('subject_identifier', 0),
                                                             visit_code=request.GET.get('visit_code', 0),
-                                                            visit_instance=request.GET.get('visit_instance', 0),
-                                                            )
+                                                            visit_instance=request.GET.get('visit_instance', 0))
 
         return super(BaseVisitTrackingModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 

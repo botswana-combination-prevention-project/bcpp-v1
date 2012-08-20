@@ -26,7 +26,11 @@ class VisitModelHelper(object):
         self.subject_identifier = kwargs.get('subject_identifier')
         self.visit_code = kwargs.get('visit_code')
         self.visit_instance = kwargs.get('visit_instance')
-        return self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier,
+        pk = kwargs.get('pk')
+        if pk:
+            return self.visit_model.objects.filter(pk=pk)
+        else:
+            return self.visit_model.objects.filter(appointment__registered_subject__subject_identifier=self.subject_identifier,
                                                     appointment__visit_definition__code=self.visit_code,
                                                     appointment__visit_instance=self.visit_instance,
                                                     )
