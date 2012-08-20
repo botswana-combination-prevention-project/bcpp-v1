@@ -6,14 +6,13 @@ from bhp_crypto.utils import mask_encrypted
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
-from bhp_identifier.classes import SubjectIdentifier
 from bhp_subject.classes import BaseSubject
 from consented_subject_identifier import ConsentedSubjectIdentifier
 
 
 class BaseConsent(BaseSubject):
 
-    """ consents should be subclasses of this """
+    """ Consent models should be subclasses of this """
 
     study_site = models.ForeignKey(StudySite,
         verbose_name='Site',

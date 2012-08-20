@@ -1,5 +1,4 @@
 from django.db.models import get_model
-#from bhp_registration.models import RegisteredSubject
 from bhp_identifier.classes import SubjectIdentifier
 
 
