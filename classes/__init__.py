@@ -1,4 +1,3 @@
 from base_consent import BaseConsent
-#from consent_descriptor import ConsentDescriptor
-#from base_consent_model_admin import BaseConsentModelAdmin
-from base_subject_consent_model_admin import BaseSubjectConsentModelAdmin
+from base_consent_model_admin import BaseConsentModelAdmin
+from base_key_to_consent_model_admin import BaseKeyToConsentModelAdmin
