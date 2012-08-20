@@ -33,6 +33,8 @@ class RegisteredSubjectManager(models.Manager):
                 registered_subject = super(RegisteredSubjectManager, self).get(**{attrname: value})
         if registered_subject:
             # update an existing registered_subject
+            if not registered_subject.subject_identifier:
+                registered_subject.subject_identifier = getattr(instance, attrname)
             registered_subject.user_modified = instance.user_modified
             registered_subject.modified = datetime.today()
             registered_subject.first_name = instance.first_name
