@@ -12,7 +12,7 @@ class NotRegistered(Exception):
     pass
 
 
-class TrackerRegistry(object):
+class SiteTracker(object):
 
     def __init__(self):
         self._registry = {}
@@ -20,7 +20,7 @@ class TrackerRegistry(object):
     def register(self, model_cls, history):
         if model_cls._meta.object_name in self._registry.keys():
             if self._registry[model_cls._meta.object_name] == (model_cls, history):
-                raise AlreadyRegistered('The class %s is already registered' % model_cls.__name__)
+                raise AlreadyRegistered('The class %s is already registered' % model_cls._meta.object_name)
         self._registry[model_cls._meta.object_name] = (model_cls, history)
         print self._registry
 
@@ -35,10 +35,10 @@ class TrackerRegistry(object):
             mod = import_module(app)
             try:
                 before_import_registry = copy.copy(tracker._registry)
-                import_module('%s.lab_tracker' % app)
+                import_module('%s.tracker' % app)
             except:
                 tracker._registry = before_import_registry
                 if module_has_submodule(mod, 'tracker'):
                     raise
 
-tracker = TrackerRegistry()
+tracker = SiteTracker()
