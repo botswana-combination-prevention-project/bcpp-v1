@@ -22,7 +22,6 @@ class SiteTracker(object):
             if self._registry[model_cls._meta.object_name] == (model_cls, history):
                 raise AlreadyRegistered('The class %s is already registered' % model_cls._meta.object_name)
         self._registry[model_cls._meta.object_name] = (model_cls, history)
-        print self._registry
 
     def get(self, key):
         return self._registry.get(key)
