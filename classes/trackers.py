@@ -13,7 +13,7 @@ class NotRegistered(Exception):
 
 
 class SiteTracker(object):
-
+    """Registers tuples of (model_cls, history) from modules with a tracker module (tracker.py)."""
     def __init__(self):
         self._registry = {}
 
@@ -39,5 +39,5 @@ class SiteTracker(object):
                 tracker._registry = before_import_registry
                 if module_has_submodule(mod, 'tracker'):
                     raise
-
+# A global to contain all tracker instances from modules
 tracker = SiteTracker()
