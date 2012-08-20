@@ -2,8 +2,8 @@ Models
 ======
 
 .. automodule:: bhp_identifier.models
-   :members:
-    
+   :members:  
+ 
 .. autoclass:: SubjectIdentifier
    :members:
     

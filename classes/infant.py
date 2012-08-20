@@ -11,7 +11,7 @@ class Infant(BaseIdentifier):
     during this registration session and their birth order and returns a dictionary {infant order: identifier}.
 
     Usage::
-        >>>if not change:
+        >>> if not change:
         >>>    obj.user_created = request.user
         >>>    obj.save()
         >>>    if obj.live_infants_to_register > 0:

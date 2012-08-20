@@ -8,13 +8,15 @@ class BaseIdentifierModel(BaseModel):
     Will not include identifiers derived from other identifiers, for example, infant and partner
     identifiers are not included in this model.
 
-    To populate for an EDC already in use, for example:
-
-        >>>for rs in RegisteredSubject.objects.filter(subject_type='maternal').order_by('created'):
+    To populate for an EDC already in use, for example::
+        >>> for rs in RegisteredSubject.objects.filter(subject_type='maternal').order_by('created'):
+        >>>    SubjectIdentifier.objects.create(identifier=rs.subject_identifier, seed='1000')
+        >>> # or ##############
+        >>> for rs in RegisteredSubject.objects.filter(subject_type='subject',
+        >>>                                            subject_identifier__isnull=False).order_by('created'):
         >>>    SubjectIdentifier.objects.create(identifier=rs.subject_identifier, seed='1000')
 
-    If there are records in SubjectIdentifier, delete them and reset the autoincrement like this:
-
+    If there are records in SubjectIdentifier, delete them and reset the autoincrement like this::
         >>> ALTER TABLE `bhp_identifier_subjectidentifier` AUTO_INCREMENT = 1;
     """
 

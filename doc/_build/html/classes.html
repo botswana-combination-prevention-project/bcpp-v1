@@ -57,15 +57,160 @@
   <div class="section" id="module-bhp_identifier.classes">
 <span id="classes"></span><h1>Classes<a class="headerlink" href="#module-bhp_identifier.classes" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="bhp_identifier.classes.Subject">
-<em class="property">class </em><tt class="descclassname">bhp_identifier.classes.</tt><tt class="descname">Subject</tt><a class="headerlink" href="#bhp_identifier.classes.Subject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.base.Base</span></tt></p>
-<p>Create the subject identifier by calling get_identifier()</p>
+<dt id="bhp_identifier.classes.BaseIdentifierModel">
+<em class="property">class </em><tt class="descclassname">bhp_identifier.classes.</tt><tt class="descname">BaseIdentifierModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_model.BaseModel</span></tt></p>
+<p>Store identifiers as allocated and use the pk as a unique sequence for the new identifier.</p>
+<p>Will not include identifiers derived from other identifiers, for example, infant and partner
+identifiers are not included in this model.</p>
+<dl class="docutils">
+<dt>To populate for an EDC already in use, for example::</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">rs</span> <span class="ow">in</span> <span class="n">RegisteredSubject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">subject_type</span><span class="o">=</span><span class="s">&#39;maternal&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;created&#39;</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">SubjectIdentifier</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">rs</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="s">&#39;1000&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># or ##############</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">rs</span> <span class="ow">in</span> <span class="n">RegisteredSubject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">subject_type</span><span class="o">=</span><span class="s">&#39;subject&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                           <span class="n">subject_identifier__isnull</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;created&#39;</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">SubjectIdentifier</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">rs</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="s">&#39;1000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>If there are records in SubjectIdentifier, delete them and reset the autoincrement like this::</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ALTER</span> <span class="n">TABLE</span> <span class="sb">`bhp_identifier_subjectidentifier`</span> <span class="n">AUTO_INCREMENT</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>CharField</em>) &#8211; Identifier</li>
+<li><strong>seed</strong> (<em>IntegerField</em>) &#8211; Seed</li>
+<li><strong>padding</strong> (<em>IntegerField</em>) &#8211; Padding</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="bhp_identifier.classes.BaseIdentifierModel.Meta">
+<em class="property">class </em><tt class="descname">Meta</tt><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="bhp_identifier.classes.BaseIdentifierModel.Meta.abstract">
+<tt class="descname">abstract</tt><em class="property"> = False</em><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel.Meta.abstract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bhp_identifier.classes.BaseIdentifierModel._meta">
+<tt class="descclassname">BaseIdentifierModel.</tt><tt class="descname">_meta</tt><em class="property"> = &lt;Options for BaseIdentifierModel&gt;</em><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel._meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
-<dt id="bhp_identifier.classes.Subject.get_identifier">
-<tt class="descname">get_identifier</tt><big>(</big><em>subject_type</em>, <em>site</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.Subject.get_identifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>given the subject type and study site code, return a formatted identifier 
-Format is {prefix}-{site}{device_id}{sequence}-{check_digit}</p>
+<dt id="bhp_identifier.classes.BaseIdentifierModel.get_next_by_created">
+<tt class="descclassname">BaseIdentifierModel.</tt><tt class="descname">get_next_by_created</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel.get_next_by_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifierModel.get_next_by_modified">
+<tt class="descclassname">BaseIdentifierModel.</tt><tt class="descname">get_next_by_modified</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel.get_next_by_modified" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifierModel.get_previous_by_created">
+<tt class="descclassname">BaseIdentifierModel.</tt><tt class="descname">get_previous_by_created</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel.get_previous_by_created" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifierModel.get_previous_by_modified">
+<tt class="descclassname">BaseIdentifierModel.</tt><tt class="descname">get_previous_by_modified</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel.get_previous_by_modified" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bhp_identifier.classes.BaseIdentifierModel.sequence">
+<tt class="descclassname">BaseIdentifierModel.</tt><tt class="descname">sequence</tt><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifierModel.sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a padded sequence segment of the identifier based on the auto-increment
+integer primary key</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_identifier.classes.BaseIdentifier">
+<em class="property">class </em><tt class="descclassname">bhp_identifier.classes.</tt><tt class="descname">BaseIdentifier</tt><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifier._post_identifier">
+<tt class="descname">_post_identifier</tt><big>(</big><em>identifier</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifier._post_identifier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifier._prepare_identifier">
+<tt class="descname">_prepare_identifier</tt><big>(</big><em>options</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifier._prepare_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls user method self.get_identifier_prep() and adds/updates custom options to the defaults.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifier.get_identifier">
+<tt class="descname">get_identifier</tt><big>(</big><em>add_check_digit=True</em>, <em>is_derived=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifier.get_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a formatted identifier based on the identifier format and the dictionary
+of options.</p>
+<p>Calls self._prepare_identifier()</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><dl class="first last docutils">
+<dt>add_check_digit: if true adds a check digit calculated using the numbers in the</dt>
+<dd>identifier. Letters are stripped out if they exist. (default: True)</dd>
+<dt>is_derived: identifier is derived from an existing identifier so get a sequence</dt>
+<dd>from the identifier_model. For example, an infant identifier is derived from the
+maternal identifier. (default: False)</dd>
+</dl>
+</dd>
+<dt>Keyword Arguments:</dt>
+<dd><ul class="first last simple">
+<li>app_name: app_label for model_name below. (default: &#8216;bhp_identifier&#8217;)
+model_name: lower case of model.object_name to use to track subject identifiers
+as they are created. id of this model is the sequence integer.
+(default: &#8216;subject_identifier&#8217;)</li>
+<li>site: site code. (default: &#8216;&#8217;)</li>
+<li>seed: not used</li>
+<li>padding: integer to calculate right justified padding on the sequence segement
+of the identifier. (default: 4)</li>
+<li>modulus: used to calculate the check digit. (default: 7)</li>
+<li>prefix: prefix for identifier such as the protocol number (e.g 041, 056 etc).
+(default: (default: settings.PROJECT_IDENTIFIER_PREFIX)</li>
+<li>identifier_format: template for the identifier with keywords referring to the above keys.
+(default: &#8216;{prefix}-{site}{device_id}{sequence}&#8217;)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifier.get_identifier_post">
+<tt class="descname">get_identifier_post</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifier.get_identifier_post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users may override to run something after the identifier is created.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.BaseIdentifier.get_identifier_prep">
+<tt class="descname">get_identifier_prep</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.BaseIdentifier.get_identifier_prep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users may override to pass non-default keyword arguments to get_identifier
+before the identifier is created.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_identifier.classes.SubjectIdentifier">
+<em class="property">class </em><tt class="descclassname">bhp_identifier.classes.</tt><tt class="descname">SubjectIdentifier</tt><a class="headerlink" href="#bhp_identifier.classes.SubjectIdentifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.base_identifier.BaseIdentifier</span></tt></p>
+<dl class="method">
+<dt id="bhp_identifier.classes.SubjectIdentifier.get_identifier_prep">
+<tt class="descname">get_identifier_prep</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.SubjectIdentifier.get_identifier_prep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the identifier model and format for subject identifiers.</p>
 </dd></dl>
 
 </dd></dl>
@@ -73,8 +218,32 @@ Format is {prefix}-{site}{device_id}{sequence}-{check_digit}</p>
 <dl class="class">
 <dt id="bhp_identifier.classes.Infant">
 <em class="property">class </em><tt class="descclassname">bhp_identifier.classes.</tt><tt class="descname">Infant</tt><a class="headerlink" href="#bhp_identifier.classes.Infant" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>Create subject identifier(s) for an infant(s) by calling get_identifier() with the maternal identifier and return a dictionary {infant order: identifier}.</p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.base_identifier.BaseIdentifier</span></tt></p>
+<p>Creates an infant identifier derived from the maternal identifier, considers the number of infants
+during this registration session and their birth order and returns a dictionary {infant order: identifier}.</p>
+<dl class="docutils">
+<dt>Usage::</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">change</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">obj</span><span class="o">.</span><span class="n">user_created</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">live_infants_to_register</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="c">#Allocate Infant Identifier</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">infant</span> <span class="o">=</span> <span class="n">Infant</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">infant_order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">live_infants_to_register</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>           <span class="n">infant</span><span class="o">.</span><span class="n">get_identifier</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">add_check_digit</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">is_derived</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">maternal_identifier</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">maternal_visit</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">maternal_study_site</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">maternal_visit</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">study_site</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">birth_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">infant_order</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">live_infants</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">live_infants</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">live_infants_to_register</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">live_infants_to_register</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>               <span class="n">subject_type</span><span class="o">=</span><span class="s">&#39;infant&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <dl class="method">
 <dt id="bhp_identifier.classes.Infant._get_base_suffix">
 <tt class="descname">_get_base_suffix</tt><big>(</big><em>live_infants</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.Infant._get_base_suffix" title="Permalink to this definition">¶</a></dt>
@@ -83,9 +252,16 @@ Format is {prefix}-{site}{device_id}{sequence}-{check_digit}</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="bhp_identifier.classes.Infant._get_suffix">
+<tt class="descname">_get_suffix</tt><big>(</big><em>birth_order</em>, <em>live_infants</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.Infant._get_suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a suffix for the identifier.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_identifier.classes.Infant._register_infants">
 <tt class="descname">_register_infants</tt><big>(</big><em>user</em>, <em>maternal_identifier</em>, <em>maternal_study_site</em>, <em>subject_type</em>, <em>live_infants</em>, <em>live_infants_to_register</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.Infant._register_infants" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identify and Register infant(s) and associate with the mother&#8217;s subject_identifier and study site.</p>
+<dd><p>Identify and Register infant(s) and associate with the mother&#8217;s subject_identifier
+and study site.</p>
 <p>Infant identifier is the maternal identifier plus a suffix</p>
 </dd></dl>
 
@@ -95,15 +271,33 @@ Format is {prefix}-{site}{device_id}{sequence}-{check_digit}</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="bhp_identifier.classes.Infant.get_identifier">
-<tt class="descname">get_identifier</tt><big>(</big><em>user</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.Infant.get_identifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return identifier or a tuple of identifiers (if twins).</p>
-<ul class="simple">
-<li>Information comes from a delivery form usually, not a consent.</li>
-<li>Names, initials, gender and DOB are not expected to be known yet.</li>
-<li>Subject Identifier is derived from the maternal identifier so the SubjectIdentifier model is not updated.</li>
-</ul>
+<dt id="bhp_identifier.classes.Infant.get_identifier_post">
+<tt class="descname">get_identifier_post</tt><big>(</big><em>new_identifier</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.Infant.get_identifier_post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates registered subject after a new subject identifier is created.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="bhp_identifier.classes.Infant.get_identifier_prep">
+<tt class="descname">get_identifier_prep</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.Infant.get_identifier_prep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares to create an identifier consisting of the the maternal identifier and a
+suffix determined by the number of live infants from this delivery.</p>
+<dl class="docutils">
+<dt>For example:</dt>
+<dd>maternal_identifier=056-19800001-3 -&gt; 2 live infants -&gt; 056-19800001-3-</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_identifier.classes.CheckDigit">
+<em class="property">class </em><tt class="descclassname">bhp_identifier.classes.</tt><tt class="descname">CheckDigit</tt><a class="headerlink" href="#bhp_identifier.classes.CheckDigit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Create or validate a check digit</p>
+<dl class="method">
+<dt id="bhp_identifier.classes.CheckDigit.calculate">
+<tt class="descname">calculate</tt><big>(</big><em>number</em>, <em>modulus=7</em><big>)</big><a class="headerlink" href="#bhp_identifier.classes.CheckDigit.calculate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

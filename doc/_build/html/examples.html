@@ -59,7 +59,7 @@
 <div class="section" id="consenting-subjects">
 <h2>Consenting Subjects<a class="headerlink" href="#consenting-subjects" title="Permalink to this headline">¶</a></h2>
 <p>By default, <tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt> in the base consent model from module <tt class="xref py py-mod docutils literal"><span class="pre">bhp_consent</span></tt> uses an instance of
-<a class="reference internal" href="classes.html#bhp_identifier.classes.Subject" title="bhp_identifier.classes.Subject"><tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.Subject</span></tt></a> to allocate an identifier to the consenting subject:</p>
+<tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.Subject</span></tt> to allocate an identifier to the consenting subject:</p>
 <div class="highlight-python"><div class="highlight"><pre> <span class="k">class</span> <span class="nc">BaseConsent</span><span class="p">(</span><span class="n">BaseSubject</span><span class="p">):</span>
 
      <span class="o">...</span>
@@ -93,7 +93,7 @@
 <h2>Infants<a class="headerlink" href="#infants" title="Permalink to this headline">¶</a></h2>
 <p>To register infants for an already registered mother add the following to the save method of the ModelAdmin.
 For example, using the Maternal Delivery form, create an instance of <a class="reference internal" href="classes.html#bhp_identifier.classes.Infant" title="bhp_identifier.classes.Infant"><tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.Infant</span></tt></a> and call it&#8217;s
-<a class="reference internal" href="classes.html#bhp_identifier.classes.Infant.get_identifier" title="bhp_identifier.classes.Infant.get_identifier"><tt class="xref py py-meth docutils literal"><span class="pre">bhp_identifier.classes.Infant.get_identifier()</span></tt></a> method:</p>
+<tt class="xref py py-meth docutils literal"><span class="pre">bhp_identifier.classes.Infant.get_identifier()</span></tt> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MaternalLabDelAdmin</span><span class="p">(</span><span class="n">MaternalVisitModelAdmin</span><span class="p">):</span>
 
     <span class="o">...</span>
