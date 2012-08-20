@@ -1,5 +1,5 @@
 from lab_clinic_api.models import ResultItem
-from lab_longitudinal.models import HistoryModel
+from lab_tracker.models import HistoryModel
 
 
 class History(object):
@@ -89,4 +89,3 @@ class History(object):
     def _get_value_map(self):
         """Gets and returns a value_map if one has been defined."""
         return self.get_value_map_prep()
-
