@@ -2,3 +2,5 @@ from base_model import BaseModel
 from base_uuid_model import BaseUuidModel
 from base_model_admin import BaseModelAdmin
 from base_list_model import BaseListModel
+from base_tabular_inline import BaseTabularInline
+from base_stacked_inline import BaseStackedInline
