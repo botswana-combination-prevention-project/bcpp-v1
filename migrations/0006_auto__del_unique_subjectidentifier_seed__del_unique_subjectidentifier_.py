@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         #db.delete_unique('bhp_identifier_subjectidentifier', ['subject_identifier'])
 
         # Removing unique constraint on 'SubjectIdentifier', fields ['seed']
-        db.delete_unique('bhp_identifier_subjectidentifier', ['seed'])
+        #db.delete_unique('bhp_identifier_subjectidentifier', ['seed'])
         pass
 
 
