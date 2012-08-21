@@ -9,12 +9,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'UserProfile', fields ['initials']
-        db.delete_unique('bhp_userprofile_userprofile', ['initials'])
+        #db.delete_unique('bhp_userprofile_userprofile', ['initials'])
+        pass
 
 
     def backwards(self, orm):
         # Adding unique constraint on 'UserProfile', fields ['initials']
-        db.create_unique('bhp_userprofile_userprofile', ['initials'])
+        #db.create_unique('bhp_userprofile_userprofile', ['initials'])
+        pass
 
 
     models = {
