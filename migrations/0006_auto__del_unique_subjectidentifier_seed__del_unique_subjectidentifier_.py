@@ -9,19 +9,21 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         
         # Removing unique constraint on 'SubjectIdentifier', fields ['subject_identifier']
-        db.delete_unique('bhp_identifier_subjectidentifier', ['subject_identifier'])
+        #db.delete_unique('bhp_identifier_subjectidentifier', ['subject_identifier'])
 
         # Removing unique constraint on 'SubjectIdentifier', fields ['seed']
         db.delete_unique('bhp_identifier_subjectidentifier', ['seed'])
+        pass
 
 
     def backwards(self, orm):
         
         # Adding unique constraint on 'SubjectIdentifier', fields ['seed']
-        db.create_unique('bhp_identifier_subjectidentifier', ['seed'])
+        #db.create_unique('bhp_identifier_subjectidentifier', ['seed'])
 
         # Adding unique constraint on 'SubjectIdentifier', fields ['subject_identifier']
-        db.create_unique('bhp_identifier_subjectidentifier', ['subject_identifier'])
+        #db.create_unique('bhp_identifier_subjectidentifier', ['subject_identifier'])
+        pass
 
 
     models = {
