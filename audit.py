@@ -206,7 +206,7 @@ def create_audit_model(cls, **kwargs):
         # begin erikvw added this as OneToOneField was not handled, causes an IntegrityError
         elif isinstance(field, models.OneToOneField):
             rel = copy.copy(field.rel)
-            new_field = models.ForeignKey(rel.to)
+            new_field = models.ForeignKey(rel.to, null=field.null)
             new_field.rel.related_name = '_audit_' + field.related_query_name()
             attrs[field.name] = new_field
             # end erikvw added
