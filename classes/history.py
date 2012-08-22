@@ -7,16 +7,33 @@ class History(object):
     def __init__(self):
         self.value_map = self._get_value_map()
 
-    def get(self, subject_identifier):
+    def update_now(self, subject_identifier):
+        """Just updates the history values."""
+        self._update(subject_identifier)
+
+    def get(self, subject_identifier, order_desc=False):
+        """Returns all values as a ordered queryset."""
+        order_by = 'value_datetime'
+        if order_desc:
+            order_by = '-{0}'.format(order_by)
         test_key = self._update(subject_identifier)
-        return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=test_key).order_by('value_datetime')
+        return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=test_key).order_by(order_by)
+
+    def get_current_value(self, subject_identifier):
+        """Returns only the most current value."""
+        queryset = self.get(subject_identifier, True)
+        if queryset:
+            return queryset[0].value
+        else:
+            return None
 
     def get_as_list(self, subject_identifier):
+        """Returns all values as a list in ascending chronological order."""
         queryset = self.get(subject_identifier)
         return [qs.value for qs in queryset]
 
     def get_as_string(self, subject_identifier, mapped=True):
-        """Returns a subject's qualitative values joined as a string in chronological order.
+        """Returns a subject's qualitative values joined as a string in ascending chronological order.
 
         If mapped is True and a value_map is defined, map is inverted and a string of values is generated from the map."""
         if not self.value_map:
@@ -89,3 +106,18 @@ class History(object):
     def _get_value_map(self):
         """Gets and returns a value_map if one has been defined."""
         return self.get_value_map_prep()
+
+    def update_history_model(self, **kwargs):
+        """ Creates or Updates HistoryModel using get_or_create with kwargs."""
+        defaults = kwargs.get('defaults')
+        value = defaults.get('value')
+        history_model, created = HistoryModel.objects.get_or_create(
+            subject_identifier=kwargs.get('subject_identifier'),
+            test_key=kwargs.get('test_key'),
+            test_code=kwargs.get('test_code'),
+            value_datetime=kwargs.get('value_datetime'),
+            defaults=defaults)
+        if not created:
+            if value:
+                history_model.result = self.value_map[value]
+                history_model.save()
