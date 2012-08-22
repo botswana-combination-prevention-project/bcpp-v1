@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from bhp_identifier.classes import Infant, Partner
+from bhp_identifier.classes import Partner
 
 
 class RegisteredSubjectManager(models.Manager):
@@ -80,22 +80,22 @@ class RegisteredSubjectManager(models.Manager):
         if extra:
             registered_subject.save()
 
-    def register_live_infants(self, ** kwargs):
-
-        """ Identify and register the number of live infants "to register" and return identifier(s). """
-        maternal_registered_subject = kwargs.get('maternal_registered_subject')
-        maternal_identifier = maternal_registered_subject.subject_identifier
-        maternal_study_site = maternal_registered_subject.study_site
-        live_infants = kwargs.get('live_infants')
-        live_infants_to_register = kwargs.get('live_infants_to_register')
-        user = kwargs.get('user')
-        infant = Infant()
-        subject_identifier = infant.get_identifier(user,
-                              maternal_identifier=maternal_identifier,
-                              maternal_study_site=maternal_study_site,
-                              live_infants=live_infants,
-                              live_infants_to_register=live_infants_to_register,)
-        return subject_identifier
+#    def register_live_infants(self, ** kwargs):
+#
+#        """ Identify and register the number of live infants "to register" and return identifier(s). """
+#        maternal_registered_subject = kwargs.get('maternal_registered_subject')
+#        maternal_identifier = maternal_registered_subject.subject_identifier
+#        maternal_study_site = maternal_registered_subject.study_site
+#        live_infants = kwargs.get('live_infants')
+#        live_infants_to_register = kwargs.get('live_infants_to_register')
+#        user = kwargs.get('user')
+#        infant = Infant()
+#        subject_identifier = infant.get_identifier(user,
+#                              maternal_identifier=maternal_identifier,
+#                              maternal_study_site=maternal_study_site,
+#                              live_infants=live_infants,
+#                              live_infants_to_register=live_infants_to_register,)
+#        return subject_identifier
 
     def register_partner(self, ** kwargs):
         """ Allocate partner identifiers. """
