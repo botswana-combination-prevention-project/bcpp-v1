@@ -14,17 +14,20 @@ class ContentTypeMap(BaseModel):
 
     app_label = models.CharField(
         max_length=50,
+        db_index=True,
         )
 
     name = models.CharField(
         verbose_name='Model verbose_name',
         max_length=50,
         unique=True,
+        db_index=True,
         )
 
     model = models.CharField(
         verbose_name='Model name (module name)',
         max_length=50,
+        db_index=True,
         )
 
     objects = ContentTypeMapManager()

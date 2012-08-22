@@ -7,7 +7,7 @@ class ContentTypeMapManager(models.Manager):
 
     def sync(self):
 
-        """Sync content type map foreignkey with django's ContentType id.
+        """Syncs content type map foreignkey with django's ContentType id.
 
         Schema changes might change the key values for records in django's ContentType table.
         Update ContentTypeMap field content_type with the new key.
@@ -27,7 +27,7 @@ class ContentTypeMapManager(models.Manager):
 
     def populate(self):
 
-        """Populate ContentTypeMap with django's ContentTypecontent information."""
+        """Populates ContentTypeMap with django's ContentTypecontent information."""
 
         content_types = ContentType.objects.all()
         for content_type in content_types:
