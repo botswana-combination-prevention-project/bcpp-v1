@@ -75,31 +75,6 @@ class BaseSubject (BaseUuidModel):
         null=True,
         )
 
-    screening_datetime = models.DateTimeField(
-        null=True,
-        blank=True
-        )
-
-    registration_datetime = models.DateTimeField(
-        null=True,
-        blank=True
-        )
-
-    """ for simplicity, if going straight from screen to rando,
-        update both registration date and randomization date """
-    randomization_datetime = models.DateTimeField(
-        null=True,
-        blank=True
-        )
-
-    registration_status = models.CharField(
-        verbose_name="Registration status",
-        max_length=25,
-        #choices=REGISTRATION_STATUS,
-        null=True,
-        blank=True,
-        )
-
     def save(self, *args, **kwargs):
         # for new instances, enforce unique subject_identifier if not null
         if not self.pk and self.subject_identifier:
