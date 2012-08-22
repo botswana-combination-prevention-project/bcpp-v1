@@ -72,6 +72,7 @@ class BaseSubject (BaseUuidModel):
     subject_type = models.CharField(
         max_length=25,
         default='undetermined',
+        null=True,
         )
 
     screening_datetime = models.DateTimeField(
