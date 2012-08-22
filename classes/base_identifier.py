@@ -64,7 +64,7 @@ class BaseIdentifier(object):
         options.update(model_name=kwargs.get('model_name', 'subjectidentifier'))
         options.update(site=kwargs.get('site_code', ''))
         options.update(padding=kwargs.get('padding', 4))
-        options.update(seed=kwargs.get('seed', 0))
+        #options.update(seed=kwargs.get('seed', 0))
         options.update(modulus=kwargs.get('modulus', settings.PROJECT_IDENTIFIER_MODULUS))
         options.update(prefix=kwargs.get('prefix', settings.PROJECT_IDENTIFIER_PREFIX))
         options.update(identifier_format=kwargs.get('identifier_format', "{prefix}-{site}{device_id}{sequence}"))
@@ -76,7 +76,7 @@ class BaseIdentifier(object):
             IdentifierModel = get_model(options.pop('app_name'), options.pop('model_name'))
             # put a random uuid temporarily in the identifier field
             # to maintain unique constraint on identifier field.
-            identifier_model = IdentifierModel.objects.create(identifier=str(uuid.uuid4()), seed=options.pop('seed'), padding=options.pop('padding'))
+            identifier_model = IdentifierModel.objects.create(identifier=str(uuid.uuid4()), padding=options.pop('padding'))
             options.update(sequence=identifier_model.sequence)
         else:
             # the identifier is derived from an existing one. no need for

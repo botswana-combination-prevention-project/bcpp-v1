@@ -21,7 +21,7 @@ class BaseIdentifierModel(BaseModel):
     """
 
     identifier = models.CharField(max_length=36, unique=True, editable=False)
-    seed = models.IntegerField(editable=False)
+    #seed = models.IntegerField(editable=False)
     padding = models.IntegerField(default=4, editable=False)
 
     @property
