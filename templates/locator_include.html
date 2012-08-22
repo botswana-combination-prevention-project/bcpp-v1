@@ -8,9 +8,9 @@
        <BR><b>May follow-up?</b> {{locator.may_follow_up }}       
        {% if locator.may_follow_up.lower == 'yes' %}   
             <BR><b>Home visits?</b> {{locator.home_visit_permission }}
-            <BR>Address: {{locator.physical_address|wordwrap:25}}
-            <BR>Tel: {{locator.subject_phone|default:''}}, {{locator.subject_phone_alt|default:''}}
-            <BR>Cell: {{locator.subject_cell|default:''}}, {{locator.subject_cell_alt|default:''}}
+            <BR><i>Address:</i><BR>{{locator.physical_address|safe}}
+            <BR><i>Tel:</i> {{locator.subject_phone|default:''}}&nbsp;{{locator.subject_phone_alt|default:''}}
+            <BR><i>Cell:</i> {{locator.subject_cell|default:''}}&nbsp;{{locator.subject_cell_alt|default:''}}
             <BR><B>Call work?</B> {{locator.may_call_work}}
             {% if locator.may_call_work.lower == 'yes' %}       
             <BR>{{locator.subject_work_place }}

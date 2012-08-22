@@ -27,6 +27,8 @@ class BaseLocator(BaseUuidModel):
         max_length=500,
         verbose_name="Mailing address ",
         help_text="",
+        null=True,
+        blank=True
         )
     home_visit_permission = models.CharField(
         max_length=25,
