@@ -123,6 +123,10 @@ class AuditTrail(object):
                 #dispatcher.connect(_audit_delete, signal=models.signals.pre_delete, sender=cls, weak=False)
                 ## Comment this line for pre r8223 Django builds
                 models.signals.pre_delete.connect(_audit_delete, sender=cls, weak=False)
+                
+                # begin: erikvw added for serialization
+                # models.signals.pre_delete.connect(_serialize, sender=model, weak=False, dispatch_uid='audit_serialize_on_delete')
+                # end: erikvw added for serialization
 
         ## Uncomment this line for pre r8223 Django builds
         #dispatcher.connect(_contribute, signal=models.signals.class_prepared, sender=cls, weak=False)
@@ -220,7 +224,7 @@ def create_audit_model(cls, **kwargs):
             # If a model has primary_key = True, a second primary key would be
             # created in the audit model. Set primary_key to false.
             attrs[field.name].primary_key = False
-
+            attrs[field.name].null = field.null
             # Rebuild and replace the 'rel' object to avoid foreign key clashes.
             # Borrowed from the Basie project - please check if adding this is allowed by the license.
             if isinstance(field, models.ForeignKey):
