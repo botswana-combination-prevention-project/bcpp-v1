@@ -1,6 +1,9 @@
+from textwrap import wrap, fill
+from django.db.models import TextField
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
+from bhp_crypto.fields import EncryptedTextField
 from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_bucket.classes import bucket
@@ -300,6 +303,11 @@ class RegisteredSubjectDashboard(Dashboard):
     def render_locator(self, locator_instance, template=None):
         if not template:
             template = 'locator_include.html'
+        for field in locator_instance._meta.fields:
+            if isinstance(field, (TextField, EncryptedTextField)):
+                setattr(locator_instance, field.name, '<BR>'.join(wrap(getattr(locator_instance, field.name), 25)))
+                #setattr(locator_instance, field.name, fill(getattr(locator_instance, field.name), 20))
+
         return render_to_string(template, {'locator': locator_instance})
 
     def get_urlpatterns(self, view, regex, **kwargs):
