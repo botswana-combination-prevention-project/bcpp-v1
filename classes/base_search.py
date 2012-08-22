@@ -116,9 +116,13 @@ class BaseSearch(object):
             self.update_context(form=self.search_form())
 
     def get_most_recent(self, model_name=None, page=1, limit=15):
+        """Returns a queryset of the top most recent instances of the search model.
+
+        Not technically a search function but it does use the other attributes like search_name...
+        This is usually called from your section_index view."""
         if model_name:
             model = self.get_search_model(model_name)
-            search_result = model.objects.all()[0:limit]
+            search_result = model.objects.all().order_by('-created')[0:limit]
             return self._paginate(search_result, page)
         return None
 
