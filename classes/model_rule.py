@@ -1,6 +1,5 @@
 from django.db.models import get_model
 from django.core.exceptions import ImproperlyConfigured
-#from bhp_bucket.models import RuleHistory
 
 
 class ModelRule(object):

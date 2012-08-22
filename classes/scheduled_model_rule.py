@@ -78,7 +78,7 @@ class ScheduledModelRule(ModelRule):
         for target_model in self._target_models:
             contenttypemap = ContentTypeMap.objects.get(app_label=target_model._meta.app_label,
                                                         model=target_model._meta.object_name.lower())
-            if ScheduledEntryBucket.objects.filter(entry__content_type_map=contenttypemap):
+            if ScheduledEntryBucket.objects.values('id').filter(entry__content_type_map=contenttypemap):
                 self._eval(instance, target_model, meta.visit_model_fieldname)
             else:
                 raise ValueError('Cannot determine target model for bucket rule, %s' % (target_model,))
