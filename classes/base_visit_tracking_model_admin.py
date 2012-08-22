@@ -125,9 +125,11 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
         if db_field.name == visit_model_helper.get_visit_field(model=self.model, visit_model=self.visit_model):
             #if not request.GET.get('subject_identifier', None):
             #    raise TypeError('Subject identifier cannot be none when accessing {0}.'.format(db_field.name))
-            kwargs["queryset"] = visit_model_helper.set_visit_queryset(pk=request.GET.get(db_field.name, None),
-                                                            subject_identifier=request.GET.get('subject_identifier', 0),
-                                                            visit_code=request.GET.get('visit_code', 0),
-                                                            visit_instance=request.GET.get('visit_instance', 0))
+            kwargs["queryset"] = visit_model_helper.set_visit_queryset(
+                visit_model=self.visit_model,
+                pk=request.GET.get(db_field.name, None),
+                subject_identifier=request.GET.get('subject_identifier', 0),
+                visit_code=request.GET.get('visit_code', 0),
+                visit_instance=request.GET.get('visit_instance', 0))
 
         return super(BaseVisitTrackingModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
