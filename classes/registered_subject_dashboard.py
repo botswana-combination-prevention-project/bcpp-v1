@@ -1,4 +1,4 @@
-from textwrap import wrap, fill
+from textwrap import wrap
 from django.db.models import TextField
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
@@ -44,23 +44,14 @@ class RegisteredSubjectDashboard(Dashboard):
     def __init__(self, **kwargs):
 
         super(RegisteredSubjectDashboard, self).__init__(**kwargs)
-        self.scheduled_entry_bucket = None
-        self.additional_entry_bucket = None
-        self.scheduled_lab_bucket = None
-        self.additional_lab_bucket = None
         self.selected_visit = None
-        self.visit = None
         self.visit_code = None
-        self.visit_instance = None
+        self.visit_instance = None  # this is not a model instance!!
         self.visit_model = None
         self.subject_identifier = None
-        self.app_label = None
         self.requisition_model = None
         self.appointment_row_template = 'appointment_row.html'
-        #side bar links for med, etc summaries
-        self.summary_links = ''
-        # limit the membership forms to those of this category
-        self.membership_form_category = None
+        self.appointment_map = {}
         self.exclude_others_if_keyed_model_name = ''  # this is a form name or regex pattern
         self.include_after_exclusion_model_keyed = []
         self.scheduled_entry_bucket_rules = []
@@ -90,68 +81,63 @@ class RegisteredSubjectDashboard(Dashboard):
                 subject_identifier=self.subject_identifier,
                 subject_type=self.subject_type,
                 )
-        self.visit_code = kwargs.get('visit_code', self.visit_code)
-        self.visit_instance = kwargs.get("visit_instance", self.visit_instance)
-        self.visit_model = kwargs.get('visit_model', self.visit_model)
+        visit_code = kwargs.get('visit_code', self.visit_code)
+        visit_instance = kwargs.get("visit_instance", self.visit_instance)
+        visit_model = kwargs.get('visit_model', self.visit_model)
         if self.extra_url_context == {}:
             self.extra_url_context = ''
         self.context.add(
-            visit_model=self.visit_model,
-            visit_instance=self.visit_instance,
-            visit_code=self.visit_code,
+            visit_model=visit_model,
+            visit_instance=visit_instance,
+            visit_code=visit_code,
             extra_url_context=self.extra_url_context
             )
         if not self.requisition_model:
             raise AttributeError('RegisteredSubjectDashboard.create() requires attribute '
                                  '\'requisition_model\'. Got none.')
-        if not self.visit_model:
+        if not visit_model:
             raise AttributeError('RegisteredSubjectDashboard.create() requires attribute '
                                  '\'visit_model\'. Got none.')
         else:
-            self.context.add(visit_model_add_url=self._get_visit_model_url(self.visit_model))
-        self._set_membership_forms()
-        self._set_appointments()
-        self._set_additional_entry_bucket()
-        self._set_scheduled_entry_bucket()
-        self._set_scheduled_lab_bucket()
-        self._set_additional_lab_bucket()
-        self._set_current_appointment()
-        self._set_current_visit()
-        self._set_summary_links()
-        self._add_to_entry_buckets()
-        self._run_entry_bucket_rules()
+            self.context.add(visit_model_add_url=self._get_visit_model_url(visit_model))
+        self._prepare(visit_model, visit_code, visit_instance)
 
-    def _add_to_entry_buckets(self):
+    def _prepare(self, visit_model, visit_code, visit_instance):
+        self._prepare_membership_forms()
+        self._set_appointments(visit_code, visit_instance)
+        self._prepare_additional_entry_bucket()
+        self._prepare_scheduled_entry_bucket(visit_code)
+        self._prepare_scheduled_lab_bucket(visit_code)
+        self._prepare_additional_lab_bucket(visit_code)
+        self._set_current_appointment(visit_code, visit_instance)
+        visit = self._set_current_visit(visit_model, self.appointment)
+        self.render_summary_links()
+        self._add_to_entry_buckets(visit)
+        self._run_entry_bucket_rules(self.subject_identifier, visit_code, visit)
+
+    def _add_to_entry_buckets(self, visit_model_instance):
         # update / add to entries in ScheduledEntryBucket, ScheduledLabEntryBucket
-        if self.visit:
-            ScheduledEntryBucket.objects.add_for_visit(visit_model_instance=self.visit)
+        if visit_model_instance:
+            ScheduledEntryBucket.objects.add_for_visit(visit_model_instance=visit_model_instance)
             # if requisition_model has been defined, assume scheduled labs otherwise pass
             if hasattr(self, 'requisition_model'):
                 ScheduledLabEntryBucket.objects.add_for_visit(
-                    visit_model_instance=self.visit,
-                    requisition_model=self.requisition_model,
-                    )
+                    visit_model_instance=visit_model_instance,
+                    requisition_model=self.requisition_model)
 
-    def _run_entry_bucket_rules(self, **kwargs):
+    def _run_entry_bucket_rules(self, subject_identifier, visit_code, visit_model_instance):
 
         """ Runs rules in self.scheduled_entry_bucket_rules if visit_code is known.
 
         Add rules before calling create()
         If called, update entry status (new, not required, etc) when the visit dashboard is refreshed."""
-        if not self.subject_identifier:
+        if not subject_identifier:
             raise AttributeError('set value of subject_identifier before calling dashboard create() when scheduled_entry_bucket_rules exist')
         # run rules if visit_code is known -- user selected, that is user clicked to see list of
         # scheduled entries for a given visit.
-        if self.visit_code:
+        if visit_code:
             # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
-            if self.visit_model.objects.filter(
-                appointment__registered_subject__subject_identifier=self.subject_identifier,
-                appointment__visit_definition__code=self.visit_code,
-                appointment__visit_instance=self.visit_instance):
-                visit_model_instance = self.visit_model.objects.get(
-                    appointment__registered_subject__subject_identifier=self.subject_identifier,
-                    appointment__visit_definition__code=self.visit_code,
-                    appointment__visit_instance=self.visit_instance)
+            if visit_model_instance:
                 for rule in bucket.dashboard_rules:
                     rule.run(visit_model_instance=visit_model_instance)
                 bucket.update_all(visit_model_instance)
@@ -169,131 +155,122 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(visit_model_name=model_name)
         return url
 
-    def _set_summary_links(self):
-        # render side bar template for subject summaries
-        self.summary_links = render_to_string('summary_side_bar.html', {
-                'links': Link.objects.filter(dashboard_type=self.dashboard_type),
-                'subject_identifier': self.subject_identifier,
-                })
-        self.context.add(summary_links=self.summary_links)
+    def _set_appointment_map(self, visit_code):
+        """Create a dictionary of appointment instances for this subject and visit_code using visit_instance(0,1,2,3...) as a key."""
+        self.appointment_map = {}
+        for appointment in Appointment.objects.filter(registered_subject=self.registered_subject, visit_definition__code=visit_code):
+            self.appointment_map[appointment.visit_instance] = appointment
 
-    def _set_scheduled_entry_bucket(self):
-        # get list of scheduled crfs
-        if self.visit_code:
-            # filter for appointment with visit_instance=0
-            appointment = Appointment.objects.get(
-                              registered_subject=self.registered_subject,
-                              visit_definition__code=self.visit_code,
-                              visit_instance=0)
-            self.scheduled_entry_bucket = ScheduledEntryBucket.objects.get_entries_for(
+    def _get_appointment_map(self, visit_code, visit_instance=None):
+        if not self.appointment_map:
+            self._set_appointment_map(visit_code)
+        if visit_instance:
+            return self.appointment_map.get(visit_instance, None)
+        else:
+            return self.appointment_map
+
+    def _prepare_scheduled_entry_bucket(self, visit_code):
+        """ Gets the scheduled bucket entries using the appointment with instance=0 and adds to context ."""
+        scheduled_entry_bucket = None
+        if visit_code:
+            scheduled_entry_bucket = ScheduledEntryBucket.objects.get_entries_for(
                                               registered_subject=self.registered_subject,
-                                              appointment=appointment,
-                                              visit_code=self.visit_code)
-        self.context.add(scheduled_entry_bucket=self.scheduled_entry_bucket)
+                                              appointment=self._get_appointment_map(visit_code, '0'),
+                                              visit_code=visit_code)
+        self.context.add(scheduled_entry_bucket=scheduled_entry_bucket)
+        return scheduled_entry_bucket
 
-    def _set_scheduled_lab_bucket(self):
-        # get list of scheduled crfs
-        if self.visit_code:
-            # filter for appointment with visit_instance=0
-            appointment = Appointment.objects.get(
-                             registered_subject=self.registered_subject,
-                             visit_definition__code=self.visit_code,
-                             visit_instance=0)
-            self.scheduled_lab_bucket = ScheduledLabEntryBucket.objects.get_scheduled_labs_for(
+    def _prepare_scheduled_lab_bucket(self, visit_code):
+        """ Gets the scheduled lab bucket entries using the appointment with instance=0 and adds to context ."""
+        scheduled_lab_bucket = None
+        if visit_code:
+            scheduled_lab_bucket = ScheduledLabEntryBucket.objects.get_scheduled_labs_for(
                                             registered_subject=self.registered_subject,
-                                            appointment=appointment,
-                                            visit_code=self.visit_code)
-        self.context.add(scheduled_lab_bucket=self.scheduled_lab_bucket)
+                                            appointment=self._get_appointment_map(visit_code, '0'),
+                                            visit_code=visit_code)
+        self.context.add(scheduled_lab_bucket=scheduled_lab_bucket)
+        return scheduled_lab_bucket
 
-    def _set_additional_lab_bucket(self):
-        # get list of scheduled crfs
-        if self.visit_code:
-            # filter for appointment with visit_instance=0
-            appointment = Appointment.objects.get(
-                              registered_subject=self.registered_subject,
-                              visit_definition__code=self.visit_code,
-                              visit_instance=0)
-            self.additional_lab_bucket = AdditionalLabEntryBucket.objects.get_labs_for(
-                                             registered_subject=self.registered_subject,
-                                             appointment=appointment)
-        self.context.add(additional_lab_bucket=self.additional_lab_bucket)
+    def _prepare_additional_lab_bucket(self, visit_code):
+        """ Gets the additional lab bucket entries using the appointment with instance=0 and adds to context ."""
+        additional_lab_bucket = None
+        if visit_code:
+            additional_lab_bucket = AdditionalLabEntryBucket.objects.get_labs_for(registered_subject=self.registered_subject,
+                                                                                  appointment=self._get_appointment_map(visit_code, '0'))
+        self.context.add(additional_lab_bucket=additional_lab_bucket)
+        return additional_lab_bucket
 
-    def _set_appointments(self):
-        # get all appointments for this registered_subject
-        # if self.visit_code and self.visit_instance, then limit to the one appointment
+    def _set_appointments(self, visit_code=None, visit_instance=None):
+        """Returns all appointments for this registered_subject or just one (if given a visit_code and visit_instance).
+
+        Note: visit_instance does not refer to a model instance. It is an integer 0,1,2,3..."""
         appointments = None
-        if self.visit_code and self.visit_instance:
-            appointments = Appointment.objects.filter(registered_subject=self.registered_subject,
-                                                      visit_definition__code=self.visit_code,
-                                                      visit_instance=self.visit_instance)
+        if visit_code and visit_instance:
+            appointments = [self._get_appointment_map(visit_code, visit_instance)]
         else:
             # or filter appointments for the current membership category
-
-            # Note: previously, the membership_form_category was defaulted to the subject_type
-            # and this method returned ALL appointment for a registered subject.
-            # I now return only the registered_subject's appointments filtered for a given membership_form_category.
-
-            # get list visit_definition__code for this membership_form_category to filter the appointments by
-            codes = VisitDefinition.objects.codes_for_membership_form_category(membership_form_category=self.membership_form_category)
-            # select the appointments
+            codes = VisitDefinition.objects.codes_for_membership_form_category(membership_form_category=self._get_membership_form_category())
             appointments = Appointment.objects.filter(registered_subject=self.registered_subject,
                                                       visit_definition__code__in=codes,
                                                       ).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
         # add to the context
         self.context.add(appointments=appointments)
 
-    def _set_current_visit(self):
-        if self.appointment:
+    def _set_current_visit(self, visit_model, appointment=None):
+        if appointment:
             # set the visit
-            if self.visit_model:
-                self.visit = self.visit_model.objects.get(appointment=self.appointment)
+            if visit_model:
+                visit = visit_model.objects.get(appointment=appointment)
             else:
                 raise AttributeError('Cannot determine attribute \'visit_model\' in RegisteredSubjectDashboard. Got none. Either pass as a attribute or add_to_context')
         else:
-            self.visit = self.visit_model.objects.none()
-        self.context.add(visit=self.visit)
+            visit = visit_model.objects.none()
+        self.context.add(visit=visit)
+        return visit
 
-    def _set_current_appointment(self):
+    def _set_current_appointment(self, visit_code, visit_instance):
         self.appointment = Appointment.objects.none()
         # get the appointment that has focus based on visit_code
-        if self.visit_code:
+        if visit_code:
             # get visit associated with this appointment (in progress) and visit code and instance
-            if Appointment.objects.filter(registered_subject=self.registered_subject,
-                                        visit_definition__code=self.visit_code,
-                                        visit_instance=self.visit_instance,):
-                # set the appointment
-                self.appointment = Appointment.objects.get(
-                    registered_subject=self.registered_subject,
-                    visit_definition__code=self.visit_code,
-                    visit_instance=self.visit_instance,
-                    )
+            self.appointment = self._get_appointment_map(visit_code, visit_instance)
         self.context.add(appointment=self.appointment)
 
-    def _set_additional_entry_bucket(self):
+    def _prepare_additional_entry_bucket(self):
         # get additional crfs
-        self.additional_entry_bucket = AdditionalEntryBucket.objects.filter(
-            registered_subject=self.registered_subject
-            )
-        self.context.add(additional_entry_bucket=self.additional_entry_bucket)
+        additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.registered_subject)
+        self.context.add(additional_entry_bucket=additional_entry_bucket)
+        return additional_entry_bucket
 
-    def _set_membership_forms(self):
+    def _get_membership_form_category(self):
+        return self.subject_type
+
+    def _prepare_membership_forms(self):
         # membership forms can also be proxy models ... see mochudi_subject.models
         # you may specify the membership_form_category, otherwise just use subject type
-        if not self.membership_form_category:
-            self.membership_form_category = self.subject_type
+        membership_form_category = None
+        if not membership_form_category:
+            membership_form_category = self.subject_type
         # add membership forms for this registered_subject and subject_type
         # these are the KEYED, UNKEYED schedule group membership forms
-        self.membership_forms = ScheduleGroup.objects.get_membership_forms_for(
+        membership_forms = ScheduleGroup.objects.get_membership_forms_for(
             registered_subject=self.registered_subject,
-            membership_form_category=self.membership_form_category,
+            membership_form_category=self._get_membership_form_category(),
             exclude_others_if_keyed_model_name=self.exclude_others_if_keyed_model_name,
-            include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed,
-            )
+            include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed)
         self.context.add(
-            membership_forms=self.membership_forms,
-            keyed_membership_forms=self.membership_forms['keyed'],
-            unkeyed_membership_forms=self.membership_forms['unkeyed'],
-            )
+            membership_forms=membership_forms,
+            keyed_membership_forms=membership_forms['keyed'],
+            unkeyed_membership_forms=membership_forms['unkeyed'])
+
+    def render_summary_links(self, template_filename=None):
+        """Renders the side bar template for subject summaries."""
+        if not template_filename:
+            template_filename = 'summary_side_bar.html'
+        summary_links = render_to_string(template_filename, {
+                'links': Link.objects.filter(dashboard_type=self.dashboard_type),
+                'subject_identifier': self.subject_identifier})
+        self.context.add(summary_links=summary_links)
 
     def render_labs(self, update=False):
         # prepare results for dashboard sidebar
@@ -303,11 +280,10 @@ class RegisteredSubjectDashboard(Dashboard):
     def render_locator(self, locator_instance, template=None):
         if not template:
             template = 'locator_include.html'
-        for field in locator_instance._meta.fields:
-            if isinstance(field, (TextField, EncryptedTextField)):
-                setattr(locator_instance, field.name, '<BR>'.join(wrap(getattr(locator_instance, field.name), 25)))
-                #setattr(locator_instance, field.name, fill(getattr(locator_instance, field.name), 20))
-
+        if locator_instance:
+            for field in locator_instance._meta.fields:
+                if isinstance(field, (TextField, EncryptedTextField)):
+                    setattr(locator_instance, field.name, '<BR>'.join(wrap(getattr(locator_instance, field.name), 25)))
         return render_to_string(template, {'locator': locator_instance})
 
     def get_urlpatterns(self, view, regex, **kwargs):
