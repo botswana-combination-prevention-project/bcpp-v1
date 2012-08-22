@@ -55,10 +55,18 @@ class BaseSearch(object):
         if self.ready:
             #form is ready or "is_valid() = True", so get the search result
             self.search(request, **kwargs)
+#        else:
+#            # get ten most recent
+#            self.update_context_with_most_recent(request)
         return render_to_response(
                   self.context.get('template'),
                   self.context,
                   context_instance=RequestContext(request))
+
+#    def update_context_with_most_recent(self, request, **kwargs):
+#        model = self.get_search_model(kwargs.get('search_name'))
+#        search_result = model.objects.all().order_by('-created')[0:10]
+#        self.update_result_to_context(request, search_result)
 
     def prepare(self, request, **kwargs):
 
@@ -110,6 +118,11 @@ class BaseSearch(object):
         else:
             self.update_context(form=self.search_form())
 
+    def get_most_recent(self, model_name, page=1, limit=15):
+        model = self.get_search_model(model_name)
+        search_result = model.objects.all()[0:limit]
+        return self._paginate(search_result, page)
+
     def search(self, request, **kwargs):
         """
         Updates the context with the search results and has the queryset paginated.
@@ -141,7 +154,14 @@ class BaseSearch(object):
 
     def get_search_model(self, search_model_name):
         search_models = self.get_search_prep_models()
-        (app_label, model_name) = search_models[search_model_name]
+        try:
+            (app_label, model_name) = search_models[search_model_name]
+        except KeyError as e:
+            raise KeyError('{0}. {1}'.format(e, 'Check that your url parameter \'search_name\' in the template url '
+                                                'is the name of the model you are searching on and is a key in your '
+                                                'search model map (see get_search_prep_models()).'))
+        except:
+            raise
         return get_model(app_label, model_name)
 
     def get_search_prep(self, request, **kwargs):
