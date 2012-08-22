@@ -5,51 +5,33 @@ from bhp_entry.choices import ENTRY_STATUS
 
 
 class BaseEntryBucket(BaseUuidModel):
-    
-    """ Base model for list of required entries by registered_subject. """
-    
-    registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
-    
-    current_entry_title = models.CharField(
-        max_length = 250,
-        null = True,
-        )
-    
-    entry_status = models.CharField(
-        max_length = 25,
-        choices = ENTRY_STATUS,
-        default = 'NEW',        
-        )
 
+    """ Base model for list of required entries by registered_subject. """
+
+    registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
+    current_entry_title = models.CharField(
+        max_length=250,
+        null=True)
+    entry_status = models.CharField(
+        max_length=25,
+        choices=ENTRY_STATUS,
+        default='NEW')
     due_datetime = models.DateTimeField(
         null=True,
-        blank=True,
-        )
-    
+        blank=True)
     report_datetime = models.DateTimeField(
         null=True,
-        blank=True,
-        )    
-    
+        blank=True)
     entry_comment = models.TextField(
-        max_length = 250,
+        max_length=250,
         null=True,
-        blank=True,
-        )
-    
+        blank=True)
     close_datetime = models.DateTimeField(
-        null = True,
-        blank = True,
-        )  
-    
+        null=True,
+        blank=True)
     fill_datetime = models.DateTimeField(
         null=True,
-        blank=True,
-        )
-    
+        blank=True)
 
-    # def is_serialized(self):
-    #     return super(BaseEntryBucket, self).is_serialized(False)
-    
     class Meta:
         abstract = True

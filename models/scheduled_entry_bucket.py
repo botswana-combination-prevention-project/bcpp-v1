@@ -7,17 +7,13 @@ from base_entry_bucket import BaseEntryBucket
 
 
 class ScheduledEntryBucket(BaseEntryBucket):
-    
+
     """Subject-specific list of required and scheduled entry as per normal visit schedule."""
-    
     appointment = models.ForeignKey(Appointment, related_name='+')
-    
     entry = models.ForeignKey(Entry)
-    
     #_index_together = ('registered_subject', 'appointment', 'entry')
-        
     objects = ScheduledEntryBucketManager()
-    
+
     def get_absolute_url(self):
         return reverse('admin:bhp_entry_scheduledentrybucket_change', args=(self.id,))
 
@@ -27,12 +23,12 @@ class ScheduledEntryBucket(BaseEntryBucket):
         # See example in registered_subject_dashboard.py
         return False
 
-    def __unicode__(self):        
-        return '%s: %s' % (self.registered_subject.subject_identifier, self.entry)    
+    def __unicode__(self):
+        return '%s: %s' % (self.registered_subject.subject_identifier, self.entry)
 
     class Meta:
         app_label = 'bhp_entry'
         db_table = 'bhp_form_scheduledentrybucket'
         verbose_name = "Subject Scheduled Entry Bucket"
-        ordering = ['registered_subject', 'entry','appointment',]
-        unique_together = ['registered_subject', 'entry', 'appointment',] 
+        ordering = ['registered_subject', 'entry', 'appointment']
+        unique_together = ['registered_subject', 'entry', 'appointment']
