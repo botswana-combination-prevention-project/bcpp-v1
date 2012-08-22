@@ -20,9 +20,9 @@
             {% if locator.may_contact_someone.lower == 'yes' %}
                <BR>Name: {{ locator.contact_name }}
                <BR>Relation: {{ locator.contact_rel }}
-               <BR>Address: {{ locator.contact_physical_address }}               
-               <BR>Cell: {{ locator.contact_cell }}
-               <BR>Tel: {{ locator.contact_tel }}
+               <BR><i>Address:</i><BR>{{ locator.contact_physical_address|safe }}               
+               <BR><i>Tel:</i> {{ locator.contact_tel }}
+               <BR><i>Cell:</i> {{ locator.contact_cell }}
             {% endif%}            
             <BR><b>Contact next of kin?</b> {{locator.has_alt_contact}}
             {% if locator.has_alt_contact.lower == 'yes' %}
