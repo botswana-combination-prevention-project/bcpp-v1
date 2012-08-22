@@ -55,9 +55,6 @@ class BaseSearch(object):
         if self.ready:
             #form is ready or "is_valid() = True", so get the search result
             self.search(request, **kwargs)
-#        else:
-#            # get ten most recent
-#            self.update_context_with_most_recent(request)
         return render_to_response(
                   self.context.get('template'),
                   self.context,
@@ -118,10 +115,12 @@ class BaseSearch(object):
         else:
             self.update_context(form=self.search_form())
 
-    def get_most_recent(self, model_name, page=1, limit=15):
-        model = self.get_search_model(model_name)
-        search_result = model.objects.all()[0:limit]
-        return self._paginate(search_result, page)
+    def get_most_recent(self, model_name=None, page=1, limit=15):
+        if model_name:
+            model = self.get_search_model(model_name)
+            search_result = model.objects.all()[0:limit]
+            return self._paginate(search_result, page)
+        return None
 
     def search(self, request, **kwargs):
         """
