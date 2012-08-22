@@ -5,7 +5,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 
 
-class BasetModelWithConsentAdmin(BaseModelAdmin):
+class BaseModelWithConsentAdmin(BaseModelAdmin):
     """ For models with a key to consent"""
     def save_model(self, request, obj, form, change):
 
@@ -20,7 +20,7 @@ class BasetModelWithConsentAdmin(BaseModelAdmin):
                 base_appt_datetime=datetime.today(),
                 model_name=self.form._meta.model.__name__.lower())
 
-        return super(BasetModelWithConsentAdmin, self).save_model(request, obj, form, change)
+        return super(BaseModelWithConsentAdmin, self).save_model(request, obj, form, change)
 
     #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -34,12 +34,12 @@ class BasetModelWithConsentAdmin(BaseModelAdmin):
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj=None):
 
-        super(BasetModelWithConsentAdmin, self).get_readonly_fields(request, obj)
+        super(BaseModelWithConsentAdmin, self).get_readonly_fields(request, obj)
         consent_fk_name = [fk for fk in [f for f in self.model._meta.fields if isinstance(f, ForeignKey)] if fk.rel.to._meta.module_name == self.consent_model._meta.module_name][0].name
         if obj:  # In edit mode
             self.readonly_fields += (consent_fk_name,)
         return self.readonly_fields
 
 
-class BaseKeyToConsentModelAdmin(BasetModelWithConsentAdmin):
+class BaseKeyToConsentModelAdmin(BaseModelWithConsentAdmin):
     pass
