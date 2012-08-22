@@ -3,5 +3,5 @@ from base_identifier_model import BaseIdentifierModel
 from identifier import Identifier
 from check_digit import CheckDigit
 from subject_identifier import SubjectIdentifier
-from infant import Infant
+from infant_identifier import InfantIdentifier
 from partner import Partner

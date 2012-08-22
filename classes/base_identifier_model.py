@@ -10,18 +10,17 @@ class BaseIdentifierModel(BaseModel):
 
     To populate for an EDC already in use, for example::
         >>> for rs in RegisteredSubject.objects.filter(subject_type='maternal').order_by('created'):
-        >>>    SubjectIdentifier.objects.create(identifier=rs.subject_identifier, seed='1000')
+        >>>    SubjectIdentifier.objects.create(identifier=rs.subject_identifier)
         >>> # or ##############
         >>> for rs in RegisteredSubject.objects.filter(subject_type='subject',
         >>>                                            subject_identifier__isnull=False).order_by('created'):
-        >>>    SubjectIdentifier.objects.create(identifier=rs.subject_identifier, seed='1000')
+        >>>    SubjectIdentifier.objects.create(identifier=rs.subject_identifier)
 
     If there are records in SubjectIdentifier, delete them and reset the autoincrement like this::
         >>> ALTER TABLE `bhp_identifier_subjectidentifier` AUTO_INCREMENT = 1;
     """
 
     identifier = models.CharField(max_length=36, unique=True, editable=False)
-    #seed = models.IntegerField(editable=False)
     padding = models.IntegerField(default=4, editable=False)
 
     @property

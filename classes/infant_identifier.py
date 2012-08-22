@@ -5,7 +5,7 @@ from bhp_identifier.models import SubjectIdentifier
 from base_identifier import BaseIdentifier
 
 
-class Infant(BaseIdentifier):
+class InfantIdentifier(BaseIdentifier):
 
     """ Creates an infant identifier derived from the maternal identifier, considers the number of infants
     during this registration session and their birth order and returns a dictionary {infant order: identifier}.
@@ -16,9 +16,9 @@ class Infant(BaseIdentifier):
         >>>    obj.save()
         >>>    if obj.live_infants_to_register > 0:
         >>>        #Allocate Infant Identifier
-        >>>        infant = Infant()
+        >>>        infant_identifier = InfantIdentifier()
         >>>        for self.infant_order in range(0, obj.live_infants_to_register):
-        >>>            infant.get_identifier(
+        >>>            infant_identifier.get_identifier(
         >>>                add_check_digit=False,
         >>>                is_derived=True,
         >>>                maternal_identifier=obj.maternal_visit.appointment.registered_subject.subject_identifier,
