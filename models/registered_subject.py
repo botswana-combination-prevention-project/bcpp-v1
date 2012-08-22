@@ -74,6 +74,31 @@ class RegisteredSubject(BaseSubject):
         null=True,
         )
 
+    screening_datetime = models.DateTimeField(
+        null=True,
+        blank=True
+        )
+
+    registration_datetime = models.DateTimeField(
+        null=True,
+        blank=True
+        )
+
+    """ for simplicity, if going straight from screen to rando,
+        update both registration date and randomization date """
+    randomization_datetime = models.DateTimeField(
+        null=True,
+        blank=True
+        )
+
+    registration_status = models.CharField(
+        verbose_name="Registration status",
+        max_length=25,
+        #choices=REGISTRATION_STATUS,
+        null=True,
+        blank=True,
+        )
+
     comment = models.TextField(
         verbose_name='Comment',
         max_length=250,
