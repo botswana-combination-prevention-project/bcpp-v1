@@ -15,7 +15,7 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         visit_fk_name = [fk for fk in [f for f in self.entry.content_type_map.model_class()._meta.fields if isinstance(f, ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model_instance._meta.module_name]
         if visit_fk_name:
             visit_fk_name = visit_fk_name[0].name
-            if model.objects.values('id').filter(**{visit_fk_name: self.visit_model_instance}):
+            if model.objects.filter(**{visit_fk_name: self.visit_model_instance}).exists():
                 is_keyed = True
             else:
                 is_keyed = False
@@ -28,15 +28,16 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
 
         Note that ScheduledEntryBucket objects are linked to a subject's appointment
         for visit_instance = '0'; that is, the first appointment for
-        a timepoint/visit. """
+        a timepoint/visit.
+        """
         entry_category = kwargs.get("entry_category", 'clinic')
         registered_subject = kwargs.get("registered_subject")
         if not registered_subject:
             raise TypeError("Manager get_schedule_forms_for expected registered_subject. Got None.")
         appt_0 = kwargs.get("appointment")
-        visit_code = kwargs.get("visit_code")
-        if not visit_code:
-            raise TypeError("Manager get_schedule_forms_for expected visit_code. Got None.")
+        #visit_code = kwargs.get("visit_code")
+        #if not visit_code:
+        #    raise TypeError("Manager get_schedule_forms_for expected visit_code. Got None.")
         if appt_0:
             # get the scheduled crfs based on the appt for visit_instance = '0'
             scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).filter(
@@ -95,10 +96,10 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                 visit_model_instance_field = [fk for fk in [f for f in entry.content_type_map.model_class()._meta.fields if isinstance(f, ForeignKey)] if fk.rel.to._meta.module_name == visit_model_instance._meta.module_name]
                 if visit_model_instance_field:
                     qset = Q(**{visit_model_instance_field[0].name: visit_model_instance})
-                    if not super(ScheduledEntryBucketManager, self).values('id').filter(
+                    if not super(ScheduledEntryBucketManager, self).filter(
                                     registered_subject=registered_subject,
                                     appointment=visit_model_instance.appointment,
-                                    entry=entry):
+                                    entry=entry).exists():
                         # not in bucket, but should be, so add to bucket
                         super(ScheduledEntryBucketManager, self).create(
                                 registered_subject=registered_subject,
@@ -107,13 +108,13 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
                                 current_entry_title=entry.content_type_map.model_class()._meta.verbose_name,
                                 fill_datetime=filled_datetime,
                                 due_datetime=due_datetime)
-                    if entry.content_type_map.model_class().objects.values('id').filter(qset):
+                    if entry.content_type_map.model_class().objects.filter(qset).exists():
                         report_datetime = visit_model_instance.report_datetime
                         # update
-                        if super(ScheduledEntryBucketManager, self).values('id').filter(
+                        if super(ScheduledEntryBucketManager, self).filter(
                                     registered_subject=registered_subject,
                                     appointment=visit_model_instance.appointment,
-                                    entry=entry):
+                                    entry=entry).exists():
                             # already in bucket, so get bucket entry
                             s = super(ScheduledEntryBucketManager, self).get(
                                         registered_subject=registered_subject,
@@ -172,9 +173,9 @@ class ScheduledEntryBucketManager(BaseEntryBucketManager):
         # see method set_entry()
         if self.entry:
             if self.visit_model_instance:
-                if super(ScheduledEntryBucketManager, self).values('id').filter(registered_subject=self.registered_subject,
+                if super(ScheduledEntryBucketManager, self).filter(registered_subject=self.registered_subject,
                                                                    appointment=self.appointment,
-                                                                   entry=self.entry):
+                                                                   entry=self.entry).exists():
                     # already in bucket, so get bucket entry
                     scheduled_entry_bucket = super(ScheduledEntryBucketManager, self).get(registered_subject=self.registered_subject,
                                                                                           appointment=self.appointment,
