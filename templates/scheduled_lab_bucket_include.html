@@ -23,7 +23,7 @@
 </thead>
 <tbody>
 {% if not scheduled_lab_bucket %}
-    <tr class="{% cycle 'row1' 'row2' %}"><td colsapn="14"></td></tr>
+    <tr class="{% cycle 'row1' 'row2' %}"><td colspan="14"></td></tr>
 {% else %}                
     {% for f in scheduled_lab_bucket %}
         <tr class="{% cycle 'row1' 'row2' %}">
