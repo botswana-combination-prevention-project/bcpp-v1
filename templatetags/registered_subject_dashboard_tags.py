@@ -177,10 +177,10 @@ class ModelAdminUrl(template.Node):
 def model_admin_url(parser, token):
     """Compilation function for renderer ModelAdminUrl"""
     try:
-        tag_name, contenttype, visit_model, appointment, dashboard_type, app_label, extra_url_context = token.split_contents()
+        tag_name, contenttype, visit_model, appointment, dashboard_type, extra_url_context = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError("%r tag requires exactly 6 arguments" % token.contents.split()[0])
-    return ModelAdminUrl(contenttype, visit_model, appointment, dashboard_type, app_label, extra_url_context)
+        raise template.TemplateSyntaxError("%r tag requires exactly 5 arguments" % token.contents.split()[0])
+    return ModelAdminUrl(contenttype, visit_model, appointment, dashboard_type, extra_url_context)
 
 
 class ModelAdminUrlFromRegisteredSubject(template.Node):
