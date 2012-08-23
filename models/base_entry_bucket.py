@@ -15,7 +15,8 @@ class BaseEntryBucket(BaseUuidModel):
     entry_status = models.CharField(
         max_length=25,
         choices=ENTRY_STATUS,
-        default='NEW')
+        default='NEW',
+        db_index=True)
     due_datetime = models.DateTimeField(
         null=True,
         blank=True)
