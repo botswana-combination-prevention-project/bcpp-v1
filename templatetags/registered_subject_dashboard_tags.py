@@ -76,11 +76,11 @@ class ModelPk(template.Node):
         # i have to use 'extra' because i can only know the fk field name pointing to the visit model at runtime
         if self.visit_model_instance:
             #if this_model.objects.extra(where=[fk_fieldname_to_visit_model + '=%s'], params=[self.visit_model_instance.pk]):
-            if this_model.objects.filter(**{fk_fieldname_to_visit_model: self.visit_model_instance.pk}).exists():
+            if this_model.objects.filter(**{fk_fieldname_to_visit_model: self.visit_model_instance}).exists():
                 # the link is for a change
                 # these next two lines would change if for another dashboard and another visit model
                 #next = 'dashboard_visit_url'
-                this_model_instance = this_model.objects.get(**{fk_fieldname_to_visit_model: self.visit_model_instance.pk})
+                this_model_instance = this_model.objects.get(**{fk_fieldname_to_visit_model: self.visit_model_instance})
                 #this_model_instance = this_model.objects.extra(where=[fk_fieldname_to_visit_model + '=%s'], params=[self.visit_model_instance.pk])[0]
                 pk = this_model_instance.pk
         return pk
@@ -100,13 +100,13 @@ class ModelAdminUrl(template.Node):
 
     """return a reverse url to admin + '?dashboard-specific querystring' for 'change' or 'add' for a given contenttype model name"""
 
-    def __init__(self, contenttype, visit_model, appointment, dashboard_type, app_label, extra_url_context):
+    def __init__(self, contenttype, visit_model, appointment, dashboard_type, extra_url_context):
         self.unresolved_contenttype = template.Variable(contenttype)
         #self.unresolved_visit_pk = template.Variable(visit_pk)
         self.unresolved_appointment = template.Variable(appointment)
         self.unresolved_visit_model = template.Variable(visit_model)
         self.unresolved_dashboard_type = template.Variable(dashboard_type)
-        self.unresolved_app_label = template.Variable(app_label)
+        #self.unresolved_app_label = template.Variable(app_label)
         self.unresolved_extra_url_context = template.Variable(extra_url_context)
 
     def render(self, context):
@@ -115,7 +115,7 @@ class ModelAdminUrl(template.Node):
         self.appointment = self.unresolved_appointment.resolve(context)
         self.visit_model = self.unresolved_visit_model.resolve(context)
         self.dashboard_type = self.unresolved_dashboard_type.resolve(context)
-        self.app_label = self.unresolved_app_label.resolve(context)
+        #self.app_label = self.unresolved_app_label.resolve(context)
         self.extra_url_context = self.unresolved_extra_url_context.resolve(context)
         self.visit_model_instance = None
         if not self.extra_url_context:
@@ -138,11 +138,11 @@ class ModelAdminUrl(template.Node):
                                                        self.visit_model._meta.object_name,
                                                        self.visit_model._meta.object_name))
         # query this_model for visit=this_visit, or whatever the fk_fieldname is
-        if this_model.objects.filter(**{fk_fieldname_to_visit_model: self.visit_model_instance.pk}).exists():
+        if this_model.objects.filter(**{fk_fieldname_to_visit_model: self.visit_model_instance}).exists():
             #the link is for a change
             # these next two lines would change if for another dashboard and another visit model
             next_url_name = 'dashboard_visit_url'
-            this_model_instance = this_model.objects.get(**{fk_fieldname_to_visit_model: self.visit_model_instance.pk})
+            this_model_instance = this_model.objects.get(**{fk_fieldname_to_visit_model: self.visit_model_instance})
             # do reverse url
             view = 'admin:{app_label}_{model_name}_change'.format(app_label=this_model._meta.app_label, model_name=this_model._meta.object_name.lower())
             view = str(view)

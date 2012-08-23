@@ -26,7 +26,7 @@
         <td>{{ forloop.counter }}</td>
         {% if f.entry_status == 'NEW' or f.entry_status == 'KEYED' or f.entry_status == 'QUERY' %}            
             {% if appointment.appt_status == 'in_progress' %}
-             <td><A href="{% model_admin_url f.entry.content_type_map.content_type visit_model appointment dashboard_type app_label extra_url_context %}">{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</A></td>
+             <td><A href="{% model_admin_url f.entry.content_type_map.content_type visit_model appointment dashboard_type extra_url_context %}">{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</A></td>
             {% else %}                
                 <td>{{ f.entry.content_type_map.content_type|model_verbose_name|title }}</td>
             {% endif %}                                 
