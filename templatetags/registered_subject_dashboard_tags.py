@@ -201,7 +201,7 @@ class ModelAdminUrlFromRegisteredSubject(template.Node):
 
         this_model = self.contenttype.model_class()
 
-        if this_model.objects.filter(registered_subject=self.registered_subject):
+        if this_model.objects.filter(registered_subject=self.registered_subject).exists():
             #the link is for a change
             # these next two lines would change if for another dashboard and another visit model
             next_url_name = 'dashboard_url'
@@ -270,7 +270,7 @@ class ModelPkFromRegisteredSubject(template.Node):
         self.app_label = self.unresolved_app_label.resolve(context)
         pk = None
         this_model = self.contenttype.model_class()
-        if this_model.objects.filter(registered_subject=self.registered_subject):
+        if this_model.objects.filter(registered_subject=self.registered_subject).exists():
             this_model_instance = this_model.objects.get(registered_subject=self.registered_subject)
             pk = this_model_instance.pk
         return pk
