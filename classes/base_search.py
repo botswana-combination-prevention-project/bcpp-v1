@@ -1,4 +1,5 @@
 import re
+from django.conf import settings
 from django.shortcuts import render_to_response
 #from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
@@ -115,12 +116,17 @@ class BaseSearch(object):
         else:
             self.update_context(form=self.search_form())
 
-    def get_most_recent(self, model_name=None, page=1, limit=15):
+    def get_most_recent(self, model_name=None, page=1, limit=None):
         """Returns a queryset of the top most recent instances of the search model.
 
         Not technically a search function but it does use the other attributes like search_name...
         This is usually called from your section_index view."""
-        if model_name:
+        if not limit:
+            if 'MOST_RECENT_LIMIT' in dir(settings):
+                limit = settings.MOST_RECENT_LIMIT
+            else:
+                limit = 5
+        if model_name and limit > 0:
             model = self.get_search_model(model_name)
             search_result = model.objects.all().order_by('-created')[0:limit]
             return self._paginate(search_result, page)
