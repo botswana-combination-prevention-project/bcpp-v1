@@ -1,9 +1,9 @@
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from bhp_base_model.classes import BaseModelAdmin
-from bhp_entry.models import ScheduledEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_appointment.models import Appointment
+from bhp_entry.classes import ScheduledEntry
 
 
 class BaseAppointmentModelAdmin(BaseModelAdmin):
@@ -63,8 +63,8 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
                             'hostname_created']
 
     def save_model(self, request, obj, form, change):
-
-        ScheduledEntryBucket.objects.add_for_visit(visit_model_instance=obj)
+        #scheduled_entry = ScheduledEntry()
+        #scheduled_entry.add_or_update_for_visit(visit_model_instance=obj)
         # if requisition_model has been defined, assume scheduled labs otherwise pass
         if hasattr(self, 'requisition_model'):
             ScheduledLabEntryBucket.objects.add_for_visit(
