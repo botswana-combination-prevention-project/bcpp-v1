@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
 from bhp_crypto.fields import EncryptedTextField
-from bhp_entry.models import ScheduledEntryBucket, AdditionalEntryBucket
+from bhp_entry.models import AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_bucket.classes import bucket
 from bhp_appointment.models import Appointment
@@ -13,6 +13,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
 from bhp_subject_summary.models import Link
 from lab_clinic_api.classes import EdcLab
+from bhp_entry.classes import ScheduledEntry
 
 
 class RegisteredSubjectDescriptor(object):
@@ -105,20 +106,21 @@ class RegisteredSubjectDashboard(Dashboard):
     def _prepare(self, visit_model, visit_code, visit_instance):
         self._prepare_membership_forms()
         self._set_appointments(visit_code, visit_instance)
+        self._set_current_appointment(visit_code, visit_instance)
+        visit_model_instance = self._set_current_visit(visit_model, self.appointment)
+        self._add_or_update_entry_buckets(visit_model_instance)
+        self._run_entry_bucket_rules(self.subject_identifier, visit_code, visit_model_instance)
         self._prepare_additional_entry_bucket()
         self._prepare_scheduled_entry_bucket(visit_code)
         self._prepare_scheduled_lab_bucket(visit_code)
         self._prepare_additional_lab_bucket(visit_code)
-        self._set_current_appointment(visit_code, visit_instance)
-        visit = self._set_current_visit(visit_model, self.appointment)
         self.render_summary_links()
-        self._add_to_entry_buckets(visit)
-        self._run_entry_bucket_rules(self.subject_identifier, visit_code, visit)
 
-    def _add_to_entry_buckets(self, visit_model_instance):
-        # update / add to entries in ScheduledEntryBucket, ScheduledLabEntryBucket
+    def _add_or_update_entry_buckets(self, visit_model_instance):
+        """ Calls manager method to add / update entries in ScheduledEntryBucket and ScheduledLabEntryBucket"""
         if visit_model_instance:
-            ScheduledEntryBucket.objects.add_for_visit(visit_model_instance=visit_model_instance)
+            scheduled_entry = ScheduledEntry()
+            scheduled_entry.add_or_update_for_visit(visit_model_instance)
             # if requisition_model has been defined, assume scheduled labs otherwise pass
             if hasattr(self, 'requisition_model'):
                 ScheduledLabEntryBucket.objects.add_for_visit(
@@ -171,14 +173,14 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def _prepare_scheduled_entry_bucket(self, visit_code):
         """ Gets the scheduled bucket entries using the appointment with instance=0 and adds to context ."""
-        scheduled_entry_bucket = None
+        scheduled_entry_buckets = None
         if visit_code:
-            scheduled_entry_bucket = ScheduledEntryBucket.objects.get_entries_for(
-                                              registered_subject=self.registered_subject,
-                                              appointment=self._get_appointment_map(visit_code, '0'),
-                                              visit_code=visit_code)
-        self.context.add(scheduled_entry_bucket=scheduled_entry_bucket)
-        return scheduled_entry_bucket
+            scheduled_entry = ScheduledEntry()
+            scheduled_entry_buckets = scheduled_entry.get_entries_for(
+                appointment=self._get_appointment_map(visit_code, '0'),
+                entry_category='clinic')
+        self.context.add(scheduled_entry_bucket=scheduled_entry_buckets)
+        return scheduled_entry_buckets
 
     def _prepare_scheduled_lab_bucket(self, visit_code):
         """ Gets the scheduled lab bucket entries using the appointment with instance=0 and adds to context ."""
