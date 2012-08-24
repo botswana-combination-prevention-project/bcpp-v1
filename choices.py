@@ -1,42 +1,39 @@
 ENTRY_CATEGORY = (
-    ('CLINIC','Clinic'),
-    ('LAB','Lab'),
-    ('OTHER','Other'),        
+    ('CLINIC', 'Clinic'),
+    ('LAB', 'Lab'),
+    ('OTHER', 'Other'),
     )
-
 
 # careful, this tuple is coupled with the ScheduledEntryBucketManager
 ENTRY_STATUS = (
-    ('NEW','New'),
-    ('KEYED','Keyed'),    
-    ('CHECKED','Checked'),
-    ('MISSED','Missed'),    
-    ('NOT_REQUIRED','Not required'),
-    ('QUERY','Query?'),    
+    ('NEW', 'New'),
+    ('KEYED', 'Keyed'),
+    ('CHECKED', 'Checked'),
+    ('MISSED', 'Missed'),
+    ('NOT_REQUIRED', 'Not required'),
+    ('QUERY', 'Query?'),
     ('PENDING', 'Pending'),
-    )    
-    
+    )
+
 ENTRY_WINDOW = (
-    ('VISIT','Visit'),
-    ('FORM','Form'),
-    )    
-    
-   
-    
+    ('VISIT', 'Visit'),
+    ('FORM', 'Form'),
+    )
+
 TAG_TYPE = (
     ('REGISTRATION', 'Registration'),
-    ('OTHER', 'Other'),    
-)    
+    ('OTHER', 'Other'),
+)
 
-    
+
 SUBJECT_TYPE = (
-    ('ADULT','ADULT'),
-    ('MOTHER','MOTHER'),
-    ('INFANT','INFANT'),
-    ('SUBJECT','SUBJECT'),
-    ('INDEX','INDEX'),
-    ('PARTNER','PARTNER'),                                                                                                                            
-) 
+    ('ADULT', 'ADULT'),
+    ('MOTHER', 'MOTHER'),
+    ('INFANT', 'INFANT'),
+    ('SUBJECT', 'SUBJECT'),
+    ('INDEX', 'INDEX'),
+    ('PARTNER', 'PARTNER'),
+)
 
 VISIT_INFO_SOURCE = (
     ('participant', '1. Clinic visit with participant'),
@@ -53,4 +50,4 @@ VISIT_REASON = (
     ('unscheduled', '3. Unscheduled visit at which lab samples or data are being submitted'),
     ('lost', '4. Lost to follow-up'),
     ('death', '5. Death'),
-)        
+)
