@@ -1,10 +1,9 @@
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, get_model
 from django.core.urlresolvers import reverse
 from bhp_base_model.classes import BaseModelAdmin
-from bhp_entry.models import ScheduledEntryBucket
 from bhp_export_data.actions import export_as_csv_action
 from visit_model_helper import VisitModelHelper
-from bhp_visit_tracking.actions import update_entry_bucket_rules
+#from bhp_visit_tracking.actions import update_entry_bucket_rules
 
 
 class BaseVisitTrackingModelAdmin(BaseModelAdmin):
@@ -19,24 +18,18 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
     visit_model = None
 
     def __init__(self, *args, **kwargs):
-
         super(BaseVisitTrackingModelAdmin, self).__init__(*args, **kwargs)
-
         model = args[0]
-
         if not self.visit_model:
-            raise ValueError, "BaseVisitModelAdmin for %s needs a visit model. None found. Please correct." % (model,)
+            raise ValueError("BaseVisitModelAdmin for %s needs a visit model. None found. Please correct." % (model))
         self.visit_model_foreign_key = [fk for fk in [f for f in model._meta.fields if isinstance(f, ForeignKey)] if fk.rel.to._meta.module_name == self.visit_model._meta.module_name]
         if not self.visit_model_foreign_key:
-            raise ValueError, "The model for %s requires a foreign key to visit model %s. None found. Either correct the model or change the ModelAdmin class." % (self, self.visit_model)
+            raise ValueError("The model for %s requires a foreign key to visit model %s. None found. Either correct the model or change the ModelAdmin class." % (self, self.visit_model))
         else:
             self.visit_model_foreign_key = self.visit_model_foreign_key[0].name
-
         self.search_fields = ['id', self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier', ]
-
         self.list_display = [self.visit_model_foreign_key,
                              'created', 'modified', 'user_created', 'user_modified', ]
-
         self.list_filter = [
             self.visit_model_foreign_key + '__report_datetime',
             self.visit_model_foreign_key + '__reason',
@@ -47,58 +40,49 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
             'modified',
             'user_created',
             'user_modified',
-            'hostname_created',
-            ]
-
+            'hostname_created']
         self.actions.append(export_as_csv_action("CSV Export: ...with visit and demographics",
             fields=[],
             exclude=['id', ],
             extra_fields=[
-                {'report_datetime': '%s__report_datetime' % self.visit_model_foreign_key },
+                {'report_datetime': '%s__report_datetime' % self.visit_model_foreign_key},
                 {'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier'},
                 {'gender': self.visit_model_foreign_key + '__appointment__registered_subject__gender'},
                 {'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob'},
                 {'visit_reason': self.visit_model_foreign_key + '__reason'},
                 {'visit_status': self.visit_model_foreign_key + '__appointment__appt_status'},
                 {'visit': self.visit_model_foreign_key + '__appointment__visit_definition__code'},
-                {'visit_instance': self.visit_model_foreign_key + '__appointment__visit_instance'},
-                ],
+                {'visit_instance': self.visit_model_foreign_key + '__appointment__visit_instance'}],
             ))
-
-        self.actions.append(update_entry_bucket_rules)
+        #self.actions.append(update_entry_bucket_rules)
 
     def save_model(self, request, obj, form, change):
-
         if not self.visit_model:
-            raise AttributeError, 'visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''
-
+            raise AttributeError('visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = '
+                                 '\'maternal_visit\'')
         # whatever this does, the post_save signal may call
         # bucket.py class to override
-        ScheduledEntryBucket.objects.update_status(
-            model_instance=obj,
-            visit_model=self.visit_model,
-            action='new',
-            )
-
+#        ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
+#        ScheduledEntryBucket.objects.update_status(
+#            model_instance=obj,
+#            visit_model=self.visit_model,
+#            action='new')
         return super(BaseVisitTrackingModelAdmin, self).save_model(request, obj, form, change)
 
     def delete_model(self, request, obj):
 
         if not self.visit_model:
-            raise AttributeError, 'delete_model(): visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = \'maternal_visit\''
-
+            raise AttributeError('delete_model(): visit_model cannot be None. Specify in the ModelAdmin '
+                                 'class. e.g. visit_model = \'maternal_visit\'')
+        ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
         ScheduledEntryBucket.objects.update_status(
             model_instance=obj,
             visit_model=self.visit_model,
-            action='delete',
-            )
-
+            action='delete')
         return super(BaseVisitTrackingModelAdmin, self).delete_model(request, obj)
 
     def delete_view(self, request, object_id, extra_context=None):
-
         """ Tries to redirect if enough information is available in the admin model."""
-
         if not self.visit_model:
             raise AttributeError('visit_model cannot be None. Specify in the ModelAdmin class. '
                                  'e.g. visit_model = \'maternal_visit\'')
@@ -120,7 +104,6 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
 
     #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-
         visit_model_helper = VisitModelHelper()
         if db_field.name == visit_model_helper.get_visit_field(model=self.model, visit_model=self.visit_model):
             #if not request.GET.get('subject_identifier', None):
@@ -131,5 +114,4 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
                 subject_identifier=request.GET.get('subject_identifier', 0),
                 visit_code=request.GET.get('visit_code', 0),
                 visit_instance=request.GET.get('visit_instance', 0))
-
         return super(BaseVisitTrackingModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
