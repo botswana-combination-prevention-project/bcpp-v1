@@ -61,9 +61,10 @@ class BucketController(object):
             for model, model_bucket in self._registry['scheduled'].iteritems():
                 for item in dir(model_bucket):
                     if isinstance(getattr(model_bucket, item), ModelRule):
-                        if model.objects.filter(**{model_bucket.Meta.visit_model_fieldname: visit_model_instance}):
+                        if model.objects.filter(**{model_bucket.Meta.visit_model_fieldname: visit_model_instance}).exists():
                             instance = model.objects.get(**{model_bucket.Meta.visit_model_fieldname: visit_model_instance})
-                            getattr(model_bucket, item).run(instance, model_bucket.Meta)
+                            # gets the model rule of name item
+                            getattr(model_bucket, item).run(instance, model_bucket.Meta, visit_model_instance)
 
     def update(self, instance):
         """ Run model rules for this model instance. """

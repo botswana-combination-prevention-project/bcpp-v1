@@ -45,9 +45,9 @@ class ModelRule(object):
         if not 'Meta' in dir(self):
             AttributeError('class Meta with the app_label attribute has not been defined. Do so in the bucket.py')
 
-    def run(self, instance, meta):
+    def run(self, instance, meta, visit_model_instance):
         """ Run the rule. """
-        self._set_reference_model(instance, meta.app_label, meta.visit_model_fieldname)
+        self._set_reference_model(instance, meta.app_label, meta.visit_model_fieldname, visit_model_instance)
         self._build_predicate(instance)
         self._set_target_model(instance, meta.app_label)
         if not self._predicate:
@@ -66,7 +66,7 @@ class ModelRule(object):
             else:
                 self._target_models.append(get_model(app_label, target_model))
 
-    def _set_reference_model(self, instance, app_label, visit_model_fieldname):
+    def _set_reference_model(self, instance, app_label, visit_model_fieldname, visit_model_instance):
         """ Set the reference model used to get a field value for the predicate. """
         # check if a model other than the default will be used
         # to get the field value for the predicate
@@ -78,18 +78,18 @@ class ModelRule(object):
                 for field in reference_model._meta.fields:
                     if field.attname == visit_model_fieldname:
                         self.reference_model_filter = visit_model_fieldname
-                        self._reference_model_instance = reference_model.objects.get(**{visit_model_fieldname: self.visit_model_instance})
+                        self._reference_model_instance = reference_model.objects.get(**{visit_model_fieldname: visit_model_instance})
                         break
             if not self.reference_model_filter:
                 for field in reference_model._meta.fields:
                     if field.attname == 'registered_subject':
                         self.reference_model_filter = 'registered_subject'
-                        self._reference_model_instance = reference_model.objects.get(registered_subject=self.visit_model_instance.appointment.registered_subject)
+                        self._reference_model_instance = reference_model.objects.get(registered_subject=visit_model_instance.appointment.registered_subject)
                         break
             if not self.reference_model_filter:
                 raise AttributeError('Unknown reference_model_filter. Expected {0} or registered_subject. Got {1}'.format(visit_model_fieldname, self.reference_model_filter))
             if self.reference_model_filter == 'registered_subject':
-                self._reference_model_instance = reference_model.objects.get(registered_subject=self.visit_model_instance.appointment.registered_subject)
+                self._reference_model_instance = reference_model.objects.get(registered_subject=visit_model_instance.appointment.registered_subject)
             if not self._reference_model_instance:
                 raise AttributeError('Unable to get an instance of class {0}. Need a valid reference_model_filter. Got {1}.'.format(reference_model, self.reference_model_filter))
         else:

@@ -1,4 +1,5 @@
 from django.db.models import get_model
+from bhp_entry.classes import ScheduledEntry
 from model_rule import ModelRule
 
 """
@@ -67,40 +68,35 @@ class ScheduledModelRule(ModelRule):
         self._consequent_action = self.logic[self._CONSEQUENT_ACTION]
         self._alternative_action = self.logic[self._ALTERNATIVE_ACTION]
 
-    def run(self, instance, meta):
+    def run(self, instance, meta, visit_model_instance):
         """ Run the rule, test the logic. """
-        self.visit_model_instance = getattr(instance, meta.visit_model_fieldname)
         # call super to build predicate, etc
-        super(ScheduledModelRule, self).run(instance, meta)
+        super(ScheduledModelRule, self).run(instance, meta, visit_model_instance)
         ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
         ContentTypeMap = get_model('bhp_content_type_map', 'contenttypemap')
         # run the rule for each target model in the list
-        for target_model in self._target_models:
-            contenttypemap = ContentTypeMap.objects.get(app_label=target_model._meta.app_label,
-                                                        model=target_model._meta.object_name.lower())
-            if ScheduledEntryBucket.objects.values('id').filter(entry__content_type_map=contenttypemap):
-                self._eval(instance, target_model, meta.visit_model_fieldname)
+        for target_model_cls in self._target_models:
+            #print 'instance '+instance._meta.object_name
+            #print 'target class '+target_model_cls._meta.object_name
+            contenttypemap = ContentTypeMap.objects.get(app_label=target_model_cls._meta.app_label,
+                                                        model=target_model_cls._meta.object_name.lower())
+            if ScheduledEntryBucket.objects.filter(entry__content_type_map=contenttypemap,
+                                                   registered_subject=visit_model_instance.appointment.registered_subject,
+                                                   appointment=visit_model_instance.appointment).exists():
+                scheduled_entry_bucket_map = ScheduledEntryBucket.objects.values('id').get(entry__content_type_map=contenttypemap,
+                                                                                          registered_subject=visit_model_instance.appointment.registered_subject,
+                                                                                          appointment=visit_model_instance.appointment)
+                self._eval(target_model_cls, scheduled_entry_bucket_map.get('id'), meta.visit_model_fieldname, visit_model_instance)
             else:
-                raise ValueError('Cannot determine target model for bucket rule, %s' % (target_model,))
+                raise ValueError('Cannot determine target model for bucket rule, %s' % (target_model_cls,))
 
-    def _eval(self, instance, target_model, visit_model_fieldname):
+    def _eval(self, target_model_cls, scheduled_entry_bucket_id, visit_model_fieldname, visit_model_instance):
         """ Evaluate predicate and update status if true """
-        ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
+        scheduled_entry = ScheduledEntry()
+        scheduled_entry.set_user_model_cls(target_model_cls)
+        scheduled_entry.set_filter_model_instance(visit_model_instance)
+        scheduled_entry.set_filter_fieldname(visit_model_fieldname)
         if eval(self._predicate):
-            ScheduledEntryBucket.objects.update_status(
-                model=target_model,
-                visit_model_instance=getattr(instance, visit_model_fieldname),
-                action=self._consequent_action)
-            #RuleHistory.objects.create(rule = self,
-            #                   model = target_model._meta.object_name.lower(),
-            #                   predicate = self._predicate,
-            #                   action = self._consequent_action)
+            scheduled_entry.update_status(self._consequent_action, scheduled_entry_bucket_id, visit_model_instance.report_datetime)
         else:
-            ScheduledEntryBucket.objects.update_status(
-                model=target_model,
-                visit_model_instance=getattr(instance, visit_model_fieldname),
-                action=self._alternative_action)
-            #RuleHistory.objects.create(rule = self,
-            #                   model = target_model._meta.object_name.lower(),
-            #                   predicate = self._predicate,
-            #                   action = self._alternative_action)
+            scheduled_entry.update_status(self._alternative_action, scheduled_entry_bucket_id, visit_model_instance.report_datetime)
