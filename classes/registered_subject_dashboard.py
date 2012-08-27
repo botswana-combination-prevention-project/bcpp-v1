@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from bhp_crypto.fields import EncryptedTextField
 from bhp_entry.models import AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
-from bhp_bucket.classes import bucket
+from bhp_bucket.classes import rule_groups
 from bhp_appointment.models import Appointment
 from bhp_visit.models import ScheduleGroup, VisitDefinition
 from bhp_registration.models import RegisteredSubject
@@ -109,7 +109,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._set_current_appointment(visit_code, visit_instance)
         visit_model_instance = self._set_current_visit(visit_model, self.appointment)
         self._add_or_update_entry_buckets(visit_model_instance)
-        self._run_entry_bucket_rules(self.subject_identifier, visit_code, visit_model_instance)
+        self._run_rule_groups(self.subject_identifier, visit_code, visit_model_instance)
         self._prepare_additional_entry_bucket()
         self._prepare_scheduled_entry_bucket(visit_code)
         self._prepare_scheduled_lab_bucket(visit_code)
@@ -117,7 +117,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.render_summary_links()
 
     def _add_or_update_entry_buckets(self, visit_model_instance):
-        """ Calls manager method to add / update entries in ScheduledEntryBucket and ScheduledLabEntryBucket"""
+        """ Adds missing bucket entries and flags added and existing entries as keyed or not keyed (only)."""
         if visit_model_instance:
             scheduled_entry = ScheduledEntry()
             scheduled_entry.add_or_update_for_visit(visit_model_instance)
@@ -127,12 +127,10 @@ class RegisteredSubjectDashboard(Dashboard):
                     visit_model_instance=visit_model_instance,
                     requisition_model=self.requisition_model)
 
-    def _run_entry_bucket_rules(self, subject_identifier, visit_code, visit_model_instance):
+    def _run_rule_groups(self, subject_identifier, visit_code, visit_model_instance):
+        """ Runs rules in any rule groups if visit_code is known and update entries as (new, not required) when the visit dashboard is refreshed.
 
-        """ Runs rules in self.scheduled_entry_bucket_rules if visit_code is known.
-
-        Add rules before calling create()
-        If called, update entry status (new, not required, etc) when the visit dashboard is refreshed."""
+        If status is 'keyed' and the form is actually keyed, do nothing."""
         if not subject_identifier:
             raise AttributeError('set value of subject_identifier before calling dashboard create() when scheduled_entry_bucket_rules exist')
         # run rules if visit_code is known -- user selected, that is user clicked to see list of
@@ -140,9 +138,7 @@ class RegisteredSubjectDashboard(Dashboard):
         if visit_code:
             # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
             if visit_model_instance:
-                for rule in bucket.dashboard_rules:
-                    rule.run(visit_model_instance=visit_model_instance)
-                bucket.update_all(visit_model_instance)
+                rule_groups.update_all(visit_model_instance)
 
     def _get_visit_model_url(self, visit_model):
         model_name = visit_model._meta.module_name
