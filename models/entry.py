@@ -27,7 +27,8 @@ class Entry(BaseWindowPeriodItem):
     entry_category = models.CharField(
         max_length=25,
         choices=ENTRY_CATEGORY,
-        default='CLINIC')
+        default='CLINIC',
+        db_index=True)
     entry_window_calculation = models.CharField(
         max_length=25,
         choices=ENTRY_WINDOW,

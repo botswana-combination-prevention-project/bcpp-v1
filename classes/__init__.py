@@ -1,2 +1,3 @@
 from base_entry import BaseEntry
 from scheduled_entry import ScheduledEntry
+from additional_entry import AdditionalEntry
