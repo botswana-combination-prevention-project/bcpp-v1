@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_appointment.models import Appointment
-from bhp_entry.classes import ScheduledEntry
 
 
 class BaseAppointmentModelAdmin(BaseModelAdmin):
