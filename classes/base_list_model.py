@@ -10,6 +10,7 @@ class BaseListModel(BaseModel):
         verbose_name='Display value',
         max_length=250,
         unique=True,
+        db_index=True,
         help_text='This is displayed value, shown to the user (40 characters max.)',
         )
 
@@ -17,12 +18,14 @@ class BaseListModel(BaseModel):
         verbose_name="Stored value",
         max_length=250,
         unique=True,
+        db_index=True,
         help_text='This is the stored value, required',
         )
 
     display_index = models.IntegerField(
         verbose_name="display index",
         default=0,
+        db_index=True,
         help_text='Index to control display order if not alphabetical, not required',
         )
 
