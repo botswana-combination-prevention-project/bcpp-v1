@@ -1,19 +1,15 @@
-from django.db.models import ForeignKey, get_model
+from django.db.models import ForeignKey
 from django.core.urlresolvers import reverse
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from visit_model_helper import VisitModelHelper
 #from bhp_visit_tracking.actions import update_entry_bucket_rules
+# from bhp_entry.classes import ScheduledEntry
 
 
 class BaseVisitTrackingModelAdmin(BaseModelAdmin):
 
-    """ModelAdmin subclass for models with a ForeignKey to your visit model(s)
-
-    Takes care of updating the bucket and redirecting back to the dashboard after
-    delete()
-
-    """
+    """ModelAdmin subclass for models with a ForeignKey to your visit model(s)"""
 
     visit_model = None
 
@@ -60,13 +56,12 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
         if not self.visit_model:
             raise AttributeError('visit_model cannot be None. Specify in the ModelAdmin class. e.g. visit_model = '
                                  '\'maternal_visit\'')
-        # whatever this does, the post_save signal may call
-        # bucket.py class to override
 #        ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
 #        ScheduledEntryBucket.objects.update_status(
 #            model_instance=obj,
 #            visit_model=self.visit_model,
 #            action='new')
+        #bucket keyed, not keyed will automatically be updated when the dashboard is refreshed.
         return super(BaseVisitTrackingModelAdmin, self).save_model(request, obj, form, change)
 
     def delete_model(self, request, obj):
@@ -74,11 +69,13 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
         if not self.visit_model:
             raise AttributeError('delete_model(): visit_model cannot be None. Specify in the ModelAdmin '
                                  'class. e.g. visit_model = \'maternal_visit\'')
-        ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
-        ScheduledEntryBucket.objects.update_status(
-            model_instance=obj,
-            visit_model=self.visit_model,
-            action='delete')
+#        ScheduledEntryBucket = get_model('bhp_entry', 'scheduledentrybucket')
+#        ScheduledEntryBucket.objects.update_status(
+#            model_instance=obj,
+#            visit_model=self.visit_model,
+#            action='delete')
+#        scheduled_entry = ScheduledEntry()
+#        scheduled_entry
         return super(BaseVisitTrackingModelAdmin, self).delete_model(request, obj)
 
     def delete_view(self, request, object_id, extra_context=None):
