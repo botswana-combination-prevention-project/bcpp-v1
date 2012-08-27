@@ -10,9 +10,14 @@ class AdditionalEntryBucket(BaseEntryBucket):
     """List of required but unscheduled entries by registered_subject such as off-study, death, adverse event, etc (not attached to appointment model).
 
     This model differs from ScheduledEntryBucket in that it is not attached to an
-    appointment/visit_definition. Also, it is not attached to the Entry model and instead refers 
+    appointment/visit_definition. Also, it is not attached to the Entry model and instead refers
     directly to the ContentType model.
     """
+    rule_name = models.CharField(
+        max_length=50,
+        null=True,
+        help_text='Name of rule that created the entry',
+        db_index=True)
 
     content_type_map = models.ForeignKey(ContentTypeMap,
             related_name='+',
@@ -28,9 +33,7 @@ class AdditionalEntryBucket(BaseEntryBucket):
         return '%s: %s' % (self.registered_subject.subject_identifier, self.content_type_map)
 
     def is_keyed(self):
-
         """ Confirm if model instance exists / is_keyed. """
-
         model = models.get_model(
                         self.content_type_map.content_type.app_label,
                         self.content_type_map.content_type.model)
@@ -39,7 +42,6 @@ class AdditionalEntryBucket(BaseEntryBucket):
             is_keyed = True
         else:
             is_keyed = False
-
         return is_keyed
 
     class Meta:

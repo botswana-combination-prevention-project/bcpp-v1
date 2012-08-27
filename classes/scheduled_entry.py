@@ -119,3 +119,18 @@ class ScheduledEntry(BaseEntry):
         self.set_filter_fieldname(filter_model_field)
         self.set_bucket_model_instance_with_id(scheduled_entry_bucket_id)
         self.update_bucket(action, visit_model_instance.report_datetime, comment)
+
+    def get_entries_for(self, appointment, entry_category):
+        """Returns a list of Bucket instance for the given subject and zero instance appointment."""
+        if appointment.visit_instance != '0':
+            raise TypeError('Appointment must be a 0 instance appointment.')
+        registered_subject_id = appointment.registered_subject.pk
+        bucket_instance_list = []
+        if appointment:
+            for  bucket_instance in self.get_bucket_model_cls().objects.values('pk').filter(
+                registered_subject_id=registered_subject_id,
+                appointment_id=appointment.pk,
+                entry__entry_category=entry_category,
+                ).order_by('entry__entry_order'):
+                bucket_instance_list.append(self.get_bucket_model_cls().objects.select_related().get(pk=bucket_instance.get('pk')))
+        return bucket_instance_list

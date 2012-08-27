@@ -169,15 +169,17 @@ class BaseEntry(object):
             self.set_bucket_model_cls()
         return self._bucket_model_cls
 
-    def set_content_type_map(self, **kwargs):
-        """Is this used?"""
-        model = self.get_target_model_cls() or self.get_target_model_instance()
-        if model:
-            self._content_type_map = ContentTypeMap.objects.get(
-                app_label=self.model._meta.app_label,
-                name=self.model._meta.verbose_name)
+    def set_content_type_map(self, content_type_map=None):
+        if content_type_map:
+            self._content_type_map = content_type_map
         else:
-            self._content_type_map = None
+            model = self.get_target_model_cls() or self.get_target_model_instance()
+            if model:
+                self._content_type_map = ContentTypeMap.objects.get(
+                    app_label=self.model._meta.app_label,
+                    name=self.model._meta.verbose_name)
+            else:
+                self._content_type_map = None
 
     def get_content_type_map(self):
         if not self._content_type_map:
@@ -205,17 +207,4 @@ class BaseEntry(object):
             retval = 'NEW'
         return retval
 
-    def get_entries_for(self, appointment, entry_category):
-        """Returns a list of ScheduledEntryBucket instance for the given subject and zero instance appointment."""
-        if appointment.visit_instance != '0':
-            raise TypeError('Appointment must be a 0 instance appointment.')
-        registered_subject_id = appointment.registered_subject.pk
-        bucket_instance_list = []
-        if appointment:
-            for  bucket_instance in self.get_bucket_model_cls().objects.values('pk').filter(
-                registered_subject_id=registered_subject_id,
-                appointment_id=appointment.pk,
-                entry__entry_category=entry_category,
-                ).order_by('entry__entry_order'):
-                bucket_instance_list.append(self.get_bucket_model_cls().objects.select_related().get(pk=bucket_instance.get('pk')))
-        return bucket_instance_list
+
