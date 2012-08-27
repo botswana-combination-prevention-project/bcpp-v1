@@ -2,7 +2,7 @@ import copy
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.module_loading import module_has_submodule
-from rule import Rule
+#from rule import Rule
 from rule_group import RuleGroup
 
 
@@ -19,45 +19,46 @@ class Controller(object):
     """ Main controller of :class:`RuleGroup` objects. """
 
     def __init__(self):
-        self._registry = {'scheduled': [], 'additional': [], 'additional_lab': []}
+        self._registry = {}
         self.dashboard_rules = []
 
-    def register(self, rule_group, register='scheduled'):
-        """ Register :class:`RuleGroup`. """
-        if register == 'scheduled':
-            if rule_group in self._registry['scheduled']:
-                raise AlreadyRegistered('The rule %s is already registered' % rule_group.__name__)
-            if not issubclass(rule_group, RuleGroup):
-                raise AlreadyRegistered('Expected an instance of RuleGroup.')
-            self._registry['scheduled'].append(rule_group)
-        elif register == 'additional':
-            if rule_group in self._registry['additional']:
-                raise AlreadyRegistered('The rule %s is already registered' % rule_group.__name__)
-            self._registry['additional'].append(rule_group)
-        elif register == 'additional_lab':
-            if rule_group in self._registry['additional_lab']:
-                raise AlreadyRegistered('The rule %s is already registered' % rule_group.__name__)
-            self._registry['additional_lab'].append(rule_group)
-        else:
-            raise ValueError('Invalid Key for _registry. Got %s' % (register,))
+    def set_registry(self, rule_group):
+        if not issubclass(rule_group, RuleGroup):
+            raise AlreadyRegistered('Expected an instance of RuleGroup.')
+        if not rule_group.app_label in self._registry:
+            self._registry.update({rule_group.app_label: []})
+        if rule_group in self._registry.get(rule_group.app_label):
+            raise AlreadyRegistered('The rule {0} is already registered for module {1}'.format(rule_group.__name__, rule_group.app_label))
+        self._registry.get(rule_group.app_label).append(rule_group)
+
+    def get_registry(self, app_label=None):
+        if app_label:
+            if app_label in self._registry:
+                return self._registry.get(app_label)
+            else:
+                return {}
+        return self._registry
+
+    def register(self, rule_group):
+        """ Register Rule groups to the list for the module the rule groups were declared in; which is the same module as the visit model (see update)."""
+        self.set_registry(rule_group)
 
     def update_all(self, visit_model_instance):
-        """ Given a visit model instance, run all rules for a given rule group."""
-        if self._registry['scheduled']:
-            for rule_group in self._registry['scheduled']:
-                #rule_group.run_all(visit_model_instance)
-                for rule in rule_group.rules:
-                    rule.run(visit_model_instance)
+        """ Given a visit model instance, run all rules in each rule group for the app_label of the visit model."""
+        app_label = visit_model_instance._meta.app_label
+        for rule_group in self.get_registry(app_label):
+            for rule in rule_group.rules:
+                rule.run(visit_model_instance)
 
-    def update(self, instance):
-        """ Run model rules for this model instance. """
-        self.target_model = {'add': [], 'delete': []}
-        if self._registry['scheduled']:
-            """ update status for scheduled entries """
-            for rule_group in self._registry['scheduled']:
-                for rule in dir(rule_group):
-                    if isinstance(getattr(rule_group, rule), Rule):
-                        getattr(rule_group, rule).run(instance, rule_group.Meta)
+#    def update(self, instance):
+#        """ Run model rules for this model instance. """
+#        self.target_model = {'add': [], 'delete': []}
+#        if self._registry['scheduled']:
+#            """ update status for scheduled entries """
+#            for rule_group in self._registry['scheduled']:
+#                for rule in dir(rule_group):
+#                    if isinstance(getattr(rule_group, rule), Rule):
+#                        getattr(rule_group, rule).run(instance, rule_group.Meta)
 
     def autodiscover(self):
         """ Autodiscover buckey rules from a bucket.py.

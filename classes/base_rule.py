@@ -9,6 +9,9 @@ class BaseRule(object):
 
     def __init__(self, *args, **kwargs):
 
+        self._predicate = None
+        self._consequent_action = None
+        self._alternative_action = None
         self._target_model_list = None
         self._target_model_cls = None
         self._source_model_cls = None
@@ -23,10 +26,7 @@ class BaseRule(object):
         self.rule_group_name = ''
 
         if 'logic' in kwargs:
-            if isinstance(kwargs.get('logic'), Logic):
-                self.logic = kwargs.get('logic')
-            else:
-                raise AttributeError('Attribute \'logic\' must be an instance of class Logic.')
+            self.set_logic(kwargs.get('logic'))
         if 'target_model' in kwargs:
             self.set_target_model_list(kwargs.get('target_model'))
         # these attributes usually come in thru Meta, but not always...
@@ -53,20 +53,123 @@ class BaseRule(object):
         self._target_bucket_instance_id = None
         self._target_content_type_map = None
         self.set_visit_model_instance(visit_model_instance)
-        # TODO: is this correct?
         self.set_filter_instance()
 
     def run(self, visit_model_instance):
-        """ Run the rule, test the logic. """
-        # evaluate the rule for each target model in the list
+        """ Evaluate the rule for each target model in the target model list."""
         for target_model_cls in self.get_target_model_list():
             self.reset(visit_model_instance)
             self.set_target_model_cls(target_model_cls)
-            #print 'Evaluating rule {0} on target {1}'.format(self, self.get_target_model_cls()._meta.object_name)
             self.evaluate()
 
     def evaluate(self):
         raise AttributeError('Evaluate should be overridden. Nothing to do.')
+
+    def set_logic(self, logic):
+        if isinstance(logic, Logic):
+            self._logic = logic
+            if self.is_valid_action(logic.consequence):
+                self.set_consequent_action(logic.consequence)
+            if self.is_valid_action(logic.alternative):
+                self.set_alternative_action(logic.alternative)
+        else:
+            raise AttributeError('Attribute \'logic\' must be an instance of class Logic.')
+
+    def get_logic(self):
+        if self._logic is None:
+            raise AttributeError('Logic cannot be None.')
+        return self._logic
+
+    def set_consequent_action(self, action):
+        self._consequent_action = action
+
+    def get_consequent_action(self):
+        return self._consequent_action
+
+    def set_alternative_action(self, action):
+        self._alternative_action = action
+
+    def get_alternative_action(self):
+        return self._alternative_action
+
+    def get_action_list(self):
+        """Users should override to return a valid list of actions for consequent and alternative actions.
+
+        For example ['new', 'not_required']."""
+        raise TypeError('Action list cannot be None.')
+
+    def is_valid_action(self, action):
+        """Returns true or, if invalid action, raises an error."""
+        if action.lower() not in self.get_action_list():
+            raise TypeError('Encountered an invalid action \'{0}\' when parsing additional rule. '
+                            'Valid actions are {1}.'.format(action, ', '.join(self.get_action_list())))
+        return True
+
+    def get_operator_from_word(self, word):
+        operator = None
+        if word.lower() == 'equals' or word.lower() == 'eq':
+            operator = '=='
+        if word.lower() == 'gt':
+            operator = '>'
+        if word.lower() == 'gte':
+            operator = '>='
+        if word.lower() == 'lt':
+            operator = '<'
+        if word.lower() == 'lte':
+            operator = '<='
+        if word.lower() == 'ne':
+            operator = '!='
+        if not operator:
+            raise TypeError('Unrecognized operator in rule predicate. Valid options are equals, eq, gt, gte, lt, lte, ne. Options are not case sensitive')
+        return operator
+
+    def set_predicate(self):
+        """Converts the predicate to something like "value==value" that can be evaluated with eval().
+
+        A simple predicate would be a tuple ('field_name', 'equals', 'value') meant to resolve to 'value' == 'value'.
+        A more complex one might be (('field_name', 'equals', 'value'), ('field_name', 'equals', 'value', 'or'))
+        which would resolve to 'value' == 'value' or 'value' == 'value'.
+        """
+        self._predicate = None
+        source_model_instance = self.get_source_model_instance()
+        if source_model_instance:
+            self._predicate = ''
+            unresolved_predicate = self._logic.predicate
+            if isinstance(unresolved_predicate[0], basestring):
+                unresolved_predicate = (unresolved_predicate,)
+            # build the predicate
+            # check that unresolved predicate is a tuple
+            if not isinstance(unresolved_predicate, tuple):
+                raise TypeError('First \'logic\' item must be a tuple of (field, operator, value). Got %s' % (unresolved_predicate,))
+            n = 0
+            for item in unresolved_predicate:
+                if n == 0 and not len(item) == 3:
+                    ValueError('The logic tuple (or the first tuple of tuples) must must have three items')
+                if n > 0 and not len(item) == 4:
+                    ValueError('Additional tuples in the logic tuple must have a boolean operator as the fourth item')
+                field_value = getattr(source_model_instance, item[0])
+                if not field_value:
+                    self._predicate = None
+                    break
+                # comparison value
+                value = item[2]
+                # logical_operator if more than one tuple in the logic tuple
+                if len(item) == 4:
+                    logical_operator = item[3]
+                    if logical_operator not in ['and', 'or', 'and not', 'or not']:
+                        ValueError('Invalid logical operator in logic tuple for rule {0}. Got {1}. '
+                                   'Valid options are {2}'.format(self, logical_operator, ', '.join(['and', 'or', 'and not', 'or not'])))
+                else:
+                    logical_operator = ''
+                # add as string for eval
+                self._predicate += ' %s (\'%s\' %s \'%s\')' % (logical_operator, field_value.lower(), self.get_operator_from_word(item[1]), value.lower())
+                n += 1
+
+    def get_predicate(self):
+        """Gets the predicate, but return value may be '' or None, so users should check for this."""
+        # always set
+        self.set_predicate()
+        return self._predicate
 
     def set_target_model_list(self, target_model_list=None):
         """ Sets up the target model list for this rule. """

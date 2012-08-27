@@ -2,7 +2,7 @@ import copy
 from django.db.models import get_model, Model
 from django.utils.encoding import smart_str
 
-from rule import Rule
+from base_rule import BaseRule
 
 
 class BaseRuleGroup(type):
@@ -17,8 +17,7 @@ class BaseRuleGroup(type):
         meta = attrs.pop('Meta', None)
         for rule_name, rule in attrs.items():
             if not rule_name.startswith('__'):
-                if isinstance(rule, Rule):
-                    rules.append(rule)
+                if isinstance(rule, BaseRule):
                     setattr(rule, 'name', rule_name)
                     setattr(rule, 'rule_group_name', name)
                     if meta:
@@ -49,8 +48,10 @@ class BaseRuleGroup(type):
                                     raise AttributeError('Rule Meta Attribute \'filter_model\' must be a tuple of (ModelClass, fieldname) or ((app_label, model_name), fieldname).')
                                 rule.set_filter_model_cls(meta.filter_model[0])
                                 rule.set_filter_fieldname(meta.filter_model[1])
+                    rules.append(rule)
                     attrs.update({rule_name: rule})
         attrs.update({'rules': tuple(rules)})
+        attrs.update({'app_label': attrs.get('__module__').split('.')[0]})
         return super(BaseRuleGroup, cls).__new__(cls, name, bases, attrs)
 
 
