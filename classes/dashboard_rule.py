@@ -1,6 +1,6 @@
 from django.db.models import get_model
 #from bhp_entry.classes import ScheduledEntry
-from bucket_controller import bucket
+from controller import rule_groups
 
 
 class DashboardRule(object):
@@ -65,4 +65,4 @@ class DashboardRuleContainer(object):
     def count(self):
         return len(self.dashboard_rules)
 
-bucket.dashboard_rules = DashboardRuleContainer()
+rule_groups.dashboard_rules = DashboardRuleContainer()
