@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from django.db.models import Q
+from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import ForeignKey
@@ -65,7 +66,13 @@ class Lis(object):
         subject_identifier = kwargs.get('subject_identifier', None)
         protocol_identifier = kwargs.get('protocol_identifier', None)
 
-        import_history = ImportHistory(self.db, subject_identifier or protocol_identifier)
+        lock_name = subject_identifier
+        if not lock_name:
+            if 'LAB_LOCK_NAME' in dir(settings):
+                lock_name = settings.LAB_LOCK_NAME
+            else:
+                lock_name = protocol_identifier
+        import_history = ImportHistory(self.lab_db, lock_name)
         if import_history.start():
             # import all received
             modified_aliquots = []
