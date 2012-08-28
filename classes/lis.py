@@ -72,7 +72,7 @@ class Lis(object):
                 lock_name = settings.LAB_LOCK_NAME
             else:
                 lock_name = protocol_identifier
-        import_history = ImportHistory(self.lab_db, lock_name)
+        import_history = ImportHistory(self.db, lock_name)
         if import_history.start():
             # import all received
             modified_aliquots = []
