@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from bhp_crypto.fields import EncryptedTextField
 from bhp_entry.models import AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
-from bhp_bucket.classes import rule_groups
+from bhp_entry_rules.classes import rule_groups
 from bhp_appointment.models import Appointment
 from bhp_visit.models import ScheduleGroup, VisitDefinition
 from bhp_registration.models import RegisteredSubject
