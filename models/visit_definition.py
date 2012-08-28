@@ -45,4 +45,3 @@ class VisitDefinition(BaseWindowPeriodItem):
     class Meta:
         ordering = ['code', 'time_point']
         app_label = "bhp_visit"
-        db_table = 'bhp_form_visitdefinition'

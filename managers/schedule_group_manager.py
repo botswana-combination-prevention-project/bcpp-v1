@@ -2,19 +2,18 @@ import re
 from django.core.exceptions import FieldError
 from django.db import models
 from django.db.models import Q
+from bhp_visit.models import MembershipForm
 
 
 class ScheduleGroupManager(models.Manager):
 
-    def get_membership_forms_for(self, **kwargs):
+    def get_membership_forms_for(self, registered_subject, membership_form_category, **kwargs):
 
-        """ Returns dict of keyed and unkeyed schedule group membership forms for registered_subject
+        """ Returns dict of keyed and unkeyed schedule group membership forms for agiven registered_subject
 
         Specify the registered_subject and the membership_form_category. Include forms
         of the specified membership_form__category AND those that have no category (null) or blank.
         """
-
-        registered_subject = kwargs.get("registered_subject")
 
         # if this model is keyed, exclude all other UNKEYED models LIKE this from the list
         # for example, if consented, no other membership forms apply and
@@ -31,11 +30,12 @@ class ScheduleGroupManager(models.Manager):
         # category of the membership form. Can be any value as  long as
         # it helps link membership forms in some way. For example,
         # to distinguish 'maternal' from 'infant' forms. Specified at the form level
-        membership_form_category = kwargs.get("membership_form_category")
-        if membership_form_category:
-            #  membership form 'category' should appear in the category field of membership_form.
-            if not super(ScheduleGroupManager, self).filter(membership_form__category__iexact=membership_form_category).exists():
-                raise ValueError('The given membership_form_category is not valid for attribute \'category\' in model membership form. Got \'%s\'.' % membership_form_category)
+
+        #  membership form 'category' should appear in the category field of membership_form.
+        if not MembershipForm.objects.filter(category__iexact=membership_form_category).exists():
+            raise ValueError('Can\'t find any membership forms! Have you configured any for category \'%s\'.' % membership_form_category)
+        if not super(ScheduleGroupManager, self).filter(membership_form__category__iexact=membership_form_category).exists():
+            raise ValueError('Can\'t find any schedule groups! Have you configured any for category \'%s\'.' % membership_form_category)
 
         # a list of "keys" that link like membership forms together. If they share this
         # key it means that only one form should be KEYED per subject.
