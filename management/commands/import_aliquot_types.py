@@ -30,7 +30,7 @@ class Command(BaseCommand):
             if not created:
                 action = 'Updating'
             print '{action} {aliquot_type}'.format(action=action, aliquot_type=aliquot_type)
-        lis = [aliquot_type.name for aliquot_type in AliquotType.objects.using(self.db).all().order_by('name')]
+        lis = [aliquot_type.name for aliquot_type in LisAliquotType.objects.using(self.db).all().order_by('name')]
         local = [aliquot_type.name for aliquot_type in AliquotType.objects.all().order_by('name')]
         diff_set = set(local).difference(set(lis))
         if diff_set:
