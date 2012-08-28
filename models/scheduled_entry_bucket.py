@@ -28,7 +28,6 @@ class ScheduledEntryBucket(BaseEntryBucket):
 
     class Meta:
         app_label = 'bhp_entry'
-        db_table = 'bhp_form_scheduledentrybucket'
         verbose_name = "Subject Scheduled Entry Bucket"
         ordering = ['registered_subject', 'entry', 'appointment']
         unique_together = ['registered_subject', 'entry', 'appointment']

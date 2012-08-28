@@ -46,7 +46,6 @@ class AdditionalEntryBucket(BaseEntryBucket):
 
     class Meta:
         app_label = 'bhp_entry'
-        db_table = 'bhp_form_additionalentrybucket'
         verbose_name = "Subject Additional Entry Bucket"
         ordering = ['registered_subject', 'content_type_map', ]
         unique_together = ['registered_subject', 'content_type_map', ]
