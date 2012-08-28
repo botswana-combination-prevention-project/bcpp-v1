@@ -51,20 +51,29 @@ class BaseConsent(BaseSubject):
     def __unicode__(self):
         return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
 
-    def save(self, *args, **kwargs):
-        """ create or get a subject identifier and update registered subject """
+    def save_new_consent(self):
+        """ Creates or gets a subject identifier and updates registered subject.
+
+        Users may override this to change the default behavior"""
         consented_subject_identifier = ConsentedSubjectIdentifier()
-        registered_subject = getattr(self, 'registered_subject', None)
+        try:
+            registered_subject = getattr(self, 'registered_subject')
+        except:
+            registered_subject = None
+        # check for  registered subject key and if it already has
+        # a subject_identifier (e.g for subjects re-consenting)
+        if registered_subject:
+            self.subject_identifier = self.registered_subject.subject_identifier
+        if not self.subject_identifier:
+            self.subject_identifier = consented_subject_identifier.get_identifier(
+                consent=self,
+                consent_attrname='subject_identifier',
+                registration_status='consented',
+                site_code=self.study_site.site_code)
+
+    def save(self, *args, **kwargs):
         if not self.id:
-            # check for  registered subject key and if it already has
-            # a subject_identifier (e.g for subjects re-consenting)
-            if registered_subject:
-                self.subject_identifier = self.registered_subject.subject_identifier
-            if not self.subject_identifier:
-                self.subject_identifier = consented_subject_identifier.get_identifier(consent=self,
-                                                                                      consent_attrname='subject_identifier',
-                                                                                      registration_status='consented',
-                                                                                      site_code=self.study_site.site_code)
+            self.save_new_consent()
         super(BaseConsent, self).save(*args, **kwargs)
 
     class Meta:
