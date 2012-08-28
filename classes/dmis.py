@@ -53,8 +53,13 @@ class Dmis(BaseDmis):
             the result instance.
         """
 
-        #import_as_new = kwargs.get('import_as_new', None)
-        import_history = ImportHistory(self.lab_db, kwargs.get('subject_identifier', None) or kwargs.get('protocol', None))
+        lock_name = kwargs.get('subject_identifier', None)
+        if not lock_name:
+            if 'LAB_LOCK_NAME' in dir(settings):
+                lock_name = settings.LAB_LOCK_NAME
+            else:
+                lock_name = kwargs.get('protocol', None)
+        import_history = ImportHistory(self.lab_db, lock_name)
         if import_history.start():
             # start with the receiving records. If a receiving record (LAB01) has not been modified
             # on the dmis, nothing further will happen to it nor any of its related data (order, result, resultitem, ...).
