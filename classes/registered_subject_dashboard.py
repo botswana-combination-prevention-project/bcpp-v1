@@ -50,6 +50,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_instance = None  # this is not a model instance!!
         self.visit_model = None
         self.subject_identifier = None
+        self._subject_type = None
         self.requisition_model = None
         self.appointment_row_template = 'appointment_row.html'
         self.appointment_map = {}
@@ -64,7 +65,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(appointment_row_template=self.appointment_row_template)
         self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if self.registered_subject:
-            self.subject_type = kwargs.get('subject_type', self.registered_subject.subject_type)
+            self.set_subject_type(kwargs.get('subject_type'))
             # subject identifier is almost always available
             self.subject_identifier = self.registered_subject.subject_identifier
             self.dashboard_identifier = self.subject_identifier
@@ -80,7 +81,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(
                 registered_subject=self.registered_subject,
                 subject_identifier=self.subject_identifier,
-                subject_type=self.subject_type,
+                subject_type=self.get_subject_type(),
                 )
         visit_code = kwargs.get('visit_code', self.visit_code)
         visit_instance = kwargs.get("visit_instance", self.visit_instance)
@@ -240,20 +241,24 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(additional_entry_bucket=additional_entry_bucket)
         return additional_entry_bucket
 
+    def set_subject_type(self, value=None):
+        if not value:
+            self._subject_type = self.registered_subject.subject_type
+        else:
+            self._subject_type = value
+
+    def get_subject_type(self, value=None):
+        return self._subject_type
+
     def _get_membership_form_category(self):
-        return self.subject_type
+        # you may specify the membership_form_category, otherwise just use subject type
+        return self.get_subject_type()
 
     def _prepare_membership_forms(self):
         # membership forms can also be proxy models ... see mochudi_subject.models
-        # you may specify the membership_form_category, otherwise just use subject type
-        membership_form_category = None
-        if not membership_form_category:
-            membership_form_category = self.subject_type
         # add membership forms for this registered_subject and subject_type
         # these are the KEYED, UNKEYED schedule group membership forms
-        membership_forms = ScheduleGroup.objects.get_membership_forms_for(
-            registered_subject=self.registered_subject,
-            membership_form_category=self._get_membership_form_category(),
+        membership_forms = ScheduleGroup.objects.get_membership_forms_for(self.registered_subject, self._get_membership_form_category(),
             exclude_others_if_keyed_model_name=self.exclude_others_if_keyed_model_name,
             include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed)
         self.context.add(
