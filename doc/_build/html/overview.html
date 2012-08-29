@@ -107,12 +107,17 @@ EDC and has some useful demographic data useful for rules. The rule class actual
 Anyway, using RegisteredSubject as a source model is a special case. But if the HIV status was asked in a
 scheduled model for the current visit, the filter model tuple would help to get the correct instance
 of that scheduled source model.</p>
-<p>A few points:
-* The visit model is always passed to the rule;
-* In most cases the filter model and the visit model are the same, but they do not have to be;
-* If the source model instance does not exist, the rule does not run;
-* Rules run in the order that they appear in the RuleGroup;
-* RulesGroups are evaluated in the order that they appear in the rule_groups module.</p>
+<dl class="docutils">
+<dt>A few points:</dt>
+<dd><ul class="first last simple">
+<li>The visit model is always passed to the rule;</li>
+<li>In most cases the filter model and the visit model are the same, but they do not have to be;</li>
+<li>If the source model instance does not exist, the rule does not run;</li>
+<li>Rules run in the order that they appear in the RuleGroup;</li>
+<li>RulesGroups are evaluated in the order that they appear in the rule_groups module.</li>
+</ul>
+</dd>
+</dl>
 </div>
 
 
