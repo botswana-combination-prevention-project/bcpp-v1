@@ -63,8 +63,8 @@ scheduled model for the current visit, the filter model tuple would help to get 
 of that scheduled source model.
 
 A few points:
-* The visit model is always passed to the rule;
-* In most cases the filter model and the visit model are the same, but they do not have to be;
-* If the source model instance does not exist, the rule does not run;
-* Rules run in the order that they appear in the RuleGroup;
-* RulesGroups are evaluated in the order that they appear in the rule_groups module.
+    * The visit model is always passed to the rule;
+    * In most cases the filter model and the visit model are the same, but they do not have to be;
+    * If the source model instance does not exist, the rule does not run;
+    * Rules run in the order that they appear in the RuleGroup;
+    * RulesGroups are evaluated in the order that they appear in the rule_groups module.
