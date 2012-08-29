@@ -23,13 +23,9 @@ class Producer(BaseUuidModel):
     sync_status = models.CharField(
         max_length=250,
         default='-',
-        null=True,
-        )
-
+        null=True)
     json_limit = models.IntegerField(
-        default=0
-        )
-
+        default=0)
     json_total_count = models.IntegerField(
         default=0
         )
@@ -37,8 +33,8 @@ class Producer(BaseUuidModel):
     comment = models.TextField(
         max_length=50,
         null=True,
-        blank=True,
-        )
+        blank=True)
+    objects = models.Manager()
 
     def __unicode__(self):
         return self.name

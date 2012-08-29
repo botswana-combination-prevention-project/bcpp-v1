@@ -78,7 +78,6 @@ class BaseTransaction(BaseUuidModel):
 
         if self.is_consumed is True and not self.consumed_datetime:
             self.consumed_datetime = datetime.today()
-
         super(BaseTransaction, self).save(*args, **kwargs)
 
     class Meta:

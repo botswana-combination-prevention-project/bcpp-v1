@@ -10,23 +10,21 @@ class IncomingTransaction(BaseTransaction):
 
     is_self = models.BooleanField(
         default=False,
-        db_index=True,
-        )
+        db_index=True)
+    objects = models.Manager()
 
     def save(self, *args, **kwargs):
-
         """ An incoming transaction produced by self may exist, but is not wanted, if received by fanout from a consumer of
         transactions of self (this producer). that is (hostname_modified==hostname)."""
         #TODO: for IncomingTransaction perhaps just cancel save instead??
         if self.hostname_modified == socket.gethostname():
             #self.is_consumed = True
             self.is_self = True
-
         super(IncomingTransaction, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'bhp_sync'
-        ordering = ['timestamp']
+        ordering = ['-timestamp']
 
 
 #@receiver(post_save, sender=IncomingTransaction, dispatch_uid="deserialize_on_post_save")

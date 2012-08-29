@@ -14,38 +14,35 @@ from bhp_sync.classes import TransactionProducer
 def consume_transactions(request, **kwargs):
 
     if not 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
-        messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')                                                                                            
+        messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')
     producer = None
     if request.user:
-        if 'api_key' in dir(request.user):
+        if not 'api_key' in dir(request.user):
+            raise ValueError('ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,))
+        else:
             if not request.user.api_key:
-                raise ValueError, 'ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,)
-            else:            
+                raise ValueError('ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,))
+            else:
                 # specify producer "name" of the server you are connecting to 
                 # as you only want transactions created by that server.
                 producer = None
                 if kwargs.get('producer'):
                     producer = Producer.objects.filter(name__iexact=kwargs.get('producer'))
                     if not producer:
-                        messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
+                        messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))
                     else:
                         producer = Producer.objects.get(name__iexact=kwargs.get('producer'))
-                
                 if producer:
-                    
                     # url to producer, add in the producer, username and api_key of the current user
                     data = {'host': producer.url, 'producer':producer.name, 'limit':producer.json_limit, 'username':request.user.username, 'api_key':request.user.api_key.key}
                     url = '{host}bhp_sync/api/outgoingtransaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
-                    
                     request_log = RequestLog()
                     request_log.producer = producer
                     request_log.save()
-                    
                     producer.sync_datetime = request_log.request_datetime
                     #producer.sync_status = 'Error'
                     producer.sync_status = '?'
                     producer.save()
-                    
                     err = None
                     try:
                         req = urllib2.Request(url=url)
@@ -53,81 +50,69 @@ def consume_transactions(request, **kwargs):
                         producer.sync_status = err
                         producer.save()
                         messages.add_message(request, messages.ERROR, err)
-                            
                     while req:
                         try:
                             f = urllib2.urlopen(req)
                             req = None
                         except urllib2.HTTPError, err:
-                            producer.sync_status = err  
+                            producer.sync_status = err
                             producer.save()
                             messages.add_message(request, messages.ERROR, err)
                             request_log.status = 'error'
                             request_log.save()
-                            req = None            
+                            req = None
                             if err.code == 404:
-                                messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))          
+                                messages.add_message(request, messages.ERROR, 'Unknown producer. Got %s.' % (kwargs.get('producer')))
                         except urllib2.URLError, err:
-                            producer.sync_status = err  
-                            producer.save()                                              
+                            producer.sync_status = err
+                            producer.save()
                             request_log.status = 'error'
                             request_log.save()
-                            messages.add_message(request, messages.ERROR, err)                                       
+                            messages.add_message(request, messages.ERROR, err)
                             break
-
                         if not err:
                             # read response from url and decode          
                             response = f.read()
                             json_response = None
                             if response:
-                                json_response =  json.loads(response)
-                            
+                                json_response = json.loads(response)
                                 # response is limited to 20 objects, if there are more
                                 # next will the the url with offset to fetch next 20 (&limit=20&offset=20)
                                 if 'meta' in json_response:
                                     if json_response['meta']['next']:
                                         req = urllib2.Request(url=json_response['meta']['next'])
-                                    if not json_response['meta']['total_count'] == 0:    
-                                        messages.add_message(request, messages.INFO, 'Fetching. Limit is %s. Starting at %s of %s' % (json_response['meta']['limit'], json_response['meta']['offset'], json_response['meta']['total_count']) )                              
-                                    producer.json_limit = json_response['meta']['limit']                                       
-                                    producer.json_total_count = json_response['meta']['total_count']                                        
+                                    if not json_response['meta']['total_count'] == 0:
+                                        messages.add_message(request, messages.INFO, 'Fetching. Limit is %s. Starting at %s of %s' % (json_response['meta']['limit'], json_response['meta']['offset'], json_response['meta']['total_count']))
+                                    producer.json_limit = json_response['meta']['limit']
+                                    producer.json_total_count = json_response['meta']['total_count']
                                 #except:
                                 #    messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))  
-
                                 if json_response:
-                                    
-                                    messages.add_message(request, messages.INFO, 'Consuming %s new transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name,url))                                                                                                    
-
+                                    messages.add_message(request, messages.INFO, 'Consuming %s new transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name, url))
                                     # 'outgoing_transaction' is the serialized Transaction object from the producer. 
                                     # The OutgoingTransaction's object field 'tx' has the serialized 
                                     # instance of the data model we are looking for
                                     for outgoing_transaction in json_response['objects']:
-                                        
                                         # save to IncomingTransaction.
                                         # this will trigger the post_save signal to deserialize tx
                                         IncomingTransaction.objects.create(
-                                            pk = outgoing_transaction['id'],
-                                            tx_name = outgoing_transaction['tx_name'],
-                                            tx_pk = outgoing_transaction['tx_pk'],
-                                            tx = outgoing_transaction['tx'],
-                                            timestamp = outgoing_transaction['timestamp'],
-                                            producer = outgoing_transaction['producer'],
-                                            action = outgoing_transaction['action'],                
-                                            )
-                                                                        
+                                            pk=outgoing_transaction['id'],
+                                            tx_name=outgoing_transaction['tx_name'],
+                                            tx_pk=outgoing_transaction['tx_pk'],
+                                            tx=outgoing_transaction['tx'],
+                                            timestamp=outgoing_transaction['timestamp'],
+                                            producer=outgoing_transaction['producer'],
+                                            action=outgoing_transaction['action'])
                                         # POST success back to to the producer
                                         outgoing_transaction['is_consumed'] = True
                                         outgoing_transaction['consumer'] = str(TransactionProducer())
                                         req = urllib2.Request(url, json.dumps(outgoing_transaction, cls=DjangoJSONEncoder), {'Content-Type': 'application/json'})
                                         f = urllib2.urlopen(req)
                                         response = f.read()
-                                        f.close()  
+                                        f.close()
                                         producer.sync_status = 'OK'
-                                        
                     #producer.sync_status = 'OK'
                     producer.save()
-        
-    
-        return render_to_response('consume_transactions.html', { 
+        return render_to_response('consume_transactions.html', {
             'producer': producer,
-        },context_instance=RequestContext(request))
+        }, context_instance=RequestContext(request))
