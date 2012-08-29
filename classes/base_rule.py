@@ -2,11 +2,12 @@ from django.db.models import get_model, Model
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_registration.models import RegisteredSubject
 from bhp_visit_tracking.models import BaseVisitTracking
+from bhp_entry.models import BaseEntryBucket
 from logic import Logic
 
 
 class BaseRule(object):
-
+    """Base class for all rules."""
     def __init__(self, *args, **kwargs):
 
         self._predicate = None
@@ -99,13 +100,14 @@ class BaseRule(object):
         raise TypeError('Action list cannot be None.')
 
     def is_valid_action(self, action):
-        """Returns true or, if invalid action, raises an error."""
+        """Returns true if the action is in the list of valid actions or, if invalid action, raises an error."""
         if action.lower() not in self.get_action_list():
             raise TypeError('Encountered an invalid action \'{0}\' when parsing additional rule. '
                             'Valid actions are {1}.'.format(action, ', '.join(self.get_action_list())))
         return True
 
     def get_operator_from_word(self, word):
+        """Returns the operator from the 'word' used in the predicate, for example 'equals' returns '=='."""
         operator = None
         if word.lower() == 'equals' or word.lower() == 'eq':
             operator = '=='
@@ -172,7 +174,7 @@ class BaseRule(object):
         return self._predicate
 
     def set_target_model_list(self, target_model_list=None):
-        """ Sets up the target model list for this rule. """
+        """ Sets up the target model list for this rule by converting model names to classes. """
         self._target_model_list = []
         # for each target model tuple, get the actual model
         # and append to the internal list of target models to run against
@@ -205,7 +207,9 @@ class BaseRule(object):
         return self._target_model_cls
 
     def set_source_model_cls(self, model_cls=None):
-        """Sets the user model class where the user model class has values that will determine how to set bucket status for the target models."""
+        """Sets the source model class.
+
+        The predicate refers to an attribute of the source model class."""
         self._source_model_instance = None
         if model_cls:
             if isinstance(model_cls, tuple):
@@ -279,9 +283,7 @@ class BaseRule(object):
     def set_source_model_instance(self, source_model_instance=None):
         """ Set the user model instance using either a given instance or by filtering on the user model class.
 
-        Has values that will determine how to set the bucket status for the target models.
-
-        If the source model instance does not exixt (yet), value is None"""
+        If the source model instance does not exist (yet), value is None"""
         self._source_model_instance = None
         if source_model_instance:
             self._source_model_instance = source_model_instance
@@ -299,13 +301,15 @@ class BaseRule(object):
         return self._source_model_instance
 
     def set_bucket_cls(self):
-        """Users should override"""
+        """Sets the entry bucket class but users should override"""
         if not self._bucket_cls:
             raise AttributeError('Attribute _bucket_cls cannot be None')
 
     def get_bucket_cls(self):
         if not self._bucket_cls:
             self.set_bucket_cls()
+        elif not issubclass(self._bucket_cls, BaseEntryBucket):
+            raise AttributeError('Attribute _bucket_cls must be a subclass of BaseEntryBucket.')
         return self._bucket_cls
 
     def set_target_bucket_instance_id(self, bucket_cls):

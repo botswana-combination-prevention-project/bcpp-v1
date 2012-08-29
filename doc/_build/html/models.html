@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Models &mdash; bhp_bucket 1.0 documentation</title>
+    <title>Models &mdash; bhp_entry_rules 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="bhp_bucket 1.0 documentation" href="index.html" />
+    <link rel="top" title="bhp_entry_rules 1.0 documentation" href="index.html" />
     <link rel="prev" title="Classes" href="classes.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="classes.html" title="Classes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">bhp_bucket 1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">bhp_entry_rules 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,12 +50,34 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-bhp_bucket.models">
-<span id="models"></span><h1>Models<a class="headerlink" href="#module-bhp_bucket.models" title="Permalink to this headline">¶</a></h1>
-<dl class="attribute">
-<dt id="bhp_bucket.models.rule_history">
-<tt class="descclassname">bhp_bucket.models.</tt><tt class="descname">rule_history</tt><a class="headerlink" href="#bhp_bucket.models.rule_history" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bhp_bucket.models.rule_history" title="bhp_bucket.models.rule_history"><tt class="xref py py-class docutils literal"><span class="pre">bhp_bucket.models.rule_history</span></tt></a></p>
+  <div class="section" id="module-bhp_entry_rules.models">
+<span id="models"></span><h1>Models<a class="headerlink" href="#module-bhp_entry_rules.models" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bhp_entry_rules.models.RuleHistory">
+<em class="property">class </em><tt class="descclassname">bhp_entry_rules.models.</tt><tt class="descname">RuleHistory</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_entry_rules.models.RuleHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_model.BaseModel</span></tt></p>
+<p>RuleHistory(id, created, modified, user_created, user_modified, hostname_created, hostname_modified, model, rule, predicate, action, timestamp)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Name :</th><td class="field-body"><p class="first">rule history</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">bhp_bucket_rulehistory</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>CharField</em>) &#8211; Model</li>
+<li><strong>rule</strong> (<em>CharField</em>) &#8211; Rule</li>
+<li><strong>predicate</strong> (<em>CharField</em>) &#8211; Predicate</li>
+<li><strong>action</strong> (<em>CharField</em>) &#8211; Action</li>
+<li><strong>timestamp</strong> (<em>CharField</em>) &#8211; Timestamp</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -103,7 +125,7 @@
         <li class="right" >
           <a href="classes.html" title="Classes"
              >previous</a> |</li>
-        <li><a href="index.html">bhp_bucket 1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">bhp_entry_rules 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

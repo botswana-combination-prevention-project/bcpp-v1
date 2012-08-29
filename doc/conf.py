@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# bhp_bucket documentation build configuration file, created by
+# bhp_entry_rules documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul 17 15:03:55 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'bhp_bucket'
+project = u'bhp_entry_rules'
 copyright = u'2012, erik van widenfelt'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -169,7 +169,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'bhp_bucketdoc'
+htmlhelp_basename = 'bhp_entry_rulesdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -188,7 +188,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'bhp_bucket.tex', u'bhp\\_bucket Documentation',
+  ('index', 'bhp_entry_rules.tex', u'bhp\\_entry_rules Documentation',
    u'erik van widenfelt', 'manual'),
 ]
 
@@ -218,7 +218,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'bhp_bucket', u'bhp_bucket Documentation',
+    ('index', 'bhp_entry_rules', u'bhp_entry_rules Documentation',
      [u'erik van widenfelt'], 1)
 ]
 
@@ -232,8 +232,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'bhp_bucket', u'bhp_bucket Documentation',
-   u'erik van widenfelt', 'bhp_bucket', 'One line description of project.',
+  ('index', 'bhp_entry_rules', u'bhp_entry_rules Documentation',
+   u'erik van widenfelt', 'bhp_entry_rules', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -250,7 +250,7 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'bhp_bucket'
+epub_title = u'bhp_entry_rules'
 epub_author = u'erik van widenfelt'
 epub_publisher = u'erik van widenfelt'
 epub_copyright = u'2012, erik van widenfelt'

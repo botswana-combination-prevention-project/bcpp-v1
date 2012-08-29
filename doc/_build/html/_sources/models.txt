@@ -1,8 +1,8 @@
 Models
 ======
 
-.. automodule:: bhp_bucket.models
+.. automodule:: bhp_entry_rules.models
 
-.. autoclass:: rule_history
+.. autoclass:: RuleHistory
   :members:
   :show-inheritance:

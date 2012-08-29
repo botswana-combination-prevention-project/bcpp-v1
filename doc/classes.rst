@@ -1,30 +1,28 @@
 Classes
 =======
 
-.. automodule:: bhp_bucket.classes
+.. automodule:: bhp_entry_rules.classes
   :members:
   
-.. autoclass:: BucketController
+.. autoclass:: Controller
   :members:
   :show-inheritance:
 
-.. autoclass:: ModelBucket
+.. autoclass:: RuleGroup
   :members:
   :show-inheritance: 
 
-.. automodule:: bhp_bucket.classes.model_rule
+.. autoclass:: BaseRule
   :members:
     
-.. autoclass:: ModelRule
-  :members:
-  :show-inheritance:
-    
-.. automodule:: bhp_bucket.classes.scheduled_model_rule
+.. autoclass:: ScheduledDataRule
   :members:
   :show-inheritance: 
 
-.. automodule:: bhp_bucket.classes.additional_model_rule
+.. autoclass:: AdditionalDataRule
   :members:
   :show-inheritance: 
   
-    
+.. autoclass:: Logic
+  :members:
+  :show-inheritance:     
