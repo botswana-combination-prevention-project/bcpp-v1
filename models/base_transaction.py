@@ -19,8 +19,6 @@ class BaseTransaction(BaseUuidModel):
         max_length=36,
         )
 
-    tx = models.TextField()
-
     producer = models.CharField(
         max_length=25,
         default=str(transaction_producer),

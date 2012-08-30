@@ -21,7 +21,7 @@ admin.site.register(Transaction, TransactionAdmin)
 
 class IncomingTransactionAdmin (MyModelAdmin):
 
-    list_display = ('tx_name', 'producer', 'is_consumed', 'is_error', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
+    list_display = ('tx_name', 'render', 'producer', 'is_consumed', 'is_error', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
     
     list_filter = ('is_consumed', 'is_error', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name','hostname_modified')
     
