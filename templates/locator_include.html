@@ -20,7 +20,7 @@
             <BR><b>Contact anyone else?</b>{{locator.may_contact_someone}}           
             {% if locator.may_contact_someone.lower == 'yes' %}
                <BR>Name: {{ locator.contact_name|encrypted }}
-               <BR>Relation: {{ locator.contact_rel }}
+               <BR>Relation: {{ locator.contact_rel|encrypted }}
                <BR><i>Address:</i><BR>{{ locator.contact_physical_address|safe|encrypted }}               
                <BR><i>Tel:</i> {{ locator.contact_tel|encrypted }}
                <BR><i>Cell:</i> {{ locator.contact_cell|encrypted }}
