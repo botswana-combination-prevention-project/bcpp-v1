@@ -139,10 +139,10 @@ class BaseRule(object):
         return self._field_value
 
     def _set_predicate_comparitive_value(self, value):
-        if type(self._get_predicate_field_value()) != type(value):
-                raise TypeError('Predicate field value must be of the same type as the comparative value. Got {0} and {1}.'.format(type(self._get_predicate_field_value()), type(value)))
-        else:
-            self._comparitive_value = value
+#        if type(self._get_predicate_field_value()) != type(value):
+#                raise TypeError('Predicate field value must be of the same type as the comparative value. Got {0} and {1}.'.format(type(self._get_predicate_field_value()), type(value)))
+#        else:
+        self._comparitive_value = value
         if self._comparitive_value:
             if isinstance(self._comparitive_value, basestring):
                 self._comparitive_value = self._comparitive_value.lower()
