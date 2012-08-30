@@ -1,3 +1,4 @@
+{% load crypto_tags %}
 <tr style="background:lightyellow;">
    <td><H4>Contact Info</H4></td><tr>
    <tr style="background:lightyellow;">
@@ -8,7 +9,7 @@
        <BR><b>May follow-up?</b> {{locator.may_follow_up }}       
        {% if locator.may_follow_up.lower == 'yes' %}   
             <BR><b>Home visits?</b> {{locator.home_visit_permission }}
-            <BR><i>Address:</i><BR>{{locator.physical_address|safe}}
+            <BR><i>Address:</i><BR>{{locator.physical_address|safe|encrypted}}
             <BR><i>Tel:</i> {{locator.subject_phone|default:''}}&nbsp;{{locator.subject_phone_alt|default:''}}
             <BR><i>Cell:</i> {{locator.subject_cell|default:''}}&nbsp;{{locator.subject_cell_alt|default:''}}
             <BR><B>Call work?</B> {{locator.may_call_work}}
