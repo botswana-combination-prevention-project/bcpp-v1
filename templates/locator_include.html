@@ -10,8 +10,8 @@
        {% if locator.may_follow_up.lower == 'yes' %}   
             <BR><b>Home visits?</b> {{locator.home_visit_permission }}
             <BR><i>Address:</i><BR>{{locator.physical_address|safe|encrypted}}
-            <BR><i>Tel:</i> {{locator.subject_phone|default:''}}&nbsp;{{locator.subject_phone_alt|default:''}}
-            <BR><i>Cell:</i> {{locator.subject_cell|default:''}}&nbsp;{{locator.subject_cell_alt|default:''}}
+            <BR><i>Tel:</i> {{locator.subject_phone|default:''|encrypted}}&nbsp;{{locator.subject_phone_alt|default:''|encrypted}}
+            <BR><i>Cell:</i> {{locator.subject_cell|default:''|encrypted}}&nbsp;{{locator.subject_cell_alt|default:''|encrypted}}
             <BR><B>Call work?</B> {{locator.may_call_work}}
             {% if locator.may_call_work.lower == 'yes' %}       
             <BR>{{locator.subject_work_place }}
@@ -19,17 +19,17 @@
             {% endif%}
             <BR><b>Contact anyone else?</b>{{locator.may_contact_someone}}           
             {% if locator.may_contact_someone.lower == 'yes' %}
-               <BR>Name: {{ locator.contact_name }}
+               <BR>Name: {{ locator.contact_name|encrypted }}
                <BR>Relation: {{ locator.contact_rel }}
-               <BR><i>Address:</i><BR>{{ locator.contact_physical_address|safe }}               
-               <BR><i>Tel:</i> {{ locator.contact_tel }}
-               <BR><i>Cell:</i> {{ locator.contact_cell }}
+               <BR><i>Address:</i><BR>{{ locator.contact_physical_address|safe|encrypted }}               
+               <BR><i>Tel:</i> {{ locator.contact_tel|encrypted }}
+               <BR><i>Cell:</i> {{ locator.contact_cell|encrypted }}
             {% endif%}            
             <BR><b>Contact next of kin?</b> {{locator.has_alt_contact}}
             {% if locator.has_alt_contact.lower == 'yes' %}
-               <BR>Name: {{ locator.alt_contact_name }}
-               <BR>Cell: {{ locator.alt_contact_cell }}
-               <BR>Tel: {{ locator.alt_contact_tel }}
+               <BR>Name: {{ locator.alt_contact_name|encrypted }}
+               <BR>Cell: {{ locator.alt_contact_cell|encrypted }}
+               <BR>Tel: {{ locator.alt_contact_tel|encrypted }}
            {% endif%}
        {% endif%}           
    {% endif %}
