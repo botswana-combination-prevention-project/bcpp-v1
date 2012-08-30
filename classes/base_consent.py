@@ -54,7 +54,7 @@ class BaseConsent(BaseSubject):
     def save_new_consent(self):
         """ Creates or gets a subject identifier and updates registered subject.
 
-        Users may override this to change the default behavior"""
+        Users may override this to change the default behavior for new instances"""
         consented_subject_identifier = ConsentedSubjectIdentifier()
         try:
             registered_subject = getattr(self, 'registered_subject')
