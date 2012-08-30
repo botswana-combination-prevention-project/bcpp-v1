@@ -138,6 +138,18 @@ class BaseRule(object):
     def _get_predicate_field_value(self):
         return self._field_value
 
+    def _set_predicate_comparitive_value(self, value):
+        if type(self._get_predicate_field_value()) != type(value):
+                raise TypeError('Predicate field value must be of the same type as the comparative value. Got {0} and {1}.'.format(type(self._get_predicate_field_value()), type(value)))
+        else:
+            self._comparitive_value = value
+        if self._comparitive_value:
+            if isinstance(self._comparitive_value, basestring):
+                self._comparitive_value = self._comparitive_value.lower()
+
+    def _get_predicate_comparitive_value(self):
+        return self._comparitive_value
+
     def set_predicate(self):
         """Converts the predicate to something like "value==value" that can be evaluated with eval().
 
@@ -169,7 +181,7 @@ class BaseRule(object):
                     self._predicate = None
                     break
                 # comparison value
-                value = item[2]
+                self._set_predicate_comparitive_value(item[2])
                 # logical_operator if more than one tuple in the logic tuple
                 if len(item) == 4:
                     logical_operator = item[3]
@@ -179,7 +191,7 @@ class BaseRule(object):
                 else:
                     logical_operator = ''
                 # add as string for eval
-                self._predicate += ' %s (\'%s\' %s \'%s\')' % (logical_operator, self._get_predicate_field_value(), self.get_operator_from_word(item[1]), value.lower())
+                self._predicate += ' %s (\'%s\' %s \'%s\')' % (logical_operator, self._get_predicate_field_value(), self.get_operator_from_word(item[1]), self._get_predicate_comparitive_value())
                 n += 1
 
     def get_predicate(self):
