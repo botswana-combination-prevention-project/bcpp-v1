@@ -102,10 +102,10 @@ class RegisteredSubjectDashboard(Dashboard):
                                  '\'visit_model\'. Got none.')
         else:
             self.context.add(visit_model_add_url=self._get_visit_model_url(visit_model))
-        self._prepare(visit_model, visit_code, visit_instance)
+        self._prepare(visit_model, visit_code, visit_instance, kwargs.get('membership_form_category', None))
 
-    def _prepare(self, visit_model, visit_code, visit_instance):
-        self._prepare_membership_forms()
+    def _prepare(self, visit_model, visit_code, visit_instance, membership_form_category):
+        self._prepare_membership_forms(membership_form_category)
         self._set_appointments(visit_code, visit_instance)
         self._set_current_appointment(visit_code, visit_instance)
         visit_model_instance = self._set_current_visit(visit_model, self.appointment)
@@ -250,14 +250,23 @@ class RegisteredSubjectDashboard(Dashboard):
     def get_subject_type(self, value=None):
         return self._subject_type
 
-    def _get_membership_form_category(self):
-        # you may specify the membership_form_category, otherwise just use subject type
-        return self.get_subject_type()
+    def _set_membership_form_category(self, membership_form_category=None):
+        """Sets the membership_form_category, otherwise just uses subject type."""
+        if membership_form_category:
+            self._membership_form_category = membership_form_category
+        else:
+            self._membership_form_category = self.get_subject_type()
 
-    def _prepare_membership_forms(self):
+    def _get_membership_form_category(self):
+        if not self._membership_form_category:
+            self._set_membership_form_category()
+        return self._membership_form_category
+
+    def _prepare_membership_forms(self, membership_form_category=None):
         # membership forms can also be proxy models ... see mochudi_subject.models
         # add membership forms for this registered_subject and subject_type
         # these are the KEYED, UNKEYED schedule group membership forms
+        self._set_membership_form_category(membership_form_category)
         membership_forms = ScheduleGroup.objects.get_membership_forms_for(self.registered_subject, self._get_membership_form_category(),
             exclude_others_if_keyed_model_name=self.exclude_others_if_keyed_model_name,
             include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed)
