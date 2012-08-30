@@ -25,7 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="bhp_entry_rules 1.0 documentation" href="index.html" /> 
+    <link rel="top" title="bhp_entry_rules 1.0 documentation" href="index.html" />
+    <link rel="next" title="Building Model Rules" href="rules.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,6 +39,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="rules.html" title="Building Model Rules"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">bhp_entry_rules 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,6 +56,53 @@
             
   <div class="section" id="rule-groups">
 <h1>Rule Groups<a class="headerlink" href="#rule-groups" title="Permalink to this headline">¶</a></h1>
+<p>Note that fields from RegisteredSubject, like gender, can be used. The <tt class="xref py py-class docutils literal"><span class="pre">ScheduledDataRule</span></tt> class
+will catch the field name in the predicate and substitute the value from RegisteredSubject
+for the current subject.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bhp_entry_rules.classes</span> <span class="kn">import</span> <span class="n">RuleGroup</span><span class="p">,</span> <span class="n">ScheduledDataRule</span><span class="p">,</span> <span class="n">Logic</span><span class="p">,</span> <span class="n">rule_groups</span>
+<span class="kn">from</span> <span class="nn">mochudi_subject.models</span> <span class="kn">import</span> <span class="n">SubjectVisit</span><span class="p">,</span> <span class="n">Qn002</span>
+
+
+<span class="k">class</span> <span class="nc">Qn002RuleGroup</span><span class="p">(</span><span class="n">RuleGroup</span><span class="p">):</span>
+
+    <span class="n">sex_had_interc</span> <span class="o">=</span> <span class="n">ScheduledDataRule</span><span class="p">(</span>
+        <span class="n">logic</span><span class="o">=</span><span class="n">Logic</span><span class="p">(</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;sex_had_interc&#39;</span><span class="p">,</span> <span class="s">&#39;equals&#39;</span><span class="p">,</span> <span class="s">&#39;yes&#39;</span><span class="p">),</span>
+            <span class="n">consequence</span><span class="o">=</span><span class="s">&#39;new&#39;</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;not_required&#39;</span><span class="p">),</span>
+        <span class="n">target_model</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;qn002sectioneightintro&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;qn002sectioneightpartnerrecent&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;qn002sectioneightpartnersecond&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;qn002sectioneightpartnerthird&#39;</span><span class="p">])</span>
+
+    <span class="n">is_tested_hiv</span> <span class="o">=</span> <span class="n">ScheduledDataRule</span><span class="p">(</span>
+        <span class="n">logic</span><span class="o">=</span><span class="n">Logic</span><span class="p">(</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;is_tested_hiv&#39;</span><span class="p">,</span> <span class="s">&#39;equals&#39;</span><span class="p">,</span> <span class="s">&#39;yes&#39;</span><span class="p">),</span>
+            <span class="n">consequence</span><span class="o">=</span><span class="s">&#39;new&#39;</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;not_required&#39;</span><span class="p">),</span>
+        <span class="n">target_model</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;qn002sectionseven&#39;</span><span class="p">])</span>
+
+    <span class="n">gender</span> <span class="o">=</span> <span class="n">ScheduledDataRule</span><span class="p">(</span>
+        <span class="n">logic</span><span class="o">=</span><span class="n">Logic</span><span class="p">(</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;gender&#39;</span><span class="p">,</span> <span class="s">&#39;equals&#39;</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">),</span>
+            <span class="n">consequence</span><span class="o">=</span><span class="s">&#39;new&#39;</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;not_required&#39;</span><span class="p">),</span>
+        <span class="n">target_model</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;qn002sectionfour&#39;</span><span class="p">,</span> <span class="s">&#39;qn002sectionfive&#39;</span><span class="p">])</span>
+
+    <span class="n">gender</span> <span class="o">=</span> <span class="n">ScheduledDataRule</span><span class="p">(</span>
+        <span class="n">logic</span><span class="o">=</span><span class="n">Logic</span><span class="p">(</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;gender&#39;</span><span class="p">,</span> <span class="s">&#39;equals&#39;</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">),</span>
+            <span class="n">consequence</span><span class="o">=</span><span class="s">&#39;new&#39;</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;not_required&#39;</span><span class="p">),</span>
+        <span class="n">target_model</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;qn002sectionfsix&#39;</span><span class="p">])</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">app_label</span> <span class="o">=</span> <span class="s">&#39;mochudi_subject&#39;</span>
+        <span class="n">filter_model</span> <span class="o">=</span> <span class="p">(</span><span class="n">SubjectVisit</span><span class="p">,</span> <span class="s">&#39;subject_visit&#39;</span><span class="p">)</span>
+        <span class="n">source_model</span> <span class="o">=</span> <span class="n">Qn002</span>
+<span class="n">rule_groups</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Qn002RuleGroup</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 
 
@@ -56,6 +111,12 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rules.html"
+                        title="next chapter">Building Model Rules</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/rule_groups.txt"
@@ -87,6 +148,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="rules.html" title="Building Model Rules"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             >previous</a> |</li>
         <li><a href="index.html">bhp_entry_rules 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>

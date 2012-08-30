@@ -125,6 +125,19 @@ class BaseRule(object):
             raise TypeError('Unrecognized operator in rule predicate. Valid options are equals, eq, gt, gte, lt, lte, ne. Options are not case sensitive')
         return operator
 
+    def _set_predicate_field_value(self, instance, attr_name):
+        if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site']]:
+            registered_subject = self.get_visit_model_instance().appointment.registered_subject
+            self._field_value = getattr(registered_subject, attr_name)
+        else:
+            self._field_value = getattr(instance, attr_name)
+        if self._field_value:
+            if isinstance(self._field_value, basestring):
+                self._field_value = self._field_value.lower()
+
+    def _get_predicate_field_value(self):
+        return self._field_value
+
     def set_predicate(self):
         """Converts the predicate to something like "value==value" that can be evaluated with eval().
 
@@ -149,8 +162,10 @@ class BaseRule(object):
                     ValueError('The logic tuple (or the first tuple of tuples) must must have three items')
                 if n > 0 and not len(item) == 4:
                     ValueError('Additional tuples in the logic tuple must have a boolean operator as the fourth item')
-                field_value = getattr(source_model_instance, item[0])
-                if not field_value:
+
+                self._set_predicate_field_value(source_model_instance, item[0])
+
+                if not self._get_predicate_field_value():
                     self._predicate = None
                     break
                 # comparison value
@@ -164,7 +179,7 @@ class BaseRule(object):
                 else:
                     logical_operator = ''
                 # add as string for eval
-                self._predicate += ' %s (\'%s\' %s \'%s\')' % (logical_operator, field_value.lower(), self.get_operator_from_word(item[1]), value.lower())
+                self._predicate += ' %s (\'%s\' %s \'%s\')' % (logical_operator, self._get_predicate_field_value(), self.get_operator_from_word(item[1]), value.lower())
                 n += 1
 
     def get_predicate(self):
