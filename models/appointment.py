@@ -71,5 +71,4 @@ class Appointment(BaseAppointment):
     class Meta:
         ordering = ['registered_subject', 'appt_datetime', ]
         app_label = 'bhp_appointment'
-        db_table = 'bhp_form_appointment'
 
