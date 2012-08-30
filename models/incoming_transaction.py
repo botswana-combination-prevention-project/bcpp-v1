@@ -2,14 +2,14 @@ import socket
 from django.db import models
 from django.core.urlresolvers import reverse
 from base_transaction import BaseTransaction
-from bhp_crypto.fields import EncryptedTextField
+#from bhp_crypto.fields import EncryptedTextField
 
 
 class IncomingTransaction(BaseTransaction):
 
     """ Transactions received from a remote producer and to be consumed locally. """
 
-    tx = EncryptedTextField()
+    tx = models.TextField()
 
     is_self = models.BooleanField(
         default=False,
