@@ -63,6 +63,7 @@ class AppointmentAdmin(BaseModelAdmin):
 
     list_display = (
         'registered_subject',
+        'dashboard',
         'appt_datetime',
         'appt_status',
         'visit_definition',

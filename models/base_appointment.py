@@ -14,40 +14,32 @@ class BaseAppointment (BaseUuidModel):
     appt_datetime = models.DateTimeField(
         verbose_name=_("Appointment date and time"),
         help_text="",
-        #validators=[datetime_is_future,], check this at the form level...
-        )
-
+        db_index=True)
     # this is the original calculated appointment datetime
     # which the user cannot change
     timepoint_datetime = models.DateTimeField(
         verbose_name=_("Timepoint date and time"),
         help_text="calculated appointment datetime. Do not change",
         null=True,
-        editable=False,
-        )
-
+        editable=False)
     appt_status = models.CharField(
         verbose_name=_("Status"),
         choices=APPT_STATUS,
         max_length=25,
         default='new',
-        )
+        db_index=True)
     appt_reason = models.CharField(
         verbose_name=_("Reason for appointment"),
         max_length=25,
         help_text=_("Reason for appointment"),
-        blank=True,
-        )
-
+        blank=True)
     contact_tel = models.CharField(
         verbose_name=_("Contact Tel"),
         max_length=250,
-        blank=True,
-        )
+        blank=True)
     comment = models.CharField("Comment",
         max_length=250,
-        blank=True,
-        )
+        blank=True)
 
     class Meta:
         abstract = True
