@@ -299,32 +299,31 @@ class Dmis(BaseDmis):
 
         def create_or_update_receive(row, rowcount):
             #is this receiving record on file
-            receives = Receive.objects.using(lab_db).values('pk').filter(receive_identifier=row.receive_identifier)
-            if receives:
+            if Receive.objects.using(lab_db).values('pk').filter(receive_identifier=row.receive_identifier).exists():
                 receive = Receive.objects.using(lab_db).get(receive_identifier=row.receive_identifier)
-                if receive.modified < row.modified:
-                    receive.patient = row.patient,
-                    receive.modified = row.modified
-                    receive.user_modified = row.user_modified
-                    receive.protocol = row.protocol
-                    receive.drawn_datetime = row.drawn_datetime
-                    receive.receive_datetime = row.receive_datetime
-                    receive.site = row.site
-                    receive.visit = row.visit
-                    receive.clinician_initials = row.clinician_initials
-                    receive.dmis_reference = row.dmis_reference
-                    receive.requisition_identifier = row.edc_specimen_identifier or row.other_pat_ref
-                    receive.receive_condition = row.condition
-                    receive.save()
-                    logger.info('  dmis - receive: {rowcount} updating {receive_identifier} '
-                                'for {subject_identifier}.'.format(rowcount=rowcount,
-                                                                   receive_identifier=row.receive_identifier,
-                                                                   subject_identifier=row.subject_identifier))
-                else:
-                    logger.info('  dmis - receive: {rowcount} found {receive_identifier} for '
-                                '{subject_identifier} (not modified).'.format(rowcount=rowcount,
+#                if receive.modified < row.modified:
+                receive.patient = row.patient,
+                receive.modified = row.modified
+                receive.user_modified = row.user_modified
+                receive.protocol = row.protocol
+                receive.drawn_datetime = row.drawn_datetime
+                receive.receive_datetime = row.receive_datetime
+                receive.site = row.site
+                receive.visit = row.visit
+                receive.clinician_initials = row.clinician_initials
+                receive.dmis_reference = row.dmis_reference
+                receive.requisition_identifier = row.edc_specimen_identifier or row.other_pat_ref
+                receive.receive_condition = row.condition
+                receive.save()
+                logger.info('  dmis - receive: {rowcount} updating {receive_identifier} '
+                            'for {subject_identifier}.'.format(rowcount=rowcount,
                                                                receive_identifier=row.receive_identifier,
-                                                               subject_identifier=row.subject_identifier))
+                                                                   subject_identifier=row.subject_identifier))
+#                else:
+#                    logger.info('  dmis - receive: {rowcount} found {receive_identifier} for '
+#                                '{subject_identifier} (not modified).'.format(rowcount=rowcount,
+#                                                               receive_identifier=row.receive_identifier,
+#                                                               subject_identifier=row.subject_identifier))
             else:
                 receive = Receive.objects.using(lab_db).create(
                     protocol=row.protocol,
