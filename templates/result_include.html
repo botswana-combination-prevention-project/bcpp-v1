@@ -31,7 +31,7 @@
             <td><A href="/admin{{ result.order.aliquot.get_absolute_url }}">{{ result.order.aliquot }}</A></td>
         	<td><A href="/admin{{ result.order.aliquot.receive.get_absolute_url }}">{{ result.order.aliquot.receive }}</td>          	
             <td>{{ result.order.aliquot.receive.datetime_drawn|date:'Y-m-d' }}</td>                      	            
-        	  <td><A href="/admin{{ result.order.aliquot.receive.patient.get_absolute_url }}">{{ result.order.aliquot.receive.patient }}</td>
+        	  <td><A href="{{ result.order.aliquot.receive.patient.get_absolute_url }}">{{ result.order.aliquot.receive.patient }}</td>
          	  <td><A href="/admin{{ result.order.aliquot.receive.protocol.get_absolute_url }}">{{ result.order.aliquot.receive.protocol|escape }}</td></td>
          	  <td>{{ result.order.aliquot.receive.patient.initials|escape }}</td>
 
