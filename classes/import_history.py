@@ -33,4 +33,5 @@ class ImportHistory(BaseImportHistory):
         if self.last_import_datetime:
             conditional_clause = (' (l.datelastmodified >= \'{last_import_datetime}\' or '
                                   'l21.datelastmodified >= \'{last_import_datetime}\') ').format(last_import_datetime=self.last_import_datetime.strftime('%Y-%m-%d %H:%M'))
+            logger.info(conditional_clause)
         return conditional_clause
