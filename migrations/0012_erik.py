@@ -7,6 +7,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.rename_table('bhp_form_appointment', 'bhp_appointment_appointment')
+        db.rename_table('bhp_form_appointment_audit', 'bhp_appointment_appointment_audit')
 
     def backwards(self, orm):
         pass
