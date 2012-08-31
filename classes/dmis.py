@@ -302,7 +302,7 @@ class Dmis(BaseDmis):
             if Receive.objects.using(lab_db).values('pk').filter(receive_identifier=row.receive_identifier).exists():
                 receive = Receive.objects.using(lab_db).get(receive_identifier=row.receive_identifier)
 #                if receive.modified < row.modified:
-                receive.patient = row.patient,
+                receive.patient = row.patient
                 receive.modified = row.modified
                 receive.user_modified = row.user_modified
                 receive.protocol = row.protocol
