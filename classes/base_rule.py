@@ -126,7 +126,7 @@ class BaseRule(object):
         return operator
 
     def _set_predicate_field_value(self, instance, attr_name):
-        if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site']]:
+        if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status']]:
             registered_subject = self.get_visit_model_instance().appointment.registered_subject
             self._field_value = getattr(registered_subject, attr_name)
         else:
