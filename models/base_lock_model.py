@@ -11,7 +11,6 @@ class BaseLockModel(BaseUuidModel):
     ..seealso:: :class:DmisLock."""
 
     lock_name = models.CharField(max_length=50, unique=True)
-
     objects = models.Manager()
 
     def __unicode__(self):
