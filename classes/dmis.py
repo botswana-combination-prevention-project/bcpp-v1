@@ -92,7 +92,7 @@ class Dmis(BaseDmis):
                         if dmis_receive.protocol_identifier not in [account_name for account_name in accounts.iterkeys()]:
                             accounts[dmis_receive.protocol_identifier] = self._fetch_or_create(Account, dmis_receive.protocol_identifier)
                         # for a patient, just fetch or create, no need for a list
-                        patients[dmis_receive.subject_identifier] = self._create_or_update(Patient,
+                        patients[dmis_receive.subject_identifier] = self._create_or_update_patient(
                             account=accounts[dmis_receive.protocol_identifier],
                             subject_identifier=dmis_receive.subject_identifier,
                             gender=dmis_receive.gender,
@@ -103,13 +103,13 @@ class Dmis(BaseDmis):
                         rcv_row.protocol = protocol
                         rcv_row.site = sites[dmis_receive.site_identifier]
                         rcv_row.patient = patients[dmis_receive.subject_identifier]
-                        receive = self._create_or_update(Receive, rcv_row, rowcount)
+                        receive = self._create_or_update_receive(rcv_row, rowcount)
                         del rcv_row
                     # gather what is needed to create an order instance,
                     # note: dmis_receive has the order information in it as well
                     ord_row = self.get_order_row_from_cursor(dmis_receive)
                     # data model is receive -> aliquot -> order
-                    ord_row.aliquot = self._create_or_update(Aliquot, receive, dmis_receive.tid)
+                    ord_row.aliquot = self._create_or_update_aliquot(receive, dmis_receive.tid)
                     # determine the order.panel from tid or else panel_id
                     if dmis_receive.tid and dmis_receive.tid != '-9':
                         if dmis_receive.tid not in [tid for tid in panel_ids.iterkeys()]:
@@ -126,34 +126,31 @@ class Dmis(BaseDmis):
                     else:
                         # this will cause an error
                         ord_row.panel = None
-
-                    #if 'order' in import_as_new:
-                        # force an order to be recreated on import
+                    # force an order to be recreated on import from dmis by deleting the existing one on lis
                     Order.objects.using(self.lab_db).filter(aliquot__receive=receive).delete()
-
                     if not ord_row.order_identifier:
                         # create a PENDING order instance using the receive_identifier
                         # as the order_identifier. (Dmis has no corresponding record)
                         ord_row.order_identifier = dmis_receive.receive_identifier
-                        order = self._create_or_update(Order, ord_row)
+                        order = self._create_or_update_order(ord_row)
                     else:
                         # delete the PENDING order instance created above. (Dmis created the
                         # order when the results became available.)
                         # Order.objects.using(self.lab_db).filter(order_identifier=dmis_receive.receive_identifier).delete()
                         # create the order using the dmis order_identifier
-                        order = self._create_or_update(Order, ord_row)
+                        order = self._create_or_update_order(ord_row)
                         del ord_row
                         if order:
-                            result, result_modified = self._create_or_update(Result, order)
+                            result, result_modified = self._create_or_update_result(order)
                             if result and result_modified:
                                 # delete existing result items. The dmis is the master, so if
-                                # a item is added or removed from dmis it must reflect
+                                # an item is added or removed from dmis it must reflect
                                 ResultItem.objects.using(self.lab_db).filter(result=result).delete()
                                 resultitem_rows = self._fetch_dmis_resultitem_rows(result.order.order_identifier)
                                 max_validation_datetime = None
                                 max_validation_user = None
                                 for ritem in resultitem_rows:
-                                    result_item = self._create_or_update(ResultItem, result, ritem)
+                                    result_item = self._create_or_update_resultitem(result, ritem)
                                     result_item = self._validate_result_item(result, result_item)
                                     if not max_validation_datetime:
                                         max_validation_datetime = result_item.validation_datetime
@@ -292,84 +289,82 @@ class Dmis(BaseDmis):
         else:
             raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
 
-    def _create_or_update(self, cls, *args, **kwargs):
+#    def _create_or_update(self, cls, *args, **kwargs):
+#
+#        lab_db = self.lab_db
+#        dmis_data_source = self.dmis_data_source
+#        row = args[0]
+#        if cls == Patient:
+#            return self._create_or_update_patient(lab_db, **kwargs)
+#        elif cls == Aliquot:
+#            return self._create_or_update_aliquot(lab_db, row, args[1])
+#        elif cls == Receive:
+#            return self._create_or_update_receive(lab_db, row, args[1])
+#        elif cls == Order:
+#            return self._create_or_update_order(lab_db, row)
+#        elif cls == Result:
+#            return self._create_or_update_result(lab_db, dmis_data_source, order)
+#        elif cls == ResultItem:
+#            return self._create_or_update_resultitem(lab_db, row, args[1])
+#        else:
+#            raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
 
-        lab_db = self.lab_db
-        dmis_data_source = self.dmis_data_source
-
-        def create_or_update_receive(row, rowcount):
-            #is this receiving record on file
-            if Receive.objects.using(lab_db).values('pk').filter(receive_identifier=row.receive_identifier).exists():
-                receive = Receive.objects.using(lab_db).get(receive_identifier=row.receive_identifier)
+    def _create_or_update_receive(self, row, rowcount):
+        #is this receiving record on file
+        if Receive.objects.using(self.lab_db).values('pk').filter(receive_identifier=row.receive_identifier).exists():
+            # force overwrite by not checking modified date on local receive -- local edits are overwritten.
+            receive = Receive.objects.using(self.lab_db).get(receive_identifier=row.receive_identifier)
 #                if receive.modified < row.modified:
-                receive.patient = row.patient
-                receive.modified = row.modified
-                receive.user_modified = row.user_modified
-                receive.protocol = row.protocol
-                receive.drawn_datetime = row.drawn_datetime
-                receive.receive_datetime = row.receive_datetime
-                receive.site = row.site
-                receive.visit = row.visit
-                receive.clinician_initials = row.clinician_initials
-                receive.dmis_reference = row.dmis_reference
-                receive.requisition_identifier = row.edc_specimen_identifier or row.other_pat_ref
-                receive.receive_condition = row.condition
-                receive.save()
-                logger.info('  dmis - receive: {rowcount} updating {receive_identifier} '
-                            'for {subject_identifier}.'.format(rowcount=rowcount,
-                                                               receive_identifier=row.receive_identifier,
-                                                                   subject_identifier=row.subject_identifier))
+            receive.patient = row.patient
+            receive.modified = row.modified
+            receive.user_modified = row.user_modified
+            receive.protocol = row.protocol
+            receive.drawn_datetime = row.drawn_datetime
+            receive.receive_datetime = row.receive_datetime
+            receive.site = row.site
+            receive.visit = row.visit
+            receive.clinician_initials = row.clinician_initials
+            receive.dmis_reference = row.dmis_reference
+            receive.requisition_identifier = row.edc_specimen_identifier or row.other_pat_ref
+            receive.receive_condition = row.condition
+            receive.save()
+            logger.info('  dmis - receive: {rowcount} updating {receive_identifier} '
+                        'for {subject_identifier}.'.format(rowcount=rowcount,
+                                                           receive_identifier=row.receive_identifier,
+                                                               subject_identifier=row.subject_identifier))
 #                else:
 #                    logger.info('  dmis - receive: {rowcount} found {receive_identifier} for '
 #                                '{subject_identifier} (not modified).'.format(rowcount=rowcount,
 #                                                               receive_identifier=row.receive_identifier,
 #                                                               subject_identifier=row.subject_identifier))
-            else:
-                receive = Receive.objects.using(lab_db).create(
-                    protocol=row.protocol,
-                    receive_identifier=row.receive_identifier,
-                    patient=row.patient,
-                    site=row.site,
-                    visit=row.visit,
-                    drawn_datetime=row.drawn_datetime,
-                    receive_datetime=row.receive_datetime,
-                    user_created=row.user_created,
-                    user_modified=row.user_modified,
-                    created=row.created,
-                    modified=row.modified,
-                    dmis_reference=row.dmis_reference,
-                    clinician_initials=row.clinician_initials,
-                    requisition_identifier=row.edc_specimen_identifier or row.other_pat_ref,
-                    receive_condition=row.condition)
-                logger.info('  dmis - receive: {rowcount} creating '
-                            '{receive_identifier} for {subject_identifier}'.format(rowcount=rowcount,
-                                                                                   receive_identifier=row.receive_identifier,
-                                                                                   subject_identifier=row.subject_identifier))
-            return receive
+        else:
+            receive = Receive.objects.using(self.lab_db).create(
+                protocol=row.protocol,
+                receive_identifier=row.receive_identifier,
+                patient=row.patient,
+                site=row.site,
+                visit=row.visit,
+                drawn_datetime=row.drawn_datetime,
+                receive_datetime=row.receive_datetime,
+                user_created=row.user_created,
+                user_modified=row.user_modified,
+                created=row.created,
+                modified=row.modified,
+                dmis_reference=row.dmis_reference,
+                clinician_initials=row.clinician_initials,
+                requisition_identifier=row.edc_specimen_identifier or row.other_pat_ref,
+                receive_condition=row.condition)
+            logger.info('  dmis - receive: {rowcount} creating '
+                        '{receive_identifier} for {subject_identifier}'.format(rowcount=rowcount,
+                                                                               receive_identifier=row.receive_identifier,
+                                                                               subject_identifier=row.subject_identifier))
+        return receive
 
-        def create_or_update_order(row):
-            if Order.objects.using(lab_db).filter(order_identifier=row.order_identifier):
-                # order identifier is unique
-                order = Order.objects.using(lab_db).get(order_identifier=row.order_identifier)
-                if order.modified < row.modified:
-                    order.order_identifier = row.order_identifier
-                    order.order_datetime = row.order_datetime
-                    order.aliquot = row.aliquot
-                    status = 'COMPLETE'
-                    order.panel = row.panel
-                    order.comment = '',
-                    order.created = row.created
-                    order.modified = row.modified
-                    order.user_created = row.user_created
-                    order.user_modified = row.user_modified
-                    order.dmis_reference = row.dmis_reference
-                    order.save()
-                    logger.info('    order: updated {order_identifier} {panel}'.format(order_identifier=row.order_identifier, panel=row.panel.name))
-                else:
-                    logger.info('    order: found {order_identifier} {panel} (not modified)'.format(order_identifier=row.order_identifier, panel=row.panel.name))
-            elif Order.objects.using(lab_db).filter(order_identifier=row.receive_identifier):
-                # update PENDING order previously created by django-lis identified by the receive_identifier
-                order = Order.objects.using(lab_db).get(order_identifier=row.receive_identifier)
+    def _create_or_update_order(self, row):
+        if Order.objects.using(self.lab_db).filter(order_identifier=row.order_identifier):
+            # order identifier is unique
+            order = Order.objects.using(self.lab_db).get(order_identifier=row.order_identifier)
+            if order.modified < row.modified:
                 order.order_identifier = row.order_identifier
                 order.order_datetime = row.order_datetime
                 order.aliquot = row.aliquot
@@ -382,348 +377,308 @@ class Dmis(BaseDmis):
                 order.user_modified = row.user_modified
                 order.dmis_reference = row.dmis_reference
                 order.save()
-                logger.info('    order: updated pending {receive_identifier} {panel}. '
-                            'order_identifier is now {order_identifier}'.format(receive_identifier=row.receive_identifier,
-                                                                                      order_identifier=row.order_identifier,
-                                                                                      panel=row.panel.name))
+                logger.info('    order: updated {order_identifier} {panel}'.format(order_identifier=row.order_identifier, panel=row.panel.name))
             else:
-                if row.receive_identifier == row.order_identifier:
-                    status = 'PENDING'
-                else:
-                    status = 'COMPLETE'
-                order = Order.objects.using(lab_db).create(
-                    order_identifier=row.order_identifier,
-                    order_datetime=row.order_datetime,
-                    aliquot=row.aliquot,
-                    status=status,
-                    panel=row.panel,
-                    comment='',
-                    created=row.created,
-                    modified=row.modified,
-                    user_created=row.user_created,
-                    user_modified=row.user_modified,
-                    dmis_reference=row.dmis_reference,
-                    )
-                logger.info('    order: created {order_identifier} {panel}'.format(order_identifier=row.order_identifier, panel=row.panel.name))
-            return order
-
-        def create_or_update_result(order):
-            """ Updates the dmis result using the given \'order\' by querying the dmis server on the order_identifier for
-            a dmis result (LAB21) that has result_items (LAB21D)"""
-            result = None
-            result_is_modified = False
-            cnxn2 = pyodbc.connect(dmis_data_source)
-            cursor = cnxn2.cursor()
-            sql = ('select distinct headerdate as result_datetime, '
-               'l21.keyopcreated as user_created, '
-               'l21.keyoplastmodified as user_modified, '
-               'l21.datecreated as created, '
-               'l21.datelastmodified as modified, '
-               'convert(varchar(36), l21.result_guid) as result_guid '
-               'from BHPLAB.DBO.LAB21Response as L21 '
-               'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
-               'where l21.id=\'{order_identifier}\' and '
-               'l21d.id is not null').format(order_identifier=order.order_identifier)
-            # cursor.execute(str(sql))
-            # on dmis exists, same as django - do nothing
-            # on dmis exists, older on django - update
-            # on dmis was deleted, still exists on django - delete
-            # on dmis exists, not on dkjango  - create
-            if not cursor.execute(str(sql)).fetchone():
-                # there is an order with no result (that is, no result items l21d.id is null)
-                logger.warning('    result: no result on source for order {order_identifier}'.format(order_identifier=order.order_identifier))
-                for result in Result.objects.using(lab_db).filter(order=order):
-                    result.delete()
-                    logger.warning('    result: deleted from target for order {order_identifier}'.format(order_identifier=order.order_identifier))
-                    result_is_modified = True  # ??
-            else:
-                # most likely just one row
-                for row in cursor.execute(str(sql)):
-                    if Result.objects.using(lab_db).filter(order=order):
-                        # result identifier is unique and an order should only have one result
-                        result = Result.objects.using(lab_db).get(order=order)
-                        if result.modified < row.modified:
-                            #result.result_identifier = result_identifier, # allocated by django-lis
-                            #result.order = order,
-                            result.result_datetime = row.result_datetime
-                            result.comment = ''
-                            result.user_created = row.user_created
-                            result.user_modified = row.user_modified
-                            result.created = row.created
-                            result.modified = row.modified
-                            result.dmis_result_guid = row.result_guid
-                            result.save()
-                            result_is_modified = True
-                            logger.info('    result: updated {result_identifier}'.format(result_identifier=result.result_identifier))
-                        else:
-                            result_is_modified = False
-                            logger.info('    result: found {result_identifier} (not modified)'.format(result_identifier=result.result_identifier))
-                    else:
-                        result = Result.objects.using(lab_db).create(
-                            order=order,
-                            result_datetime=row.result_datetime,
-                            comment='',
-                            user_created=row.user_created,
-                            user_modified=row.user_modified,
-                            created=row.created,
-                            modified=row.modified,
-                            dmis_result_guid=row.result_guid)
-                        result_is_modified = True
-                        #self._fetch_or_create(ResultSource)
-                        logger.info('    result: created {result_identifier}'.format(result_identifier=result.result_identifier))
-            return result, result_is_modified
-
-#            cnxn2 = pyodbc.connect(dmis_data_source)
-#            cursor_result = cnxn2.cursor()
-#            result = Result.objects.using(lab_db).filter(order=order).order_by('-modified')
-#            if result:
-#                if result.count() > 1:
-#                    # get rid of duplicates
-#                    logger.warning('    result: warning: more than one result found for %s' % (result[0].result_identifier,))
-#                # take most recent
-#                result = Result.objects.using(lab_db).filter(order=order).order_by('-modified')[0]
-#                logger.warning('    result: result found for {0} resulted on {1}'.format(order.order_identifier, result.result_datetime.strftime("%Y-%m-%d")))
-#            else:
-#                # create new result
-#                # fetch the order/result from DMIS (note in DMIS orders are generated when a
-#                # result is available so orders always have results)
-#                sql = ('select distinct headerdate as result_datetime, '
-#                       'l21.keyopcreated as user_created, '
-#                       'l21.datecreated as created, '
-#                       'convert(varchar(36), l21.result_guid) as result_guid '
-#                       'from BHPLAB.DBO.LAB21Response as L21 '
-#                       'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
-#                       'where l21.id=\'{order_identifier}\' and '
-#                       'l21d.id is not null').format(order_identifier=order.order_identifier)
-#                cursor_result.execute(str(sql))  # should return 0 or 1 row because l21.id is a primary key
-#                n = 0
-#                for row in cursor_result:
-#                    n += 1
-#                    # allocate a result identifier for this new result
-#                    result_identifier = AllocateResultIdentifier(order)
-#                    if n > 1:
-#                        logger.warning('    result: warning - more than one result created for {0}'.format(order.order_identifier,))
-#                    # create the result record
-#                    result = Result.objects.using(lab_db).create(
-#                        result_identifier=result_identifier,
-#                        order=order,
-#                        result_datetime=row.result_datetime,
-#                        comment='',
-#                        user_created=row.user_created,
-#                        created=row.created,
-#                        dmis_result_guid=row.result_guid)
-#                    logger.info('    result: created result for order {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
-#                    self._fetch_or_create(ResultSource)
-#            return result
-
-        def create_or_update_resultitem(result, ritem, delete=False):
-            """ Creates a result item for the given ritem from the dmis.
-
-            ..note:: dmis item overwrites and existing django-lis item. The dmis sql statement is
-            ordered on datelastmodified which means oldest testcodes will come in first
-            and later be overwritten by the same testcode if a testcode appears more than once for a result.
-            """
-            def fetch_or_create_testcode(code, lab_db):
-                try:
-                    test_code = TestCode.objects.using(lab_db).get(code__exact=code)
-                except:
-                    test_code_group = TestCodeGroup.objects.using(lab_db).get(code__exact='000')
-                    TestCode.objects.using(self.lab_db).create(
-                        code=code,
-                        name=code,
-                        units='-',
-                        test_code_group=test_code_group,
-                        display_decimal_places=0,
-                        is_absolute='absolute',
-                        )
-                    test_code = TestCode.objects.using(self.lab_db).get(code__iexact=code)
-                return test_code
-
-            def get_ritem_user(dmis_user):
-                # change NT system username to auto
-                if dmis_user.strip(' \t\n\r').upper() == 'NT AUTHORITY\SYSTEM':
-                    user = 'auto'
-                else:
-                    user = dmis_user
-                return user
-
-            def get_ritem_validation(ritem):
-                result_item_source = ''
-                result_item_source_reference = ''
-                validation_reference = ''
-                # evaluate validation_reference
-                if ritem.validation_reference == '-9':
-                    # this is an item from GetResults TCP connected to PSM
-                    result_item_source = self._fetch_or_create(ResultSource, interface='psm_interface')
-                    result_item_source_reference = ''
-                    validation_reference = 'dmis-auto'
-                elif ritem.validation_reference == 'LAB21:MANUAL':
-                    # manual entry and no validation -- straight to LAB21 tableset
-                    result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
-                    result_item_source_reference = 'dmis-%s' % ritem.validation_reference
-                    validation_reference = 'auto'
-                elif re.search('^rad[0-9A-F]{5}\.tmp$', ritem.validation_reference):
-                    # this is an item from GetResults Flatfile and validated via the LAB05 path
-                    result_item_source = self._fetch_or_create(ResultSource, interface='cd4_interface')
-                    result_item_source_reference = 'dmis-%s' % ritem.validation_reference
-                    validation_reference = 'lab05'
-                elif re.search('^LAB23:', ritem.validation_reference):
-                    # manual entry and validated via the LAB23 validation path
-                    result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
-                    result_item_source_reference = 'dmis-%s' % ritem.validation_reference
-                    validation_reference = 'lab23'
-                elif re.search('^IMPORT', ritem.validation_reference):
-                    # manual entry and validated via the LAB23 validation path
-                    result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
-                    result_item_source_reference = 'dmis-%s' % ritem.validation_reference
-                    validation_reference = 'auto'
-                elif re.search('^LB003:', ritem.validation_reference):
-                    # manual import
-                    result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
-                    result_item_source_reference = 'dmis-%s' % ritem.validation_reference
-                    validation_reference = 'auto'
-                elif re.search('^LB004:', ritem.validation_reference):
-                    # manual import
-                    result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
-                    result_item_source_reference = 'dmis-%s' % ritem.validation_reference
-                    validation_reference = 'auto'
-                elif re.search('^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$', ritem.validation_reference):
-                    # manual import
-                    result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
-                    result_item_source_reference = 'dmis-%s' % ritem.validation_reference
-                    validation_reference = 'auto'
-                else:
-                    # missed a case? let's hear about it
-                    raise TypeError('Validation reference \'%s\' was not expected. See dmis_fetch_result.' % ritem.validation_reference)
-                result_item_source_reference = '%s %s' % (result_item_source_reference, ritem.mid)
-                return {'validation_reference': validation_reference,
-                        'result_item_source': result_item_source,
-                        'result_item_source_reference': result_item_source_reference}
-
-            code = ritem.code.strip(' \t\n\r')
-            # usually delete all items as soon as the result instance is known.
-            if delete:
-                # delete from django-lis the one result item for this result (should only be one)
-                ResultItem.objects.using(self.lab_db).filter(result=result, test_code__code=code).delete()
-            test_code = fetch_or_create_testcode(code, lab_db)
-            user = get_ritem_user(ritem.user_created)
-            validation = get_ritem_validation(ritem)
-            # create a new result item. set validation to 'P', we'll import
-            # full validation information later
-            result_item = ResultItem.objects.using(self.lab_db).create(
-                result=result,
-                test_code=test_code,
-                result_item_datetime=ritem.result_item_datetime,
-                result_item_value=ritem.result_value,
-                result_item_quantifier=ritem.result_quantifier,
-                validation_status='P',
-                validation_reference=validation['validation_reference'],
-                result_item_source=validation['result_item_source'],
-                result_item_source_reference=validation['result_item_source_reference'],
-                result_item_operator=user,
-                comment='',
-                )
-            logger.info('      created item {0}'.format(code, ritem.result_item_datetime.strftime("%Y-%m-%d")))
-            return result_item
-
-        def create_or_update_patient(**kwargs):
-            subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
-            initials = kwargs.get('initials').strip(' \t\n\r')
-            if not initials:
-                initials = 'X0X'
-            account = kwargs.get('account')
-            gender = kwargs.get('gender')
-            dob = kwargs.get('dob')
-            is_dob_estimated = '-'
-            patients = Patient.objects.using(lab_db).values('pk').filter(subject_identifier__iexact=subject_identifier)
-            if patients:
-                patient = Patient.objects.using(lab_db).get(subject_identifier__iexact=subject_identifier)
-                patient.dob = dob
-                patient.gender = gender
-                patient.is_dob_estimated = is_dob_estimated
-                patient.initials = initials
-                patient.save()
-            else:
-                patient = Patient.objects.using(lab_db).create(
-                    subject_identifier=subject_identifier,
-                    initials=initials,
-                    gender=gender,
-                    dob=dob,
-                    is_dob_estimated=is_dob_estimated,
-                    comment='auto created / imported from DMIS')
-                patient.account.add(account)
-            return patient
-
-        def create_or_update_aliquot(receive, tid):
-
-            def create_or_update_aliquotcondition(condition, lab_db):
-                if AliquotCondition.objects.using(lab_db).values('pk').filter(short_name__exact=condition):
-                    aliquot_condition = AliquotCondition.objects.using(lab_db).get(short_name__exact=condition)
-                else:
-                    agg = AliquotCondition.objects.using(lab_db).aggregate(Max('display_index'),)
-                    if not agg:
-                        display_index = 10
-                    else:
-                        display_index = agg['display_index__max'] + 10
-                    aliquot_condition = AliquotCondition.objects.using(lab_db).create(
-                        name=condition,
-                        short_name=condition,
-                        display_index=display_index,
-                        )
-                return aliquot_condition
-
-            if receive.receive_condition:
-                aliquot_condition = create_or_update_aliquotcondition(receive.receive_condition, lab_db)
-            else:
-                aliquot_condition = None
-            #create primary
-            # TODO: need more detail here for sample types other than the ones listed here...
-            create = {}
-            if tid == '411':
-                create['type'] = '02'  # WB
-                create['medium'] = 'DBS'
-            else:
-                create['type'] = '02'  # WB
-                create['medium'] = 'TUBE'
-            # get or create the primary aliquot
-            aliquot_identifier = '%s0000%s01' % (receive.receive_identifier, create['type'])
-            if Aliquot.objects.using(lab_db).values('pk').filter(aliquot_identifier__iexact=aliquot_identifier):
-                primary_aliquot = Aliquot.objects.using(lab_db).get(aliquot_identifier__iexact=aliquot_identifier)
-                if not primary_aliquot.modified == receive.modified:
-                    aliquot_type = AliquotType.objects.using(lab_db).get(numeric_code__exact=create['type'])
-                    primary_aliquot.modified = receive.modified
-                    primary_aliquot.aliquot_type = aliquot_type
-                    primary_aliquot.aliquot_condition = aliquot_condition
-                    primary_aliquot.save()
-            else:
-                create['comment'] = 'auto created on import from DMIS'
-                aliquot_type = AliquotType.objects.using(lab_db).get(numeric_code__exact=create['type'])
-                aliquot_medium = AliquotMedium.objects.using(lab_db).get(short_name__iexact=create['medium'])
-                primary_aliquot = Aliquot.objects.using(lab_db).create(
-                    aliquot_identifier=aliquot_identifier,
-                    receive=receive,
-                    count=1,
-                    aliquot_type=aliquot_type,
-                    medium=aliquot_medium,
-                    aliquot_condition=aliquot_condition,
-                    comment=create['comment'],
-                    )
-            return primary_aliquot
-
-        if cls == Patient:
-            return create_or_update_patient(**kwargs)
-        elif cls == Aliquot:
-            return create_or_update_aliquot(args[0], args[1])
-        elif cls == Receive:
-            return create_or_update_receive(args[0], args[1])
-        elif cls == Order:
-            return create_or_update_order(args[0])
-        elif cls == Result:
-            return create_or_update_result(args[0])
-        elif cls == ResultItem:
-            return create_or_update_resultitem(args[0], args[1])
+                logger.info('    order: found {order_identifier} {panel} (not modified)'.format(order_identifier=row.order_identifier, panel=row.panel.name))
+        elif Order.objects.using(self.lab_db).filter(order_identifier=row.receive_identifier):
+            # update PENDING order previously created by django-lis identified by the receive_identifier
+            order = Order.objects.using(self.lab_db).get(order_identifier=row.receive_identifier)
+            order.order_identifier = row.order_identifier
+            order.order_datetime = row.order_datetime
+            order.aliquot = row.aliquot
+            status = 'COMPLETE'
+            order.panel = row.panel
+            order.comment = '',
+            order.created = row.created
+            order.modified = row.modified
+            order.user_created = row.user_created
+            order.user_modified = row.user_modified
+            order.dmis_reference = row.dmis_reference
+            order.save()
+            logger.info('    order: updated pending {receive_identifier} {panel}. '
+                        'order_identifier is now {order_identifier}'.format(receive_identifier=row.receive_identifier,
+                                                                                  order_identifier=row.order_identifier,
+                                                                                  panel=row.panel.name))
         else:
-            raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
+            if row.receive_identifier == row.order_identifier:
+                status = 'PENDING'
+            else:
+                status = 'COMPLETE'
+            order = Order.objects.using(self.lab_db).create(
+                order_identifier=row.order_identifier,
+                order_datetime=row.order_datetime,
+                aliquot=row.aliquot,
+                status=status,
+                panel=row.panel,
+                comment='',
+                created=row.created,
+                modified=row.modified,
+                user_created=row.user_created,
+                user_modified=row.user_modified,
+                dmis_reference=row.dmis_reference,
+                )
+            logger.info('    order: created {order_identifier} {panel}'.format(order_identifier=row.order_identifier, panel=row.panel.name))
+        return order
+
+    def _create_or_update_result(self, order):
+        """ Updates the dmis result using the given \'order\' by querying the dmis server on the order_identifier for
+        a dmis result (LAB21) that has result_items (LAB21D)"""
+        result = None
+        result_is_modified = False
+        cnxn2 = pyodbc.connect(self.dmis_data_source)
+        cursor = cnxn2.cursor()
+        sql = ('select distinct headerdate as result_datetime, '
+           'l21.keyopcreated as user_created, '
+           'l21.keyoplastmodified as user_modified, '
+           'l21.datecreated as created, '
+           'l21.datelastmodified as modified, '
+           'convert(varchar(36), l21.result_guid) as result_guid '
+           'from BHPLAB.DBO.LAB21Response as L21 '
+           'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
+           'where l21.id=\'{order_identifier}\' and '
+           'l21d.id is not null').format(order_identifier=order.order_identifier)
+        # cursor.execute(str(sql))
+        # on dmis exists, same as django - do nothing
+        # on dmis exists, older on django - update
+        # on dmis was deleted, still exists on django - delete
+        # on dmis exists, not on dkjango  - create
+        if not cursor.execute(str(sql)).fetchone():
+            # there is an order with no result (that is, no result items l21d.id is null)
+            logger.warning('    result: no result on source for order {order_identifier}'.format(order_identifier=order.order_identifier))
+            for result in Result.objects.using(self.lab_db).filter(order=order):
+                result.delete()
+                logger.warning('    result: deleted from target for order {order_identifier}'.format(order_identifier=order.order_identifier))
+                result_is_modified = True  # ??
+        else:
+            # most likely just one row
+            for row in cursor.execute(str(sql)):
+                if Result.objects.using(self.lab_db).filter(order=order):
+                    # result identifier is unique and an order should only have one result
+                    result = Result.objects.using(self.lab_db).get(order=order)
+                    if result.modified < row.modified:
+                        #result.result_identifier = result_identifier, # allocated by django-lis
+                        #result.order = order,
+                        result.result_datetime = row.result_datetime
+                        result.comment = ''
+                        result.user_created = row.user_created
+                        result.user_modified = row.user_modified
+                        result.created = row.created
+                        result.modified = row.modified
+                        result.dmis_result_guid = row.result_guid
+                        result.save()
+                        result_is_modified = True
+                        logger.info('    result: updated {result_identifier}'.format(result_identifier=result.result_identifier))
+                    else:
+                        result_is_modified = False
+                        logger.info('    result: found {result_identifier} (not modified)'.format(result_identifier=result.result_identifier))
+                else:
+                    result = Result.objects.using(self.lab_db).create(
+                        order=order,
+                        result_datetime=row.result_datetime,
+                        comment='',
+                        user_created=row.user_created,
+                        user_modified=row.user_modified,
+                        created=row.created,
+                        modified=row.modified,
+                        dmis_result_guid=row.result_guid)
+                    result_is_modified = True
+                    #self._fetch_or_create(ResultSource)
+                    logger.info('    result: created {result_identifier}'.format(result_identifier=result.result_identifier))
+        return result, result_is_modified
+
+    def _create_or_update_resultitem(self, result, ritem, delete=False):
+        """ Creates a result item for the given ritem from the dmis.
+
+        ..note:: dmis item overwrites and existing django-lis item. The dmis sql statement is
+        ordered on datelastmodified which means oldest testcodes will come in first
+        and later be overwritten by the same testcode if a testcode appears more than once for a result.
+        """
+        def fetch_or_create_testcode(code):
+            try:
+                test_code = TestCode.objects.using(self.lab_db).get(code__exact=code)
+            except:
+                test_code_group = TestCodeGroup.objects.using(self.lab_db).get(code__exact='000')
+                TestCode.objects.using(self.lab_db).create(
+                    code=code,
+                    name=code,
+                    units='-',
+                    test_code_group=test_code_group,
+                    display_decimal_places=0,
+                    is_absolute='absolute',
+                    )
+                test_code = TestCode.objects.using(self.lab_db).get(code__iexact=code)
+            return test_code
+
+        def get_ritem_user(dmis_user):
+            # change NT system username to auto
+            if dmis_user.strip(' \t\n\r').upper() == 'NT AUTHORITY\SYSTEM':
+                user = 'auto'
+            else:
+                user = dmis_user
+            return user
+
+        def get_ritem_validation(ritem):
+            result_item_source = ''
+            result_item_source_reference = ''
+            validation_reference = ''
+            # evaluate validation_reference
+            if ritem.validation_reference == '-9':
+                # this is an item from GetResults TCP connected to PSM
+                result_item_source = self._fetch_or_create(ResultSource, interface='psm_interface')
+                result_item_source_reference = ''
+                validation_reference = 'dmis-auto'
+            elif ritem.validation_reference == 'LAB21:MANUAL':
+                # manual entry and no validation -- straight to LAB21 tableset
+                result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
+                result_item_source_reference = 'dmis-%s' % ritem.validation_reference
+                validation_reference = 'auto'
+            elif re.search('^rad[0-9A-F]{5}\.tmp$', ritem.validation_reference):
+                # this is an item from GetResults Flatfile and validated via the LAB05 path
+                result_item_source = self._fetch_or_create(ResultSource, interface='cd4_interface')
+                result_item_source_reference = 'dmis-%s' % ritem.validation_reference
+                validation_reference = 'lab05'
+            elif re.search('^LAB23:', ritem.validation_reference):
+                # manual entry and validated via the LAB23 validation path
+                result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
+                result_item_source_reference = 'dmis-%s' % ritem.validation_reference
+                validation_reference = 'lab23'
+            elif re.search('^IMPORT', ritem.validation_reference):
+                # manual entry and validated via the LAB23 validation path
+                result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
+                result_item_source_reference = 'dmis-%s' % ritem.validation_reference
+                validation_reference = 'auto'
+            elif re.search('^LB003:', ritem.validation_reference):
+                # manual import
+                result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
+                result_item_source_reference = 'dmis-%s' % ritem.validation_reference
+                validation_reference = 'auto'
+            elif re.search('^LB004:', ritem.validation_reference):
+                # manual import
+                result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
+                result_item_source_reference = 'dmis-%s' % ritem.validation_reference
+                validation_reference = 'auto'
+            elif re.search('^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$', ritem.validation_reference):
+                # manual import
+                result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
+                result_item_source_reference = 'dmis-%s' % ritem.validation_reference
+                validation_reference = 'auto'
+            else:
+                # missed a case? let's hear about it
+                raise TypeError('Validation reference \'%s\' was not expected. See dmis_fetch_result.' % ritem.validation_reference)
+            result_item_source_reference = '%s %s' % (result_item_source_reference, ritem.mid)
+            return {'validation_reference': validation_reference,
+                    'result_item_source': result_item_source,
+                    'result_item_source_reference': result_item_source_reference}
+
+        code = ritem.code.strip(' \t\n\r')
+        # usually delete all items as soon as the result instance is known.
+        if delete:
+            # delete from django-lis the one result item for this result (should only be one)
+            ResultItem.objects.using(self.lab_db).filter(result=result, test_code__code=code).delete()
+        test_code = fetch_or_create_testcode(code)
+        user = get_ritem_user(ritem.user_created)
+        validation = get_ritem_validation(ritem)
+        # create a new result item. set validation to 'P', we'll import
+        # full validation information later
+        result_item = ResultItem.objects.using(self.lab_db).create(
+            result=result,
+            test_code=test_code,
+            result_item_datetime=ritem.result_item_datetime,
+            result_item_value=ritem.result_value,
+            result_item_quantifier=ritem.result_quantifier,
+            validation_status='P',
+            validation_reference=validation['validation_reference'],
+            result_item_source=validation['result_item_source'],
+            result_item_source_reference=validation['result_item_source_reference'],
+            result_item_operator=user,
+            comment='',
+            )
+        logger.info('      created item {0}'.format(code, ritem.result_item_datetime.strftime("%Y-%m-%d")))
+        return result_item
+
+    def _create_or_update_patient(self, **kwargs):
+        subject_identifier = kwargs.get('subject_identifier').strip(' \t\n\r')
+        initials = kwargs.get('initials').strip(' \t\n\r')
+        if not initials:
+            initials = 'X0X'
+        account = kwargs.get('account')
+        gender = kwargs.get('gender')
+        dob = kwargs.get('dob')
+        is_dob_estimated = '-'
+        patients = Patient.objects.using(self.lab_db).values('pk').filter(subject_identifier__iexact=subject_identifier)
+        if patients:
+            patient = Patient.objects.using(self.lab_db).get(subject_identifier__iexact=subject_identifier)
+            patient.dob = dob
+            patient.gender = gender
+            patient.is_dob_estimated = is_dob_estimated
+            patient.initials = initials
+            patient.save()
+        else:
+            patient = Patient.objects.using(self.lab_db).create(
+                subject_identifier=subject_identifier,
+                initials=initials,
+                gender=gender,
+                dob=dob,
+                is_dob_estimated=is_dob_estimated,
+                comment='auto created / imported from DMIS')
+            patient.account.add(account)
+        return patient
+
+    def _create_or_update_aliquot(self, receive, tid):
+
+        def create_or_update_aliquotcondition(condition):
+            if AliquotCondition.objects.using(self.lab_db).values('pk').filter(short_name__exact=condition):
+                aliquot_condition = AliquotCondition.objects.using(self.lab_db).get(short_name__exact=condition)
+            else:
+                agg = AliquotCondition.objects.using(self.lab_db).aggregate(Max('display_index'),)
+                if not agg:
+                    display_index = 10
+                else:
+                    display_index = agg['display_index__max'] + 10
+                aliquot_condition = AliquotCondition.objects.using(self.lab_db).create(
+                    name=condition,
+                    short_name=condition,
+                    display_index=display_index,
+                    )
+            return aliquot_condition
+
+        if receive.receive_condition:
+            aliquot_condition = create_or_update_aliquotcondition(receive.receive_condition, self.lab_db)
+        else:
+            aliquot_condition = None
+        #create primary
+        # TODO: need more detail here for sample types other than the ones listed here...
+        create = {}
+        if tid == '411':
+            create['type'] = '02'  # WB
+            create['medium'] = 'DBS'
+        else:
+            create['type'] = '02'  # WB
+            create['medium'] = 'TUBE'
+        # get or create the primary aliquot
+        aliquot_identifier = '%s0000%s01' % (receive.receive_identifier, create['type'])
+        if Aliquot.objects.using(self.lab_db).values('pk').filter(aliquot_identifier__iexact=aliquot_identifier):
+            primary_aliquot = Aliquot.objects.using(self.lab_db).get(aliquot_identifier__iexact=aliquot_identifier)
+            if not primary_aliquot.modified == receive.modified:
+                aliquot_type = AliquotType.objects.using(self.lab_db).get(numeric_code__exact=create['type'])
+                primary_aliquot.modified = receive.modified
+                primary_aliquot.aliquot_type = aliquot_type
+                primary_aliquot.aliquot_condition = aliquot_condition
+                primary_aliquot.save()
+        else:
+            create['comment'] = 'auto created on import from DMIS'
+            aliquot_type = AliquotType.objects.using(self.lab_db).get(numeric_code__exact=create['type'])
+            aliquot_medium = AliquotMedium.objects.using(self.lab_db).get(short_name__iexact=create['medium'])
+            primary_aliquot = Aliquot.objects.using(self.lab_db).create(
+                aliquot_identifier=aliquot_identifier,
+                receive=receive,
+                count=1,
+                aliquot_type=aliquot_type,
+                medium=aliquot_medium,
+                aliquot_condition=aliquot_condition,
+                comment=create['comment'],
+                )
+        return primary_aliquot
 
     def _validate_result_item(self, result, result_item, **kwargs):
         """ Imports result item validation information from the dmis.
@@ -804,9 +759,8 @@ class Dmis(BaseDmis):
         if not validation_datetime:
             raise TypeError('Expected a date for validation_datetime for '
                             'result {0}. Got None.'.format(result.result_identifier))
-        if validation_username == 'auto' or not validation_username:
+        elif validation_username == 'auto' or not validation_username:
             validation_username = unicode('smoyo')
-
         # remove oldest of any duplicate result_items
 
         # update result
