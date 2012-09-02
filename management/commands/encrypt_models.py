@@ -1,5 +1,3 @@
-#import sys
-#import threading
 from datetime import datetime
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError

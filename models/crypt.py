@@ -34,6 +34,8 @@ class Crypt (BaseUuidModel):
         max_length=50,
         null=True)
 
+    objects = models.Manager()
+
     class Meta:
         app_label = 'bhp_crypto'
         verbose_name = 'Crypt'
