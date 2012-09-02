@@ -22,10 +22,12 @@ class Crypt (BaseUuidModel):
 
     algorithm = models.CharField(
         max_length=25,
+        db_index=True,
         null=True)
 
     mode = models.CharField(
         max_length=25,
+        db_index=True,
         null=True)
 
     salt = models.CharField(
