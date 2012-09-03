@@ -102,7 +102,7 @@ class RegisteredSubjectDashboard(Dashboard):
                                  '\'visit_model\'. Got none.')
         else:
             self.context.add(visit_model_add_url=self._get_visit_model_url(visit_model))
-        membership_form_category = kwargs.get('membership_form_category', None)
+        membership_form_category = kwargs.pop('membership_form_category', None)
         self._prepare(visit_model, visit_code, visit_instance, membership_form_category, **kwargs)
 
     def _prepare(self, visit_model, visit_code, visit_instance, membership_form_category, **kwargs):
