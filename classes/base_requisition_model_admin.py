@@ -16,6 +16,7 @@ class BaseRequisitionModelAdmin(BaseVisitTrackingModelAdmin):
                print_requisition_label, ]
 
     def __init__(self, *args, **kwargs):
+        super(BaseRequisitionModelAdmin, self).__init__(*args, **kwargs)
         self.fields = [
             self.visit_fieldname,
             "requisition_datetime",
@@ -66,7 +67,6 @@ class BaseRequisitionModelAdmin(BaseVisitTrackingModelAdmin):
             '{0}__appointment__registered_subject__subject_identifier'.format(self.visit_fieldname,),
             'specimen_identifier',
             'requisition_identifier']
-        super(BaseRequisitionModelAdmin, self).__init__(*args, **kwargs)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         panel_pk = request.GET.get('panel', 0)
