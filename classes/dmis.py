@@ -86,11 +86,11 @@ class Dmis(BaseDmis):
                         # If not, fetch or create and add to the list.
                         already_received.append(dmis_receive.receive_identifier)
                         if not protocol:
-                            protocol = self._fetch_or_create(Protocol, dmis_receive.protocol_identifier)
+                            protocol = self._fetch_or_create_protocol(dmis_receive.protocol_identifier)
                         if dmis_receive.site_identifier not in [site_identifier for site_identifier in sites.iterkeys()]:
-                            sites[dmis_receive.site_identifier] = self._fetch_or_create(Site, dmis_receive.site_identifier)
+                            sites[dmis_receive.site_identifier] = self._fetch_or_create_site(dmis_receive.site_identifier)
                         if dmis_receive.protocol_identifier not in [account_name for account_name in accounts.iterkeys()]:
-                            accounts[dmis_receive.protocol_identifier] = self._fetch_or_create(Account, dmis_receive.protocol_identifier)
+                            accounts[dmis_receive.protocol_identifier] = self._fetch_or_create_account(dmis_receive.protocol_identifier)
                         # for a patient, just fetch or create, no need for a list
                         patients[dmis_receive.subject_identifier] = self._create_or_update_patient(
                             account=accounts[dmis_receive.protocol_identifier],
@@ -113,15 +113,11 @@ class Dmis(BaseDmis):
                     # determine the order.panel from tid or else panel_id
                     if dmis_receive.tid and dmis_receive.tid != '-9':
                         if dmis_receive.tid not in [tid for tid in panel_ids.iterkeys()]:
-                            panel_ids[dmis_receive.tid] = self._fetch_or_create(Panel, panel_id=dmis_receive.panel_id,
-                                                                            tid=ord_row.tid,
-                                                                            receive_identifier=receive.receive_identifier)
+                            panel_ids[dmis_receive.tid] = self._fetch_or_create_panel(dmis_receive.panel_id, ord_row.tid)
                         ord_row.panel = panel_ids[dmis_receive.tid]
                     elif dmis_receive.panel_id and dmis_receive.panel_id != '-9':
                         if dmis_receive.panel_id not in [panel_id for panel_id in panel_ids.iterkeys()]:
-                            panel_ids[dmis_receive.panel_id] = self._fetch_or_create(Panel, panel_id=dmis_receive.panel_id,
-                                                                                 tid=ord_row.tid,
-                                                                                 receive_identifier=receive.receive_identifier)
+                            panel_ids[dmis_receive.panel_id] = self._fetch_or_create_panel(dmis_receive.panel_id, ord_row.tid)
                         ord_row.panel = panel_ids[dmis_receive.panel_id]
                     else:
                         # this will cause an error
@@ -167,147 +163,126 @@ class Dmis(BaseDmis):
         import_history.finish()
         return None
 
-    def _fetch_or_create(self, cls, value=None, **kwargs):
+    def fetch_or_create_testcode(self, code):
+        try:
+            test_code = TestCode.objects.using(self.lab_db).get(code__exact=code)
+        except:
+            test_code_group = TestCodeGroup.objects.using(self.lab_db).get(code__exact='000')
+            TestCode.objects.using(self.lab_db).create(
+                code=code,
+                name=code,
+                units='-',
+                test_code_group=test_code_group,
+                display_decimal_places=0,
+                is_absolute='absolute',
+                )
+            test_code = TestCode.objects.using(self.lab_db).get(code__iexact=code)
+        return test_code
 
-        def fetch_or_create_protocol(protocol_identifier, lab_db):
-            protocols = Protocol.objects.using(lab_db).values('pk').filter(protocol_identifier__iexact=protocol_identifier)
-            if protocols:
-                protocol = Protocol.objects.using(lab_db).get(protocol_identifier__iexact=protocol_identifier)
-            else:
-                protocol = Protocol.objects.using(lab_db).create(
-                    protocol_identifier=protocol_identifier,
-                    research_title='unknown',
-                    short_title='unknown',
-                    local_title='unknown',
-                    date_registered=datetime.today(),
-                    date_opened=datetime.today(),
-                    description='auto created / imported from DMIS')
-            return protocol
-
-        def fetch_or_create_account(account_name, lab_db):
-            accounts = Account.objects.using(lab_db).values('pk').filter(account_name__iexact=account_name)
-            if accounts:
-                account = Account.objects.using(lab_db).get(account_name__iexact=account_name)
-            else:
-                account = Account.objects.using(lab_db).create(
-                    account_name=account_name,
-                    account_opendate=datetime.today(),
-                    account_closedate=datetime.today(),
-                    user_created='auto',
-                    created=datetime.today(),
-                    comment='auto created / imported from DMIS')
-            return account
-
-        def fetch_or_create_panel(lab_db, dmis_data_source, **kwargs):
-            """ Determines the panel given a tid or panel_id."""
-            panel_id = kwargs.get('panel_id', None)
-            if panel_id == '-9':
-                panel_id = None
-            tid = kwargs.get('tid', None)
-            if tid == '-9':
-                tid = None
-            panel = None
-            if tid:
-                panels = Panel.objects.using(lab_db).filter(panel_group__name__exact=tid).order_by('name')
-                if panels:
-                    panel = panels[0]
-                    for p in panels:
-                        if re.search(settings.PROJECT_NUMBER, panel.name):
-                            panel = p
-                            break
-                    if not panel:
-                        if panel_id:
-                            # try to get using row.panel_id
-                            panels = Panel.objects.using(lab_db).filter(dmis_panel_identifier=panel_id)
-                            if panels:
-                                panel = panels[0]
-                                for p in panels:
-                                    if re.search(settings.PROJECT_NUMBER, panel.name):
-                                        panel = p
-                                        break
-            if not panel:
-                raise TypeError('Could not determine panel for tid={tid} '
-                                'or panel_id={panel_id} protocol '
-                                '{protocol}. Perhaps add one.'.format(tid=tid, panel_id=panel_id,
-                                                    protocol=settings.PROJECT_NUMBER))
-            logger.info('      panel is {panel} from tid={tid} or panel_id={panel_id}'.format(panel=panel.name, tid=tid, panel_id=panel_id))
-            return panel
-
-        def fetch_or_create_resultsource(lab_db, **kwargs):
-            interfaces = ['psm_interface', 'cd4_interface', 'auto', 'manual_entry', 'direct_import', ]
-            agg = ResultSource.objects.using(self.lab_db).aggregate(Max('display_index'),)
-            display_index = 0
-            if agg:
-                display_index = agg['display_index__max'] or 0
-            # populate if not already ...
-            for interface in interfaces:
-                if not ResultSource.objects.using(lab_db).filter(name__iexact=interface):
-                    result_source = ResultSource.objects.using(lab_db).create(
-                        name=interface,
-                        short_name=interface,
-                        display_index=display_index + 10,
-                        )
-            # create a new one if given argument and does not exist already
-            if kwargs.get('interface'):
-                if not ResultSource.objects.using(lab_db).filter(name__iexact=kwargs.get('interface')):
-                    result_source = ResultSource.objects.using(lab_db).create(
-                        name=kwargs.get('interface'),
-                        short_name=kwargs.get('interface'),
-                        display_index=display_index + 11,
-                        )
-                else:
-                    result_source = ResultSource.objects.using(lab_db).get(name__iexact=kwargs.get('interface'))
-            else:
-                result_source = None
-            return result_source
-
-        def fetch_or_create_site(site_identifier, lab_db):
-            if site_identifier == None or site_identifier == '' or site_identifier == '-9':
-                site_identifier = '00'
-            sites = Site.objects.using(lab_db).values('pk').filter(site_identifier__iexact=site_identifier)
-            if sites:
-                site = Site.objects.using(lab_db).get(site_identifier__iexact=site_identifier)
-            else:
-                location = Location.objects.using(lab_db).values('pk').filter(name__exact='UNKNOWN')
-                if location:
-                    location = Location.objects.using(lab_db).get(name__exact='UNKNOWN')
-                else:
-                    location = Location.objects.using(lab_db).create(name='UNKNOWN')
-                site = Site.objects.using(lab_db).create(site_identifier=site_identifier, name=site_identifier, location=location)
-            return site
-
-        if cls == Protocol:
-            return fetch_or_create_protocol(value, self.lab_db)
-        elif cls == Account:
-            return fetch_or_create_account(value, self.lab_db)
-        elif cls == Panel:
-            return fetch_or_create_panel(self.lab_db, self.dmis_data_source, **kwargs)
-        elif cls == ResultSource:
-            return fetch_or_create_resultsource(self.lab_db, **kwargs)
-        elif cls == Site:
-            return fetch_or_create_site(value, self.lab_db)
+    def _fetch_or_create_protocol(self, protocol_identifier):
+        protocols = Protocol.objects.using(self.lab_db).values('pk').filter(protocol_identifier__iexact=protocol_identifier)
+        if protocols:
+            protocol = Protocol.objects.using(self.lab_db).get(protocol_identifier__iexact=protocol_identifier)
         else:
-            raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
+            protocol = Protocol.objects.using(self.lab_db).create(
+                protocol_identifier=protocol_identifier,
+                research_title='unknown',
+                short_title='unknown',
+                local_title='unknown',
+                date_registered=datetime.today(),
+                date_opened=datetime.today(),
+                description='auto created / imported from DMIS')
+        return protocol
 
-#    def _create_or_update(self, cls, *args, **kwargs):
-#
-#        lab_db = self.lab_db
-#        dmis_data_source = self.dmis_data_source
-#        row = args[0]
-#        if cls == Patient:
-#            return self._create_or_update_patient(lab_db, **kwargs)
-#        elif cls == Aliquot:
-#            return self._create_or_update_aliquot(lab_db, row, args[1])
-#        elif cls == Receive:
-#            return self._create_or_update_receive(lab_db, row, args[1])
-#        elif cls == Order:
-#            return self._create_or_update_order(lab_db, row)
-#        elif cls == Result:
-#            return self._create_or_update_result(lab_db, dmis_data_source, order)
-#        elif cls == ResultItem:
-#            return self._create_or_update_resultitem(lab_db, row, args[1])
-#        else:
-#            raise TypeError('Expected and instance of Protocol, Account or Panel. Got {0}'.format(cls))
+    def _fetch_or_create_account(self, account_name):
+        accounts = Account.objects.using(self.lab_db).values('pk').filter(account_name__iexact=account_name)
+        if accounts:
+            account = Account.objects.using(self.lab_db).get(account_name__iexact=account_name)
+        else:
+            account = Account.objects.using(self.lab_db).create(
+                account_name=account_name,
+                account_opendate=datetime.today(),
+                account_closedate=datetime.today(),
+                user_created='auto',
+                created=datetime.today(),
+                comment='auto created / imported from DMIS')
+        return account
+
+    def _fetch_or_create_panel(self, panel_id, tid):
+        """ Determines the panel given a tid or panel_id."""
+        if panel_id == '-9':
+            panel_id = None
+        if tid == '-9':
+            tid = None
+        panel = None
+        if tid:
+            panels = Panel.objects.using(self.lab_db).filter(panel_group__name__exact=tid).order_by('name')
+            if panels:
+                panel = panels[0]
+                for p in panels:
+                    if re.search(settings.PROJECT_NUMBER, panel.name):
+                        panel = p
+                        break
+                if not panel:
+                    if panel_id:
+                        # try to get using row.panel_id
+                        panels = Panel.objects.using(self.lab_db).filter(dmis_panel_identifier=panel_id)
+                        if panels:
+                            panel = panels[0]
+                            for p in panels:
+                                if re.search(settings.PROJECT_NUMBER, panel.name):
+                                    panel = p
+                                    break
+        if not panel:
+            raise TypeError('Could not determine panel for tid={tid} '
+                            'or panel_id={panel_id} protocol '
+                            '{protocol}. Perhaps add one.'.format(tid=tid, panel_id=panel_id,
+                                                protocol=settings.PROJECT_NUMBER))
+        logger.info('      panel is {panel} from tid={tid} or panel_id={panel_id}'.format(panel=panel.name, tid=tid, panel_id=panel_id))
+        return panel
+
+    def _fetch_or_create_resultsource(self, **kwargs):
+        interfaces = ['psm_interface', 'cd4_interface', 'auto', 'manual_entry', 'direct_import', ]
+        agg = ResultSource.objects.using(self.lab_db).aggregate(Max('display_index'),)
+        display_index = 0
+        if agg:
+            display_index = agg['display_index__max'] or 0
+        # populate if not already ...
+        for interface in interfaces:
+            if not ResultSource.objects.using(self.lab_db).filter(name__iexact=interface):
+                result_source = ResultSource.objects.using(self.lab_db).create(
+                    name=interface,
+                    short_name=interface,
+                    display_index=display_index + 10,
+                    )
+        # create a new one if given argument and does not exist already
+        if kwargs.get('interface'):
+            if not ResultSource.objects.using(self.lab_db).filter(name__iexact=kwargs.get('interface')):
+                result_source = ResultSource.objects.using(self.lab_db).create(
+                    name=kwargs.get('interface'),
+                    short_name=kwargs.get('interface'),
+                    display_index=display_index + 11,
+                    )
+            else:
+                result_source = ResultSource.objects.using(self.lab_db).get(name__iexact=kwargs.get('interface'))
+        else:
+            result_source = None
+        return result_source
+
+    def _fetch_or_create_site(self, site_identifier):
+        if site_identifier == None or site_identifier == '' or site_identifier == '-9':
+            site_identifier = '00'
+        sites = Site.objects.using(self.lab_db).values('pk').filter(site_identifier__iexact=site_identifier)
+        if sites:
+            site = Site.objects.using(self.lab_db).get(site_identifier__iexact=site_identifier)
+        else:
+            location = Location.objects.using(self.lab_db).values('pk').filter(name__exact='UNKNOWN')
+            if location:
+                location = Location.objects.using(self.lab_db).get(name__exact='UNKNOWN')
+            else:
+                location = Location.objects.using(self.lab_db).create(name='UNKNOWN')
+            site = Site.objects.using(self.lab_db).create(site_identifier=site_identifier, name=site_identifier, location=location)
+        return site
 
     def _create_or_update_receive(self, row, rowcount):
         #is this receiving record on file
@@ -493,21 +468,6 @@ class Dmis(BaseDmis):
         ordered on datelastmodified which means oldest testcodes will come in first
         and later be overwritten by the same testcode if a testcode appears more than once for a result.
         """
-        def fetch_or_create_testcode(code):
-            try:
-                test_code = TestCode.objects.using(self.lab_db).get(code__exact=code)
-            except:
-                test_code_group = TestCodeGroup.objects.using(self.lab_db).get(code__exact='000')
-                TestCode.objects.using(self.lab_db).create(
-                    code=code,
-                    name=code,
-                    units='-',
-                    test_code_group=test_code_group,
-                    display_decimal_places=0,
-                    is_absolute='absolute',
-                    )
-                test_code = TestCode.objects.using(self.lab_db).get(code__iexact=code)
-            return test_code
 
         def get_ritem_user(dmis_user):
             # change NT system username to auto
@@ -524,42 +484,42 @@ class Dmis(BaseDmis):
             # evaluate validation_reference
             if ritem.validation_reference == '-9':
                 # this is an item from GetResults TCP connected to PSM
-                result_item_source = self._fetch_or_create(ResultSource, interface='psm_interface')
+                result_item_source = self._fetch_or_create_resultsource(interface='psm_interface')
                 result_item_source_reference = ''
                 validation_reference = 'dmis-auto'
             elif ritem.validation_reference == 'LAB21:MANUAL':
                 # manual entry and no validation -- straight to LAB21 tableset
-                result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
+                result_item_source = self._fetch_or_create_resultsource(interface='manual_entry')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'auto'
             elif re.search('^rad[0-9A-F]{5}\.tmp$', ritem.validation_reference):
                 # this is an item from GetResults Flatfile and validated via the LAB05 path
-                result_item_source = self._fetch_or_create(ResultSource, interface='cd4_interface')
+                result_item_source = self._fetch_or_create_resultsource(interface='cd4_interface')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'lab05'
             elif re.search('^LAB23:', ritem.validation_reference):
                 # manual entry and validated via the LAB23 validation path
-                result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
+                result_item_source = self._fetch_or_create_resultsource(interface='manual_entry')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'lab23'
             elif re.search('^IMPORT', ritem.validation_reference):
                 # manual entry and validated via the LAB23 validation path
-                result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
+                result_item_source = self._fetch_or_create_resultsource(interface='direct_import')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'auto'
             elif re.search('^LB003:', ritem.validation_reference):
                 # manual import
-                result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
+                result_item_source = self._fetch_or_create_resultsource(interface='direct_import')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'auto'
             elif re.search('^LB004:', ritem.validation_reference):
                 # manual import
-                result_item_source = self._fetch_or_create(ResultSource, interface='direct_import')
+                result_item_source = self._fetch_or_create_resultsource(interface='direct_import')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'auto'
             elif re.search('^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$', ritem.validation_reference):
                 # manual import
-                result_item_source = self._fetch_or_create(ResultSource, interface='manual_entry')
+                result_item_source = self._fetch_or_create_resultsource(interface='manual_entry')
                 result_item_source_reference = 'dmis-%s' % ritem.validation_reference
                 validation_reference = 'auto'
             else:
@@ -575,7 +535,7 @@ class Dmis(BaseDmis):
         if delete:
             # delete from django-lis the one result item for this result (should only be one)
             ResultItem.objects.using(self.lab_db).filter(result=result, test_code__code=code).delete()
-        test_code = fetch_or_create_testcode(code)
+        test_code = self.fetch_or_create_testcode(code)
         user = get_ritem_user(ritem.user_created)
         validation = get_ritem_validation(ritem)
         # create a new result item. set validation to 'P', we'll import
@@ -626,24 +586,8 @@ class Dmis(BaseDmis):
 
     def _create_or_update_aliquot(self, receive, tid):
 
-        def create_or_update_aliquotcondition(condition):
-            if AliquotCondition.objects.using(self.lab_db).values('pk').filter(short_name__exact=condition):
-                aliquot_condition = AliquotCondition.objects.using(self.lab_db).get(short_name__exact=condition)
-            else:
-                agg = AliquotCondition.objects.using(self.lab_db).aggregate(Max('display_index'),)
-                if not agg:
-                    display_index = 10
-                else:
-                    display_index = agg['display_index__max'] + 10
-                aliquot_condition = AliquotCondition.objects.using(self.lab_db).create(
-                    name=condition,
-                    short_name=condition,
-                    display_index=display_index,
-                    )
-            return aliquot_condition
-
         if receive.receive_condition:
-            aliquot_condition = create_or_update_aliquotcondition(receive.receive_condition, self.lab_db)
+            aliquot_condition = self._create_or_update_aliquotcondition(receive.receive_condition)
         else:
             aliquot_condition = None
         #create primary
@@ -679,6 +623,22 @@ class Dmis(BaseDmis):
                 comment=create['comment'],
                 )
         return primary_aliquot
+
+    def _create_or_update_aliquotcondition(self, condition):
+        if AliquotCondition.objects.using(self.lab_db).values('pk').filter(short_name__exact=condition):
+            aliquot_condition = AliquotCondition.objects.using(self.lab_db).get(short_name__exact=condition)
+        else:
+            agg = AliquotCondition.objects.using(self.lab_db).aggregate(Max('display_index'),)
+            if not agg:
+                display_index = 10
+            else:
+                display_index = agg['display_index__max'] + 10
+            aliquot_condition = AliquotCondition.objects.using(self.lab_db).create(
+                name=condition,
+                short_name=condition,
+                display_index=display_index,
+                )
+        return aliquot_condition
 
     def _validate_result_item(self, result, result_item, **kwargs):
         """ Imports result item validation information from the dmis.
@@ -719,13 +679,12 @@ class Dmis(BaseDmis):
         elif result_item.result_item_source == cd4_interface:
             #this returns only one record per result, only, so update all items as one
             # hmmm ... all imported results are from LAB21 which implies result_accepted=1, add "where result_accepted=1"
-            sql = "select top 1 result_accepted_username as operator, \
-                    result_accepted_username as validation_username, \
-                    l5.result_accessed_date as validation_datetime, \
-                    archive_filename+' ('+exp_filename+')' as result_item_source_reference \
-                    from bhplab.dbo.lab05response as l5 \
-                    left join bhplab.dbo.results_101 as r101 on l5.result_guid=r101.result_guid \
-                    where result_accepted=1 and convert(varchar(36),l5.result_guid)='%s'" % result.dmis_result_guid
+            sql = ("select result_accepted_username as operator, "
+                    "result_accepted_username as validation_username, "
+                    "l5.result_accessed_date as validation_datetime "
+                    "from bhplab.dbo.lab05response as l5 "
+                    "left join bhplab.dbo.results_101 as r101 on l5.result_guid=r101.result_guid "
+                    "where result_accepted=1 and convert(varchar(36),l5.result_guid)='%s'") % result.dmis_result_guid
 
             cursor_result = cnxn2.cursor()
             cursor_result.execute(str(sql))
@@ -751,7 +710,7 @@ class Dmis(BaseDmis):
         else:
             raise TypeError('Unknown case result_item_source in dmis validation. '
                             'Got \'%s\' from result %s.' % (result.resultitem.result_item_source, result))
-        logger.info('      validated item %s %s' % (result_item.test_code.code, result_item.result_item_source))
+        logger.info('      validated item %s %s (%s)' % (result_item.test_code.code, result_item.result_item_source, result_item.validation_status))
         return result_item
 
     def _release_result(self, result, validation_datetime, validation_username, **kwargs):
@@ -854,5 +813,5 @@ class Dmis(BaseDmis):
                 'l21.datelastmodified as modified '
                 'from BHPLAB.DBO.LAB21Response as L21 '
                 'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
-                'where l21.id=\'%s\' and l21d.id is not null order by l21d.datelastmodified') % order_identifier
+                'where l21.id=\'%s\' and l21d.id is not null and l21d.result<>\'*\' order by l21d.datelastmodified') % order_identifier
         return cursor_resultitem.execute(str(sql))
