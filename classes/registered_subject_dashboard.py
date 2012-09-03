@@ -83,9 +83,9 @@ class RegisteredSubjectDashboard(Dashboard):
                 subject_identifier=self.subject_identifier,
                 subject_type=self.get_subject_type(),
                 )
-        visit_code = kwargs.get('visit_code', self.visit_code)
-        visit_instance = kwargs.get("visit_instance", self.visit_instance)
-        visit_model = kwargs.get('visit_model', self.visit_model)
+        visit_code = kwargs.pop('visit_code', self.visit_code)
+        visit_instance = kwargs.pop("visit_instance", self.visit_instance)
+        visit_model = kwargs.pop('visit_model', self.visit_model)
         if self.extra_url_context == {}:
             self.extra_url_context = ''
         self.context.add(
@@ -102,11 +102,12 @@ class RegisteredSubjectDashboard(Dashboard):
                                  '\'visit_model\'. Got none.')
         else:
             self.context.add(visit_model_add_url=self._get_visit_model_url(visit_model))
-        self._prepare(visit_model, visit_code, visit_instance, kwargs.get('membership_form_category', None))
+        membership_form_category = kwargs.get('membership_form_category', None)
+        self._prepare(visit_model, visit_code, visit_instance, membership_form_category, **kwargs)
 
-    def _prepare(self, visit_model, visit_code, visit_instance, membership_form_category):
+    def _prepare(self, visit_model, visit_code, visit_instance, membership_form_category, **kwargs):
         self._prepare_membership_forms(membership_form_category)
-        self._set_appointments(visit_code, visit_instance)
+        self._set_appointments(visit_code, visit_instance, **kwargs)
         self._set_current_appointment(visit_code, visit_instance)
         visit_model_instance = self._set_current_visit(visit_model, self.appointment)
         self._add_or_update_entry_buckets(visit_model_instance)
@@ -199,15 +200,24 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(additional_lab_bucket=additional_lab_bucket)
         return additional_lab_bucket
 
-    def _set_appointments(self, visit_code=None, visit_instance=None):
+    def _set_appointments(self, visit_code=None, visit_instance=None, **kwargs):
         """Returns all appointments for this registered_subject or just one (if given a visit_code and visit_instance).
 
-        Note: visit_instance does not refer to a model instance. It is an integer 0,1,2,3..."""
+        Note: visit_instance does not refer to a model instance. It is an integer 0,1,2,3...
+        
+        Could show
+            one
+            all
+            only for this membership form category (which is the subject type)
+            only those for a given membership form
+            only those for a visit definition grouping
+            """
         appointments = None
         if visit_code and visit_instance:
             appointments = [self._get_appointment_map(visit_code, visit_instance)]
         else:
             # or filter appointments for the current membership category
+            # schedule_group__membership_form
             codes = VisitDefinition.objects.codes_for_membership_form_category(membership_form_category=self._get_membership_form_category())
             appointments = Appointment.objects.filter(registered_subject=self.registered_subject,
                                                       visit_definition__code__in=codes,
