@@ -179,7 +179,7 @@ class Lis(object):
                     modified_results.remove(result.result_identifier)
                     for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
                         self._import_result_item_model(lis_result_item, result)
-        self.delete_pending_orphans()
+        self.delete_pending_orphans(subject_identifier=subject_identifier)
         return import_history.finish()
 
     def _import_model(self, lis_source, target_cls, target_identifier_name, exclude_fields, **kwargs):
@@ -379,7 +379,7 @@ class Lis(object):
             modified.append(getattr(instance, identifier_name))
         return modified
 
-    def delete_pending_orphans(self):
+    def delete_pending_orphans(self, **kwargs):
         """ Deletes pending orders where a complete order has come in but with a different order identifier for the same receive, panel and order_idenifier.
 
         Assumption is that there is only one order for a given receive identifier, order panel and order date.
@@ -391,7 +391,10 @@ class Lis(object):
         resultitem instances. The now orphaned order and result instances have status Pending and New respectively.
         Since they no longer exist in the DMIS, they need to be deleted.
         """
-        orders = Order.objects.filter(status='Pending').order_by('aliquot__receive__receive_identifier')
+        options = {'status': 'Pending'}
+        if kwargs.get('subject_identifier', None):
+            options.update({'subject_identifier': kwargs.get('subject_identifier')})
+        orders = Order.objects.filter(**options).order_by('aliquot__receive__receive_identifier')
         tot = orders.count()
         logger.info('Scanning {0} pending orders to be removed if complete ...'.format(tot))
         m = 0
@@ -400,7 +403,7 @@ class Lis(object):
             ResultItem.objects.filter(validation_status__iexact='P').delete()
             logger.info('    removed {0} preliminary result items...'.format(ri_tot))
         for order in orders:
-            if Order.objects.filter(aliquot__receive=order.aliquot.receive, panel=order.panel, order_datetime=order.order_datetime, status__iexact='complete'):
+            if Order.objects.filter(aliquot__receive=order.aliquot.receive, panel=order.panel, order_datetime=order.order_datetime, status__iexact='complete').exists():
                 results = Result.objects.filter(order=order)
                 if not results:
                     # no result so just delete the order.
@@ -408,7 +411,7 @@ class Lis(object):
                     order.delete()
                 else:
                     for result in results:
-                        if not ResultItem.objects.filter(result=result):
+                        if not ResultItem.objects.filter(result=result).exists():
                             # no result items left, so delete the result and order.
                             m += 1
                             result.delete()
