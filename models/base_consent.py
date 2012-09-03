@@ -17,5 +17,10 @@ class BaseConsent(BaseBaseConsent):
 
     identity_type = IdentityTypeField()
 
+    confirm_identity = EncryptedOmangField(
+        help_text="Retype the identity number from the identity card",
+        null=True,
+        blank=False)
+
     class Meta:
         abstract = True
