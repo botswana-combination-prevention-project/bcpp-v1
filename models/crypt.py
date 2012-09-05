@@ -39,3 +39,4 @@ class Crypt (BaseUuidModel):
     class Meta:
         app_label = 'bhp_crypto'
         verbose_name = 'Crypt'
+        unique_together = (('hash', 'algorithm', 'mode'), )
