@@ -7,24 +7,26 @@ from lab_entry import LabEntry
 
 
 class ScheduledLabEntryBucket(BaseEntryBucket):
-    
+
     """Subject-specific list of required and scheduled lab as per normal visit schedule."""
-    
+
     appointment = models.ForeignKey(Appointment, related_name='+')
-    
+
     lab_entry = models.ForeignKey(LabEntry)
-    
+
     objects = ScheduledLabEntryBucketManager()
-    
+
+    def deserialize_on_duplicate(self):
+        return False
+
     def get_absolute_url(self):
         return reverse('admin:bhp_lab_entry_scheduledlabentrybucket_change', args=(self.id,))
 
-    def __unicode__(self):        
-        return '%s: %s' % (self.registered_subject.subject_identifier, self.lab_entry.panel.name)    
+    def __unicode__(self):
+        return '%s: %s' % (self.registered_subject.subject_identifier, self.lab_entry.panel.name)
 
-    
     class Meta:
         app_label = 'bhp_lab_entry'
         verbose_name = "Subject Scheduled Lab Bucket"
-        ordering = ['registered_subject', 'lab_entry__panel__name','appointment',]
-        unique_together = ['registered_subject', 'lab_entry', 'appointment',] 
+        ordering = ['registered_subject', 'lab_entry__panel__name', 'appointment', ]
+        unique_together = ['registered_subject', 'lab_entry', 'appointment', ]
