@@ -10,6 +10,8 @@ transaction_producer = TransactionProducer()
 
 class BaseTransaction(BaseUuidModel):
 
+    tx = models.TextField()
+
     tx_name = models.CharField(
         max_length=64,
         db_index=True,
@@ -52,6 +54,12 @@ class BaseTransaction(BaseUuidModel):
         null=True,
         blank=True,
         db_index=True,
+        )
+
+    is_ignored = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text='Ignore if update'
         )
 
     is_error = models.BooleanField(

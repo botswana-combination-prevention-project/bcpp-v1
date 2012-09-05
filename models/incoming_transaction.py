@@ -2,6 +2,7 @@ import socket
 from django.db import models
 from django.core.urlresolvers import reverse
 from base_transaction import BaseTransaction
+from bhp_sync.managers import IncomingTransactionManager
 #from bhp_crypto.fields import EncryptedTextField
 
 
@@ -9,12 +10,10 @@ class IncomingTransaction(BaseTransaction):
 
     """ Transactions received from a remote producer and to be consumed locally. """
 
-    tx = models.TextField()
-
     is_self = models.BooleanField(
         default=False,
         db_index=True)
-    objects = models.Manager()
+    objects = IncomingTransactionManager()
 
     def render(self):
         url = reverse('view_transaction_url', kwargs={'model_name': self._meta.object_name.lower(), 'pk': self.pk})
@@ -33,4 +32,4 @@ class IncomingTransaction(BaseTransaction):
 
     class Meta:
         app_label = 'bhp_sync'
-        ordering = ['-timestamp']
+        ordering = ['timestamp']

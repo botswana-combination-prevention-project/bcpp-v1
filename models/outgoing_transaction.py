@@ -6,8 +6,6 @@ class OutgoingTransaction(BaseTransaction):
 
     """ transactions produced locally to be consumed/sent to a queue or consumer """
     
-    tx = models.TextField()
-    
     objects = models.Manager()
 
     class Meta:

@@ -18,6 +18,22 @@ class BaseSyncModel(BaseUuidModel):
                 return serialize
         return False
 
+    def deserialize_prep(self):
+        """Users may override to manipulate the incoming object before calling save()"""
+
+    def deserialize_on_duplicate(self):
+        """Users may override this to determine how to handle a duplicate error on deserialization.
+
+        If you have a way to help decide if a duplicate should overwrite the existing record or not,
+        evaluate your criteria here and return True or False. If False is returned to the deserializer,
+        the object will not be saved and the transaction WILL be flagged as consumed WITHOUT error.
+        """
+        return True
+
+    def deserialize_get_missing_fk(self, attrname):
+        """Override to return a foreignkey object for 'attrname', if possible, using criteria in self, otherwise return None"""
+        raise TypeError()
+
     def save(self, *args, **kwargs):
 
         # sneek in the transaction_producer, if called from
