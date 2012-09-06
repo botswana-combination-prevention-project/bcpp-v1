@@ -1,6 +1,7 @@
 from django.db import models
 from lab_test_code.models import BaseTestCode
 from test_code_group import TestCodeGroup
+from lab_clinic_api.managers import TestCodeManager
 
 
 class TestCode(BaseTestCode):
@@ -10,6 +11,8 @@ class TestCode(BaseTestCode):
     edc_name = models.CharField(max_length=50, null=True, db_index=True)
 
     test_code_group = models.ForeignKey(TestCodeGroup, null=True)
+
+    objects = TestCodeManager()
 
     def __unicode__(self):
         return unicode(self.edc_name)
@@ -22,6 +25,10 @@ class TestCode(BaseTestCode):
             self.edc_name = self.name
         super(TestCode, self).save(*args, **kwargs)
 
+    def natural_key(self):
+        return (self.code, )
+
     class Meta:
         ordering = ["edc_name"]
         app_label = 'lab_clinic_api'
+        #unique_together = (('code', ))
