@@ -212,6 +212,17 @@ TIME_UNITS = (
     ('YEARS', 'Years'),
 )
 
+URINALYSIS = (
+    ('NAD', 'NAD'),
+    ('Sugar Neg', 'Sugar Neg'),
+    ('Sugar +', 'Sugar +'),
+    ('Sugar ++', 'Sugar ++'),
+    ('Sugar +++', 'Sugar +++'),
+    ('Blood', 'Blood'),
+    ('Protein', 'Protein'),
+    ('Cells', 'Cells'),
+    )
+
 WILL_DECL = (
     ('WILLING', 'Willing'),
     ('DELINED', 'Declined'),
