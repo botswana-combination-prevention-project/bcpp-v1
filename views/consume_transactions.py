@@ -18,7 +18,7 @@ def consume_transactions(request, **kwargs):
     producer = None
     if request.user:
         if not 'api_key' in dir(request.user):
-            raise ValueError('ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,))
+            raise ValueError('ApiKey does not exist for user %s. Check if tastypie was added to installed apps or Perhaps run create_api_key().' % (request.user,))
         else:
             if not request.user.api_key:
                 raise ValueError('ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,))
