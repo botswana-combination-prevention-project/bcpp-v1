@@ -33,7 +33,7 @@ for each packing list / requisition model defined in models.
 
         form = InfantPackingListForm
         requisition = InfantRequisition
-        
+
     admin.site.register(InfantPackingList, InfantPackingListAdmin)
 
 """
@@ -42,8 +42,6 @@ for each packing list / requisition model defined in models.
 class BasePackingListAdmin(BasePackingListModelAdmin):
 
     #form = PackingListForm
-
-    list_filter = ('panel', 'created', 'user')
 
     def save_model(self, request, obj, form, change):
 
@@ -102,7 +100,7 @@ class BasePackingListItemAdmin(BaseModelAdmin):
 
     search_fields = ('packing_list__pk', 'packing_list__timestamp', 'item_description', 'item_reference',)
     list_display = ('specimen', 'priority', 'panel', 'description', 'created', 'user_created', 'view_packing_list',)
-    list_filter = ('created',)
+    list_filter = ('created', 'panel')
 
     def delete_model(self, request, obj):
 
