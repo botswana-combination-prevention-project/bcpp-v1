@@ -28,11 +28,11 @@ class BaseConsent(BaseSubject):
     guardian_name = EncryptedLastnameField(
         verbose_name=_("Guardian\'s Last and first name (minors only)"),
         validators=[
-            RegexValidator('^[A-Z]{1,50}\,[A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+            RegexValidator('^[A-Z]{1,50}\,[A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
             ],
         blank=True,
         null=True,
-        help_text=_('Required only if subject is a minor. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+        help_text=_('Required only if subject is a minor. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
         )
 
     may_store_samples = models.CharField(
