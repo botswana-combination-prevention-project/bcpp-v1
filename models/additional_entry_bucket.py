@@ -2,7 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_entry.models import BaseEntryBucket
-#from bhp_entry.managers import AdditionalEntryBucketManager
+from bhp_entry.managers import AdditionalEntryBucketManager
 
 
 class AdditionalEntryBucket(BaseEntryBucket):
@@ -23,8 +23,8 @@ class AdditionalEntryBucket(BaseEntryBucket):
             related_name='+',
             verbose_name='entry form / model')
 
-    #objects = AdditionalEntryBucketManager()
-    objects = models.Manager()
+    objects = AdditionalEntryBucketManager()
+    #objects = models.Manager()
 
     def get_absolute_url(self):
         return reverse('admin:bhp_entry_additionalentrybucket_change', args=(self.id,))
