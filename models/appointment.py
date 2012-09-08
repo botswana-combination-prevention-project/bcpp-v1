@@ -11,10 +11,10 @@ from base_appointment import BaseAppointment
 
 class Appointment(BaseAppointment):
 
-    """Model to track appointments for a registered subject's visit.
+    """Tracks appointments for a registered subject's visit.
 
-    Only one appointment per subject visit_definition+visit_instance.
-    Attribute 'visit_instance' should be populated by the system
+        Only one appointment per subject visit_definition+visit_instance.
+        Attribute 'visit_instance' should be populated by the system
     """
     registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
     visit_definition = models.ForeignKey(VisitDefinition, related_name='+',
@@ -53,7 +53,7 @@ class Appointment(BaseAppointment):
         return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance)
 
     def dashboard(self):
-        url = reverse('dashboard_url', kwargs={'dashboard_type': self.registered_subject.subject_type,
+        url = reverse('dashboard_url', kwargs={'dashboard_type': self.registered_subject.subject_type.lower(),
                                                'subject_identifier': self.registered_subject.subject_identifier,
                                                'appointment': self.pk})
         ret = """<a href="{url}" />dashboard</a>""".format(url=url)
@@ -71,4 +71,3 @@ class Appointment(BaseAppointment):
     class Meta:
         ordering = ['registered_subject', 'appt_datetime', ]
         app_label = 'bhp_appointment'
-

@@ -8,9 +8,6 @@ except ImportError:
 
 
 class BaseAppointment (BaseUuidModel):
-
-    """Base model of appointments. """
-
     appt_datetime = models.DateTimeField(
         verbose_name=_("Appointment date and time"),
         help_text="",
