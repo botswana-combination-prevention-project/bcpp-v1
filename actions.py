@@ -9,5 +9,6 @@ def clear_stale_error_messages(modeladmin, request, queryset):
         if qs.model_name == 'Receive':
             if Receive.objects.filter(receive_identifier=qs.identifier).exists():
                 qs.delete()
-        modeladmin.message_user(request, 'Removed {0} error messages'.format(n))
+                n += 1
+    modeladmin.message_user(request, 'Removed {0} error messages'.format(n))
 clear_stale_error_messages.short_description = "Clear stale error messages"
