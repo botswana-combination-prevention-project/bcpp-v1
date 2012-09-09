@@ -51,6 +51,28 @@ class Dmis(BaseDmis):
             even though it was not created by the user as an order. In this script, we create an order and
             a result instance with the same data (LAB21). Result item instances are attached to
             the result instance.
+
+        if you need to fix a result not importing because it is stuck in a validated batch
+
+            declare @id int
+            declare @pid varchar(7)
+            declare @batchid varchar(25)
+
+            set @batchid='500971'
+            set @pid='UY55139'
+
+            select @id=l23d.id from lab23response as l23
+            left join lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0
+            where batchid=@batchid and l23d.bhhrl_ref=@pid
+
+            delete from lab21response where pid=@pid
+            update lab23responseq001x0 set  datesent=convert(datetime,'09/09/9999',103), result_accepted=-9 where id=@id
+
+        for auto validated data just change the datelastmodified to force re-import:
+
+            declare @pid varchar(7)
+            set @pid='UY55139'
+            update lab01response set datelastmodified=now() where pid=@pid
         """
 
         lock_name = kwargs.get('subject_identifier', None)
