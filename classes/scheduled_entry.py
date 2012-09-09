@@ -6,7 +6,6 @@ from base_entry import BaseEntry
 
 
 class ScheduledEntry(BaseEntry):
-
     def set_bucket_model_cls(self):
         self._bucket_model_cls = ScheduledEntryBucket
 
