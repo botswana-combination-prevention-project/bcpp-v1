@@ -43,6 +43,7 @@ class DeserializeFromTransaction(object):
                         else:
                             raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,))
                     else:
+                        is_success = True
                         try:
                             # save using ModelBase save() method (skips all the subclassed save() methods)
                             # post_save, etc signals will fire
@@ -61,7 +62,6 @@ class DeserializeFromTransaction(object):
                                         obj.save()
                                     else:
                                         incoming_transaction.is_ignored = True
-
                         except IntegrityError as error:
                             if 'Cannot add or update a child row' in error.args[1]:
                                 # which foreign key is failing?
@@ -95,14 +95,16 @@ class DeserializeFromTransaction(object):
                                     # if there is no other constraint on the model
                                     # then an integrity error does not really make sense.
                                     # but anyway ...
-                                    raise
+                                    is_success = False
+                                    #raise
                                 options = {}
                                 for tpl in obj.object._meta.unique_together:
                                     for f in tpl:
                                         options.update({f: getattr(obj.object, f)})
                                     if not obj.object.__class__.objects.filter(**options).exists():
                                         # it should exist, otherwise how did we get an integrity error?
-                                        raise
+                                        is_success = False
+                                        #raise
                                     else:
                                         old_pk = obj.object.id
                                         new_pk = obj.object.__class__.objects.get(**options).pk
@@ -117,7 +119,6 @@ class DeserializeFromTransaction(object):
                                                 incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk)
                                             else:
                                                 incoming_transaction.is_ignored = True
-
                                         except IntegrityError as error:
                                             incoming_transaction.is_consumed = False
                                             incoming_transaction.consumer = None
@@ -125,15 +126,15 @@ class DeserializeFromTransaction(object):
                                             incoming_transaction.error = error
                                             incoming_transaction.save()
                                         except:
-                                            raise
+                                            is_success = False
+                                            #raise
                             else:
-                                raise
+                                is_success = False
+                                #raise
                         except:
-                            raise
-                        incoming_transaction.is_consumed = True
-                        incoming_transaction.consumer = str(TransactionProducer())
-                        incoming_transaction.save()
-
-
-
-
+                            is_success = False
+                            #raise
+                        if is_success:
+                            incoming_transaction.is_consumed = True
+                            incoming_transaction.consumer = str(TransactionProducer())
+                            incoming_transaction.save()

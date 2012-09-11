@@ -89,20 +89,26 @@ def consume_transactions(request, **kwargs):
                                 #    messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))  
                                 if json_response:
                                     messages.add_message(request, messages.INFO, 'Consuming %s new transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name, url))
-                                    # 'outgoing_transaction' is the serialized Transaction object from the producer. 
-                                    # The OutgoingTransaction's object field 'tx' has the serialized 
+                                    # 'outgoing_transaction' is the serialized Transaction object from the producer.
+                                    # The OutgoingTransaction's object field 'tx' has the serialized
                                     # instance of the data model we are looking for
                                     for outgoing_transaction in json_response['objects']:
                                         # save to IncomingTransaction.
                                         # this will trigger the post_save signal to deserialize tx
-                                        IncomingTransaction.objects.create(
-                                            pk=outgoing_transaction['id'],
-                                            tx_name=outgoing_transaction['tx_name'],
-                                            tx_pk=outgoing_transaction['tx_pk'],
-                                            tx=outgoing_transaction['tx'],
-                                            timestamp=outgoing_transaction['timestamp'],
-                                            producer=outgoing_transaction['producer'],
-                                            action=outgoing_transaction['action'])
+                                        if not IncomingTransaction.objects.filter(pk=outgoing_transaction['id']).exists():
+                                            IncomingTransaction.objects.create(
+                                                pk=outgoing_transaction['id'],
+                                                tx_name=outgoing_transaction['tx_name'],
+                                                tx_pk=outgoing_transaction['tx_pk'],
+                                                tx=outgoing_transaction['tx'],
+                                                timestamp=outgoing_transaction['timestamp'],
+                                                producer=outgoing_transaction['producer'],
+                                                action=outgoing_transaction['action'])
+                                        else:
+                                            incoming_transaction = IncomingTransaction.objects.get(pk=outgoing_transaction['id'])
+                                            incoming_transaction.is_consumed = False
+                                            incoming_transaction.is_error = False
+                                            incoming_transaction.save()
                                         # POST success back to to the producer
                                         outgoing_transaction['is_consumed'] = True
                                         outgoing_transaction['consumer'] = str(TransactionProducer())
