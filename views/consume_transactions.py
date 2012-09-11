@@ -49,7 +49,7 @@ def consume_transactions(request, **kwargs):
                     except urllib2.URLError, err:
                         producer.sync_status = err
                         producer.save()
-                        messages.add_message(request, messages.ERROR, '{0} {1}'.format(err, url))
+                        messages.add_message(request, messages.ERROR, '[A] {0} {1}'.format(err, url))
                     while req:
                         try:
                             f = urllib2.urlopen(req)
@@ -57,7 +57,7 @@ def consume_transactions(request, **kwargs):
                         except urllib2.HTTPError, err:
                             producer.sync_status = err
                             producer.save()
-                            messages.add_message(request, messages.ERROR, err)
+                            messages.add_message(request, messages.ERROR, '[B] {0} {1}'.format(err, url))
                             request_log.status = 'error'
                             request_log.save()
                             req = None
@@ -68,7 +68,7 @@ def consume_transactions(request, **kwargs):
                             producer.save()
                             request_log.status = 'error'
                             request_log.save()
-                            messages.add_message(request, messages.ERROR, err)
+                            messages.add_message(request, messages.ERROR, '[C] {0} {1}'.format(err, url))
                             break
                         if not err:
                             # read response from url and decode          
