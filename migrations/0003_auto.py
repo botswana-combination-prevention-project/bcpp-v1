@@ -64,59 +64,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Removing index on 'AdverseEventStudyRelation', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_adverseeventstudyrelation', ['hostname_modified'])
-
-        # Removing index on 'AdverseEventStudyRelation', fields ['hostname_created']
-        db.delete_index('bhp_adverse_adverseeventstudyrelation', ['hostname_created'])
-
-        # Removing index on 'AdverseEventReportType', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_adverseeventreporttype', ['hostname_modified'])
-
-        # Removing index on 'AdverseEventReportType', fields ['hostname_created']
-        db.delete_index('bhp_adverse_adverseeventreporttype', ['hostname_created'])
-
-        # Removing index on 'DeathReasonHospitalized', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_deathreasonhospitalized', ['hostname_modified'])
-
-        # Removing index on 'DeathReasonHospitalized', fields ['hostname_created']
-        db.delete_index('bhp_adverse_deathreasonhospitalized', ['hostname_created'])
-
-        # Removing index on 'Ae010AdverseStudyRel', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_ae010adversestudyrel', ['hostname_modified'])
-
-        # Removing index on 'Ae010AdverseStudyRel', fields ['hostname_created']
-        db.delete_index('bhp_adverse_ae010adversestudyrel', ['hostname_created'])
-
-        # Removing index on 'DeathCauseInfo', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_deathcauseinfo', ['hostname_modified'])
-
-        # Removing index on 'DeathCauseInfo', fields ['hostname_created']
-        db.delete_index('bhp_adverse_deathcauseinfo', ['hostname_created'])
-
-        # Removing index on 'Ae010ReportType', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_ae010reporttype', ['hostname_modified'])
-
-        # Removing index on 'Ae010ReportType', fields ['hostname_created']
-        db.delete_index('bhp_adverse_ae010reporttype', ['hostname_created'])
-
-        # Removing index on 'DeathMedicalResponsibility', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_deathmedicalresponsibility', ['hostname_modified'])
-
-        # Removing index on 'DeathMedicalResponsibility', fields ['hostname_created']
-        db.delete_index('bhp_adverse_deathmedicalresponsibility', ['hostname_created'])
-
-        # Removing index on 'SimpleAdverseEvent', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_simpleadverseevent', ['hostname_modified'])
-
-        # Removing index on 'SimpleAdverseEvent', fields ['hostname_created']
-        db.delete_index('bhp_adverse_simpleadverseevent', ['hostname_created'])
-
-        # Removing index on 'DeathCauseCategory', fields ['hostname_modified']
-        db.delete_index('bhp_adverse_deathcausecategory', ['hostname_modified'])
-
-        # Removing index on 'DeathCauseCategory', fields ['hostname_created']
-        db.delete_index('bhp_adverse_deathcausecategory', ['hostname_created'])
+       pass
 
 
     models = {
