@@ -7,7 +7,6 @@ from bhp_base_model.fields import InitialsField, IsDateEstimatedField
 from bhp_base_model.validators import dob_not_future
 from lab_account.models import Account
 from lab_patient.managers import PatientManager
-from lab_patient.models import SimpleConsent
 
 
 class Patient(BaseUuidModel):
@@ -56,12 +55,6 @@ class Patient(BaseUuidModel):
         default='UNKNOWN',
         )
 
-    simple_consent = models.ManyToManyField(SimpleConsent,
-        verbose_name=_('Consent'),
-        null=True,
-        blank=True,
-        )
-
     comment = models.CharField("Comment",
         max_length=250,
         blank=True
@@ -80,4 +73,3 @@ class Patient(BaseUuidModel):
         unique_together = ['subject_identifier', ]
         app_label = 'lab_patient'
         db_table = 'bhp_lab_registration_patient'
-
