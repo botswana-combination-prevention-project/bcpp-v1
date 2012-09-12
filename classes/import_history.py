@@ -1,5 +1,5 @@
 import logging
-from lab_import.classes import BaseImportHistory
+from bhp_lock.classes import BaseImportHistory
 from lab_import_lis.models import LisImportHistoryModel
 from lis_lock import LisLock
 

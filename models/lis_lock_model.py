@@ -1,5 +1,5 @@
 
-from lab_import.models import BaseLockModel
+from bhp_lock.models import BaseLockModel
 
 
 class LisLockModel(BaseLockModel):

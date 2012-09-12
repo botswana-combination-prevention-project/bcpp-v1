@@ -1,5 +1,5 @@
 import logging
-from lab_import.classes import BaseLock
+from bhp_lock.classes import BaseLock
 from lab_import_lis.models import LisLockModel, LisImportHistoryModel
 
 logger = logging.getLogger(__name__)

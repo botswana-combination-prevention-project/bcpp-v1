@@ -1,4 +1,4 @@
-from lab_import.models import BaseImportHistoryModel
+from bhp_lock.models import BaseImportHistoryModel
 
 
 class LisImportHistoryModel(BaseImportHistoryModel):
