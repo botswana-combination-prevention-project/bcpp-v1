@@ -223,11 +223,11 @@ class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
             # check if entry.content_type_map.model has been keyed for this registered_subject, timepoint
             # if so, set report date and status accordingly
             report_datetime = self.visit_model_instance.report_datetime
-            if super(ScheduledLabEntryBucketManager, self).filter(registered_subject=self.registered_subject,
+            if super(ScheduledLabEntryBucketManager, self).filter(registered_subject=self.visit_model_instance.appointment.registered_subject,
                                                                   appointment=self.appointment,
                                                                   lab_entry=self.entry):
                 # already in bucket, so get bucket entry
-                scheduled_entry_bucket = super(ScheduledLabEntryBucketManager, self).get(registered_subject=self.registered_subject,
+                scheduled_entry_bucket = super(ScheduledLabEntryBucketManager, self).get(registered_subject=self.visit_model_instance.appointment.registered_subject,
                                                                     appointment=self.appointment,
                                                                     lab_entry=self.entry)
                 # update entry_status if NEW no matter what, to indictate perhaps that it was modified
