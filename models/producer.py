@@ -6,6 +6,14 @@ class Producer(BaseUuidModel):
 
     name = models.CharField(
         max_length=25,
+        help_text='Usually hostname-database_name. e.g mpp83-bhp041_survey'
+        )
+
+    settings_key = models.CharField(
+        max_length=25,
+        help_text='Key in settings.DATABASES, usually hostname of producer',
+        null=True,
+        blank=False,
         )
 
     url = models.CharField(
