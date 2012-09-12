@@ -23,7 +23,7 @@ def consume_transactions(request, **kwargs):
             if not request.user.api_key:
                 raise ValueError('ApiKey not found for user %s. Perhaps run create_api_key().' % (request.user,))
             else:
-                # specify producer "name" of the server you are connecting to 
+                # specify producer "name" of the server you are connecting to
                 # as you only want transactions created by that server.
                 producer = None
                 if kwargs.get('producer'):
@@ -34,7 +34,7 @@ def consume_transactions(request, **kwargs):
                         producer = Producer.objects.get(name__iexact=kwargs.get('producer'))
                 if producer:
                     # url to producer, add in the producer, username and api_key of the current user
-                    data = {'host': producer.url, 'producer': producer.name, 'limit': producer.json_limit, 'username': request.user.username, 'api_key':request.user.api_key.key}
+                    data = {'host': producer.url, 'producer': producer.name, 'limit': producer.json_limit, 'username': request.user.username, 'api_key': request.user.api_key.key}
                     url = '{host}bhp_sync/api/outgoingtransaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
                     request_log = RequestLog()
                     request_log.producer = producer
@@ -71,7 +71,7 @@ def consume_transactions(request, **kwargs):
                             messages.add_message(request, messages.ERROR, '[C] {0} {1}'.format(err, url))
                             break
                         if not err:
-                            # read response from url and decode          
+                            # read response from url and decode
                             response = f.read()
                             json_response = None
                             if response:
@@ -86,7 +86,7 @@ def consume_transactions(request, **kwargs):
                                     producer.json_limit = json_response['meta']['limit']
                                     producer.json_total_count = json_response['meta']['total_count']
                                 #except:
-                                #    messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))  
+                                #    messages.add_message(request, messages.ERROR, 'Failed to decode response to JSON from %s URL %s.' % (producer.name,producer.url))
                                 if json_response:
                                     messages.add_message(request, messages.INFO, 'Consuming %s new transactions from producer %s URL %s.' % (len(json_response['objects']), producer.name, url))
                                     # 'outgoing_transaction' is the serialized Transaction object from the producer.

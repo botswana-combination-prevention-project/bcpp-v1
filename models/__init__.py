@@ -4,4 +4,6 @@ from outgoing_transaction import OutgoingTransaction
 from transaction import Transaction
 from producer import Producer
 from request_log import RequestLog
+from sync_lock_model import SyncLockModel
+from sync_import_history_model import SyncImportHistoryModel
 from signals import *

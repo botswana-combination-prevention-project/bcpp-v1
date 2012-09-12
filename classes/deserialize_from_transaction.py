@@ -96,7 +96,7 @@ class DeserializeFromTransaction(object):
                                     # then an integrity error does not really make sense.
                                     # but anyway ...
                                     is_success = False
-                                    #raise
+                                    raise
                                 options = {}
                                 for tpl in obj.object._meta.unique_together:
                                     for f in tpl:
@@ -104,7 +104,7 @@ class DeserializeFromTransaction(object):
                                     if not obj.object.__class__.objects.filter(**options).exists():
                                         # it should exist, otherwise how did we get an integrity error?
                                         is_success = False
-                                        #raise
+                                        raise
                                     else:
                                         old_pk = obj.object.id
                                         new_pk = obj.object.__class__.objects.get(**options).pk
@@ -127,13 +127,13 @@ class DeserializeFromTransaction(object):
                                             incoming_transaction.save()
                                         except:
                                             is_success = False
-                                            #raise
+                                            raise
                             else:
                                 is_success = False
-                                #raise
+                                raise
                         except:
                             is_success = False
-                            #raise
+                            raise
                         if is_success:
                             incoming_transaction.is_consumed = True
                             incoming_transaction.consumer = str(TransactionProducer())
