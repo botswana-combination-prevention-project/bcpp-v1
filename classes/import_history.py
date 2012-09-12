@@ -1,5 +1,5 @@
 import logging
-from lab_import.classes import BaseImportHistory
+from bhp_lock.classes import BaseImportHistory
 from lab_import_dmis.models import DmisImportHistoryModel
 from dmis_lock import DmisLock
 

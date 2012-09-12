@@ -1,5 +1,5 @@
 import logging
-from lab_import.classes import BaseLock
+from bhp_lock.classes import BaseLock
 from lab_import_dmis.models import DmisLockModel, DmisImportHistoryModel
 
 logger = logging.getLogger(__name__)
