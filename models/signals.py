@@ -15,6 +15,6 @@ def deserialize_on_post_save(sender, instance, **kwargs):
 #        if not instance.is_consumed and not instance.is_error:  # and not instance.is_self:
 #            deserialize_from_transaction = DeserializeFromTransaction()
 #            try:
-#                deserialize_from_transaction.deserialize(sender, instance, **kwargs)
+#                deserialize_from_transaction.deserialize_from_signal(sender, instance, **kwargs)
 #            except:
 #                pass

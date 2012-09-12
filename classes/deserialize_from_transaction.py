@@ -12,8 +12,11 @@ class DeserializeFromTransaction(object):
     def __init__(self, *args, **kwargs):
         super(DeserializeFromTransaction, self).__init__(*args, **kwargs)
 
-    def deserialize(self, sender, incoming_transaction, **kwargs):
+    def deserialize_from_signal(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
+        self.deserialize(incoming_transaction)
+
+    def deserialize(self, incoming_transaction):
 
         for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)):
         # if you get an error deserializing a datetime, confirm dev version of json.py
@@ -21,6 +24,7 @@ class DeserializeFromTransaction(object):
                 # check if tx originanted from me
                 #print "created %s : modified %s" % (obj.object.hostname_created, obj.object.hostname_modified)
                 incoming_transaction.is_ignored = False
+                print '    {0}'.format(obj.object)
                 if obj.object.hostname_modified == socket.gethostname():
                     #print "Ignoring my own transaction %s" % (incoming_transaction.tx_pk)
                     pass
@@ -65,13 +69,6 @@ class DeserializeFromTransaction(object):
                         except IntegrityError as error:
                             if 'Cannot add or update a child row' in error.args[1]:
                                 # which foreign key is failing?
-                                foreign_key_error = []
-                                for field in obj.object._meta.fields:
-                                    if isinstance(field, ForeignKey):
-                                        try:
-                                            getattr(obj.object, field.name)
-                                        except:
-                                            foreign_key_error.append(field)
                                 if 'audit' in obj.object._meta.db_table:
                                     # audit tables do not have access to the helper methods
                                     #for field in foreign_key_error:
@@ -79,7 +76,16 @@ class DeserializeFromTransaction(object):
                                     #    setattr(obj.object, field.name, None)
                                     incoming_transaction.is_ignored = True
                                 else:
+                                    foreign_key_error = []
+                                    for field in obj.object._meta.fields:
+                                        if isinstance(field, ForeignKey):
+                                            try:
+                                                getattr(obj.object, field.name)
+                                            except:
+                                                foreign_key_error.append(field)
+                                    print '    cannot add or update a child row ({0})'.format(','.join(foreign_key_error))
                                     for field in foreign_key_error:
+                                        print '    deserialize_get_missing_fk ({0})'.format(field)
                                         setattr(obj.object, field.name, obj.object.deserialize_get_missing_fk(field.name))
                                     try:
                                         obj.save()
@@ -91,6 +97,7 @@ class DeserializeFromTransaction(object):
                                 # locate the existing pk.
                                 # If pk found, overwrite the pk in the json with the existing pk.
                                 # Try to save again
+                                print '    duplicate'
                                 if not obj.object._meta.unique_together:
                                     # if there is no other constraint on the model
                                     # then an integrity error does not really make sense.
@@ -110,12 +117,14 @@ class DeserializeFromTransaction(object):
                                         new_pk = obj.object.__class__.objects.get(**options).pk
                                         obj.object.id = new_pk
                                         try:
+                                            print '    deserialize_on_duplicate'
                                             if obj.object.deserialize_on_duplicate():
                                                 # not every duplicate needs to be saved
                                                 # if you can develop criteria to decide,
                                                 # then use deserialize_on_duplicate to evaluate
                                                 obj.save()
                                                 # change all pk to the new pk for is_consumed=False.
+                                                print '    replace_pk_in_tx'
                                                 incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk)
                                             else:
                                                 incoming_transaction.is_ignored = True
