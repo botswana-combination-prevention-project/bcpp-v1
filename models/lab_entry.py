@@ -6,14 +6,16 @@ from base_lab_entry import BaseLabEntry
 class LabEntry(BaseLabEntry):
 
     """Model of metadata for each model_class linked to a visit definition.
-    
-    This model lists entry forms by visit definition used to fill 
-    the scheduled entry bucket for a subject once a visit is reported 
-    
+
+    This model lists entry forms by visit definition used to fill
+    the scheduled entry bucket for a subject once a visit is reported
+
     Important: Read notes on model bhp_common.models ContentTypeMap
     """
 
     visit_definition = models.ForeignKey(VisitDefinition)
+
+    objects = models.Manager()
 
     def form_title(self):
         self.content_type_map.content_type.model_class()._meta.verbose_name
