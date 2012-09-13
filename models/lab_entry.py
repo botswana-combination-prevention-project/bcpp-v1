@@ -14,15 +14,15 @@ class LabEntry(BaseLabEntry):
     """
 
     visit_definition = models.ForeignKey(VisitDefinition)
-       
+
     def form_title(self):
         self.content_type_map.content_type.model_class()._meta.verbose_name
-    
-    def __unicode__(self):        
+
+    def __unicode__(self):
         return '%s: %s' % (self.visit_definition.code, self.panel.name)
-   
+
     class Meta:
         app_label = 'bhp_lab_entry'
         verbose_name = "Lab Entry"
-        ordering = ['visit_definition__code', 'entry_order',]
-        unique_together = ['visit_definition', 'panel', ]   
+        ordering = ['visit_definition__code', 'entry_order', ]
+        unique_together = ['visit_definition', 'panel', ]
