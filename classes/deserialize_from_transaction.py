@@ -1,4 +1,4 @@
-import types
+import sys
 import socket
 from django.core import serializers
 from django.db.models import ForeignKey
@@ -47,7 +47,7 @@ class DeserializeFromTransaction(object):
                         else:
                             raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,))
                     else:
-                        is_success = True
+                        is_success = False
                         try:
                             # save using ModelBase save() method (skips all the subclassed save() methods)
                             # post_save, etc signals will fire
@@ -56,17 +56,27 @@ class DeserializeFromTransaction(object):
                                 # override this method on your model
                                 obj.object.deserialize_prep()
                             try:
-                                # force insert to trigger an integrity error
+                                # force insert even if it is an update
+                                # to trigger an integrity error if it is an update
                                 obj.save(force_insert=True)
+                                print '    OK on force insert'
+                                is_success = True
                             except:
-                                if not 'deserialize_on_duplicate' in dir(obj.object):
+                                # insert failed so unique contraints blocked the forced insert above
+                                # check if there is a helper method
+                                print '    force insert failed'
+                                if 'deserialize_on_duplicate' in dir(obj.object):
+                                    obj.object.deserialize_on_duplicate()
                                     obj.save()
+                                    print '    OK update succeeded after deserialize_on_duplicate'
+                                    is_success = True
                                 else:
-                                    if obj.object.deserialize_on_duplicate():
-                                        obj.save()
-                                    else:
-                                        incoming_transaction.is_ignored = True
+                                    obj.save()
+                                    print '    OK update succeeded as is'
+                                    is_success = True
                         except IntegrityError as error:
+                            # failed both insert and update, why?
+                            print '    integrity error'
                             if 'Cannot add or update a child row' in error.args[1]:
                                 # which foreign key is failing?
                                 if 'audit' in obj.object._meta.db_table:
@@ -74,6 +84,7 @@ class DeserializeFromTransaction(object):
                                     #for field in foreign_key_error:
                                     #    # it is OK to just set the fk to None
                                     #    setattr(obj.object, field.name, None)
+                                    print '    audit instance, ignoring...'
                                     incoming_transaction.is_ignored = True
                                 else:
                                     foreign_key_error = []
@@ -82,13 +93,15 @@ class DeserializeFromTransaction(object):
                                             try:
                                                 getattr(obj.object, field.name)
                                             except:
+                                                print '    unable to getattr {0}'.format(field.name)
                                                 foreign_key_error.append(field)
-                                    print '    cannot add or update a child row ({0})'.format(','.join(foreign_key_error))
                                     for field in foreign_key_error:
-                                        print '    deserialize_get_missing_fk ({0})'.format(field)
+                                        print '    deserialize_get_missing_fk on model {0} for field {1}'.format(obj.object._meta.object_name, field.name)
                                         setattr(obj.object, field.name, obj.object.deserialize_get_missing_fk(field.name))
                                     try:
                                         obj.save()
+                                        print '   OK saved after integrity error'
+                                        is_success = True
                                     except:
                                         incoming_transaction.is_ignored = True
                             elif 'Duplicate' in error.args[1]:
@@ -102,7 +115,7 @@ class DeserializeFromTransaction(object):
                                     # if there is no other constraint on the model
                                     # then an integrity error does not really make sense.
                                     # but anyway ...
-                                    is_success = False
+                                    print '   missing unique_together attribute'
                                     raise
                                 options = {}
                                 for tpl in obj.object._meta.unique_together:
@@ -110,7 +123,7 @@ class DeserializeFromTransaction(object):
                                         options.update({f: getattr(obj.object, f)})
                                     if not obj.object.__class__.objects.filter(**options).exists():
                                         # it should exist, otherwise how did we get an integrity error?
-                                        is_success = False
+                                        print '   not found using unique_together field atttributes'
                                         raise
                                     else:
                                         old_pk = obj.object.id
@@ -118,30 +131,37 @@ class DeserializeFromTransaction(object):
                                         obj.object.id = new_pk
                                         try:
                                             print '    deserialize_on_duplicate'
-                                            if obj.object.deserialize_on_duplicate():
+                                            if 'deserialize_on_duplicate' in dir(obj.object):
+                                                print '    deserialize_on_duplicate'
+                                                obj.object.deserialize_on_duplicate()
                                                 # not every duplicate needs to be saved
                                                 # if you can develop criteria to decide,
                                                 # then use deserialize_on_duplicate to evaluate
+                                                print '    try save again'
                                                 obj.save()
+                                                is_success = True
                                                 # change all pk to the new pk for is_consumed=False.
-                                                print '    replace_pk_in_tx'
+                                                print '    OK saved, now replace_pk_in_tx'
                                                 incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk)
+                                                print '    {0} is now {1}'.format(old_pk, new_pk)
                                             else:
+                                                print '    no deserialize_on_duplicate method'
                                                 incoming_transaction.is_ignored = True
                                         except IntegrityError as error:
+                                            print '    integrity error still.'
                                             incoming_transaction.is_consumed = False
                                             incoming_transaction.consumer = None
                                             incoming_transaction.is_error = True
                                             incoming_transaction.error = error
                                             incoming_transaction.save()
                                         except:
-                                            is_success = False
+                                            print "        [a] Unexpected error:", sys.exc_info()[0]
                                             raise
                             else:
-                                is_success = False
+                                print '    {0}'.format(error)
                                 raise
                         except:
-                            is_success = False
+                            print "        [b] Unexpected error:", sys.exc_info()[0]
                             raise
                         if is_success:
                             incoming_transaction.is_consumed = True

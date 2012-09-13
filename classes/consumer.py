@@ -1,4 +1,5 @@
 import logging
+import sys
 from django.conf import settings
 from import_history import ImportHistory
 from bhp_sync.models import OutgoingTransaction, IncomingTransaction, Producer
@@ -73,7 +74,7 @@ class Consumer(object):
     def consume(self, lock_name):
         deserialize_from_transaction = DeserializeFromTransaction()
         n = 0
-        tot = IncomingTransaction.objects.using('server').filter(is_consumed=False).count()
+        tot = IncomingTransaction.objects.filter(is_consumed=False).count()
         for incoming_transaction in IncomingTransaction.objects.filter(is_consumed=False).order_by('producer', 'timestamp'):
             n += 1
             action = ''
@@ -83,6 +84,7 @@ class Consumer(object):
                 deserialize_from_transaction.deserialize(incoming_transaction)
                 action = 'saved'
             except:
+                print "    Unexpected error on cosume:", sys.exc_info()[0]
                 action = 'exception'
                 pass
             print '    {0}'.format(action)
