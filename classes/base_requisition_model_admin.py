@@ -25,6 +25,7 @@ class BaseRequisitionModelAdmin(BaseVisitTrackingModelAdmin):
             "drawn_datetime",
             "site",
             "panel",
+            "test_code",
             "aliquot_type",
             "item_type",
             "item_count_total",
@@ -67,6 +68,7 @@ class BaseRequisitionModelAdmin(BaseVisitTrackingModelAdmin):
             '{0}__appointment__registered_subject__subject_identifier'.format(self.visit_fieldname,),
             'specimen_identifier',
             'requisition_identifier']
+        self.filter_horizontal = ["test_code", ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         panel_pk = request.GET.get('panel', 0)
