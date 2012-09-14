@@ -6,11 +6,13 @@ from bhp_base_model.classes import BaseModel
 class Comment(BaseModel):
 
     subject = models.CharField(max_length=50)
-
     comment_date = models.DateField(default=date.today())
-
     comment = models.TextField(max_length=500)
-
+    rt = models.IntegerField(default=0, verbose_name='RT Ref.')
+    status = models.CharField(
+        max_length=35,
+        choices=(('Open', 'Open'), ('Stalled', 'Stalled'), ('Resolved', 'Resolved')),
+        default='Open')
     objects = models.Manager()
 
     class Meta:
