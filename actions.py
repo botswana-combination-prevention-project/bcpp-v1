@@ -1,6 +1,9 @@
-import csv, datetime
+import csv
+import datetime
 from django.http import HttpResponse
 from django.db.models.sql.constants import LOOKUP_SEP
+from django.db.models import ManyToManyField
+
 
 def export_as_csv_action(description="Export selected objects as CSV file",
                          fields=None, exclude=None, extra_fields=None, header=True):
@@ -24,7 +27,7 @@ def export_as_csv_action(description="Export selected objects as CSV file",
     
     """
     def my_getattr(obj, query_list):
-        
+
         """ Recurse on result of getattr() with a given query string as a list.
 
                 The query_list is based on a django-style query string 
@@ -32,25 +35,25 @@ def export_as_csv_action(description="Export selected objects as CSV file",
                 For example 'field_attr__model_name__field_attr' split to 
                 ['field_attr', 'model_name', 'field_attr']
         """
-        
-        if len(query_list)>1:
+
+        if len(query_list) > 1:
             try:
                 return my_getattr(getattr(obj, query_list[0]), query_list[1:])
             except:
                 # DoesNotExist
-                return '(none)'    
-        return getattr(obj, query_list[0])    
+                return '(none)'
+        return getattr(obj, query_list[0])
 
     def export_as_csv(modeladmin, request, queryset):
         """
         Generic csv export admin action.
         based on http://djangosnippets.org/snippets/1697/
-        
+
         Added exra_fields and changed accordingly
         """
-        
+
         #export_queryset_as_csv(modeladmin, request, queryset)
-        
+
         opts = modeladmin.model._meta
 
         field_names = [field.name for field in opts.fields]
@@ -60,8 +63,8 @@ def export_as_csv_action(description="Export selected objects as CSV file",
             # extra fields is list of dicts of [{'label': 'query_string'}, {}...]
             for item in extra_fields:
                 field_names.extend(item.values())
-        
-        field_names = set(field_names)    
+
+        field_names = set(field_names)
 
         if fields:
             fieldset = set(fields)
@@ -69,7 +72,7 @@ def export_as_csv_action(description="Export selected objects as CSV file",
         elif exclude:
             excludeset = set(exclude)
             field_names = field_names - excludeset
-        
+
         response = HttpResponse(mimetype='text/csv')
 
         response['Content-Disposition'] = 'attachment; filename=%s_%s.csv' % (unicode(opts).replace('.', '_'), datetime.datetime.now().strftime('%Y%m%d'))
@@ -82,15 +85,20 @@ def export_as_csv_action(description="Export selected objects as CSV file",
                 for item in extra_fields:
                     if item.values()[0] in header_row:
                         header_row[header_row.index(item.values()[0])] = item.keys()[0]
-            writer.writerow(header_row)
         # queryset comes from action call. loop over queryset objects
+        header_complete = False
         for obj in queryset:
             # start a new row as a list
-            row = []        
+            if not header_complete:
+                for m2m in obj._meta.many_to_many:
+                    header_row.append(m2m.name)
+                writer.writerow(header_row)
+                header_complete = True
+            row = []
             for field in field_names:
                 if field in queryset.model.__dict__:
                     # is a field_attr for the queryset.model, append field object value to row
-                    row.append(unicode(getattr(obj, field)).encode("utf-8","replace"))
+                    row.append(unicode(getattr(obj, field)).encode("utf-8", "replace"))
                 else:
                     # is not a field attribute for this model, must be a django-style query_string
                     # split on LOOKUP_SEP
@@ -98,15 +106,17 @@ def export_as_csv_action(description="Export selected objects as CSV file",
                     # recurse to last field object to get value
                     item = my_getattr(obj, query_list)
                     # append to row
-                    row.append(unicode(item).encode("utf-8","replace"))
+                    row.append(unicode(item).encode("utf-8", "replace"))
+            for m2m in obj._meta.many_to_many:
+                values = '; '.join([item.name.encode("utf-8", "replace") for item in getattr(obj, m2m.name).all()])
+                row.append(values)
+            writer.writerow(row)
 
-            writer.writerow(row)        
-            
             #writer.writerow([unicode(getattr(obj, field)).encode("utf-8","replace") for field in field_names])
             #writer.writerow([unicode(obj[field]).encode("utf-8","replace") for field in field_names])            
 
         return response
-        
+
     export_as_csv.short_description = description
 
     return export_as_csv
