@@ -5,8 +5,8 @@ from models import Comment
 
 class CommentAdmin(BaseModelAdmin):
 
-    list_display = ('created', 'subject', 'user_created', 'user_modified', 'modified')
-    search_fields = ('subject', 'comment')
-    list_filter = ('created', 'user_created', 'user_modified', 'modified')
+    list_display = ('created', 'subject', 'rt', 'status', 'user_created', 'user_modified', 'modified')
+    search_fields = ('subject', 'comment', 'rt')
+    list_filter = ('status', 'created', 'user_created', 'user_modified', 'modified')
 
 admin.site.register(Comment, CommentAdmin)
