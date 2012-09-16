@@ -148,7 +148,7 @@ class DeserializeFromTransaction(object):
                                                 print '    no deserialize_on_duplicate method'
                                                 incoming_transaction.is_ignored = True
                                         except IntegrityError as error:
-                                            print '    integrity error still.'
+                                            print '    integrity error ... giving up.'
                                             incoming_transaction.is_consumed = False
                                             incoming_transaction.consumer = None
                                             incoming_transaction.is_error = True

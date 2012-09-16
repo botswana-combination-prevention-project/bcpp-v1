@@ -78,16 +78,16 @@ class Consumer(object):
         for incoming_transaction in IncomingTransaction.objects.filter(is_consumed=False).order_by('producer', 'timestamp'):
             n += 1
             action = ''
-            print '{0} / {1} {2} {3}'.format(n, tot, incoming_transaction.producer, incoming_transaction.tx_name)
-            print '    {0}'.format(incoming_transaction.tx_pk)
+            logger.info('{0} / {1} {2} {3}'.format(n, tot, incoming_transaction.producer, incoming_transaction.tx_name))
+            logger.info('    {0}'.format(incoming_transaction.tx_pk))
             try:
                 deserialize_from_transaction.deserialize(incoming_transaction)
                 action = 'saved'
             except:
-                print "    Unexpected error on cosume:", sys.exc_info()[0]
+                logger.info("    Unexpected error on cosume:", sys.exc_info()[0])
                 action = 'exception'
                 pass
-            print '    {0}'.format(action)
+            logger.info('    {0}'.format(action))
 
     def copy_incoming_from_server(self):
         if not 'server' in settings.DATABASES.keys():
@@ -98,4 +98,4 @@ class Consumer(object):
         for incoming_transaction in IncomingTransaction.objects.using('server').filter(is_consumed=False).order_by('producer', 'timestamp'):
             incoming_transaction.save(using='default')
             n += 1
-            print '{0} / {1} {2} {3}'.format(n, tot, incoming_transaction.producer, incoming_transaction.tx_name)
+            logger.info('{0} / {1} {2} {3}'.format(n, tot, incoming_transaction.producer, incoming_transaction.tx_name))
