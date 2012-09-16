@@ -50,7 +50,6 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
                 {'visit': self.visit_model_foreign_key + '__appointment__visit_definition__code'},
                 {'visit_instance': self.visit_model_foreign_key + '__appointment__visit_instance'}],
             ))
-        #self.actions.append(update_entry_bucket_rules)
 
     def save_model(self, request, obj, form, change):
         if not self.visit_model:
