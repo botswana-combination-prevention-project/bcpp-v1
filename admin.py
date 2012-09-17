@@ -80,6 +80,7 @@ class AppointmentAdmin(BaseModelAdmin):
         'visit_instance',
         'visit_definition',
         'created',
+        'user_created',
         'hostname_created',
         )
 
