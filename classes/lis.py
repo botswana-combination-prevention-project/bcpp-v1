@@ -328,9 +328,15 @@ class Lis(object):
     def _registered_subject_handler(self, lis_source, target_cls, target_identifier_name):
         """ Returns a registered_subject instance or none and updates the error log."""
         value = None
-        if RegisteredSubject.objects.filter(subject_identifier=lis_source.patient.subject_identifier):
-            value = RegisteredSubject.objects.get(subject_identifier=lis_source.patient.subject_identifier)
-            self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, None)
+        if RegisteredSubject.objects.filter(subject_identifier=lis_source.patient.subject_identifier).exists():
+            if RegisteredSubject.objects.filter(subject_identifier=lis_source.patient.subject_identifier).count() == 1:
+                value = RegisteredSubject.objects.get(subject_identifier=lis_source.patient.subject_identifier)
+                self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, None)
+            else:
+                warning = ('warning: {target_identifier} has multiple subject identifiers '
+                           '{subject_identifier}').format(target_identifier=getattr(lis_source, target_identifier_name),
+                                                  subject_identifier=lis_source.patient.subject_identifier)
+                self._add_or_remove_warning(lis_source, target_cls, target_identifier_name, warning)
         else:
             warning = ('warning: {target_identifier} has an unknown subject identifier '
                    '{subject_identifier}').format(target_identifier=getattr(lis_source, target_identifier_name),
