@@ -99,7 +99,7 @@ class BasePackingListAdmin(BasePackingListModelAdmin):
 class BasePackingListItemAdmin(BaseModelAdmin):
 
     search_fields = ('packing_list__pk', 'packing_list__timestamp', 'item_description', 'item_reference',)
-    list_display = ('specimen', 'priority', 'panel', 'description', 'created', 'user_created', 'view_packing_list',)
+    list_display = ('specimen', 'priority', 'panel', 'description','gender', 'drawn_datetime', 'clinician', 'view_packing_list',)
     list_filter = ('created', 'panel')
 
     def delete_model(self, request, obj):
