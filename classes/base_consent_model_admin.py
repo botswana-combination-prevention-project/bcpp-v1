@@ -1,5 +1,6 @@
 from django.contrib import admin
 from bhp_crypto.classes import BaseCryptorModelAdmin as BaseModelAdmin
+from bhp_consent.actions import flag_as_verified_against_paper, unflag_as_verified_against_paper
 
 
 class BaseConsentModelAdmin(BaseModelAdmin):
@@ -9,18 +10,20 @@ class BaseConsentModelAdmin(BaseModelAdmin):
         super(BaseConsentModelAdmin, self).__init__(*args, **kwargs)
         self.search_fields = ['id', 'subject_identifier', 'first_name', 'last_name', 'identity', ]
         self.list_display = ['subject_identifier', 'first_name', 'initials', 'gender', 'dob',
-                             'consent_datetime', 'created', 'modified', 'user_created', 'user_modified', ]
+                             'consent_datetime', 'is_verified', 'created', 'modified', 'user_created', 'user_modified', ]
+
+        self.actions = [flag_as_verified_against_paper, unflag_as_verified_against_paper]
 
         self.list_filter = [
             'gender',
+            'is_verified',
             'study_site',
             'consent_datetime',
             'created',
             'modified',
             'user_created',
             'user_modified',
-            'hostname_created',
-            ]
+            'hostname_created']
 
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj=None):
@@ -51,15 +54,13 @@ class BaseConsentModelAdmin(BaseModelAdmin):
         'identity_type',
         'confirm_identity',
         'may_store_samples',
-        'comment',
-        ]
+        'comment']
     radio_fields = {
         "gender": admin.VERTICAL,
         "study_site": admin.VERTICAL,
         "is_dob_estimated": admin.VERTICAL,
         "identity_type": admin.VERTICAL,
-        "may_store_samples": admin.VERTICAL,
-        }
+        "may_store_samples": admin.VERTICAL}
 
 
 class SubjectConsentAdminBase(BaseConsentModelAdmin):

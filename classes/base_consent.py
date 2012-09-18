@@ -48,6 +48,10 @@ class BaseConsent(BaseSubject):
         null=True
         )
 
+    is_verified = models.BooleanField(default=False, editable=False)
+
+    is_verified_datetime = models.DateTimeField(null=True)
+
     def __unicode__(self):
         return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
 
