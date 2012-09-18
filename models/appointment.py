@@ -6,6 +6,7 @@ from audit_trail.audit import AuditTrail
 from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition
 from bhp_appointment.managers import AppointmentManager
+from bhp_appointment.classes import AppointmentDate
 from base_appointment import BaseAppointment
 
 
@@ -17,6 +18,9 @@ class Appointment(BaseAppointment):
         Attribute 'visit_instance' should be populated by the system
     """
     registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
+
+    best_appt_datetime = models.DateTimeField(null=True)
+
     visit_definition = models.ForeignKey(VisitDefinition, related_name='+',
         verbose_name=_("Visit"),
         help_text=_("For tracking within the window period of a visit, use the decimal convention. "
@@ -46,7 +50,12 @@ class Appointment(BaseAppointment):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.appt_datetime = self.__class__.objects.best_appointment_datetime(appt_datetime=self.appt_datetime)
+        appointment_date = AppointmentDate()
+        if not self.id:
+            self.appt_datetime = appointment_date.get(self.appt_datetime)
+            self.best_appt_datetime = self.appt_datetime
+        else:
+            self.appt_datetime = appointment_date.change(self.best_appt_datetime, self.appt_datetime)
         super(Appointment, self).save(*args, **kwargs)
 
     def __unicode__(self):

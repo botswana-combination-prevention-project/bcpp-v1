@@ -1,5 +1,5 @@
 import inspect
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
 from django.db import models
 from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
@@ -109,7 +109,7 @@ class AppointmentManager(models.Manager):
         return count
 
     def create_next_appointment_instance(self, **kwargs):
-        """ create the next instance of an appointment given the base appointment instance (.0) and the next appt_datetime """
+        """ Creates the next instance of an appointment given the base appointment instance (.0) and the next appt_datetime """
         appointment = kwargs.get('base_appointment')
         next_appt_datetime = kwargs.get('next_appt_datetime')
         # check if there are rules to determine a better appt_datetime
@@ -131,7 +131,7 @@ class AppointmentManager(models.Manager):
                     appt_datetime=appt_datetime)
 
     def list_appointments_for_model(self, **kwargs):
-        """ list created appointments for this registered_subject for this model_name """
+        """ Lists created appointments for this registered_subject for this model_name """
         registered_subject = kwargs.get("registered_subject")
         if not registered_subject:
             raise TypeError('AppointmentManager.list_appointments requires registered_subject. Got None')
@@ -143,7 +143,7 @@ class AppointmentManager(models.Manager):
         return appointments
 
     def list_visit_definitions_for_model(self, **kwargs):
-        """ list visit_definitions for which appointments would be created or updated for this model_name"""
+        """ Lists visit_definitions for which appointments would be created or updated for this model_name"""
         registered_subject = kwargs.get("registered_subject")
         if not registered_subject:
             raise TypeError('AppointmentManager.list_visit_deinitions requires registered_subject. Got None')
@@ -158,7 +158,7 @@ class AppointmentManager(models.Manager):
         return visit_definitions
 
     def next_appointment_datetime(self, **kwargs):
-        """ return the appt_datetime given the visit_definition and base_appt_datetime"""
+        """ Returns the appt_datetime given the visit_definition and base_appt_datetime"""
         # should be date from membership form
         base_appt_datetime = kwargs.get('base_appt_datetime')
         if kwargs.get('visit_definition'):
@@ -169,69 +169,69 @@ class AppointmentManager(models.Manager):
         appt_datetime = self.best_appointment_datetime(appt_datetime=appt_datetime, weekday=base_appt_datetime.isoweekday())
         return appt_datetime
 
-    def check_if_allowed_isoweekday(self, appt_datetime):
-        """ check if weekday is allowed, otherwise adjust forward or backward """
-        # check if is allowable isoweekday based on integer value in
-        # study_specific.allowed_iso_weekdays (e.g. 12345)
-        allowed_iso_weekdays = [int(num) for num in str(self.get_appointment_configuration().allowed_iso_weekdays)]
-        forward = appt_datetime
-        while forward.isoweekday() not in allowed_iso_weekdays:
-            forward = forward + timedelta(days=+1)
-        backward = appt_datetime
-        while backward.isoweekday() not in allowed_iso_weekdays:
-            backward = backward + timedelta(days=-1)
-        # which is closer to the original appt_datetime
-        td_forward = abs(appt_datetime - forward)
-        td_backward = abs(appt_datetime - backward)
-        if td_forward <= td_backward:
-            appt_datetime = forward
-        else:
-            appt_datetime = backward
-        return appt_datetime
+#    def check_if_allowed_isoweekday(self, appt_datetime):
+#        """ check if weekday is allowed, otherwise adjust forward or backward """
+#        # check if is allowable isoweekday based on integer value in
+#        # study_specific.allowed_iso_weekdays (e.g. 12345)
+#        allowed_iso_weekdays = [int(num) for num in str(self.get_appointment_configuration().allowed_iso_weekdays)]
+#        forward = appt_datetime
+#        while forward.isoweekday() not in allowed_iso_weekdays:
+#            forward = forward + timedelta(days=+1)
+#        backward = appt_datetime
+#        while backward.isoweekday() not in allowed_iso_weekdays:
+#            backward = backward + timedelta(days=-1)
+#        # which is closer to the original appt_datetime
+#        td_forward = abs(appt_datetime - forward)
+#        td_backward = abs(appt_datetime - backward)
+#        if td_forward <= td_backward:
+#            appt_datetime = forward
+#        else:
+#            appt_datetime = backward
+#        return appt_datetime
+#
+#    def check_if_holiday(self, appt_datetime):
+#        """ Checks if appt_datetime lands on a holiday, if so, move forward """
+#        Holiday = get_model('bhp_appointment', 'holiday')
+#        while appt_datetime.date() in [holiday.holiday_date for holiday in Holiday.objects.all()]:
+#            appt_datetime = appt_datetime + timedelta(days=+1)
+#            appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
+#        return appt_datetime
 
-    def check_if_holiday(self, appt_datetime):
-        """ Checks if appt_datetime lands on a holiday, if so, move forward """
-        Holiday = get_model('bhp_appointment', 'holiday')
-        while appt_datetime.date() in [holiday.holiday_date for holiday in Holiday.objects.all()]:
-            appt_datetime = appt_datetime + timedelta(days=+1)
-            appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
-        return appt_datetime
-
-    def move_to_same_weekday(self, appt_datetime, weekday=1):
-        """ Moves appoitment if all appt to land in same day."""
-        if weekday not in range(1, 8):
-            raise ValueError('Weekday must be a number between 1-7, Got %s' % (weekday, ))
-        # make all appointments land on the same isoweekday,
-        # if possible as date may change becuase of holiday and/or iso_weekday checks below)
-        forward = appt_datetime
-        while not forward.isoweekday() == weekday:
-            forward = forward + timedelta(days=+1)
-        backward = appt_datetime
-        while not backward.isoweekday() == weekday:
-            backward = backward - timedelta(days=+1)
-        # which is closer to the original appt_datetime
-        td_forward = abs(appt_datetime - forward)
-        td_backward = abs(appt_datetime - backward)
-        if td_forward <= td_backward:
-            appt_datetime = forward
-        else:
-            appt_datetime = backward
-        return appt_datetime
-
-    def get_appointment_configuration(self):
-        Configuration = get_model('bhp_appointment', 'configuration')
-        return Configuration.objects.get_configuration()
-
-    def best_appointment_datetime(self, **kwargs):
-        """ setup rules to get a better, but still close, appt_datetime, for example, on the same day as the base, not on holiday, etc. """
-        appt_datetime = kwargs.get('appt_datetime')
-        if not isinstance(appt_datetime, datetime):
-            # note, this datetime comes from the membership_form model method get_registration_datetime
-            raise TypeError('%s method %s expects kwarg \'appt_datetime\' to be an instance of datetime, got %s' % (self, inspect.stack()[0][3], appt_datetime.__class__, ))
-        weekday = kwargs.get('weekday')
-        if weekday and self.get_appointment_configuration().use_same_weekday:
-            appt_datetime = self.move_to_same_weekday(appt_datetime, weekday)
-        appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
-        appt_datetime = self.check_if_holiday(appt_datetime)
-        # TODO:load balance to a day with fewer appointments
-        return appt_datetime
+#    def move_to_same_weekday(self, appt_datetime, weekday=1):
+#        """ Moves appoitment if all appt to land in same day."""
+#        if weekday not in range(1, 8):
+#            raise ValueError('Weekday must be a number between 1-7, Got %s' % (weekday, ))
+#        # make all appointments land on the same isoweekday,
+#        # if possible as date may change becuase of holiday and/or iso_weekday checks below)
+#        forward = appt_datetime
+#        while not forward.isoweekday() == weekday:
+#            forward = forward + timedelta(days=+1)
+#        backward = appt_datetime
+#        while not backward.isoweekday() == weekday:
+#            backward = backward - timedelta(days=+1)
+#        # which is closer to the original appt_datetime
+#        td_forward = abs(appt_datetime - forward)
+#        td_backward = abs(appt_datetime - backward)
+#        if td_forward <= td_backward:
+#            appt_datetime = forward
+#        else:
+#            appt_datetime = backward
+#        return appt_datetime
+#
+#    def get_appointment_configuration(self):
+#        Configuration = get_model('bhp_appointment', 'configuration')
+#        return Configuration.objects.get_configuration()
+#
+#    def best_appointment_datetime(self, **kwargs):
+#        """ setup rules to get a better, but still close, appt_datetime, for example, on the same day as the base, not on holiday, etc. """
+#        appt_datetime = kwargs.get('appt_datetime')
+#        if not isinstance(appt_datetime, datetime):
+#            # note, this datetime comes from the membership_form model method get_registration_datetime
+#            raise TypeError('%s method %s expects kwarg \'appt_datetime\' to be an instance of datetime, got %s' % (self, inspect.stack()[0][3], appt_datetime.__class__, ))
+#        weekday = kwargs.get('weekday')
+#        if weekday and self.get_appointment_configuration().use_same_weekday:
+#            appt_datetime = self.move_to_same_weekday(appt_datetime, weekday)
+#        appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
+#        appt_datetime = self.check_if_holiday(appt_datetime)
+#        # TODO:load balance to a day with fewer appointments
+#        return appt_datetime

@@ -1,8 +1,9 @@
 from datetime import datetime
 from django.core.urlresolvers import reverse
+from django.db.models import get_model
 from bhp_base_model.classes import BaseModelAdmin
-from bhp_lab_entry.models import ScheduledLabEntryBucket
-from bhp_appointment.models import Appointment
+#from bhp_lab_entry.models import ScheduledLabEntryBucket
+#from bhp_appointment.models import Appointment
 
 
 class BaseAppointmentModelAdmin(BaseModelAdmin):
@@ -66,6 +67,7 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
         #scheduled_entry.add_or_update_for_visit(visit_model_instance=obj)
         # if requisition_model has been defined, assume scheduled labs otherwise pass
         if hasattr(self, 'requisition_model'):
+            ScheduledLabEntryBucket = get_model('bhp_lab_entry', 'scheduledlabentrybucket')
             ScheduledLabEntryBucket.objects.add_for_visit(
                 visit_model_instance=obj,
                 requisition_model=self.requisition_model,
@@ -76,7 +78,7 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
         if this_appt_tdelta.days == 0:
             # if today is the appointment, set to this_appointment in progress and
             # the others to incomplete if not 'done' and not 'cancelled'
-            appointments = Appointment.objects.filter(registered_subject=obj.appointment.registered_subject,
+            appointments = obj.appointment.__class__.objects.filter(registered_subject=obj.appointment.registered_subject,
                                                       appt_status='in_progress')
             for appointment in appointments:
                 tdelta = datetime.today() - obj.appointment.appt_datetime
@@ -118,5 +120,6 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
     #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'appointment' and request.GET.get('appointment'):
+            Appointment = request.GET.get('appointment').__class__
             kwargs["queryset"] = Appointment.objects.filter(pk=request.GET.get('appointment', 0))
         return super(BaseAppointmentModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
