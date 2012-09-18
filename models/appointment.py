@@ -19,7 +19,7 @@ class Appointment(BaseAppointment):
     """
     registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
 
-    best_appt_datetime = models.DateTimeField(null=True)
+    best_appt_datetime = models.DateTimeField(null=True, editable=False)
 
     visit_definition = models.ForeignKey(VisitDefinition, related_name='+',
         verbose_name=_("Visit"),

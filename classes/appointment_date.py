@@ -23,10 +23,10 @@ class AppointmentDate(object):
     def change(self, best_appt_datetime, new_appt_datetime):
         """Checks if a changed appt datetime is OK."""
         td = best_appt_datetime - new_appt_datetime
-        if abs(td.days()) <= 8 and new_appt_datetime >= datetime.today():
+        if abs(td.days) <= 8 and new_appt_datetime >= datetime.today():
             retval = new_appt_datetime
         else:
-            retval = None
+            retval = best_appt_datetime
         return retval
 
     @property
