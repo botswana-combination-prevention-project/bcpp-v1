@@ -16,7 +16,7 @@ def unflag_as_verified_against_paper(modeladmin, request, queryset, **kwargs):
     """ UnFlags instance as verified."""
 
     for qs in queryset:
-        qs.is_verified = True
+        qs.is_verified = False
         qs.is_verified_datetime = datetime.today()
         qs.save()
 
