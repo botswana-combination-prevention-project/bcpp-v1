@@ -107,9 +107,9 @@ class Command(BaseCommand):
                     print '    {0} found on a server {1}'.format(tot,producer)
                 else:
                     #We are on a netbook so delete consumed tx
-                    transactions = OutgoingTransaction.objects.filter(
-                                        is_consumed=True,
-                                        created__lte=cutoff_date
+                    transactions = OutgoingTransaction.objects.exclude(
+                                        producer=producer,
+                                        created__gte=cutoff_date
                                     )
                     tot = transactions.count()
                     print '    {0} found on a netbook {1}'.format(tot,producer)
