@@ -8,7 +8,7 @@ from bhp_sync.classes import TransactionProducer
 
 class Command(BaseCommand):
 
-    args = ('producer producer')
+    args = ('num_days')
     help = 'Purge transactions already consumed. '
     option_list = BaseCommand.option_list + (
         make_option('--incoming',
@@ -81,7 +81,7 @@ class Command(BaseCommand):
         n = 0
         tot = 0
         transactions = None
-        #producer = TransactionProducer()
+        producer = TransactionProducer()
 
         #in days
         age = 0
@@ -104,6 +104,7 @@ class Command(BaseCommand):
                                         created__lte=cutoff_date
                                     )
                     tot = transactions.count()
+                    print '    {0} found on a server {1}'.format(tot,producer)
                 else:
                     #We are on a netbook so delete consumed tx
                     transactions = OutgoingTransaction.objects.filter(
@@ -111,6 +112,7 @@ class Command(BaseCommand):
                                         created__lte=cutoff_date
                                     )
                     tot = transactions.count()
+                    print '    {0} found on a netbook {1}'.format(tot,producer)
                 if tot == 0:
                     print "    No transactions older than {0} were found".format(cutoff_date)
                 else:
