@@ -124,8 +124,8 @@ class Command(BaseCommand):
                             outgoing_transaction.producer,
                             outgoing_transaction.tx_name)
 
-                        outgoing_transaction.save(using='archive')
-                        print '    Saved on the archive db'
+                        #outgoing_transaction.save(using='archive')
+                        #print '    Saved on the archive db'
 
                         outgoing_transaction.delete(using='default')
                         print '    Deleted'
