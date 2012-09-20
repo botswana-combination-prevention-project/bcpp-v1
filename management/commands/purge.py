@@ -82,7 +82,7 @@ class Command(BaseCommand):
         tot = 0
         transactions = None
         producer = TransactionProducer()
-
+        is_server = True
         #in days
         age = 0
 
@@ -112,6 +112,8 @@ class Command(BaseCommand):
                                         created__gte=cutoff_date
                                     )
                     tot = transactions.count()
+                    is_server = False
+                    
                     print '    {0} found on a netbook {1}'.format(tot,producer)
                 if tot == 0:
                     print "    No transactions older than {0} were found".format(cutoff_date)
@@ -123,9 +125,9 @@ class Command(BaseCommand):
                             tot,
                             outgoing_transaction.producer,
                             outgoing_transaction.tx_name)
-
-                        #outgoing_transaction.save(using='archive')
-                        #print '    Saved on the archive db'
+                        if is_server == True:
+                            outgoing_transaction.save(using='archive')
+                            print '    Saved on the archive db'
 
                         outgoing_transaction.delete(using='default')
                         print '    Deleted'
