@@ -9,7 +9,7 @@ from appointment_datetime import AppointmentDatetime
 from bhp_appointment.models import Appointment, Holiday, Configuration
 
 
-class AppointmentManager(object):
+class AppointmentHelper(object):
     """ """
     def __init__(self):
         pass
