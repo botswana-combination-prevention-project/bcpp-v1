@@ -1,3 +1,3 @@
 from appt_date_helper import ApptDateHelper
 from base_appointment_model_admin import BaseAppointmentModelAdmin
-from appointment_date import AppointmentDate
+from appointment_datetime import AppointmentDatetime

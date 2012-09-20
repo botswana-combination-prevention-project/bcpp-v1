@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from bhp_appointment.models import Holiday, Configuration
 
 
-class AppointmentMaker(object):
+class AppointmentDatetime(object):
     """ """
     def __init__(self):
         if not "APPOINTMENTS_PER_DAY_MAX" in dir(settings):
