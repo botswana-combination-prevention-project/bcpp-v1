@@ -3,6 +3,7 @@ import inspect
 from django.db import models
 from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
+from bhp_appointment.classes import AppointmentDate
 
 
 class AppointmentManager(models.Manager):
@@ -67,10 +68,12 @@ class AppointmentManager(models.Manager):
                 raise AttributeError("%s method %s cannot determine the registration model_instance. "
                                      "This is needed to call get_registration_datetime()." % (self, inspect.stack()[0][3],))
             visit_definitions = VisitDefinition.objects.filter(schedule_group=schedule_group)
+            appointment_date = AppointmentDate()
             for visit_definition in visit_definitions:
                 # calculate the appointment date
                 if visit_definition.time_point == 0:
-                    appt_datetime = self.best_appointment_datetime(appt_datetime=base_appt_datetime)
+                    #appt_datetime = self.best_appointment_datetime(appt_datetime=base_appt_datetime)
+                    appt_datetime = appointment_date.get(base_appt_datetime)
                 else:
                     appt_datetime = self.next_appointment_datetime(visit_definition=visit_definition,
                                                                 base_appt_datetime=base_appt_datetime)

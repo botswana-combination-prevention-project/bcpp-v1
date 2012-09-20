@@ -4,8 +4,8 @@ from django.core.exceptions import ImproperlyConfigured
 from bhp_appointment.models import Holiday, Configuration
 
 
-class AppointmentDate(object):
-    """ Calculates the appointment datetime on insert or looks for the best appointment datetime on an update."""
+class AppointmentMaker(object):
+    """ """
     def __init__(self):
         if not "APPOINTMENTS_PER_DAY_MAX" in dir(settings):
             raise ImproperlyConfigured('Appointment requires settings attribute APPOINTMENTS_PER_DAY_MAX. Please add to your settings.py')
@@ -19,14 +19,8 @@ class AppointmentDate(object):
         config = Configuration.objects.get_configuration()
         self.use_same_weekday = config.use_same_weekday
 
-    def _check(self, appt_datetime):
-        appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
-        appt_datetime = self._check_if_holiday(appt_datetime)
-        appt_datetime = self._move_on_appt_max_exceeded(appt_datetime)
-        return appt_datetime
-
     def get(self, appt_datetime, weekday=None):
-        """ Gets the appointment date on insert.
+        """ Gets the appointment datetime on insert.
 
         For example, may be configured to be on the same day as the base, not on holiday, etc.
 
@@ -50,6 +44,12 @@ class AppointmentDate(object):
             # unchanged
             retval = best_appt_datetime
         return retval
+
+    def _check(self, appt_datetime):
+        appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
+        appt_datetime = self._check_if_holiday(appt_datetime)
+        appt_datetime = self._move_on_appt_max_exceeded(appt_datetime)
+        return appt_datetime
 
     def _check_if_allowed_isoweekday(self, appt_datetime):
         """ Checks if weekday is allowed, otherwise adjust forward or backward """
