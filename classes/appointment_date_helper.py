@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from bhp_visit.models import VisitDefinition
 from bhp_appointment.models import Holiday, Configuration
 
 
-class AppointmentDatetime(object):
+class AppointmentDateHelper(object):
     """ """
     def __init__(self):
         if not "APPOINTMENTS_PER_DAY_MAX" in dir(settings):
@@ -19,7 +20,7 @@ class AppointmentDatetime(object):
         config = Configuration.objects.get_configuration()
         self.use_same_weekday = config.use_same_weekday
 
-    def get(self, appt_datetime, weekday=None):
+    def get_best_datetime(self, appt_datetime, weekday=None):
         """ Gets the appointment datetime on insert.
 
         For example, may be configured to be on the same day as the base, not on holiday, etc.
@@ -33,17 +34,23 @@ class AppointmentDatetime(object):
             appt_datetime = self._move_to_same_weekday(appt_datetime, weekday)
         return self._check(appt_datetime)
 
-    def change(self, best_appt_datetime, new_appt_datetime, days_forward=None):
-        """Checks if an appointment datetime is OK before allowing it to be changed."""
+    def change_datetime(self, best_appt_datetime, new_appt_datetime, days_forward=None):
+        """Checks if an appointment datetime from the user is OK to accept."""
         if not days_forward:
             days_forward = self.days_forward
         td = best_appt_datetime - new_appt_datetime
         if abs(td.days) <= days_forward and new_appt_datetime >= datetime.today():
-            retval = self._check(new_appt_datetime)
+            # return changed datetime +/- a possible adjustment in _check
+            appt_datetime = self._check(new_appt_datetime)
         else:
-            # unchanged
-            retval = best_appt_datetime
-        return retval
+            # return unchanged appt_datetime
+            appt_datetime = best_appt_datetime
+        return appt_datetime
+
+    def get_relative_datetime(self, base_appt_datetime, visit_definition):
+        """ Returns appointment datetime relative to the base_appointment_datetime."""
+        appt_datetime = base_appt_datetime + VisitDefinition.objects.relativedelta_from_base(visit_definition=visit_definition)
+        return self.get_best_datetime(appt_datetime, base_appt_datetime.isoweekday())
 
     def _check(self, appt_datetime):
         appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
