@@ -1,8 +1,11 @@
 from django.db import models
-from bhp_base_model.classes import BaseModel
+try:
+    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.classes import BaseUuidModel
 
 
-class BaseIdentifierModel(BaseModel):
+class BaseIdentifierModel(BaseUuidModel):
     """Store identifiers as allocated and use the pk as a unique sequence for the new identifier.
 
     Will not include identifiers derived from other identifiers, for example, infant and partner
