@@ -1,13 +1,32 @@
 from datetime import datetime, timedelta
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from bhp_appointment.models import Holiday, Configuration
 
 
 class AppointmentDate(object):
-    daily_limit = 30
-    days_forward = 8
+    """ Calculates the appointment datetime on insert or looks for the best appointment datetime on an update."""
+    def __init__(self):
+        if not "APPOINTMENTS_PER_DAY_MAX" in dir(settings):
+            raise ImproperlyConfigured('Appointment requires settings attribute APPOINTMENTS_PER_DAY_MAX. Please add to your settings.py')
+        # number of appointments to set per day before moveing to an alternative appointment date
+        self.appointments_per_day_max = settings.APPT_PER_DAY_MAX
+        # number of days to look forward for an alternative appointment date
+        self.days_forward = 8
+        # not used
+        self.allow_backwards = False
+        # True if appointments should land on the same day for a subject
+        config = Configuration.objects.get_configuration()
+        self.use_same_weekday = config.use_same_weekday
+
+    def _check(self, appt_datetime):
+        appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
+        appt_datetime = self._check_if_holiday(appt_datetime)
+        appt_datetime = self._move_on_appt_max_exceeded(appt_datetime)
+        return appt_datetime
 
     def get(self, appt_datetime, weekday=None):
-        """ Gets the appointment date.
+        """ Gets the appointment date on insert.
 
         For example, may be configured to be on the same day as the base, not on holiday, etc.
 
@@ -16,30 +35,23 @@ class AppointmentDate(object):
         if not isinstance(appt_datetime, datetime):
             raise AttributeError('Expected parameter \'appt_datetime\' to be an instance of datetime')
         if weekday and self.use_same_weekday:
-            appt_datetime = self.move_to_same_weekday(appt_datetime, weekday)
-        appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
-        appt_datetime = self.check_if_holiday(appt_datetime)
-        appt_datetime = self.balance(appt_datetime)
-        return appt_datetime
+            # force to use same week day for every appointment
+            appt_datetime = self._move_to_same_weekday(appt_datetime, weekday)
+        return self._check(appt_datetime)
 
     def change(self, best_appt_datetime, new_appt_datetime, days_forward=None):
-        """Checks if a changed appt datetime is OK."""
+        """Checks if an appointment datetime is OK before allowing it to be changed."""
         if not days_forward:
             days_forward = self.days_forward
         td = best_appt_datetime - new_appt_datetime
         if abs(td.days) <= days_forward and new_appt_datetime >= datetime.today():
-            retval = new_appt_datetime
+            retval = self._check(new_appt_datetime)
         else:
+            # unchanged
             retval = best_appt_datetime
         return retval
 
-    @property
-    def use_same_weekday(self):
-        """Force appt datetime to land on the same DAY for each data point."""
-        config = Configuration.objects.get_configuration()
-        return config.use_same_weekday
-
-    def check_if_allowed_isoweekday(self, appt_datetime):
+    def _check_if_allowed_isoweekday(self, appt_datetime):
         """ Checks if weekday is allowed, otherwise adjust forward or backward """
         # check if is allowable isoweekday based on integer value in
         # study_specific.allowed_iso_weekdays (e.g. 12345)
@@ -59,15 +71,15 @@ class AppointmentDate(object):
             appt_datetime = backward
         return appt_datetime
 
-    def check_if_holiday(self, appt_datetime):
+    def _check_if_holiday(self, appt_datetime):
         """ Checks if appt_datetime lands on a holiday, if so, move forward """
         while appt_datetime.date() in [holiday.holiday_date for holiday in Holiday.objects.all()]:
             appt_datetime = appt_datetime + timedelta(days=+1)
-            appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
+            appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
         return appt_datetime
 
-    def move_to_same_weekday(self, appt_datetime, weekday=1):
-        """ Moves appointment if all appt to land in same day."""
+    def _move_to_same_weekday(self, appt_datetime, weekday=1):
+        """ Moves appointment to use same weekday for each subject appointment."""
         if weekday not in range(1, 8):
             raise ValueError('Weekday must be a number between 1-7, Got %s' % (weekday, ))
         # make all appointments land on the same isoweekday,
@@ -87,24 +99,33 @@ class AppointmentDate(object):
             appt_datetime = backward
         return appt_datetime
 
-    def balance(self, appt_datetime, daily_limit=None, days_forward=None):
-        """Moves appointment date to another date if the daily limit is exceeded."""
+    def _move_on_appt_max_exceeded(self, appt_datetime, appointments_per_day_max=None, days_forward=None):
+        """Moves appointment date to another date if the appointments_per_day_max is exceeded."""
         from bhp_appointment.models import Appointment
-        if not daily_limit:
-            daily_limit = self.daily_limit
+        if not appointments_per_day_max:
+            appointments_per_day_max = self.appointments_per_day_max
         if not days_forward:
             days_forward = self.days_forward
         my_appt_date = appt_datetime.date()
+        # get a list of appointments in the date range from 'appt_datetime' to 'appt_datetime'+days_forward
+        # use model field appointment.best_appt_datetime not appointment.appt_datetime
+        # TODO: change this query to allow the search to go to the beginning of the week
         appointments = Appointment.objects.filter(
             best_appt_datetime__gte=appt_datetime,
             best_appt_datetime__lte=appt_datetime + timedelta(days=self.days_forward))
         if appointments:
+            # looking for appointments per day
+            # create dictionary of { day: count, ... }
             appt_dates = [appointment.appt_datetime.date() for appointment in appointments]
             appt_date_counts = dict((i, appt_dates.count(i)) for i in appt_dates)
-            if appt_date_counts(my_appt_date) < daily_limit:
+            # if desired date is not maxed out, use it
+            if appt_date_counts(my_appt_date) < appointments_per_day_max:
                 appt_date = my_appt_date
             else:
+                # look for an alternative date
                 for appt_date, cnt in dict((i, appt_dates.count(i)) for i in appt_dates).iteritems():
-                    if cnt < daily_limit and appt_date > my_appt_date:
+                    # only looking forward at the moment unless Appointments query is changed above
+                    if cnt < appointments_per_day_max and appt_date > my_appt_date:
                         break
+            # return an appointment datetime that uses the time from the originally desrired datetime
             return datetime(appt_date.year, appt_date.month, appt_date.day, appt_datetime.hour, appt_datetime.minute)
