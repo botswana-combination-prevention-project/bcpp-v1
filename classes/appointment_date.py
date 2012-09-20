@@ -3,6 +3,8 @@ from bhp_appointment.models import Holiday, Configuration
 
 
 class AppointmentDate(object):
+    daily_limit = 30
+    days_forward = 8
 
     def get(self, appt_datetime, weekday=None):
         """ Gets the appointment date.
@@ -17,13 +19,15 @@ class AppointmentDate(object):
             appt_datetime = self.move_to_same_weekday(appt_datetime, weekday)
         appt_datetime = self.check_if_allowed_isoweekday(appt_datetime)
         appt_datetime = self.check_if_holiday(appt_datetime)
-        # TODO:load balance to a day with fewer appointments
+        appt_datetime = self.balance(appt_datetime)
         return appt_datetime
 
-    def change(self, best_appt_datetime, new_appt_datetime):
+    def change(self, best_appt_datetime, new_appt_datetime, days_forward=None):
         """Checks if a changed appt datetime is OK."""
+        if not days_forward:
+            days_forward = self.days_forward
         td = best_appt_datetime - new_appt_datetime
-        if abs(td.days) <= 8 and new_appt_datetime >= datetime.today():
+        if abs(td.days) <= days_forward and new_appt_datetime >= datetime.today():
             retval = new_appt_datetime
         else:
             retval = best_appt_datetime
@@ -31,6 +35,7 @@ class AppointmentDate(object):
 
     @property
     def use_same_weekday(self):
+        """Force appt datetime to land on the same DAY for each data point."""
         config = Configuration.objects.get_configuration()
         return config.use_same_weekday
 
@@ -82,4 +87,24 @@ class AppointmentDate(object):
             appt_datetime = backward
         return appt_datetime
 
-        
+    def balance(self, appt_datetime, daily_limit=None, days_forward=None):
+        """Moves appointment date to another date if the daily limit is exceeded."""
+        from bhp_appointment.models import Appointment
+        if not daily_limit:
+            daily_limit = self.daily_limit
+        if not days_forward:
+            days_forward = self.days_forward
+        my_appt_date = appt_datetime.date()
+        appointments = Appointment.objects.filter(
+            best_appt_datetime__gte=appt_datetime,
+            best_appt_datetime__lte=appt_datetime + timedelta(days=self.days_forward))
+        if appointments:
+            appt_dates = [appointment.appt_datetime.date() for appointment in appointments]
+            appt_date_counts = dict((i, appt_dates.count(i)) for i in appt_dates)
+            if appt_date_counts(my_appt_date) < daily_limit:
+                appt_date = my_appt_date
+            else:
+                for appt_date, cnt in dict((i, appt_dates.count(i)) for i in appt_dates).iteritems():
+                    if cnt < daily_limit and appt_date > my_appt_date:
+                        break
+            return datetime(appt_date.year, appt_date.month, appt_date.day, appt_datetime.hour, appt_datetime.minute)
