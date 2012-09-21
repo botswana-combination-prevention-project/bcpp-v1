@@ -66,11 +66,18 @@ class VisitDefinitionManager(models.Manager):
         return rdelta
 
     def codes_for_membership_form_category(self, **kwargs):
-        """Returns a list of visit codes for a membership form category."""
+
         if not kwargs.get('membership_form_category'):
-            raise AttributeError('%s method %s requires attribute \'membership_form_category\'. Got None' % (self.__name__, inspect.stack()[0][3],))
-        codes = []
-        agg = super(VisitDefinitionManager, self).values('code').filter(schedule_group__membership_form__category=kwargs.get('membership_form_category')).annotate(cnt=Count('code'))
-        for dct in agg:
-            codes.append(dct['code'])
-        return codes
+            raise AttributeError, '%s method %s requires attribute \'membership_form_category\'. Got None' % (self.__name__, inspect.stack()[0][3],)
+        membership_forms = MembershipForm.objects.filter(category=kwargs.get('membership_form_category'))
+        visit_definition_codes = set()
+        for membership_form in membership_forms:
+            for visit_definition in super(VisitDefinitionManager, self).filter(schedule_group__membership_form=membership_form):
+                visit_definition_codes.add(visit_definition.code)
+
+        return list(visit_definition_codes)
+
+
+
+
+
