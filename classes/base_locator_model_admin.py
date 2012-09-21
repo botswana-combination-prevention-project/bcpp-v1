@@ -3,7 +3,7 @@ from bhp_base_model.classes import BaseModelAdmin
 
 
 class BaseLocatorModelAdmin(BaseModelAdmin):
-    
+
     fields = (
         'subject_consent',
         'date_signed',
