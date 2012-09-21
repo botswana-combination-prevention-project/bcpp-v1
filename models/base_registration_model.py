@@ -5,10 +5,6 @@ from base_registered_subject_model import BaseRegisteredSubjectModel
 
 class BaseRegistrationModel (BaseRegisteredSubjectModel):
 
-    #registered_subject = models.OneToOneField(RegisteredSubject,
-    #    #editable=False  
-    #    )
-
     registration_datetime = models.DateTimeField("Today's date",
         validators=[
             datetime_not_before_study_start,
@@ -16,4 +12,3 @@ class BaseRegistrationModel (BaseRegisteredSubjectModel):
 
     class Meta:
         abstract = True
-

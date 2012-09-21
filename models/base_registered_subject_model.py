@@ -1,12 +1,12 @@
 from django.db import models
-from django.db.models import get_app, get_model, get_models
-from bhp_appointment.models import Appointment
+from django.db.models import get_app, get_models
 from registered_subject import RegisteredSubject
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
 except ImportError:
     from bhp_base_model.classes import BaseUuidModel
 from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
+from bhp_appointment_helper.classes import AppointmentHelper
 
 
 class BaseRegisteredSubjectModel (BaseUuidModel):
@@ -32,22 +32,8 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
     def save(self, *args, **kwargs):
 
         super(BaseRegisteredSubjectModel, self).save(*args, **kwargs)
-
-        # create appointments, (if model is in schedule_group)
-        # this has been moved here from the admin save_model() method as the
-        # create_appointments() method needs to access the saved model
-        # for the base_appt_datetime, see Appointment.objects.create_appointments()
-
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
-            Appointment.objects.create_appointments(
-                registered_subject=self.registered_subject,
-                model_name=self.__class__.__name__.lower(),
-                )
-            #AdditionalEntryBucket = get_model('bhp_entry', 'additionalentrybucket')
-            #AdditionalEntryBucket.objects.update_status(
-            #    registered_subject=self.registered_subject,
-            #    model_instance=self,
-            #    )
+            AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
 
     class Meta:
         abstract = True

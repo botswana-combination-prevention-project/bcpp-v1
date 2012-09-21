@@ -6,7 +6,6 @@ except ImportError:
 from bhp_export_data.actions import export_as_csv_action
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
-from bhp_entry.models import AdditionalEntryBucket
 
 
 class BaseRegisteredSubjectModelAdmin (BaseModelAdmin):
@@ -55,16 +54,6 @@ class BaseRegisteredSubjectModelAdmin (BaseModelAdmin):
 
         return super(BaseRegisteredSubjectModelAdmin, self).save_model(request, obj, form, change)
 
-    def delete_model(self, request, obj):
-
-        AdditionalEntryBucket.objects.update_status(
-            registered_subject=obj.registered_subject,
-            model_instance=obj,
-            action='delete',
-            )
-
-        return super(BaseRegisteredSubjectModelAdmin, self).delete_model(request, obj)
-
     def delete_view(self, request, object_id, extra_context=None):
 
         kwargs = {'dashboard_type': self.dashboard_type}
@@ -95,16 +84,12 @@ class BaseRegisteredSubjectModelAdmin (BaseModelAdmin):
         if db_field.name == "appointment":
             if request.GET.get('appointment'):
                 kwargs["queryset"] = Appointment.objects.filter(id__exact=request.GET.get('appointment'))
-            #elif self.model.objects.filter(pk=object_id):
-            #    kwargs["queryset"] = Appointment.objects.filter(pk=self.model.objects.get(pk=object_id).appointment.pk)
             else:
                 kwargs["queryset"] = Appointment.objects.none()
 
         if db_field.name == "registered_subject":
             if request.GET.get('registered_subject'):
                 kwargs["queryset"] = RegisteredSubject.objects.filter(pk=request.GET.get('registered_subject'))
-            #elif self.model.objects.filter(pk=object_id):
-            #    kwargs["queryset"] = RegisteredSubject.objects.filter(pk = self.model.objects.get(pk=object_id).appointment.registered_subject.pk)
             else:
                 kwargs["queryset"] = RegisteredSubject.objects.none()
 
