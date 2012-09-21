@@ -11,7 +11,7 @@ class AppointmentDateHelper(object):
         if not "APPOINTMENTS_PER_DAY_MAX" in dir(settings):
             raise ImproperlyConfigured('Appointment requires settings attribute APPOINTMENTS_PER_DAY_MAX. Please add to your settings.py')
         # number of appointments to set per day before moveing to an alternative appointment date
-        self.appointments_per_day_max = settings.APPT_PER_DAY_MAX
+        self.appointments_per_day_max = settings.APPOINTMENTS_PER_DAY_MAX
         # number of days to look forward for an alternative appointment date
         self.days_forward = 8
         # not used
@@ -19,6 +19,7 @@ class AppointmentDateHelper(object):
         # True if appointments should land on the same day for a subject
         config = Configuration.objects.get_configuration()
         self.use_same_weekday = config.use_same_weekday
+        self.allowed_iso_weekdays = config.allowed_iso_weekdays
 
     def get_best_datetime(self, appt_datetime, weekday=None):
         """ Gets the appointment datetime on insert.
@@ -45,6 +46,8 @@ class AppointmentDateHelper(object):
         else:
             # return unchanged appt_datetime
             appt_datetime = best_appt_datetime
+        if not appt_datetime:
+            raise TypeError('Appt_datetime cannot be None')
         return appt_datetime
 
     def get_relative_datetime(self, base_appt_datetime, visit_definition):
@@ -56,13 +59,13 @@ class AppointmentDateHelper(object):
         appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
         appt_datetime = self._check_if_holiday(appt_datetime)
         appt_datetime = self._move_on_appt_max_exceeded(appt_datetime)
+        if not appt_datetime:
+            raise TypeError('Appt_datetime cannot be None')
         return appt_datetime
 
     def _check_if_allowed_isoweekday(self, appt_datetime):
         """ Checks if weekday is allowed, otherwise adjust forward or backward """
-        # check if is allowable isoweekday based on integer value in
-        # study_specific.allowed_iso_weekdays (e.g. 12345)
-        allowed_iso_weekdays = [int(num) for num in str(self.get_appointment_configuration().allowed_iso_weekdays)]
+        allowed_iso_weekdays = [int(num) for num in str(self.allowed_iso_weekdays)]
         forward = appt_datetime
         while forward.isoweekday() not in allowed_iso_weekdays:
             forward = forward + timedelta(days=+1)
@@ -76,6 +79,8 @@ class AppointmentDateHelper(object):
             appt_datetime = forward
         else:
             appt_datetime = backward
+        if not appt_datetime:
+            raise TypeError('Appt_datetime cannot be None')
         return appt_datetime
 
     def _check_if_holiday(self, appt_datetime):
@@ -83,6 +88,8 @@ class AppointmentDateHelper(object):
         while appt_datetime.date() in [holiday.holiday_date for holiday in Holiday.objects.all()]:
             appt_datetime = appt_datetime + timedelta(days=+1)
             appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
+        if not appt_datetime:
+            raise TypeError('Appt_datetime cannot be None')
         return appt_datetime
 
     def _move_to_same_weekday(self, appt_datetime, weekday=1):
@@ -104,6 +111,8 @@ class AppointmentDateHelper(object):
             appt_datetime = forward
         else:
             appt_datetime = backward
+        if not appt_datetime:
+            raise TypeError('Appt_datetime cannot be None')
         return appt_datetime
 
     def _move_on_appt_max_exceeded(self, appt_datetime, appointments_per_day_max=None, days_forward=None):
@@ -126,7 +135,7 @@ class AppointmentDateHelper(object):
             appt_dates = [appointment.appt_datetime.date() for appointment in appointments]
             appt_date_counts = dict((i, appt_dates.count(i)) for i in appt_dates)
             # if desired date is not maxed out, use it
-            if appt_date_counts(my_appt_date) < appointments_per_day_max:
+            if appt_date_counts.get(my_appt_date) < appointments_per_day_max:
                 appt_date = my_appt_date
             else:
                 # look for an alternative date
@@ -135,4 +144,7 @@ class AppointmentDateHelper(object):
                     if cnt < appointments_per_day_max and appt_date > my_appt_date:
                         break
             # return an appointment datetime that uses the time from the originally desrired datetime
-            return datetime(appt_date.year, appt_date.month, appt_date.day, appt_datetime.hour, appt_datetime.minute)
+            appt_datetime = datetime(appt_date.year, appt_date.month, appt_date.day, appt_datetime.hour, appt_datetime.minute)
+        if not appt_datetime:
+            raise TypeError('Appt_datetime cannot be None')
+        return appt_datetime

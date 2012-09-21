@@ -3,7 +3,6 @@ from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
 from bhp_visit.classes import VisitDefinitionHelper
 from appointment_date_helper import AppointmentDateHelper
-from bhp_appointment.models import Appointment
 
 
 class AppointmentHelper(object):
@@ -57,6 +56,7 @@ class AppointmentHelper(object):
                                      "This is needed to call get_registration_datetime()." % (self, inspect.stack()[0][3],))
             visit_definitions = VisitDefinition.objects.filter(schedule_group=schedule_group)
             appointment_date_helper = AppointmentDateHelper()
+            Appointment = get_model('bhp_appointment', 'appointment')
             for visit_definition in visit_definitions:
                 # calculate the appointment date
                 if visit_definition.time_point == 0:
@@ -73,8 +73,9 @@ class AppointmentHelper(object):
                                 registered_subject=registered_subject,
                                 visit_definition=visit_definition,
                                 visit_instance=0)
-                    appt.appt_datetime = appt_datetime
-                    appt.save()
+                    if appt.appt_datetime != appt_datetime:
+                        appt.appt_datetime = appt_datetime
+                        appt.save()
                 # else create a new appointment
                 else:
                     Appointment.objects.create(
@@ -85,11 +86,11 @@ class AppointmentHelper(object):
                         timepoint_datetime=appt_datetime,
                         dashboard_type=dashboard_type)
 
-    def delete_appointments_for_instance(self, model_instance):
+    def delete_for_instance(self, model_instance):
         """ Delete appointments for this registered_subject for this model_instance but only if visit report not yet submitted """
         #visit_definitions = self.list_visit_definitions_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
         visit_definitions = VisitDefinitionHelper.list_all_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
-
+        Appointment = get_model('bhp_appointment', 'appointment')
         # only delete appointments without a visit model
         appointments = Appointment.objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)
         count = 0
@@ -103,6 +104,7 @@ class AppointmentHelper(object):
     def create_next_instance(self, base_appointment_instance, next_appt_datetime):
         """ Creates a continuation appointment given the base appointment instance (.0) and the next appt_datetime """
         appointment = base_appointment_instance
+        Appointment = get_model('bhp_appointment', 'appointment')
         if not Appointment.objects.filter(
             registered_subject=appointment.registered_subject,
             visit_definition=appointment.visit_definition,
@@ -122,7 +124,8 @@ class AppointmentHelper(object):
                     visit_instance=next_visit_instance,
                     appt_datetime=appt_datetime)
 
-    def list_appointments_for_model(self, registered_subject, model_name):
+    def list_for_model(self, registered_subject, model_name):
         """ Lists created appointments for this registered_subject for this model_name """
         visit_definitions = VisitDefinitionHelper.list_all_for_model(registered_subject, model_name)
+        Appointment = get_model('bhp_appointment', 'appointment')
         return Appointment.objects.filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)
