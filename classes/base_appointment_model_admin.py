@@ -2,8 +2,7 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from bhp_base_model.classes import BaseModelAdmin
-#from bhp_lab_entry.models import ScheduledLabEntryBucket
-#from bhp_appointment.models import Appointment
+from bhp_appointment.models import Appointment
 
 
 class BaseAppointmentModelAdmin(BaseModelAdmin):
@@ -117,9 +116,7 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
         result['Location'] = reverse('dashboard_url', kwargs=context)
         return result
 
-    #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'appointment' and request.GET.get('appointment'):
-            Appointment = request.GET.get('appointment').__class__
             kwargs["queryset"] = Appointment.objects.filter(pk=request.GET.get('appointment', 0))
         return super(BaseAppointmentModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
