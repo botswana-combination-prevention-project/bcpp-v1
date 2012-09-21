@@ -164,6 +164,10 @@ class BaseRule(object):
             unresolved_predicate = self._logic.predicate
             if isinstance(unresolved_predicate[0], basestring):
                 unresolved_predicate = (unresolved_predicate,)
+            elif isinstance(unresolved_predicate[0], tuple):
+                unresolved_predicate = unresolved_predicate
+            else:
+                raise TypeError('First item in predicate must be a string or tuple of (field, operator, value).')
             # build the predicate
             # check that unresolved predicate is a tuple
             if not isinstance(unresolved_predicate, tuple):
