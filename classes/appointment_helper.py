@@ -89,12 +89,17 @@ class AppointmentHelper(object):
     def delete_for_instance(self, model_instance):
         """ Delete appointments for this registered_subject for this model_instance but only if visit report not yet submitted """
         #visit_definitions = self.list_visit_definitions_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
-        visit_definitions = VisitDefinitionHelper.list_all_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
+        visit_definitions = VisitDefinitionHelper().list_all_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
         Appointment = get_model('bhp_appointment', 'appointment')
         # only delete appointments without a visit model
         appointments = Appointment.objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)
         count = 0
         visit_model = model_instance.get_visit_model(model_instance)
+        # find the most recent visit model instance and delete any appoiintments after that
+        for appointment in appointments:
+            if not visit_model.objects.filter(appointment=appointment):
+                appointment.delete()
+                count += 1
         for appointment in appointments:
             if not visit_model.objects.filter(appointment=appointment):
                 appointment.delete()
@@ -126,6 +131,6 @@ class AppointmentHelper(object):
 
     def list_for_model(self, registered_subject, model_name):
         """ Lists created appointments for this registered_subject for this model_name """
-        visit_definitions = VisitDefinitionHelper.list_all_for_model(registered_subject, model_name)
+        visit_definitions = VisitDefinitionHelper().list_all_for_model(registered_subject, model_name)
         Appointment = get_model('bhp_appointment', 'appointment')
         return Appointment.objects.filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)
