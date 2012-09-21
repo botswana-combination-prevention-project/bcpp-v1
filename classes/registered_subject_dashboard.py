@@ -8,7 +8,8 @@ from bhp_entry.models import AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_entry_rules.classes import rule_groups
 from bhp_appointment.models import Appointment
-from bhp_visit.models import ScheduleGroup, VisitDefinition
+from bhp_visit.models import ScheduleGroup
+from bhp_visit.classes import MembershipFormHelper
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
 from bhp_subject_summary.models import Link
@@ -204,7 +205,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """Returns all appointments for this registered_subject or just one (if given a visit_code and visit_instance).
 
         Note: visit_instance does not refer to a model instance. It is an integer 0,1,2,3...
-        
+
         Could show
             one
             all
@@ -218,11 +219,10 @@ class RegisteredSubjectDashboard(Dashboard):
         else:
             # or filter appointments for the current membership category
             # schedule_group__membership_form
-            codes = VisitDefinition.objects.codes_for_membership_form_category(membership_form_category=self._get_membership_form_category())
+            codes = MembershipFormHelper().codes_for_category(membership_form_category=self._get_membership_form_category())
             appointments = Appointment.objects.filter(registered_subject=self.registered_subject,
                                                       visit_definition__code__in=codes,
                                                       ).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
-        # add to the context
         self.context.add(appointments=appointments)
 
     def _set_current_visit(self, visit_model, appointment=None):
