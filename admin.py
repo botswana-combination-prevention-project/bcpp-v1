@@ -46,6 +46,12 @@ class AdditionalEntryBucketAdmin(MyModelAdmin):
     list_display = ('registered_subject', 'content_type_map', 'entry_status', 'fill_datetime', 'due_datetime', 'close_datetime', 'rule_name')
     list_filter = ('entry_status', 'fill_datetime', 'rule_name')
     search_fields = ('registered_subject__subject_identifier', 'content_type_map__model', 'id', 'rule_name')
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "registered_subject":
+            if request.GET.get('subject_identifier'):
+                kwargs["queryset"] = RegisteredSubject.objects.filter(subject_identifier=request.GET.get('subject_identifier'))
+        return super(AdditionalEntryBucketAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 admin.site.register(AdditionalEntryBucket, AdditionalEntryBucketAdmin)
 
 
