@@ -1,8 +1,6 @@
 import inspect
 from dateutil.relativedelta import relativedelta
 from django.db import models
-from django.db.models import Count
-#from bhp_visit.models import MembershipForm
 
 
 class VisitDefinitionManager(models.Manager):
@@ -27,9 +25,11 @@ class VisitDefinitionManager(models.Manager):
             if super(VisitDefinitionManager, self).filter(schedule_group=schedule_group, code=code):
                 visit_definition = super(VisitDefinitionManager, self).get(schedule_group=schedule_group, code=code)
             else:
-                raise ValueError, '%s method %s cannot determine the visit_definition given schedule_group=\'%s\' and code=\'%s\'' % (self.__name__, inspect.stack()[0][3], schedule_group, code,)
+                raise ValueError('%s method %s cannot determine the visit_definition given '
+                                 ' schedule_group=\'%s\' and code=\'%s\'' % (self.__name__, inspect.stack()[0][3], schedule_group, code))
         else:
-            raise AttributeError, '%s method %s requires a visit_definition instance OR schedule_group and code' % (self.__name__, inspect.stack()[0][3],)
+            raise AttributeError('%s method %s requires a visit_definition instance OR schedule_group '
+                                 'and code' % (self.__name__, inspect.stack()[0][3], ))
 
         visit_definitions = super(VisitDefinitionManager, self).filter(schedule_group=visit_definition.schedule_group).exclude(id=visit_definition.id).order_by('time_point')
 
@@ -62,22 +62,18 @@ class VisitDefinitionManager(models.Manager):
             elif unit == 'H':
                 rdelta = relativedelta(hours=interval)
             else:
-                raise AttributeError, "Cannot calculate relativedelta, visit_definition.base_interval_unit must be Y,M,D or H. Got %s" % (unit,)
+                raise AttributeError("Cannot calculate relativedelta, visit_definition.base_interval_unit "
+                                     "must be Y,M,D or H. Got %s" % (unit, ))
         return rdelta
 
     def codes_for_membership_form_category(self, **kwargs):
-
+        """ Lists visit codes for this membership form category."""
         if not kwargs.get('membership_form_category'):
-            raise AttributeError, '%s method %s requires attribute \'membership_form_category\'. Got None' % (self.__name__, inspect.stack()[0][3],)
+            raise AttributeError('%s method %s requires attribute \'membership_form_category\'. Got None' % (self.__name__, inspect.stack()[0][3], ))
         membership_forms = MembershipForm.objects.filter(category=kwargs.get('membership_form_category'))
         visit_definition_codes = set()
         for membership_form in membership_forms:
             for visit_definition in super(VisitDefinitionManager, self).filter(schedule_group__membership_form=membership_form):
                 visit_definition_codes.add(visit_definition.code)
-
         return list(visit_definition_codes)
-
-
-
-
 
