@@ -6,7 +6,7 @@ from audit_trail.audit import AuditTrail
 from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition
 from bhp_appointment.managers import AppointmentManager
-from bhp_appointment.classes import AppointmentDate
+from bhp_appointment_helper.classes import AppointmentDateHelper
 from base_appointment import BaseAppointment
 
 
@@ -50,12 +50,12 @@ class Appointment(BaseAppointment):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        appointment_date = AppointmentDate()
+        appointment_date_helper = AppointmentDateHelper()
         if not self.id:
-            self.appt_datetime = appointment_date.get(self.appt_datetime)
+            self.appt_datetime = appointment_date_helper.get_best_datetime(self.appt_datetime)
             self.best_appt_datetime = self.appt_datetime
         else:
-            self.appt_datetime = appointment_date.change(self.best_appt_datetime, self.appt_datetime)
+            self.appt_datetime = appointment_date_helper.change_datetime(self.best_appt_datetime, self.appt_datetime)
         super(Appointment, self).save(*args, **kwargs)
 
     def __unicode__(self):
