@@ -21,4 +21,3 @@ class Panel(BasePanel):
 
     class Meta:
         app_label = 'lab_clinic_api'
-        #ordering =['result_identifier']
