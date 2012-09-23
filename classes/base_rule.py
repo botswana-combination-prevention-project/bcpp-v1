@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from django.db.models import get_model, Model
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_registration.models import RegisteredSubject
@@ -106,11 +107,14 @@ class BaseRule(object):
                             'Valid actions are {1}.'.format(action, ', '.join(self.get_action_list())))
         return True
 
-    def get_operator_from_word(self, word):
+    def get_operator_from_word(self, word, a, b):
         """Returns the operator from the 'word' used in the predicate, for example 'equals' returns '=='."""
         operator = None
         if word.lower() == 'equals' or word.lower() == 'eq':
-            operator = '=='
+            if b is None:
+                operator = ' is '
+            else:
+                operator = '=='
         if word.lower() == 'gt':
             operator = '>'
         if word.lower() == 'gte':
@@ -120,12 +124,25 @@ class BaseRule(object):
         if word.lower() == 'lte':
             operator = '<='
         if word.lower() == 'ne':
-            operator = '!='
+            if b is None:
+                operator = ' is not '
+            else:
+                operator = '!='
+        if word.lower() == 'in' or word.lower() == 'not in':
+            if not isinstance(b, (list, tuple)):
+                raise TypeError('Invalid combination. Rule predicate expects [in, not in] when comparing to a list or tuple.')
+            operator = word.lower()
         if not operator:
-            raise TypeError('Unrecognized operator in rule predicate. Valid options are equals, eq, gt, gte, lt, lte, ne. Options are not case sensitive')
+            raise TypeError('Unrecognized operator in rule predicate. Valid options are equals, eq, gt, gte, lt, lte, ne, in, not in. Options are not case sensitive')
+        if (a is None or b is None) and word not in ('equals', 'eq', 'ne'):
+            raise TypeError('Invalid predicate operator in rule for value None. Must be (equals, ea or ne). Got \'{0}\'.'.format(word))
         return operator
 
     def _set_predicate_field_value(self, instance, attr_name):
+        """ Returns a field value either by applying getattr to the source model or, if the field name matches one in RegisteredSubject, returns that value.
+
+        Some RegisteredSubject field names are excluded:
+            ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status']"""
         if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status']]:
             registered_subject = self.get_visit_model_instance().appointment.registered_subject
             self._field_value = getattr(registered_subject, attr_name)
@@ -194,8 +211,41 @@ class BaseRule(object):
                                    'Valid options are {2}'.format(self, logical_operator, ', '.join(['and', 'or', 'and not', 'or not'])))
                 else:
                     logical_operator = ''
-                # add as string for eval
-                self._predicate += ' %s (\'%s\' %s \'%s\')' % (logical_operator, self._get_predicate_field_value(), self.get_operator_from_word(item[1]), self._get_predicate_comparitive_value())
+                # add as string for eval()
+                a = self._get_predicate_field_value()
+                b = self._get_predicate_comparitive_value()
+                if b == 'None':
+                    b = None
+                # check type of field value and comparative value, must be the same or <Some>Type to NoneType
+                # if a or b are string or None
+                if (isinstance(a, (unicode, basestring)) or a is None) and (isinstance(b, (unicode, basestring)) or b is None):
+                    predicate_template = ' {logical_operator} (\'{field_value}\' {operator} \'{comparative_value}\')'
+                    self._predicate = self._predicate.replace('\'None\'', 'None')
+                # if a or b are number or None
+                elif (isinstance(a, (int, long, float)) or a is None) and (isinstance(b, (int, long, float)) or b is None):
+                    predicate_template = ' {logical_operator} ({field_value} {operator} {comparative_value})'
+                # if a is a date and b is a date, datetime
+                elif isinstance(a, (date)) and isinstance(b, (date, datetime)):
+                    if isinstance(b, datetime):
+                        # convert b to date to match type of a
+                        b = date(date.year, date.month, date.day)
+                    predicate_template = ' {logical_operator} (datetime.strptime({field_value},\'%Y-%m-%d\') {operator} datetime.strptime({comparative_value},\'%Y-%m-%d\'))'
+                # if a is a datetime and b is a date, datetime
+                elif isinstance(a, (datetime)) and isinstance(b, (date, datetime)):
+                    if isinstance(b, date):
+                        # convert a to date if b is a date
+                        a = date(date.year, date.month, date.day)
+                    predicate_template = ' {logical_operator} (datetime.strptime({field_value},\'%Y-%m-%d %H:%M\') {operator} datetime.strptime({comparative_value},\'%Y-%m-%d %H:%M\'))'
+                else:
+                    if isinstance(a, (date, datetime)) and b is None:
+                        raise TypeError('In a rule predicate, may not compare a date or datetime to None. Got \'{0}\' and \'{1}\''.format(a, b))
+                    else:
+                        raise TypeError('Rule predicate values must be of the same data type and be either strings, dates or numbers. Got \'{0}\' and \'{1}\''.format(a, b))
+                self._predicate += predicate_template.format(
+                       logical_operator=logical_operator,
+                       field_value=a,
+                       operator=self.get_operator_from_word(item[1], a, b),
+                       comparative_value=b)
                 n += 1
 
     def get_predicate(self):
