@@ -10,7 +10,7 @@ class LabEntry(BaseLabEntry):
     This model lists entry forms by visit definition used to fill
     the scheduled entry bucket for a subject once a visit is reported
 
-    Important: Read notes on model bhp_common.models ContentTypeMap
+    Important: this is linked to / depends on the ContentTypeMap
     """
 
     visit_definition = models.ForeignKey(VisitDefinition)
