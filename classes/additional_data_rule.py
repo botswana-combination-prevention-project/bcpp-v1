@@ -17,6 +17,9 @@ class AdditionalDataRule(BaseRule):
     def set_bucket_cls(self):
         self._bucket_cls = AdditionalEntryBucket
 
+    def set_entry_cls(self):
+        self._entry_cls = AdditionalEntry
+
     def get_action_list(self):
         return ['required', 'not_required']
 
@@ -51,14 +54,16 @@ class AdditionalDataRule(BaseRule):
                 action = self.get_alternative_action()
             if self.is_valid_action(action):
                 if not self.get_target_bucket_instance_id() and action.lower() == 'required':
-                    additional_entry = AdditionalEntry()
-                    additional_entry.add_from_rule(
+                    EntryCls = self.get_entry_cls()
+                    entry = EntryCls()
+                    entry.add_from_rule(
                         self.__repr__(),
                         self.get_visit_model_instance(),
                         self.get_target_content_type_map())
                 if self.get_target_bucket_instance_id() and action.lower() == 'not_required':
-                    additional_entry = AdditionalEntry()
-                    additional_entry.remove_from_rule(
+                    EntryCls = self.get_entry_cls()
+                    entry = EntryCls()
+                    entry.remove_from_rule(
                         self.__repr__(),
                         self.get_target_model_cls(),
                         self.get_visit_model_instance(),

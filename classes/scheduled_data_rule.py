@@ -16,6 +16,9 @@ nullhandler = logger.addHandler(NullHandler())
 
 class ScheduledDataRule(BaseRule):
 
+    def set_entry_cls(self):
+        self._entry_cls = ScheduledEntry
+
     def set_bucket_cls(self):
         self._bucket_cls = ScheduledEntryBucket
 
@@ -74,8 +77,9 @@ class ScheduledDataRule(BaseRule):
                 action = self.get_alternative_action()
             if self.is_valid_action(action):
                 if self.get_target_bucket_instance_id():  # make sure this visit has this target model
-                    scheduled_entry = ScheduledEntry()
-                    scheduled_entry.update_status_from_rule(
+                    EntryCls = self.get_entry_cls()
+                    entry = EntryCls()
+                    entry.update_status_from_rule(
                         action,
                         self.get_target_model_cls(),
                         self.get_target_bucket_instance_id(),

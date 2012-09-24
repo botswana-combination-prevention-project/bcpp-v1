@@ -4,6 +4,7 @@ from bhp_content_type_map.models import ContentTypeMap
 from bhp_registration.models import RegisteredSubject
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_entry.models import BaseEntryBucket
+from bhp_entry.classes import BaseEntry
 from logic import Logic
 
 
@@ -22,6 +23,7 @@ class BaseRule(object):
         self._filter_model_cls = None
         self._source_model_instance = None
         self._bucket_cls = None
+        self._entry_cls = None
         self._target_bucket_instance_id = None
         self._target_content_type_map = None
         self._visit_model_instance = None
@@ -392,6 +394,18 @@ class BaseRule(object):
         elif not issubclass(self._bucket_cls, BaseEntryBucket):
             raise AttributeError('Attribute _bucket_cls must be a subclass of BaseEntryBucket.')
         return self._bucket_cls
+
+    def set_entry_cls(self):
+        """Sets the entry class but users should override"""
+        if not self._entry_cls:
+            raise AttributeError('Attribute _entry_cls cannot be None')
+
+    def get_entry_cls(self):
+        if not self._entry_cls:
+            self.set_entry_cls()
+        elif not issubclass(self._entry_cls, BaseEntry):
+            raise AttributeError('Attribute _entry_cls must be a subclass of BaseEntry.')
+        return self._entry_cls
 
     def set_target_bucket_instance_id(self, bucket_cls):
         """Users should override"""
