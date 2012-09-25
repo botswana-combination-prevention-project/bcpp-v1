@@ -396,7 +396,7 @@ class BaseRule(object):
         return self._bucket_cls
 
     def set_entry_cls(self):
-        """Sets the entry class but users should override"""
+        """Sets the entry class but users should override."""
         if not self._entry_cls:
             raise AttributeError('Attribute _entry_cls cannot be None')
 
