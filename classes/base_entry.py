@@ -5,7 +5,7 @@ from bhp_visit_tracking.models import BaseVisitTracking
 
 
 class BaseEntry(object):
-
+    """ Base class for all classes that manage the entry state of additional, scheduled and unscheduled data."""
     def __init__(self):
         self._filter_fieldname = None  # field to filter the target_model
         self._filter_model_instance = None  # instance of field to filter the user model
@@ -19,11 +19,6 @@ class BaseEntry(object):
         self._visit_model_fieldname = None
 
     def reset(self, visit_model_instance):
-#        self._filter_fieldname = None
-#        self._target_model_cls = None
-#        self._bucket_model_cls = None
-#        self._target_model_base_cls = None
-#        self._content_type_map = None
         self._bucket_model_instance = None
         self._target_model_instance = None
         self._filter_model_instance = None
