@@ -4,6 +4,7 @@ try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
 except ImportError:
     from bhp_base_model.classes import BaseUuidModel
+from bhp_registration.models import RegisteredSubject
 from lab_panel.models import Panel
 from base_packing_list import BasePackingList
 
@@ -48,15 +49,45 @@ class BasePackingListItem(BaseUuidModel):
     #history = AuditTrail()
 
     def gender(self):
-        """Users should override."""
-        return '?'
+        """Users may override."""
+        retval = "n/a"
+        try:
+            Requisition = models.get_model(self._meta.app_label, self.requisition)
+        except:
+            Requisition = None
+            retval = '?'
+        if self.item_reference and Requisition:
+            requisition = Requisition.objects.get(specimen_identifier=self.item_reference)
+            subject_identifier = requisition.subject()
+            if subject_identifier:
+                registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
+                retval = registered_subject.gender
+        return retval
 
     def clinician(self):
-        """Users should override."""
-        return '?'
+        """Users may override."""
+        retval = "n/a"
+        try:
+            Requisition = models.get_model(self._meta.app_label, self.requisition)
+        except:
+            Requisition = None
+            retval = '?'
+        if self.item_reference and Requisition:
+            requisition = Requisition.objects.get(specimen_identifier=self.item_reference)
+            retval = requisition.user_created
+        return retval
 
     def drawn_datetime(self):
-        return None
+        retval = "n/a"
+        try:
+            Requisition = models.get_model(self._meta.app_label, self.requisition)
+        except:
+            Requisition = None
+            retval = '?'
+        if self.item_reference and Requisition:
+            requisition = Requisition.objects.get(specimen_identifier=self.item_reference)
+            retval = requisition.drawn_datetime.strftime('%Y-%m-%d %H:%M')
+        return retval
 
     def packing_list_model(self):
         for field in self._meta.fields:
