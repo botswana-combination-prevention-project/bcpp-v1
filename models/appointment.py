@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from audit_trail.audit import AuditTrail
+from bhp_variables.models import StudySite
 from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition
 from bhp_appointment.managers import AppointmentManager
@@ -20,6 +21,8 @@ class Appointment(BaseAppointment):
     registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
 
     best_appt_datetime = models.DateTimeField(null=True, editable=False)
+
+    study_site = models.ForeignKey(StudySite, null=True, blank=False)
 
     visit_definition = models.ForeignKey(VisitDefinition, related_name='+',
         verbose_name=_("Visit"),
@@ -55,7 +58,10 @@ class Appointment(BaseAppointment):
             self.appt_datetime = appointment_date_helper.get_best_datetime(self.appt_datetime)
             self.best_appt_datetime = self.appt_datetime
         else:
-            self.appt_datetime = appointment_date_helper.change_datetime(self.best_appt_datetime, self.appt_datetime)
+            if not self.best_appt_datetime:
+                # did you update best_appt_datetime for existing instances since the migration?
+                raise TypeError('Appointment instance attribute \'best_appt_datetime\' cannot be null on change.')
+            self.appt_datetime = appointment_date_helper.change_datetime(self.best_appt_datetime, self.appt_datetime, self.study_site)
         super(Appointment, self).save(*args, **kwargs)
 
     def __unicode__(self):
