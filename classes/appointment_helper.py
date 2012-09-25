@@ -121,7 +121,7 @@ class AppointmentHelper(object):
             if aggr:
                 appointment_date_helper = AppointmentDateHelper()
                 # check if there are rules to determine a better appt_datetime
-                appt_datetime = appointment_date_helper.get_best_datetime(next_appt_datetime)
+                appt_datetime = appointment_date_helper.get_best_datetime(next_appt_datetime, appointment.registered_subject.study_site)
                 next_visit_instance = int(aggr['visit_instance__max'] + 1.0)
                 Appointment.objects.create(
                     registered_subject=appointment.registered_subject,
