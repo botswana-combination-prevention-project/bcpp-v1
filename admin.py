@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin
-from bhp_identifier.models import SubjectIdentifier, IdentifierTracker
+from bhp_identifier.models import SubjectIdentifier, IdentifierTracker, Sequence
 
 
 class SubjectIdentifierAdmin(BaseModelAdmin):
@@ -19,3 +19,9 @@ class IdentifierTrackerAdmin(BaseModelAdmin):
     list_filter = ('created', 'root_number', 'user_created')
 
 admin.site.register(IdentifierTracker, IdentifierTrackerAdmin)
+
+
+class SequenceAdmin(BaseModelAdmin):
+    list_display = ('pk', 'created', 'user_created', 'hostname_created')
+    list_filter = ('created', 'hostname_created', 'user_created')
+admin.site.register(Sequence, SequenceAdmin)

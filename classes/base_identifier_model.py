@@ -6,7 +6,7 @@ except ImportError:
 
 
 class BaseIdentifierModel(BaseUuidModel):
-    """Store identifiers as allocated and use the pk as a unique sequence for the new identifier.
+    """Store identifiers as allocated.
 
     Will not include identifiers derived from other identifiers, for example, infant and partner
     identifiers are not included in this model.
@@ -25,12 +25,18 @@ class BaseIdentifierModel(BaseUuidModel):
 
     identifier = models.CharField(max_length=36, unique=True, editable=False)
     padding = models.IntegerField(default=4, editable=False)
+    sequence_number = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        from bhp_identifier.models import Sequence
+        sequence = Sequence.objects.create()
+        self.sequence_number = sequence.pk
+        super(BaseIdentifierModel, self).save(*args, **kwargs)
 
     @property
     def sequence(self):
-        """Returns a padded sequence segment of the identifier based on the auto-increment
-        integer primary key"""
-        return str(self.pk).rjust(self.padding, '0')
+        """Returns a padded sequence segment for the identifier"""
+        return str(self.sequence_number).rjust(self.padding, '0')
 
     def __unicode__(self):
         return self.identifier
