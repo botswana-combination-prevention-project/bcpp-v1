@@ -61,7 +61,7 @@ class AppointmentHelper(object):
                 # calculate the appointment date
                 if visit_definition.time_point == 0:
                     #appt_datetime = self.best_appointment_datetime(appt_datetime=base_appt_datetime)
-                    appt_datetime = appointment_date_helper.get_best_datetime(base_appt_datetime)
+                    appt_datetime = appointment_date_helper.get_best_datetime(base_appt_datetime, registered_subject.study_site)
                 else:
                     appt_datetime = appointment_date_helper.get_relative_datetime(base_appt_datetime, visit_definition)
                 # if appt exists, update appt_datetime
