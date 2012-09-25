@@ -55,7 +55,7 @@ class Appointment(BaseAppointment):
     def save(self, *args, **kwargs):
         appointment_date_helper = AppointmentDateHelper()
         if not self.id:
-            self.appt_datetime = appointment_date_helper.get_best_datetime(self.appt_datetime)
+            self.appt_datetime = appointment_date_helper.get_best_datetime(self.appt_datetime, self.study_site)
             self.best_appt_datetime = self.appt_datetime
         else:
             if not self.best_appt_datetime:
