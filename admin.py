@@ -1,14 +1,21 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
-from models import DxCode
+from bhp_base_model.classes import BaseModelAdmin
+from models import DxCode, WcsDxAdult, WcsDxPed
 
-class DxCodeAdmin(MyModelAdmin):
 
+class DxCodeAdmin(BaseModelAdmin):
     list_display = ('code', 'short_name')
-    
     search_fields = ('code', 'short_name', 'long_name')
-    
-    #readonly_fields = ('code', 'short_name', 'long_name')
-   
 admin.site.register(DxCode, DxCodeAdmin)
 
+
+class WcsDxAdultAdmin(BaseModelAdmin):
+    list_display = ('code', 'short_name')
+    search_fields = ('code', 'short_name', 'long_name')
+admin.site.register(WcsDxAdult, WcsDxAdultAdmin)
+
+
+class WcsDxPedAdmin(BaseModelAdmin):
+    list_display = ('code', 'short_name')
+    search_fields = ('code', 'short_name', 'long_name')
+admin.site.register(WcsDxPed, WcsDxPedAdmin)
