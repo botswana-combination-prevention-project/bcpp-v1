@@ -8,9 +8,12 @@ from bhp_base_model.validators import datetime_not_before_study_start, datetime_
 from bhp_common.choices import YES_NO, YES_NO_DOESNT_WORK
 from bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
 from bhp_crypto.fields import EncryptedCharField, EncryptedTextField
+from bhp_registration.models import RegisteredSubject
 
 
 class BaseLocator(BaseUuidModel):
+
+    registered_subject = models.OneToOneField(RegisteredSubject, null=True)
 
     report_datetime = models.DateTimeField("Today's date",
         validators=[

@@ -1,11 +1,17 @@
-{% load crypto_tags %}
+{% load crypto_tags %}{% load admin_urls %}
 <tr style="background:lightyellow;">
-   <td><H4>Contact Info</H4></td><tr>
+   <td><H4>Contact Info</H4></td></tr>
    <tr style="background:lightyellow;">
    {% if not locator %}
-    <td>locator not found!
+    <td><span style="color:red;">Please provide subject<BR>contact details.</span>    
+    <A href="{{locator_add_url}}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Add ]</A>
    {% else %}
        <td>
+       {% if visit_code and visit_instance %}
+           <A href="{{ locator.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">[ Edit ]</A>
+       {% else %}
+           <A href="{{ locator.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Edit ]</A>
+       {% endif %}
        <BR><b>May follow-up?</b> {{locator.may_follow_up }}       
        {% if locator.may_follow_up.lower == 'yes' %}   
             <BR><b>Home visits?</b> {{locator.home_visit_permission }}
@@ -31,6 +37,8 @@
                <BR>Cell: {{ locator.alt_contact_cell|encrypted }}
                <BR>Tel: {{ locator.alt_contact_tel|encrypted }}
            {% endif%}
-       {% endif%}           
+       {% endif%}
+       <BR><i><small>Updated on {{ locator.modified|date:"SHORT_DATE_FORMAT" }}   
+       by {{ locator.user_modified }}</small></i>         
    {% endif %}
    </td></tr>
