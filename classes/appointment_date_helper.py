@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from django.conf import settings
+#from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
+from bhp_visit.classes import WindowPeriod
 from bhp_visit.models import VisitDefinition
 from bhp_appointment.models import Holiday, Configuration
 
@@ -13,7 +15,11 @@ class AppointmentDateHelper(object):
         # number of appointments to set per day before moving to an alternative appointment date
         self.appointments_per_day_max = settings.APPOINTMENTS_PER_DAY_MAX
         # number of days to look forward for an alternative appointment date
-        self.days_forward = 8
+        if 'APPOINTMENTS_DAYS_FORWARD' in dir(settings):
+            self.days_forward = settings.APPOINTMENTS_DAYS_FORWARD
+        else:
+            self.days_forward = 8
+        self.window_delta = None
         # not used
         self.allow_backwards = False
         # True if appointments should land on the same day for a subject
@@ -35,15 +41,11 @@ class AppointmentDateHelper(object):
             appt_datetime = self._move_to_same_weekday(appt_datetime, weekday)
         return self._check(appt_datetime, site)
 
-    def change_datetime(self, best_appt_datetime, new_appt_datetime, site, days_forward=None):
+    def change_datetime(self, best_appt_datetime, new_appt_datetime, site, visit_definition):
         """Checks if an appointment datetime from the user is OK to accept."""
-        if not days_forward:
-            days_forward = self.days_forward
-        td = best_appt_datetime - new_appt_datetime
-        if abs(td.days) <= days_forward and new_appt_datetime >= datetime.today():
-            # return changed datetime +/- a possible adjustment in _check
-            appt_datetime = self._check(new_appt_datetime, site)
-        else:
+        window_period = WindowPeriod()
+        appt_datetime = self._check(new_appt_datetime, site)
+        if not window_period.check_datetime(visit_definition, appt_datetime, best_appt_datetime):
             # return unchanged appt_datetime
             appt_datetime = best_appt_datetime
         if not appt_datetime:
@@ -138,11 +140,13 @@ class AppointmentDateHelper(object):
             # if desired date is not maxed out, use it
             if appt_date_counts.get(my_appt_date) < appointments_per_day_max:
                 appt_date = my_appt_date
+                #self.message = 'Appointment date has been changed to {0}'.format(appt_date)
             else:
                 # look for an alternative date
                 for appt_date, cnt in dict((i, appt_dates.count(i)) for i in appt_dates).iteritems():
                     # only looking forward at the moment unless Appointments query is changed above
                     if cnt < appointments_per_day_max and appt_date > my_appt_date:
+                        self.message = 'Appointment date has been moved to {0}.'.format(appt_date)
                         break
             # return an appointment datetime that uses the time from the originally desrired datetime
             appt_datetime = datetime(appt_date.year, appt_date.month, appt_date.day, appt_datetime.hour, appt_datetime.minute)

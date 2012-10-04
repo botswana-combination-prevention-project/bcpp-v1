@@ -1,7 +1,6 @@
 import inspect
 from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
-from bhp_visit.classes import VisitDefinitionHelper
 from appointment_date_helper import AppointmentDateHelper
 
 
@@ -89,7 +88,7 @@ class AppointmentHelper(object):
     def delete_for_instance(self, model_instance):
         """ Delete appointments for this registered_subject for this model_instance but only if visit report not yet submitted """
         #visit_definitions = self.list_visit_definitions_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
-        visit_definitions = VisitDefinitionHelper().list_all_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
+        visit_definitions = VisitDefinition.objects.list_all_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
         Appointment = get_model('bhp_appointment', 'appointment')
         # only delete appointments without a visit model
         appointments = Appointment.objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)
