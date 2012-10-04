@@ -7,6 +7,7 @@ from check_digit import CheckDigit
 
 
 class BaseIdentifier(object):
+    """ Base class for all identifiers."""
 
     def get_identifier_prep(self, **kwargs):
         """ Users may override to pass non-default keyword arguments to get_identifier
