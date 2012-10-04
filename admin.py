@@ -2,7 +2,8 @@ from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_common.models import MyTabularInline
 from django.db.models import Max
-
+from django.contrib import messages
+from bhp_visit.classes import WindowPeriod
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment, Holiday, Configuration
 from bhp_appointment.forms import AppointmentForm
@@ -31,6 +32,10 @@ class AppointmentAdmin(BaseModelAdmin):
 
         if change:
             obj.user_modified = request.user
+            window_period = WindowPeriod()
+            if not window_period.check_datetime(obj.visit_definition, obj.appt_datetime, obj.best_appt_datetime):
+                messages.add_message(request, messages.ERROR, window_period.error_message)
+
         if not change:
             obj.user_created = request.user
             #set the visit instance

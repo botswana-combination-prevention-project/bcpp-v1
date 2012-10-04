@@ -63,18 +63,19 @@ class AppointmentForm(forms.ModelForm):
                 if ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='NEW').exists():
                     self.cleaned_data['appt_status'] = 'incomplete'
         elif appt_status == 'new':
-            # must be future
-            if t1.days < 0:
-                raise forms.ValidationError("Status is 'new' so the appointment date must be a future date. You wrote '%s'" % appt_datetime)
+            # must be future relative to best_appt_datetime
+            #if t1.days < 0:
+            #    raise forms.ValidationError("Status is 'new' so the appointment date must be a future date. You wrote '%s'" % appt_datetime)
             # for new appointments, no matter what, appt_datetime must be greater than
             # any existing appointment for this subject and visit code
-            aggr = Appointment.objects.filter(
-                registered_subject=registered_subject,
-                visit_definition__code=visit_definition.code).aggregate(Max('appt_datetime'))
-            if aggr['appt_datetime__max'] != None:
-                t1 = aggr['appt_datetime__max'] - appt_datetime
-                if t1.days >= 0:
-                    raise forms.ValidationError("A NEW appointment with appointment date greater than or equal to this date already exists'. You wrote '%s'" % appt_datetime)
+            #aggr = Appointment.objects.filter(
+            #    registered_subject=registered_subject,
+            #    visit_definition__code=visit_definition.code).aggregate(Max('appt_datetime'))
+            #if aggr['appt_datetime__max'] != None:
+            #    t1 = aggr['appt_datetime__max'] - appt_datetime
+            #    if t1.days >= 0:
+            #        raise forms.ValidationError("A NEW appointment with appointment date greater than or equal to this date already exists'. You wrote '%s'" % appt_datetime)
+            pass
         elif appt_status == 'in_progress':
             # check if any other appointments in progress for this registered_subject
             if Appointment.objects.filter(registered_subject=registered_subject, appt_status='in_progress').exclude(visit_definition__code=visit_definition.code, visit_instance=visit_instance):
@@ -83,5 +84,6 @@ class AppointmentForm(forms.ModelForm):
         else:
             raise TypeError("Unknown appt_status passed to clean method in form AppointmentForm. Got %s" % appt_status)
             #must be future
+        
         # Always return the full collection of cleaned data.
         return cleaned_data

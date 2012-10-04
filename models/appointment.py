@@ -61,7 +61,7 @@ class Appointment(BaseAppointment):
             if not self.best_appt_datetime:
                 # did you update best_appt_datetime for existing instances since the migration?
                 raise TypeError('Appointment instance attribute \'best_appt_datetime\' cannot be null on change.')
-            self.appt_datetime = appointment_date_helper.change_datetime(self.best_appt_datetime, self.appt_datetime, self.study_site)
+            self.appt_datetime = appointment_date_helper.change_datetime(self.best_appt_datetime, self.appt_datetime, self.study_site, self.visit_definition)
         super(Appointment, self).save(*args, **kwargs)
 
     def __unicode__(self):
