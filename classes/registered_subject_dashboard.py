@@ -1,4 +1,5 @@
 from textwrap import wrap
+from django.db import models
 from django.db.models import TextField
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
@@ -8,13 +9,13 @@ from bhp_entry.models import AdditionalEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_entry_rules.classes import rule_groups
 from bhp_appointment.models import Appointment
-from bhp_visit.models import ScheduleGroup
-from bhp_visit.classes import MembershipFormHelper
+from bhp_visit.models import ScheduleGroup, MembershipForm
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
 from bhp_subject_summary.models import Link
 from lab_clinic_api.classes import EdcLab
 from bhp_entry.classes import ScheduledEntry
+from bhp_locator.models import BaseLocator
 
 
 class RegisteredSubjectDescriptor(object):
@@ -219,7 +220,7 @@ class RegisteredSubjectDashboard(Dashboard):
         else:
             # or filter appointments for the current membership category
             # schedule_group__membership_form
-            codes = MembershipFormHelper().codes_for_category(membership_form_category=self._get_membership_form_category())
+            codes = MembershipForm.objects.codes_for_category(membership_form_category=self._get_membership_form_category())
             appointments = Appointment.objects.filter(registered_subject=self.registered_subject,
                                                       visit_definition__code__in=codes,
                                                       ).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
@@ -299,14 +300,35 @@ class RegisteredSubjectDashboard(Dashboard):
         edc_lab = EdcLab()
         return edc_lab.render(self.subject_identifier, False)
 
-    def render_locator(self, locator_instance, template=None):
+    def render_locator(self, locator_cls, template=None):
+        if isinstance(locator_cls, models.Model) or locator_cls is None:
+            raise TypeError('Expected first parameter to be a Locator model class. Got an instance. Please correct in local dashboard view.')
+        if locator_cls is None:
+            raise TypeError('Expected first parameter to be a Locator model class. Got None. Please correct in local dashboard view.')
+        if not issubclass(locator_cls, BaseLocator):
+            raise TypeError('Expected first parameter to be a subclass of BaseLocator model class. Please correct in local dashboard view.')
+        visit_code = None
+        visit_instance = None
+        locator_add_url = reverse('admin:' + locator_cls._meta.app_label + '_' + locator_cls._meta.module_name + '_add')
         if not template:
             template = 'locator_include.html'
-        if locator_instance:
+        if locator_cls.objects.filter(registered_subject=self.registered_subject):
+            locator_instance = locator_cls.objects.get(registered_subject=self.registered_subject)
             for field in locator_instance._meta.fields:
                 if isinstance(field, (TextField, EncryptedTextField)):
                     setattr(locator_instance, field.name, '<BR>'.join(wrap(getattr(locator_instance, field.name), 25)))
-        return render_to_string(template, {'locator': locator_instance})
+            if self.appointment:
+                visit_code = self.appointment.visit_definition.code
+                visit_instance = self.appointment.visit_instance
+
+        return render_to_string(template, {'locator': locator_instance,
+                                           'registered_subject': self.registered_subject,
+                                           'subject_identifier': self.subject_identifier,
+                                           'dashboard_type': self.dashboard_type,
+                                           'visit_code': visit_code,
+                                           'visit_instance': visit_instance,
+                                           'appointment': self.appointment,
+                                           'locator_add_url': locator_add_url})
 
     def get_urlpatterns(self, view, regex, **kwargs):
 
@@ -339,7 +361,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 'dashboard',
                 name="dashboard_visit_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<appointment>{pk})/$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<registered_subject>{pk})/(?P<appointment>{pk})/$'.format(**regex),
                 'dashboard',
                 name="dashboard_visit_url"
                 ),
