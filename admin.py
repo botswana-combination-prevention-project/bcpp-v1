@@ -38,7 +38,7 @@ class OrderAdmin(BaseModelAdmin):
     list_per_page = 15
 
     def get_readonly_fields(self, request, obj):
-        return ['aliquot', 'panel', 'status', 'order_datetime', 'comment']
+        return ['aliquot', 'status', 'order_datetime', 'comment']
 admin.site.register(Order, OrderAdmin)
 
 
