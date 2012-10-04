@@ -1,5 +1,5 @@
-from datetime import *
-from dateutil.relativedelta import *
+from dateutil.relativedelta import relativedelta
+
 
 def formatted_age(born, reference_date):
 
@@ -10,13 +10,13 @@ def formatted_age(born, reference_date):
         elif rdelta.years == 0 and rdelta.months <= 0:
             return '%sd' % (rdelta.days)
         elif rdelta.years == 0 and rdelta.months > 0 and rdelta.months <= 2:
-            return '%sm%sd' % (rdelta.months,rdelta.days)
+            return '%sm%sd' % (rdelta.months, rdelta.days)
         elif rdelta.years == 0 and rdelta.months > 2:
             return '%sm' % (rdelta.months)
-        elif rdelta.years == 1: 
+        elif rdelta.years == 1:
             m = rdelta.months + 12
-            return '%sm' % (m)        
+            return '%sm' % (m)
         elif rdelta.years > 1:
             return '%sy' % (rdelta.years)
         else:
-             raise TypeError('Age template tag missed a case... today - born. redelta = %s and %s' % (rdelta, born)) 
+            raise TypeError('Age template tag missed a case... today - born. rdelta = %s and %s' % (rdelta, born))
