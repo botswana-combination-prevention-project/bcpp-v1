@@ -2,6 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_base_model.classes import BaseUuidModel
+from bhp_visit.managers import MembershipFormManager
 
 
 class MembershipForm(BaseUuidModel):
@@ -17,7 +18,7 @@ class MembershipForm(BaseUuidModel):
     visible = models.BooleanField(
         default=True,
         help_text='If not visible on the dashboard, you have to write code to populate it yourself.')
-    objects = models.Manager()
+    objects = MembershipFormManager()
 
     def get_absolute_url(self):
         return reverse('admin:bhp_visit_membershipform_change', args=(self.id,))

@@ -1,6 +1,7 @@
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
 from bhp_visit.choices import VISIT_INTERVAL_UNITS
+from bhp_visit.classes import WindowPeriod
 
 
 class BaseWindowPeriodItem(BaseUuidModel):
@@ -54,6 +55,25 @@ class BaseWindowPeriodItem(BaseUuidModel):
         null=True,
         blank=True,
         )
+
+    def get_rdelta_attrname(self, unit):
+        if unit == 'H':
+            rdelta_attr_name = 'hours'
+        elif unit == 'D':
+            rdelta_attr_name = 'days'
+        elif unit == 'M':
+            rdelta_attr_name = 'months'
+        elif unit == 'Y':
+            rdelta_attr_name = 'years'
+        else:
+            raise TypeError('Unknown value for visit_definition.upper_window_unit. '
+                            'Expected [H, D, M, Y]. Got {0}.'.format(unit))
+        return rdelta_attr_name
+
+    def is_in_window_period(self, new_datetime, reference_datetime):
+        """Checks if new_datetime is within the scheduled visit window period."""
+        window_period = WindowPeriod()
+        return window_period.check_datetime(self, new_datetime, reference_datetime)
 
     class Meta:
         abstract = True

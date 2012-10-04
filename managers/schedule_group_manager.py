@@ -2,7 +2,7 @@ import re
 from django.core.exceptions import FieldError
 from django.db import models
 from django.db.models import Q
-from bhp_visit.models import MembershipForm
+#from bhp_visit.models import MembershipForm
 
 
 class ScheduleGroupManager(models.Manager):
@@ -14,7 +14,7 @@ class ScheduleGroupManager(models.Manager):
         Specify the registered_subject and the membership_form_category. Include forms
         of the specified membership_form__category AND those that have no category (null) or blank.
         """
-
+        MembershipForm = models.get_model('bhp_visit', 'membershipform')
         # if this model is keyed, exclude all other UNKEYED models LIKE this from the list
         # for example, if consented, no other membership forms apply and
         # the links need not show on the dashboard
