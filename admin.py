@@ -9,9 +9,9 @@ class MembershipFormAdmin (MyModelAdmin):
 
     list_display = ('content_type_map', 'category', 'visible', 'user_created', 'user_modified', 'created', 'modified')
 
-    list_filter = ( 'category', )  
-    
-    search_fields = ('id', )  
+    list_filter = ('category',)
+
+    search_fields = ('id',)
 
 admin.site.register(MembershipForm, MembershipFormAdmin)
 
@@ -19,25 +19,23 @@ admin.site.register(MembershipForm, MembershipFormAdmin)
 class ScheduleGroupAdmin(MyModelAdmin):
 
     list_display = ('group_name', 'membership_form', 'grouping_key', 'comment')
-    
-    list_filter = ('grouping_key', 'comment')
-    
-    search_fields = ('id', )  
-   
 
-admin.site.register(ScheduleGroup, ScheduleGroupAdmin)    
+    list_filter = ('grouping_key', 'comment')
+
+    search_fields = ('id',)
+
+
+admin.site.register(ScheduleGroup, ScheduleGroupAdmin)
 
 
 class VisitDefinitionAdmin(MyModelAdmin):
 
-    list_display = ('code', 'title', 'grouping', 'time_point', 'base_interval', 'base_interval_unit','lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit','user_modified', 'modified')
-    
-    list_filter = ('code', 'grouping', 'time_point','base_interval')
-    
-    search_fields = ('code', 'grouping', 'id', )
+    list_display = ('code', 'title', 'grouping', 'time_point', 'base_interval', 'base_interval_unit', 'lower_window', 'lower_window_unit', 'upper_window', 'upper_window_unit', 'user_modified', 'modified')
 
-    inlines = [EntryInline,LabEntryInline,]
-        
+    list_filter = ('code', 'grouping', 'time_point', 'base_interval')
+
+    search_fields = ('code', 'grouping', 'id',)
+
+    inlines = [EntryInline, LabEntryInline, ]
+
 admin.site.register(VisitDefinition, VisitDefinitionAdmin)
-
-
