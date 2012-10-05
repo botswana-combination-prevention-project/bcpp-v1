@@ -80,7 +80,10 @@ class AuditTrail(object):
                             else:
                                 kwargs[field.name] = value
                         else:
-                            kwargs[field.name] = getattr(instance, field.name)
+                            try:
+                                kwargs[field.name] = getattr(instance, field.name)
+                            except instance.DoesNotExist:
+                                kwargs[field.name] = None
                     if self.opts['save_change_type']:
                         if created:
                             kwargs['_audit_change_type'] = 'I'
