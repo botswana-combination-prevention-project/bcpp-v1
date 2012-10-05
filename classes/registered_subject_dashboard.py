@@ -320,6 +320,8 @@ class RegisteredSubjectDashboard(Dashboard):
             if self.appointment:
                 visit_code = self.appointment.visit_definition.code
                 visit_instance = self.appointment.visit_instance
+        else:
+            locator_instance = None
 
         return render_to_string(template, {'locator': locator_instance,
                                            'registered_subject': self.registered_subject,
