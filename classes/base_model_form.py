@@ -11,7 +11,9 @@ class BaseModelForm(forms.ModelForm):
         self.logic = LogicCheck(self._meta.model)
 
     def clean(self):
+
         cleaned_data = self.cleaned_data
+
         # encrypted fields may have their own validation code to run.
         # See the custom field objects in bhp_crypto.
         try:
@@ -33,24 +35,22 @@ class BaseModelForm(forms.ModelForm):
 
     def validate_m2m(self, **kwargs):
 
-        """Validate at form level a triplet of questions lead by a Yes/No for a many to many with other specify.
+        """Validates at form level a triplet of questions lead by a Yes/No for a many to many with other specify.
 
-        The first question is a Yes/No question indicating if any items in the many to many will be selected
-        The second question is a many to many (select all that apply)
-        The third is an 'Other Specify' to be completed if an 'Other' item was selected in the many to many question
+            * The first question is a Yes/No question indicating if any items in the many to many will be selected
+            * The second question is a many to many (select all that apply)
+            * The third is an 'Other Specify' to be completed if an 'Other' item was selected in the many to many question
 
-        Be sure to check cleaned_data for the 'key' of the m2m field first.
+            Be sure to check cleaned_data for the 'key' of the m2m field first.
 
-        For example, in the ModelForm clean() method call:
-
-        if cleaned_data.has_key('chronic_cond'):
-            self.validate_m2m(
-                    label = 'chronic condition',
-                    yesno = cleaned_data['has_chronic_cond'],
-                    m2m = cleaned_data['chronic_cond'],
-                    other = cleaned_data['chronic_cond_other'],
-                )
-
+            For example, in the ModelForm clean() method call::
+                
+                if cleaned_data.has_key('chronic_cond'):
+                    self.validate_m2m(
+                            label = 'chronic condition',
+                            yesno = cleaned_data['has_chronic_cond'],
+                            m2m = cleaned_data['chronic_cond'],
+                            other = cleaned_data['chronic_cond_other'])
         """
 
         label = kwargs.get('label', 'items to be selected')
