@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from bhp_sync.models import OutgoingTransaction, IncomingTransaction, Producer
+from bhp_sync.models import OutgoingTransaction, IncomingTransaction
 from bhp_sync.classes import TransactionProducer
 
 
@@ -67,8 +67,8 @@ class Command(BaseCommand):
                     incoming_transaction.producer,
                     incoming_transaction.tx_name)
 
-                incoming_transaction.save(using='archive')
-                print '    Saved on the archive db'
+                #incoming_transaction.save(using='archive')
+                #print '    Saved on the archive db'
 
                 incoming_transaction.delete(using='default')
                 print '    Deleted from local db'
@@ -103,34 +103,32 @@ class Command(BaseCommand):
                     transactions = OutgoingTransaction.objects.filter(
                                         created__lte=cutoff_date
                                     )
-                    tot = transactions.count()
-                    print '    {0} found on a server {1}'.format(tot,producer)
+                    #tot = transactions.count()
+                    #print '    {0} found on a server {1}'.format(tot,producer)
                 else:
+                    raise ValueError('The command should on be ran on server! .')
                     #We are on a netbook so delete consumed tx
-                    transactions = OutgoingTransaction.objects.exclude(
-                                        producer=producer,
-                                        created__gte=cutoff_date
-                                    )
-                    tot = transactions.count()
-                    is_server = False
+#                    transactions = OutgoingTransaction.objects.exclude(
+#                                        producer=producer,
+#                                        created__gte=cutoff_date
+                    #                )
+                    #tot = transactions.count()
+                    #is_server = False
                     
-                    print '    {0} found on a netbook {1}'.format(tot,producer)
-                if tot == 0:
-                    print "    No transactions older than {0} were found".format(cutoff_date)
-                else:
-                    for outgoing_transaction in transactions:
-                        n += 1
-                        print '{0} / {1} {2} {3}'.format(
-                            n,
-                            tot,
-                            outgoing_transaction.producer,
-                            outgoing_transaction.tx_name)
-                        if is_server == True:
-                            outgoing_transaction.save(using='archive')
-                            print '    Saved on the archive db'
+                    #print '    {0} found on a netbook {1}'.format(tot,producer)
+                #if tot == 0:
+                #    print "    No transactions older than {0} were found".format(cutoff_date)
+                #else:
+                for outgoing_transaction in transactions:
+                    n += 1
+                    print '{0} / {1} {2}'.format(
+                        n,outgoing_transaction.producer,outgoing_transaction.tx_name)
+#                        if is_server == True:
+#                            outgoing_transaction.save(using='archive')
+#                            print '    Saved on the archive db'
 
-                        outgoing_transaction.delete(using='default')
-                        print '    Deleted'
+                    outgoing_transaction.delete(using='default')
+                    print '    Deleted'
             else:
                 raise ValueError('DEVICE_ID global value should be a number .')
         else:
