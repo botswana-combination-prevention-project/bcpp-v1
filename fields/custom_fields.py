@@ -14,7 +14,7 @@ class OtherCharField(CharField):
         kwargs.setdefault('editable', True)
         kwargs.setdefault('blank', True)
         kwargs.setdefault('max_length', 35)
-        kwargs.setdefault('verbose_name', _('...if "Other", specify'))
+        kwargs.setdefault('verbose_name', '...if "Other", specify')
         CharField.__init__(self, *args, **kwargs)
 
     def get_internal_type(self):
