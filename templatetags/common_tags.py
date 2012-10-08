@@ -25,10 +25,31 @@ def project_title():
 
 
 @register.simple_tag
+def project_number():
+    if 'PROJECT_NUMBER' not in dir(settings):
+        raise ImproperlyConfigured('Attribute settings.PROJECT_NUMBER not found. Please add PROJECT_NUMBER=\'<project number, e.g. BHP041>\' to the settings file.')
+    return settings.PROJECT_NUMBER
+
+
+@register.simple_tag
 def app_name():
     if 'APP_NAME' not in dir(settings):
         raise ImproperlyConfigured('Attribute settings.APP_NAME not found. Please add APP_NAME=\'<short name of my project>\' to the settings file.')
     return settings.APP_NAME
+
+
+@register.simple_tag
+def protocol_revision():
+    if 'PROTOCOL_REVISION' not in dir(settings):
+        raise ImproperlyConfigured('Attribute settings.PROTOCOL_REVISION not found. Please add PROTOCOL_REVISION=\'<document version and date>\' to the settings file.')
+    return settings.PROTOCOL_REVISION
+
+
+@register.simple_tag
+def institution():
+    if 'INSTITUTION' not in dir(settings):
+        raise ImproperlyConfigured('Attribute settings.INSTITUTION not found. Please add INSTITUTION=\'<institution name>\' to the settings file.')
+    return settings.INSTITUTION
 
 
 @register.simple_tag
