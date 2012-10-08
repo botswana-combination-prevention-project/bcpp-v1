@@ -15,9 +15,9 @@ class BaseIdentifier(object):
         options = {}
         return options
 
-    def get_identifier_post(self, *args, **kwargs):
+    def get_identifier_post(self, identifier, **kwargs):
         """ Users may override to run something after the identifier is created."""
-        return
+        return None
 
     def _prepare_identifier(self, options, **kwargs):
         """Calls user method self.get_identifier_prep() and adds/updates custom options to the defaults."""
