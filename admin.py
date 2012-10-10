@@ -61,7 +61,7 @@ admin.site.register(Panel, PanelAdmin)
 class TestCodeAdmin(BaseModelAdmin):
     list_display = ('code', 'name', 'edc_code', 'edc_name')
     list_filter = ('test_code_group', )
-    search_fields = ('code', 'name', 'edc_code', 'edc_name', 'test_code_group')
+    search_fields = ('code', 'name', 'edc_code', 'edc_name', 'test_code_group__code', 'test_code_group__name')
 admin.site.register(TestCode, TestCodeAdmin)
 
 
