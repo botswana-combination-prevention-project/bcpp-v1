@@ -26,6 +26,6 @@ class CheckDigit(object):
 
         if modulus > 10 and modulus <= 100:
             if check_digit < 10:
-                check_digit = "0{}".format(check_digit)
+                check_digit = "{0}".format(check_digit)
 
         return check_digit
