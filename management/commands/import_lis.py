@@ -65,12 +65,13 @@ class Command(BaseCommand):
         elif options['import']:
             self.import_from_lis(db)
         elif options['import-subject']:
+            if args == [None] or not args:
+                raise CommandError('Please specify a valid subject_identifier. Got None')
             for subject_identifier in args:
                 if RegisteredSubject.objects.filter(subject_identifier=subject_identifier).exists():
                     self.import_from_lis_for_subject(subject_identifier)
                 else:
-                    raise CommandError('Please specify a valid subject_identifier')
-            self.import_from_lis_for_subject(subject_identifier)
+                    raise CommandError('Please specify a valid subject_identifier. Got {0}'.format(subject_identifier))
         elif options['show_history']:
             for lock_name in args:
                 self.show_history(db, lis_lock, lock_name)
