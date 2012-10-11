@@ -2,6 +2,7 @@ from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from lab_import_lis.classes import LisLock, ImportHistory, Lis
+from lab_clinic_api.classes import EdcLab
 
 
 class Command(BaseCommand):
@@ -33,6 +34,13 @@ class Command(BaseCommand):
                   'Otherwise, the default is to import all for current protocol.')),
         )
     option_list += (
+        make_option('--import-subject',
+            action='store_true',
+            dest='import_subject',
+            default=False,
+            help=('Initiate import of labs from django-lis into your Edc for one subject_identifier')),
+        )
+    option_list += (
         make_option('--show-history',
             action='store_true',
             dest='show_history',
@@ -55,6 +63,12 @@ class Command(BaseCommand):
                 self.unlock(lis_lock, lock_name)
         elif options['import']:
             self.import_from_lis(db)
+        elif options['import_subject']:
+            if args:
+                subject_identifier = args[0]
+            else:
+                raise CommandError('Please specify a subject_identifier')
+            self.import_from_lis_for_subject(subject_identifier)
         elif options['show_history']:
             for lock_name in args:
                 self.show_history(db, lis_lock, lock_name)
@@ -64,6 +78,11 @@ class Command(BaseCommand):
     def import_from_lis(self, db, import_as_new=None):
         lis = Lis(db)
         lis.import_from_lis(protocol_identifier=settings.PROJECT_NUMBER)
+
+    def import_from_lis_for_subject(self, subject_identifier):
+        edc_lab = EdcLab()
+        last_updated = edc_lab.update(subject_identifier)
+        print last_updated
 
     def unlock(self, lis_lock, lock_name):
         if lock_name:
