@@ -62,9 +62,16 @@ class BaseBaseDeath(BaseRegisteredSubjectModel):
         )
 
     days_hospitalized = models.IntegerField(
-        verbose_name="if yes, hospitalized, for how many days was the participant hospitalised during the illness immediately before death? ",
+        verbose_name="For how many days was the participant hospitalised during the illness immediately before death? ",
         help_text="",
         default=0,
+        )
+
+    comment = models.TextField(
+        max_length=500,
+        verbose_name="Comments",
+        blank=True,
+        null=True,
         )
 
     class Meta:
