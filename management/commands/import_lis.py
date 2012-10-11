@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 if RegisteredSubject.objects.filter(subject_identifier=subject_identifier).exists():
                     self.import_from_lis_for_subject(subject_identifier)
                 else:
-                    raise CommandError('Please specify a valid subject_identifier. Got {0}'.format(subject_identifier))
+                    raise CommandError('Please specify a valid subject_identifier. Not found in RegisteredSubject. Got {0}'.format(subject_identifier))
         elif options['show_history']:
             for lock_name in args:
                 self.show_history(db, lis_lock, lock_name)
