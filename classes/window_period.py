@@ -24,7 +24,7 @@ class WindowPeriod(object):
         upper_window_datetime = reference_datetime + rdelta
         rdelta = relativedelta()
         setattr(rdelta, visit_definition.get_rdelta_attrname(visit_definition.lower_window_unit), visit_definition.lower_window)
-        lower_window_datetime = reference_datetime + rdelta
+        lower_window_datetime = reference_datetime - rdelta
         # count the timedelta between window's datetime and new appt datetime
         upper_td = new_datetime - upper_window_datetime
         lower_td = new_datetime - lower_window_datetime
