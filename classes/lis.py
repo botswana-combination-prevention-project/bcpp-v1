@@ -79,7 +79,7 @@ class Lis(object):
             modified_orders = []
             modified_results = []
             if subject_identifier:
-                logger.info('Subject identifier is "{0}"'.format(subject_identifier))
+                logger.info('  subject identifier specified: "{0}"'.format(subject_identifier))
                 registered_subject = RegisteredSubject.objects.get(subject_identifier__iexact=subject_identifier)
                 if import_history.last_import_datetime:
                     qset = Q()
