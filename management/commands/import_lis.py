@@ -36,7 +36,7 @@ class Command(BaseCommand):
     option_list += (
         make_option('--import-subject',
             action='store_true',
-            dest='import_subject',
+            dest='import-subject',
             default=False,
             help=('Initiate import of labs from django-lis into your Edc for one subject_identifier')),
         )
@@ -63,10 +63,9 @@ class Command(BaseCommand):
                 self.unlock(lis_lock, lock_name)
         elif options['import']:
             self.import_from_lis(db)
-        elif options['import_subject']:
-            if args:
-                subject_identifier = args[0]
-            else:
+        elif options['import-subject']:
+            subject_identifier = args[0]
+            if not subject_identifier:
                 raise CommandError('Please specify a subject_identifier')
             self.import_from_lis_for_subject(subject_identifier)
         elif options['show_history']:
