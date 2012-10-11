@@ -80,7 +80,7 @@ class Lis(object):
             modified_results = []
             if subject_identifier:
                 logger.info('  subject identifier specified: "{0}"'.format(subject_identifier))
-                registered_subject = RegisteredSubject.objects.get(subject_identifier__iexact=subject_identifier)
+                registered_subject = RegisteredSubject.objects.get(subject_identifier__iexact=unicode(subject_identifier))
                 if import_history.last_import_datetime:
                     qset = Q()
                     q = (Q(modified__gte=import_history.last_import_datetime) | Q(created__gte=import_history.last_import_datetime))
