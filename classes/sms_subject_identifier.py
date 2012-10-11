@@ -10,9 +10,11 @@ class SmsSubjectIdentifier(SubjectIdentifier):
     def get_post_identifier(self, identifier, **kwargs):
         """Queues a request for an identifier via SMS."""
         app_name = settings.APP_NAME
-        pending_identifier = PendingIdentifier.objects.create(pending_identifier=identifier, app_name=app_name)
+        pending_identifier = PendingIdentifier()
+        pending_identifier.pending_identifier = identifier
+        pending_identifier.app_name = app_name
         sms = Sms()
-        sms_queue_id = sms.queue_message(pending_identifier.pk, pending_identifier.app_name, identifier)
+        sms_queue_id = sms.queue_message(pending_identifier.app_name, identifier)
         if not sms_queue_id:
             raise ImproperlyConfigured('Expected response from SMS module')
         else:
