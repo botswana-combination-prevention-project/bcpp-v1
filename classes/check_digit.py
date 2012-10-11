@@ -20,7 +20,7 @@ class CheckDigit(object):
         # pad the check digit if required based on the modulus
         if modulus > 100 and modulus <= 1000:
             if check_digit < 10:
-                check_digit = "0{0}".format(check_digit)
+                check_digit = "00{0}".format(check_digit)
             if check_digit >= 10 and check_digit < 100:
                 check_digit = "0{0}".format(check_digit)
 
