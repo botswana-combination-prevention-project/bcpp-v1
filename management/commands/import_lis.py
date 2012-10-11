@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from lab_import_lis.classes import LisLock, ImportHistory, Lis
 from lab_clinic_api.classes import EdcLab
+from bhp_registration.models import RegisteredSubject
 
 
 class Command(BaseCommand):
@@ -64,9 +65,11 @@ class Command(BaseCommand):
         elif options['import']:
             self.import_from_lis(db)
         elif options['import-subject']:
-            subject_identifier = args[0]
-            if not subject_identifier:
-                raise CommandError('Please specify a subject_identifier')
+            for subject_identifier in args:
+                if RegisteredSubject.objects.filter(subject_identifier=subject_identifier).exists():
+                    self.import_from_lis_for_subject(subject_identifier)
+                else:
+                    raise CommandError('Please specify a valid subject_identifier')
             self.import_from_lis_for_subject(subject_identifier)
         elif options['show_history']:
             for lock_name in args:
