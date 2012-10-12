@@ -1,10 +1,9 @@
-from datetime import datetime
-from django.db.models import get_model
 from django.forms import ValidationError
-from bhp_identifier.models import SubjectIdentifier, DerivedSubjectIdentifier
+from bhp_identifier.models import SubjectIdentifier
+from base_identifier import BaseIdentifier
 
 
-class PartnerIdentifier(object):
+class PartnerIdentifier(BaseIdentifier):
 
     """ Create the subject identifier for a partner by calling get_identifier() with the index subject identifier. """
 
@@ -13,7 +12,6 @@ class PartnerIdentifier(object):
 
     def get_identifier_prep(self, **kwargs):
         """Prepares to create an identifier consisting of the the index identifier and a -10 suffix."""
-
         options = {}
         subject_identifier = kwargs.get('subject_identifier')
         if not SubjectIdentifier.objects.filter(identifier=subject_identifier):
