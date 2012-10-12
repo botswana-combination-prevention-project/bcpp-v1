@@ -16,6 +16,7 @@ class BaseConsentModelAdmin(BaseModelAdmin):
         self.list_filter = [
             'gender',
             'is_verified',
+            'may_store_samples',
             'study_site',
             'consent_datetime',
             'created',
