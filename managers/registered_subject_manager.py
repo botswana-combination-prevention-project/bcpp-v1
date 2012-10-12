@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from bhp_identifier.classes import Partner
+#from bhp_identifier.classes import Partner
 
 
 class RegisteredSubjectManager(models.Manager):
@@ -80,17 +80,17 @@ class RegisteredSubjectManager(models.Manager):
         if extra:
             registered_subject.save()
 
-    def register_partner(self, ** kwargs):
-        """ Allocate partner identifiers. """
-        index_identifier = kwargs.get('index_identifier')
-        first_name = kwargs.get('partner_first_name')
-        initials = kwargs.get('partner_initials')
-        site = kwargs.get('study_site')
-        user = kwargs.get('user')
-        partner = Partner()
-        subject_identifier = partner.get_identifier(user,
-                               index_identifier=index_identifier,
-                               first_name=first_name,
-                               initials=initials,
-                               site=site,)
-        return subject_identifier
+#    def register_partner(self, ** kwargs):
+#        """ Allocate partner identifiers. """
+#        index_identifier = kwargs.get('index_identifier')
+#        first_name = kwargs.get('partner_first_name')
+#        initials = kwargs.get('partner_initials')
+#        site = kwargs.get('study_site')
+#        user = kwargs.get('user')
+#        partner = Partner()
+#        subject_identifier = partner.get_identifier(user,
+#                               index_identifier=index_identifier,
+#                               first_name=first_name,
+#                               initials=initials,
+#                               site=site,)
+#        return subject_identifier
