@@ -51,7 +51,7 @@ class Command(BaseCommand):
         print "Deleting incoming transaction older than {0} day(s)".format(age)
         cut_off_date = datetime.now() - timedelta(days=age)
         transactions = IncomingTransaction.objects.filter(
-                            is_consumed=True,
+                            is_consumed=True,consumed_datetime__isnull=False,
                             consumed_datetime__lte=cut_off_date
                         )
 
@@ -67,8 +67,8 @@ class Command(BaseCommand):
                     incoming_transaction.producer,
                     incoming_transaction.tx_name)
 
-                #incoming_transaction.save(using='archive')
-                #print '    Saved on the archive db'
+                incoming_transaction.save(using='archive')
+                print '    Saved on the archive db'
 
                 incoming_transaction.delete(using='default')
                 print '    Deleted from local db'
@@ -121,11 +121,10 @@ class Command(BaseCommand):
                 #else:
                 for outgoing_transaction in transactions:
                     n += 1
-                    print '{0} / {1} {2}'.format(
-                        n,outgoing_transaction.producer,outgoing_transaction.tx_name)
-#                        if is_server == True:
-#                            outgoing_transaction.save(using='archive')
-#                            print '    Saved on the archive db'
+                    print '{0} / {1} {2}'.format(n,outgoing_transaction.producer,outgoing_transaction.tx_name)
+                    if is_server == True:
+                        outgoing_transaction.save(using='archive')
+                        print '    Saved on the archive db'
 
                     outgoing_transaction.delete(using='default')
                     print '    Deleted'
