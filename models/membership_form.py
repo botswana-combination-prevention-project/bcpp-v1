@@ -9,7 +9,7 @@ class MembershipForm(BaseUuidModel):
 
     """Model to list forms to be linked to a ShceduleGroup as "registration" forms to that group"""
 
-    content_type_map = models.ForeignKey(ContentTypeMap, related_name='+')
+    content_type_map = models.OneToOneField(ContentTypeMap, related_name='+')
     category = models.CharField(
         max_length=25,
         default='subject',
@@ -19,6 +19,9 @@ class MembershipForm(BaseUuidModel):
         default=True,
         help_text='If not visible on the dashboard, you have to write code to populate it yourself.')
     objects = MembershipFormManager()
+
+    def natural_key(self):
+        return self.content_type_map.natural_key()
 
     def get_absolute_url(self):
         return reverse('admin:bhp_visit_membershipform_change', args=(self.id,))

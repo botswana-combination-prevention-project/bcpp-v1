@@ -11,9 +11,10 @@ from bhp_visit.managers import VisitDefinitionManager
 class VisitDefinition(BaseWindowPeriodItem):
     """Model to define a visit code, title, windows, schedule_group, etc."""
     code = models.CharField(
-        max_length=4,
-        validators=[MinLengthValidator(4)],
-        db_index=True)
+        max_length=6,
+        validators=[MinLengthValidator(6)],
+        db_index=True,
+        unique=True)
     title = models.CharField(
         verbose_name="Title",
         max_length=35,
@@ -25,6 +26,9 @@ class VisitDefinition(BaseWindowPeriodItem):
         max_length=255,
         blank=True)
     objects = VisitDefinitionManager()
+
+    def natural_key(self):
+        return (self.code, )
 
     def get_lower_window_datetime(self, appt_datetime):
         days = get_lower_window_days(self.lower_window, self.lower_window_unit)

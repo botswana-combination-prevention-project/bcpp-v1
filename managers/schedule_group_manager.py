@@ -2,10 +2,12 @@ import re
 from django.core.exceptions import FieldError
 from django.db import models
 from django.db.models import Q
-#from bhp_visit.models import MembershipForm
 
 
 class ScheduleGroupManager(models.Manager):
+
+    def get_by_natural_key(self, group_name):
+        return self.get(group_name=group_name)
 
     def get_membership_forms_for(self, registered_subject, membership_form_category, **kwargs):
 

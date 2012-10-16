@@ -23,6 +23,9 @@ class ScheduleGroup(BaseUuidModel):
         blank=True)
     objects = ScheduleGroupManager()
 
+    def natural_key(self):
+        return (self.group_name, )
+
     def __unicode__(self):
         return unicode(self.group_name)
 

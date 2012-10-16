@@ -12,6 +12,9 @@ class VisitDefinitionManager(models.Manager):
     VisitDefinition.objects.next_visit_definition(visit_definition=visit_definition)
     """
 
+    def get_by_natural_key(self, code):
+        return self.get(code=code)
+
     def next_visit_definition(self, **kwargs):
 
         """ return next visit_definition for the given visit_definition """
