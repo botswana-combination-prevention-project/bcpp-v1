@@ -52,6 +52,10 @@ class Appointment(BaseAppointment):
 
     history = AuditTrail()
 
+    def natural_key(self):
+        return (self.visit_instance, ) + self.visit_definition.natural_key() + self.registered_subject.natural_key()
+    natural_key.dependencies = ['bhp_registration.registeredsubject', 'bhp_visit.visitdefinition']
+
     def save(self, *args, **kwargs):
         appointment_date_helper = AppointmentDateHelper()
         if not self.id:
@@ -75,10 +79,10 @@ class Appointment(BaseAppointment):
         return ret
     dashboard.allow_tags = True
 
-    def natural_key_as_dict(self):
-        return {'registered_subject': self.registered_subject,
-                'visit_definition': self.visit_definition,
-                'visit_instance': self.visit_instance}
+#    def natural_key_as_dict(self):
+#        return {'registered_subject': self.registered_subject,
+#                'visit_definition': self.visit_definition,
+#                'visit_instance': self.visit_instance}
 
     def get_absolute_url(self):
         return reverse('admin:bhp_appointment_appointment_change', args=(self.id,))
