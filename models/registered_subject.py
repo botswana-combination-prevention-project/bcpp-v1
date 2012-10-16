@@ -112,6 +112,9 @@ class RegisteredSubject(BaseSubject):
 
     history = AuditTrail()
 
+    def natural_key(self):
+        return self.identity
+
     def is_serialized(self):
         return super(RegisteredSubject, self).is_serialized(True)
 
