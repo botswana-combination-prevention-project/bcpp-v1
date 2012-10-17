@@ -7,11 +7,11 @@ class BaseListModel(BaseModel):
     """Basic model for list data used in dropdown and radio widgets having display value and store value pairs."""
 
     name = models.CharField(
-        verbose_name='Display value',
+        verbose_name='Name',
         max_length=250,
         unique=True,
         db_index=True,
-        help_text='This is displayed value, shown to the user (40 characters max.)',
+        help_text='(suggest 40 characters max.)',
         )
 
     short_name = models.CharField(
@@ -19,6 +19,7 @@ class BaseListModel(BaseModel):
         max_length=250,
         unique=True,
         db_index=True,
+        null=True,
         help_text='This is the stored value, required',
         )
 
@@ -46,9 +47,14 @@ class BaseListModel(BaseModel):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.short_name:
+            self.short_name = self.name
+        super(BaseListModel, self).save(*args, **kwargs)
+
     def natural_key(self):
         return (self.name, )
 
     class Meta:
         abstract = True
-        ordering = ['display_index']
+        ordering = ['display_index', 'name']
