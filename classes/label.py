@@ -80,13 +80,13 @@ class Label(object):
                     if self.process.returncode < 0:
                         # process timed out so throw an exception
                         self.message = ('Unable to connect to printer '
-                                        '{0} ({1}).'.format(unicode(self.label_printer),
-                                                            self.process.returncode))
+                                        '{0} ({1}){2}.'.format(unicode(self.label_printer),
+                                                            self.process.returncode,remote_addr))
                         raise PrinterException(self.message)
                     else:
                         self.message = ('Successfully printed label \'{0}\' {1}/{2} to '
-                                        '{3}'.format(label_value, (copies - i + 1), copies,
-                                                     self.label_printer.cups_printer_name))
+                                        '{3} from {4}'.format(label_value, (copies - i + 1), copies,
+                                                     self.label_printer.cups_printer_name, remote_addr))
                     print_success = True
         return (self.message, print_success)
 
