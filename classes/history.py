@@ -92,15 +92,16 @@ class History(object):
     def get_value_map_prep(self):
         """Returns a dictionary that may be used to map values for storage in the :class:`HistoryModel` to value formats used in :class:`ResultItem` model.
 
-        Format {given this value: store this value}.
+            Format {given this value: store this value}.
 
-        This is useful if update_prep adds results that are not described in the same format as the :class:`ResultItem` model.
+            This is useful if update_prep adds results that are not described in the same format as the :class:`ResultItem` model.
 
-        For example:
-            {'A': 'POS', 'B': NEG} will store POS and NEG given A, B. POS, NEG is how it is stored in the :class:`ResultItem` model.
-        Also, the map is inverted to generate a string of values using this map returning 'AB' instead of 'POSNEG'.
+            For example:
+                {'A': 'POS', 'B': NEG} will store POS and NEG given A, B. POS, NEG is how it is stored in the :class:`ResultItem` model.
 
-        Users may override."""
+            Also, the map is inverted to generate a string of values using this map returning 'AB' instead of 'POSNEG'.
+
+            Users may override."""
         return {}
 
     def _get_value_map(self):
