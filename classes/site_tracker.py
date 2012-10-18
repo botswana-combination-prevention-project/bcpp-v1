@@ -18,6 +18,10 @@ class SiteTracker(object):
         self._registry = {}
 
     def register(self, model_cls, history):
+        """Registers tuples of (model_cls, history) from modules with a tracker module (tracker.py).
+
+            Args:
+                model_cls: a model class that """
         if model_cls._meta.object_name in self._registry.keys():
             if self._registry[model_cls._meta.object_name] == (model_cls, history):
                 raise AlreadyRegistered('The class %s is already registered' % model_cls._meta.object_name)
@@ -30,6 +34,7 @@ class SiteTracker(object):
         return self._registry.iteritems
 
     def autodiscover(self):
+        """Discovers tracker modules in your apps."""
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             try:

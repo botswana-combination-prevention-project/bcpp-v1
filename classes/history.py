@@ -12,7 +12,7 @@ class History(object):
         self._update(subject_identifier)
 
     def get(self, subject_identifier, order_desc=False):
-        """Returns all values as a ordered queryset."""
+        """Returns all values as a ordered queryset for a given subject_identifier."""
         order_by = 'value_datetime'
         if order_desc:
             order_by = '-{0}'.format(order_by)
@@ -20,7 +20,7 @@ class History(object):
         return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=test_key).order_by(order_by)
 
     def get_current_value(self, subject_identifier):
-        """Returns only the most current value."""
+        """Returns only the most current value for a given subject_identifier."""
         queryset = self.get(subject_identifier, True)
         if queryset:
             return queryset[0].value
@@ -28,7 +28,7 @@ class History(object):
             return None
 
     def get_as_list(self, subject_identifier):
-        """Returns all values as a list in ascending chronological order."""
+        """Returns all values as a list in ascending chronological order for a given subject_identifier."""
         queryset = self.get(subject_identifier)
         return [qs.value for qs in queryset]
 

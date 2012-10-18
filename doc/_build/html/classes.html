@@ -1,0 +1,221 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Classes &mdash; lab_tracker 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="lab_tracker 1.0 documentation" href="index.html" />
+    <link rel="next" title="Models" href="models.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">lab_tracker 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-lab_tracker.classes"></span><div class="section" id="classes">
+<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="lab_tracker.classes.History">
+<em class="property">class </em><tt class="descclassname">lab_tracker.classes.</tt><tt class="descname">History</tt><a class="headerlink" href="#lab_tracker.classes.History" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="lab_tracker.classes.History.get">
+<tt class="descname">get</tt><big>(</big><em>subject_identifier</em>, <em>order_desc=False</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all values as a ordered queryset for a given subject_identifier.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.get_as_list">
+<tt class="descname">get_as_list</tt><big>(</big><em>subject_identifier</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.get_as_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all values as a list in ascending chronological order for a given subject_identifier.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.get_as_string">
+<tt class="descname">get_as_string</tt><big>(</big><em>subject_identifier</em>, <em>mapped=True</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.get_as_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a subject&#8217;s qualitative values joined as a string in ascending chronological order.</p>
+<p>If mapped is True and a value_map is defined, map is inverted and a string of values is generated from the map.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.get_current_value">
+<tt class="descname">get_current_value</tt><big>(</big><em>subject_identifier</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.get_current_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns only the most current value for a given subject_identifier.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.get_prep">
+<tt class="descname">get_prep</tt><big>(</big><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.get_prep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple of (test_code, test_key) where test_code may be a list.</p>
+<dl class="docutils">
+<dt>This method defines:</dt>
+<dd>test_code: a list of test_codes to search for in <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt>.
+test_key: the common key for all instances of the HistoryModel for the subclass.</dd>
+</dl>
+<p>Users should override this.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.get_value_map_prep">
+<tt class="descname">get_value_map_prep</tt><big>(</big><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.get_value_map_prep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary that may be used to map values for storage in the <tt class="xref py py-class docutils literal"><span class="pre">HistoryModel</span></tt> to value formats used in <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt> model.</p>
+<p>Format {given this value: store this value}.</p>
+<p>This is useful if update_prep adds results that are not described in the same format as the <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt> model.</p>
+<dl class="docutils">
+<dt>For example:</dt>
+<dd>{&#8216;A&#8217;: &#8216;POS&#8217;, &#8216;B&#8217;: NEG} will store POS and NEG given A, B. POS, NEG is how it is stored in the <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt> model.</dd>
+</dl>
+<p>Also, the map is inverted to generate a string of values using this map returning &#8216;AB&#8217; instead of &#8216;POSNEG&#8217;.</p>
+<p>Users may override.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.update_history_model">
+<tt class="descname">update_history_model</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.update_history_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates or Updates HistoryModel using get_or_create with kwargs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.update_now">
+<tt class="descname">update_now</tt><big>(</big><em>subject_identifier</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.update_now" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just updates the history values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.History.update_prep">
+<tt class="descname">update_prep</tt><big>(</big><em>subject_identifier</em>, <em>test_key</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.History.update_prep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the HistoryModel if the user has other sources to include.</p>
+<p>Users may override.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lab_tracker.classes.SiteTracker">
+<em class="property">class </em><tt class="descclassname">lab_tracker.classes.</tt><tt class="descname">SiteTracker</tt><a class="headerlink" href="#lab_tracker.classes.SiteTracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Registers tuples of (model_cls, history) from modules with a tracker module (tracker.py).</p>
+<dl class="method">
+<dt id="lab_tracker.classes.SiteTracker.autodiscover">
+<tt class="descname">autodiscover</tt><big>(</big><big>)</big><a class="headerlink" href="#lab_tracker.classes.SiteTracker.autodiscover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discovers tracker modules in your apps.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_tracker.classes.SiteTracker.register">
+<tt class="descname">register</tt><big>(</big><em>model_cls</em>, <em>history</em><big>)</big><a class="headerlink" href="#lab_tracker.classes.SiteTracker.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers tuples of (model_cls, history) from modules with a tracker module (tracker.py).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>model_cls: a model class that</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p>The global <cite>tracker</cite> is an instance of <a class="reference internal" href="#lab_tracker.classes.SiteTracker" title="lab_tracker.classes.SiteTracker"><tt class="xref py py-class docutils literal"><span class="pre">SiteTracker</span></tt></a> which is referred to in the <tt class="file docutils literal"><span class="pre">tracker.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">SubjectHivResult</span><span class="p">,</span> <span class="n">HivHistory</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="next chapter">Models</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/classes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">lab_tracker 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, erik van widenfelt.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
