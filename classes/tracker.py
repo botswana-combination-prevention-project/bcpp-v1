@@ -2,17 +2,17 @@ from lab_clinic_api.models import ResultItem
 from lab_tracker.models import HistoryModel
 
 
-class History(object):
+class Tracker(object):
 
     def __init__(self):
         self.value_map = self._get_value_map()
 
     def update_now(self, subject_identifier):
-        """Just updates the history values."""
+        """Just updates the history values using existing data for this subject."""
         self._update(subject_identifier)
 
     def get(self, subject_identifier, order_desc=False):
-        """Returns all values as a ordered queryset for a given subject_identifier."""
+        """Returns all values as a ordered queryset."""
         order_by = 'value_datetime'
         if order_desc:
             order_by = '-{0}'.format(order_by)
@@ -20,7 +20,7 @@ class History(object):
         return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=test_key).order_by(order_by)
 
     def get_current_value(self, subject_identifier):
-        """Returns only the most current value for a given subject_identifier."""
+        """Returns only the most current value."""
         queryset = self.get(subject_identifier, True)
         if queryset:
             return queryset[0].value
@@ -28,7 +28,7 @@ class History(object):
             return None
 
     def get_as_list(self, subject_identifier):
-        """Returns all values as a list in ascending chronological order for a given subject_identifier."""
+        """Returns all values as a list in ascending chronological order."""
         queryset = self.get(subject_identifier)
         return [qs.value for qs in queryset]
 
@@ -107,6 +107,20 @@ class History(object):
     def _get_value_map(self):
         """Gets and returns a value_map if one has been defined."""
         return self.get_value_map_prep()
+
+    def update_history_model_with_instance(self, subject_identifier, value, value_datetime, test_key, test_code):
+        """Updates the history model using a instance."""
+        defaults = {'value': self.value_map[value]}
+        history_model, created = HistoryModel.objects.get_or_create(
+            subject_identifier=subject_identifier,
+            test_key=test_key,
+            test_code=test_code,
+            value_datetime=value_datetime,
+            defaults=defaults)
+        if not created:
+            if value:
+                history_model.result = self.value_map[value]
+                history_model.save()
 
     def update_history_model(self, **kwargs):
         """ Creates or Updates HistoryModel using get_or_create with kwargs."""

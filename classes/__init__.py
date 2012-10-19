@@ -1,2 +1,2 @@
-from lab_tracker.classes.site_tracker import SiteTracker, tracker
-from history import History
+from lab_tracker.classes.site_lab_tracker import SiteLabTracker, lab_tracker
+from tracker import Tracker
