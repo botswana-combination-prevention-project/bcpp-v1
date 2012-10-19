@@ -2,7 +2,7 @@ from lab_clinic_api.models import ResultItem
 from lab_tracker.models import HistoryModel
 
 
-class Tracker(object):
+class LabTracker(object):
 
     def __init__(self):
         self.value_map = self._get_value_map()

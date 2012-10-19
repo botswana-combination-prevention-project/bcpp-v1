@@ -31,7 +31,7 @@ Add the following to your :file:`settings.py`::
 
 For each subject type you wish to track, create a subclass of :class:`History`::
 
-    class HivHistory(History):
+    class HivTracker(LabTracker):
     
         def get_value_map_prep(self):
             SubjectHivResultOption = get_model('mochudi_subject', 'subjecthivresultoption')
