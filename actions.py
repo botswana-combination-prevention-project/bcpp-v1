@@ -39,23 +39,3 @@ def print_requisition_label(modeladmin, request, requisitions):
                                  'cannot be printed until the specimen is '
                                  'received.'.format(requisition.requisition_identifier,))
 print_requisition_label.short_description = "LABEL: print requisition label"
-
-
-def print_dispensing_label(modeladmin, request, dispensings):
-#    if not modeladmin.label_template_name:
-#        raise ImproperlyConfigured('{0} attribute \'label_template_name\' must be set. '
-#                                   'Got None.'.format(unicode(modeladmin.__class__.__name__)))
-    for dispensing in dispensings:
-        model_label = DispensingLabel()
-        try:
-            model_label.print_label(
-                request,
-                dispensing,
-                dispensing.copies,
-                dispensing.identifier
-                )
-        except PrinterException as e:
-            messages.add_message(request, messages.ERROR, e.value)
-
-
-print_dispensing_label.short_description = "LABEL: print dispensing label"
