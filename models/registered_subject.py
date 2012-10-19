@@ -113,7 +113,7 @@ class RegisteredSubject(BaseSubject):
     history = AuditTrail()
 
     def natural_key(self):
-        return self.identity
+        return (self.identity, self.first_name, self.dob, self.initials,)
 
     def is_serialized(self):
         return super(RegisteredSubject, self).is_serialized(True)
@@ -133,4 +133,4 @@ class RegisteredSubject(BaseSubject):
         app_label = 'bhp_registration'
         verbose_name = 'Registered Subject'
         ordering = ['subject_identifier', ]
-        #unique_together = (('first_name', 'dob', 'initials'),)
+        unique_together = (('identity', 'first_name', 'dob', 'initials'),)
