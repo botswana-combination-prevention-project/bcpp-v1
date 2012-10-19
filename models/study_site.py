@@ -1,5 +1,6 @@
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
+from bhp_variables.managers import StudySiteManager
 
 
 class StudySite(BaseUuidModel):
@@ -7,6 +8,8 @@ class StudySite(BaseUuidModel):
     site_code = models.CharField(max_length=4, unique=True)
 
     site_name = models.CharField(max_length=35, unique=True)
+
+    objects = StudySiteManager()
 
     def natural_key(self):
         return (self.site_code, )
