@@ -1,0 +1,144 @@
+from bhp_visit_tracking.classes import VisitModelHelper
+from lab_clinic_api.models import ResultItem
+from lab_tracker.models import HistoryModel
+
+
+class LabTracker(object):
+
+    def __init__(self):
+        # label in HistoryModel for this class's records
+        self.history_filter = None
+        # test codes to filter ResultItem on
+        self.resultitem_test_code = None
+        # test code to use for tracker model results
+        self.tracker_test_code = None
+
+    def get_value_map_prep(self):
+        """Returns a dictionary that may be used to map values for storage in the :class:`HistoryModel` to value formats used in :class:`ResultItem` model.
+
+            Format {given this value: store this value}.
+
+            This is useful if update_prep adds results that are not described in the same format as the :class:`ResultItem` model.
+
+            For example:
+                {'A': 'POS', 'B': NEG} will store POS and NEG given A, B. POS, NEG is how it is stored in the :class:`ResultItem` model.
+
+            Also, the map is inverted to generate a string of values using this map returning 'AB' instead of 'POSNEG'.
+
+            Users may override."""
+        return {}
+
+    def update(self, subject_identifier):
+        """Updates the HistoryModel with the subject's values found in all the tracker models and ResultItem."""
+        self._update_from_tracker_models(subject_identifier)
+        self._update_from_result_item(subject_identifier)
+
+    def update_with_tracker_instance(self, instance):
+        """Updates the history model given a tracker model instance.
+
+        Note that the tracker model must define the get_*** methods below.
+        """
+        self._update_history_model(
+            instance.get_subject_identifier(),
+            self._get_tracker_test_code(),
+            self._get_tracker_result_value(instance),
+            instance.get_result_datetime(),
+            )
+
+    def _update_from_tracker_models(self, subject_identifier):
+        for model in self.models:
+            try:
+                options = {'{visit_field}__appointment__registered_subject__subject_identifier'.format(visit_field=VisitModelHelper().get_fieldname_from_cls(model)): subject_identifier}
+            except:
+                options = {'registered_subject__subject_identifier': subject_identifier}
+            try:
+                queryset = model.objects.filter(**options)
+            except:
+                AttributeError('Lab Tracker model {0} must have a key to either a visit model or RegisteredSubject'.format(model._meta.object_name))
+            for instance in queryset:
+                self.update_with_instance(instance)
+
+    def _update_history_model(self, subject_identifier, test_code, value, value_datetime):
+        """Inserts or Updates the history model using a using get_or_create() with the given criteria."""
+        history_model, created = HistoryModel.objects.get_or_create(
+            test_key=self._get_history_filter(),
+            subject_identifier=subject_identifier,
+            test_code=test_code,
+            value_datetime=value_datetime,
+            default={'value': value})
+        if not created:
+            history_model.value = value
+            history_model.save()
+
+    def _update_from_result_item(self, subject_identifier):
+        """Updates the history model from values in ResultItem for this subject."""
+        for result_item in ResultItem.objects.filter(result__subject_identifier=subject_identifier, test_code__code__in=self._get_resultitem_test_codes()):
+            self._update_history_model(subject_identifier, result_item.test_code.code, result_item.result_item_value, result_item.result_item_datetime)
+
+    def get_history(self, subject_identifier, order_desc=False):
+        """Returns all values in the history model for this subject as an ordered queryset."""
+        order_by = 'value_datetime'
+        if order_desc:
+            order_by = '-{0}'.format(order_by)
+        self._update(subject_identifier)
+        return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=self._get_history_filter()).order_by(order_by)
+
+    def get_current_value(self, subject_identifier):
+        """Returns only the most current value."""
+        queryset = self.get_history(subject_identifier, True)
+        if queryset:
+            return queryset[0].value
+        else:
+            return None
+
+    def get_history_as_list(self, subject_identifier):
+        """Returns all values as a list in ascending chronological order."""
+        queryset = self.get_history(subject_identifier)
+        return [qs.value for qs in queryset]
+
+    def get_history_as_string(self, subject_identifier, mapped=True):
+        """Returns a subject's qualitative values joined as a string in ascending chronological order.
+
+        If mapped is True and a value_map is defined, map is inverted and a string of values is generated from the map."""
+        if not self.value_map:
+            mapped = False
+        retlst = []
+        inv_value_map = {}
+        lst = self.get_history_as_list(subject_identifier)
+        if mapped:
+            for k, v in self.value_map.iteritems():
+                inv_value_map[v] = inv_value_map.get(v, [])
+                inv_value_map[v].append(k)
+        for l in lst:
+            if mapped:
+                retlst.append(inv_value_map[l][0].lower())
+            else:
+                retlst.append(l)
+        return ''.join(retlst)
+
+    def _get_resultitem_test_code(self):
+        """Returns a tuple of test codes that appear in ResultItem and are of interest to this tracker."""
+        if not self.resultitem_test_code:
+            raise AttributeError('Class attribute \'resultitem_test_code\' cannot be None. Should be a test code or tuple of test codes.')
+        if not isinstance(self.resultitem_test_code, (list, tuple)):
+            self.resultitem_test_code = (self.resultitem_test_code, )
+        return self.resultitem_test_code
+
+    def _get_tracker_test_code(self):
+        if not self.tracker_test_code:
+            raise AttributeError('Class attribute \'tracker_test_code\' cannot be None. Should be the test code used for tracker model results')
+        return self.tracker_test_code
+
+    def _get_history_filter(self):
+        """Returns a history_filter or 'name' to group values in the history model for this class."""
+        return self._get_tracker_test_code()
+
+    def _get_tracker_result_value(self, instance):
+        """Returns a value mapped for the tracker model if a map exists.
+
+        Qualitative values must be translated to how they appear in ResultItem."""
+        result_value_map = self.get_value_map_prep(instance._meta.object_name.lower())
+        if result_value_map:
+            return result_value_map.get(instance.get_result_value())
+        else:
+            return instance.get_result_value()
