@@ -13,34 +13,27 @@ class NotRegistered(Exception):
 
 
 class SiteLabTracker(object):
-    """Registers tuples of (model_cls, history) from modules with a lab_tracker module (lab_tracker.py)."""
+    """Registers from modules with a lab_tracker module (lab_tracker.py)."""
     def __init__(self):
-        self._registry = {}
+        self._registry = []
 
-    def register(self, model_cls, history):
-        if model_cls._meta.object_name in self._registry.keys():
-            if self._registry[model_cls._meta.object_name] == (model_cls, history):
-                raise AlreadyRegistered('The class %s is already registered' % model_cls._meta.object_name)
-        self._registry[model_cls._meta.object_name] = (model_cls, history)
+    def register(self, lab_tracker_cls):
+        if lab_tracker_cls in self._registry:
+            raise AlreadyRegistered('The class %s is already registered' % lab_tracker_cls)
+        self._registry.append(lab_tracker_cls)
 
-    def get(self, key):
-        return self._registry.get(key)
-
-    def iteritems(self):
-        return self._registry.iteritems()
-
-    def itervalues(self):
-        return self._registry.itervalues()
+    def all(self):
+        return self._registry
 
     def autodiscover(self):
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             try:
                 before_import_registry = copy.copy(lab_tracker._registry)
-                import_module('%s.tracker' % app)
+                import_module('%s.lab_tracker' % app)
             except:
                 lab_tracker._registry = before_import_registry
-                if module_has_submodule(mod, 'tracker'):
+                if module_has_submodule(mod, 'lab_tracker'):
                     raise
 # A global to contain all tracker instances from modules
 lab_tracker = SiteLabTracker()
