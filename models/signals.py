@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import lab_tracker
 
 
 @receiver(post_save, weak=False, dispatch_uid="tracker_on_post_save")

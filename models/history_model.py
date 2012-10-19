@@ -12,4 +12,4 @@ class HistoryModel(BaseUuidModel):
     objects = models.Manager()
 
     class Meta:
-        app_label = 'lab_tracker'
+        app_label = 'bhp_lab_tracker'

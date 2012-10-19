@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from bhp_visit_tracking.classes import VisitModelHelper
 from lab_clinic_api.models import ResultItem
-from lab_tracker.models import HistoryModel
+from bhp_lab_tracker.models import HistoryModel
 
 
 class LabTracker(object):

@@ -1,4 +1,4 @@
-from lab_tracker.classes import LabTracker
+from tracker import LabTracker
 
 
 class HivLabTracker(LabTracker):
