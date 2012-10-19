@@ -1,5 +1,6 @@
 from django.db import models
 from base_model import BaseModel
+from bhp_base_model.managers import BaseListManager
 
 
 class BaseListModel(BaseModel):
@@ -43,6 +44,7 @@ class BaseListModel(BaseModel):
         editable=False,
         default='1.0',
         )
+    objects = BaseListManager()
 
     def __unicode__(self):
         return self.name
@@ -58,3 +60,4 @@ class BaseListModel(BaseModel):
     class Meta:
         abstract = True
         ordering = ['display_index', 'name']
+        unique_together = (('name', ))
