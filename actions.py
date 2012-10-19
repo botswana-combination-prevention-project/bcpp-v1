@@ -1,9 +1,7 @@
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
-from lab_barcode.exceptions import PrinterException
 from lab_barcode.models import LabelPrinter
 from lab_barcode.classes import Label, QuerysetLabel
-from ph_dispenser.classes import DispensingLabel
 
 
 def print_test_label(modeladmin, request, queryset):
