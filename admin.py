@@ -28,7 +28,7 @@ class ReceiveAdmin(AutocompleteAdmin, MyModelAdmin):
 #                pass
 #        return result
 
-    list_display = ('patient', 'drawn_datetime', 'receive_datetime')
+    list_display = ('receive_identifier', 'patient', 'drawn_datetime', 'receive_datetime')
     search_fields = ('receive_identifier', 'patient__subject_identifier')
     list_filter = ('drawn_datetime', 'receive_datetime')
 admin.site.register(Receive, ReceiveAdmin)
