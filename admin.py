@@ -54,5 +54,6 @@ class ResultAdmin(AutocompleteAdmin, MyModelAdmin):
     search_fields = ('result_identifier', 'release_status', 'receive_identifier', 'subject_identifier')
     list_filter = ('release_status', 'result_datetime', 'release_status')
     list_per_page = 15
+    
 admin.site.register(Result, ResultAdmin)
 
