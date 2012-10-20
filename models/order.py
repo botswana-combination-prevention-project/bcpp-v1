@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from lab_order.models import BaseOrder
 from aliquot import Aliquot
 from panel import Panel
-from result_item import ResultItem
 
 
 class Order(BaseOrder):
@@ -24,6 +23,7 @@ class Order(BaseOrder):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
+        from result_item import ResultItem
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
         self.receive_identifier = self.aliquot.receive_identifier
         # update status
