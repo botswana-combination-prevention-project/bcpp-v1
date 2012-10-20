@@ -9,6 +9,18 @@ from lab_result_item.classes import ResultItemFlag
 
 class BaseResultItem(BaseUuidModel):
 
+    """
+
+    result_item = ResultItem.objects.create(
+        test_code=
+        result_item_value
+        result_item_value_as_float=
+        result_item_quantifier
+        result_item_datetime)
+    result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag = ResultItemFlag().calculate(result_item)
+
+    """
+
     result_item_value = models.CharField(
         verbose_name='Result',
         max_length=25,
