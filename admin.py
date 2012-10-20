@@ -17,17 +17,18 @@ class ReceiveAdmin(AutocompleteAdmin, MyModelAdmin):
         else:
             return self.readonly_fields
 
-    def change_view(self, request, object_id, extra_context=None):
-
-        result = super(ReceiveAdmin, self).change_view(request, object_id, extra_context)
-        if request.GET.get('return_object') == 'result':
-            try:
-                result = Result.objects.get(pk=request.GET.get('object_id'))
-                result['Location'] = result.get_document_url()
-            except:
-                pass
-        return result
+#    def change_view(self, request, object_id, extra_context=None):
+#
+#        result = super(ReceiveAdmin, self).change_view(request, object_id, extra_context)
+#        if request.GET.get('return_object') == 'result':
+#            try:
+#                result = Result.objects.get(pk=request.GET.get('object_id'))
+#                result['Location'] = result.get_document_url()
+#            except:
+#                pass
+#        return result
 
     list_display = ('patient', 'drawn_datetime', 'receive_datetime')
-
+    search_fields = ('receive_identifier', 'patient__subject_identifier')
+    list_filter = ('drawn_datetime', 'receive_datetime')
 admin.site.register(Receive, ReceiveAdmin)
