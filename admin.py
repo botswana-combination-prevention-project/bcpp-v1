@@ -53,8 +53,9 @@ admin.site.register(AliquotCondition, AliquotConditionAdmin)
 
 
 class PanelAdmin(BaseModelAdmin):
-    list_display = ('name', 'edc_name')
+    list_display = ('name', 'edc_name', 'panel_type')
     filter_horizontal = ("test_code", )
+    list_filter = ('panel_type', )
 admin.site.register(Panel, PanelAdmin)
 
 
