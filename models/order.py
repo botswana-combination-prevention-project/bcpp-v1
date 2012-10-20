@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from lab_order.models import BaseOrder
 from aliquot import Aliquot
 from panel import Panel
+from result_item import ResultItem
 
 
 class Order(BaseOrder):
@@ -25,6 +26,13 @@ class Order(BaseOrder):
     def save(self, *args, **kwargs):
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
         self.receive_identifier = self.aliquot.receive_identifier
+        # update status
+        # TODO: this needs to consider "partial" status based on the testcodes that are defined
+        # in the panel.
+        if ResultItem.objects.filter(result__order=self):
+            self.status = 'COMPLETE'
+        else:
+            self.status = 'PENDING'
         super(Order, self).save(*args, **kwargs)
 
     def to_receive(self):
