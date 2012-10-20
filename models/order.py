@@ -29,7 +29,7 @@ class Order(BaseOrder):
         # update status
         # TODO: this needs to consider "partial" status based on the testcodes that are defined
         # in the panel.
-        if ResultItem.objects.filter(result__order=self):
+        if ResultItem.objects.filter(result__order=self) or self.panel.panel_type == 'STORAGE':
             self.status = 'COMPLETE'
         else:
             self.status = 'PENDING'
