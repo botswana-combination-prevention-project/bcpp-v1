@@ -32,7 +32,7 @@ class ResultItemAdmin(AutocompleteAdmin, MyModelAdmin):
             return self.readonly_fields
 
     list_display = ('result', 'test_code', 'result_item_value', 'validation_status', 'result_item_datetime', 'result_item_operator', 'result_item_source_reference')
-    search_fields = ['result__result_identifier', 'test_code__code', 'test_code__name', 'result_item_source_reference', ]
+    search_fields = ['result__result_identifier', 'test_code__code', 'test_code__name', 'result_item_source_reference', 'result__order__aliquot__receive__receive_identifier']
     list_filter = ('validation_status', 'test_code', 'result_item_datetime', 'modified')
     list_per_page = 15
 admin.site.register(ResultItem, ResultItemAdmin)
