@@ -70,11 +70,11 @@ class Dmis(BaseDmis):
             logger.info('    reset validation in L23 for id = {l23_id}'.format(l23_id=l23_id[0]))
             cnxn.commit()
             # delete on django_lis
-            for order in Order.objects.using('lab_api').filter(aliquot_receive_receive_identifier=receive_identifier):
+            for order in Order.objects.using('lab_api').filter(aliquot__receive__receive_identifier=receive_identifier):
                 logger.info('    deleted order on DJANGO-LIS for {0}. Order pk={1}.'.format(receive_identifier, order.pk))
                 order.delete()
             # delete on EDC
-            for order in Order.objects.filter(aliquot_receive_receive_identifier=receive_identifier):
+            for order in Order.objects.filter(aliquot__receive__receive_identifier=receive_identifier):
                 logger.info('    deleted order on EDC for {0}. Order pk={1}.'.format(receive_identifier, order.pk))
                 order.delete()
             # flag for reimport
