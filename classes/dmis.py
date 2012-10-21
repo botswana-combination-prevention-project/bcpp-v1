@@ -59,15 +59,15 @@ class Dmis(BaseDmis):
         if not l23_id:
             logger.error('Invalid criteria. Cannot find validation information in L23 with this criteria.\n')
         else:
-            logger.info('    l23 id is {l23_id}'.format(l23_id=l23_id))
+            logger.info('    l23 id is {l23_id}'.format(l23_id=l23_id[0]))
             sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '.format(receive_identifier=receive_identifier))
             logger.info('    deleted results in L21 for {receive_identifier}'.format(receive_identifier=receive_identifier))
             cursor.execute(str(sql))
             sql = ('UPDATE lab23responseq001x0 '
                    'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
-                   'WHERE id={l23_id}'.format(l23_id=l23_id))
+                   'WHERE id={l23_id}'.format(l23_id=l23_id[0]))
             cursor.execute(str(sql))
-            logger.info('    reset validation in L23 for id = {l23_id}'.format(l23_id=l23_id))
+            logger.info('    reset validation in L23 for id = {l23_id}'.format(l23_id=l23_id[0]))
             logger.info('Done. Validated results have been deleted and validation information reset on the DMIS for :\n'
                         '    batch: {batch_id}\n'
                         '    result set: {resultset_id}\n'
