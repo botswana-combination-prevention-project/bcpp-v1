@@ -14,7 +14,8 @@ class Command(BaseCommand):
             * --unlock <lock_name>
             * --import
             * --show-history <lock_name>
-            * --unvalidate_on_dmis <receive_identifier> <batch> <resultset>
+            * --unvalidate_on_dmis <batch> <resultset> <receive_identifier> <receive_identifier> ...
+            * --flag_for_reimport <receive_identifier> <receive_identifier> ...
     """
     args = ('lock --list-locks <lock_name> --unlock <lock_name> --import '
             '--show-history <lock_name>')
@@ -24,41 +25,46 @@ class Command(BaseCommand):
             action='store_true',
             dest='list-locked',
             default=False,
-            help=('List all locks.')),
+            help=('Lists all locks.')),
          )
     option_list += (
         make_option('--unlock',
             action='store_true',
             dest='unlock',
             default=False,
-            help=('Unlock for given lock name.')),
+            help=('Unlocks for given lock name.')),
         )
     option_list += (
         make_option('--import',
             action='store_true',
             dest='import',
             default=False,
-            help=('Initiate import of labs from dmis into django-lis.')),
+            help=('Initiates import of labs from dmis into django-lis.')),
         )
     option_list += (
         make_option('--unvalidate_on_dmis',
             action='store_true',
             dest='unvalidate_on_dmis',
             default=False,
-            help=('Unvalidate a sample on the dmis (you will need to revalidate). \nWArning: deletes results in LAB21 on the receive identifier.')),
+            help=('Unvalidates a sample on the dmis (you will need to revalidate). \nWArning: deletes results in LAB21 on the receive identifier.')),
+        )
+    option_list += (
+        make_option('--flag_for_reimport',
+            action='store_true',
+            dest='flag_for_reimport',
+            default=False,
+            help=('Flags a sample for re-import into the django-lis by updating the modified date to today.')),
         )
     option_list += (
         make_option('--show-history',
             action='store_true',
             dest='show_history',
             default=False,
-            help=('Show history of data import for lock name.')),
+            help=('Shows history of data import for lock name.')),
         )
 
     def handle(self, *args, **options):
-        #if not args:
-        #    raise CommandError('Try --help for a list of valid options')
-        #args = list(args)
+
         if not args:
             args = [None]
         db = 'lab_api'
@@ -73,6 +79,9 @@ class Command(BaseCommand):
             self.import_from_dmis(db)
         elif options['unvalidate_on_dmis']:
             self.unvalidate_on_dmis(db, args)
+        elif options['flag_for_reimport']:
+            for receive_identifier in args:
+                self.flag_for_reimport(db, receive_identifier)
         elif options['show_history']:
             for lock_name in args:
                 self.show_history(db, dmis_lock, lock_name)
@@ -85,10 +94,18 @@ class Command(BaseCommand):
         dmis.import_from_dmis(protocol=settings.PROJECT_NUMBER,
                               import_as_new=import_as_new)
 
-    def unvalidate_on_dmis(self, db, args):
+    def flag_for_reimport(self, db, receive_identifier):
+        """Flags a sample for re-import into the django-lis by updating the modified date to today."""
         dmis = Dmis(db)
-        receive_identifier, batch_id, resultset_id = args
-        dmis.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id)
+        dmis.flag_for_reimport(db, receive_identifier)
+
+    def unvalidate_on_dmis(self, db, args):
+        """Unvalidates a sample on the dmis and flags for re-import."""
+        dmis = Dmis(db)
+        batch_id, resultset_id = args.pop(0), args.pop(0)
+        for receive_identifier in args:
+            if not dmis.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id):
+                break
 
     def unlock(self, dmis_lock, lock_name):
         """ Unlocks for a given lock."""

@@ -67,14 +67,24 @@ class Dmis(BaseDmis):
                    'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
                    'WHERE id={l23_id}'.format(l23_id=l23_id[0]))
             cursor.execute(str(sql))
-            cnxn.commit()
             logger.info('    reset validation in L23 for id = {l23_id}'.format(l23_id=l23_id[0]))
+            cnxn.commit()
+            self.flag_for_reimport(receive_identifier)
             logger.info('Done. Validated results have been deleted and validation information reset on the DMIS for :\n'
                         '    batch: {batch_id}\n'
                         '    result set: {resultset_id}\n'
                         '    identifier: {receive_identifier}\n'
                         'You now need to re-validate the result on the DMIS '
                         'and re-run import_dmis --import.'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
+        return True
+
+    def flag_for_reimport(self, receive_identifier):
+        cnxn = pyodbc.connect(self.dmis_data_source)
+        cursor = cnxn.cursor()
+        sql = ('UPDATE lab01response SET datelastmodified=getdate() WHERE pid=pid=\'{receive_identifier}\''.format(receive_identifier=receive_identifier))
+        cursor.execute(str(sql))
+        cnxn.commit()
+        logger.info('    touched receive record to trigger re-import to django-lis')
 
     def import_from_dmis(self, **kwargs):
         """Fetches a result from receiving up to the result items.
