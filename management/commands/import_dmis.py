@@ -46,14 +46,16 @@ class Command(BaseCommand):
             action='store_true',
             dest='unvalidate_on_dmis',
             default=False,
-            help=('Unvalidates a sample on the dmis (you will need to revalidate). \nWArning: deletes results in LAB21 on the receive identifier.')),
+            help=('Unvalidates a sample on the dmis (you will need to revalidate). \nWarning: deletes results in LAB21 on the '
+                  'receive identifier and not the result_guid. Arguments: <batch> <resultset> <receive_identifier> <receive_identifier> ...')),
         )
     option_list += (
         make_option('--flag_for_reimport',
             action='store_true',
             dest='flag_for_reimport',
             default=False,
-            help=('Flags a sample for re-import into the django-lis by updating the modified date to today.')),
+            help=('Flags a sample for re-import into the django-lis by updating the modified date to today.'
+                  'Arguments: <receive_identifier> <receive_identifier> ...')),
         )
     option_list += (
         make_option('--show-history',

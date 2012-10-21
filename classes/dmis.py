@@ -74,8 +74,9 @@ class Dmis(BaseDmis):
                         '    batch: {batch_id}\n'
                         '    result set: {resultset_id}\n'
                         '    identifier: {receive_identifier}\n'
-                        'You now need to re-validate the result on the DMIS '
-                        'and re-run import_dmis --import.'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
+                        'You now need to re-validate the result on the DMIS and wait for the DMIS to send the result to LAB21.\n'
+                        'Once the result is flagged as sent on the validation page, '
+                        're-run import_dmis --import.'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
         return True
 
     def flag_for_reimport(self, receive_identifier):
