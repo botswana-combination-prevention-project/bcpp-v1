@@ -42,11 +42,11 @@ class Dmis(BaseDmis):
 
     def unvalidate_on_dmis(self, db, receive_identifier, batch_id, resultset_id):
         if not re.match('[A-Z]{2}[0-9]{5}', receive_identifier):
-            raise TypeError('Invalid receive_identifier format. Must be format AA99999.')
+            raise TypeError('Invalid receive_identifier format. Must be format AA99999.Got {0}'.format(receive_identifier))
         if not re.match('\d+', batch_id):
-            raise TypeError('Invalid batch_id format. Must be format an integer.')
+            raise TypeError('Invalid batch_id format. Must be format an integer. Got {0}'.format(batch_id))
         if not re.match('\d+', resultset_id):
-            raise TypeError('Invalid resultset_id format. Must be format an integer.')
+            raise TypeError('Invalid resultset_id format. Must be format an integer. Got {0}'.format(resultset_id))
         logger.info('Unvalidating...')
         sql = ('SELECT l23d.id FROM lab23response as l23 '
                'LEFT JOIN lab23responseq001x0 AS l23d ON l23.q001x0=l23d.qid1x0 '
