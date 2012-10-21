@@ -51,7 +51,9 @@ class Order(BaseOrder):
             # this IF is here because i cannot figure out how this aliquot condition crept in
             # somewhere on the import id=10 instead of short_name=10??
             if self.aliquot.aliquot_condition.short_name == '4294967287':
-                self.aliquot.aliquot_condition = aliquot_condition_ok
+                aliquot = self.aliquot
+                aliquot.aliquot_condition = aliquot_condition_ok
+                aliquot.save()
                 logger.warning('Changing aliquot condition from 4294967287 to 10')
         if not self.aliquot.aliquot_condition:
             self.status = 'ERROR'

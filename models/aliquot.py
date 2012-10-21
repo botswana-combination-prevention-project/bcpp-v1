@@ -28,6 +28,16 @@ class Aliquot(BaseAliquot):
     def save(self, *args, **kwargs):
         self.subject_identifier = self.receive.registered_subject.subject_identifier
         self.receive_identifier = self.receive.receive_identifier
+        if AliquotCondition.objects.filter(short_name='10'):
+            aliquot_condition_ok = AliquotCondition.objects.get(short_name='10')
+        else:
+            raise TypeError('AliquotCondition must have at least one entry that has short_name=10 for condition is OK. Got None')
+        if self.aliquot_condition:
+            # TODO: fix this...
+            # this IF is here because i cannot figure out how this aliquot condition crept in
+            # somewhere on the import id=10 instead of short_name=10??
+            if self.aliquot_condition.short_name == '4294967287':
+                self.aliquot_condition = aliquot_condition_ok
         super(Aliquot, self).save(*args, **kwargs)
 
     def drawn(self):
