@@ -13,7 +13,8 @@ class Command(BaseCommand):
             * --list-locks <lock_name>
             * --unlock <lock_name>
             * --import
-            * --show-history <lock_name>'
+            * --show-history <lock_name>
+            * --unvalidate_on_dmis <receive_identifier> <batch> <resultset>
     """
     args = ('lock --list-locks <lock_name> --unlock <lock_name> --import '
             '--show-history <lock_name>')
@@ -39,14 +40,13 @@ class Command(BaseCommand):
             default=False,
             help=('Initiate import of labs from dmis into django-lis.')),
         )
-#    option_list += (
-#        make_option('--import_as_new',
-#            action='store_true',
-#            dest='import_as_new',
-##            default=False,
-##            help=('Initiate import of labs from dmis into django-lis. '
-#                  'Force listed models to be recreated')),
-#        )
+    option_list += (
+        make_option('--unvalidate_on_dmis',
+            action='store_true',
+            dest='unvalidate_on_dmis',
+            default=False,
+            help=('Unvalidate a sample on the dmis (you will need to revalidate).')),
+        )
     option_list += (
         make_option('--show-history',
             action='store_true',
@@ -71,11 +71,9 @@ class Command(BaseCommand):
                 self.unlock(dmis_lock, lock_name)
         elif options['import']:
             self.import_from_dmis(db)
-#        elif options['import_as_new']:
-#            import_as_new = []
-#            for model_name in args:
-#                import_as_new.append(model_name)
-#            self.import_from_dmis(db, import_as_new)
+        elif options['unvalidate_on_dmis']:
+            receive_identifier, batch_id, resultset_id = args
+            self.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id)
         elif options['show_history']:
             for lock_name in args:
                 self.show_history(db, dmis_lock, lock_name)

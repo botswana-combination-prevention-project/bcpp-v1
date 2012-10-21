@@ -40,6 +40,40 @@ class Dmis(BaseDmis):
         self.lab_db = lab_db
         self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
 
+    def unvalidate_on_dmis(self, db, receive_identifier, batch_id, resultset_id):
+        if not re.match('[A-Z]{2}[0-9]{5}', receive_identifier):
+            raise TypeError('Invalid receive_identifier format. Must be format AA99999.')
+        if not re.match('\d+', batch_id):
+            raise TypeError('Invalid batch_id format. Must be format an integer.')
+        if not re.match('\d+', resultset_id):
+            raise TypeError('Invalid resultset_id format. Must be format an integer.')
+        sql = ('SELECT l23d.id FROM lab23response as l23 '
+               'LEFT JOIN lab23responseq001x0 AS l23d ON l23.q001x0=l23d.qid1x0 '
+               'WHERE batchid={batch_id} '
+               'AND l23.pid={resultset_id} '
+               'AND l23d.bhhrl_ref=\'{receive_identifier}\' ')
+        cnxn = pyodbc.connect(self.dmis_data_source)
+        cursor = cnxn.cursor()
+        if not cursor.execute(str(sql)).fetchone():
+            logger.error('Invalid criteria. Cannot find validation information in L23 with this criteria.\n')
+        else:
+            sql = ('DECLARE @id int '
+                   'SELECT @id=l23d.id FROM lab23response as l23 '
+                   'LEFT JOIN lab23responseq001x0 AS l23d ON l23.q001x0=l23d.qid1x0 '
+                   'WHERE batchid={batch_id} '
+                   'AND l23.pid={resultset_id} '
+                   'AND l23d.bhhrl_ref=\'{receive_identifier}\' '
+                   'DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '
+                   'UPDATE lab23responseq001x0',
+                   'SET  datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
+                   'WHERE id=@id'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
+            cursor.execute(str(sql))
+            logger.info('Result has been unvalidated on the DMIS for :\n'
+                        '    batch: {batch_id}\n'
+                        '    result set: {resultset_id}\n'
+                        '    identifier: {receive_identifier}\n'
+                        'Re-validate the result on the DMIS and re-run import_dmis --import.')
+
     def import_from_dmis(self, **kwargs):
         """Fetches a result from receiving up to the result items.
 
