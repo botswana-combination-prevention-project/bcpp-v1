@@ -165,6 +165,8 @@ class Lis(object):
                     receive = Receive.objects.get(receive_identifier=lis_aliquot.receive.receive_identifier)
                     aliquot = self._import_model(lis_aliquot, Aliquot, 'aliquot_identifier',
                                                  exclude_fields=None, receive=receive)
+                    if aliquot.aliquot_condition.pk == '10':
+                        TypeError('Invalid ')
                     modified_aliquots.remove(aliquot.aliquot_identifier)
             logger.info('    Orders...')
             for lis_order in LisOrder.objects.using(self.db).filter(order_identifier__in=modified_orders):
