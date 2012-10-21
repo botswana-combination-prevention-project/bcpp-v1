@@ -30,12 +30,12 @@ class Order(BaseOrder):
         # TODO: this needs to consider "partial" status based on the testcodes that are defined
         # in the panel.
         if ResultItem.objects.filter(result__order=self) or self.panel.panel_type == 'STORAGE':
-            if self.receive.sample_condition == '10':
+            if self.aliquot.aliquot_condition.short_name == '10':
                 self.status = 'COMPLETE'
             else:
                 # has results or is stored but condition is not 10
                 self.status = 'ERROR'
-        elif self.receive.sample_condition != '10':
+        elif self.aliquot.aliquot_condition.short_name != '10':
             self.status = 'REDRAW'
         else:
             self.status = 'PENDING'
