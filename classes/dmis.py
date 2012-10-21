@@ -67,6 +67,7 @@ class Dmis(BaseDmis):
                    'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
                    'WHERE id={l23_id}'.format(l23_id=l23_id[0]))
             cursor.execute(str(sql))
+            cnxn.commit()
             logger.info('    reset validation in L23 for id = {l23_id}'.format(l23_id=l23_id[0]))
             logger.info('Done. Validated results have been deleted and validation information reset on the DMIS for :\n'
                         '    batch: {batch_id}\n'
