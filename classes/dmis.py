@@ -51,7 +51,7 @@ class Dmis(BaseDmis):
                'LEFT JOIN lab23responseq001x0 AS l23d ON l23.q001x0=l23d.qid1x0 '
                'WHERE batchid={batch_id} '
                'AND l23.pid={resultset_id} '
-               'AND l23d.bhhrl_ref=\'{receive_identifier}\' ')
+               'AND l23d.bhhrl_ref=\'{receive_identifier}\' '.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
         cnxn = pyodbc.connect(self.dmis_data_source)
         cursor = cnxn.cursor()
         if not cursor.execute(str(sql)).fetchone():
