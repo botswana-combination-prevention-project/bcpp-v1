@@ -54,25 +54,20 @@ class Dmis(BaseDmis):
                'AND l23d.bhhrl_ref=\'{receive_identifier}\' '.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
         cnxn = pyodbc.connect(self.dmis_data_source)
         cursor = cnxn.cursor()
-        if not cursor.execute(str(sql)).fetchone():
+        l23_id = cursor.execute(str(sql)).fetchone()
+        if not l23_id:
             logger.error('Invalid criteria. Cannot find validation information in L23 with this criteria.\n')
         else:
-            sql = ('DECLARE @id int '
-                   'SELECT @id=l23d.id FROM lab23response as l23 '
-                   'LEFT JOIN lab23responseq001x0 AS l23d ON l23.q001x0=l23d.qid1x0 '
-                   'WHERE batchid={batch_id} '
-                   'AND l23.pid={resultset_id} '
-                   'AND l23d.bhhrl_ref=\'{receive_identifier}\' '
-                   'DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '
+            sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\'; '
                    'UPDATE lab23responseq001x0',
                    'SET  datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
-                   'WHERE id=@id'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
+                   'WHERE id={l23_id}'.format(l23_id=l23_id, receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
             cursor.execute(str(sql))
-            logger.info('Result has been unvalidated on the DMIS for :\n'
+            logger.info('Validated results have been deleted and validation information reset on the DMIS for :\n'
                         '    batch: {batch_id}\n'
                         '    result set: {resultset_id}\n'
                         '    identifier: {receive_identifier}\n'
-                        'Re-validate the result on the DMIS and re-run import_dmis --import.')
+                        'You now need to re-validate the result on the DMIS and re-run import_dmis --import.')
 
     def import_from_dmis(self, **kwargs):
         """Fetches a result from receiving up to the result items.

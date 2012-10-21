@@ -45,7 +45,7 @@ class Command(BaseCommand):
             action='store_true',
             dest='unvalidate_on_dmis',
             default=False,
-            help=('Unvalidate a sample on the dmis (you will need to revalidate).')),
+            help=('Unvalidate a sample on the dmis (you will need to revalidate). \nWArning: deletes results in LAB21 on the receive identifier.')),
         )
     option_list += (
         make_option('--show-history',
