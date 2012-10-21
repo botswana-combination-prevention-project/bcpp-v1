@@ -61,7 +61,7 @@ class Dmis(BaseDmis):
             sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '
                    'UPDATE lab23responseq001x0 ',
                    'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
-                   'WHERE id={l23_id}'.format(l23_id=l23_id, receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
+                   'WHERE id={l23_id}'.format(l23_id=l23_id, receive_identifier=receive_identifier))
             cursor.execute(str(sql))
             logger.info('Validated results have been deleted and validation information reset on the DMIS for :\n'
                         '    batch: {batch_id}\n'
