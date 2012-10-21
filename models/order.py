@@ -29,7 +29,9 @@ class Order(BaseOrder):
         # update status
         # TODO: this needs to consider "partial" status based on the testcodes that are defined
         # in the panel.
-        if ResultItem.objects.filter(result__order=self) or self.panel.panel_type == 'STORAGE':
+        if not self.aliquot.aliquot_condition:
+            self.status = 'ERROR'
+        elif ResultItem.objects.filter(result__order=self) or self.panel.panel_type == 'STORAGE':
             if self.aliquot.aliquot_condition.short_name == '10':
                 self.status = 'COMPLETE'
             else:
