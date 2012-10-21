@@ -734,11 +734,13 @@ class Dmis(BaseDmis):
                                                                                 result_guid=result.dmis_result_guid)
             cursor_result = cnxn2.cursor()
             cursor_result.execute(str(sql))
-            validated = False
-            for row in cursor_result:
-                validated = _validate_l23(result_item, row)
-            if not validated:
-                logger.warning('      WARNING: validation failed for item %s %s (%s)' % (result_item.test_code.code, result_item.result_item_source, result_item.validation_status))
+            if cursor_result.execute(str(sql)).fetchone():
+                _validate_l23(result_item, row)
+            else:
+                # the cursor did not return anything becuase
+                # the guid on L21 is not the same as the guid on l23, so
+                # the validation information / result has been manipulated somehow.
+                logger.warning('      WARNING: validation failed for item %s %s (%s). L23 guid does not match L21 guid!!' % (result_item.test_code.code, result_item.result_item_source, result_item.validation_status))
         else:
             raise TypeError('Unknown case result_item_source in dmis validation. '
                             'Got \'%s\' from result %s.' % (result.resultitem.result_item_source, result))
