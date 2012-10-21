@@ -1,0 +1,186 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Classes &mdash; lab_import_dmis 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="lab_import_dmis 1.0 documentation" href="index.html" />
+    <link rel="next" title="Models" href="models.html" />
+    <link rel="prev" title="Troubleshooting" href="troubleshooting.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="troubleshooting.html" title="Troubleshooting"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">lab_import_dmis 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-lab_import_dmis.classes"></span><div class="section" id="classes">
+<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="lab_import_dmis.classes.Dmis">
+<em class="property">class </em><tt class="descclassname">lab_import_dmis.classes.</tt><tt class="descname">Dmis</tt><big>(</big><em>lab_db</em>, <em>debug=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.Dmis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lab_import_dmis.classes.base_dmis.BaseDmis</span></tt></p>
+<dl class="method">
+<dt id="lab_import_dmis.classes.Dmis.import_from_dmis">
+<tt class="descname">import_from_dmis</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.Dmis.import_from_dmis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches a result from receiving up to the result items.</p>
+<dl class="docutils">
+<dt>..note:: DMIS has a relational problem with the receiving table LAB01 where multiple</dt>
+<dd>receiving records can exist for the same primary sample. To correct this on import,
+the receiving record is only imported once while other records (order, result, resultitem)
+are imported complete. Also, LAB21 is not really an order record but there is a 1-many
+relationship between LAB21 and LAB21ResponseQ001x0 which kind of makes it look like one
+even though it was not created by the user as an order. In this script, we create an order and
+a result instance with the same data (LAB21). Result item instances are attached to
+the result instance.</dd>
+</dl>
+<p>if you need to fix a result not importing because it is stuck in a validated batch</p>
+<blockquote>
+<div><p>declare &#64;id int
+declare &#64;pid varchar(7)
+declare &#64;batchid varchar(25)</p>
+<p>set &#64;batchid=&#8216;500971&#8217;
+set &#64;pid=&#8217;UY55139&#8217;</p>
+<p>select &#64;id=l23d.id from lab23response as l23
+left join lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0
+where <a class="reference external" href="mailto:batchid=&#37;&#52;&#48;batchid">batchid=<span>&#64;</span>batchid</a> and <a class="reference external" href="mailto:l23d&#46;bhhrl_ref=&#37;&#52;&#48;pid">l23d<span>&#46;</span>bhhrl_ref=<span>&#64;</span>pid</a></p>
+<p>delete from lab21response where <a class="reference external" href="mailto:pid=&#37;&#52;&#48;pid">pid=<span>&#64;</span>pid</a>
+update lab23responseq001x0 set  datesent=convert(datetime,&#8216;09/09/9999&#8217;,103), result_accepted=-9 where <a class="reference external" href="mailto:id=&#37;&#52;&#48;id">id=<span>&#64;</span>id</a></p>
+</div></blockquote>
+<p>for auto validated data just change the datelastmodified to force re-import:</p>
+<blockquote>
+<div>declare &#64;pid varchar(7)
+set &#64;pid=&#8217;UY55139&#8217;
+update lab01response set datelastmodified=now() where <a class="reference external" href="mailto:pid=&#37;&#52;&#48;pid">pid=<span>&#64;</span>pid</a></div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_import_dmis.classes.Dmis.unvalidate_on_dmis">
+<tt class="descname">unvalidate_on_dmis</tt><big>(</big><em>db</em>, <em>receive_identifier</em>, <em>batch_id</em>, <em>resultset_id</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.Dmis.unvalidate_on_dmis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unvalidates a result on the DMIS for L23 path (use carefully).</p>
+<dl class="docutils">
+<dt>Additionally:</dt>
+<dd><ul class="first last simple">
+<li>deletes any results in LAB21 for this receive_identifier. This might be problematic
+if result spans more than one LAB21/LAB21D record set.</li>
+<li>deletes all orders on this receive identifier on django-lis</li>
+<li>deletes all orders for this receive identifier on EDC</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lab_import_dmis.classes.DmisLock">
+<em class="property">class </em><tt class="descclassname">lab_import_dmis.classes.</tt><tt class="descname">DmisLock</tt><big>(</big><em>db</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.DmisLock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_lock.classes.base_lock.BaseLock</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="lab_import_dmis.classes.ImportHistory">
+<em class="property">class </em><tt class="descclassname">lab_import_dmis.classes.</tt><tt class="descname">ImportHistory</tt><big>(</big><em>db</em>, <em>lock_name</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.ImportHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_lock.classes.base_import_history.BaseImportHistory</span></tt></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="troubleshooting.html"
+                        title="previous chapter">Troubleshooting</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="next chapter">Models</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/classes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="troubleshooting.html" title="Troubleshooting"
+             >previous</a> |</li>
+        <li><a href="index.html">lab_import_dmis 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, erik van widenfelt.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

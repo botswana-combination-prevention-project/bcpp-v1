@@ -716,6 +716,11 @@ class Dmis(BaseDmis):
         return primary_aliquot
 
     def _create_or_update_aliquotcondition(self, condition):
+        # sorry for this but i cannot figure out how this condition value
+        # got in ????
+        if condition == '4294967287':
+            condition = '10'
+            logger.warning('Invalid condition 4294967287, setting to 10.')
         if AliquotCondition.objects.using(self.lab_db).values('pk').filter(short_name__exact=condition):
             aliquot_condition = AliquotCondition.objects.using(self.lab_db).get(short_name__exact=condition)
         else:
