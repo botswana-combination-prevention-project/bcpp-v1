@@ -81,7 +81,7 @@ class Dmis(BaseDmis):
     def flag_for_reimport(self, receive_identifier):
         cnxn = pyodbc.connect(self.dmis_data_source)
         cursor = cnxn.cursor()
-        sql = ('UPDATE lab01response SET datelastmodified=getdate() WHERE pid=pid=\'{receive_identifier}\''.format(receive_identifier=receive_identifier))
+        sql = ('UPDATE lab01response SET datelastmodified=getdate() WHERE pid=\'{receive_identifier}\''.format(receive_identifier=receive_identifier))
         cursor.execute(str(sql))
         cnxn.commit()
         logger.info('    touched receive record to trigger re-import to django-lis')
