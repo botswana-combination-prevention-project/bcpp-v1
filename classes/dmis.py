@@ -59,7 +59,7 @@ class Dmis(BaseDmis):
             logger.error('Invalid criteria. Cannot find validation information in L23 with this criteria.\n')
         else:
             sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '
-                   'UPDATE lab23responseq001x0 ',
+                   'UPDATE lab23responseq001x0 '
                    'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
                    'WHERE id={l23_id}'.format(l23_id=l23_id, receive_identifier=receive_identifier))
             cursor.execute(str(sql))
