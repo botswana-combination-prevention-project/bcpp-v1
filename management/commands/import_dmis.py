@@ -102,6 +102,7 @@ class Command(BaseCommand):
     def unvalidate_on_dmis(self, db, args):
         """Unvalidates a sample on the dmis and flags for re-import."""
         dmis = Dmis(db)
+        args = [i for i in args]
         batch_id, resultset_id = args.pop(0), args.pop(0)
         for receive_identifier in args:
             if not dmis.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id):
