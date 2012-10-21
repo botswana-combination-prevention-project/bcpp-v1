@@ -47,7 +47,7 @@ class Command(BaseCommand):
             dest='unvalidate_on_dmis',
             default=False,
             help=('Unvalidates a sample on the dmis (you will need to revalidate). \nWarning: deletes results in LAB21 on the '
-                  'receive identifier and not the result_guid. Arguments: <batch> <resultset> <receive_identifier> <receive_identifier> ...')),
+                  'receive identifier and not the result_guid so use carefully. Arguments: <batch> <resultset> <receive_identifier> <receive_identifier> ...')),
         )
     option_list += (
         make_option('--flag_for_reimport',

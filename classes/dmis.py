@@ -41,6 +41,15 @@ class Dmis(BaseDmis):
         self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
 
     def unvalidate_on_dmis(self, db, receive_identifier, batch_id, resultset_id):
+        """Unvalidates a result on the DMIS for L23 path (use carefully).
+
+        Additionally:
+            * deletes any results in LAB21 for this receive_identifier. This might be problematic
+              if result spans more than one LAB21/LAB21D record set.
+            * deletes all orders on this receive identifier on django-lis
+            * deletes all orders for this receive identifier on EDC
+        """
+
         if not re.match('[A-Z]{2}[0-9]{5}', receive_identifier):
             raise TypeError('Invalid receive_identifier format. Must be format AA99999.Got {0}'.format(receive_identifier))
         if not re.match('\d+', batch_id):
@@ -83,7 +92,7 @@ class Dmis(BaseDmis):
                         '    batch: {batch_id}\n'
                         '    result set: {resultset_id}\n'
                         '    identifier: {receive_identifier}\n'
-                        'You now need to re-validate the result on the DMIS and wait for the DMIS to send the result to LAB21.\n'
+                        'You now need to re-validate the result on the DMIS and wait for the DMIS to send the result to LAB21 (10-15min).\n'
                         'Once the result is flagged as sent on the validation page, '
                         're-run import_dmis --import.'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
         return True
