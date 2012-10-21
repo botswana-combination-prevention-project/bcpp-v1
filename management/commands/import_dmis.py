@@ -54,7 +54,7 @@ class Command(BaseCommand):
             action='store_true',
             dest='flag_for_reimport',
             default=False,
-            help=('Flags a sample for re-import into the django-lis by updating the modified date to today.'
+            help=('Flags a sample for re-import into the django-lis by updating the modified date to today. '
                   'Arguments: <receive_identifier> <receive_identifier> ...')),
         )
     option_list += (
