@@ -1,8 +1,18 @@
+import logging
 from django.db import models
 from django.core.urlresolvers import reverse
 from lab_order.models import BaseOrder
 from aliquot import Aliquot
 from panel import Panel
+
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class Order(BaseOrder):
@@ -24,20 +34,35 @@ class Order(BaseOrder):
 
     def save(self, *args, **kwargs):
         from result_item import ResultItem
+        from aliquot_condition import AliquotCondition
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
         self.receive_identifier = self.aliquot.receive_identifier
         # update status
         # TODO: this needs to consider "partial" status based on the testcodes that are defined
         # in the panel.
+        # this record MUST exist
+        if AliquotCondition.objects.filter(short_name='10'):
+            aliquot_condition_ok = AliquotCondition.objects.get(short_name='10')
+        else:
+            raise TypeError('AliquotCondition must have at least one entry that has short_name=10 for condition is OK. Got None')
+
+        if self.aliquot.aliquot_condition:
+            # TODO: fix this...
+            # this IF is here because i cannot figure out how this aliquot condition crept in
+            # somewhere on the import id=10 instead of short_name=10??
+            if self.aliquot.aliquot_condition.short_name == '4294967287':
+                self.aliquot.aliquot_condition = aliquot_condition_ok
+                logger.warning('Changing aliquot condition from 4294967287 to 10')
         if not self.aliquot.aliquot_condition:
             self.status = 'ERROR'
         elif ResultItem.objects.filter(result__order=self) or self.panel.panel_type == 'STORAGE':
-            if self.aliquot.aliquot_condition.short_name == '10':
+            # test aliquot condition and set the order status
+            if self.aliquot.aliquot_condition == aliquot_condition_ok:
                 self.status = 'COMPLETE'
             else:
                 # has results or is stored but condition is not 10
                 self.status = 'ERROR'
-        elif self.aliquot.aliquot_condition.short_name != '10':
+        elif self.aliquot.aliquot_condition != aliquot_condition_ok:
             self.status = 'REDRAW'
         else:
             self.status = 'PENDING'
