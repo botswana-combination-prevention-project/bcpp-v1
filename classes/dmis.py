@@ -167,6 +167,7 @@ class Dmis(BaseDmis):
                                 resultitem_rows = self._fetch_dmis_resultitem_rows(result.order.order_identifier)
                                 max_validation_datetime = None
                                 max_validation_user = None
+                                # loop thru result items for validation_datetime and get the max datetime
                                 for ritem in resultitem_rows:
                                     result_item = self._create_or_update_resultitem(result, ritem)
                                     result_item = self._validate_result_item(result, result_item)
@@ -180,7 +181,10 @@ class Dmis(BaseDmis):
                                 if max_validation_datetime and max_validation_user:
                                     self._release_result(result, max_validation_datetime, max_validation_user)
                                 else:
-                                    logger.info('    NOT RELEASING {0} resulted on {1}'.format(order.order_identifier, order.order_datetime.strftime("%Y-%m-%d")))
+                                    logger.info('    NOT RELEASING {0} resulted on {1} (datetime:{2}, user:{3})'.format(order.order_identifier,
+                                                                                                                        order.order_datetime.strftime("%Y-%m-%d"),
+                                                                                                                        max_validation_datetime,
+                                                                                                                        max_validation_user))
 
         import_history.finish()
         return None
@@ -665,7 +669,7 @@ class Dmis(BaseDmis):
     def _validate_result_item(self, result, result_item, **kwargs):
         """ Imports result item validation information from the dmis.
 
-        ..note:: For legacy reasons, dmis has more than one approach to capturing validation information. For
+        .. note:: For legacy reasons, dmis has more than one approach to capturing validation information. For
         CD4 results the LAB05 path is used, while for all other results the LAB23 path id used. Additionally, for
         results that are auto validated, like those coming from PSM, the information comes from LAB21 directly.
         """
