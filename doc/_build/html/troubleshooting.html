@@ -57,12 +57,12 @@
   <div class="section" id="troubleshooting">
 <h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
 <p>Sometimes results do not come through from the DMIS.</p>
-<p>Try triggering import by changing the modification datetime on the receiving record.</p>
+<p>First try triggering import by changing the modification datetime on the receiving record.</p>
 <blockquote>
 <div><div class="highlight-python"><div class="highlight"><pre><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">import_dmis</span> <span class="o">--</span><span class="n">flag_for_reimport</span> <span class="o">&lt;</span><span class="n">receive_identifier</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>In the project source folder:</p>
+<p>followed by:</p>
 <div class="highlight-python"><pre>python manage.py import_dmis --import</pre>
 </div>
 </div></blockquote>

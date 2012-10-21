@@ -3,15 +3,15 @@ Troubleshooting
 
 Sometimes results do not come through from the DMIS. 
 
-Try triggering import by changing the modification datetime on the receiving record.
+First try triggering import by changing the modification datetime on the receiving record.
                  
   .. code-block:: python
      
      python manage.py import_dmis --flag_for_reimport <receive_identifier>
-    
-  In the project source folder::
-  
-    python manage.py import_dmis --import
+     
+  followed by::
+      
+     python manage.py import_dmis --import
 
 
 If that does not work, then a condition exists on the DMIS that this module cannot handle. Here are
