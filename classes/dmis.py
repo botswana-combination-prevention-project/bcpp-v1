@@ -47,6 +47,7 @@ class Dmis(BaseDmis):
             raise TypeError('Invalid batch_id format. Must be format an integer.')
         if not re.match('\d+', resultset_id):
             raise TypeError('Invalid resultset_id format. Must be format an integer.')
+        logger.info('Unvalidating...')
         sql = ('SELECT l23d.id FROM lab23response as l23 '
                'LEFT JOIN lab23responseq001x0 AS l23d ON l23.q001x0=l23d.qid1x0 '
                'WHERE batchid={batch_id} '
@@ -58,12 +59,16 @@ class Dmis(BaseDmis):
         if not l23_id:
             logger.error('Invalid criteria. Cannot find validation information in L23 with this criteria.\n')
         else:
-            sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '
-                   'UPDATE lab23responseq001x0 '
-                   'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
-                   'WHERE id={l23_id}'.format(l23_id=l23_id, receive_identifier=receive_identifier))
+            logger.info('    l23 id is {l23_id}'.format(l23_id=l23_id))
+            sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '.format(receive_identifier=receive_identifier))
+            logger.info('    deleted results in L21 for {receive_identifier}'.format(receive_identifier=receive_identifier))
             cursor.execute(str(sql))
-            logger.info('Validated results have been deleted and validation information reset on the DMIS for :\n'
+            sql = ('UPDATE lab23responseq001x0 '
+                   'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
+                   'WHERE id={l23_id}'.format(l23_id=l23_id))
+            cursor.execute(str(sql))
+            logger.info('    reset validation in L23 for id = {l23_id}'.format(l23_id=l23_id))
+            logger.info('Done. Validated results have been deleted and validation information reset on the DMIS for :\n'
                         '    batch: {batch_id}\n'
                         '    result set: {resultset_id}\n'
                         '    identifier: {receive_identifier}\n'
