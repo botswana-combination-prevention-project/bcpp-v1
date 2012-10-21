@@ -58,9 +58,9 @@ class Dmis(BaseDmis):
         if not l23_id:
             logger.error('Invalid criteria. Cannot find validation information in L23 with this criteria.\n')
         else:
-            sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\'; '
-                   'UPDATE lab23responseq001x0',
-                   'SET  datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
+            sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '
+                   'UPDATE lab23responseq001x0 ',
+                   'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
                    'WHERE id={l23_id}'.format(l23_id=l23_id, receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
             cursor.execute(str(sql))
             logger.info('Validated results have been deleted and validation information reset on the DMIS for :\n'
