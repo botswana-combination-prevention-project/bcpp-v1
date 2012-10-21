@@ -679,6 +679,7 @@ class Dmis(BaseDmis):
             result_item.validation_datetime = result_item.result_item_datetime or result_item.validation_datetime
             result_item.validation_username = 'auto'
             result_item.save()
+            return True
 
         def _validate_l23(result_item, row):
             result_item.result_item_operator = row.operator.strip('BHP\\bhp\\')
@@ -686,9 +687,11 @@ class Dmis(BaseDmis):
             result_item.validation_datetime = row.validation_datetime
             result_item.validation_username = row.validation_username.strip('BHP\\bhp\\')
             result_item.save()
+            return True
 
         def _validate_l5(result_item, row):
             _validate_l23(result_item, row)
+            return True
 
         cnxn2 = pyodbc.connect(self.dmis_data_source)
         cursor_result = cnxn2.cursor()
@@ -731,8 +734,11 @@ class Dmis(BaseDmis):
                                                                                 result_guid=result.dmis_result_guid)
             cursor_result = cnxn2.cursor()
             cursor_result.execute(str(sql))
+            validated = False
             for row in cursor_result:
-                _validate_l23(result_item, row)
+                validated = _validate_l23(result_item, row)
+            if not validated:
+                logger.warning('      WARNING: validation failed for item %s %s (%s)' % (result_item.test_code.code, result_item.result_item_source, result_item.validation_status))
         else:
             raise TypeError('Unknown case result_item_source in dmis validation. '
                             'Got \'%s\' from result %s.' % (result.resultitem.result_item_source, result))
