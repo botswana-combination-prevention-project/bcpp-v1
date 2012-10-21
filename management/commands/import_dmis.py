@@ -99,7 +99,7 @@ class Command(BaseCommand):
     def flag_for_reimport(self, db, receive_identifier):
         """Flags a sample for re-import into the django-lis by updating the modified date to today."""
         dmis = Dmis(db)
-        dmis.flag_for_reimport(db, receive_identifier)
+        dmis.flag_for_reimport(receive_identifier)
 
     def unvalidate_on_dmis(self, db, args):
         """Unvalidates a sample on the dmis and flags for re-import."""
