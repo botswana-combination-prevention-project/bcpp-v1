@@ -72,8 +72,7 @@ class Command(BaseCommand):
         elif options['import']:
             self.import_from_dmis(db)
         elif options['unvalidate_on_dmis']:
-            receive_identifier, batch_id, resultset_id = args
-            self.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id)
+            self.unvalidate_on_dmis(db, args)
         elif options['show_history']:
             for lock_name in args:
                 self.show_history(db, dmis_lock, lock_name)
@@ -85,6 +84,11 @@ class Command(BaseCommand):
         dmis = Dmis(db)
         dmis.import_from_dmis(protocol=settings.PROJECT_NUMBER,
                               import_as_new=import_as_new)
+
+    def unvalidate_on_dmis(self, db, args):
+        dmis = Dmis(db)
+        receive_identifier, batch_id, resultset_id = args
+        dmis.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id)
 
     def unlock(self, dmis_lock, lock_name):
         """ Unlocks for a given lock."""
