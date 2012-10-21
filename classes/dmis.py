@@ -61,8 +61,8 @@ class Dmis(BaseDmis):
         else:
             logger.info('    l23 id is {l23_id}'.format(l23_id=l23_id[0]))
             sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '.format(receive_identifier=receive_identifier))
-            logger.info('    deleted results in L21 for {receive_identifier}'.format(receive_identifier=receive_identifier))
             cursor.execute(str(sql))
+            logger.info('    deleted results in L21 for {receive_identifier}'.format(receive_identifier=receive_identifier))
             sql = ('UPDATE lab23responseq001x0 '
                    'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
                    'WHERE id={l23_id}'.format(l23_id=l23_id[0]))
@@ -72,7 +72,8 @@ class Dmis(BaseDmis):
                         '    batch: {batch_id}\n'
                         '    result set: {resultset_id}\n'
                         '    identifier: {receive_identifier}\n'
-                        'You now need to re-validate the result on the DMIS and re-run import_dmis --import.')
+                        'You now need to re-validate the result on the DMIS '
+                        'and re-run import_dmis --import.'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
 
     def import_from_dmis(self, **kwargs):
         """Fetches a result from receiving up to the result items.
