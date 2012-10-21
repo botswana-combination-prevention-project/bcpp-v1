@@ -733,8 +733,8 @@ class Dmis(BaseDmis):
                    'convert(varchar(36),result_guid)=\'{result_guid}\'').format(code=result_item.test_code.code,
                                                                                 result_guid=result.dmis_result_guid)
             cursor_result = cnxn2.cursor()
-            cursor_result.execute(str(sql))
-            if cursor_result.execute(str(sql)).fetchone():
+            row = cursor_result.execute(str(sql)).fetchone()
+            if row:
                 _validate_l23(result_item, row)
             else:
                 # the cursor did not return anything becuase
