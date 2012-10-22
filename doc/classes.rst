@@ -1,16 +1,23 @@
-.. automodule:: lab_tracker.classes
+.. automodule:: bhp_lab_tracker.classes
 
 Classes
 ================== 
 
-.. autoclass:: lab_tracker.classes.History
+.. autoclass:: bhp_lab_tracker.classes.LabTracker
     :members:    
     :show-inheritance:
 
-.. autoclass:: lab_tracker.classes.SiteTracker
+.. autoclass:: bhp_lab_tracker.classes.SiteLabTracker
     :members:
     :show-inheritance:    
 
-The global `tracker` is an instance of :class:`SiteTracker` which is referred to in the :file:`tracker.py`::
+The global `lab_tracker` is an instance of :class:`SiteLabTracker` which is referred to in the :file:`lab_tracker.py`::
 
-    tracker.register(SubjectHivResult, HivHistory)
+    lab_tracker.register(SubjectHivResult, HivHistory)
+    
+Custom Subclasses of LabTracker
++++++++++++++++++++++++++++++++
+
+.. autoclass:: bhp_lab_tracker.classes.HivLabTracker
+    :members:    
+    :show-inheritance:

@@ -4,7 +4,7 @@ from models import HistoryModel
 
 
 class HistoryModelAdmin(BaseModelAdmin):
-    list_display = ('subject_identifier', 'test_key', 'test_code', 'value', 'value_datetime')
+    list_display = ('subject_identifier', 'group_name', 'test_code', 'value', 'value_datetime')
     search_fields = ('subject_identifier', 'value')
-    list_filter = ('test_key', 'test_code')
+    list_filter = ('group_name', 'test_code')
 admin.site.register(HistoryModel, HistoryModelAdmin)

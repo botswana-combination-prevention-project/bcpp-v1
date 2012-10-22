@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="lab_tracker 1.0 documentation" href="index.html" />
-    <link rel="prev" title="Classes" href="classes.html" /> 
+    <link rel="prev" title="Signals" href="signals.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="classes.html" title="Classes"
+          <a href="signals.html" title="Signals"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">lab_tracker 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -50,13 +50,13 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="models">
+  <span class="target" id="module-bhp_lab_tracker.models"></span><div class="section" id="models">
 <h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="lab_tracker.models.HistoryModel">
-<em class="property">class </em><tt class="descclassname">lab_tracker.models.</tt><tt class="descname">HistoryModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_tracker.models.HistoryModel" title="Permalink to this definition">¶</a></dt>
+<dt id="bhp_lab_tracker.models.HistoryModel">
+<em class="property">class </em><tt class="descclassname">bhp_lab_tracker.models.</tt><tt class="descname">HistoryModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.models.HistoryModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_uuid_model.BaseUuidModel</span></tt></p>
-<p>HistoryModel(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, test_key, test_code, value, value_datetime)</p>
+<p>HistoryModel(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, group_name, test_code, value, value_datetime, source)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -64,15 +64,16 @@
 <tr class="field-odd field"><th class="field-name">Name :</th><td class="field-body"><p class="first">history model</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">lab_tracker_historymodel</p>
+<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">bhp_lab_tracker_historymodel</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>subject_identifier</strong> (<em>CharField</em>) &#8211; Subject identifier</li>
-<li><strong>test_key</strong> (<em>CharField</em>) &#8211; Test key</li>
+<li><strong>group_name</strong> (<em>CharField</em>) &#8211; Group name</li>
 <li><strong>test_code</strong> (<em>CharField</em>) &#8211; Test code</li>
 <li><strong>value</strong> (<em>CharField</em>) &#8211; Value</li>
 <li><strong>value_datetime</strong> (<em>DateTimeField</em>) &#8211; Value datetime</li>
+<li><strong>source</strong> (<em>CharField</em>) &#8211; Source</li>
 </ul>
 </td>
 </tr>
@@ -89,8 +90,8 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="classes.html"
-                        title="previous chapter">Classes</a></p>
+  <p class="topless"><a href="signals.html"
+                        title="previous chapter">Signals</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/models.txt"
@@ -123,7 +124,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="classes.html" title="Classes"
+          <a href="signals.html" title="Signals"
              >previous</a> |</li>
         <li><a href="index.html">lab_tracker 1.0 documentation</a> &raquo;</li> 
       </ul>

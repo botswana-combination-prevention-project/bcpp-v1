@@ -7,4 +7,4 @@ from bhp_lab_tracker.classes import lab_tracker
 def tracker_on_post_save(sender, instance, **kwargs):
     for lab_tracker_cls in lab_tracker.all():
         if sender in lab_tracker_cls.models:
-            lab_tracker_cls.update_with_tracker_instance(instance)
+            lab_tracker_cls().update_with_tracker_instance(instance)

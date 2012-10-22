@@ -1,9 +1,9 @@
 Installation
 ============
 
-Checkout the latest version of :mod:`lab_tracker` into your test environment project folder::
+Checkout the latest version of :mod:`bhp_lab_tracker` into your test environment project folder::
 
-    svn co http://192.168.1.50/svn/lab_tracker
+    svn co http://192.168.1.50/svn/bhp_lab_tracker
 
 
 Add :mod:`lab_tracker` to your project ''settings'' file::
@@ -21,7 +21,7 @@ Add :mod:`lab_tracker` to your project ''settings'' file::
         'audit_trail',
         'bhp_base_model',
         'bhp_common',
-        'lab_tracker',
+        'bhp_lab_tracker',
         ...
         )
 
@@ -31,7 +31,7 @@ Add the following to your :file:`settings.py`::
 
 For each subject type you wish to track, create a subclass of :class:`History`::
 
-    class HivHistory(History):
+    class HivTracker(LabTracker):
     
         def get_value_map_prep(self):
             SubjectHivResultOption = get_model('mochudi_subject', 'subjecthivresultoption')
@@ -58,11 +58,12 @@ For each subject type you wish to track, create a subclass of :class:`History`::
             SubjectHivResult = get_model('mochudi_subject', 'subjecthivresult')
             for subject_hiv_result in SubjectHivResult.objects.filter(subject_visit__appointment__registered_subject__subject_identifier=subject_identifier):
                 defaults = {'value': self.value_map[subject_hiv_result.subject_hiv_result_option.result_option]}
-                history_model, created = HistoryModel.objects.get_or_create(subject_identifier=subject_identifier,
-                                                                            test_key=test_key,
-                                                                            test_code='RELISA',
-                                                                            value_datetime=subject_hiv_result.subject_visit.report_datetime,
-                                                                            defaults=defaults)
+                history_model, created = HistoryModel.objects.get_or_create(
+                    subject_identifier=subject_identifier,
+                    test_key=test_key,
+                    test_code='RELISA',
+                    value_datetime=subject_hiv_result.subject_visit.report_datetime,
+                    defaults=defaults)
                 if not created:
                     if subject_hiv_result.subject_hiv_result_option.result_option:
                         history_model.result = self.value_map[subject_hiv_result.subject_hiv_result_option.result_option]
@@ -83,12 +84,6 @@ A model may have a method like this::
     def hiv_status(self):
         """Updates and returns hiv history using the HivHistory object and
         model but does not update the hsm self.hiv_history attr.
-
-        To update all::
-            >>> for rs in RegisteredSubject.objects.filter(subject_identifier__isnull=False):
-            >>>     for hsm in HouseholdStructureMember.objects.filter(registered_subject=rs, hiv_history__isnull=True):
-            >>>     # print hsm
-            >>>     hsm.save()
         """
         retval = ''
         if self.registered_subject:

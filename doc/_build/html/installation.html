@@ -37,9 +37,6 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="classes.html" title="Classes"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -56,8 +53,8 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>Checkout the latest version of <tt class="xref py py-mod docutils literal"><span class="pre">lab_tracker</span></tt> into your test environment project folder:</p>
-<div class="highlight-python"><pre>svn co http://192.168.1.50/svn/lab_tracker</pre>
+<p>Checkout the latest version of <tt class="xref py py-mod docutils literal"><span class="pre">bhp_lab_tracker</span></tt> into your test environment project folder:</p>
+<div class="highlight-python"><pre>svn co http://192.168.1.50/svn/bhp_lab_tracker</pre>
 </div>
 <p>Add <tt class="xref py py-mod docutils literal"><span class="pre">lab_tracker</span></tt> to your project &#8216;&#8217;settings&#8217;&#8217; file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
@@ -73,7 +70,7 @@
     <span class="s">&#39;audit_trail&#39;</span><span class="p">,</span>
     <span class="s">&#39;bhp_base_model&#39;</span><span class="p">,</span>
     <span class="s">&#39;bhp_common&#39;</span><span class="p">,</span>
-    <span class="s">&#39;lab_tracker&#39;</span><span class="p">,</span>
+    <span class="s">&#39;bhp_lab_tracker&#39;</span><span class="p">,</span>
     <span class="o">...</span>
     <span class="p">)</span>
 </pre></div>
@@ -83,7 +80,7 @@
 </pre></div>
 </div>
 <p>For each subject type you wish to track, create a subclass of <tt class="xref py py-class docutils literal"><span class="pre">History</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">HivHistory</span><span class="p">(</span><span class="n">History</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">HivTracker</span><span class="p">(</span><span class="n">LabTracker</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">get_value_map_prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">SubjectHivResultOption</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s">&#39;mochudi_subject&#39;</span><span class="p">,</span> <span class="s">&#39;subjecthivresultoption&#39;</span><span class="p">)</span>
@@ -110,11 +107,12 @@
         <span class="n">SubjectHivResult</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s">&#39;mochudi_subject&#39;</span><span class="p">,</span> <span class="s">&#39;subjecthivresult&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">subject_hiv_result</span> <span class="ow">in</span> <span class="n">SubjectHivResult</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">subject_visit__appointment__registered_subject__subject_identifier</span><span class="o">=</span><span class="n">subject_identifier</span><span class="p">):</span>
             <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_map</span><span class="p">[</span><span class="n">subject_hiv_result</span><span class="o">.</span><span class="n">subject_hiv_result_option</span><span class="o">.</span><span class="n">result_option</span><span class="p">]}</span>
-            <span class="n">history_model</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">HistoryModel</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">subject_identifier</span><span class="o">=</span><span class="n">subject_identifier</span><span class="p">,</span>
-                                                                        <span class="n">test_key</span><span class="o">=</span><span class="n">test_key</span><span class="p">,</span>
-                                                                        <span class="n">test_code</span><span class="o">=</span><span class="s">&#39;RELISA&#39;</span><span class="p">,</span>
-                                                                        <span class="n">value_datetime</span><span class="o">=</span><span class="n">subject_hiv_result</span><span class="o">.</span><span class="n">subject_visit</span><span class="o">.</span><span class="n">report_datetime</span><span class="p">,</span>
-                                                                        <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">)</span>
+            <span class="n">history_model</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">HistoryModel</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+                <span class="n">subject_identifier</span><span class="o">=</span><span class="n">subject_identifier</span><span class="p">,</span>
+                <span class="n">test_key</span><span class="o">=</span><span class="n">test_key</span><span class="p">,</span>
+                <span class="n">test_code</span><span class="o">=</span><span class="s">&#39;RELISA&#39;</span><span class="p">,</span>
+                <span class="n">value_datetime</span><span class="o">=</span><span class="n">subject_hiv_result</span><span class="o">.</span><span class="n">subject_visit</span><span class="o">.</span><span class="n">report_datetime</span><span class="p">,</span>
+                <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">created</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">subject_hiv_result</span><span class="o">.</span><span class="n">subject_hiv_result_option</span><span class="o">.</span><span class="n">result_option</span><span class="p">:</span>
                     <span class="n">history_model</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_map</span><span class="p">[</span><span class="n">subject_hiv_result</span><span class="o">.</span><span class="n">subject_hiv_result_option</span><span class="o">.</span><span class="n">result_option</span><span class="p">]</span>
@@ -135,12 +133,6 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">hiv_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Updates and returns hiv history using the HivHistory object and</span>
 <span class="sd">    model but does not update the hsm self.hiv_history attr.</span>
-
-<span class="sd">    To update all::</span>
-<span class="sd">        &gt;&gt;&gt; for rs in RegisteredSubject.objects.filter(subject_identifier__isnull=False):</span>
-<span class="sd">        &gt;&gt;&gt;     for hsm in HouseholdStructureMember.objects.filter(registered_subject=rs, hiv_history__isnull=True):</span>
-<span class="sd">        &gt;&gt;&gt;     # print hsm</span>
-<span class="sd">        &gt;&gt;&gt;     hsm.save()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">retval</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="p">:</span>
@@ -192,9 +184,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="classes.html" title="Classes"
              >next</a> |</li>

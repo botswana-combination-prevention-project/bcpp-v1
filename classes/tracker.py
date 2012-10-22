@@ -1,5 +1,4 @@
 from django.core.exceptions import ImproperlyConfigured
-from bhp_visit_tracking.classes import VisitModelHelper
 from lab_clinic_api.models import ResultItem
 from bhp_lab_tracker.models import HistoryModel
 
@@ -7,15 +6,10 @@ from bhp_lab_tracker.models import HistoryModel
 class LabTracker(object):
 
     def __init__(self):
-        # label in HistoryModel for this class's records
-        self.history_filter = None
-        # test codes to filter ResultItem on
-        self.resultitem_test_code = None
-        # test code to use for tracker model results
-        self.tracker_test_code = None
+        pass
 
     def _get_display_map(self):
-        return self.get_display_map()
+        return self.get_display_map_prep()
 
     def get_display_map_prep(self):
         """Returns a dictionary that may be used to map values for storage in the :class:`HistoryModel` to value formats used in :class:`ResultItem` model.
@@ -54,6 +48,7 @@ class LabTracker(object):
         Note that the tracker model must define the get_*** methods below.
         """
         self._update_history_model(
+            instance._meta.object_name.lower(),
             instance.get_subject_identifier(),
             self._get_tracker_test_code(),
             self._get_tracker_result_value(instance),
@@ -61,26 +56,27 @@ class LabTracker(object):
             )
 
     def _update_from_tracker_models(self, subject_identifier):
-        for model in self.models:
-            try:
-                options = {'{visit_field}__appointment__registered_subject__subject_identifier'.format(visit_field=VisitModelHelper().get_fieldname_from_cls(model)): subject_identifier}
-            except:
-                options = {'registered_subject__subject_identifier': subject_identifier}
-            try:
-                queryset = model.objects.filter(**options)
-            except:
-                AttributeError('Lab Tracker model {0} must have a key to either a visit model or RegisteredSubject'.format(model._meta.object_name))
-            for instance in queryset:
-                self.update_with_instance(instance)
+        from bhp_visit_tracking.classes import VisitModelHelper
 
-    def _update_history_model(self, subject_identifier, test_code, value, value_datetime):
+        for model in self.models:
+            visit_field = VisitModelHelper().get_fieldname_from_cls(model)
+            options = {'{visit_field}__appointment__registered_subject__subject_identifier'.format(visit_field=VisitModelHelper().get_fieldname_from_cls(model)): subject_identifier}
+            #options = {'registered_subject__subject_identifier': subject_identifier}
+            queryset = model.objects.filter(**options)
+            #except:
+            #    AttributeError('Lab Tracker model {0} must have a key to either a visit model or RegisteredSubject'.format(model._meta.object_name))
+            for instance in queryset:
+                self.update_with_tracker_instance(instance)
+
+    def _update_history_model(self, source, subject_identifier, test_code, value, value_datetime):
         """Inserts or Updates the history model using a using get_or_create() with the given criteria."""
         history_model, created = HistoryModel.objects.get_or_create(
-            test_key=self._get_history_filter(),
+            source=source,
+            group_name=self._get_group_name(),
             subject_identifier=subject_identifier,
             test_code=test_code,
             value_datetime=value_datetime,
-            default={'value': value})
+            defaults={'value': value})
         if not created:
             history_model.value = value
             history_model.save()
@@ -88,7 +84,7 @@ class LabTracker(object):
     def _update_from_result_item(self, subject_identifier):
         """Updates the history model from values in ResultItem for this subject."""
         for result_item in ResultItem.objects.filter(result__subject_identifier=subject_identifier, test_code__code__in=self._get_resultitem_test_codes()):
-            self._update_history_model(subject_identifier, result_item.test_code.code, result_item.result_item_value, result_item.result_item_datetime)
+            self._update_history_model('resultitem', subject_identifier, result_item.test_code.code, result_item.result_item_value, result_item.result_item_datetime)
 
     def _get_resultitem_test_code(self):
         """Returns a tuple of test codes that appear in ResultItem and are of interest to this tracker."""
@@ -103,27 +99,30 @@ class LabTracker(object):
             raise AttributeError('Class attribute \'tracker_test_code\' cannot be None. Should be the test code used for tracker model results')
         return self.tracker_test_code
 
-    def _get_history_filter(self):
-        """Returns a history_filter or 'name' to group values in the history model for this class."""
-        return self._get_tracker_test_code()
+    def _get_group_name(self):
+        """Returns a group_name or 'name' to group values in the history model for this class."""
+        return self.group_name
 
     def _get_tracker_result_value(self, instance):
         """Returns a value mapped for the tracker model if a map exists.
 
         Qualitative values must be translated to how they appear in ResultItem."""
-        result_value_map = self.get_value_map(instance._meta.object_name.lower())
+        result_value_map = self._get_value_map(instance._meta.object_name.lower())
         if result_value_map:
-            return result_value_map.get(instance.get_result_value())
+            retval = result_value_map.get(instance.get_result_value())
         else:
-            return instance.get_result_value()
+            retval = instance.get_result_value()
+        if not retval:
+            raise ValueError('Tracker value cannot be None. Instance value is {0}, map={1}'.format(instance.get_result_value(), result_value_map))
+        return retval
 
     def get_history(self, subject_identifier, order_desc=False):
         """Returns all values in the history model for this subject as an ordered queryset."""
         order_by = 'value_datetime'
         if order_desc:
             order_by = '-{0}'.format(order_by)
-        self._update(subject_identifier)
-        return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=self._get_history_filter()).order_by(order_by)
+        self.update(subject_identifier)
+        return HistoryModel.objects.filter(subject_identifier=subject_identifier, test_key=self._get_group_name()).order_by(order_by)
 
     def get_current_value(self, subject_identifier):
         """Returns only the most current value."""

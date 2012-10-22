@@ -14,6 +14,7 @@ Contents:
    overview
    installation
    classes
+   signals
    models
 
 

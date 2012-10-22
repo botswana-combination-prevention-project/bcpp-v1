@@ -1,6 +1,8 @@
+.. automodule:: bhp_lab_tracker.models
+
 Models
 ======
 
-.. autoclass:: lab_tracker.models.HistoryModel
+.. autoclass:: bhp_lab_tracker.models.HistoryModel
     :members:  
     :show-inheritance: 
