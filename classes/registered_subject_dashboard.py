@@ -51,6 +51,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_code = None
         self.visit_instance = None  # this is not a model instance!!
         self.visit_model = None
+        self.visit_messages = None
         self.subject_identifier = None
         self._subject_type = None
         self.requisition_model = None
@@ -176,9 +177,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_messages.append(message)
 
     def _prepare_visit_messages(self, visit_code):
-        
         self.context.add(visit_messages=self.visit_messages)
-        return visit_messages
+        return self.visit_messages
 
     def _prepare_scheduled_entry_bucket(self, visit_code):
         """ Gets the scheduled bucket entries using the appointment with instance=0 and adds to context ."""
