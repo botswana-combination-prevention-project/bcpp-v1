@@ -115,6 +115,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._add_or_update_entry_buckets(visit_model_instance)
         self._run_rule_groups(self.subject_identifier, visit_code, visit_model_instance)
         self._prepare_additional_entry_bucket()
+        self._prepare_visit_messages(visit_code)
         self._prepare_scheduled_entry_bucket(visit_code)
         self._prepare_scheduled_lab_bucket(visit_code)
         self._prepare_additional_lab_bucket(visit_code)
@@ -170,6 +171,14 @@ class RegisteredSubjectDashboard(Dashboard):
             return self.appointment_map.get(visit_instance, None)
         else:
             return self.appointment_map
+
+    def add_visit_message(self, message):
+        self.visit_messages.append(message)
+
+    def _prepare_visit_messages(self, visit_code):
+        
+        self.context.add(visit_messages=self.visit_messages)
+        return visit_messages
 
     def _prepare_scheduled_entry_bucket(self, visit_code):
         """ Gets the scheduled bucket entries using the appointment with instance=0 and adds to context ."""

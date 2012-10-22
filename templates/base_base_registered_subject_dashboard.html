@@ -45,7 +45,11 @@
                         {% block visit_instructions %}
                             <PRE>{{ appointment.visit_definition.instruction|wordwrap:80 }}</PRE>
                         {% endblock visit_instructions %}
-                    </td>
+                        {% block visit_messages %}
+                            {% for message in visit_messages %}
+                                <PRE>{{ message|wordwrap:80 }}<BR></PRE>
+                        {% endblock visit_messages %}                    
+                   </td>
                 </tr>
                 {% endif %}
 
