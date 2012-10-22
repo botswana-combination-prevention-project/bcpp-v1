@@ -1,7 +1,7 @@
 from datetime import timedelta
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.core.validators import MinLengthValidator
+from django.core.validators import MaxLengthValidator
 from bhp_visit.utils import get_lower_window_days, get_upper_window_days
 from bhp_visit.models import ScheduleGroup
 from bhp_visit.models import BaseWindowPeriodItem
@@ -12,7 +12,7 @@ class VisitDefinition(BaseWindowPeriodItem):
     """Model to define a visit code, title, windows, schedule_group, etc."""
     code = models.CharField(
         max_length=6,
-        validators=[MinLengthValidator(6)],
+        validators=[MaxLengthValidator(6)],
         db_index=True,
         unique=True)
     title = models.CharField(
