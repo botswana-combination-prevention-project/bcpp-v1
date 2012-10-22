@@ -47,8 +47,11 @@ class VisitModelHelper(object):
         return visit_fk[0].name
 
     def get_visit_model(self, instance):
-        """ given the instance of a model, return the visit model of its app """
+        """ given the instance (or class) of a model, return the visit model of its app """
         for model in get_models(get_app(instance._meta.app_label)):
             if isinstance(model(), BaseVisitTracking):
                 return model
         raise TypeError('Unable to determine the visit model from instance {0} for app {1}'.format(instance._meta.model_name, instance._meta.app_label))
+
+    def get_fieldname_from_cls(self, cls):
+        return self.get_visit_field(cls, self.get_visit_model(cls))
