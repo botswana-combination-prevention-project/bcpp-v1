@@ -9,18 +9,25 @@ class ScheduleGroup(BaseUuidModel):
     """Model that groups membership forms"""
     group_name = models.CharField(
         max_length=25,
-        unique=True)
+        unique=True
+        )
+
     membership_form = models.ForeignKey(MembershipForm)
+
     grouping_key = models.CharField(
         max_length=25,
         null=True,
         blank=True,
         help_text=('may specify a common value to group a number of membership forms so '
-                  'that when one of the group is keyed, the others are no longer shown.'))
+                  'that when one of the group is keyed, the others are no longer shown.')
+        )
+
     comment = models.CharField(
         max_length=25,
         null=True,
-        blank=True)
+        blank=True
+        )
+
     objects = ScheduleGroupManager()
 
     def natural_key(self):

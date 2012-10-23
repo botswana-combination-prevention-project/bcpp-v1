@@ -9,15 +9,23 @@ class MembershipForm(BaseUuidModel):
 
     """Model to list forms to be linked to a ShceduleGroup as "registration" forms to that group"""
 
-    content_type_map = models.OneToOneField(ContentTypeMap, related_name='+')
+    content_type_map = models.OneToOneField(
+        ContentTypeMap,
+        related_name='+'
+        )
+
     category = models.CharField(
         max_length=25,
         default='subject',
         null=True,
-        help_text='In lowercase, this should be a valid subject type (as in registered_subject).')
+        help_text='In lowercase, this should be a valid subject type (as in registered_subject).'
+        )
+
     visible = models.BooleanField(
         default=True,
-        help_text='If not visible on the dashboard, you have to write code to populate it yourself.')
+        help_text='If not visible on the dashboard, you have to write code to populate it yourself.'
+        )
+
     objects = MembershipFormManager()
 
     def natural_key(self):
