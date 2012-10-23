@@ -98,6 +98,8 @@ class Order(BaseOrder):
             msg = 'Warning: this order has been flagged as WITHDRAWN. The result is not valid.'
         elif self.status == 'DUPLICATE':
             msg = 'Warning: this order has been flagged as DUPLICATE. Please resolve.'
+        else:
+            msg = None
         return msg
 
     def to_receive(self):
