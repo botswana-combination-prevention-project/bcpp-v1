@@ -39,7 +39,7 @@ class Dmis(BaseDmis):
         self.debug = debug
         self.lab_db = lab_db
         self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
-    
+
     def import_from_dmis(self, **kwargs):
         """Fetches a result from receiving up to the result items.
 

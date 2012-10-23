@@ -84,7 +84,13 @@ class DmisTools(object):
         return True
 
     def flag_for_reimport(self, receive_identifier):
-        cnxn = pyodbc.connect(self.dmis_data_source)
+        try:
+            cnxn = pyodbc.connect(self.dmis_data_source)
+        except:
+            cnxn = None
+        if not cnxn:
+            logger.warning('Unable to contact DMIS')
+            return None
         cursor = cnxn.cursor()
         sql = ('UPDATE lab01response SET datelastmodified=getdate() WHERE pid=\'{receive_identifier}\''.format(receive_identifier=receive_identifier))
         cursor.execute(str(sql))
@@ -131,9 +137,15 @@ class DmisTools(object):
 
         .. note:: Order identifier is LAB21.id.
         """
-        order_status = order.status
-        cnxn = pyodbc.connect(self.dmis_data_source)
+        try:
+            cnxn = pyodbc.connect(self.dmis_data_source)
+        except:
+            cnxn = None
+        if not cnxn:
+            logger.warning('Unable to contact DMIS')
+            return None
         cursor = cnxn.cursor()
+        order_status = None
         # make sure the order identifier is an integer
         if not re.match('\d+', order.order_identifier):
             logger.info('    invalid order identifier {0}'.format(order.order_identifier))
@@ -147,8 +159,9 @@ class DmisTools(object):
                 if LisOrder.objects.using('lab_api').filter(order_identifier=order.order_identifier).exists():
                     lis_order = LisOrder.objects.using('lab_api').get(order_identifier=order.order_identifier)
                     lis_order.status = order_status
-                    logger.info('    changing order {0} to WITHDRAWN on django-lis.'.format(order.order_identifier))
-                    lis_order.save(using='lab_api')
+                    if save:
+                        logger.info('    changing order {0} to WITHDRAWN on django-lis.'.format(order.order_identifier))
+                        lis_order.save(using='lab_api')
                 if save:
                     # only save if you are not in Order.save()
                     order.status = order_status
