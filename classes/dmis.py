@@ -39,72 +39,7 @@ class Dmis(BaseDmis):
         self.debug = debug
         self.lab_db = lab_db
         self.dmis_data_source = settings.LAB_IMPORT_DMIS_DATA_SOURCE
-
-    def unvalidate_on_dmis(self, db, receive_identifier, batch_id, resultset_id):
-        """Unvalidates a result on the DMIS for L23 path (use carefully).
-
-        Additionally:
-            * deletes any results in LAB21 for this receive_identifier. This might be problematic
-              if result spans more than one LAB21/LAB21D record set.
-            * deletes all orders on this receive identifier on django-lis
-            * deletes all orders for this receive identifier on EDC
-        """
-
-        if not re.match('[A-Z]{2}[0-9]{5}', receive_identifier):
-            raise TypeError('Invalid receive_identifier format. Must be format AA99999.Got {0}'.format(receive_identifier))
-        if not re.match('\d+', batch_id):
-            raise TypeError('Invalid batch_id format. Must be format an integer. Got {0}'.format(batch_id))
-        if not re.match('\d+', resultset_id):
-            raise TypeError('Invalid resultset_id format. Must be format an integer. Got {0}'.format(resultset_id))
-        logger.info('Unvalidating...')
-        sql = ('SELECT l23d.id FROM lab23response as l23 '
-               'LEFT JOIN lab23responseq001x0 AS l23d ON l23.q001x0=l23d.qid1x0 '
-               'WHERE batchid={batch_id} '
-               'AND l23.pid={resultset_id} '
-               'AND l23d.bhhrl_ref=\'{receive_identifier}\' '.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
-        cnxn = pyodbc.connect(self.dmis_data_source)
-        cursor = cnxn.cursor()
-        l23_id = cursor.execute(str(sql)).fetchone()
-        if not l23_id:
-            logger.error('Invalid criteria. Cannot find validation information in L23 with this criteria.\n')
-        else:
-            logger.info('    l23 id is {l23_id}'.format(l23_id=l23_id[0]))
-            sql = ('DELETE FROM lab21response WHERE pid=\'{receive_identifier}\' '.format(receive_identifier=receive_identifier))
-            cursor.execute(str(sql))
-            logger.info('    deleted results in L21 for {receive_identifier}'.format(receive_identifier=receive_identifier))
-            sql = ('UPDATE lab23responseq001x0 '
-                   'SET datesent=convert(datetime,\'09/09/9999\',103), result_accepted=-9 '
-                   'WHERE id={l23_id}'.format(l23_id=l23_id[0]))
-            cursor.execute(str(sql))
-            logger.info('    reset validation in L23 for id = {l23_id}'.format(l23_id=l23_id[0]))
-            cnxn.commit()
-            # delete on django_lis
-            for order in Order.objects.using('lab_api').filter(aliquot__receive__receive_identifier=receive_identifier):
-                logger.info('    deleted order on DJANGO-LIS for {0}. Order pk={1}.'.format(receive_identifier, order.pk))
-                order.delete()
-            # delete on EDC
-            for order in Order.objects.filter(aliquot__receive__receive_identifier=receive_identifier):
-                logger.info('    deleted order on EDC for {0}. Order pk={1}.'.format(receive_identifier, order.pk))
-                order.delete()
-            # flag for reimport
-            self.flag_for_reimport(receive_identifier)
-            logger.info('Done. Validated results have been deleted and validation information reset on the DMIS for :\n'
-                        '    batch: {batch_id}\n'
-                        '    result set: {resultset_id}\n'
-                        '    identifier: {receive_identifier}\n'
-                        'You now need to re-validate the result on the DMIS and wait for the DMIS to send the result to LAB21 (10-15min).\n'
-                        'Once the result is flagged as sent on the validation page, '
-                        're-run import_dmis --import.'.format(receive_identifier=receive_identifier, batch_id=batch_id, resultset_id=resultset_id))
-        return True
-
-    def flag_for_reimport(self, receive_identifier):
-        cnxn = pyodbc.connect(self.dmis_data_source)
-        cursor = cnxn.cursor()
-        sql = ('UPDATE lab01response SET datelastmodified=getdate() WHERE pid=\'{receive_identifier}\''.format(receive_identifier=receive_identifier))
-        cursor.execute(str(sql))
-        cnxn.commit()
-        logger.info('    touched receive record to trigger re-import to django-lis')
-
+    
     def import_from_dmis(self, **kwargs):
         """Fetches a result from receiving up to the result items.
 

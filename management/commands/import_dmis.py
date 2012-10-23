@@ -1,7 +1,7 @@
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from lab_import_dmis.classes import DmisLock, Dmis, ImportHistory
+from lab_import_dmis.classes import DmisLock, Dmis, ImportHistory, DmisTools
 
 
 class Command(BaseCommand):
@@ -98,16 +98,16 @@ class Command(BaseCommand):
 
     def flag_for_reimport(self, db, receive_identifier):
         """Flags a sample for re-import into the django-lis by updating the modified date to today."""
-        dmis = Dmis(db)
-        dmis.flag_for_reimport(receive_identifier)
+        dmis_tools = DmisTools(db)
+        dmis_tools.flag_for_reimport(receive_identifier)
 
     def unvalidate_on_dmis(self, db, args):
         """Unvalidates a sample on the dmis and flags for re-import."""
-        dmis = Dmis(db)
+        dmis_tools = DmisTools(db)
         args = [i for i in args]
         batch_id, resultset_id = args.pop(0), args.pop(0)
         for receive_identifier in args:
-            if not dmis.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id):
+            if not dmis_tools.unvalidate_on_dmis(db, receive_identifier, batch_id, resultset_id):
                 break
 
     def unlock(self, dmis_lock, lock_name):
