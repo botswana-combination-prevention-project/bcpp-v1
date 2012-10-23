@@ -5,6 +5,12 @@ from django.contrib.contenttypes.models import ContentType
 
 class ContentTypeMapManager(models.Manager):
 
+    def get_by_natural_key(self, app_label, model):
+        return self.get(
+            app_label=app_label,
+            model=model
+            )
+ 
     def sync(self):
 
         """Syncs content type map foreignkey with django's ContentType id.
