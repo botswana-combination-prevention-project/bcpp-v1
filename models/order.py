@@ -2,8 +2,10 @@ import logging
 from django.db import models
 from django.core.urlresolvers import reverse
 from lab_order.models import BaseOrder
-#from lab_clinic_helper.classes import OrderHelper
+from lab_import_dmis.classes import DmisTools
+
 from aliquot import Aliquot
+from aliquot_condition import AliquotCondition
 from panel import Panel
 
 
@@ -41,8 +43,55 @@ class Order(BaseOrder):
         super(Order, self).save(*args, **kwargs)
 
     def get_status(self):
-        #return OrderHelper().get_status(self)
-        return None
+        """Gets the status of this order based on a few conditions.
+
+            * COMPLETE: either the result items exist or it is a storage panel
+            * PENDING: no results
+            * ERROR: has results but condition is not OK
+            * REDRAW: no results, condition not OK
+            * WITHDRAWN: no results AND no longer exists on LIS
+
+        .. todo:: a PARTIAL status is not yet handled.
+        """
+
+        # update status
+        # TODO: this needs to consider "partial" status based on the testcodes that are defined
+        # in the panel.
+        # get the condition OK aliquot condition instance
+        result_item_cls = models.get_model(self._meta.app_label, 'resultitem')
+        aliquot_condition_ok = AliquotCondition.objects.get_condition_ok()
+        if self.aliquot.aliquot_condition:
+            # TODO: fix this...
+            # this IF is here because i cannot figure out how this aliquot condition crept in
+            # somewhere on the import id=10 instead of short_name=10??
+            if self.aliquot.aliquot_condition.short_name == '4294967287':
+                aliquot = self.aliquot
+                aliquot.aliquot_condition = aliquot_condition_ok
+                aliquot.save()
+                logger.warning('Changing aliquot condition from 4294967287 to 10')
+        if not self.aliquot.aliquot_condition:
+            # how can this be ??
+            status = 'ERROR'
+        elif result_item_cls.objects.filter(result__order=self) or self.panel.panel_type == 'STORAGE':
+            # test aliquot condition and set the order status
+            if self.aliquot.aliquot_condition == aliquot_condition_ok:
+                status = 'COMPLETE'
+            else:
+                # has results or is stored but condition is not 10
+                # was this meant to be a storage panel?
+                status = 'ERROR'
+        elif self.aliquot.aliquot_condition != aliquot_condition_ok:
+            #self.clear_orphan_result()
+            status = 'REDRAW'
+        else:
+            #self.clear_orphan_result()
+            status = 'PENDING'
+        # regardless of status, check that order was not deleted on DMIS
+        dmis_tools = DmisTools()
+        if dmis_tools.is_withdrawn_order(self):
+            # other aspects of result visibility must consider this value
+            status = 'WITHDRAWN'
+        return status
 
     def to_receive(self):
         return '<a href="/admin/lab_clinic_api/receive/?q={receive_identifier}">receive</a>'.format(receive_identifier=self.aliquot.receive.receive_identifier)

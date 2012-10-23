@@ -4,7 +4,7 @@ from bhp_base_model.classes import BaseModelAdmin
 from forms import ResultForm, ResultItemForm
 from models import Receive, Aliquot, Result, ResultItem, Review, Order, Panel, TestCode
 from models import AliquotType, TestCodeGroup, AliquotCondition
-from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed
+from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed, refresh_order_status
 
 
 class ReceiveAdmin(BaseModelAdmin):
@@ -36,6 +36,7 @@ class OrderAdmin(BaseModelAdmin):
     search_fields = ('aliquot__receive__registered_subject__subject_identifier', "order_identifier", "aliquot__receive__receive_identifier")
     list_filter = ('status', 'import_datetime', 'aliquot__aliquot_condition', 'panel__edc_name')
     list_per_page = 15
+    actions = [refresh_order_status, ]
 
     def get_readonly_fields(self, request, obj):
         return ['aliquot', 'status', 'order_datetime', 'comment']

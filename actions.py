@@ -1,4 +1,4 @@
-from models import Result, ResultItem
+from models import Result, ResultItem, Order
 
 
 def recalculate_grading(modeladmin, request, queryset):
@@ -45,3 +45,20 @@ def unflag_as_reviewed(modeladmin, request, queryset):
             qs.review.save()
             qs.save()
 unflag_as_reviewed.short_description = "Review: flag as NOT reviewed"
+
+
+def refresh_order_status(modeladmin, request, queryset):
+        updated = 0
+        tot = 1
+        for qs in queryset:
+            if isinstance(qs, Order):
+                tot += 1
+                status = qs.get_status()
+                if status != qs.status:
+                    qs.save()
+                    updated += 1
+        if tot == 0:
+            modeladmin.message_user(request, 'Nothing to do. Must be a selection of Orders.')
+        else:
+            modeladmin.message_user(request, 'Updated status on {0}/{1} Orders.'.format(updated, tot))
+refresh_order_status.short_description = "Orders: refresh status"
