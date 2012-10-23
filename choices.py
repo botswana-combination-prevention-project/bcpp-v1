@@ -4,4 +4,5 @@ ORDER_STATUS = (
     ('COMPLETE', 'Complete'),
     ('ERROR', 'Error'),
     ('REDRAW', 'Redraw'),
+    ('WITHDRAWN', 'Withdrawn'),
 )
