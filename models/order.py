@@ -3,7 +3,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from lab_order.models import BaseOrder
 from lab_import_dmis.classes import DmisTools
-
+from lab_clinic_api.managers import OrderManager
 from aliquot import Aliquot
 from aliquot_condition import AliquotCondition
 from panel import Panel
@@ -33,7 +33,7 @@ class Order(BaseOrder):
     receive_identifier = models.CharField(
         max_length=25, editable=False, null=True, db_index=True,
         help_text="non-user helper field to simplify search and filter")
-    objects = models.Manager()
+    objects = OrderManager()
 
     def save(self, *args, **kwargs):
 
@@ -93,12 +93,19 @@ class Order(BaseOrder):
             status = 'WITHDRAWN'
         return status
 
+    def get_status_message(self):
+        if self.status == 'WITHDRAWN':
+            msg = 'Warning: this order has been flagged as WITHDRAWN. The result is not valid.'
+        elif self.status == 'DUPLICATE':
+            msg = 'Warning: this order has been flagged as DUPLICATE. Please resolve.'
+        return msg
+
     def to_receive(self):
         return '<a href="/admin/lab_clinic_api/receive/?q={receive_identifier}">receive</a>'.format(receive_identifier=self.aliquot.receive.receive_identifier)
     to_receive.allow_tags = True
 
     def to_result(self):
-        if self.status.lower() in ('complete', 'error'):
+        if self.status.lower() in ('complete', 'error', 'duplicate'):
             return '<a href="/admin/lab_clinic_api/result/?q={order_identifier}">result</a>'.format(order_identifier=self.order_identifier)
         else:
             return ''

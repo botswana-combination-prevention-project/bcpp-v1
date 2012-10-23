@@ -49,7 +49,7 @@ unflag_as_reviewed.short_description = "Review: flag as NOT reviewed"
 
 def refresh_order_status(modeladmin, request, queryset):
         updated = 0
-        tot = 1
+        tot = 0
         for qs in queryset:
             if isinstance(qs, Order):
                 tot += 1
@@ -60,5 +60,5 @@ def refresh_order_status(modeladmin, request, queryset):
         if tot == 0:
             modeladmin.message_user(request, 'Nothing to do. Must be a selection of Orders.')
         else:
-            modeladmin.message_user(request, 'Updated status on {0}/{1} Orders.'.format(updated, tot))
+            modeladmin.message_user(request, 'Checked status on {0} orders. - updated {1}.'.format(tot, updated))
 refresh_order_status.short_description = "Orders: refresh status"
