@@ -185,6 +185,8 @@ class Lis(object):
                     for lis_result_item in LisResultItem.objects.using(self.db).filter(result__result_identifier=result.result_identifier):
                         self._import_result_item_model(lis_result_item, result)
         self.delete_pending_orphans(subject_identifier=subject_identifier)
+        orders = Order.objects.flag_duplicates()
+        logger.info('    flagged {0} Orders as DUPLICATE.'.format(len(orders)))
         return import_history.finish()
 
     def _import_model(self, lis_source, target_cls, target_identifier_name, exclude_fields, **kwargs):
