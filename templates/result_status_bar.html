@@ -24,7 +24,7 @@
                     {% if result.order.status != 'COMPLETE' %}
                         <tr><td style="font-color: red; font-size: 10px;line-height: 10px; padding:0;">{{ result.order.status }}</td></tr>
                     {% endif %}
-                    <tr><td style="font-size: 10px;line-height: 10px; padding:0;">{{ result.order.aliquot.receive.receive_identifier }} {{ result.release_status|lower }}</td></tr>
+                    <tr><td style="font-size: 10px;line-height: 10px; padding:0;">{{ result.order.aliquot.receive.receive_identifier }} {{ result.release_status }}</td></tr>
                     <tr><td style="font-size: 10px;line-height: 10px; padding:0;">{{ result.order.aliquot.receive.drawn_datetime|date:"Y-m-d" }}
                 </td></tr></table>        
                 </tr>
