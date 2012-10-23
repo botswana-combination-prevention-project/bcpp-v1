@@ -83,7 +83,7 @@ class Command(BaseCommand):
             self.unvalidate_on_dmis(db, args)
         elif options['flag_for_reimport']:
             for receive_identifier in args:
-                self.flag_for_reimport(db, receive_identifier)
+                self.flag_for_reimport(receive_identifier)
         elif options['show_history']:
             for lock_name in args:
                 self.show_history(db, dmis_lock, lock_name)
@@ -96,14 +96,14 @@ class Command(BaseCommand):
         dmis.import_from_dmis(protocol=settings.PROJECT_NUMBER,
                               import_as_new=import_as_new)
 
-    def flag_for_reimport(self, db, receive_identifier):
+    def flag_for_reimport(self, receive_identifier):
         """Flags a sample for re-import into the django-lis by updating the modified date to today."""
-        dmis_tools = DmisTools(db)
+        dmis_tools = DmisTools()
         dmis_tools.flag_for_reimport(receive_identifier)
 
     def unvalidate_on_dmis(self, db, args):
         """Unvalidates a sample on the dmis and flags for re-import."""
-        dmis_tools = DmisTools(db)
+        dmis_tools = DmisTools()
         args = [i for i in args]
         batch_id, resultset_id = args.pop(0), args.pop(0)
         for receive_identifier in args:
