@@ -16,7 +16,7 @@ nullhandler = logger.addHandler(NullHandler())
 class Command(BaseCommand):
 
     args = ()
-    help = 'Flag PENDING orders on EDC and django-lis as WITHDRAWN if they no longer exist on the DMIS.'
+    help = 'Flag DUPLICATE, PENDING orders on EDC and django-lis as WITHDRAWN if they no longer exist on the DMIS.'
 
     def handle(self, *args, **options):
         # clear orphaned results
@@ -38,3 +38,5 @@ class Command(BaseCommand):
                 invalid_identifiers.append(order.order_identifier)
             else:
                 dmis_tools.flag_withdrawn_order(self, order, save=True)
+        Order.objects.flag_duplicates()
+
