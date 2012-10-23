@@ -1,10 +1,15 @@
 from django.db import models
+from bhp_content_type_map.models import ContentTypeMap
 
 
 class MembershipFormManager(models.Manager):
 
-    def get_by_natural_key(self, content_type_map):
-        return self.get(content_type_map=content_type_map)
+    def get_by_natural_key(self, app_label, model):
+        return self.get(
+            content_type_map=ContentTypeMap.objects.get_by_natural_key(
+                app_label, model
+                )
+            )
 
     def codes_for_category(self, membership_form_category):
         """ Lists visit codes for this membership form category."""
