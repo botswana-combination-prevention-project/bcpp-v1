@@ -19,6 +19,9 @@ class Configuration(BaseUuidModel):
 
     objects = ConfigurationManager()
 
+    def natural_key(self):
+        return (self.allowed_iso_weekdays, )
+
     def save(self, *args, **kwargs):
         if not self.id and self.__class__.objects.all().count() == 1:
             raise ValueError('Configuration model may only have one record and you are trying to add a second. Edit the first record instead.')
