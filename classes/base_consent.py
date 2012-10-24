@@ -79,12 +79,12 @@ class BaseConsent(BaseSubject):
     def save(self, *args, **kwargs):
         if not self.id:
             self.save_new_consent()
+        super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
         # so need to create appointments
         if 'registered_subject' in dir(self):
             if not kwargs.get('suppress_autocreate_on_deserialize', False):
                 AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
-        super(BaseConsent, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True

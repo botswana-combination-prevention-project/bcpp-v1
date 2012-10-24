@@ -33,8 +33,8 @@ class BaseConsentModelAdmin(BaseModelAdmin):
         if obj:  # In edit mode
             return (
                 'subject_identifier',
-                'first_name',
-                'last_name',
+                #'first_name',
+                #'last_name',
                 'study_site',
                 'consent_datetime',) + self.readonly_fields
         else:
