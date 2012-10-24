@@ -21,7 +21,7 @@ admin.site.register(Receive, ReceiveAdmin)
 
 class AliquotAdmin(BaseModelAdmin):
     list_display = ("aliquot_identifier", 'to_receive', 'subject_identifier', 'drawn', "aliquot_type", 'aliquot_condition', 'created', 'modified', 'import_datetime')
-    search_fields = ('aliquot_identifier', 'receive__receive_identifier', 'receive__receive_identifier__registered_subject__subject_identifier')
+    search_fields = ('aliquot_identifier', 'receive__receive_identifier', 'receive__registered_subject__subject_identifier')
     list_filter = ('created', 'import_datetime', 'aliquot_type', 'aliquot_condition')
     list_per_page = 15
 
