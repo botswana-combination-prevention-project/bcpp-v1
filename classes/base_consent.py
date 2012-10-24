@@ -8,6 +8,7 @@ from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from bhp_subject.classes import BaseSubject
 from consented_subject_identifier import ConsentedSubjectIdentifier
+from bhp_appointment_helper.classes import AppointmentHelper
 
 
 class BaseConsent(BaseSubject):
@@ -78,6 +79,11 @@ class BaseConsent(BaseSubject):
     def save(self, *args, **kwargs):
         if not self.id:
             self.save_new_consent()
+        # if has key to registered subject, might be a membership form
+        # so need to create appointments
+        if 'registered_subject' in dir(self):
+            if not kwargs.get('suppress_autocreate_on_deserialize', False):
+                AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
         super(BaseConsent, self).save(*args, **kwargs)
 
     class Meta:
