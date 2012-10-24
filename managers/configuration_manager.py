@@ -3,6 +3,9 @@ from django.db import models
 
 class ConfigurationManager(models.Manager):
 
+    def get_by_natural_key(self, allowed_iso_weekdays):
+        return self.get(allowed_iso_weekdays=allowed_iso_weekdays)
+
     def get_configuration(self):
 
         """ Returns only the first record """
