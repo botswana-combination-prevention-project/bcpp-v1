@@ -11,13 +11,11 @@ Classes
     :members:
     :show-inheritance:    
 
-The global `lab_tracker` is an instance of :class:`SiteLabTracker` which is referred to in the :file:`lab_tracker.py`::
-
-    lab_tracker.register(SubjectHivResult, HivHistory)
+.. note:: The global `lab_tracker` is an instance of :class:`SiteLabTracker` which is referred to in the :file:`lab_tracker.py`
     
 Custom Subclasses of LabTracker
 +++++++++++++++++++++++++++++++
 
-.. autoclass:: bhp_lab_tracker.classes.HivLabTracker
+.. autoclass:: hiv_lab_tracker.HivLabTracker
     :members:    
     :show-inheritance:

@@ -37,6 +37,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="classes.html" title="Classes"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -120,27 +123,49 @@
         <span class="k">return</span> <span class="bp">None</span>
 </pre></div>
 </div>
-<p>Add a <tt class="file docutils literal"><span class="pre">tracker.py</span></tt> file to the module:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">lab_tracker.classes</span> <span class="kn">import</span> <span class="n">tracker</span>
-<span class="kn">from</span> <span class="nn">classes</span> <span class="kn">import</span> <span class="n">HivHistory</span>
-<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">SubjectHivResult</span>
+<p>Add a <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt> file to the module.</p>
+<div class="section" id="examples-of-lab-tracker-py">
+<h2>Examples of <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt><a class="headerlink" href="#examples-of-lab-tracker-py" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Configure longitudinal tracking of a value in lab_clinic_api.ResultItem only:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bhp_lab_tracker.classes</span> <span class="kn">import</span> <span class="n">lab_tracker</span>
+<span class="kn">from</span> <span class="nn">bhp_lab_tracker.classes</span> <span class="kn">import</span> <span class="n">HivLabTracker</span>
 
 
-<span class="n">tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">SubjectHivResult</span><span class="p">,</span> <span class="n">HivHistory</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">InfantHivLabTracker</span><span class="p">(</span><span class="n">HivLabTracker</span><span class="p">):</span>
+    <span class="k">pass</span>
+<span class="n">lab_tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">InfantHivLabTracker</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>A model may have a method like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">hiv_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Updates and returns hiv history using the HivHistory object and</span>
-<span class="sd">    model but does not update the hsm self.hiv_history attr.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">retval</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">:</span>
-            <span class="n">hiv_history</span> <span class="o">=</span> <span class="n">HivHistory</span><span class="p">()</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="n">hiv_history</span><span class="o">.</span><span class="n">get_as_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">retval</span>
+</li>
+<li><p class="first">Configure longitudinal tracking of a value that includes values from local models as well as
+lab_clinic_api.ResultItem:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bhp_lab_tracker.classes</span> <span class="kn">import</span> <span class="n">lab_tracker</span>
+<span class="kn">from</span> <span class="nn">bhp_lab_tracker.classes</span> <span class="kn">import</span> <span class="n">HivLabTracker</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">MaternalEligibilityPost</span><span class="p">,</span> <span class="n">MaternalEligibilityAnte</span>
+
+
+<span class="k">class</span> <span class="nc">MaternalHivLabTracker</span><span class="p">(</span><span class="n">HivLabTracker</span><span class="p">):</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">MaternalEligibilityPost</span><span class="p">,</span> <span class="s">&#39;is_hiv_positive&#39;</span><span class="p">,</span> <span class="s">&#39;registration_datetime&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MaternalEligibilityAnte</span><span class="p">,</span> <span class="s">&#39;is_hiv_positive&#39;</span><span class="p">,</span> <span class="s">&#39;registration_datetime&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+<span class="n">lab_tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MaternalHivLabTracker</span><span class="p">)</span>
 </pre></div>
+</div>
+<dl class="docutils">
+<dt>In this case, local models have been registered. Note the following:</dt>
+<dd><ol class="first last arabic simple">
+<li>models are registered as a tuple of (class, value_attr, date_attr) where value_attr is the
+field attribute name for the result value and date_attr is the datetime attribute for the
+datetime of the result.</li>
+<li>This class is a subclass of <tt class="xref py py-class docutils literal"><span class="pre">HivLabTracker</span></tt>. This class is predefined in <tt class="xref py py-mod docutils literal"><span class="pre">bhp_lab_tracker</span></tt>
+where some additional required class attributes are already defined.</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ol>
 </div>
 </div>
 
@@ -150,6 +175,14 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#examples-of-lab-tracker-py">Examples of <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="overview.html"
                         title="previous chapter">Overview</a></p>
@@ -184,6 +217,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="classes.html" title="Classes"
              >next</a> |</li>

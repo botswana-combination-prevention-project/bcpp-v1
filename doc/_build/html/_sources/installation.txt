@@ -70,24 +70,40 @@ For each subject type you wish to track, create a subclass of :class:`History`::
                         history_model.save()
             return None
        
-Add a :file:`tracker.py` file to the module::
+Add a :file:`lab_tracker.py` file to the module. 
 
-    from lab_tracker.classes import tracker
-    from classes import HivHistory
-    from models import SubjectHivResult
-    
-    
-    tracker.register(SubjectHivResult, HivHistory) 
-    
-A model may have a method like this::
+Examples of :file:`lab_tracker.py`
+++++++++++++++++++++++++++++++++++
 
-    def hiv_status(self):
-        """Updates and returns hiv history using the HivHistory object and
-        model but does not update the hsm self.hiv_history attr.
-        """
-        retval = ''
-        if self.registered_subject:
-            if self.registered_subject.subject_identifier:
-                hiv_history = HivHistory()
-                retval = hiv_history.get_as_string(self.registered_subject.subject_identifier)
-        return retval
+1. Configure longitudinal tracking of a value in lab_clinic_api.ResultItem only::
+
+    from bhp_lab_tracker.classes import lab_tracker
+    from bhp_lab_tracker.classes import HivLabTracker
+    
+    
+    class InfantHivLabTracker(HivLabTracker):
+        pass
+    lab_tracker.register(InfantHivLabTracker)
+
+2. Configure longitudinal tracking of a value that includes values from local models as well as 
+   lab_clinic_api.ResultItem::
+
+    from bhp_lab_tracker.classes import lab_tracker
+    from bhp_lab_tracker.classes import HivLabTracker
+    from models import MaternalEligibilityPost, MaternalEligibilityAnte
+    
+    
+    class MaternalHivLabTracker(HivLabTracker):
+        models = (
+            (MaternalEligibilityPost, 'is_hiv_positive', 'registration_datetime'),
+            (MaternalEligibilityAnte, 'is_hiv_positive', 'registration_datetime')
+            )
+    lab_tracker.register(MaternalHivLabTracker)
+
+
+   In this case, local models have been registered. Note the following:
+      1. models are registered as a tuple of (class, value_attr, date_attr) where value_attr is the 
+         field attribute name for the result value and date_attr is the datetime attribute for the 
+         datetime of the result.
+      2. This class is a subclass of :class:`HivLabTracker`. This class is predefined in :mod:`bhp_lab_tracker`
+         where some additional required class attributes are already defined.
