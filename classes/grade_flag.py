@@ -1,4 +1,5 @@
 from lab_grading.classes import GradeFlag as BaseGradeFlag
+from bhp_lab_tracker.classes import lab_tracker
 
 
 class GradeFlag(BaseGradeFlag):
