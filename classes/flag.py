@@ -2,6 +2,7 @@ import logging
 from bhp_common.utils import get_age_in_days
 from lab_test_code.models import BaseTestCode
 from lab_reference.models import BaseReferenceListItem
+import pdb
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,7 @@ class Flag(object):
         if not list_items:
             logger.warning('    No {0} items for {1}.'.format(self.list_name, self.test_code.code))
         else:
+            #pdb.set_trace()
             for list_item in list_items:
                 if not isinstance(list_item, BaseReferenceListItem):
                     raise TypeError('List item must be an instance of BaseReferenceListItem.')
@@ -59,6 +61,18 @@ class Flag(object):
                     break
         self._cleanup()
         return retdict
+    
+    def round_off(self, value, list_item):
+        flag, lower_limit, upper_limit = None, None, None
+        places = self.test_code.display_decimal_places or 0  # this might be worth a warning in None
+        #lower_limit = ceil(list_item.lln * (10 ** places)) / (10 ** places)
+        #upper_limit = ceil(list_item.uln * (10 ** places)) / (10 ** places)
+        #value = ceil(value * (10 ** places)) / (10 ** places)
+        lower_limit = round(list_item.lln ,places)
+        upper_limit = round(list_item.uln,places)
+        value = round(value,places)
+        return value, lower_limit, upper_limit
+        
 
     def _cleanup(self):
         """ Clean up instance variables in case you forget to re-init."""
