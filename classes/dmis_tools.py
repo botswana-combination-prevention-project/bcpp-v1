@@ -84,6 +84,7 @@ class DmisTools(object):
         return True
 
     def flag_for_reimport(self, receive_identifier):
+        """Flags items to be re-imported by changing the modification datetime on the DMIS receiving record."""
         try:
             cnxn = pyodbc.connect(self.dmis_data_source)
         except:
@@ -170,6 +171,9 @@ class DmisTools(object):
         return order_status
 
     def is_withdrawn_order(self, order):
+        """Wraps :mod:`flag_withdrawn_order` to return True/False. 
+
+        Called by Order :finc:save()."""
         if self.flag_withdrawn_order(order, False):
             return True
         else:

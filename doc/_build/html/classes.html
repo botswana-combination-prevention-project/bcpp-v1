@@ -64,39 +64,83 @@
 <dt id="lab_import_dmis.classes.Dmis.import_from_dmis">
 <tt class="descname">import_from_dmis</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.Dmis.import_from_dmis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches a result from receiving up to the result items.</p>
-<dl class="docutils">
-<dt>..note:: DMIS has a relational problem with the receiving table LAB01 where multiple</dt>
-<dd>receiving records can exist for the same primary sample. To correct this on import,
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">DMIS has a relational problem with the receiving table LAB01 where multiple
+receiving records can exist for the same primary sample. To correct this on import,
 the receiving record is only imported once while other records (order, result, resultitem)
 are imported complete. Also, LAB21 is not really an order record but there is a 1-many
 relationship between LAB21 and LAB21ResponseQ001x0 which kind of makes it look like one
 even though it was not created by the user as an order. In this script, we create an order and
 a result instance with the same data (LAB21). Result item instances are attached to
-the result instance.</dd>
-</dl>
-<p>if you need to fix a result not importing because it is stuck in a validated batch</p>
-<blockquote>
-<div><p>declare &#64;id int
-declare &#64;pid varchar(7)
-declare &#64;batchid varchar(25)</p>
-<p>set &#64;batchid=&#8216;500971&#8217;
-set &#64;pid=&#8217;UY55139&#8217;</p>
-<p>select &#64;id=l23d.id from lab23response as l23
-left join lab23responseq001x0 as l23d on l23.q001x0=l23d.qid1x0
-where <a class="reference external" href="mailto:batchid=&#37;&#52;&#48;batchid">batchid=<span>&#64;</span>batchid</a> and <a class="reference external" href="mailto:l23d&#46;bhhrl_ref=&#37;&#52;&#48;pid">l23d<span>&#46;</span>bhhrl_ref=<span>&#64;</span>pid</a></p>
-<p>delete from lab21response where <a class="reference external" href="mailto:pid=&#37;&#52;&#48;pid">pid=<span>&#64;</span>pid</a>
-update lab23responseq001x0 set  datesent=convert(datetime,&#8216;09/09/9999&#8217;,103), result_accepted=-9 where <a class="reference external" href="mailto:id=&#37;&#52;&#48;id">id=<span>&#64;</span>id</a></p>
-</div></blockquote>
+the result instance.</p>
+</div>
+<p>if you need to fix a result not importing because it is stuck in a validated batch:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">declare</span> <span class="o">@</span><span class="n">id</span> <span class="nb">int</span>
+<span class="k">declare</span> <span class="o">@</span><span class="n">pid</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="k">declare</span> <span class="o">@</span><span class="n">batchid</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+
+<span class="k">set</span> <span class="o">@</span><span class="n">batchid</span><span class="o">=</span><span class="s1">&#39;500971&#39;</span>
+<span class="k">set</span> <span class="o">@</span><span class="n">pid</span><span class="o">=</span><span class="s1">&#39;UY55139&#39;</span>
+
+<span class="k">select</span> <span class="o">@</span><span class="n">id</span><span class="o">=</span><span class="n">l23d</span><span class="p">.</span><span class="n">id</span> <span class="k">from</span> <span class="n">lab23response</span> <span class="k">as</span> <span class="n">l23</span>
+<span class="k">left</span> <span class="k">join</span> <span class="n">lab23responseq001x0</span> <span class="k">as</span> <span class="n">l23d</span> <span class="k">on</span> <span class="n">l23</span><span class="p">.</span><span class="n">q001x0</span><span class="o">=</span><span class="n">l23d</span><span class="p">.</span><span class="n">qid1x0</span>
+<span class="k">where</span> <span class="n">batchid</span><span class="o">=@</span><span class="n">batchid</span> <span class="k">and</span> <span class="n">l23d</span><span class="p">.</span><span class="n">bhhrl_ref</span><span class="o">=@</span><span class="n">pid</span>
+
+<span class="k">delete</span> <span class="k">from</span> <span class="n">lab21response</span> <span class="k">where</span> <span class="n">pid</span><span class="o">=@</span><span class="n">pid</span>
+<span class="k">update</span> <span class="n">lab23responseq001x0</span> <span class="k">set</span>  <span class="n">datesent</span><span class="o">=</span><span class="k">convert</span><span class="p">(</span><span class="n">datetime</span><span class="p">,</span><span class="s1">&#39;09/09/9999&#39;</span><span class="p">,</span><span class="mi">103</span><span class="p">),</span> <span class="n">result_accepted</span><span class="o">=-</span><span class="mi">9</span> <span class="k">where</span> <span class="n">id</span><span class="o">=@</span><span class="n">id</span>
+</pre></div>
+</div>
 <p>for auto validated data just change the datelastmodified to force re-import:</p>
-<blockquote>
-<div>declare &#64;pid varchar(7)
-set &#64;pid=&#8217;UY55139&#8217;
-update lab01response set datelastmodified=now() where <a class="reference external" href="mailto:pid=&#37;&#52;&#48;pid">pid=<span>&#64;</span>pid</a></div></blockquote>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">declare</span> <span class="o">@</span><span class="n">pid</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="k">set</span> <span class="o">@</span><span class="n">pid</span><span class="o">=</span><span class="s1">&#39;UY55139&#39;</span>
+<span class="k">update</span> <span class="n">lab01response</span> <span class="k">set</span> <span class="n">datelastmodified</span><span class="o">=</span><span class="n">now</span><span class="p">()</span> <span class="k">where</span> <span class="n">pid</span><span class="o">=@</span><span class="n">pid</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lab_import_dmis.classes.DmisTools">
+<em class="property">class </em><tt class="descclassname">lab_import_dmis.classes.</tt><tt class="descname">DmisTools</tt><a class="headerlink" href="#lab_import_dmis.classes.DmisTools" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="lab_import_dmis.classes.DmisTools.clear_orphaned_result">
+<tt class="descname">clear_orphaned_result</tt><big>(</big><em>item=None</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.DmisTools.clear_orphaned_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies and, if required, deletes the result of a &#8216;PENDING&#8217; order on the EDC that has no result items and the result is NEW.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>item: can be either a Result instance or an order_identifier.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="lab_import_dmis.classes.Dmis.unvalidate_on_dmis">
-<tt class="descname">unvalidate_on_dmis</tt><big>(</big><em>db</em>, <em>receive_identifier</em>, <em>batch_id</em>, <em>resultset_id</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.Dmis.unvalidate_on_dmis" title="Permalink to this definition">¶</a></dt>
+<dt id="lab_import_dmis.classes.DmisTools.flag_for_reimport">
+<tt class="descname">flag_for_reimport</tt><big>(</big><em>receive_identifier</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.DmisTools.flag_for_reimport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flags items to be re-imported by changing the modification datetime on the DMIS receiving record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_import_dmis.classes.DmisTools.flag_withdrawn_order">
+<tt class="descname">flag_withdrawn_order</tt><big>(</big><em>order</em>, <em>save=True</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.DmisTools.flag_withdrawn_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an order if it no longer exists on the DMIS and does not have a result on file.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Order identifier is LAB21.id.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_import_dmis.classes.DmisTools.is_withdrawn_order">
+<tt class="descname">is_withdrawn_order</tt><big>(</big><em>order</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.DmisTools.is_withdrawn_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps <tt class="xref py py-mod docutils literal"><span class="pre">flag_withdrawn_order</span></tt> to return True/False.</p>
+<p>Called by Order :finc:save().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lab_import_dmis.classes.DmisTools.unvalidate_on_dmis">
+<tt class="descname">unvalidate_on_dmis</tt><big>(</big><em>db</em>, <em>receive_identifier</em>, <em>batch_id</em>, <em>resultset_id</em><big>)</big><a class="headerlink" href="#lab_import_dmis.classes.DmisTools.unvalidate_on_dmis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unvalidates a result on the DMIS for L23 path (use carefully).</p>
 <dl class="docutils">
 <dt>Additionally:</dt>

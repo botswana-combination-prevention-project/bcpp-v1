@@ -43,7 +43,7 @@ class Dmis(BaseDmis):
     def import_from_dmis(self, **kwargs):
         """Fetches a result from receiving up to the result items.
 
-        ..note:: DMIS has a relational problem with the receiving table LAB01 where multiple
+        .. note:: DMIS has a relational problem with the receiving table LAB01 where multiple
             receiving records can exist for the same primary sample. To correct this on import,
             the receiving record is only imported once while other records (order, result, resultitem)
             are imported complete. Also, LAB21 is not really an order record but there is a 1-many
@@ -52,8 +52,10 @@ class Dmis(BaseDmis):
             a result instance with the same data (LAB21). Result item instances are attached to
             the result instance.
 
-        if you need to fix a result not importing because it is stuck in a validated batch
-
+        if you need to fix a result not importing because it is stuck in a validated batch:
+        
+        .. code-block:: sql
+        
             declare @id int
             declare @pid varchar(7)
             declare @batchid varchar(25)
@@ -69,6 +71,8 @@ class Dmis(BaseDmis):
             update lab23responseq001x0 set  datesent=convert(datetime,'09/09/9999',103), result_accepted=-9 where id=@id
 
         for auto validated data just change the datelastmodified to force re-import:
+
+        .. code-block:: sql
 
             declare @pid varchar(7)
             set @pid='UY55139'

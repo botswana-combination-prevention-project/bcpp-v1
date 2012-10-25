@@ -7,7 +7,7 @@ class DmisLockModel(BaseLockModel):
 
     The lock data is on the django-lis and managed by clients via :class:DmisLock.
 
-    ..seealso:: :class:DmisLock."""
+    .. seealso:: :class:`DmisLock`."""
 
     class Meta:
         app_label = 'lab_import_dmis'
