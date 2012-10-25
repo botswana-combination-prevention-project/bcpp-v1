@@ -1,286 +1,286 @@
 from datetime import date, timedelta
 "Test Cases Start-HEMOGLOBIN"
 
-#DAYS_TO_SUBTRACT_1 = 58
+DAYS_TO_SUBTRACT_1 = 58
 ## Adult and Pediartic>=57 days HIV POSETIVE-GRADE1
-#G1_TEST_1 = {'result_value': 8.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G1_TEST_2 = {'result_value': 8.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G1_TEST_3 = {'result_value': 10.04,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G1_TEST_4 = {'result_value': 10.059,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G1_TEST_5 = {'result_value': 9.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G1_TEST_6 = {'result_value': 11.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#
-## Adult and Pediartic>=57 days HIV POSETIVE-GRADE2
-#G2_TEST_1 = {'result_value': 7.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G2_TEST_2 = {'result_value': 7.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G2_TEST_3 = {'result_value': 8.4444,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G2_TEST_4 = {'result_value': 8.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G2_TEST_5 = {'result_value': 8.11111,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G2_TEST_6 = {'result_value': 9.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#
-## Adult and Pediartic>=57 days HIV POSETIVE-GRADE3
-#G3_TEST_1 = {'result_value': 6.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G3_TEST_2 = {'result_value': 6.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G3_TEST_3 = {'result_value': 7.4444,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G3_TEST_4 = {'result_value': 7.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G3_TEST_5 = {'result_value': 7.11111,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G3_TEST_6 = {'result_value': 8.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#
-## Adult and Pediartic>=57 days HIV POSETIVE-GRADE4
-#G4_TEST_1 = {'result_value': 6.4444,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G4_TEST_2 = {'result_value': 6.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G4_TEST_3 = {'result_value': 7.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
-#G4_TEST_4 = {'result_value': 6.0000,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'POS'}
+G1_TEST_1 = {'result_value': 8.444,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G1_TEST_2 = {'result_value': 8.459,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G1_TEST_3 = {'result_value': 10.044,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G1_TEST_4 = {'result_value': 10.059,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G1_TEST_5 = {'result_value': 9.459,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G1_TEST_6 = {'result_value': 11.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+
+# Adult and Pediartic>=57 days HIV POSETIVE-GRADE2
+G2_TEST_1 = {'result_value': 7.444,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G2_TEST_2 = {'result_value': 7.459,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G2_TEST_3 = {'result_value': 8.444,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G2_TEST_4 = {'result_value': 8.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G2_TEST_5 = {'result_value': 8.111,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G2_TEST_6 = {'result_value': 9.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+
+# Adult and Pediartic>=57 days HIV POSETIVE-GRADE3
+G3_TEST_1 = {'result_value': 6.444,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G3_TEST_2 = {'result_value': 6.559,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G3_TEST_3 = {'result_value': 7.444,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G3_TEST_4 = {'result_value': 7.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G3_TEST_5 = {'result_value': 7.111,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G3_TEST_6 = {'result_value': 8.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+
+# Adult and Pediartic>=57 days HIV POSETIVE-GRADE4
+G4_TEST_1 = {'result_value': 6.444,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G4_TEST_2 = {'result_value': 6.559,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G4_TEST_3 = {'result_value': 7.4444,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
+G4_TEST_4 = {'result_value': 5.0000,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'POS'}
 
 # Adult and Pediartic>=57 days HIV NEGATIVE-GRADE1
-#G1_TEST_1 = {'result_value': 8.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G1_TEST_2 = {'result_value': 8.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G1_TEST_3 = {'result_value': 10.04,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G1_TEST_4 = {'result_value': 10.059,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G1_TEST_5 = {'result_value': 9.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G1_TEST_6 = {'result_value': 11.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#
-## Adult and Pediartic>=57 days HIV NEGATIVE-GRADE2
-#G2_TEST_1 = {'result_value': 7.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G2_TEST_2 = {'result_value': 7.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G2_TEST_3 = {'result_value': 8.4444,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G2_TEST_4 = {'result_value': 8.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G2_TEST_5 = {'result_value': 8.11111,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G2_TEST_6 = {'result_value': 9.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#
-## Adult and Pediartic>=57 days HIV NEGATIVE-GRADE3
-#G3_TEST_1 = {'result_value': 6.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G3_TEST_2 = {'result_value': 6.44459,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G3_TEST_3 = {'result_value': 7.4444,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G3_TEST_4 = {'result_value': 7.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G3_TEST_5 = {'result_value': 7.11111,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G3_TEST_6 = {'result_value': 8.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#
-## Adult and Pediartic>=57 days HIV NEGATIVE-GRADE4
-#G4_TEST_1 = {'result_value': 6.4444,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G4_TEST_2 = {'result_value': 6.44459,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G4_TEST_3 = {'result_value': 7.4444,#FALSE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
-#G4_TEST_4 = {'result_value': 6.0000,#TRUE
-#             'test_code': 'HGB',
-#             'datetime_drawn': date.today(),
-#             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
-#             'gender': 'MF',
-#             'hiv_status': 'ANY'}
+G1_TEST_25 = {'result_value': 10.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G1_TEST_26 = {'result_value': 10.044,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G1_TEST_27 = {'result_value': 10.944,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G1_TEST_28 = {'result_value': 10.955,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G1_TEST_29 = {'result_value': 10.555,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G1_TEST_30 = {'result_value': 11.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+
+# Adult and Pediartic>=57 days HIV NEGATIVE-GRADE2
+G2_TEST_25 = {'result_value': 9.054,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G2_TEST_26 = {'result_value': 8.959,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G2_TEST_27 = {'result_value': 9.944,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G2_TEST_28 = {'result_value': 9.959,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G2_TEST_29 = {'result_value': 9.111,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G2_TEST_30 = {'result_value': 10.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+
+# Adult and Pediartic>=57 days HIV NEGATIVE-GRADE3
+G3_TEST_25 = {'result_value': 6.944,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G3_TEST_26 = {'result_value': 6.959,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G3_TEST_27 = {'result_value': 8.944,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G3_TEST_28 = {'result_value': 8.959,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G3_TEST_29 = {'result_value': 8.111,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G3_TEST_30 = {'result_value': 9.459,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+
+# Adult and Pediartic>=57 days HIV NEGATIVE-GRADE4
+G4_TEST_1 = {'result_value': 6.944,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G4_TEST_2 = {'result_value': 7.059,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G4_TEST_3 = {'result_value': 7.444,#FALSE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
+G4_TEST_4 = {'result_value': 6.000,#TRUE
+             'test_code': 'HGB',
+             'datetime_drawn': date.today(),
+             'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_1),
+             'gender': 'MF',
+             'hiv_status': 'NEG'}
 
 DAYS_TO_SUBTRACT_2 = 40
 # Adult and Pediartic 36-56 days HIV POSETIVE/NEGATIVE-GRADE1 - TODO:ALSO HAVE TO TEST AGE RANGE
@@ -289,37 +289,37 @@ G1_TEST_7 = {'result_value': 8.444,#FALSE
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
-             'hiv_status': 'ANY'}
+             'hiv_status': 'NEG'}
 G1_TEST_8 = {'result_value': 8.455,#TRUE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
-             'hiv_status': 'ANY'}
+             'hiv_status': 'NEG'}
 G1_TEST_9 = {'result_value': 9.444,#TRUE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
-             'hiv_status': 'ANY'}
+             'hiv_status': 'NEG'}
 G1_TEST_10 = {'result_value': 9.455,#FALSE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
-             'hiv_status': 'ANY'}
+             'hiv_status': 'NEG'}
 G1_TEST_11 = {'result_value': 9.111,#TRUE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
-             'hiv_status': 'ANY'}
+             'hiv_status': 'NEG'}
 G1_TEST_12 = {'result_value': 10.459,#FALSE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
-             'hiv_status': 'ANY'}
+             'hiv_status': 'NEG'}
 
 # Adult and Pediartic 36-56 days HIV POSETIVE/NEGATIVE-GRADE2
 G2_TEST_7 = {'result_value': 6.944,#FALSE
@@ -398,25 +398,25 @@ G3_TEST_12 = {'result_value': 7.459,#FALSE
              'hiv_status': 'ANY'}
 
 # Adult and Pediartic> 36-56 days HIV POSETIVE/NEGATIVE-GRADE4
-G4_TEST_5 = {'result_value': 5.944,#TRUE
+G4_TEST_17 = {'result_value': 5.944,#TRUE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
              'hiv_status': 'ANY'}
-G4_TEST_6 = {'result_value': 6.155,#FALSE
+G4_TEST_18 = {'result_value': 6.155,#FALSE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
              'hiv_status': 'ANY'}
-G4_TEST_7 = {'result_value': 6.054,#FALSE
+G4_TEST_19 = {'result_value': 6.054,#FALSE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
              'gender': 'MF',
              'hiv_status': 'ANY'}
-G4_TEST_8 = {'result_value': 5.000,#TRUE
+G4_TEST_20 = {'result_value': 5.000,#TRUE
              'test_code': 'HGB',
              'datetime_drawn': date.today(),
              'dob': date.today()-timedelta(days=DAYS_TO_SUBTRACT_2),
