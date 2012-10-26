@@ -2,7 +2,7 @@
 
 class ResultItemFlag(object):
     @classmethod
-    def calculate(self, result_item):
+    def calculate(self, result_item, **kwargs):
         """Takes a result_item instance and evaluates the reference and grade flags.
 
         Gets flag classes from model methods get_cls_reference_flag() and get_grading_list().
@@ -15,6 +15,7 @@ class ResultItemFlag(object):
             >>>group by tc.code, grade_flag;
         """
         #before = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
+        hiv_status = kwargs.get('hiv_status', None)
         value = result_item.result_item_value_as_float
         ReferenceFlag = result_item.get_cls_reference_flag()
         flag = ReferenceFlag(result_item.get_reference_list(), result_item)
@@ -29,7 +30,7 @@ class ResultItemFlag(object):
         else:
             result_item.reference_flag = None
         GradeFlag = result_item.get_cls_grade_flag()
-        flag = GradeFlag(result_item.get_grading_list(), result_item)
+        flag = GradeFlag(result_item.get_grading_list(), result_item, hiv_status=hiv_status)
         kw = flag.evaluate(value)
         if kw.get('flag', None):
             range_ = '{0}-{1}'.format(kw.get('lower_limit'), kw.get('upper_limit'))

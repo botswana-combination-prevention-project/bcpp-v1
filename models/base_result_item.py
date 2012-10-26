@@ -101,7 +101,7 @@ class BaseResultItem(BaseUuidModel):
     import_datetime = models.DateTimeField(null=True)
 
     def get_subject_identifier(self):
-        return ''
+        return self.result.subject_identifier
 
     def get_visit(self):
         return ''
