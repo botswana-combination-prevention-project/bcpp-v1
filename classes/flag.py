@@ -15,7 +15,7 @@ nullhandler = logger.addHandler(NullHandler())
 
 class Flag(object):
 
-    def __init__(self, reference_list, test_code, gender, dob, reference_datetime, hiv_status=None, **kwargs):
+    def __init__(self, reference_list, test_code, gender, dob, reference_datetime, hiv_status):
         self.dirty = False
         self.list_name, self.list_item_model_cls = reference_list
         self.test_code = test_code
