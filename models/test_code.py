@@ -3,7 +3,6 @@ from lab_test_code.models import BaseTestCode
 from test_code_group import TestCodeGroup
 from lab_clinic_api.managers import TestCodeManager
 
-
 class TestCode(BaseTestCode):
 
     edc_code = models.CharField(max_length=25, null=True, db_index=True)

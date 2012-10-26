@@ -21,9 +21,9 @@ class ResultItemTestCase(unittest.TestCase):
         return self.test_data.count()
 
     def test_Haemaglobin_grade_flag(self):      
-#            for flag_args in TRUE_G1_ASSERTIONS:
-#                grade = self.get_result_item_flag(flag_args)
-#                self.assertTrue(grade == 1,"TRUE_G1 "+str(flag_args['result_value'])+" FAILED. Returned Grade="+str(grade))
+            for flag_args in TRUE_G1_ASSERTIONS:
+                grade = self.get_result_item_flag(flag_args)
+                self.assertTrue(grade == 1,"TRUE_G1 "+str(flag_args['result_value'])+" FAILED. Returned Grade="+str(grade))
 #            print "--------------------------------------------------------------------"
             for flag_args in FALSE_G1_ASSERTIONS:
                 grade = self.get_result_item_flag(flag_args)

@@ -4,6 +4,7 @@ from lab_result_item.models import BaseResultItem
 from lab_clinic_reference.classes import ReferenceRangeFlag, GradeFlag
 from test_code import TestCode
 from result import Result
+#import pdb
 
 
 logger = logging.getLogger(__name__)
@@ -58,6 +59,7 @@ class ResultItem(BaseResultItem):
         return GradeFlag
 
     def get_reference_list(self):
+        #pdb.set_trace()
         return ('reference_range_list', models.get_model('lab_clinic_reference', 'referencerangelistitem'))
 
     class Meta:
