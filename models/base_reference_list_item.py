@@ -20,12 +20,16 @@ class BaseReferenceListItem(BaseModel):
         decimal_places=4,
         blank=True)
 
+    lln_quantifier = models.CharField(max_length=10, default='>=')
+
     uln = models.DecimalField(
         verbose_name='upper',
         null=True,
         max_digits=12,
         decimal_places=4,
         blank=True)
+
+    uln_quantifier = models.CharField(max_length=10, default='<=')
 
     age_low = models.IntegerField(
         null=True,
