@@ -4,6 +4,7 @@ from django.conf import settings
 from lab_flag.classes import Flag
 import pdb
 
+
 class GradeFlag(Flag):
 
     def get_list_prep(self):
@@ -22,34 +23,34 @@ class GradeFlag(Flag):
 
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
-        #pdb.set_trace()
+        # pdb.set_trace()
         flag, lower_limit, upper_limit = None, None, None
         if str(list_item.age_low_quantifier) == str('> ') and str(list_item.age_high_quantifier) == str('< '):
             if self.age_in_days > list_item.age_low_days() and self.age_in_days < list_item.age_high_days():
-                val, lower_limit, upper_limit = self.round_off(value,list_item)
+                val, lower_limit, upper_limit = self.round_off(value, list_item)
                 if val >= lower_limit and val <= upper_limit:
                     flag = list_item.grade
                 return flag, lower_limit, upper_limit
         elif str(list_item.age_low_quantifier) == str('> ') and str(list_item.age_high_quantifier) == str('<='):
             if self.age_in_days > list_item.age_low_days() and self.age_in_days <= list_item.age_high_days():
-                val, lower_limit, upper_limit = self.round_off(value,list_item)
+                val, lower_limit, upper_limit = self.round_off(value, list_item)
                 if val >= lower_limit and val <= upper_limit:
                     flag = list_item.grade
                 return flag, lower_limit, upper_limit
         elif str(list_item.age_low_quantifier) == str('>=') and str(list_item.age_high_quantifier) == str('< '):
             if self.age_in_days >= list_item.age_low_days() and self.age_in_days < list_item.age_high_days():
-                val, lower_limit, upper_limit = self.round_off(value,list_item)
+                val, lower_limit, upper_limit = self.round_off(value, list_item)
                 if val >= lower_limit and val <= upper_limit:
                     flag = list_item.grade
                 return flag, lower_limit, upper_limit
         elif str(list_item.age_low_quantifier) == str('>=') and str(list_item.age_high_quantifier) == str('<='):
             if self.age_in_days >= list_item.age_low_days() and self.age_in_days <= list_item.age_high_days():
-                val, lower_limit, upper_limit = self.round_off(value,list_item)
+                val, lower_limit, upper_limit = self.round_off(value, list_item)
                 if val >= lower_limit and val <= upper_limit:
                     flag = list_item.grade
                 return flag, lower_limit, upper_limit
         return flag, lower_limit, upper_limit
-        
+
 #        if list_item.age_low_days() <= self.age_in_days and list_item.age_high_days() >= self.age_in_days:
 #            # round up all values
 #            places = self.test_code.display_decimal_places or 0  # this might be worth a warning in None
@@ -60,4 +61,3 @@ class GradeFlag(Flag):
 #                flag = list_item.grade
 #        return flag, lower_limit, upper_limit
 
-    
