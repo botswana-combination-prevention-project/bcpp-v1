@@ -30,21 +30,31 @@ class SiteLabTracker(object):
             raise AlreadyRegistered('The class %s is already registered' % lab_tracker_cls)
         # confirm the models in the models class attribute have the required methods.
         if 'models' in dir(lab_tracker_cls):
-            for model, value_attr, date_attr in lab_tracker_cls.models:
-                if 'get_subject_identifier' not in dir(model):
-                    raise ImproperlyConfigured('Model {0} cannot be registered to a lab tracker. Define the method \'get_subject_identifier()\' on the model first.'.format(model._meta.object_name))
-                if 'get_result_value' not in dir(model):
-                    raise ImproperlyConfigured('Model {0} cannot be registered to a lab tracker. Define the method \'get_result_value()\' on the model first.'.format(model._meta.object_name))
-                #if 'get_result_datetime' not in dir(model):
-                #    raise ImproperlyConfigured('Model {0} cannot be registered to a lab tracker. Define the method \'get_result_datetime()\' on the model first.'.format(model._meta.object_name))
-                # add ResultItem to the models
+            for model_tpl in lab_tracker_cls.models:
+                model_cls = lab_tracker_cls()._unpack_model_tpl(model_tpl, lab_tracker_cls.MODEL_CLS)
+                if 'get_subject_identifier' not in dir(model_cls):
+                    raise ImproperlyConfigured('Model {0} cannot be registered to a lab tracker. Define the method \'get_subject_identifier()\' on the model first.'.format(model_cls._meta.object_name))
         else:
             lab_tracker_cls.models = []
         lab_tracker_cls.models.append(lab_tracker_cls.result_item_tpl)
         self._registry.append(lab_tracker_cls)
 
+    def update_all(self, supress_messages):
+        for lab_tracker_cls in self._registry:
+            lab_tracker_cls().update_all(supress_messages)
+
     def all(self):
         return self._registry
+
+    def get_value(self, group_name, subject_identifier, value_datetime):
+        value = None
+        for lab_tracker_cls in self._registry:
+            value = lab_tracker_cls().get_current_value(subject_identifier, value_datetime)
+            if value:
+                break
+        if not value:
+            raise TypeError('Value cannot be None. Using ({0}, {1}, {2})'.format(group_name, subject_identifier, value_datetime))
+        return (subject_identifier, value, value_datetime)
 
     def autodiscover(self):
         for app in settings.INSTALLED_APPS:
