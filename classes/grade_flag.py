@@ -9,5 +9,10 @@ class GradeFlag(BaseGradeFlag):
         gender = result_item.result.order.aliquot.receive.registered_subject.gender
         dob = result_item.result.order.aliquot.receive.registered_subject.dob
         reference_datetime = result_item.result.order.aliquot.receive.receive_datetime
-        hiv_status = result_item.result.order.aliquot.receive.registered_subject.hiv_status
-        super(GradeFlag, self).__init__(reference_list, test_code, gender, dob, reference_datetime, hiv_status, **kwargs)
+        subject_identifier = result_item.result.order.aliquot.receive.registered_subject.subject_identifier
+        hiv_status = kwargs.get('hiv_status', None)
+        if not hiv_status:
+            subject_identifier, hiv_status, reference_datetime = lab_tracker.get_value('HIV', subject_identifier, reference_datetime)
+        if not hiv_status:
+            raise TypeError('hiv_status cannot be None.')
+        super(GradeFlag, self).__init__(reference_list, test_code, gender, dob, reference_datetime, hiv_status)
