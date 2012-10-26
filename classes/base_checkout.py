@@ -5,7 +5,8 @@ from bhp_sync.models import Producer
 
 
 class BaseCheckout(BaseUuidModel):
-
+    """A base model for checking out/in models to a mobile device
+    """
     netbook = models.ForeignKey(
         Producer,
         verbose_name="Netbook"
