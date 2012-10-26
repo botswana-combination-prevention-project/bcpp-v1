@@ -1,7 +1,9 @@
-import re
 from django.core.management.base import BaseCommand
-from lab_clinic_api.models import Result, ResultItem
+from django.db.models import get_model
 from lab_result_item.classes import ResultItemFlag
+from bhp_lab_tracker.classes import lab_tracker
+
+lab_tracker.autodiscover()
 
 
 class Command(BaseCommand):
@@ -10,21 +12,20 @@ class Command(BaseCommand):
     help = 'Recalculate grading and reference range flags for result items.'
 
     def handle(self, *args, **options):
+        Result = get_model('lab_clinic_api', 'result')
+        ResultItem = get_model('lab_clinic_api', 'resultitem')
         tot = Result.objects.all().count()
-        result_count = 0
-        for result in Result.objects.all().order_by('result_identifier'):
-            n = 0
+        for index, result in enumerate(Result.objects.all().order_by('result_identifier')):
+            updated = 0
+            print ('{0} / {1} Recalculating for {2}'.format(index, tot, result.result_identifier))
             for result_item in ResultItem.objects.filter(result=result):
-                value = None
-                if re.search(r'\d+\.?\d*', result_item.result_item_value):
-                    try:
-                        value = float(result_item.result_item_value)
-                    except:
-                        value = None
-                if value:
-                    result_item, modified = ResultItemFlag().calculate(result_item)
-                    if modified:
+                original_flags = (result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag)
+                if result_item.result_item_value_as_float:
+                    result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag = ResultItemFlag().calculate(result_item)
+                    if original_flags != (result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag):
                         result_item.save()
-                    n += 1
-            result_count += 1
-            print ('{0} / {1} Recalculated for {2} items in result {3}'.format(result_count, tot, n, result.result_identifier))
+                        updated += 1
+                        print ('    UPDATED {0} to {1}'.format(result_item.test_code.code, result_item.grade_flag))
+                    else:
+                        print ('    no change {0} to {1}'.format(result_item.test_code.code, result_item.grade_flag))
+        print ('Updated {0} of {1} reviewed. Check HistoryModelError model for errors.'.format(updated, index))

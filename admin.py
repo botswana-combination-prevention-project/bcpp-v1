@@ -134,7 +134,7 @@ class ResultItemAdmin(BaseModelAdmin):
         "modified",
         'import_datetime')
     list_filter = ('grade_flag', 'reference_flag', "validation_status", "result_item_datetime", "created", "modified", 'import_datetime', "test_code")
-    search_fields = ('test_code__code',
+    search_fields = ('id', 'test_code__code',
                      'result__result_identifier',
                      "subject_identifier",
                      "receive_identifier",
