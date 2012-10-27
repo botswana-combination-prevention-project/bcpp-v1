@@ -24,6 +24,7 @@
 <th>Producer</th>
 <th>Sync URL</th>
 <th>Transactions</th>
+{% if show_checkin_link %}<th>Checkin URL</th>{% endif %}
 <th>Direct URL</th>
 <th>Last Sync</th>
 <th>Status</th>
@@ -36,6 +37,7 @@
     <td>{{ producer.name }}</td>
     <td><A href="/bhp_sync/consume/{{ producer.name }}/">synchronize with community server</A></td>
     <td><A href="{{ producer.url }}admin/bhp_sync/outgoingtransaction/?is_consumed__exact=0&producer={{ producer.name }}">producer outgoing transactions</A></td>    
+{% if show_checkin_link %}<td><A href="/{{ CHECKOUT_APP }}/checkin/{{ producer.name }}/">Check in data from netbook</A></td>{% endif %}
     <td>{{ producer.url }}</td>
     <td>{{ producer.sync_datetime|date:"Y-m-d H:i" }} </td>
     <td><div style="{% if producer.sync_status == 'OK' %}color:green;{% endif%}{% if producer.sync_status == 'Error' %}color:red;{% endif%}">{{ producer.sync_status }}</div></td>        
