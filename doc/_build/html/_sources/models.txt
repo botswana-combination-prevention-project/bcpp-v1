@@ -3,6 +3,6 @@
 Models
 ======
 
-.. autoclass:: bhp_lab_tracker.models.HistoryModel
+.. autoclass:: HistoryModel
     :members:  
     :show-inheritance: 

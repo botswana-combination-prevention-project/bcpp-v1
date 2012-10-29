@@ -58,7 +58,19 @@
 <h1>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h1>
 <p><tt class="xref py py-mod docutils literal"><span class="pre">bhp_lab_tracker</span></tt> uses a <tt class="xref py py-func docutils literal"><span class="pre">post_save()</span></tt> signal to catch modifications to models registered
 in a modules :file&#8221;<cite>lab_tracker.py</cite>.</p>
-<span class="target" id="module-bhp_lab_tracker.models.signals"></span></div>
+<span class="target" id="module-bhp_lab_tracker.models.signals"></span><dl class="function">
+<dt id="bhp_lab_tracker.models.signals.tracker_on_post_delete">
+<tt class="descclassname">bhp_lab_tracker.models.signals.</tt><tt class="descname">tracker_on_post_delete</tt><big>(</big><em>sender</em>, <em>instance</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bhp_lab_tracker/models/signals.html#tracker_on_post_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_lab_tracker.models.signals.tracker_on_post_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the tracker on post-delete for models registered in lab_tracker.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bhp_lab_tracker.models.signals.tracker_on_post_save">
+<tt class="descclassname">bhp_lab_tracker.models.signals.</tt><tt class="descname">tracker_on_post_save</tt><big>(</big><em>sender</em>, <em>instance</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bhp_lab_tracker/models/signals.html#tracker_on_post_save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_lab_tracker.models.signals.tracker_on_post_save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the tracker on pos-save for models registered in lab_tracker.</p>
+</dd></dl>
+
+</div>
 
 
           </div>

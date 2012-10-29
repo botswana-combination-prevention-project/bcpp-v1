@@ -55,8 +55,8 @@
 <dl class="class">
 <dt id="bhp_lab_tracker.models.HistoryModel">
 <em class="property">class </em><tt class="descclassname">bhp_lab_tracker.models.</tt><tt class="descname">HistoryModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.models.HistoryModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_uuid_model.BaseUuidModel</span></tt></p>
-<p>HistoryModel(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, group_name, test_code, value, value_datetime, source)</p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_lab_tracker.models.base_history_model.BaseHistoryModel</span></tt></p>
+<p>HistoryModel(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, group_name, test_code, value, value_datetime, source, source_identifier, history_datetime)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -74,6 +74,8 @@
 <li><strong>value</strong> (<em>CharField</em>) &#8211; Value</li>
 <li><strong>value_datetime</strong> (<em>DateTimeField</em>) &#8211; Value datetime</li>
 <li><strong>source</strong> (<em>CharField</em>) &#8211; Source</li>
+<li><strong>source_identifier</strong> (<em>CharField</em>) &#8211; Source identifier</li>
+<li><strong>history_datetime</strong> (<em>DateTimeField</em>) &#8211; History datetime</li>
 </ul>
 </td>
 </tr>
