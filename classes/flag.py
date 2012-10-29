@@ -46,7 +46,7 @@ class Flag(object):
                                                                                                                      self.reference_datetime,
                                                                                                                      self.group_name))
 
-    def get_list_prep(self, *args):
+    def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
         """Returns a filtered list of list items .
 
         Users should override this."""
@@ -58,22 +58,29 @@ class Flag(object):
         Users should override this."""
         return None, None, None
 
+    def check_list_prep(self, list_items):
+        """Runs additional checks for the reference table.
+
+        Users may override."""
+        return None
+
     def _get_list(self):
         """Returns the items from the reference list that meet the criteria of test code, gender, hiv status and age.
 
         Calls the user defined :func:`get_list_prep` to get the list then checks that there are no duplicates
         in the upper or lower ranges."""
-        list_items = self.get_list_prep()
+        list_items = self.get_list_prep(self.test_code, self.gender, self.hiv_status, self.age_in_days)
         if not list_items:
             raise TypeError('No reference list found for test code {0} gender {1} hiv status {2}. Cannot continue'.format(self.test_code, self.gender, self.hiv_status))
-        # inspect items for possible duplicates, overlapping ranges
+        # inspect items for possible duplicates, overlapping ranges and for missing grades
         upper_ranges = []
         lower_ranges = []
         for list_item in list_items:
             upper_ranges.append(list_item.uln)
             lower_ranges.append(list_item.lln)
-        if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
-            raise TypeError('Duplicates detected in reference list for test code {0} gender {1} hiv status {2}'.format(self.test_code, self.gender, self.hiv_status))
+        #if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
+        #    raise TypeError('Duplicates detected in reference list for test code {0} gender {1} hiv status {2}'.format(self.test_code, self.gender, self.hiv_status))
+        self.check_list_prep(list_items)
         return list_items
 
     def evaluate(self, value):
@@ -85,7 +92,7 @@ class Flag(object):
         retdict = {}
         # retdict.update({'is_default_hiv_status': self.is_default_hiv_status})
         # get the reference list from the user defined method
-        list_items = self.get_list_prep(self.test_code, self.gender, self.hiv_status)
+        list_items = self._get_list()
         if not list_items:
             # nothing in the reference list for this
             logger.warning('    No {0} items for {1}.'.format(self.list_name, self.test_code.code))
