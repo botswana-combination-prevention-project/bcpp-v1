@@ -38,7 +38,7 @@ class GradingListItem(BaseReferenceListItem):
         return get_upper_range_days(self.age_high, self.age_high_unit)
 
     def __unicode__(self):
-        return self.test_code.code
+        return '{0} {1}'.format(self.test_code.code, self.grade)
 
     class Meta:
         app_label = 'lab_clinic_reference'
