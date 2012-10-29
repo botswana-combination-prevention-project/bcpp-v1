@@ -384,26 +384,29 @@ class LabTracker(object):
         if not max_value_datetime:
             logger.warning('    no history found for {0} date {1} for group {2}.'.format(subject_identifier, value_datetime, group_name))
         else:
-            max_value_datetime = datetime(max_value_datetime.year, max_value_datetime.month, max_value_datetime.day, 0, 0)
+            max_value_datetime = datetime(max_value_datetime.year, max_value_datetime.month, max_value_datetime.day, max_value_datetime.hour, max_value_datetime.minute, max_value_datetime.second, max_value_datetime.microsecond)
             if HistoryModel.objects.filter(
                     subject_identifier=subject_identifier,
-                    value_datetime__lte=value_datetime,
                     group_name=self.get_group_name(group_name),
                     value_datetime=max_value_datetime).exists():
                 try:
                     history_model = HistoryModel.objects.get(
                         subject_identifier=subject_identifier,
-                        value_datetime__lte=value_datetime,
                         group_name=self.get_group_name(group_name),
                         value_datetime=max_value_datetime)
                 except MultipleObjectsReturned as e:
+                    # multiple objects resturned, if each has the same value, then no harm
+                    # otherwise log an error and return the default value
+                    values = []
                     for history_model in HistoryModel.objects.filter(
                             subject_identifier=subject_identifier,
-                            value_datetime__lte=value_datetime,
                             group_name=self.get_group_name(group_name),
                             value_datetime=max_value_datetime):
+                        values.append(history_model.value)
+                    if not list(set(values)).count() == 1:
+                        # more than one value for the same value_datetime, log the error!
                         self.log_history_model_error(history_model, e)
-                    history_model.value = self._get_default_value(group_name, subject_identifier, value_datetime)
+                        history_model.value = self._get_default_value(group_name, subject_identifier, value_datetime)
                 except:
                     raise
         return history_model
