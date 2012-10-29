@@ -23,15 +23,6 @@ class ResultItem(BaseResultItem):
         null=True,
         blank=True,
         help_text='Reference to source, invoice, filename, machine, etc')
-    subject_identifier = models.CharField(
-        max_length=25,
-        null=True,
-        editable=False,
-        db_index=True,
-        help_text="non-user helper field to simplify search and filtering")
-    receive_identifier = models.CharField(
-        max_length=25, editable=False, null=True, db_index=True,
-        help_text="non-user helper field to simplify search and filter")
     objects = models.Manager()
 
     def save(self, *args, **kwargs):

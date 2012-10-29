@@ -56,6 +56,12 @@ class BaseResultItem(BaseUuidModel):
         max_length=5,
         null=True,
         blank=True)
+    grade_message = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True)
+    grade_warn = models.BooleanField(default=False)
+
     reference_flag = models.CharField(
         max_length=5,
         null=True,
@@ -98,6 +104,15 @@ class BaseResultItem(BaseUuidModel):
         null=True,
         blank=True,
         help_text='')
+    subject_identifier = models.CharField(
+        max_length=25,
+        null=True,
+        editable=False,
+        db_index=True,
+        help_text="non-user helper field to simplify search and filtering")
+    receive_identifier = models.CharField(
+        max_length=25, editable=False, null=True, db_index=True,
+        help_text="non-user helper field to simplify search and filter")
     import_datetime = models.DateTimeField(null=True)
 
     def get_subject_identifier(self):

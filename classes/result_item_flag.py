@@ -18,8 +18,8 @@ class ResultItemFlag(object):
         hiv_status = kwargs.get('hiv_status', None)
         value = result_item.result_item_value_as_float
         ReferenceFlag = result_item.get_cls_reference_flag()
-        flag = ReferenceFlag(result_item.get_reference_list(), result_item)
-        kw = flag.evaluate(value)
+        reference_flag = ReferenceFlag(result_item.get_reference_list(), result_item)
+        kw = reference_flag.evaluate(value)
         range_ = '{0}-{1}'.format(kw.get('lower_limit'), kw.get('upper_limit'))
         if range_.strip() == '-' or kw.get('lower_limit') is None or kw.get('upper_limit') is None:
             result_item.reference_range = None
@@ -30,8 +30,11 @@ class ResultItemFlag(object):
         else:
             result_item.reference_flag = None
         GradeFlag = result_item.get_cls_grade_flag()
-        flag = GradeFlag(result_item.get_grading_list(), result_item, hiv_status=hiv_status)
-        kw = flag.evaluate(value)
+        grade_flag = GradeFlag(
+            result_item.get_grading_list(),
+            result_item,
+            hiv_status=hiv_status)
+        kw = grade_flag.evaluate(value)
         if kw.get('flag', None):
             range_ = '{0}-{1}'.format(kw.get('lower_limit'), kw.get('upper_limit'))
             if range_.strip() == '-':
@@ -42,6 +45,8 @@ class ResultItemFlag(object):
         else:
             result_item.grade_range = None
             result_item.grade_flag = None
+        result_item.grade_warn = True
+        result_item.grade_message = 'HIV status unknown, defaulted to NEG'
         #after = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
         #modified = (before == after) is False
         return result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag
