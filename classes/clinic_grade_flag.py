@@ -10,18 +10,20 @@ class ClinicGradeFlag(GradeFlag):
         gender = result_item.result.order.aliquot.receive.registered_subject.gender
         dob = result_item.result.order.aliquot.receive.registered_subject.dob
         reference_datetime = result_item.result.order.aliquot.receive.receive_datetime
+        subject_identifier = result_item.result.order.aliquot.receive.registered_subject.subject_identifier
         # may pass hiv_status as a kwargs for testing
         hiv_status, is_default_hiv_status = self.get_hiv_status(
-            result_item.result.order.aliquot.receive.registered_subject.subject_identifier,
+            subject_identifier,
             reference_datetime, **kwargs)
         super(ClinicGradeFlag, self).__init__(
             reference_list,
             test_code,
+            subject_identifier,
             gender,
             dob,
             reference_datetime,
-            hiv_status,
-            is_default_hiv_status, **kwargs)
+            hiv_status=hiv_status,
+            is_default_hiv_status=is_default_hiv_status)
 
     def get_lab_tracker_group_name(self):
         """Returns a group name to use when filtering on values in the lab_tracker class.
