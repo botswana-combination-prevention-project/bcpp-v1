@@ -4,7 +4,7 @@ from lab_flag.classes import Flag
 
 class ReferenceFlag(Flag):
 
-    def get_list_prep(self, test_code, gender, hiv_status):
+    def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
         """Returns a filtered list of list items."""
         list_items = self.list_item_model_cls.objects.filter(
             **{'{0}__name__iexact'.format(self.list_name): settings.REFERENCE_RANGE_LIST,
