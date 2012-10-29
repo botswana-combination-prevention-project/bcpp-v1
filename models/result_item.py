@@ -1,10 +1,9 @@
 import logging
 from django.db import models
 from lab_result_item.models import BaseResultItem
-from lab_clinic_reference.classes import ReferenceRangeFlag, ClinicGradeFlag
+from lab_clinic_reference.classes import ClinicReferenceFlag, ClinicGradeFlag
 from test_code import TestCode
 from result import Result
-#import pdb
 
 
 logger = logging.getLogger(__name__)
@@ -44,7 +43,7 @@ class ResultItem(BaseResultItem):
         return ('grading_list', models.get_model('lab_clinic_reference', 'gradinglistitem'))
 
     def get_cls_reference_flag(self):
-        return ReferenceRangeFlag
+        return ClinicReferenceFlag
 
     def get_cls_grade_flag(self):
         return ClinicGradeFlag
