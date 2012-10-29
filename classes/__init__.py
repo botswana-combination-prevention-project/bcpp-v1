@@ -1,4 +1,4 @@
 from reference_range_flag import ReferenceRangeFlag
-from grade_flag import GradeFlag
+from clinic_grade_flag import ClinicGradeFlag
 from import_grading import ImportGrading
 from import_reference_range import ImportReferenceRange

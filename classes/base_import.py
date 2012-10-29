@@ -12,7 +12,7 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class BaseImport(object):
-
+    """Base class for importing grading and reference lists."""
     def __init__(self, db):
         self.db = db
 
