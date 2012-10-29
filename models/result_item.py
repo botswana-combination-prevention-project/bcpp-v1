@@ -1,7 +1,7 @@
 import logging
 from django.db import models
 from lab_result_item.models import BaseResultItem
-from lab_clinic_reference.classes import ReferenceRangeFlag, GradeFlag
+from lab_clinic_reference.classes import ReferenceRangeFlag, ClinicGradeFlag
 from test_code import TestCode
 from result import Result
 #import pdb
@@ -20,15 +20,6 @@ class ResultItem(BaseResultItem):
     """Stores each result item in a result in one-to-many relation with :class:`Result`."""
     test_code = models.ForeignKey(TestCode, related_name='+')
     result = models.ForeignKey(Result)
-    subject_identifier = models.CharField(
-        max_length=25,
-        null=True,
-        editable=False,
-        db_index=True,
-        help_text="non-user helper field to simplify search and filtering")
-    receive_identifier = models.CharField(
-        max_length=25, editable=False, null=True, db_index=True,
-        help_text="non-user helper field to simplify search and filter")
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
@@ -56,7 +47,7 @@ class ResultItem(BaseResultItem):
         return ReferenceRangeFlag
 
     def get_cls_grade_flag(self):
-        return GradeFlag
+        return ClinicGradeFlag
 
     def get_reference_list(self):
         #pdb.set_trace()
