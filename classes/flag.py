@@ -2,6 +2,7 @@ import logging
 from bhp_common.utils import get_age_in_days
 from lab_test_code.models import BaseTestCode
 from lab_reference.models import BaseReferenceListItem
+from bhp_lab_tracker.classes import lab_tracker
 
 logger = logging.getLogger(__name__)
 
@@ -14,18 +15,36 @@ nullhandler = logger.addHandler(NullHandler())
 
 class Flag(object):
 
-    def __init__(self, reference_list, test_code, gender, dob, reference_datetime, hiv_status, is_default_hiv_status):
+    def __init__(self, subject_identifier, reference_list, test_code, gender, dob, reference_datetime, **kwargs):
         self.dirty = False
+        self.group_name = 'HIV'  # lab_tracker cls group name
         self.list_name, self.list_item_model_cls = reference_list
         self.test_code = test_code
         if not isinstance(test_code, BaseTestCode):
             raise TypeError('Parameter \'test_code\' must be an instance of \'BaseTestCode\'.')
+        self.subject_identifier = subject_identifier
         self.gender = gender
         self.dob = dob
         self.reference_datetime = reference_datetime
-        self.hiv_status = hiv_status
-        self.is_default_hiv_status = is_default_hiv_status
         self.age_in_days = get_age_in_days(self.reference_datetime, self.dob)
+        self.hiv_status = kwargs.get('hiv_status', None)
+        self.is_default_hiv_status = kwargs.get('is_default_hiv_status', None)
+        if not self.hiv_status:
+            self.get_hiv_status()
+        if not self.hiv_status:
+            raise TypeError('hiv_status cannot be None.')
+
+    def get_hiv_status(self):
+        """ """
+        if not self.hiv_status:
+            self.hiv_status, self.is_default_hiv_status = lab_tracker.get_value(
+                self.group_name,
+                self.subject_identifier,
+                self.reference_datetime)
+        if not self.hiv_status:
+            raise TypeError('hiv_status cannot be None for subject {0} relative to {1} using group name {2}.'.format(self.subject_identifier,
+                                                                                                                     self.reference_datetime,
+                                                                                                                     self.group_name))
 
     def get_list_prep(self, *args):
         """Returns a filtered list of list items .
@@ -39,6 +58,24 @@ class Flag(object):
         Users should override this."""
         return None, None, None
 
+    def _get_list(self):
+        """Returns the items from the reference list that meet the criteria of test code, gender, hiv status and age.
+
+        Calls the user defined :func:`get_list_prep` to get the list then checks that there are no duplicates
+        in the upper or lower ranges."""
+        list_items = self.get_list_prep()
+        if not list_items:
+            raise TypeError('No reference list found for test code {0} gender {1} hiv status {2}. Cannot continue'.format(self.test_code, self.gender, self.hiv_status))
+        # inspect items for possible duplicates, overlapping ranges
+        upper_ranges = []
+        lower_ranges = []
+        for list_item in list_items:
+            upper_ranges.append(list_item.uln)
+            lower_ranges.append(list_item.lln)
+        if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
+            raise TypeError('Duplicates detected in reference list for test code {0} gender {1} hiv status {2}'.format(self.test_code, self.gender, self.hiv_status))
+        return list_items
+
     def evaluate(self, value):
         """ Determines the flag for value and returns a with the flag and related parameters."""
         if self.dirty:
@@ -46,11 +83,11 @@ class Flag(object):
         if not isinstance(value, (int, float, long)):
             raise TypeError('Value must be an instance of int, float, long.')
         retdict = {}
-        retdict.update({'is_default_hiv_status': self.is_default_hiv_status})
+        # retdict.update({'is_default_hiv_status': self.is_default_hiv_status})
         # get the reference list from the user defined method
-        list_items = self.get_list_prep(test_code, gender, hiv_status)
+        list_items = self.get_list_prep(self.test_code, self.gender, self.hiv_status)
         if not list_items:
-            # nothing in the reference list for this 
+            # nothing in the reference list for this
             logger.warning('    No {0} items for {1}.'.format(self.list_name, self.test_code.code))
         else:
             for list_item in list_items:
