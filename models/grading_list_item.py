@@ -31,6 +31,21 @@ class GradingListItem(BaseReferenceListItem):
 
     objects = models.Manager()
 
+    def describe(self, age_in_days=None):
+        if not age_in_days:
+            age_in_days = 'AGE'
+        template = '{grade} {hiv_status} {lln} - {uln} for {age_in_days} {age_low_quantifier} {age_low_days} and {age_in_days} {age_high_quantifier} {age_high_days}'
+        return template.format(
+            grade=self.grade,
+            hiv_status=self.hiv_status,
+            lln=self.lln,
+            uln=self.uln,
+            age_in_days=age_in_days,
+            age_low_quantifier=self.age_low_quantifier,
+            age_low_days=self.age_low_days(),
+            age_high_quantifier=self.age_high_quantifier,
+            age_high_days=self.age_high_days())
+
     def age_low_days(self):
         return get_lower_range_days(self.age_low, self.age_low_unit)
 
