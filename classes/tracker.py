@@ -5,7 +5,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.core.exceptions import ImproperlyConfigured
 from lab_clinic_api.models import ResultItem
 from bhp_registration.models import RegisteredSubject
-from bhp_lab_tracker.models import HistoryModel, HistoryModelError
+from bhp_lab_tracker.models import HistoryModel, HistoryModelError, DefaultValueLog
 
 logger = logging.getLogger(__name__)
 
@@ -80,9 +80,11 @@ class LabTracker(object):
         return None
 
     def _get_default_value(self, group_name, subject_identifier, value_datetime):
-        """Returns the a value if None is available."""
+        """Returns the default value when none is available from the HistoryModel."""
         default_value = self.get_default_value(group_name, subject_identifier, value_datetime)
         # track that a default value was used
+        if not default_value:
+            raise ImproperlyConfigured('Method get_default_value() must return a value. Got None.')
         return default_value
 
     def _get_value_map(self, model_name):
@@ -338,6 +340,7 @@ class LabTracker(object):
             group_name=self._get_group_name(group_name)).order_by(order_by)
 
     def get_current_value(self, group_name, subject_identifier, value_datetime=None):
+        """Returns the current value relative to value_datetime or the default value if there is no information for this subject in the History model."""
         is_default = False
         history_model = self.get_current_instance(self._get_group_name(group_name), subject_identifier, value_datetime)
         if not history_model:
@@ -391,6 +394,13 @@ class LabTracker(object):
                 except:
                     raise
         return history_model
+
+    def log_default_value_used(self, subject_identifier, group_name, value_datetime=None):
+        default_value_log = DefaultValueLog.objects.create(
+            subject_identifier=subject_identifier,
+            group_name=group_name,
+            value_datetime=value_datetime)
+        return default_value_log
 
     def log_history_model_error(self, history_model, error):
         """Logs errors with the HistoryModel such as when no instance can be found for a subject."""

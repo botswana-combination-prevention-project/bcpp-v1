@@ -86,6 +86,8 @@ class SiteLabTracker(object):
                 * subject_identifier: used by :func:`get_current_value`
                 * value_datetime: used by :func:`get_current_value`
 
+           Method :finc:`get_value()`
+
            This method will be called from any class that needs the value being tracked. For example,
            :class:`ClinicGradeFlag` needs to know the HIV Status of a subject at the time a sample
            was drawn in order to grade a test result.
