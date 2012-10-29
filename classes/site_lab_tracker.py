@@ -52,7 +52,7 @@ class SiteLabTracker(object):
         # confirm the models in the models class attribute have the required methods.
         if 'models' in dir(lab_tracker_cls):
             for model_tpl in lab_tracker_cls.models:
-                model_cls = lab_tracker_cls()._unpack_model_tpl(model_tpl, lab_tracker_cls.MODEL_CLS)
+                model_cls = lab_tracker_cls.unpack_model_tpl(model_tpl, lab_tracker_cls.MODEL_CLS)
                 if 'get_subject_identifier' not in dir(model_cls):
                     raise ImproperlyConfigured('Model {0} cannot be registered to a lab tracker. '
                                                'Define the method \'get_subject_identifier()\' on '
@@ -60,16 +60,16 @@ class SiteLabTracker(object):
         else:
             lab_tracker_cls.models = []
         # add result_item model
-        lab_tracker_cls.models.append(lab_tracker_cls.result_item_tpl)
+        lab_tracker_cls.add_model_tpl(lab_tracker_cls.result_item_tpl)
         self._registry.append(lab_tracker_cls)
         # check group_names of registered classes to enforce uniqueness across classes.
-        for cls in self._registry:
-            if cls == lab_tracker_cls:
-                if cls().get_group_name != lab_tracker_cls().get_group_name():
-                    raise ImproperlyConfigured('{0} group name must be unique across LabTracker classes. '
-                                               'Group name {1} also appears in .'.format(lab_tracker_cls.__name__,
-                                                                                         lab_tracker_cls().get_group_name(),
-                                                                                         cls.__name__))
+        #for cls in self._registry:
+        #    if cls == lab_tracker_cls:
+        #        if cls().get_group_name != lab_tracker_cls().get_group_name():
+        #            raise ImproperlyConfigured('{0} group name must be unique across LabTracker classes. '
+        #                                       'Group name {1} also appears in .'.format(lab_tracker_cls.__name__,
+        #                                                                                 lab_tracker_cls().get_group_name(),
+        #                                                                                 cls.__name__))
 
     def update_all(self, supress_messages):
         for lab_tracker_cls in self._registry:
@@ -104,7 +104,7 @@ class SiteLabTracker(object):
         if not value:
             # a value should always be returned, even if it is the classes' default value.
             raise TypeError('Value cannot be None. Using ({0}, {1}, {2})'.format(group_name, subject_identifier, value_datetime))
-        return (subject_identifier, value, value_datetime, is_default_value)
+        return (value, is_default_value)
 
     def autodiscover(self):
         """Searches all apps for :file:`lab_tracker.py` and registers and :class:`LabTracker` subclasses found."""
