@@ -1,7 +1,7 @@
 from lab_reference.classes import ReferenceFlag
 
 
-class ReferenceRangeFlag(ReferenceFlag):
+class ClinicReferenceFlag(ReferenceFlag):
 
     def __init__(self, reference_list, result_item, **kwargs):
         test_code = result_item.test_code
@@ -9,4 +9,4 @@ class ReferenceRangeFlag(ReferenceFlag):
         dob = result_item.result.order.aliquot.receive.registered_subject.dob
         reference_datetime = result_item.result.order.aliquot.receive.receive_datetime
         hiv_status = result_item.result.order.aliquot.receive.registered_subject.hiv_status
-        super(ReferenceRangeFlag, self).__init__(reference_list, test_code, gender, dob, reference_datetime, hiv_status, **kwargs)
+        super(ClinicReferenceFlag, self).__init__(reference_list, test_code, gender, dob, reference_datetime, hiv_status, **kwargs)
