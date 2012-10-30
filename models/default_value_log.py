@@ -5,6 +5,7 @@ from bhp_base_model.classes import BaseUuidModel
 class DefaultValueLog(BaseUuidModel):
 
     subject_identifier = models.CharField(max_length=50)
+    subject_type = models.CharField(max_length=25, null=True)
     group_name = models.CharField(max_length=50)
     value_datetime = models.DateTimeField(null=True)
     error_message = models.TextField(max_length=500, null=True)

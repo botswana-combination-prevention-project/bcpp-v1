@@ -95,7 +95,11 @@ class LabTracker(object):
             raise ImproperlyConfigured('Method get_default_value() must return a value. Got None.')
         else:
             # track that a default value was used
-            self.log_default_value_used(group_name, subject_identifier, value_datetime)
+            subject_type = 'unknown'
+            if RegisteredSubject.objects.filter(subject_identifier=subject_identifier):
+                registered_subject = RegisteredSubject.objects.filter(subject_identifier=subject_identifier)
+                subject_type = registered_subject.subject_type
+            self.log_default_value_used(group_name, subject_identifier, subject_type, value_datetime)
         return default_value
 
     def _get_value_map(self, model_name):
@@ -411,9 +415,10 @@ class LabTracker(object):
                     raise
         return history_model
 
-    def log_default_value_used(self, group_name, subject_identifier, value_datetime=None):
+    def log_default_value_used(self, group_name, subject_identifier, subject_type, value_datetime=None):
         default_value_log = DefaultValueLog.objects.create(
             subject_identifier=subject_identifier,
+            subject_type=subject_type,
             group_name=group_name,
             value_datetime=value_datetime)
         return default_value_log
