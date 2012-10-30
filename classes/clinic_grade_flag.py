@@ -10,7 +10,6 @@ class ClinicGradeFlag(GradeFlag):
         dob = result_item.result.order.aliquot.receive.registered_subject.dob
         reference_datetime = result_item.result.order.aliquot.receive.receive_datetime
         subject_identifier = result_item.result.order.aliquot.receive.registered_subject.subject_identifier
-        kwargs = {'hiv_status':result_item.result.order.aliquot.receive.registered_subject.hiv_status}
         super(ClinicGradeFlag, self).__init__(
             subject_identifier,
             reference_list,
