@@ -8,23 +8,25 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'HistoryModel.is_default_value'
-        db.delete_column('bhp_lab_tracker_historymodel', 'is_default_value')
-
-        # Deleting field 'HistoryModelError.is_default_value'
-        db.delete_column('bhp_lab_tracker_historymodelerror', 'is_default_value')
+        pass
+#        # Deleting field 'HistoryModel.is_default_value'
+#        db.delete_column('bhp_lab_tracker_historymodel', 'is_default_value')
+#
+#        # Deleting field 'HistoryModelError.is_default_value'
+#        db.delete_column('bhp_lab_tracker_historymodelerror', 'is_default_value')
 
 
     def backwards(self, orm):
-        # Adding field 'HistoryModel.is_default_value'
-        db.add_column('bhp_lab_tracker_historymodel', 'is_default_value',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-
-        # Adding field 'HistoryModelError.is_default_value'
-        db.add_column('bhp_lab_tracker_historymodelerror', 'is_default_value',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
+        pass
+#        # Adding field 'HistoryModel.is_default_value'
+#        db.add_column('bhp_lab_tracker_historymodel', 'is_default_value',
+#                      self.gf('django.db.models.fields.BooleanField')(default=False),
+#                      keep_default=False)
+#
+#        # Adding field 'HistoryModelError.is_default_value'
+#        db.add_column('bhp_lab_tracker_historymodelerror', 'is_default_value',
+#                      self.gf('django.db.models.fields.BooleanField')(default=False),
+#                      keep_default=False)
 
 
     models = {
