@@ -8,8 +8,6 @@ class ClinicReferenceFlag(ReferenceFlag):
         dob = result_item.result.order.aliquot.receive.registered_subject.dob
         reference_datetime = result_item.result.order.aliquot.receive.receive_datetime
         subject_identifier = result_item.result.order.aliquot.receive.registered_subject.subject_identifier
-        #REMOVE LINE BELOW AFTER TESTING
-        kwargs = {'hiv_status':result_item.result.order.aliquot.receive.registered_subject.hiv_status}
         super(ClinicReferenceFlag, self).__init__(
             subject_identifier,
             reference_list,
