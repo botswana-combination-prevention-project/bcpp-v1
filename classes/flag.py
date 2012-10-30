@@ -118,6 +118,8 @@ class Flag(object):
         upper_limit = round(list_item.uln, places)
         value = round(value, places)
         return value, lower_limit, upper_limit
+    
+    
 
     def _cleanup(self):
         """ Clean up instance variables in case you forget to re-init."""
