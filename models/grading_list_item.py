@@ -34,17 +34,26 @@ class GradingListItem(BaseReferenceListItem):
     def describe(self, age_in_days=None):
         if not age_in_days:
             age_in_days = 'AGE'
-        template = '{grade} {hiv_status} {lln} - {uln} for {age_in_days} {age_low_quantifier} {age_low_days} and {age_in_days} {age_high_quantifier} {age_high_days}'
+        if self.scale == 'increasing':
+            template = 'G{grade} {gender} HIV-{hiv_status} VAL{uln_quantifier}{uln} and VAL{lln_quantifier}{lln} for {age_in_days}{age_low_quantifier}{age_low_days}d and {age_in_days}{age_high_quantifier}{age_high_days}d'
+        else:
+            template = 'G{grade} {gender} HIV-{hiv_status} VAL{lln_quantifier}{lln} and VAL{uln_quantifier}{uln} for {age_in_days}{age_low_quantifier}{age_low_days}d and {age_in_days}{age_high_quantifier}{age_high_days}d'
         return template.format(
             grade=self.grade,
+            gender=self.gender,
             hiv_status=self.hiv_status,
-            lln=self.lln,
-            uln=self.uln,
+            lln_quantifier=self.lln_quantifier,
+            uln_quantifier=self.uln_quantifier,
+            lln=self.round_off(self.lln),
+            uln=self.round_off(self.uln),
             age_in_days=age_in_days,
             age_low_quantifier=self.age_low_quantifier,
             age_low_days=self.age_low_days(),
             age_high_quantifier=self.age_high_quantifier,
             age_high_days=self.age_high_days())
+
+    def round_off(self, value):
+        return round(value, self.test_code.display_decimal_places or 0)
 
     def age_low_days(self):
         return get_lower_range_days(self.age_low, self.age_low_unit)
