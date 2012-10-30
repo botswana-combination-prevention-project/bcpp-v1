@@ -9,12 +9,16 @@ class GradeFlag(Flag):
     def check_list_prep(self, list_items):
         """Runs additional checks for the reference table.
 
+        Ensures list not greater than 4.
+
         Confirms that only 4 instances of list_item are returned (G1,2,3,4) from :func:`get_list_prep`
         and that all 4 grades are represented.
         """
         grades = []
         for list_item in list_items:
             grades.append(list_item.grade)
+        if len(grades) > 4:
+            raise TypeError('Duplicate instances for grade in reference list for test code {0} gender {1} hiv status {2}.".'.format(self.test_code, self.gender, self.hiv_status))
         grades = list(set(grades))
         grades.sort()
         if grades != [1, 2, 3, 4]:
@@ -27,7 +31,11 @@ class GradeFlag(Flag):
         return 'HIV'
 
     def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
-        """Returns list of GradingListItems filtered on test_code, gender, hiv_status, age_in_days."""
+        """Returns list of GradingListItems filtered on test_code, gender, hiv_status, age_in_days.
+
+        .. note:: If ranges overlap after rounding, the higher grade should be selected
+                  for the calculation. see :func:`order_list_prep`.
+        """
         if hiv_status:
             qset = (Q(hiv_status__iexact=hiv_status.lower()) | Q(hiv_status__iexact='ANY'))
         else:
@@ -57,6 +65,15 @@ class GradeFlag(Flag):
 #            else:
 #                print '   {0}'.format(list_item.describe())
         return my_list_items
+
+    def order_list_prep(self, list_items):
+        """Returns an ordered list of list_items"""
+        ordered_list_items = [None, None, None, None]
+        if len(list_items) != 4:
+            raise TypeError('Expected 4 grading list items. Got {0} from {1}.'.format(len(list_items), list_items))
+        for list_item in list_items:
+            ordered_list_items[4 - list_item.grade] = list_item
+        return ordered_list_items
 
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
