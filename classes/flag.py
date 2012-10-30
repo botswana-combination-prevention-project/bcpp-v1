@@ -79,13 +79,18 @@ class Flag(object):
         if not list_items:
             raise TypeError('No reference list found for test code {0} gender {1} hiv status {2}. Cannot continue'.format(self.test_code, self.gender, self.hiv_status))
         # inspect items for possible duplicates, overlapping ranges and for missing grades
-        upper_ranges = []
-        lower_ranges = []
-        for list_item in list_items:
-            upper_ranges.append(list_item.uln)
-            lower_ranges.append(list_item.lln)
-        if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
-            raise TypeError('Duplicates lower or upper bounds detected in reference list for test code {0} gender {1} hiv status {2}. Age is {3}.'.format(self.test_code, self.gender, self.hiv_status, self.age_in_days))
+#        upper_ranges = []
+#        lower_ranges = []
+#        for list_item in list_items:
+#            upper_ranges.append(list_item.uln)
+#            lower_ranges.append(list_item.lln)
+#        if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
+#            raise TypeError('Duplicates lower or upper bounds detected in reference list for test code {0} gender {1} hiv status {2}. Age is {3}. upper {4}, lower {5}'.format(self.test_code,
+#                                                                                                                                                                               self.gender,
+#                                                                                                                                                                               self.hiv_status,
+#                                                                                                                                                                               self.age_in_days,
+#                                                                                                                                                                               upper_ranges,
+#                                                                                                                                                                               lower_ranges))
         self.check_list_prep(list_items)
         # list may need to be ordered as in the case of grading.
         list_items = self.order_list_prep(list_items)
