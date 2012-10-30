@@ -20,5 +20,5 @@ admin.site.register(HistoryModelError, HistoryModelErrorAdmin)
 class DefaultValueLogAdmin(BaseModelAdmin):
     list_display = ('subject_identifier', 'group_name', 'value_datetime', 'modified')
     search_fields = ('subject_identifier', 'error_message')
-    list_filer = ('group_name', 'modified')
+    list_filter = ('group_name', 'subject_type', 'modified')
 admin.site.register(DefaultValueLog, DefaultValueLogAdmin)

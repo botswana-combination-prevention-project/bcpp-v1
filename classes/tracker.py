@@ -97,7 +97,7 @@ class LabTracker(object):
             # track that a default value was used
             subject_type = 'unknown'
             if RegisteredSubject.objects.filter(subject_identifier=subject_identifier):
-                registered_subject = RegisteredSubject.objects.filter(subject_identifier=subject_identifier)
+                registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
                 subject_type = registered_subject.subject_type
             self.log_default_value_used(group_name, subject_identifier, subject_type, value_datetime)
         return default_value
@@ -407,7 +407,7 @@ class LabTracker(object):
                             group_name=self.get_group_name(group_name),
                             value_datetime=max_value_datetime):
                         values.append(history_model.value)
-                    if not list(set(values)).count() == 1:
+                    if not len(list(set(values))) == 1:
                         # more than one value for the same value_datetime, log the error!
                         self.log_history_model_error(history_model, e)
                         history_model.value = self._get_default_value(group_name, subject_identifier, value_datetime)
