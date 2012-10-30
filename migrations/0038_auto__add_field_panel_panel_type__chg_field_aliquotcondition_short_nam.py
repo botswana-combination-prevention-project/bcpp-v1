@@ -23,7 +23,7 @@ class Migration(SchemaMigration):
         db.create_index('lab_clinic_api_aliquotcondition', ['short_name'])
 
         # Adding index on 'AliquotCondition', fields ['display_index']
-        db.create_index('lab_clinic_api_aliquotcondition', ['display_index'])
+        #db.create_index('lab_clinic_api_aliquotcondition', ['display_index'])
 
 
     def backwards(self, orm):
