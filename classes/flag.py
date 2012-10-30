@@ -64,6 +64,12 @@ class Flag(object):
         Users may override."""
         return None
 
+    def order_list_prep(self, list_items):
+        """Returns an ordered list of list_items.
+
+        Users may override."""
+        return list_items
+
     def _get_list(self):
         """Returns the items from the reference list that meet the criteria of test code, gender, hiv status and age.
 
@@ -78,13 +84,18 @@ class Flag(object):
         for list_item in list_items:
             upper_ranges.append(list_item.uln)
             lower_ranges.append(list_item.lln)
-        #if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
-        #    raise TypeError('Duplicates detected in reference list for test code {0} gender {1} hiv status {2}'.format(self.test_code, self.gender, self.hiv_status))
+        if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
+            raise TypeError('Duplicates lower or upper bounds detected in reference list for test code {0} gender {1} hiv status {2}. Age is {3}.'.format(self.test_code, self.gender, self.hiv_status, self.age_in_days))
         self.check_list_prep(list_items)
+        # list may need to be ordered as in the case of grading.
+        list_items = self.order_list_prep(list_items)
         return list_items
 
     def evaluate(self, value):
-        """ Determines the flag for value and returns a with the flag and related parameters."""
+        """ Determines the flag for value and returns a with the flag and related parameters.
+
+        .. note:: If list is ordered then the list item selected is predictable.
+        .. seealso:: :func:`order_list_prep`"""
         if self.dirty:
             raise ValueError('Instance has already been evaluated. Initialize a new instance before evaluating again.')
         if not isinstance(value, (int, float, long)):
@@ -103,6 +114,8 @@ class Flag(object):
                 # call user defined evaluate
                 retdict['flag'], retdict['lower_limit'], retdict['upper_limit'] = self.get_evaluate_prep(value, list_item)
                 if retdict['flag']:
+                    # takes the first list_item that matches.
+                    # if list_items is ordered then this is predicatable
                     break
         self._cleanup()
         return retdict
