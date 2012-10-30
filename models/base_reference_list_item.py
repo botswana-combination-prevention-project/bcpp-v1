@@ -7,6 +7,11 @@ class BaseReferenceListItem(BaseModel):
 
     code = models.CharField(max_length=25, null=True)
 
+    scale = models.CharField(
+        max_length=25,
+        choices=(('increasing', 'increasing'), ('decreasing', 'decreasing')),
+        default='increasing')
+
     gender = models.CharField(
         verbose_name="Gender",
         choices=GENDER_OF_REFERENCE,
