@@ -7,7 +7,11 @@ from lab_flag.classes import Flag
 class GradeFlag(Flag):
 
     def check_list_prep(self, list_items):
-        """Runs additional checks for the reference table."""
+        """Runs additional checks for the reference table.
+
+        Confirms that only 4 instances of list_item are returned (G1,2,3,4) from :func:`get_list_prep`
+        and that all 4 grades are represented.
+        """
         grades = []
         for list_item in list_items:
             grades.append(list_item.grade)
@@ -23,7 +27,7 @@ class GradeFlag(Flag):
         return 'HIV'
 
     def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
-        """Returns a filtered list of GradingListItem for this ."""
+        """Returns list of GradingListItems filtered on test_code, gender, hiv_status, age_in_days."""
         if hiv_status:
             qset = (Q(hiv_status__iexact=hiv_status.lower()) | Q(hiv_status__iexact='ANY'))
         else:
@@ -48,10 +52,10 @@ class GradeFlag(Flag):
                                     age_high_quantifier=list_item.age_high_quantifier,
                                     age_high_days=list_item.age_high_days())):
                 my_list_items.append(list_item)
-            if list_item in my_list_items:
-                print ' * {0}'.format(list_item.describe())
-            else:
-                print '   {0}'.format(list_item.describe())
+#            if list_item in my_list_items:
+#                print ' * {0}'.format(list_item.describe())
+#            else:
+#                print '   {0}'.format(list_item.describe())
         return my_list_items
 
     def get_evaluate_prep(self, value, list_item):
