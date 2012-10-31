@@ -137,7 +137,7 @@ class BaseResultItem(BaseUuidModel):
         raise TypeError('Method must be overridden by the child class.')
         return None
     
-    def get_result_item_value(self):
+    def get_result_item_values(self):
         return ResultItemFlag().calculate(self)
     
     def save(self, *args, **kwargs):
