@@ -1,4 +1,5 @@
 import logging
+import re
 from bhp_common.utils import get_age_in_days
 from lab_test_code.models import BaseTestCode
 from lab_reference.models import BaseReferenceListItem
@@ -76,21 +77,6 @@ class Flag(object):
         Calls the user defined :func:`get_list_prep` to get the list then checks that there are no duplicates
         in the upper or lower ranges."""
         list_items = self.get_list_prep(self.test_code, self.gender, self.hiv_status, self.age_in_days)
-        #if not list_items:
-        #    raise TypeError('No reference list found for test code {0} gender {1} hiv status {2}. Cannot continue'.format(self.test_code, self.gender, self.hiv_status))
-        # inspect items for possible duplicates, overlapping ranges and for missing grades
-#        upper_ranges = []
-#        lower_ranges = []
-#        for list_item in list_items:
-#            upper_ranges.append(list_item.uln)
-#            lower_ranges.append(list_item.lln)
-#        if upper_ranges != list(set(upper_ranges)) or lower_ranges != list(set(lower_ranges)):
-#            raise TypeError('Duplicates lower or upper bounds detected in reference list for test code {0} gender {1} hiv status {2}. Age is {3}. upper {4}, lower {5}'.format(self.test_code,
-#                                                                                                                                                                               self.gender,
-#                                                                                                                                                                               self.hiv_status,
-#                                                                                                                                                                               self.age_in_days,
-#                                                                                                                                                                               upper_ranges,
-#                                                                                                                                                                               lower_ranges))
         for list_item in list_items:
             if not list_item.active:
                 raise TypeError('Inactive List item returned from get_list_prep(). Got {0}'.format(list_item))
@@ -129,15 +115,30 @@ class Flag(object):
         self._cleanup()
         return retdict
 
+    def filter_list_items_by_age(self, list_items, age_in_days):
+        """ Filters list items for this subject's age and populates a list of list_item instances."""
+        my_list_items = []
+        eval_str = '{age_in_days} {age_low_quantifier} {age_low_days} and {age_in_days} {age_high_quantifier} {age_high_days}'
+        for list_item in list_items:
+            if not re.match('^\>$|^\>\=$', list_item.age_low_quantifier.strip(' \t\n\r')):
+                raise TypeError('Invalid age_low_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_low_quantifier))
+            if not re.match('^\<$|^\<\=$', list_item.age_high_quantifier.strip(' \t\n\r')):
+                raise TypeError('Invalid age_high_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_high_quantifier))
+            if eval(eval_str.format(age_in_days=age_in_days,
+                                    age_low_quantifier=list_item.age_low_quantifier,
+                                    age_low_days=list_item.age_low_days(),
+                                    age_high_quantifier=list_item.age_high_quantifier,
+                                    age_high_days=list_item.age_high_days())):
+                my_list_items.append(list_item)
+        # return a list, not a queryset
+        return my_list_items
+
     def round_off(self, value, list_item):
         """Rounds off value and reference range to the number of places from "test code" for valid comparison."""
         #flag, lower_limit, upper_limit = None, None, None
         places = self.test_code.display_decimal_places or 0  # this might be worth a warning in None
-        # lower_limit = ceil(list_item.lln * (10 ** places)) / (10 ** places)
-        # upper_limit = ceil(list_item.uln * (10 ** places)) / (10 ** places)
-        # value = ceil(value * (10 ** places)) / (10 ** places)
-        lower_limit = round(list_item.lln, places)
-        upper_limit = round(list_item.uln, places)
+        lower_limit = round(list_item.value_low, places)
+        upper_limit = round(list_item.value_high, places)
         value = round(value, places)
         return value, lower_limit, upper_limit
 
