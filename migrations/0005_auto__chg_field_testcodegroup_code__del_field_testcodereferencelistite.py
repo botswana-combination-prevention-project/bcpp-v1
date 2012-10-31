@@ -9,28 +9,28 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-#        # Changing field 'TestCodeGroup.code'
-#        db.alter_column('bhp_lab_test_code_testcodegroup', 'code', self.gf('django.db.models.fields.CharField')(max_length=15, null=True))
-#
-#        # Adding field 'TestCodeReferenceListItemAudit.scale'
-#        db.add_column('bhp_lab_test_code_testcodereferencelistitem_audit', 'scale',
-#                      self.gf('django.db.models.fields.CharField')(default='increasing', max_length=25),
-#                      keep_default=False)
+        # Changing field 'TestCodeGroup.code'
+        db.alter_column('bhp_lab_test_code_testcodegroup', 'code', self.gf('django.db.models.fields.CharField')(max_length=15, null=True))
 
-#        # Adding field 'TestCodeReferenceListItemAudit.active'
-#        db.add_column('bhp_lab_test_code_testcodereferencelistitem_audit', 'active',
-#                      self.gf('django.db.models.fields.BooleanField')(default=True),
-#                      keep_default=False)
-#
-#        # Adding field 'TestCodeReferenceListItem.scale'
-#        db.add_column('bhp_lab_test_code_testcodereferencelistitem', 'scale',
-#                      self.gf('django.db.models.fields.CharField')(default='increasing', max_length=25),
-#                      keep_default=False)
-#
-#        # Adding field 'TestCodeReferenceListItem.active'
-#        db.add_column('bhp_lab_test_code_testcodereferencelistitem', 'active',
-#                      self.gf('django.db.models.fields.BooleanField')(default=True),
-#                      keep_default=False)
+        # Adding field 'TestCodeReferenceListItemAudit.scale'
+        db.add_column('bhp_lab_test_code_testcodereferencelistitem_audit', 'scale',
+                      self.gf('django.db.models.fields.CharField')(default='increasing', max_length=25),
+                      keep_default=False)
+
+        # Adding field 'TestCodeReferenceListItemAudit.active'
+        db.add_column('bhp_lab_test_code_testcodereferencelistitem_audit', 'active',
+                      self.gf('django.db.models.fields.BooleanField')(default=True),
+                      keep_default=False)
+
+        # Adding field 'TestCodeReferenceListItem.scale'
+        db.add_column('bhp_lab_test_code_testcodereferencelistitem', 'scale',
+                      self.gf('django.db.models.fields.CharField')(default='increasing', max_length=25),
+                      keep_default=False)
+
+        # Adding field 'TestCodeReferenceListItem.active'
+        db.add_column('bhp_lab_test_code_testcodereferencelistitem', 'active',
+                      self.gf('django.db.models.fields.BooleanField')(default=True),
+                      keep_default=False)
 
         # Adding field 'TestCodeReferenceListItemAudit.value_low_quantifier'
         db.add_column('bhp_lab_test_code_testcodereferencelistitem_audit', 'value_low_quantifier',
