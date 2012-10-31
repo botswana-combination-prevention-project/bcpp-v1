@@ -18,7 +18,9 @@ class GradeFlag(Flag):
         for list_item in list_items:
             grades.append(list_item.grade)
         if len(grades) > 4:
-            raise TypeError('Duplicate instances for grade in reference list for test code {0} gender {1} hiv status {2}.".'.format(self.test_code, self.gender, self.hiv_status))
+            for list_item in list_items:
+                print '{0} {1} {2} {3}'.format(list_item.grade, list_item.age_low_days(), list_item.age_high_days(), list_item.hiv_status)
+            raise TypeError('Duplicate instances for grade in reference list for test code {0} gender {1} hiv status {2}. Got {3}.'.format(self.test_code, self.gender, self.hiv_status, grades))
         grades = list(set(grades))
         grades.sort()
         if grades != [1, 2, 3, 4]:
@@ -45,15 +47,16 @@ class GradeFlag(Flag):
             **{'{0}__name__iexact'.format(self.list_name): settings.GRADING_LIST,
                'grading_list__name__iexact': settings.GRADING_LIST,
                'test_code': test_code,
-               'gender__icontains': gender})
+               'gender__icontains': gender,
+               'active': True})
         # filter list items for this subject's age
         my_list_items = []
         eval_str = '{age_in_days} {age_low_quantifier} {age_low_days} and {age_in_days} {age_high_quantifier} {age_high_days}'
         for list_item in list_items:
             if not re.match('^\>$|^\>\=$', list_item.age_low_quantifier.strip(' \t\n\r')):
-                raise TypeError('Invalid age_low_quantifier in reference list. Got {0}.'.format(list_item.age_low_quantifier))
+                raise TypeError('Invalid age_low_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_low_quantifier))
             if not re.match('^\<$|^\<\=$', list_item.age_high_quantifier.strip(' \t\n\r')):
-                raise TypeError('Invalid age_high_quantifier in reference list. Got {0}.'.format(list_item.age_high_quantifier))
+                raise TypeError('Invalid age_high_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_high_quantifier))
             if eval(eval_str.format(age_in_days=self.age_in_days,
                                     age_low_quantifier=list_item.age_low_quantifier,
                                     age_low_days=list_item.age_low_days(),
