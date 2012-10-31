@@ -136,7 +136,10 @@ class BaseResultItem(BaseUuidModel):
         """ Users must override this."""
         raise TypeError('Method must be overridden by the child class.')
         return None
-
+    
+    def get_result_item_value(self):
+        return ResultItemFlag().calculate(self)
+    
     def save(self, *args, **kwargs):
         if re.search(r'\d+\.?\d*', self.result_item_value):
             try:
