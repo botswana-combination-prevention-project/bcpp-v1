@@ -18,8 +18,8 @@ class GradeFlag(Flag):
         for list_item in list_items:
             grades.append(list_item.grade)
         if len(grades) > 4:
-            for list_item in list_items:
-                print '{0} {1} {2} {3}'.format(list_item.grade, list_item.age_low_days(), list_item.age_high_days(), list_item.hiv_status)
+            #for list_item in list_items:
+            #    print '{0} {1} {2} {3}'.format(list_item.grade, list_item.age_low_days(), list_item.age_high_days(), list_item.hiv_status)
             raise TypeError('Duplicate instances for grade in reference list for test code {0} gender {1} hiv status {2}. Got {3}.'.format(self.test_code, self.gender, self.hiv_status, grades))
         grades = list(set(grades))
         grades.sort()
@@ -49,32 +49,8 @@ class GradeFlag(Flag):
                'test_code': test_code,
                'gender__icontains': gender,
                'active': True})
-        # filter list items for this subject's age
-        # and populate a list of list_item instances
-        my_list_items = []
-        eval_str = '{age_in_days} {age_low_quantifier} {age_low_days} and {age_in_days} {age_high_quantifier} {age_high_days}'
-        for list_item in list_items:
-            if not re.match('^\>$|^\>\=$', list_item.age_low_quantifier.strip(' \t\n\r')):
-                raise TypeError('Invalid age_low_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_low_quantifier))
-            if not re.match('^\<$|^\<\=$', list_item.age_high_quantifier.strip(' \t\n\r')):
-                raise TypeError('Invalid age_high_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_high_quantifier))
-            if eval(eval_str.format(age_in_days=self.age_in_days,
-                                    age_low_quantifier=list_item.age_low_quantifier,
-                                    age_low_days=list_item.age_low_days(),
-                                    age_high_quantifier=list_item.age_high_quantifier,
-                                    age_high_days=list_item.age_high_days())):
-                print eval_str.format(age_in_days=self.age_in_days,
-                                    age_low_quantifier=list_item.age_low_quantifier,
-                                    age_low_days=list_item.age_low_days(),
-                                    age_high_quantifier=list_item.age_high_quantifier,
-                                    age_high_days=list_item.age_high_days())
-                my_list_items.append(list_item)
-#            if list_item in my_list_items:
-#                print ' * {0}'.format(list_item.describe())
-#            else:
-#                print '   {0}'.format(list_item.describe())
-        # return a list, not a queryset
-        return my_list_items
+        # return a filtered list of list_item instances
+        return self.filter_list_items_by_age(list_items, self.age_in_days)
 
     def order_list_prep(self, list_items):
         """Returns an ordered list of list_items"""
@@ -87,13 +63,13 @@ class GradeFlag(Flag):
 
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
-        eval_str = '{val} {lln_quantifier} {lower_limit} and {val} {uln_quantifier} {upper_limit}'
+        eval_str = '{val} {value_low_quantifier} {lower_limit} and {val} {value_high_quantifier} {upper_limit}'
         flag = None
         val, lower_limit, upper_limit = self.round_off(value, list_item)
         if eval(eval_str.format(val=val,
-                                lln_quantifier=list_item.lln_quantifier,
+                                value_low_quantifier=list_item.value_low_quantifier,
                                 lower_limit=lower_limit,
-                                uln_quantifier=list_item.uln_quantifier,
+                                value_high_quantifier=list_item.value_high_quantifier,
                                 upper_limit=upper_limit)):
             flag = list_item.grade
         return flag, lower_limit, upper_limit
