@@ -57,6 +57,8 @@ class BaseReferenceListItem(BaseModel):
 
     panic_value_high = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
 
+    active = models.BooleanField(default=True, help_text="if flagged as inactive, will not be used for evaluation.")
+
     comment = models.CharField(
         verbose_name="Comment",
         max_length=250,
