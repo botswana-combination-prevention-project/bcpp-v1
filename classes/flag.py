@@ -76,8 +76,8 @@ class Flag(object):
         Calls the user defined :func:`get_list_prep` to get the list then checks that there are no duplicates
         in the upper or lower ranges."""
         list_items = self.get_list_prep(self.test_code, self.gender, self.hiv_status, self.age_in_days)
-        if not list_items:
-            raise TypeError('No reference list found for test code {0} gender {1} hiv status {2}. Cannot continue'.format(self.test_code, self.gender, self.hiv_status))
+        #if not list_items:
+        #    raise TypeError('No reference list found for test code {0} gender {1} hiv status {2}. Cannot continue'.format(self.test_code, self.gender, self.hiv_status))
         # inspect items for possible duplicates, overlapping ranges and for missing grades
 #        upper_ranges = []
 #        lower_ranges = []
@@ -91,9 +91,13 @@ class Flag(object):
 #                                                                                                                                                                               self.age_in_days,
 #                                                                                                                                                                               upper_ranges,
 #                                                                                                                                                                               lower_ranges))
-        self.check_list_prep(list_items)
-        # list may need to be ordered as in the case of grading.
-        list_items = self.order_list_prep(list_items)
+        for list_item in list_items:
+            if not list_item.active:
+                raise TypeError('Inactive List item returned from get_list_prep(). Got {0}'.format(list_item))
+        if list_items:
+            self.check_list_prep(list_items)
+            # list may need to be ordered as in the case of grading.
+            list_items = self.order_list_prep(list_items)
         return list_items
 
     def evaluate(self, value):
