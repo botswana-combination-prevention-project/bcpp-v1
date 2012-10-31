@@ -50,6 +50,7 @@ class GradeFlag(Flag):
                'gender__icontains': gender,
                'active': True})
         # filter list items for this subject's age
+        # and populate a list of list_item instances
         my_list_items = []
         eval_str = '{age_in_days} {age_low_quantifier} {age_low_days} and {age_in_days} {age_high_quantifier} {age_high_days}'
         for list_item in list_items:
@@ -62,11 +63,17 @@ class GradeFlag(Flag):
                                     age_low_days=list_item.age_low_days(),
                                     age_high_quantifier=list_item.age_high_quantifier,
                                     age_high_days=list_item.age_high_days())):
+                print eval_str.format(age_in_days=self.age_in_days,
+                                    age_low_quantifier=list_item.age_low_quantifier,
+                                    age_low_days=list_item.age_low_days(),
+                                    age_high_quantifier=list_item.age_high_quantifier,
+                                    age_high_days=list_item.age_high_days())
                 my_list_items.append(list_item)
 #            if list_item in my_list_items:
 #                print ' * {0}'.format(list_item.describe())
 #            else:
 #                print '   {0}'.format(list_item.describe())
+        # return a list, not a queryset
         return my_list_items
 
     def order_list_prep(self, list_items):
