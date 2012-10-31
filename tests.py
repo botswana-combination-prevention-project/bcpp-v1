@@ -71,7 +71,7 @@ class ResultItemTestCase(unittest.TestCase):
         result.order = order
         result_item.result = result
         #pdb.set_trace()
-        reference_range, reference_flag, grade_range, grade_flag = result_item.get_result_item_value()
+        reference_range, reference_flag, grade_range, grade_flag = result_item.get_result_item_values()
         #reference_range, reference_flag, grade_range, grade_flag = ResultItemFlag().calculate(result_item)
         return result_item.grade_flag
     
