@@ -1,4 +1,5 @@
 from django.db import models
+from audit_trail.audit import AuditTrail
 from bhp_common.choices import POS_NEG_ANY
 from lab_reference.models import BaseReferenceListItem
 from lab_reference.utils import get_lower_range_days, get_upper_range_days
@@ -28,6 +29,7 @@ class GradingListItem(BaseReferenceListItem):
         m*30  |    (1+m)*30)-1
         y*365 |    (1+y)*365)-1
     """
+    history = AuditTrail()
 
     objects = models.Manager()
 
