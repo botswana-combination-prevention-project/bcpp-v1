@@ -9,6 +9,9 @@ from bhp_registration.models import RegisteredSubject
 from test_case_data import *
 import pdb
 
+"""
+On the comman line $ python /<restOfPath>/lab_clinic_api/tests.py
+"""
 
 class ResultItemTestCase(unittest.TestCase):
     #def __init__(self):
