@@ -1,21 +1,30 @@
 from django.db import models
 from bhp_base_model.classes import BaseModel
+from bhp_common.choices import POS_NEG_ANY
 from lab_reference.choices import GENDER_OF_REFERENCE
+from lab_reference.utils import get_lower_range_days, get_upper_range_days
 
 
 class BaseReferenceListItem(BaseModel):
 
-    code = models.CharField(max_length=25, null=True)
+    code = models.CharField(max_length=25, null=True, blank=True)
 
     scale = models.CharField(
         max_length=25,
-        choices=(('increasing', 'increasing'), ('decreasing', 'decreasing')),
+        choices=(('increasing', 'increasing'),
+                 ('decreasing', 'decreasing')),
         default='increasing')
 
     gender = models.CharField(
         verbose_name="Gender",
         choices=GENDER_OF_REFERENCE,
         max_length=10,
+        )
+
+    hiv_status = models.CharField(
+        max_length=10,
+        choices=POS_NEG_ANY,
+        default='ANY',
         )
 
     value_low = models.DecimalField(
@@ -66,6 +75,15 @@ class BaseReferenceListItem(BaseModel):
         )
 
     objects = models.Manager()
+
+    def round_off(self, value):
+        return round(value, self.test_code.display_decimal_places or 0)
+
+    def age_low_days(self):
+        return get_lower_range_days(self.age_low, self.age_low_unit)
+
+    def age_high_days(self):
+        return get_upper_range_days(self.age_high, self.age_high_unit)
 
     class Meta:
         abstract = True
