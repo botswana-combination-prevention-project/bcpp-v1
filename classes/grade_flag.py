@@ -2,6 +2,9 @@ import re
 from django.db.models import Q
 from django.conf import settings
 from lab_flag.classes import Flag
+from django.db.models import get_model 
+from lab_reference.classes import ReferenceFlag
+import pdb
 
 
 class GradeFlag(Flag):
@@ -67,6 +70,16 @@ class GradeFlag(Flag):
         """ Determines if the value falls within one of the graded ranges."""
         eval_str = '{val} {value_low_quantifier} {lower_limit} and {val} {value_high_quantifier} {upper_limit}'
         flag = None
+        #Ignore a record marked as dummy and return a None flag
+        if list_item.dummy:
+            lower_limit = list_item.value_low
+            upper_limit = list_item.value_high
+            return flag, lower_limit, upper_limit
+        #Expand upper and lower limits by limit_normals from reference range if marked so.
+        if list_item.use_lln:
+            self.expand_list_limit(list_item,'ll')
+        elif list_item.use_uln:
+            self.expand_list_limit(list_item,'ul')
         val, lower_limit, upper_limit = self.round_off(value, list_item)
         if eval(eval_str.format(val=val,
                                 value_low_quantifier=list_item.value_low_quantifier,
@@ -75,3 +88,22 @@ class GradeFlag(Flag):
                                 upper_limit=upper_limit)):
             flag = list_item.grade
         return flag, lower_limit, upper_limit
+
+    def expand_list_limit(self, list_item, limit_to_expand):
+        #pdb.set_trace()
+        kw = {'hiv_status': self.hiv_status,
+              'is_default_hiv_status': self.is_default_hiv_status
+              }
+        reference_list = ('reference_range_list',get_model('lab_clinic_reference','ReferenceRangeListItem'))
+        reference_flag = ReferenceFlag(self.subject_identifier,
+                                       reference_list,
+                                       self.test_code,
+                                       self.gender,
+                                       self.dob,
+                                       self.reference_datetime,
+                                       **kw)
+        reference_item = reference_flag._get_list()
+        if limit_to_expand == 'll':
+            list_item.value_low = list_item.value_low * reference_item[0].value_low
+        elif limit_to_expand == 'ul':
+            list_item.value_high = list_item.value_high * reference_item[0].value_high
