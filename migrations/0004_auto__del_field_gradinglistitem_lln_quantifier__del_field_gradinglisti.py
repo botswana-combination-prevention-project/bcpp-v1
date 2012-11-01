@@ -33,7 +33,6 @@ class Migration(SchemaMigration):
     def backwards(self, orm):
         pass
 
-
     models = {
         'lab_grading.gradinglist': {
             'Meta': {'ordering': "['name']", 'object_name': 'GradingList'},

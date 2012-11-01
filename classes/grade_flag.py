@@ -20,11 +20,13 @@ class GradeFlag(Flag):
         if len(grades) > 4:
             #for list_item in list_items:
             #    print '{0} {1} {2} {3}'.format(list_item.grade, list_item.age_low_days(), list_item.age_high_days(), list_item.hiv_status)
-            raise TypeError('Duplicate instances for grade in reference list for test code {0} gender {1} hiv status {2}. Got {3}.'.format(self.test_code, self.gender, self.hiv_status, grades))
+            raise TypeError('Duplicate instances for grade in reference list for test code {0} gender '
+                            '{1} hiv status {2}. Got {3}.'.format(self.test_code, self.gender, self.hiv_status, grades))
         grades = list(set(grades))
         grades.sort()
         if grades != [1, 2, 3, 4]:
-            raise TypeError('Missing ranges for grade in reference list for test code {0} gender {1} hiv status {2}. Got ranges for "{3}".'.format(self.test_code, self.gender, self.hiv_status, grades))
+            raise TypeError('Missing ranges for grade in reference list for test code {0} gender {1} '
+                            'hiv status {2}. Got ranges for "{3}".'.format(self.test_code, self.gender, self.hiv_status, grades))
 
     def get_lab_tracker_group_name(self):
         """Returns a group name to use when filtering on values in the lab_tracker class.
