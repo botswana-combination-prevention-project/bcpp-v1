@@ -13,6 +13,12 @@ class GradingListItem(BaseReferenceListItem):
 
     grade = models.IntegerField()
 
+    use_uln = models.BooleanField(default=False, help_text="upper limit is X ULN")
+
+    use_lln = models.BooleanField(default=False, help_text="lower limit is X LLN")
+
+    dummy = models.BooleanField(default=False, help_text="True if no values for this grade, e.g. infant Bilirubin.")
+
     import_datetime = models.DateTimeField(null=True)
 
     history = AuditTrail()
