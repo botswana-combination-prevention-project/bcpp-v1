@@ -13,9 +13,9 @@ class ReferenceFlag(Flag):
             ranges.append(str(list_item.value_low) + '-' + str(list_item.value_high))
             ranges = list(ranges)
         if len(ranges) != 1:
-            raise TypeError('Multiple reference ranges for test code {0} gender {2}. Got ranges for "{3}".'.format(self.test_code, self.gender, ranges))
+            raise TypeError('Multiple reference ranges for test code {0} gender {1}. Got ranges for "{2}".'.format(self.test_code, self.gender, ranges))
 
-    def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
+    def get_list_prep(self, value, test_code, gender, hiv_status, age_in_days):
         """Returns list of ListItems filtered on test_code, gender, hiv_status, age_in_days."""
         if hiv_status:
             qset = (Q(hiv_status__iexact=hiv_status.lower()) | Q(hiv_status__iexact='ANY'))
