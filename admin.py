@@ -119,6 +119,7 @@ class ResultItemAdmin(BaseModelAdmin):
         "test_code",
         "result",
         "subject_identifier",
+        'subject_type', 
         "result_item_value",
         "result_item_value_as_float",
         "result_item_quantifier",
@@ -133,7 +134,7 @@ class ResultItemAdmin(BaseModelAdmin):
         "created",
         "modified",
         'import_datetime')
-    list_filter = ('grade_flag', 'reference_flag', "validation_status", "result_item_datetime", "created", "modified", 'import_datetime', "test_code")
+    list_filter = ('grade_flag', 'reference_flag', "validation_status", 'subject_type', "result_item_datetime", "created", "modified", 'import_datetime', "test_code")
     search_fields = ('id', 'test_code__code',
                      'result__result_identifier',
                      "subject_identifier",
