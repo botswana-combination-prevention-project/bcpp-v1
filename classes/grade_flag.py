@@ -7,9 +7,7 @@ from lab_reference.classes import ReferenceFlag
 class GradeFlag(Flag):
 
     def __init__(self, subject_identifier, reference_list, test_code, gender, dob, reference_datetime, **kwargs):
-        self.serum = kwargs.get('serum', 'N/A')
         self.fasting = kwargs.get('fasting', 'N/A')
-        self.grouping_key = kwargs.get('grouping_key', None)
         super(GradeFlag, self).__init__(subject_identifier, reference_list, test_code, gender, dob, reference_datetime, **kwargs)
 
     def check_list_prep(self, list_items):
@@ -40,7 +38,7 @@ class GradeFlag(Flag):
         See :mode:bhp_lab_tracker"""
         return 'HIV'
 
-    def get_list_prep(self, test_code, gender, hiv_status, age_in_days, serum, fasting, grouping_key=None):
+    def get_list_prep(self, value, test_code, gender, hiv_status, age_in_days, **kwargs):
         """Returns list of GradingListItems filtered on test_code, gender, hiv_status, age_in_days.
 
         .. note:: If ranges overlap after rounding, the higher grade should be selected
@@ -50,16 +48,29 @@ class GradeFlag(Flag):
             qset = (Q(hiv_status__iexact=hiv_status.lower()) | Q(hiv_status__iexact='ANY'))
         else:
             qset = (Q(hiv_status__iexact='ANY'))
-        list_items = self.list_item_model_cls.objects.filter(
-            qset,
-            **{'{0}__name__iexact'.format(self.list_name): settings.GRADING_LIST,
-               'grading_list__name__iexact': settings.GRADING_LIST,
-               'test_code': test_code,
-               'gender__icontains': gender,
-               'active': True,
-               'fasting': fasting,
-               'serum': serum,
-               'grouping_key': grouping_key})
+        options = {
+            '{0}__name__iexact'.format(self.list_name): settings.GRADING_LIST,
+            'grading_list__name__iexact': settings.GRADING_LIST,
+            'test_code': test_code,
+            'gender__icontains': gender,
+            'active': True,
+            'fasting': self.fasting}
+        list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
+        for index, list_item in enumerate(list_items):
+            # modify values if using lln, uln
+            list_items[index] = self.modify_list_item_in_prep(list_item)
+        # does value fall in any list item range?
+        matching_list_item = self._pre_evaluate_list_items(value, list_items)
+        if matching_list_item:
+            # check if matching list item is serum high, low or N/A
+            if matching_list_item.serum != 'N/A':
+                options.update({'serum': matching_list_item.serum})
+                # requery
+                list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
+                for index, list_item in enumerate(list_items):
+                    list_items[index] = self.modify_list_item_in_prep(list_item)
+        else:
+            list_items = []
         # return a filtered list of list_item instances
         return self.filter_list_items_by_age(list_items, self.age_in_days)
 
@@ -72,7 +83,7 @@ class GradeFlag(Flag):
             ordered_list_items[4 - list_item.grade] = list_item
         return ordered_list_items
 
-    def modify_list_item(self, list_item):
+    def modify_list_item_in_prep(self, list_item):
         """Sets the upper/lower values  to the product of value * ULN or value * LLN if specified on the grading list item"""
         modified_list_item = list_item
         if list_item.use_lln or list_item.use_uln:
@@ -124,6 +135,14 @@ class GradeFlag(Flag):
                 age_in_days=self.age_in_days,
                 hiv_status=self.hiv_status))
         return normal_reference_range_list
+
+    def _pre_evaluate_list_items(self, value, list_items):
+        """Pre-evaluates the list items to see if any list_item range matches for this value."""
+        for list_item in list_items:
+            flag, value_low, value_high = self.get_evaluate_prep(value, list_item)
+            if flag:
+                return list_item
+        return None
 
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
