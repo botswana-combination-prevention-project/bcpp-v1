@@ -76,34 +76,40 @@ class GradeFlag(Flag):
             upper_limit = list_item.value_high
             return flag, lower_limit, upper_limit
         #Expand upper and lower limits by limit_normals from reference range if marked so.
-        if list_item.use_lln:
-            self.expand_list_limit(list_item,'ll')
-        elif list_item.use_uln:
-            self.expand_list_limit(list_item,'ul')
-        val, lower_limit, upper_limit = self.round_off(value, list_item)
-        if eval(eval_str.format(val=val,
-                                value_low_quantifier=list_item.value_low_quantifier,
-                                lower_limit=lower_limit,
-                                value_high_quantifier=list_item.value_high_quantifier,
-                                upper_limit=upper_limit)):
-            flag = list_item.grade
+        if list_item.use_lln or list_item.use_uln:
+            list_item = self.expand_list_limit(list_item)
+        if list_item:
+            val, lower_limit, upper_limit = self.round_off(value, list_item)
+            if eval(eval_str.format(val=val,
+                                    value_low_quantifier=list_item.value_low_quantifier,
+                                    lower_limit=lower_limit,
+                                    value_high_quantifier=list_item.value_high_quantifier,
+                                    upper_limit=upper_limit)):
+                flag = list_item.grade
         return flag, lower_limit, upper_limit
 
-    def expand_list_limit(self, list_item, limit_to_expand):
+    def expand_list_limit(self, list_item):
         #pdb.set_trace()
-        kw = {'hiv_status': self.hiv_status,
-              'is_default_hiv_status': self.is_default_hiv_status
-              }
-        reference_list = ('reference_range_list',get_model('lab_clinic_reference','ReferenceRangeListItem'))
-        reference_flag = ReferenceFlag(self.subject_identifier,
-                                       reference_list,
-                                       self.test_code,
-                                       self.gender,
-                                       self.dob,
-                                       self.reference_datetime,
-                                       **kw)
+        reference_list = ('reference_range_list', get_model('lab_clinic_reference', 'ReferenceRangeListItem'))
+        reference_flag = ReferenceFlag(
+            self.subject_identifier,
+            reference_list,
+            self.test_code,
+            self.gender,
+            self.dob,
+            self.reference_datetime,
+            hiv_status=self.hiv_status,
+            is_default_hiv_status=self.is_default_hiv_status)
         reference_item = reference_flag._get_list()
-        if limit_to_expand == 'll':
-            list_item.value_low = list_item.value_low * reference_item[0].value_low
-        elif limit_to_expand == 'ul':
-            list_item.value_high = list_item.value_high * reference_item[0].value_high
+        if reference_item:
+            if list_item.use_lln:
+                list_item.value_low = list_item.value_low * reference_item[0].value_low
+                list_item.value_high = list_item.value_high * reference_item[0].value_low
+            elif list_item.use_uln:
+                list_item.value_low = list_item.value_low * reference_item[0].value_high
+                list_item.value_high = list_item.value_high * reference_item[0].value_high
+            else:
+                list_item = None
+        else:
+            list_item = None
+        return list_item
