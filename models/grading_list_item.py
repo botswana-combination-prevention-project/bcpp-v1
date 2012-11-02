@@ -1,5 +1,6 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
+from bhp_common.choices import YES_NO_NA
 from lab_reference.models import BaseReferenceListItem
 from lab_clinic_api.models import TestCode
 from grading_list import GradingList
@@ -16,6 +17,10 @@ class GradingListItem(BaseReferenceListItem):
     use_uln = models.BooleanField(default=False, help_text="upper limit is X ULN")
 
     use_lln = models.BooleanField(default=False, help_text="lower limit is X LLN")
+
+    fasting = models.CharField(max_length=10, choices=YES_NO_NA, default='N/A')
+
+    serum = models.CharField(max_length=10, choices=(('HIGH', 'High'), ('LOW', 'Low'), ('N/A', 'Not applicable')), default='N/A')
 
     history = AuditTrail()
 
