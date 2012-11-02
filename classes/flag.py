@@ -47,7 +47,7 @@ class Flag(object):
                                                                                                                      self.reference_datetime,
                                                                                                                      self.group_name))
 
-    def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
+    def get_list_prep(self, value, test_code, gender, hiv_status, age_in_days, **kwargs):
         """Returns a filtered list of list items .
 
         Users should override this."""
@@ -71,12 +71,12 @@ class Flag(object):
         Users may override."""
         return list_items
 
-    def get_list(self):
+    def get_list(self, value=None):
         """Returns the items from the reference list that meet the criteria of test code, gender, hiv status and age.
 
         Calls the user defined :func:`get_list_prep` to get the list then checks that there are no duplicates
         in the upper or lower ranges."""
-        list_items = [list_item for list_item in self.get_list_prep(self.test_code, self.gender, self.hiv_status, self.age_in_days, self.serum, self.fasting, self.grouping_key)]
+        list_items = [list_item for list_item in self.get_list_prep(value, self.test_code, self.gender, self.hiv_status, self.age_in_days)]
         for index, list_item in enumerate(list_items):
             if not list_item.active:
                 raise TypeError('Inactive List item returned from get_list_prep(). Got {0}'.format(list_item))
@@ -103,7 +103,7 @@ class Flag(object):
         retdict = {}
         # retdict.update({'is_default_hiv_status': self.is_default_hiv_status})
         # get the reference list from the user defined method
-        list_items = self.get_list()
+        list_items = self.get_list(value)
         if not list_items:
             # nothing in the reference list for this
             logger.warning('    No {0} items for {1}.'.format(self.list_name, self.test_code.code))
