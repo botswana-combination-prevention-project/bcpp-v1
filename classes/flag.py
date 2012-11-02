@@ -71,20 +71,25 @@ class Flag(object):
         Users may override."""
         return list_items
 
-    def _get_list(self):
+    def get_list(self):
         """Returns the items from the reference list that meet the criteria of test code, gender, hiv status and age.
 
         Calls the user defined :func:`get_list_prep` to get the list then checks that there are no duplicates
         in the upper or lower ranges."""
-        list_items = self.get_list_prep(self.test_code, self.gender, self.hiv_status, self.age_in_days)
-        for list_item in list_items:
+        list_items = [list_item for list_item in self.get_list_prep(self.test_code, self.gender, self.hiv_status, self.age_in_days)]
+        for index, list_item in enumerate(list_items):
             if not list_item.active:
                 raise TypeError('Inactive List item returned from get_list_prep(). Got {0}'.format(list_item))
+            list_items[index] = self.modify_list_item(list_item)
         if list_items:
             self.check_list_prep(list_items)
             # list may need to be ordered as in the case of grading.
             list_items = self.order_list_prep(list_items)
         return list_items
+
+    def modify_list_item(self, list_item):
+        """Modifies a list_item in some way."""
+        return list_item
 
     def evaluate(self, value):
         """ Determines the flag for value and returns a with the flag and related parameters.
@@ -98,7 +103,7 @@ class Flag(object):
         retdict = {}
         # retdict.update({'is_default_hiv_status': self.is_default_hiv_status})
         # get the reference list from the user defined method
-        list_items = self._get_list()
+        list_items = self.get_list()
         if not list_items:
             # nothing in the reference list for this
             logger.warning('    No {0} items for {1}.'.format(self.list_name, self.test_code.code))
@@ -106,12 +111,13 @@ class Flag(object):
             for list_item in list_items:
                 if not isinstance(list_item, BaseReferenceListItem):
                     raise TypeError('List item must be an instance of BaseReferenceListItem.')
-                # call user defined evaluate
-                retdict['flag'], retdict['lower_limit'], retdict['upper_limit'] = self.get_evaluate_prep(value, list_item)
-                if retdict['flag']:
-                    # takes the first list_item that matches.
-                    # if list_items is ordered then this is predicatable
-                    break
+                if not list_item.dummy:  # ignore a record marked as dummy
+                    # call user defined evaluate
+                    retdict['flag'], retdict['lower_limit'], retdict['upper_limit'] = self.get_evaluate_prep(value, list_item)
+                    if retdict['flag']:
+                        # takes the first list_item that matches.
+                        # if list_items is ordered then this is predicatable
+                        break
         self._cleanup()
         return retdict
 
