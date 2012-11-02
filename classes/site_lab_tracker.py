@@ -62,14 +62,6 @@ class SiteLabTracker(object):
         # add result_item model
         lab_tracker_cls.add_model_tpl(lab_tracker_cls.result_item_tpl)
         self._registry.append(lab_tracker_cls)
-        # check group_names of registered classes to enforce uniqueness across classes.
-        #for cls in self._registry:
-        #    if cls == lab_tracker_cls:
-        #        if cls().get_group_name != lab_tracker_cls().get_group_name():
-        #            raise ImproperlyConfigured('{0} group name must be unique across LabTracker classes. '
-        #                                       'Group name {1} also appears in .'.format(lab_tracker_cls.__name__,
-        #                                                                                 lab_tracker_cls().get_group_name(),
-        #                                                                                 cls.__name__))
 
     def update_all(self, supress_messages):
         for lab_tracker_cls in self._registry:

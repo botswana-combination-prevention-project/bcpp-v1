@@ -47,14 +47,6 @@ class LabTracker(object):
 
         .. note:: ResultItem model is added by the :class:`SiteTracker` during register()"""
         pass
-#        if not 'models' in dir(self):
-#            self.models = []
-#        if self.models:
-#            if not isinstance(self.models, list):
-#                raise ImproperlyConfigured('Class attribute \'models\' must be a list. Got {0}'.format(self.models))
-#            for tpl in self.models:
-#                if not isinstance(tpl, tuple):
-#                    raise ImproperlyConfigured('Class attribute \'models\' list must contain tuples (model_cls, value_attr, date_attr). Got {0}'.format(self.models))
 
     @classmethod
     def add_model_tpl(self, model_tpl):
@@ -149,7 +141,7 @@ class LabTracker(object):
         if identifier_attr:
             # try to get an identifier for the value, usually only available for
             # values coming from lab_clinic_api.
-            #dig into the instance's relations to get the identifier
+            # dig into the instance's relations to get the identifier
             identifier_attr = identifier_attr.split('__')
             obj = instance
             for attr in identifier_attr:
@@ -374,19 +366,21 @@ class LabTracker(object):
         max_value_datetime = None
         if not value_datetime:
             value_datetime = datetime.today()
+        # drop time for the query
+        query_value_datetime = datetime(value_datetime.year, value_datetime.month, value_datetime.day)
         # get max value_datetime for this subject / test code
         if HistoryModel.objects.filter(
                 subject_identifier=subject_identifier,
-                value_datetime__lte=value_datetime,
+                value_datetime__lte=query_value_datetime,
                 group_name=self.get_group_name(group_name)).exists():
             aggr = HistoryModel.objects.filter(
                 subject_identifier=subject_identifier,
-                value_datetime__lte=value_datetime,
+                value_datetime__lte=query_value_datetime,
                 group_name=self.get_group_name(group_name)).aggregate(Max('value_datetime'))
             # change time on datetime to 00:00
             max_value_datetime = aggr.get('value_datetime__max', None)
         if not max_value_datetime:
-            logger.warning('    no history found for {0} date {1} for group {2}.'.format(subject_identifier, value_datetime, group_name))
+            logger.warning('    no history found for {0} date {1} for group {2}.'.format(subject_identifier, query_value_datetime, group_name))
         else:
             max_value_datetime = datetime(max_value_datetime.year, max_value_datetime.month, max_value_datetime.day, max_value_datetime.hour, max_value_datetime.minute, max_value_datetime.second, max_value_datetime.microsecond)
             if HistoryModel.objects.filter(
