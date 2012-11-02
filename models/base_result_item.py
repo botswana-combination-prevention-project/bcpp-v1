@@ -113,6 +113,7 @@ class BaseResultItem(BaseUuidModel):
     receive_identifier = models.CharField(
         max_length=25, editable=False, null=True, db_index=True,
         help_text="non-user helper field to simplify search and filter")
+
     import_datetime = models.DateTimeField(null=True)
 
     def get_subject_identifier(self):
@@ -136,10 +137,10 @@ class BaseResultItem(BaseUuidModel):
         """ Users must override this."""
         raise TypeError('Method must be overridden by the child class.')
         return None
-    
+
     def get_result_item_values(self):
         return ResultItemFlag().calculate(self)
-    
+
     def save(self, *args, **kwargs):
         if re.search(r'\d+\.?\d*', self.result_item_value):
             try:
