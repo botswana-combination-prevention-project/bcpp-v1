@@ -1,4 +1,3 @@
-import re
 from django.conf import settings
 from django.db.models import Q
 from lab_flag.classes import Flag
@@ -17,11 +16,7 @@ class ReferenceFlag(Flag):
             raise TypeError('Multiple reference ranges for test code {0} gender {2}. Got ranges for "{3}".'.format(self.test_code, self.gender, ranges))
 
     def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
-        """Returns list of GradingListItems filtered on test_code, gender, hiv_status, age_in_days.
-
-        .. note:: If ranges overlap after rounding, the higher grade should be selected
-                  for the calculation. see :func:`order_list_prep`.
-        """
+        """Returns list of ListItems filtered on test_code, gender, hiv_status, age_in_days."""
         if hiv_status:
             qset = (Q(hiv_status__iexact=hiv_status.lower()) | Q(hiv_status__iexact='ANY'))
         else:
