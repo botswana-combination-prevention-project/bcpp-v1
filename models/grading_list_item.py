@@ -19,7 +19,7 @@ class GradingListItem(BaseReferenceListItem):
 
     dummy = models.BooleanField(default=False, help_text="True if no values for this grade, e.g. infant Bilirubin.")
 
-    import_datetime = models.DateTimeField(null=True)
+    import_datetime = models.DateTimeField(null=True, blank=True)
 
     history = AuditTrail()
 
@@ -31,11 +31,11 @@ class GradingListItem(BaseReferenceListItem):
         if self.scale == 'increasing':
             template = ('G{grade} {gender} HIV-{hiv_status} VAL{value_high_quantifier}{value_high} and '
                         'VAL{value_low_quantifier}{value_low} for {age_in_days}{age_low_quantifier}{age_low_days}d '
-                        'and {age_in_days}{age_high_quantifier}{age_high_days}d')
+                        'and {age_in_days}{age_high_quantifier}{age_high_days}d {lln} {uln}')
         else:
             template = ('G{grade} {gender} HIV-{hiv_status} VAL{value_low_quantifier}{value_low} and '
                         'VAL{value_high_quantifier}{value_high} for {age_in_days}{age_low_quantifier}{age_low_days}d '
-                        'and {age_in_days}{age_high_quantifier}{age_high_days}d')
+                        'and {age_in_days}{age_high_quantifier}{age_high_days}d {lln} {uln}')
         return template.format(
             grade=self.grade,
             gender=self.gender,
@@ -48,7 +48,9 @@ class GradingListItem(BaseReferenceListItem):
             age_low_quantifier=self.age_low_quantifier,
             age_low_days=self.age_low_days(),
             age_high_quantifier=self.age_high_quantifier,
-            age_high_days=self.age_high_days())
+            age_high_days=self.age_high_days(),
+            uln='ULN' if self.use_uln else '',
+            lln='LLN' if self.use_lln else '')
 
     def __unicode__(self):
         return '{0} {1}'.format(self.test_code.code, self.grade)
