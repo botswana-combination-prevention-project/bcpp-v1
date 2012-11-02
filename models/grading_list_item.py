@@ -29,14 +29,14 @@ class GradingListItem(BaseReferenceListItem):
     def describe(self, age_in_days=None):
         if not age_in_days:
             age_in_days = 'AGE'
-        if self.scale == 'increasing':
+        if self.scale == 'decreasing':
             template = ('G{grade} {gender} HIV-{hiv_status} VAL{value_high_quantifier}{value_high} and '
                         'VAL{value_low_quantifier}{value_low} for {age_in_days}{age_low_quantifier}{age_low_days}d '
-                        'and {age_in_days}{age_high_quantifier}{age_high_days}d {lln} {uln}')
+                        'and {age_in_days}{age_high_quantifier}{age_high_days}d {lln} {uln} fasting {fasting} serum {serum}')
         else:
             template = ('G{grade} {gender} HIV-{hiv_status} VAL{value_low_quantifier}{value_low} and '
                         'VAL{value_high_quantifier}{value_high} for {age_in_days}{age_low_quantifier}{age_low_days}d '
-                        'and {age_in_days}{age_high_quantifier}{age_high_days}d {lln} {uln}')
+                        'and {age_in_days}{age_high_quantifier}{age_high_days}d {lln} {uln} {fasting} {serum}')
         return template.format(
             grade=self.grade,
             gender=self.gender,
@@ -51,7 +51,9 @@ class GradingListItem(BaseReferenceListItem):
             age_high_quantifier=self.age_high_quantifier,
             age_high_days=self.age_high_days(),
             uln='ULN' if self.use_uln else '',
-            lln='LLN' if self.use_lln else '')
+            lln='LLN' if self.use_lln else '',
+            fasting='Fasting' if self.fasting.lower() == 'yes' else '',
+            serum='' if self.serum.lower() != 'n/a' else 'serum {0}'.format(self.serum))
 
     def __unicode__(self):
         return '{0} {1}'.format(self.test_code.code, self.grade)
