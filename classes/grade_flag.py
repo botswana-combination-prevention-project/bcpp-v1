@@ -1,8 +1,7 @@
 import re
-from django.db.models import Q
+from django.db.models import Q, get_model
 from django.conf import settings
 from lab_flag.classes import Flag
-from django.db.models import get_model 
 from lab_reference.classes import ReferenceFlag
 import pdb
 
@@ -66,18 +65,62 @@ class GradeFlag(Flag):
             ordered_list_items[4 - list_item.grade] = list_item
         return ordered_list_items
 
+    def modify_list_item(self, list_item):
+        """Sets the upper/lower values  to the product of value * ULN or value * LLN."""
+        if list_item.use_lln or list_item.use_uln:
+            modified_list_item = self.modify_list_item_using_limit_normal(list_item)
+            if not modified_list_item:
+                # must get values from the normal ranges list if the grading list item uses LLN or ULN
+                raise TypeError('Grading list item {test_code} depends on normal ranges that are not available. '
+                                'Searching on {test_code}, {gender}, age_in_days={age_in_days}, {hiv_status}. '
+                                'Are normal ranges available?'.format(
+                                    grade=list_item.grade,
+                                    test_code=self.test_code.code,
+                                    gender=self.gender,
+                                    age_in_days=self.age_in_days,
+                                    hiv_status=self.hiv_status))
+        return modified_list_item
+
+    def modify_list_item_using_limit_normal(self, list_item):
+        """Sets the upper/lower values  to the product of value * ULN or value * LLN."""
+        normal_reference_range_list = self.get_normal_reference_range_list()
+        for normal_reference_range in normal_reference_range_list:
+            if list_item.use_lln:
+                list_item.value_low = list_item.value_low * normal_reference_range.value_low
+                list_item.value_high = list_item.value_high * normal_reference_range.value_low
+            elif list_item.use_uln:
+                list_item.value_low = list_item.value_low * normal_reference_range.value_high
+                list_item.value_high = list_item.value_high * normal_reference_range.value_high
+            else:
+                list_item = None
+        return list_item
+
+    def get_normal_reference_range_list(self):
+        """Returns a list of reference range items."""
+        reference_flag = ReferenceFlag(
+            self.subject_identifier,
+            ('reference_range_list', get_model('lab_clinic_reference', 'ReferenceRangeListItem')),
+            self.test_code,
+            self.gender,
+            self.dob,
+            self.reference_datetime,
+            hiv_status=self.hiv_status,
+            is_default_hiv_status=self.is_default_hiv_status)
+        normal_reference_range_list = reference_flag.get_list()
+        if not normal_reference_range_list:
+            raise TypeError('Grading list item {test_code} depends on normal ranges that are not available. '
+                            'Searching on {test_code}, {gender}, age_in_days={age_in_days}, {hiv_status}. '
+                            'Check the reference range list.'.format(
+                test_code=self.test_code.code,
+                gender=self.gender,
+                age_in_days=self.age_in_days,
+                hiv_status=self.hiv_status))
+        return normal_reference_range_list
+
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
         eval_str = '{val} {value_low_quantifier} {lower_limit} and {val} {value_high_quantifier} {upper_limit}'
         flag = None
-        #Ignore a record marked as dummy and return a None flag
-        if list_item.dummy:
-            lower_limit = list_item.value_low
-            upper_limit = list_item.value_high
-            return flag, lower_limit, upper_limit
-        #Expand upper and lower limits by limit_normals from reference range if marked so.
-        if list_item.use_lln or list_item.use_uln:
-            list_item = self.expand_list_limit(list_item)
         if list_item:
             val, lower_limit, upper_limit = self.round_off(value, list_item)
             if eval(eval_str.format(val=val,
@@ -88,28 +131,3 @@ class GradeFlag(Flag):
                 flag = list_item.grade
         return flag, lower_limit, upper_limit
 
-    def expand_list_limit(self, list_item):
-        #pdb.set_trace()
-        reference_list = ('reference_range_list', get_model('lab_clinic_reference', 'ReferenceRangeListItem'))
-        reference_flag = ReferenceFlag(
-            self.subject_identifier,
-            reference_list,
-            self.test_code,
-            self.gender,
-            self.dob,
-            self.reference_datetime,
-            hiv_status=self.hiv_status,
-            is_default_hiv_status=self.is_default_hiv_status)
-        reference_item = reference_flag._get_list()
-        if reference_item:
-            if list_item.use_lln:
-                list_item.value_low = list_item.value_low * reference_item[0].value_low
-                list_item.value_high = list_item.value_high * reference_item[0].value_low
-            elif list_item.use_uln:
-                list_item.value_low = list_item.value_low * reference_item[0].value_high
-                list_item.value_high = list_item.value_high * reference_item[0].value_high
-            else:
-                list_item = None
-        else:
-            list_item = None
-        return list_item
