@@ -11,8 +11,6 @@ class ReferenceRangeListItem(BaseReferenceListItem):
 
     reference_range_list = models.ForeignKey(ReferenceRangeList)
 
-    import_datetime = models.DateTimeField(null=True)
-
     objects = models.Manager()
 
     history = AuditTrail()

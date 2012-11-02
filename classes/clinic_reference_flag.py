@@ -1,5 +1,6 @@
 from lab_reference.classes import ReferenceFlag
 
+
 class ClinicReferenceFlag(ReferenceFlag):
 
     def __init__(self, reference_list, result_item, **kwargs):
