@@ -1,12 +1,16 @@
-import re
 from django.db.models import Q, get_model
 from django.conf import settings
 from lab_flag.classes import Flag
 from lab_reference.classes import ReferenceFlag
-import pdb
 
 
 class GradeFlag(Flag):
+
+    def __init__(self, subject_identifier, reference_list, test_code, gender, dob, reference_datetime, **kwargs):
+        self.serum = kwargs.get('serum', 'N/A')
+        self.fasting = kwargs.get('fasting', 'N/A')
+        self.grouping_key = kwargs.get('grouping_key', None)
+        super(GradeFlag, self).__init__(subject_identifier, reference_list, test_code, gender, dob, reference_datetime, **kwargs)
 
     def check_list_prep(self, list_items):
         """Runs additional checks for the reference table.
@@ -36,7 +40,7 @@ class GradeFlag(Flag):
         See :mode:bhp_lab_tracker"""
         return 'HIV'
 
-    def get_list_prep(self, test_code, gender, hiv_status, age_in_days):
+    def get_list_prep(self, test_code, gender, hiv_status, age_in_days, serum, fasting, grouping_key=None):
         """Returns list of GradingListItems filtered on test_code, gender, hiv_status, age_in_days.
 
         .. note:: If ranges overlap after rounding, the higher grade should be selected
@@ -52,7 +56,10 @@ class GradeFlag(Flag):
                'grading_list__name__iexact': settings.GRADING_LIST,
                'test_code': test_code,
                'gender__icontains': gender,
-               'active': True})
+               'active': True,
+               'fasting': fasting,
+               'serum': serum,
+               'grouping_key': grouping_key})
         # return a filtered list of list_item instances
         return self.filter_list_items_by_age(list_items, self.age_in_days)
 
@@ -66,9 +73,10 @@ class GradeFlag(Flag):
         return ordered_list_items
 
     def modify_list_item(self, list_item):
-        """Sets the upper/lower values  to the product of value * ULN or value * LLN."""
+        """Sets the upper/lower values  to the product of value * ULN or value * LLN if specified on the grading list item"""
+        modified_list_item = list_item
         if list_item.use_lln or list_item.use_uln:
-            modified_list_item = self.modify_list_item_using_limit_normal(list_item)
+            modified_list_item = self._modify_list_item_using_limit_normal(list_item)
             if not modified_list_item:
                 # must get values from the normal ranges list if the grading list item uses LLN or ULN
                 raise TypeError('Grading list item {test_code} depends on normal ranges that are not available. '
@@ -81,9 +89,9 @@ class GradeFlag(Flag):
                                     hiv_status=self.hiv_status))
         return modified_list_item
 
-    def modify_list_item_using_limit_normal(self, list_item):
+    def _modify_list_item_using_limit_normal(self, list_item):
         """Sets the upper/lower values  to the product of value * ULN or value * LLN."""
-        normal_reference_range_list = self.get_normal_reference_range_list()
+        normal_reference_range_list = self._get_normal_reference_range_list()
         for normal_reference_range in normal_reference_range_list:
             if list_item.use_lln:
                 list_item.value_low = list_item.value_low * normal_reference_range.value_low
@@ -95,8 +103,8 @@ class GradeFlag(Flag):
                 list_item = None
         return list_item
 
-    def get_normal_reference_range_list(self):
-        """Returns a list of reference range items."""
+    def _get_normal_reference_range_list(self):
+        """Returns a list of reference range items for the LLN, ULN calculation."""
         reference_flag = ReferenceFlag(
             self.subject_identifier,
             ('reference_range_list', get_model('lab_clinic_reference', 'ReferenceRangeListItem')),
@@ -119,15 +127,15 @@ class GradeFlag(Flag):
 
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
-        eval_str = '{val} {value_low_quantifier} {lower_limit} and {val} {value_high_quantifier} {upper_limit}'
+        eval_str = '{val} {value_low_quantifier} {value_low} and {val} {value_high_quantifier} {value_high}'
         flag = None
         if list_item:
-            val, lower_limit, upper_limit = self.round_off(value, list_item)
+            val, value_low, value_high = self.round_off(value, list_item)
             if eval(eval_str.format(val=val,
                                     value_low_quantifier=list_item.value_low_quantifier,
-                                    lower_limit=lower_limit,
+                                    value_low=value_low,
                                     value_high_quantifier=list_item.value_high_quantifier,
-                                    upper_limit=upper_limit)):
+                                    value_high=value_high)):
                 flag = list_item.grade
-        return flag, lower_limit, upper_limit
+        return flag, value_low, value_high
 
