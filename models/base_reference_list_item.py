@@ -68,11 +68,15 @@ class BaseReferenceListItem(BaseModel):
 
     active = models.BooleanField(default=True, help_text="if flagged as inactive, will not be used for evaluation.")
 
+    dummy = models.BooleanField(default=False, help_text="True if no values for this grade/range, e.g. infant Bilirubin.")
+
     comment = models.CharField(
         verbose_name="Comment",
         max_length=250,
         blank=True,
         )
+
+    import_datetime = models.DateTimeField(null=True, blank=True)
 
     objects = models.Manager()
 
