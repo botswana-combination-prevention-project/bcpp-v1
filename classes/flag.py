@@ -1,5 +1,6 @@
 import logging
 import re
+from datetime import datetime
 from bhp_common.utils import get_age_in_days
 from lab_test_code.models import BaseTestCode
 from lab_reference.models import BaseReferenceListItem
@@ -16,7 +17,7 @@ nullhandler = logger.addHandler(NullHandler())
 
 class Flag(object):
 
-    def __init__(self, subject_identifier, reference_list, test_code, gender, dob, reference_datetime, **kwargs):
+    def __init__(self, subject_identifier, reference_list, test_code, gender, dob, drawn_datetime, release_datetime, **kwargs):
         self.dirty = False
         self.group_name = 'HIV'  # lab_tracker cls group name
         self.list_name, self.list_item_model_cls = reference_list
@@ -26,8 +27,10 @@ class Flag(object):
         self.subject_identifier = subject_identifier
         self.gender = gender
         self.dob = dob
-        self.reference_datetime = reference_datetime
-        self.age_in_days = get_age_in_days(self.reference_datetime, self.dob)
+        self.drawn_datetime = drawn_datetime
+        self.release_datetime = release_datetime
+        # age is relative to the date sample drawn!!
+        self.age_in_days = get_age_in_days(self.drawn_datetime, self.dob)
         self.hiv_status = kwargs.get('hiv_status', None)
         self.is_default_hiv_status = kwargs.get('is_default_hiv_status', None)
         if not self.hiv_status:
@@ -36,16 +39,19 @@ class Flag(object):
             raise TypeError('hiv_status cannot be None.')
 
     def get_hiv_status(self):
-        """ """
+        """ Returns the HIV status known at the time of sample draw."""
         if not self.hiv_status:
+            # convert reference datetime to midnight
+            release_datetime = datetime(self.release_datetime.year, self.release_datetime.month, self.release_datetime.day, 23, 59, 59, 999)
             self.hiv_status, self.is_default_hiv_status = lab_tracker.get_value(
                 self.group_name,
                 self.subject_identifier,
-                self.reference_datetime)
+                release_datetime)
         if not self.hiv_status:
-            raise TypeError('hiv_status cannot be None for subject {0} relative to {1} using group name {2}.'.format(self.subject_identifier,
-                                                                                                                     self.reference_datetime,
-                                                                                                                     self.group_name))
+            raise TypeError('hiv_status cannot be None for subject {0} relative to {1} using group '
+                            'name {2}.'.format(self.subject_identifier,
+                                               release_datetime,
+                                               self.group_name))
 
     def get_list_prep(self, value, test_code, gender, hiv_status, age_in_days, **kwargs):
         """Returns a filtered list of list items .
@@ -104,10 +110,10 @@ class Flag(object):
         # retdict.update({'is_default_hiv_status': self.is_default_hiv_status})
         # get the reference list from the user defined method
         list_items = self.get_list(value)
-        if not list_items:
-            # nothing in the reference list for this
-            logger.warning('    No {0} items for {1}.'.format(self.list_name, self.test_code.code))
-        else:
+        #if not list_items:
+        #    # nothing in the reference list for this
+        #    logger.warning('    No matching {0} items for {1}={2} ({3}).'.format(self.list_name, self.test_code.code, value, self.get_joined_criteria()))
+        if list_items:
             for list_item in list_items:
                 if not isinstance(list_item, BaseReferenceListItem):
                     raise TypeError('List item must be an instance of BaseReferenceListItem.')
@@ -120,6 +126,9 @@ class Flag(object):
                         break
         self._cleanup()
         return retdict
+
+    def get_joined_criteria(self):
+        return ' '.join([self.subject_identifier, self.gender, self.hiv_status, 'days=' + str(self.age_in_days)])
 
     def filter_list_items_by_age(self, list_items, age_in_days):
         """ Filters list items for this subject's age and populates a list of list_item instances."""
@@ -154,7 +163,8 @@ class Flag(object):
         self.test_code = None
         self.gender = None
         self.dob = None
-        self.reference_datetime = None
+        self.release_datetime = None
+        self.drawn_datetime = None
         self.hiv_status = None
         self.is_default_hiv_status = None
         self.age_in_days = None
