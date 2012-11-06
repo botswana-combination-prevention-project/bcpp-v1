@@ -24,3 +24,4 @@ def serialize_on_save(sender, instance, **kwargs):
             if instance.is_serialized() and not instance._meta.proxy:
                 serialize_to_transaction = SerializeToTransaction()
                 serialize_to_transaction.serialize(sender, instance, **kwargs)
+
