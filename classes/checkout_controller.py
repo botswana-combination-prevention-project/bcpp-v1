@@ -15,7 +15,7 @@ nullhandler = logger.addHandler(NullHandler())
 
 class CheckoutController(object):
     def __init__(self, debug=False, netbook=None, site_code=None):
-        self.checkouts = []
+        self.dispatch_list = []
         self.debug = debug
         if netbook:
             self.netbook = netbook
