@@ -208,8 +208,9 @@ class LabTracker(object):
                         if field.rel.to == RegisteredSubject:
                             query_string = 'registered_subject__subject_identifier'
                             break
-                if not query_string and 'subject_identifier' in dir(model_cls):
-                    query_string = 'subject_identifier'
+                if not query_string:
+                    if 'get_subject_identifier' in dir(model_cls):
+                        query_string = 'subject_identifier'
                 if not query_string:
                     raise TypeError(('Cannot determine link to subject_identifier. The model class {0} is'
                                     ' not a subclass of BaseVisitTracking and nor does it have a relation to RegisteredSubject.').format(model_cls._meta.object_name))
