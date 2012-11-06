@@ -4,7 +4,9 @@ from django.dispatch import receiver
 
 @receiver(pre_save, weak=False, dispatch_uid='is_checked_out_on_save')
 def is_checked_out_on_save(sender, instance, **kwargs):
-    """ Before saving, check if instance has not been checked out to a netbook. """
+    """ Raise an exception if instance has been dipatched to a netbook
+    but has not been checked back in.
+    """
     #if isinstance(instance, BaseSyncModel):
     if 'subject_visit' in dir(instance):
         if instance.subject_visit.is_locked():
