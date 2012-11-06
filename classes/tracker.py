@@ -195,6 +195,7 @@ class LabTracker(object):
         Excludes ResultItem
         """
         from bhp_visit_tracking.models import BaseVisitTracking
+        query_string = None
         result_item_cls = self.result_item_tpl[self.MODEL_CLS]
         for model_tpl in self.models:
             model_cls, value_attr, date_attr, identifier_attr = self.unpack_model_tpl(model_tpl)
@@ -207,9 +208,11 @@ class LabTracker(object):
                         if field.rel.to == RegisteredSubject:
                             query_string = 'registered_subject__subject_identifier'
                             break
+                if not query_string and 'subject_identifier' in dir(model_cls):
+                    query_string = 'subject_identifier'
                 if not query_string:
                     raise TypeError(('Cannot determine link to subject_identifier. The model class {0} is'
-                                    ' not a subclass of BasVisitTracking and nor does it have a relation to RegisteredSubject.').format(model_cls._meta.object_name))
+                                    ' not a subclass of BaseVisitTracking and nor does it have a relation to RegisteredSubject.').format(model_cls._meta.object_name))
                 options = {query_string: subject_identifier}
                 #options = {'registered_subject__subject_identifier': subject_identifier}
                 queryset = model_cls.objects.filter(**options)
@@ -367,7 +370,7 @@ class LabTracker(object):
         if not value_datetime:
             value_datetime = datetime.today()
         # drop time for the query
-        query_value_datetime = datetime(value_datetime.year, value_datetime.month, value_datetime.day)
+        query_value_datetime = datetime(value_datetime.year, value_datetime.month, value_datetime.day, 23, 59, 59, 999)
         # get max value_datetime for this subject / test code
         if HistoryModel.objects.filter(
                 subject_identifier=subject_identifier,
@@ -377,7 +380,6 @@ class LabTracker(object):
                 subject_identifier=subject_identifier,
                 value_datetime__lte=query_value_datetime,
                 group_name=self.get_group_name(group_name)).aggregate(Max('value_datetime'))
-            # change time on datetime to 00:00
             max_value_datetime = aggr.get('value_datetime__max', None)
         if not max_value_datetime:
             logger.warning('    no history found for {0} date {1} for group {2}.'.format(subject_identifier, query_value_datetime, group_name))
