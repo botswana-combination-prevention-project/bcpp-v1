@@ -1,28 +1,26 @@
 from lab_reference.models import BaseReferenceListItem
 
 
-def flag_as_active(modeladmin, request, queryset):
+def toggle_active(modeladmin, request, queryset):
         for qs in queryset:
             if not isinstance(qs, BaseReferenceListItem):
                 modeladmin.message_user(request, 'Records must be a list item. (BaseReferenceListItem)')
                 break
             else:
-                if not qs.active:
-                    qs.active = True
-                    qs.save()
-flag_as_active.short_description = "Flag reference item as active"
+                qs.active = not qs.active
+                qs.save()
+toggle_active.short_description = "toggle active/inactive"
 
 
-def flag_as_inactive(modeladmin, request, queryset):
+def toggle_scale(modeladmin, request, queryset):
         for qs in queryset:
             if not isinstance(qs, BaseReferenceListItem):
                 modeladmin.message_user(request, 'Records must be a list item. (BaseReferenceListItem)')
                 break
             else:
-                if qs.active:
-                    qs.active = False
-                    qs.save()
-flag_as_inactive.short_description = "Flag reference item as in-active"
+                qs.scale = 'increasing' if  qs.scale == 'decreasing' else 'decreasing'
+                qs.save()
+toggle_scale.short_description = "toggle scale increasing/decreasing"
 
 
 def toggle_lln(modeladmin, request, queryset):
@@ -45,3 +43,19 @@ def toggle_uln(modeladmin, request, queryset):
                 qs.use_uln = not qs.use_uln
                 qs.save()
 toggle_uln.short_description = "toggle ULN"
+
+
+def toggle_serum(modeladmin, request, queryset):
+        for qs in queryset:
+            if not isinstance(qs, BaseReferenceListItem):
+                modeladmin.message_user(request, 'Records must be a list item. (BaseReferenceListItem)')
+                break
+            else:
+                if qs.serum == 'LOW':
+                    qs.serum = 'HIGH'
+                if qs.serum == 'HIGH':
+                    qs.serum = 'N/A'
+                if qs.serum == 'N/A':
+                    qs.serum = 'LOW'
+                qs.save()
+toggle_uln.short_description = "toggle Serum (low->high->N/A)"

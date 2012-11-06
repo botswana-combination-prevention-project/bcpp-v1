@@ -7,7 +7,8 @@ class ClinicReferenceFlag(ReferenceFlag):
         test_code = result_item.test_code
         gender = result_item.result.order.aliquot.receive.registered_subject.gender
         dob = result_item.result.order.aliquot.receive.registered_subject.dob
-        reference_datetime = result_item.result.order.aliquot.receive.receive_datetime
+        drawn_datetime = result_item.result.order.aliquot.receive.receive_datetime
+        release_datetime = result_item.result_item_datetime
         subject_identifier = result_item.result.order.aliquot.receive.registered_subject.subject_identifier
         super(ClinicReferenceFlag, self).__init__(
             subject_identifier,
@@ -15,5 +16,6 @@ class ClinicReferenceFlag(ReferenceFlag):
             test_code,
             gender,
             dob,
-            reference_datetime,
+            drawn_datetime,
+            release_datetime,
             **kwargs)
