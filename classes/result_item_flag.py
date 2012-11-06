@@ -29,6 +29,7 @@ class ResultItemFlag(object):
             result_item.reference_flag = kw.get('flag')
         else:
             result_item.reference_flag = None
+        # get grading class from result_item method
         GradeFlag = result_item.get_cls_grade_flag()
         grade_flag = GradeFlag(
             result_item.get_grading_list(),
