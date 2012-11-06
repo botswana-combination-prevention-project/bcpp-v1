@@ -1,6 +1,7 @@
 from django.db import models
 from bhp_base_model.classes import BaseModel
 from bhp_common.choices import POS_NEG_ANY
+from lab_common.choices import UNITS
 from lab_reference.choices import GENDER_OF_REFERENCE
 from lab_reference.utils import get_lower_range_days, get_upper_range_days
 
@@ -27,12 +28,14 @@ class BaseReferenceListItem(BaseModel):
         default='ANY',
         )
 
+    value_unit = models.CharField(max_length=10, choices=UNITS, null=True)
+
     value_low = models.DecimalField(
         verbose_name='lower',
         null=True,
         max_digits=12,
         decimal_places=4,
-        blank=True)
+        blank=True,)
 
     value_low_quantifier = models.CharField(max_length=10, default='>=')
 
@@ -41,26 +44,21 @@ class BaseReferenceListItem(BaseModel):
         null=True,
         max_digits=12,
         decimal_places=4,
-        blank=True)
+        blank=True,)
 
     value_high_quantifier = models.CharField(max_length=10, default='<=')
 
-    age_low = models.IntegerField(
-        null=True,
-        blank=True)
+    age_low = models.IntegerField(null=True, blank=True, default=0)
 
-    age_low_unit = models.CharField(
-        max_length=10,
-        blank=True
-        )
+    age_low_unit = models.CharField(max_length=10, blank=True, default='D')
 
-    age_low_quantifier = models.CharField(max_length=10, blank=True)
+    age_low_quantifier = models.CharField(max_length=10, blank=True, default='>=')
 
-    age_high = models.IntegerField(null=True, blank=True)
+    age_high = models.IntegerField(null=True, blank=True, default=99999)
 
-    age_high_unit = models.CharField(max_length=10, blank=True)
+    age_high_unit = models.CharField(max_length=10, blank=True, default='Y')
 
-    age_high_quantifier = models.CharField(max_length=10, blank=True)
+    age_high_quantifier = models.CharField(max_length=10, blank=True, default='<=')
 
     panic_value_low = models.DecimalField(null=True, max_digits=12, decimal_places=4, blank=True)
 
@@ -81,7 +79,10 @@ class BaseReferenceListItem(BaseModel):
     objects = models.Manager()
 
     def round_off(self, value):
-        return round(value, self.test_code.display_decimal_places or 0)
+        retval = None
+        if value:
+            retval = round(value, self.test_code.display_decimal_places or 0)
+        return retval
 
     def age_low_days(self):
         return get_lower_range_days(self.age_low, self.age_low_unit)
