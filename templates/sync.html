@@ -15,7 +15,7 @@
 
 <P>You are {{ hostname }}.</P>
 <P>Your locally generated transactions can be found <A href="/admin/bhp_sync/outgoingtransaction/">here</A></P>
-
+<p><A href="/mochudi_map/">View mochudi map</A></p>
 <A href="/admin/bhp_sync/producer/">Producers</A>
 
 <table>
@@ -39,7 +39,7 @@
     <td><A href="{{ producer.url }}admin/bhp_sync/outgoingtransaction/?is_consumed__exact=0&producer={{ producer.name }}">producer outgoing transactions</A></td>    
 {% if show_checkin_link %}
 <td><A href="/{{ CHECKOUT_APP }}/checkin/{{ producer.name }}/">Check in netbook</A></td>
-<td><A href="/admin/{{ CHECKOUT_APP }}/checkouthousehold/?netbook__id__exact={{ producer.id }}">Checked out households</A></td>
+<td><A href="/admin/{{ CHECKOUT_APP }}/hbcdispatch/?netbook__id__exact={{ producer.id }}">Dispatch households</A></td>
 {% endif %}
     <td>{{ producer.url }}</td>
     <td>{{ producer.sync_datetime|date:"Y-m-d H:i" }} </td>
