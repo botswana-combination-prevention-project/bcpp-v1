@@ -27,7 +27,7 @@ class CheckoutController(object):
             raise ValueError("PLEASE specify the netbook you want checkout models to!")
 
     def update_crypt(self):
-        """Grabs the entire crypt table from the "server" to the local device
+        """Get the entire crypt table from the "server" to the local device
         """
         if not self.netbook:
             raise ValueError("PLEASE specify the netbook you want checkout models to!")
@@ -43,7 +43,7 @@ class CheckoutController(object):
         #print "I'm done ..."
 
     def update_lists(self):
-        """Updates all list models in "default" with data from "server".
+        """Update all list models in "default" with data from "server".
         """
         #Make sure we have a target netbook to export lists to
         if not self.netbook:

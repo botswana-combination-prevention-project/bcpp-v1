@@ -22,7 +22,8 @@ class BaseCheckout(BaseUuidModel):
 
     datetime_checked_out = models.DateTimeField(
         verbose_name="Checkout date",
-        default=datetime.today()
+        blank=True,
+        null=True
         )
 
     datetime_checked_in = models.DateTimeField(
