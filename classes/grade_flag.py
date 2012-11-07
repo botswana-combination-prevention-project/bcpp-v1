@@ -74,8 +74,10 @@ class GradeFlag(Flag):
                 list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
                 for index, list_item in enumerate(list_items):
                     list_items[index] = self.modify_list_item_in_prep(list_item)
-        #else:
-        #    list_items = []
+        else:
+            # value does not fall within any grading range, so nothing to do
+            # set list_items to nothing
+            list_items = []
         # return a filtered list of list_item instances
         return self.filter_list_items_by_age(list_items, self.age_in_days)
 
