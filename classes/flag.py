@@ -119,8 +119,9 @@ class Flag(object):
                     raise TypeError('List item must be an instance of BaseReferenceListItem.')
                 if not list_item.dummy:  # ignore a record marked as dummy
                     # call user defined evaluate
-                    retdict['flag'], retdict['lower_limit'], retdict['upper_limit'] = self.get_evaluate_prep(value, list_item)
-                    if retdict['flag']:
+                    flag, lower_limit, upper_limit = self.get_evaluate_prep(value, list_item)
+                    if flag:
+                        retdict = {'flag': flag, 'lower_limit': lower_limit, 'upper_limit': upper_limit}
                         # takes the first list_item that matches.
                         # if list_items is ordered then this is predicatable
                         break
