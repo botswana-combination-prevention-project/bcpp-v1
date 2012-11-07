@@ -182,7 +182,7 @@ class GradeFlag(Flag):
     def get_evaluate_prep(self, value, list_item):
         """ Determines if the value falls within one of the graded ranges."""
         eval_str = '{val} {value_low_quantifier} {value_low} and {val} {value_high_quantifier} {value_high}'
-        flag = None
+        flag, value_low, value_high = None, None, None
         if list_item:
             val, value_low, value_high = self.round_off(value, list_item)
             if eval(eval_str.format(val=val,
