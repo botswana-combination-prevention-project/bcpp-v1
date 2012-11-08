@@ -38,7 +38,11 @@ class ResultItem(BaseResultItem):
             return self.result_item_value
 
     def to_result(self):
-        return '<a href="/admin/lab_clinic_api/result/?q={result_identifier}">result</a>'.format(result_identifier=self.result.result_identifier)
+        reviewed = ''
+        result = '<a href="/admin/lab_clinic_api/result/?q={result_identifier}">result</a>'.format(result_identifier=self.result.result_identifier)
+        if self.result.review:
+            reviewed = """&nbsp;<img src="/static/admin/img/icon_success.gif" width="10" height="10" alt="Reviewed"/>"""
+        return '{result}{reviewed}'.format(result=result, reviewed=reviewed)
     to_result.allow_tags = True
 
     def get_subject_type(self):
