@@ -71,7 +71,6 @@ class GradeFlag(Flag):
             if matching_list_item.serum != 'N/A':
                 options.update({'serum': matching_list_item.serum})
                 # requery
-                print '{0} {1}'.format(matching_list_item, options)
                 list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
                 for index, list_item in enumerate(list_items):
                     list_items[index] = self.modify_list_item_in_prep(list_item)
@@ -80,6 +79,7 @@ class GradeFlag(Flag):
             # set list_items to nothing
             list_items = []
         # return a filtered list of list_item instances
+        print list_items
         return self.filter_list_items_by_age(list_items, self.age_in_days)
 
     def order_list_prep(self, list_items):
