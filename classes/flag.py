@@ -140,14 +140,19 @@ class Flag(object):
                 raise TypeError('Invalid age_low_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_low_quantifier))
             if not re.match('^\<$|^\<\=$', list_item.age_high_quantifier.strip(' \t\n\r')):
                 raise TypeError('Invalid age_high_quantifier in reference list for {0}. Got {1}.'.format(list_item.test_code.code, list_item.age_high_quantifier))
+            print eval_str.format(age_in_days=age_in_days,
+                                    age_low_quantifier=list_item.age_low_quantifier,
+                                    age_low_days=list_item.age_low_days(),
+                                    age_high_quantifier=list_item.age_high_quantifier,
+                                    age_high_days=list_item.age_high_days())
             if eval(eval_str.format(age_in_days=age_in_days,
                                     age_low_quantifier=list_item.age_low_quantifier,
                                     age_low_days=list_item.age_low_days(),
                                     age_high_quantifier=list_item.age_high_quantifier,
                                     age_high_days=list_item.age_high_days())):
+                print 'found'
                 my_list_items.append(list_item)
         # return a list, not a queryset
-        print age_in_days
         return my_list_items
 
     def round_off(self, value, list_item):
