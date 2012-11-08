@@ -189,6 +189,7 @@ class GradeFlag(Flag):
         flag, value_low, value_high = None, None, None
         if list_item:
             val, value_low, value_high = self.round_off(value, list_item)
+            flag = 0
             if eval(eval_str.format(val=val,
                                     value_low_quantifier=list_item.value_low_quantifier,
                                     value_low=value_low,
