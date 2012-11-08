@@ -4,14 +4,14 @@ import re
 from datetime import datetime
 
 from django.conf import settings
-from django.db.models import Max
+from django.db.models import Max, get_model
 
 from lab_receive.models import Receive
 from lab_order.models import Order
 from lab_panel.models import Panel
 from lab_result.models import Result
 from lab_result.models import ResultSource
-from lab_result_item.models import ResultItem
+#from lab_result_item.models import ResultItem
 from lab_test_code.models import TestCode, TestCodeGroup
 #from lab_common.utils import AllocateResultIdentifier
 from lab_aliquot.models import Aliquot
@@ -25,6 +25,7 @@ from base_dmis import BaseDmis
 
 
 logger = logging.getLogger(__name__)
+ResultItem = get_model('lab_result_item', 'result_item')
 
 
 class NullHandler(logging.Handler):
