@@ -4,6 +4,9 @@ from django.conf import settings
 from lab_import_lis.classes import LisLock, ImportHistory, Lis
 from lab_clinic_api.classes import EdcLab
 from bhp_registration.models import RegisteredSubject
+from bhp_lab_tracker.classes import lab_tracker
+
+lab_tracker.autodiscover()
 
 
 class Command(BaseCommand):
