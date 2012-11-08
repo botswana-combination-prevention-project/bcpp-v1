@@ -118,8 +118,9 @@ class Flag(object):
         #    # nothing in the reference list for this
         #    logger.warning('    No matching {0} items for {1}={2} ({3}).'.format(self.list_name, self.test_code.code, value, self.get_joined_criteria()))
         if list_items:
+            # default to 0. This item is evaluated but not gradeable.
+            retdict = {'flag': 0, 'lower_limit': None, 'upper_limit': None}
             for list_item in list_items:
-                flag = 0  # default to 0. This item is evaluated but not gradeable. 
                 if not isinstance(list_item, BaseReferenceListItem):
                     raise TypeError('List item must be an instance of BaseReferenceListItem.')
                 if not list_item.dummy:  # ignore a record marked as dummy
