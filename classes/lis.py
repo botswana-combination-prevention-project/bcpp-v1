@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from django.db.models import Q
+from django.db.models import Q, get_model
 from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core.exceptions import MultipleObjectsReturned
@@ -11,7 +11,7 @@ from lab_receive.models import Receive as LisReceive
 from lab_aliquot.models import Aliquot as LisAliquot
 from lab_order.models import Order as LisOrder
 from lab_result.models import Result as LisResult
-from lab_result_item.models import ResultItem as LisResultItem
+#from lab_result_item.models import ResultItem as LisResultItem
 from bhp_registration.models import RegisteredSubject
 from lab_clinic_api.models import Receive, Aliquot, Order, Result, ResultItem
 from lab_clinic_api.models import AliquotType, AliquotCondition
@@ -62,6 +62,8 @@ class Lis(object):
         For example target.panel != source.panel yet the attribute values of panel instance on
         target and source are the same (see isinstance() test for ForeignKey fields below).
         """
+
+        LisResultItem = get_model('lab_result_item', 'resultitem')
 
         subject_identifier = kwargs.get('subject_identifier', None)
         protocol_identifier = kwargs.get('protocol_identifier', None)
