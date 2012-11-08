@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
-from django.db.models import ForeignKey, OneToOneField, Max
+from django.db.models import ForeignKey, OneToOneField, Max, get_model
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.exceptions import ImproperlyConfigured
-from lab_clinic_api.models import ResultItem
+#from lab_clinic_api.models import ResultItem
 from bhp_registration.models import RegisteredSubject
 from bhp_lab_tracker.models import HistoryModel, HistoryModelError, DefaultValueLog
 
@@ -39,7 +39,7 @@ class LabTracker(object):
     VALUE_ATTR = 1
     DATE_ATTR = 2
     IDENTIFIER_ATTR = 3
-    result_item_tpl = (ResultItem, 'result_item_value', 'result_item_datetime', 'result__order__order_identifier')
+    result_item_tpl = (get_model('lab_clinic_api', 'resultitem'), 'result_item_value', 'result_item_datetime', 'result__order__order_identifier')
 
     def __init__(self):
         """If the user does not declare self.models, the tracker will add result_item so that the
@@ -161,7 +161,7 @@ class LabTracker(object):
         if not model_cls == instance.__class__:
             raise TypeError('Model tuple item \'model_cls\' {0} does not match instance class. Got {1}.'.format(model_cls, instance._meta.object_name.lower()))
         source_identifier = self._get_source_identifier_value(instance, identifier_attr)
-        if isinstance(instance, ResultItem):
+        if isinstance(instance, self.result_item_tpl[self.MODEL_CLS]):
             # will return nothing if the test code is not being tracked.
             history_model, created = self._update_from_result_item_instance(instance)
         else:
