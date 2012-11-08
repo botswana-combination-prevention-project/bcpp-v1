@@ -123,10 +123,14 @@ class BaseResultItem(BaseUuidModel):
         return ''
 
     def get_grading_list(self):
-        return None
+        field = None
+        model = None
+        return (field, model)
 
     def get_reference_list(self):
-        return None
+        field = None
+        model = None
+        return (field, model)
 
     def get_cls_reference_flag(self):
         """ Users must override this."""
