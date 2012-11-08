@@ -60,25 +60,28 @@ class GradeFlag(Flag):
             'fasting__in': fasting,
             'active': True,
             'fasting': self.fasting}
-        list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
-        for index, list_item in enumerate(list_items):
-            # modify values if using lln, uln
-            list_items[index] = self.modify_list_item_in_prep(list_item)
-        # does value fall in any list item range?
-        matching_list_item = self._pre_evaluate_list_items(value, list_items)
-        if matching_list_item:
-            # check if matching list item is serum high, low or N/A
-            if matching_list_item.serum != 'N/A':
-                options.update({'serum': matching_list_item.serum})
-                # requery
-                list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
-                for index, list_item in enumerate(list_items):
-                    list_items[index] = self.modify_list_item_in_prep(list_item)
-        else:
-            # value does not fall within any grading range, so nothing to do
-            # set list_items to nothing
+        if not self.list_item_model_cls:
             list_items = []
-        # return a filtered list of list_item instances
+        else:
+            list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
+            for index, list_item in enumerate(list_items):
+                # modify values if using lln, uln
+                list_items[index] = self.modify_list_item_in_prep(list_item)
+            # does value fall in any list item range?
+            matching_list_item = self._pre_evaluate_list_items(value, list_items)
+            if matching_list_item:
+                # check if matching list item is serum high, low or N/A
+                if matching_list_item.serum != 'N/A':
+                    options.update({'serum': matching_list_item.serum})
+                    # requery
+                    list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
+                    for index, list_item in enumerate(list_items):
+                        list_items[index] = self.modify_list_item_in_prep(list_item)
+            else:
+                # value does not fall within any grading range, so nothing to do
+                # set list_items to nothing
+                list_items = []
+            # return a filtered list of list_item instances
         return self.filter_list_items_by_age(list_items, self.age_in_days)
 
     def order_list_prep(self, list_items):
