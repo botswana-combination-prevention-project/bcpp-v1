@@ -2,7 +2,7 @@ import logging
 from django.db import models
 from django.core.urlresolvers import reverse
 from lab_order.models import BaseOrder
-from lab_import_dmis.classes import DmisTools
+from lab_import_dmis.classes.dmis_tools import DmisTools
 from lab_clinic_api.managers import OrderManager
 from aliquot import Aliquot
 from aliquot_condition import AliquotCondition
