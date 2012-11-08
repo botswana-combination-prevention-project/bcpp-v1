@@ -44,8 +44,10 @@ class ResultItemFlag(object):
                 result_item.grade_range = range_
             result_item.grade_flag = kw.get('flag')
         else:
-            result_item.grade_range = None
             result_item.grade_flag = None
+            if kw.get('flag') == 0:
+                result_item.grade_flag = 0
+            result_item.grade_range = None
         result_item.grade_warn = True
         result_item.grade_message = 'HIV status unknown, defaulted to NEG'
         #after = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
