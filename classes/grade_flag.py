@@ -61,6 +61,7 @@ class GradeFlag(Flag):
             'active': True,
             'fasting': self.fasting}
         list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
+        print list_items
         for index, list_item in enumerate(list_items):
             # modify values if using lln, uln
             list_items[index] = self.modify_list_item_in_prep(list_item)
