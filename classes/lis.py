@@ -276,7 +276,7 @@ class Lis(object):
         target_cls = ResultItem
         list_fields = ['test_code']
         for field in target_cls._meta.fields:
-            if field.name not in ['id', 'result', 'test_code', 'import_datetime']:
+            if field.name not in ['id', 'result', 'test_code', 'import_datetime', 'subject_type']:
                 if field.name in list_fields:
                     value = self._get_or_create_list_field_instance(field.name, getattr(lis_result_item, field.name))
                 else:
