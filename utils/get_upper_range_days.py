@@ -6,6 +6,7 @@ def get_upper_range_days(age_upper_range_value, age_upper_range_unit, operator):
     .. note:: If the operator is <= then the unit (M,Y) then ((range_value + 1) * number of days per unit) - 1) is
     added to the resulting value."""
     days = None
+    operator = operator.strip()
     if operator not in ['<', '<=']:
         raise TypeError('Invalid operator. Expected < or =<. Got {0}'.format(operator))
     if age_upper_range_unit.upper() == 'D':
