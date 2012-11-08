@@ -83,7 +83,6 @@ class Flag(object):
         Calls the user defined :func:`get_list_prep` to get the list then checks that there are no duplicates
         in the upper or lower ranges."""
         list_items = [list_item for list_item in self.get_list_prep(value, self.test_code, self.gender, self.hiv_status, self.age_in_days)]
-        print list_items
         for index, list_item in enumerate(list_items):
             if not list_item.active:
                 raise TypeError('Inactive List item returned from get_list_prep(). Got {0}'.format(list_item))
