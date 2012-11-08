@@ -7,7 +7,7 @@ from django.db.models import get_model
 
 from lab_order.models import Order as LisOrder
 from lab_result.models import Result as LisResult
-from lab_result_item.models import ResultItem as LisResultItem
+#from lab_result_item.models import ResultItem as LisResultItem
 
 
 logger = logging.getLogger(__name__)
@@ -105,6 +105,7 @@ class DmisTools(object):
                 item: can be either a Result instance or an order_identifier.
         """
         Result = get_model('lab_clinic_api', 'result')
+        LisResultItem = get_model('lab_result_item', 'resultitem')
         if isinstance(item, Result):
             result = item
         elif Result.objects.filter(order__order_identifier=item).exists():
