@@ -2,7 +2,7 @@ from django.db import models
 #from audit_trail.audit import AuditTrail
 from lab_result.models import Result, ResultSource
 from lab_test_code.models import TestCode
-from lab_result_item.classes import ReferenceRangeFlag, GradeFlag
+from lab_result_item.classes import ReferenceRangeFlag, LabGradeFlag
 from base_result_item import BaseResultItem
 
 
@@ -37,7 +37,7 @@ class ResultItem(BaseResultItem):
         return ReferenceRangeFlag
 
     def get_cls_grade_flag(self):
-        return GradeFlag
+        return LabGradeFlag
 
     def get_absolute_url(self):
         return "lab_result_item/resultitem/%s/" % (self.id)

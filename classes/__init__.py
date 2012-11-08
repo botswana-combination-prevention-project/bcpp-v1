@@ -1,3 +1,3 @@
 from reference_range_flag import ReferenceRangeFlag
-from grade_flag import GradeFlag
+from grade_flag import LabGradeFlag
 from result_item_flag import ResultItemFlag
