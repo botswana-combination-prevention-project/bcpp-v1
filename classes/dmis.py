@@ -25,7 +25,6 @@ from base_dmis import BaseDmis
 
 
 logger = logging.getLogger(__name__)
-ResultItem = get_model('lab_result_item', 'result_item')
 
 
 class NullHandler(logging.Handler):
@@ -79,6 +78,7 @@ class Dmis(BaseDmis):
             set @pid='UY55139'
             update lab01response set datelastmodified=now() where pid=@pid
         """
+        ResultItem = get_model('lab_result_item', 'resultitem')
 
         lock_name = kwargs.get('subject_identifier', None)
         if not lock_name:
@@ -499,6 +499,7 @@ class Dmis(BaseDmis):
         ordered on datelastmodified which means oldest testcodes will come in first
         and later be overwritten by the same testcode if a testcode appears more than once for a result.
         """
+        ResultItem = get_model('lab_result_item', 'resultitem')
 
         def get_ritem_user(dmis_user):
             # change NT system username to auto
