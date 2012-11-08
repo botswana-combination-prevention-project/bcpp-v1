@@ -66,12 +66,12 @@ class GradeFlag(Flag):
             list_items[index] = self.modify_list_item_in_prep(list_item)
         # does value fall in any list item range?
         matching_list_item = self._pre_evaluate_list_items(value, list_items)
-        print '{0} {1}'.format(value, matching_list_item)
         if matching_list_item:
             # check if matching list item is serum high, low or N/A
             if matching_list_item.serum != 'N/A':
                 options.update({'serum': matching_list_item.serum})
                 # requery
+                print '{0} {1}'.format(matching_list_item, options)
                 list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
                 for index, list_item in enumerate(list_items):
                     list_items[index] = self.modify_list_item_in_prep(list_item)
