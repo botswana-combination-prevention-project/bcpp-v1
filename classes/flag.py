@@ -147,7 +147,7 @@ class Flag(object):
                                     age_high_days=list_item.age_high_days())):
                 my_list_items.append(list_item)
         # return a list, not a queryset
-        print list_items
+        print age_in_days
         return my_list_items
 
     def round_off(self, value, list_item):
