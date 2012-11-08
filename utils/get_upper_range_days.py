@@ -23,5 +23,4 @@ def get_upper_range_days(age_upper_range_value, age_upper_range_unit, operator):
             days = age_upper_range_value * 365
     else:
         pass
-        # raise TypeError('Invalid age_high_unit in model TestCodeReference, You have the value \'%s\' stored' % (age_upper_range_value )
     return days
