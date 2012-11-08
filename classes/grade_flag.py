@@ -79,7 +79,6 @@ class GradeFlag(Flag):
             # set list_items to nothing
             list_items = []
         # return a filtered list of list_item instances
-        print list_items
         return self.filter_list_items_by_age(list_items, self.age_in_days)
 
     def order_list_prep(self, list_items):
