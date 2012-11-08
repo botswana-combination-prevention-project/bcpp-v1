@@ -19,7 +19,7 @@ class GradingListItem(BaseReferenceListItem):
         return get_lower_range_days(self.age_low, self.age_low_unit)
 
     def age_high_days(self):
-        return get_upper_range_days(self.age_high, self.age_high_unit)
+        return get_upper_range_days(self.age_high, self.age_high_unit, self.age_high_quantifier)
 
     def __unicode__(self):
         return "%s" % (unicode(self.test_code))
