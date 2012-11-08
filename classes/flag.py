@@ -100,6 +100,10 @@ class Flag(object):
     def evaluate(self, value):
         """ Determines the flag for value and returns a with the flag and related parameters.
 
+        .. note:: If an value is evaluated but not of a gradable range, flag = 0. If 
+                  the value / test code cannot be evaluated for lack of grade items, the
+                  flag is None.
+
         .. note:: If list is ordered then the list item selected is predictable.
         .. seealso:: :func:`order_list_prep`"""
         if self.dirty:
@@ -115,6 +119,7 @@ class Flag(object):
         #    logger.warning('    No matching {0} items for {1}={2} ({3}).'.format(self.list_name, self.test_code.code, value, self.get_joined_criteria()))
         if list_items:
             for list_item in list_items:
+                flag = 0  # default to 0. This item is evaluated but not gradeable. 
                 if not isinstance(list_item, BaseReferenceListItem):
                     raise TypeError('List item must be an instance of BaseReferenceListItem.')
                 if not list_item.dummy:  # ignore a record marked as dummy
