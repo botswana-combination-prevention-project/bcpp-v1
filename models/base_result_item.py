@@ -123,10 +123,10 @@ class BaseResultItem(BaseUuidModel):
         return ''
 
     def get_grading_list(self):
-        return ('grading_list', GradingListItem)
+        return None
 
     def get_reference_list(self):
-        return ('test_code_reference_list', TestCodeReferenceListItem)
+        return None
 
     def get_cls_reference_flag(self):
         """ Users must override this."""
