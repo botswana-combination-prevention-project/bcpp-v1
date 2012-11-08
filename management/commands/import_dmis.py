@@ -2,6 +2,9 @@ from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from lab_import_dmis.classes import DmisLock, Dmis, ImportHistory, DmisTools
+from bhp_lab_tracker.classes import lab_tracker
+
+lab_tracker.autodiscover()
 
 
 class Command(BaseCommand):
@@ -17,6 +20,7 @@ class Command(BaseCommand):
             * --unvalidate_on_dmis <batch> <resultset> <receive_identifier> <receive_identifier> ...
             * --flag_for_reimport <receive_identifier> <receive_identifier> ...
     """
+
     args = ('lock --list-locks <lock_name> --unlock <lock_name> --import '
             '--show-history <lock_name>')
     help = 'Manage dmis import.'
