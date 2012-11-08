@@ -91,6 +91,7 @@ class Flag(object):
             self.check_list_prep(list_items)
             # list may need to be ordered as in the case of grading.
             list_items = self.order_list_prep(list_items)
+        print list_items
         return list_items
 
     def modify_list_item(self, list_item):
