@@ -66,6 +66,7 @@ class GradeFlag(Flag):
             list_items[index] = self.modify_list_item_in_prep(list_item)
         # does value fall in any list item range?
         matching_list_item = self._pre_evaluate_list_items(value, list_items)
+        print '{0} {1}'.format(value, matching_list_item)
         if matching_list_item:
             # check if matching list item is serum high, low or N/A
             if matching_list_item.serum != 'N/A':
@@ -173,11 +174,10 @@ class GradeFlag(Flag):
     def _pre_evaluate_list_items(self, value, list_items):
         """Pre-evaluates the list items to see if any list_item range matches for this value."""
         for list_item in list_items:
-            print '{0} {1}'.format(value, list_item)
+            #print '{0} {1}'.format(value, list_item)
             if not list_item.dummy:
                 flag, value_low, value_high = self.get_evaluate_prep(value, list_item)
                 if flag:
-                    print 'found'
                     return list_item
         return None
 
