@@ -19,12 +19,16 @@ class ReferenceFlag(Flag):
         """Returns list of normal range list items filtered on test_code, gender, age_in_days.
 
         .. note:: Normal ranges do not consider HIV status."""
-        list_items = self.list_item_model_cls.objects.filter(
-            **{'{0}__name__iexact'.format(self.list_name): settings.REFERENCE_RANGE_LIST,
-               'reference_range_list__name__iexact': settings.REFERENCE_RANGE_LIST,
-               'test_code': test_code,
-               'gender__icontains': gender,
-               'active': True})
+
+        if not self.list_item_model_cls:
+            list_items = []
+        else:
+            list_items = self.list_item_model_cls.objects.filter(
+                **{'{0}__name__iexact'.format(self.list_name): settings.REFERENCE_RANGE_LIST,
+                   'reference_range_list__name__iexact': settings.REFERENCE_RANGE_LIST,
+                   'test_code': test_code,
+                   'gender__icontains': gender,
+                   'active': True})
         # return a filtered list of list_item instances
         return self.filter_list_items_by_age(list_items, age_in_days)
 
