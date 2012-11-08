@@ -61,7 +61,6 @@ class GradeFlag(Flag):
             'active': True,
             'fasting': self.fasting}
         list_items = [list_item for list_item in self.list_item_model_cls.objects.filter(qset, **options)]
-        print list_items
         for index, list_item in enumerate(list_items):
             # modify values if using lln, uln
             list_items[index] = self.modify_list_item_in_prep(list_item)
@@ -174,9 +173,11 @@ class GradeFlag(Flag):
     def _pre_evaluate_list_items(self, value, list_items):
         """Pre-evaluates the list items to see if any list_item range matches for this value."""
         for list_item in list_items:
+            print '{0} {1}'.format(value, list_item)
             if not list_item.dummy:
                 flag, value_low, value_high = self.get_evaluate_prep(value, list_item)
                 if flag:
+                    print 'found'
                     return list_item
         return None
 
