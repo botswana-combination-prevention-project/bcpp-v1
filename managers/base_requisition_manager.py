@@ -5,6 +5,10 @@ from bhp_identifier.classes import Identifier
 
 
 class BaseRequisitionManager(models.Manager):
+    def get_by_natural_key(self, requisition_identifier, specimen_identifier):
+        return self.get(requisition_identifier=requisition_identifier,
+                        specimen_identifier=specimen_identifier,
+            )
 
     def get_global_identifier(self, **kwargs):
 
