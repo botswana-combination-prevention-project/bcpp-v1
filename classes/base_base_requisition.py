@@ -12,7 +12,7 @@ from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from bhp_device.classes import Device
 from bhp_string.classes import BaseString
-from bhp_identifier.classes import CheckDigit
+#from bhp_identifier.classes import CheckDigit
 from lab_panel.models import Panel
 from lab_aliquot_list.models import AliquotType
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
