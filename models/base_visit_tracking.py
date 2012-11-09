@@ -115,6 +115,10 @@ class BaseVisitTracking (BaseUuidModel):
     def natural_key_as_dict(self):
         return {'appointment': self.appointment, }
 
+    def natural_key(self):
+        return (self.appointment.natural_key(), self.report_datetime, )
+    natural_key.dependencies = ['bhp_appointment.appointment',]
+
     def save(self, *args, **kwargs):
 
         # TODO: BaseAppointmentTracking.save() is the correct place to recalculate ScheduledEntryBucket?? no
