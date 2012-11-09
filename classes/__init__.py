@@ -1,5 +1,4 @@
 from requisition_label import RequisitionLabel
 from clinic_requisition_label import ClinicRequisitionLabel
 from base_requisition_model_admin import BaseRequisitionModelAdmin
-from base_base_requisition import BaseBaseRequisition
 from site_requisitions import SiteRequisitions, requisitions

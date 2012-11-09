@@ -1,6 +1,6 @@
 from django.db import models
 from lab_test_code.models import TestCode
-from lab_requisition.classes import BaseBaseRequisition
+from base_base_requisition import BaseBaseRequisition
 
 
 class BaseRequisition (BaseBaseRequisition):
