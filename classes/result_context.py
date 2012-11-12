@@ -23,7 +23,7 @@ class ContextDescriptor(object):
             'gender': instance.result.order.aliquot.receive.patient.gender,
             'initials': instance.result.order.aliquot.receive.patient.initials,
             'site_identifier': instance.result.order.aliquot.receive.site.site_identifier,
-            'clinicians_initials': instance.result.order.aliquot.receive.patient.initials,
+            'clinicians_initials': instance.result.order.get_requisition('clinicians_initials'),
             'drawn_datetime': instance.result.order.aliquot.receive.drawn_datetime,
             'panel_name': instance.result.order.panel.name,
             'receive_identifier': instance.result.order.aliquot.receive.receive_identifier,

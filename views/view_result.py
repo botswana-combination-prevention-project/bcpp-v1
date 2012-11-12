@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from lab_result.models import Result
-from lab_result_item.models import ResultItem
+#from lab_result_item.models import ResultItem
 from lab_result_report.classes import ResultContext
 
 
