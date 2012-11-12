@@ -116,8 +116,8 @@ class BaseVisitTracking (BaseUuidModel):
         return {'appointment': self.appointment, }
 
     def natural_key(self):
-        return (self.appointment.natural_key(), self.report_datetime, )
-    natural_key.dependencies = ['bhp_appointment.appointment',]
+        return self.appointment.natural_key()
+    natural_key.dependencies = ['bhp_appointment.appointment', ]
 
     def save(self, *args, **kwargs):
 
