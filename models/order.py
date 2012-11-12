@@ -113,6 +113,21 @@ class Order(BaseOrder):
             return ''
     to_result.allow_tags = True
 
+    def get_requisition(self):
+        from lab_requisition.classes import requisitions
+        requisition = None
+        requisition_cls = requisitions.get(self.aliquot.receive.registered_subject.subject_type)
+        if requisition_cls:
+            if requisition_cls.objects.filter(requisition_identifier=self.aliquot.receive.requisition_identifier).exists():
+                requisition = requisition_cls.objects.get(requisition_identifier=self.aliquot.receive.requisition_identifier)
+        return requisition
+
+    def req(self):
+        try:
+            return self.get_requisition().specimen_identifier
+        except:
+            return None
+
     def get_absolute_url(self):
         return reverse('admin:lab_clinic_api_order_change', args=(self.id,))
 
