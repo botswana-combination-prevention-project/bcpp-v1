@@ -114,12 +114,17 @@ class Order(BaseOrder):
     to_result.allow_tags = True
 
     def get_requisition(self):
+        """ Gets the requisition used to order this item using the specimen identifier allocated by the EDC when the item was packed.
+
+        .. note:: The receiver on the LIS tracks the EDC specimen identifier which is re-imported to the
+                  EDC as an attribute of the receive record.
+        """
         from lab_requisition.classes import requisitions
         requisition = None
         requisition_cls = requisitions.get(self.aliquot.receive.registered_subject.subject_type)
         if requisition_cls:
-            if requisition_cls.objects.filter(requisition_identifier=self.aliquot.receive.requisition_identifier).exists():
-                requisition = requisition_cls.objects.get(requisition_identifier=self.aliquot.receive.requisition_identifier)
+            if requisition_cls.objects.filter(specimen_identifier=self.aliquot.receive.requisition_identifier).exists():
+                requisition = requisition_cls.objects.get(specimen_identifier=self.aliquot.receive.requisition_identifier)
         return requisition
 
     def req(self):
@@ -127,6 +132,7 @@ class Order(BaseOrder):
             return self.get_requisition().specimen_identifier
         except:
             return None
+    req.allow_tags = True
 
     def get_absolute_url(self):
         return reverse('admin:lab_clinic_api_order_change', args=(self.id,))
