@@ -158,9 +158,11 @@ class BaseBaseRequisition (BaseUuidModel):
     def __unicode__(self):
         return '%s' % (self.requisition_identifier)
 
+    #TODO: remove this, should be get_subject_identifier
     def get_infant_identifier(self):
         return self.get_visit().appointment.registered_subject.subject_identifier
 
+    #TODO: remove this, should be get_subject_identifier
     def subject(self):
         return self.get_subject_identifier()
 

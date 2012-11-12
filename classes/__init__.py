@@ -1,4 +1,4 @@
+from lab_requisition.classes.site_requisitions import SiteRequisitions, requisitions
 from requisition_label import RequisitionLabel
 from clinic_requisition_label import ClinicRequisitionLabel
 from base_requisition_model_admin import BaseRequisitionModelAdmin
-from site_requisitions import SiteRequisitions, requisitions
