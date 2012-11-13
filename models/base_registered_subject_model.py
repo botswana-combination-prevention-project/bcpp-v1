@@ -23,6 +23,9 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
     """
     registered_subject = models.OneToOneField(RegisteredSubject)
 
+    def get_subject_identifier(self):
+        return self.registered_subject.subject_identifier
+
     def get_visit_model(self, instance):
         for model in get_models(get_app(instance._meta.app_label)):
             if isinstance(model(), BaseVisitTracking):
