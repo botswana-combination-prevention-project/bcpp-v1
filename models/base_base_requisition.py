@@ -155,6 +155,9 @@ class BaseBaseRequisition (BaseUuidModel):
 
     objects = BaseRequisitionManager()
 
+    def natural_keys(self):
+        return (self.requisition_identifier, self.specimen_identifier)
+
     def __unicode__(self):
         return '%s' % (self.requisition_identifier)
 
