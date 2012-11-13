@@ -20,11 +20,11 @@ class ResultItemFlag(object):
         ReferenceFlag = result_item.get_cls_reference_flag()
         reference_flag = ReferenceFlag(result_item.get_reference_list(), result_item)
         kw = reference_flag.evaluate(value)
-        range_ = '{0}-{1}'.format(kw.get('lower_limit'), kw.get('upper_limit'))
-        if range_.strip() == '-' or kw.get('lower_limit') is None or kw.get('upper_limit') is None:
+        formatted_reference_range = '{0}-{1}'.format(kw.get('lower_limit'), kw.get('upper_limit'))
+        if formatted_reference_range.strip() == '-' or kw.get('lower_limit') is None or kw.get('upper_limit') is None:
             result_item.reference_range = None
         else:
-            result_item.reference_range = range_
+            result_item.reference_range = formatted_reference_range
         if kw.get('flag'):
             result_item.reference_flag = kw.get('flag')
         else:
@@ -37,19 +37,19 @@ class ResultItemFlag(object):
             hiv_status=hiv_status)
         kw = grade_flag.evaluate(value)
         if kw.get('flag', None):
-            range_ = '{0}-{1}'.format(kw.get('lower_limit'), kw.get('upper_limit'))
-            if range_.strip() == '-':
+            formatted_reference_range = '{0}-{1}'.format(kw.get('lower_limit'), kw.get('upper_limit'))
+            if formatted_reference_range.strip() == '-':
                 result_item.grade_range = None
             else:
-                result_item.grade_range = range_
+                result_item.grade_range = formatted_reference_range
             result_item.grade_flag = kw.get('flag')
         else:
             result_item.grade_flag = None
             if kw.get('flag') == 0:
                 result_item.grade_flag = 0
             result_item.grade_range = None
-        result_item.grade_warn = True
-        result_item.grade_message = 'HIV status unknown, defaulted to NEG'
+        #result_item.grade_warn = True
+        #result_item.grade_message = 'HIV status unknown, defaulted to NEG'
         #after = [result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag]
         #modified = (before == after) is False
         return result_item.reference_range, result_item.reference_flag, result_item.grade_range, result_item.grade_flag
