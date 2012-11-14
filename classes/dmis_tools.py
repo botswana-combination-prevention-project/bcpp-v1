@@ -156,6 +156,7 @@ class DmisTools(object):
                 sql_template = 'select id from lab21response where pid=\'{0}\''
         # query DMIS for this LAB21.id
         sql = (sql_template).format(order.order_identifier)
+        print str(sql)
         lab21_id = cursor.execute(str(sql)).fetchone()
         if not lab21_id:
             # does not exist on the DMIS. prepare to flag as withdrawn on django-lis and EDC
