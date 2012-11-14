@@ -152,11 +152,11 @@ class DmisTools(object):
         sql_template = 'select id from lab21response where id={0}'
         if not re.match('^\d+$', order.order_identifier):
             logger.info('    invalid order identifier {0}'.format(order.order_identifier))
-            if not re.match('^\w+$', order.order_identifier):
+            if re.match('^\w+$', order.order_identifier):
                 sql_template = 'select id from lab21response where pid=\'{0}\''
         # query DMIS for this LAB21.id
         sql = (sql_template).format(order.order_identifier)
-        print str(sql)
+        #print str(sql)
         lab21_id = cursor.execute(str(sql)).fetchone()
         if not lab21_id:
             # does not exist on the DMIS. prepare to flag as withdrawn on django-lis and EDC
