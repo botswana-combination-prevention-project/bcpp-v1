@@ -1,3 +1,4 @@
-from reference_range_flag import ReferenceRangeFlag
-from lab_grade_flag import LabGradeFlag
-from result_item_flag import ResultItemFlag
+from MiddleMan import MiddleManToLocal
+from MiddleMan import MiddleManToRemote
+from MiddleMan import LocalServer
+from MiddleMan import RemoteServer
