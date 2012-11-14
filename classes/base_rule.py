@@ -197,12 +197,10 @@ class BaseRule(object):
                     ValueError('The logic tuple (or the first tuple of tuples) must must have three items')
                 if n > 0 and not len(item) == 4:
                     ValueError('Additional tuples in the logic tuple must have a boolean operator as the fourth item')
-
                 self._set_predicate_field_value(source_model_instance, item[0])
-
-                if not self._get_predicate_field_value():
-                    self._predicate = None
-                    break
+                #if not self._get_predicate_field_value():
+                #    self._predicate = None
+                #    break
                 # comparison value
                 self._set_predicate_comparitive_value(item[2])
                 # logical_operator if more than one tuple in the logic tuple
