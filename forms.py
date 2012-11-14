@@ -78,5 +78,9 @@ class BaseSubjectConsentForm(BaseModelForm):
                         entry = lst
             if cleaned_data.get('gender') != allowed[0] and allowed[0] != 'MF':
                 raise forms.ValidationError(u'Gender of consent is %s. You entered %s.' % (allowed[1], entry[1]))
+        # confirm attr identity and confirm_identity match
+        if cleaned_data.get('identity') and cleaned_data.get('confirm_identity'):
+            if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
+                raise forms.ValidationError('Identity mismatch. Identity number must match the confirmation field.')
         # Always return the full collection of cleaned data.
         return cleaned_data
