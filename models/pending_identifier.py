@@ -4,7 +4,7 @@ from bhp_base_model.classes import BaseUuidModel
 
 
 class PendingIdentifier(BaseUuidModel):
-
+    """Not used."""
     pending_identifier = models.CharField(max_length=50)
     app_name = models.CharField(max_length=50)
     final_identifier = models.CharField(max_length=50, null=True)
