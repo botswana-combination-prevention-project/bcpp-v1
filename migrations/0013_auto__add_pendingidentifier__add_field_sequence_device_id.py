@@ -8,22 +8,22 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'PendingIdentifier'
-        db.create_table('bhp_identifier_pendingidentifier', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('pending_identifier', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('app_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('final_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
-            ('pending_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2012, 11, 15, 0, 0))),
-            ('final_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True)),
-        ))
-        db.send_create_signal('bhp_identifier', ['PendingIdentifier'])
+#        # Adding model 'PendingIdentifier'
+#        db.create_table('bhp_identifier_pendingidentifier', (
+#            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+#            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+#            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+#            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+#            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+#            ('pending_identifier', self.gf('django.db.models.fields.CharField')(max_length=50)),
+#            ('app_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
+#            ('final_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+#            ('pending_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2012, 11, 15, 0, 0))),
+#            ('final_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+#        ))
+#        db.send_create_signal('bhp_identifier', ['PendingIdentifier'])
 
         # Adding field 'Sequence.device_id'
         db.add_column('bhp_identifier_sequence', 'device_id',
