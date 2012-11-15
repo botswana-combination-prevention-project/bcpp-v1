@@ -7,26 +7,26 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+        pass        
         # Adding model 'SubjectIdentifier'
-        db.create_table('bhp_identifier_subjectidentifier', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('subject_identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=25)),
-            ('seed', self.gf('django.db.models.fields.IntegerField')(default=1000, unique=True)),
-        ))
-        db.send_create_signal('bhp_identifier', ['SubjectIdentifier'])
+#        db.create_table('bhp_identifier_subjectidentifier', (
+#            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+#            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+#            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+#            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+#            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+#            ('subject_identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=25)),
+#            ('seed', self.gf('django.db.models.fields.IntegerField')(default=1000, unique=True)),
+#        ))
+#        db.send_create_signal('bhp_identifier', ['SubjectIdentifier'])
 
         # Adding index on 'IdentifierTracker', fields ['hostname_created']
-        db.create_index('bhp_identifier_identifiertracker', ['hostname_created'])
+#        db.create_index('bhp_identifier_identifiertracker', ['hostname_created'])
 
         # Adding index on 'IdentifierTracker', fields ['hostname_modified']
-        db.create_index('bhp_identifier_identifiertracker', ['hostname_modified'])
+#        db.create_index('bhp_identifier_identifiertracker', ['hostname_modified'])
 
 
     def backwards(self, orm):
