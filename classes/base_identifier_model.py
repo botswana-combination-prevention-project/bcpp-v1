@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
 except ImportError:
@@ -29,7 +31,9 @@ class BaseIdentifierModel(BaseUuidModel):
 
     def save(self, *args, **kwargs):
         from bhp_identifier.models import Sequence
-        sequence = Sequence.objects.create()
+        if not 'DEVICE_ID' in dir(settings):
+            raise ImproperlyConfigured('Settings attribute DEVICE_ID not found. Add DEVICE_ID =  to your settings.py where DEVICE_ID is a project wide unique integer.')
+        sequence = Sequence.objects.create(device_id=settings.DEVICE_ID)
         self.sequence_number = sequence.pk
         super(BaseIdentifierModel, self).save(*args, **kwargs)
 
