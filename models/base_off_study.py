@@ -3,6 +3,7 @@ from bhp_base_model.fields import OtherCharField
 from bhp_registration.models import BaseRegisteredSubjectModel
 from bhp_crypto.utils import mask_encrypted
 
+
 class BaseOffStudy(BaseRegisteredSubjectModel):
 
     offstudy_date = models.DateField(
@@ -25,12 +26,28 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
         null=True,
         )
 
+    def get_visit_model(self):
+        """Returns the visit model class from the app needed to clear appointments on save().
+
+        Users should override to return the visit model relavant to the
+        off study form."""
+        return None
+
+    def save(self, ):
+        Appointment = models.get_model('bhp_appointment', 'appointment')
+        for appointment in Appointment.objects.filter(
+                registered_subject__subject_identifier=self.registered_subject.subject_identifier,
+                appt_datetime__gt=self.offstudy_date):
+            visit_model_cls = self.get_visit_model()
+            if visit_model_cls:
+                if not visit_model_cls.objects.filter(appointment=appointment):
+                    appointment.delete()
+
     def __unicode__(self):
         return "{0} {1} ({2})".format(self.registered_subject.subject_identifier,
-                                          self.registered_subject.subject_type,
-                                          mask_encrypted(self.registered_subject.first_name))
+                                      self.registered_subject.subject_type,
+                                      mask_encrypted(self.registered_subject.first_name))
 
     class Meta:
         app_label = 'bhp_off_study'
         abstract = True
-
