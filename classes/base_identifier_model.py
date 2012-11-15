@@ -28,12 +28,14 @@ class BaseIdentifierModel(BaseUuidModel):
     identifier = models.CharField(max_length=36, unique=True, editable=False)
     padding = models.IntegerField(default=4, editable=False)
     sequence_number = models.IntegerField()
+    device_id = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         from bhp_identifier.models import Sequence
         if not 'DEVICE_ID' in dir(settings):
             raise ImproperlyConfigured('Settings attribute DEVICE_ID not found. Add DEVICE_ID =  to your settings.py where DEVICE_ID is a project wide unique integer.')
         sequence = Sequence.objects.create(device_id=settings.DEVICE_ID)
+        self.device_id = settings.DEVICE_ID
         self.sequence_number = sequence.pk
         super(BaseIdentifierModel, self).save(*args, **kwargs)
 
