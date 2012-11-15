@@ -162,6 +162,8 @@ class LabTracker(object):
             raise TypeError('Model tuple item \'model_cls\' {0} does not match instance class. Got {1}.'.format(model_cls, instance._meta.object_name.lower()))
         source_identifier = self._get_source_identifier_value(instance, identifier_attr)
         if self.result_item_tpl[self.MODEL_CLS]:
+            # sometimes the get_model() does not return the ResultItem class??.
+            # See class variable result_item_tpl.
             if isinstance(instance, self.result_item_tpl[self.MODEL_CLS]):
                 # will return nothing if the test code is not being tracked.
                 history_model, created = self._update_from_result_item_instance(instance)
