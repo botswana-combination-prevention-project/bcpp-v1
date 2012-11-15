@@ -68,10 +68,10 @@ class BaseSyncModel(BaseUuidModel):
 
         if self.is_serialized() and not self._meta.proxy:
 
-            transaction = get_model('bhp_sync', 'transaction')
+            outgoing_transaction = get_model('bhp_sync', 'outgoingtransaction')
             json_obj = serializers.serialize(
                 "json", self.__class__.objects.filter(pk=self.pk), use_natural_keys=True)
-            transaction.objects.create(
+            outgoing_transaction.objects.create(
                 tx_name=self._meta.object_name,
                 tx_pk=self.pk,
                 tx=json_obj,
