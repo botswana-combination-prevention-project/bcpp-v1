@@ -50,20 +50,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-bhp_identifier.models">
-<span id="models"></span><h1>Models<a class="headerlink" href="#module-bhp_identifier.models" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-models"></span><div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="bhp_identifier.models.SubjectIdentifier">
-<em class="property">class </em><tt class="descclassname">bhp_identifier.models.</tt><tt class="descname">SubjectIdentifier</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.models.SubjectIdentifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>SubjectIdentifier(id, created, modified, user_created, user_modified, hostname_created, hostname_modified, identifier, seed, padding)</p>
+<dt id="models.subject_identifier.SubjectIdentifier">
+<em class="property">class </em><tt class="descclassname">models.subject_identifier.</tt><tt class="descname">SubjectIdentifier</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#models.subject_identifier.SubjectIdentifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>SubjectIdentifier(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, identifier, padding, sequence_number)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>identifier</strong> (<em>CharField</em>) &#8211; Identifier</li>
-<li><strong>seed</strong> (<em>IntegerField</em>) &#8211; Seed</li>
 <li><strong>padding</strong> (<em>IntegerField</em>) &#8211; Padding</li>
+<li><strong>sequence_number</strong> (<em>IntegerField</em>) &#8211; Sequence number</li>
 </ul>
 </td>
 </tr>
@@ -72,8 +72,8 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="bhp_identifier.models.DerivedSubjectIdentifier">
-<em class="property">class </em><tt class="descclassname">bhp_identifier.models.</tt><tt class="descname">DerivedSubjectIdentifier</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_identifier.models.DerivedSubjectIdentifier" title="Permalink to this definition">¶</a></dt>
+<dt id="models.DerivedSubjectIdentifier">
+<em class="property">class </em><tt class="descclassname">models.</tt><tt class="descname">DerivedSubjectIdentifier</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#models.DerivedSubjectIdentifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store subject identifiers derived from another participant, e.g. infant identifier from maternal identifier</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -84,6 +84,20 @@
 <li><strong>base_identifier</strong> (<em>CharField</em>) &#8211; Base identifier</li>
 </ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="models.Sequence">
+<em class="property">class </em><tt class="descclassname">models.</tt><tt class="descname">Sequence</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#models.Sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence(id, created, modified, user_created, user_modified, hostname_created, hostname_modified, device_id)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device_id</strong> (<em>IntegerField</em>) &#8211; Device id</td>
 </tr>
 </tbody>
 </table>

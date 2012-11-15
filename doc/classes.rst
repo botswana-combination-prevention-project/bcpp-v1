@@ -1,7 +1,7 @@
+.. automodule:: bhp_identifier.classes
+
 Classes
 =======
-
-.. automodule:: bhp_identifier.classes
 
 .. autoclass:: BaseIdentifierModel
     :members:
@@ -14,6 +14,15 @@ Classes
     :undoc-members:
     :private-members:
     :show-inheritance:
+    
+.. autoclass:: CheckDigit
+    :members:
+    :undoc-members:
+    :private-members:
+    :show-inheritance:
+
+Custom Identifier Classes
+++++++++++++++++++++++++++
 
 .. autoclass:: SubjectIdentifier
     :members:
@@ -21,13 +30,13 @@ Classes
     :private-members:
     :show-inheritance:
 
-.. autoclass:: Infant
+.. autoclass:: InfantIdentifier
     :members:
     :undoc-members:
     :private-members:
     :show-inheritance:
 
-.. autoclass:: CheckDigit
+.. autoclass:: PartnerIdentifier
     :members:
     :undoc-members:
     :private-members:

@@ -1,13 +1,13 @@
+.. automodule:: models
+
 Models
 ======
-
-.. automodule:: bhp_identifier.models
-   :members:  
  
-.. autoclass:: SubjectIdentifier
+.. autoclass:: models.subject_identifier.SubjectIdentifier
    :members:
     
 .. autoclass:: DerivedSubjectIdentifier
    :members:
     
-    
+.. autoclass:: Sequence
+   :members:

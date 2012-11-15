@@ -1,4 +1,3 @@
-
 bhp_identifier
 ==========================================
 
@@ -8,8 +7,8 @@ bhp_identifier
    overview
    installation
    examples
-   classes
    models
+   classes
 
 .. automodule:: bhp_identifier
 

@@ -56,7 +56,27 @@
             
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="index.html#module-bhp_identifier" title="bhp_identifier"><tt class="xref py py-mod docutils literal"><span class="pre">bhp_identifier</span></tt></a> is a module to handle identifier allocation for various subject types.</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="index.html#module-bhp_identifier" title="bhp_identifier"><tt class="xref py py-mod docutils literal"><span class="pre">bhp_identifier</span></tt></a> is a module to handle identifier allocation for various subject types. An identifier is created as follows:</dt>
+<dd><ul class="first last simple">
+<li>from ModelAdmin.save_model() or Model.save() call <tt class="xref py py-func docutils literal"><span class="pre">get_identifier()</span></tt> of a selected bhp_identifier class, e.g <tt class="xref py py-class docutils literal"><span class="pre">SubjectIdentifier</span></tt>.</li>
+<li>identifier class combines the device_id from <tt class="xref py py-mod docutils literal"><span class="pre">settings.py</span></tt> and a sequence number from model <tt class="xref py py-class docutils literal"><span class="pre">Sequence</span></tt> to create a unique
+identifier.</li>
+</ul>
+</dd>
+<dt>The models involved are:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="models.html#models.subject_identifier.SubjectIdentifier" title="models.subject_identifier.SubjectIdentifier"><tt class="xref py py-class docutils literal"><span class="pre">models.subject_identifier.SubjectIdentifier</span></tt></a></li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">Sequence</span></tt></li>
+</ul>
+</dd>
+</dl>
+<p>Also, the settings attribute DEVICE_ID is required for each device that creates identifiers.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If more than one device creates identifiers ensure the DEVICE_ID for each device is unique
+and that the model <tt class="xref py py-class docutils literal"><span class="pre">Sequence</span></tt> is maintained on that device.</p>
+</div>
 </div>
 
 
