@@ -39,14 +39,14 @@ class LabTracker(object):
     VALUE_ATTR = 1
     DATE_ATTR = 2
     IDENTIFIER_ATTR = 3
-    result_item_tpl = (get_model('lab_clinic_api', 'resultitem'), 'result_item_value', 'result_item_datetime', 'result__order__order_identifier')
+    #result_item_tpl = (get_model('lab_clinic_api', 'resultitem'), 'result_item_value', 'result_item_datetime', 'result__order__order_identifier')
 
     def __init__(self):
         """If the user does not declare self.models, the tracker will add result_item so that the
         tracker at least gets what's in lab_clinic_api tables.
 
         .. note:: ResultItem model is added by the :class:`SiteTracker` during register()"""
-        pass
+        self.result_item_tpl = (get_model('lab_clinic_api', 'resultitem'), 'result_item_value', 'result_item_datetime', 'result__order__order_identifier')
 
     @classmethod
     def add_model_tpl(self, model_tpl):
@@ -161,12 +161,13 @@ class LabTracker(object):
         if not model_cls == instance.__class__:
             raise TypeError('Model tuple item \'model_cls\' {0} does not match instance class. Got {1}.'.format(model_cls, instance._meta.object_name.lower()))
         source_identifier = self._get_source_identifier_value(instance, identifier_attr)
-        if self.result_item_tpl[self.MODEL_CLS]:
-            # sometimes the get_model() does not return the ResultItem class??.
-            # See class variable result_item_tpl.
-            if isinstance(instance, self.result_item_tpl[self.MODEL_CLS]):
-                # will return nothing if the test code is not being tracked.
-                history_model, created = self._update_from_result_item_instance(instance)
+        #history_model, created = None, None
+        #if self.result_item_tpl[self.MODEL_CLS]:
+        #    # sometimes the get_model() does not return the ResultItem class??.
+        #    # See class variable result_item_tpl.
+        if isinstance(instance, self.result_item_tpl[self.MODEL_CLS]):
+            # will return nothing if the test code is not being tracked.
+            history_model, created = self._update_from_result_item_instance(instance)
         else:
             history_model, created = self._update_history_model(
                 instance._meta.object_name.lower(),

@@ -60,7 +60,7 @@ class SiteLabTracker(object):
         else:
             lab_tracker_cls.models = []
         # add result_item model
-        lab_tracker_cls.add_model_tpl(lab_tracker_cls.result_item_tpl)
+        lab_tracker_cls.add_model_tpl(lab_tracker_cls().result_item_tpl)
         self._registry.append(lab_tracker_cls)
 
     def update_all(self, supress_messages):
