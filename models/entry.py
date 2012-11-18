@@ -3,6 +3,7 @@ from bhp_content_type_map.models import ContentTypeMap
 from bhp_common.choices import YES_NO
 from bhp_visit.models import BaseWindowPeriodItem, VisitDefinition
 from bhp_entry.choices import ENTRY_CATEGORY, ENTRY_WINDOW, ENTRY_STATUS
+from bhp_entry.managers import EntryBucketManager
 
 
 class Entry(BaseWindowPeriodItem):
@@ -36,7 +37,10 @@ class Entry(BaseWindowPeriodItem):
         max_length=25,
         choices=ENTRY_STATUS,
         default='NEW')
-    objects = models.Manager()
+    objects = EntryBucketManager()
+
+    def natural_key(self):
+        return (self.visit_definition, ) + self.content_type_map.natural_key()
 
     def form_title(self):
         self.content_type_map.content_type.model_class()._meta.verbose_name

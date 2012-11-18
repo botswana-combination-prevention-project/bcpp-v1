@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import get_model, get_models
 from django.db.models.base import ModelBase
 from django.db.models import ForeignKey
-from bhp_entry.models import Entry
+#from bhp_entry.models import Entry
 from bhp_content_type_map.models import ContentTypeMap
 
 
@@ -29,8 +30,9 @@ class BaseEntryBucketManager(models.Manager):
 
     def set_entry(self):
         """Finds occurrence for this visit_definition in the Entry model and if not found, update_status() has nothing to do."""
-        if Entry.objects.filter(visit_definition=self.visit_definition, content_type_map=self.content_type_map):
-            self.entry = Entry.objects.get(visit_definition=self.visit_definition, content_type_map=self.content_type_map)
+        model = get_model('bhp_entry', 'Entry')
+        if model.objects.filter(visit_definition=self.visit_definition, content_type_map=self.content_type_map):
+            self.entry = model.objects.get(visit_definition=self.visit_definition, content_type_map=self.content_type_map)
         else:
             self.entry = None
 
