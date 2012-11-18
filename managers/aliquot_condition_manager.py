@@ -10,3 +10,6 @@ class AliquotConditionManager(models.Manager):
         else:
             raise TypeError('AliquotCondition must have at least one entry that has short_name=10 for condition is OK. Got None')
         return aliquot_condition
+
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
