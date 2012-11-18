@@ -82,7 +82,7 @@ class LabTracker(object):
 
     def _get_default_value(self, group_name, subject_identifier, value_datetime):
         """Returns the default value when none is available from the HistoryModel."""
-        default_value = self.get_default_value()
+        default_value = self.get_default_value(group_name, subject_identifier, value_datetime)
         if not default_value:
             raise ImproperlyConfigured('Method get_default_value() must return a value. Got None.')
         else:
@@ -115,22 +115,32 @@ class LabTracker(object):
 
     def update_all(self, supress_messages=True):
         tot = RegisteredSubject.objects.values('subject_identifier').all().count()
-        for index, registered_subject in enumerate(RegisteredSubject.objects.values('subject_identifier').all()):
+        for index, registered_subject in enumerate(RegisteredSubject.objects.values('subject_identifier').filter(subject_identifier__isnull=False)):
             if not supress_messages:
                 logger.info('{0} / {1} ...updating {2}'.format(index, tot, registered_subject.get('subject_identifier')))
             self.update(registered_subject.get('subject_identifier'))
+        return tot
 
     @classmethod
     def unpack_model_tpl(self, model_tpl, index=None):
-        """Unpacks and returns the model_tpl to always include identifier_attr, or, if index provided, returns just the one item."""
+        """Unpacks and returns the model_tpl to always include identifier_attr, or, if index provided, returns just the one item.
+
+        .. note:: the first element, the model_cls, may be a tuple of (app_label, model_name)."""
         if index in range(0, 4):
             retval = model_tpl[index]
+            if index == 0:
+                if isinstance(model_tpl[index], tuple):
+                    retval = get_model(model_tpl[index][0], model_tpl[index][1])
         else:
             try:
                 model_cls, value_attr, date_attr = model_tpl
+                if isinstance(model_cls, tuple):
+                    model_cls = get_model(model_cls[0], model_cls[1])
                 identifier_attr = None
             except ValueError:
                 model_cls, value_attr, date_attr, identifier_attr = model_tpl
+                if isinstance(model_cls, tuple):
+                    model_cls = get_model(model_cls[0], model_cls[1])
                 identifier_attr = model_tpl[self.IDENTIFIER_ATTR]
             except:
                 raise
