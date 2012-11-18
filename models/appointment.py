@@ -74,10 +74,11 @@ class Appointment(BaseAppointment):
     def dashboard(self):
         ret = None
         if self.registered_subject:
-            url = reverse('dashboard_url', kwargs={'dashboard_type': self.registered_subject.subject_type.lower(),
-                                                   'subject_identifier': self.registered_subject.subject_identifier,
-                                                   'appointment': self.pk})
-            ret = """<a href="{url}" />dashboard</a>""".format(url=url)
+            if self.registered_subject.subject_identifier:
+                url = reverse('dashboard_url', kwargs={'dashboard_type': self.registered_subject.subject_type.lower(),
+                                                       'subject_identifier': self.registered_subject.subject_identifier,
+                                                       'appointment': self.pk})
+                ret = """<a href="{url}" />dashboard</a>""".format(url=url)
         return ret
     dashboard.allow_tags = True
 
