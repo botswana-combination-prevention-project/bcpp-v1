@@ -20,5 +20,8 @@ class BasePanel(BaseModel):
     def __unicode__(self):
         return self.name
 
+    def natural_key(self):
+        return (self.name, )
+
     class Meta:
         abstract = True
