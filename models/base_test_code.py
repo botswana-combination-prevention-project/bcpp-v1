@@ -52,5 +52,8 @@ class BaseTestCode(BaseModel):
     def __unicode__(self):
         return self.name
 
+    def natural_key(self):
+        return (self.code, )
+
     class Meta:
         abstract = True
