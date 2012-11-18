@@ -32,5 +32,8 @@ class BaseAliquotType(BaseModel):
     def __unicode__(self):
         return "%s %s: %s" % (self.alpha_code, self.numeric_code, self.name.lower())
 
+    def natural_key(self):
+        return (self.alpha_code, self.numeric_code)
+
     class Meta:
         abstract = True
