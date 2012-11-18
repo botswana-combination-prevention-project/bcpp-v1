@@ -447,7 +447,9 @@ class LabTracker(object):
         """Returns all values on or before :attr:`reference_datetime` for a subject as a list in ascending chronological order."""
         if not reference_datetime:
             reference_datetime = datetime.today()
-        queryset = self.get_history(subject_identifier, reference_datetime)
+        if not self.group_name:
+            raise ImproperlyConfigured('Class attribute \'group_name\' cannot be None.')
+        queryset = self.get_history(self.group_name, subject_identifier, reference_datetime)
         return [qs.value for qs in queryset]
 
     def get_history_as_string(self, subject_identifier, mapped=True):

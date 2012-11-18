@@ -70,6 +70,20 @@ class SiteLabTracker(object):
     def all(self):
         return self._registry
 
+    def _get_tracker_cls_by_group_name(self, group_name):
+        for lab_tracker_cls in self._registry:
+            # confirm group names match
+            if lab_tracker_cls().get_group_name() == group_name:
+                return lab_tracker_cls
+        return None
+
+    def get_history_as_string(self, group_name, subject_identifier, mapped=True):
+        retval = ''
+        for lab_tracker_cls in self._registry:
+            if lab_tracker_cls().get_group_name() == group_name:
+                retval = lab_tracker_cls().get_history_as_string(subject_identifier, mapped)
+        return retval
+
     def get_value(self, group_name, subject_identifier, value_datetime):
         """Searches thru the registry to find a class that can be used to search for the value.
 
@@ -78,7 +92,7 @@ class SiteLabTracker(object):
                 * subject_identifier: used by :func:`get_current_value`
                 * value_datetime: used by :func:`get_current_value`
 
-           Method :finc:`get_value()`
+           Method :func:`get_value()`
 
            This method will be called from any class that needs the value being tracked. For example,
            :class:`ClinicGradeFlag` needs to know the HIV Status of a subject at the time a sample
