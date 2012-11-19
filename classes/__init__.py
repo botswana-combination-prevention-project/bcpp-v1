@@ -1,2 +1,2 @@
-from base_checkout import BaseCheckout
+from base_checkout import BaseDispatch
 from checkout_controller import CheckoutController

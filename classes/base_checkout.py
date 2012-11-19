@@ -4,7 +4,7 @@ from bhp_base_model.classes import BaseUuidModel
 from bhp_sync.models import Producer
 
 
-class BaseCheckout(BaseUuidModel):
+class BaseDispatch(BaseUuidModel):
     """A base model for checking out/in models to a mobile device
     """
     netbook = models.ForeignKey(
