@@ -16,7 +16,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class CheckoutController(object):
+class DispatchController(object):
 
     VISIT_MODEL_FLD = 0
     VISIT_MODEL_CLS = 1
