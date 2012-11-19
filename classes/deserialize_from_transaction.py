@@ -1,7 +1,7 @@
 import sys
 import socket
 from django.core import serializers
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, get_model
 from django.db.utils import IntegrityError
 from bhp_crypto.classes import FieldCryptor
 from transaction_producer import TransactionProducer
@@ -14,7 +14,13 @@ class DeserializeFromTransaction(object):
 
     def deserialize_from_signal(self, sender, incoming_transaction, **kwargs):
         """ decrypt and deserialize the incoming json object"""
-        self.deserialize(incoming_transaction)
+        allow = True
+        Dispatch = get_model('bhp_dispatch', 'HbcDispatch')
+        if Dispatch:
+            if not Dispatch.objects.filter(producer=incoming_transaction.producer):
+                allow = False
+        if allow:
+            self.deserialize(incoming_transaction)
 
     def deserialize(self, incoming_transaction):
 
@@ -161,7 +167,7 @@ class DeserializeFromTransaction(object):
                                 print '    {0}'.format(error)
                                 raise
                         except:
-                            print "        [b] Unexpected error:", sys.exc_info()[0]
+                            print "        [b] Unexpected error:", sys.exc_info()
                             raise
                         if is_success:
                             incoming_transaction.is_consumed = True
