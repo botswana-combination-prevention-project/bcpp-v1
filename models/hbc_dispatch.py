@@ -13,7 +13,7 @@ class HBCDispatch(BaseDispatch):
     def save(self, *args, **kwargs):
         # Before saving, make sure there isn't already an instance with the same cargo of household
         # identifiers that has checked out but not checked in yes
-        if self.objects.filter(
+        if self.__class__.objects.filter(
                 producer=self.producer,
                 checkout_items=self.checkout_items,
                 is_checked_out=True,

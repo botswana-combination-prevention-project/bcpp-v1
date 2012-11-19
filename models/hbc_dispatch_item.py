@@ -14,7 +14,7 @@ class HBCDispatchItem(BaseDispatch):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        if self.objects.filter(
+        if self.__class__.objects.filter(
                 producer=self.producer,
                 item_identifier=self.item_identifier,
                 is_checked_out=True,
