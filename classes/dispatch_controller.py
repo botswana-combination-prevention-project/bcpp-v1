@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models.query import QuerySet
 from django.db.models import get_models, get_app, ForeignKey, OneToOneField
-from bhp_visit_tracking.models import BaseVisitTracking
+#from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_visit.models import MembershipForm
 from bhp_variables.models import StudySite
 from bhp_crypto.models import Crypt
@@ -116,7 +116,7 @@ class DispatchController(object):
     def get_membership_form_models(self):
         _models = []
         for membership_form in MembershipForm.objects.all():
-            _models.append(membership_form.content_type_map.content_type.model_class)
+            _models.append(membership_form.content_type_map.content_type.model_class())
 #        for model in get_models():
 #            if "household_structure_member" in dir(model):
 #                if not model._meta.object_name.endswith('Audit'):
@@ -142,10 +142,12 @@ class DispatchController(object):
     def _set_visit_model_cls(self, app_name, model_cls):
         if not model_cls:
             raise TypeError('Parameter model_cls cannot be None.')
+
+        base_visit_model_cls = get_models('bhp_visit_tracking', 'BaseVisitTracking')
         for field in model_cls._meta.fields:
             if isinstance(field, ForeignKey):
                 field_cls = field.rel.to
-                if issubclass(field_cls, BaseVisitTracking):
+                if issubclass(field_cls, base_visit_model_cls):
                     self.visit_models.update({app_name: (field.name, field_cls)})
 
     def _get_visit_model_cls(self, app_name, model_cls=None):
