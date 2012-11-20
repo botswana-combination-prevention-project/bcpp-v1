@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User, Group, Permission
 from bhp_base_model.classes import BaseListModel, BaseModel
 from bhp_userprofile.models import UserProfile
+from bhp_content_type_map.models import ContentTypeMap
 
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,10 @@ class EdcDevicePrep(BaseCommand):
         for n in range(1, source_agg.get('id__max') - destination_count):
             print '    {0} / {1} adding instance to django content_type.'.format(n, source_agg.get('id__max') - destination_count)
             ContentType.objects.using(using_destination).create(app_label=str(uuid4()), model=str(uuid4()))
+
+    def sync_content_type_map(self, using):
+        ContentTypeMap.objects.using(using).populate()
+        ContentTypeMap.objects.using(using).sync()
 
     def update_content_type(self, using_source, using_destination):
         ContentType.objects.using(using_destination).all().delete()
@@ -112,5 +117,4 @@ class EdcDevicePrep(BaseCommand):
                         except:
                             print '    SKIPPING {0}'.format(instance._meta.object_name)
             print '   done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name)
-
 
