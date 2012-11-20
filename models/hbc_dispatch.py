@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_dispatch.classes import BaseDispatch
+from base_dispatch import BaseDispatch
 
 
 class HBCDispatch(BaseDispatch):
