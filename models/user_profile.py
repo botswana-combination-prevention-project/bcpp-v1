@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from bhp_base_model.fields import InitialsField
 from bhp_userprofile.choices import SALUTATION
 
-if not 'AUTH_PROFILE_MODULE' in dir(settings):
-    raise ImproperlyConfigured('Settings attribute AUTH_PROFILE_MODULE not found please add \'AUTH_PROFILE_MODULE = bhp_userprofile.UserProfile\' to your settings.py.')
+#if not 'AUTH_PROFILE_MODULE' in dir(settings):
+#    raise ImproperlyConfigured('Settings attribute AUTH_PROFILE_MODULE not found please add \'AUTH_PROFILE_MODULE = bhp_userprofile.UserProfile\' to your settings.py.')
 
 
 class UserProfile(models.Model):
@@ -41,8 +41,8 @@ class UserProfile(models.Model):
         app_label = 'bhp_userprofile'
 
 
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
+#def create_user_profile(sender, instance, created, **kwargs):
+#    if created:
+#       UserProfile.objects.create(user=instance)
+#
+#post_save.connect(create_user_profile, sender=User)
