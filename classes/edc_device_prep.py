@@ -128,10 +128,12 @@ class EdcDevicePrep(BaseCommand):
         base_model_class = kwargs.get('base_model_class', BaseModel)
         use_natural_keys = kwargs.get('use_natural_keys', True)
         select_recent = kwargs.get('select_recent', True)
-        transaction_producer = TransactionProducer()
-        destination_producer_name = settings.DATABASES.get(using_destination).get('NAME')
-        if transaction_producer.has_outgoing_transactions(self, destination_producer_name, using=using_destination):
-            raise 'Producer {0} has pending outgoing transactions. Run sync first.'.format(destination_producer_name)
+        check_transactions = kwargs.get('check_transactions', True)
+        if check_transactions:
+            transaction_producer = TransactionProducer()
+            destination_producer_name = settings.DATABASES.get(using_destination).get('NAME')
+            if transaction_producer.has_outgoing_transactions(self, destination_producer_name, using=using_destination):
+                raise 'Producer {0} has pending outgoing transactions. Run sync first.'.format(destination_producer_name)
         if not models:
             raise CommandError('Parameter \'models\' may not be None.')
         # if models is a tuple, convert to model class using get_model
