@@ -132,7 +132,7 @@ class EdcDevicePrep(BaseCommand):
         if check_transactions:
             transaction_producer = TransactionProducer()
             destination_producer_name = settings.DATABASES.get(using_destination).get('NAME')
-            if transaction_producer.has_outgoing_transactions(self, producer_name=destination_producer_name, using=using_destination):
+            if transaction_producer.has_outgoing_transactions(producer_name=destination_producer_name, using=using_destination):
                 raise 'Producer {0} has pending outgoing transactions. Run sync first.'.format(destination_producer_name)
         if not models:
             raise CommandError('Parameter \'models\' may not be None.')
