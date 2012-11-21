@@ -139,16 +139,15 @@ class DispatchController(object):
 
         #print "I'm done ..."
 
-    def _set_visit_model_cls(self, app_name, model_cls):
-        if not model_cls:
-            raise TypeError('Parameter model_cls cannot be None.')
-
-        base_visit_model_cls = get_models('bhp_visit_tracking', 'BaseVisitTracking')
-        for field in model_cls._meta.fields:
-            if isinstance(field, ForeignKey):
-                field_cls = field.rel.to
-                if issubclass(field_cls, base_visit_model_cls):
-                    self.visit_models.update({app_name: (field.name, field_cls)})
+#    def _set_visit_model_cls(self, app_name, model_cls):
+#        if not model_cls:
+#            raise TypeError('Parameter model_cls cannot be None.')
+#
+#        for field in model_cls._meta.fields:
+#            if isinstance(field, ForeignKey):
+#                field_cls = field.rel.to
+#                if issubclass(field_cls, BaseVisitTracking):
+#                    self.visit_models.update({app_name: (field.name, field_cls)})
 
     def _get_visit_model_cls(self, app_name, model_cls=None):
         if not self.visit_models.get(app_name):

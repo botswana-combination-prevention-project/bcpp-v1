@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import get_model
+from django.db.models import get_model,ForeignKey
+from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_registration.models import RegisteredSubject
 from bhp_dispatch.classes import DispatchController
 from mochudi_survey.models import Survey
@@ -12,6 +13,16 @@ class HBCDispatchHelper(DispatchController):
         super(HBCDispatchHelper, self).__init__(debug, producer, site_code)
         self.survey = None
         self.visit_models = {}
+
+    def _set_visit_model_cls(self, app_name, model_cls):
+        if not model_cls:
+            raise TypeError('Parameter model_cls cannot be None.')
+
+        for field in model_cls._meta.fields:
+            if isinstance(field, ForeignKey):
+                field_cls = field.rel.to
+                if issubclass(field_cls, BaseVisitTracking):
+                    self.visit_models.update({app_name: (field.name, field_cls)})
 
     def checkout_scheduled_instances(self, member, survey, app_name):
         """Sends scheduled instances to the producer for the given an instance of
