@@ -20,13 +20,14 @@ class TransactionProducer(object):
     def __str__(self):
         return self.value
 
-    def has_outgoing_transactions(self, producer_name=None, using=None):
+    def has_outgoing_transactions(self, **kwargs):
         retval = False
-        if not using:
-            using = 'default'
+        using = kwargs.get('using', 'default')
+        producer_name = kwargs.get('producer_name', self.value)
         OutgoingTransaction = get_model('bhp_sync', 'outgoingtransaction')
-        if not producer_name:
-            producer_name = self.value
+        Producer = get_model('bhp_sync', 'producer')
+        if not Producer.objects.using(using).filter(name=producer_name).exists():
+            raise AttributeError('Producer {0} is unknown. Cannot determine if outgoing transactions exist. (Note: using database key \'{1}\')'.format(producer_name, using))
         if OutgoingTransaction.objects.using(using).filter(producer=producer_name, is_consumed=False):
             retval = True
         return retval
