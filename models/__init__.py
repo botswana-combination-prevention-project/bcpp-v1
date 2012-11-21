@@ -1,2 +1,3 @@
+from base_dispatch import BaseDispatch
 from hbc_dispatch import HBCDispatch
 from hbc_dispatch_item import HBCDispatchItem
