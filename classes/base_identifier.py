@@ -86,7 +86,7 @@ class BaseIdentifier(object):
             options.update(sequence='')
         identifier_format = options.pop('identifier_format')
         device = Device()
-        options.update(device_id=device.device_id)
+        options.update(device_id=device.get_device_id())
         try:
             base = identifier_format.format(**options)
         except KeyError:
