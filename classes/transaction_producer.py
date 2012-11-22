@@ -27,7 +27,7 @@ class TransactionProducer(object):
         OutgoingTransaction = get_model('bhp_sync', 'outgoingtransaction')
         Producer = get_model('bhp_sync', 'producer')
         if not Producer.objects.using(using).filter(name=producer_name).exists():
-            raise AttributeError('Producer {0} is unknown. Cannot determine if outgoing transactions exist. (Note: using database key \'{1}\')'.format(producer_name, using))
+            raise AttributeError('Producer {0} is unknown. Cannot check for outgoing transactions. (Note: using database key \'{1}\')'.format(producer_name, using))
         if OutgoingTransaction.objects.using(using).filter(producer=producer_name, is_consumed=False):
             retval = True
         return retval
