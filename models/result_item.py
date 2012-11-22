@@ -45,6 +45,10 @@ class ResultItem(BaseResultItem):
         return '{result}{reviewed}'.format(result=result, reviewed=reviewed)
     to_result.allow_tags = True
 
+    @property
+    def get_drawn_datetime(self):
+        return self.result.order.aliquot.receive.drawn_datetime
+
     def get_subject_type(self):
         if not self.subject_type:
             return self.result.order.aliquot.receive.registered_subject.subject_type

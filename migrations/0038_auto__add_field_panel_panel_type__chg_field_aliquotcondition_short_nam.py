@@ -27,21 +27,8 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Removing index on 'AliquotCondition', fields ['display_index']
-        db.delete_index('lab_clinic_api_aliquotcondition', ['display_index'])
 
-        # Removing index on 'AliquotCondition', fields ['short_name']
-        db.delete_index('lab_clinic_api_aliquotcondition', ['short_name'])
-
-        # Removing index on 'AliquotCondition', fields ['name']
-        db.delete_index('lab_clinic_api_aliquotcondition', ['name'])
-
-        # Deleting field 'Panel.panel_type'
-        db.delete_column('lab_clinic_api_panel', 'panel_type')
-
-
-        # User chose to not deal with backwards NULL issues for 'AliquotCondition.short_name'
-        raise RuntimeError("Cannot reverse this migration. 'AliquotCondition.short_name' and its values cannot be restored.")
+        pass
 
     models = {
         'bhp_registration.registeredsubject': {
