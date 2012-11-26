@@ -1,5 +1,5 @@
 import urllib2
-import json
+import simplejson as json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
