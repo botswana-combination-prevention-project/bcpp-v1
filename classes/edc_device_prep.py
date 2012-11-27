@@ -131,7 +131,8 @@ class EdcDevicePrep(BaseCommand):
         check_transactions = kwargs.get('check_transactions', True)
         if check_transactions:
             transaction_producer = TransactionProducer()
-            destination_producer_name = settings.DATABASES.get(using_destination).get('NAME')
+            #destination_producer_name = settings.DATABASES.get(using_destination).get('NAME')
+            destination_producer_name = using_destination
             if transaction_producer.has_outgoing_transactions(producer_name=destination_producer_name, using=using_destination):
                 raise 'Producer {0} has pending outgoing transactions. Run sync first.'.format(destination_producer_name)
         if not models:
