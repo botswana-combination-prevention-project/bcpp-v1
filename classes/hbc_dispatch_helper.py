@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import get_model,ForeignKey
+from django.db.models import get_model, ForeignKey
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_registration.models import RegisteredSubject
 from bhp_dispatch.classes import DispatchController
@@ -112,29 +112,28 @@ class HBCDispatchHelper(DispatchController):
                 household_identifier=household_identifier
                 )
             self.export_as_json(household, self.get_producer())
-
             hs_model = get_model('mochudi_household', 'HouseholdStructure')
-            household_structure = hs_model.objects.get(
-                household=household, survey=self.survey
-                )
-            self.export_as_json(household_structure, self.get_producer())
-
-            hsm_model = get_model('mochudi_household', 'HouseholdStructureMember')
-            for member in hsm_model.objects.filter(household_structure=household_structure, survey=self.survey):
-                try:
-                    registered_subject = RegisteredSubject.objects.get(
-                        registration_identifier=member.internal_identifier
-                        )
-                    self.export_as_json(registered_subject, self.get_producer())
-#                    household_survey = HouseholdSurvey.objects.using("server").get(pk=member.household_survey.pk)
-#                    self.export_as_json(household_survey, self.get_producer())
-                except ObjectDoesNotExist:
-                    if self.debug:
-                        print "householdstructuremember {0} has no associated registered subject".format(member.pk)
-                    raise
-                self.export_as_json(member, self.get_producer())
-                self.checkout_scheduled_instances(member, self.survey, 'mochudi_subject')
-                self.checkout_membership_forms(member, self.survey)
+            if hs_model.objects.filter(household=household, survey=self.survey).exists():
+                household_structure = hs_model.objects.get(
+                    household=household, survey=self.survey
+                    )
+                self.export_as_json(household_structure, self.get_producer())
+                hsm_model = get_model('mochudi_household', 'HouseholdStructureMember')
+                for member in hsm_model.objects.filter(household_structure=household_structure, survey=self.survey):
+                    try:
+                        registered_subject = RegisteredSubject.objects.get(
+                            registration_identifier=member.internal_identifier
+                            )
+                        self.export_as_json(registered_subject, self.get_producer())
+    #                    household_survey = HouseholdSurvey.objects.using("server").get(pk=member.household_survey.pk)
+    #                    self.export_as_json(household_survey, self.get_producer())
+                    except ObjectDoesNotExist:
+                        if self.debug:
+                            print "householdstructuremember {0} has no associated registered subject".format(member.pk)
+                        raise
+                    self.export_as_json(member, self.get_producer())
+                    self.checkout_scheduled_instances(member, self.survey, 'mochudi_subject')
+                    self.checkout_membership_forms(member, self.survey)
         except ObjectDoesNotExist:
                 raise
         except:

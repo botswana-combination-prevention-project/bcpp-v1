@@ -216,7 +216,7 @@ class DispatchController(object):
         """Serialize a remote model instance, deserialize and save to local instances.
             Args:
                 remote_instance: a model instance from a remote server
-                using: using parameter for the target server, default(default).
+                using: using parameter for the target server.
         """
         app_name = kwargs.get('app_name', None)
         if using:
