@@ -13,6 +13,7 @@ ENTRY_STATUS = (
     ('NOT_REQUIRED', 'Not required'),
     ('QUERY', 'Query?'),
     ('PENDING', 'Pending'),
+    ('OPTIONAL', 'Optional'),
     )
 
 ENTRY_WINDOW = (
