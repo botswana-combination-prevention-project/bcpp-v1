@@ -233,6 +233,12 @@ YES_NO = (
     ('No', 'No'),
 )
 
+YES_NO_OPTIONAL = (
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ('Optional', 'Optional'),
+)
+
 YES_NO_REFUSED = (
     ('Yes', 'Yes'),
     ('No', 'No'),
