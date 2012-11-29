@@ -14,7 +14,7 @@ class NotRegistered(Exception):
 
 
 class SiteRequisitions(object):
-    """Registers requisition models from modules with a requisitions module (requisitions.py).    """
+    """Registers requisition models from modules with a requisitions module (requisitions.py)."""
     def __init__(self):
         self._registry = {}
 
