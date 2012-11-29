@@ -32,6 +32,8 @@ class HBCDispatchHelper(DispatchController):
            By subject visit forms, we are referring to forms that have
            reference to SubjectVisit.
         """
+        print('********** CHECKING OUT SCHEDULED INSTANCES')
+        
         scheduled_model_instances = None
         # Get all the models with reference to SubjectVisit
         scheduled_models = self._get_scheduled_models(app_name)
@@ -61,6 +63,8 @@ class HBCDispatchHelper(DispatchController):
            subject visit form which we consider to be a visit form
            as is has reference to SubjectVisit.
         """
+        print('********** CHECKING OUT MEMBERSHIP FORMS')
+        
         # Fetch all the models with reference to HouseholdStructureMember
         membership_form_models = self.get_membership_form_models()
         for membership_form_model in membership_form_models:
