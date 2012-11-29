@@ -1,5 +1,10 @@
 import urllib2
-import simplejson as json
+from sys import platform as _platform
+if _platform == "linux" or _platform == "linux2":
+    # linux
+    import json as simplejson
+elif _platform == "darwin":
+    import simplejson as json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
