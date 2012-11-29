@@ -3,7 +3,8 @@ from django.contrib import admin
 #from django.core.urlresolvers import reverse
 #from bhp_lab_entry.models import ScheduledLabEntryBucket
 from bhp_visit_tracking.classes import BaseVisitTrackingModelAdmin
-from lab_clinic_api.models import Panel
+#from lab_clinic_api.models import Panel
+from lab_panel.models import Panel
 from lab_requisition.actions import flag_as_received, flag_as_not_received, flag_as_not_labelled
 from lab_requisition.actions import print_requisition_label
 
