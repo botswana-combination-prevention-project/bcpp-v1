@@ -230,7 +230,7 @@ class DispatchController(object):
                     try:
                         obj_new.save(using=using)
                         print('*******************EXPORTING TO: '+str(kwargs.get('app_name', None))+\
-                              ' INSTANCES: '+export_instances)
+                              ' INSTANCES: '+str(export_instances))
                     except IntegrityError:
                         if app_name:
                             # assume Integrity error is because of missing ForeignKey data
