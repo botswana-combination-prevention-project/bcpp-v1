@@ -1,7 +1,7 @@
 from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_base_model.classes import BaseModelAdmin
-from lab_requisition.filters import OrderHasRequisitionListFilter
+#from lab_requisition.filters import OrderHasRequisitionListFilter
 from forms import ResultForm, ResultItemForm
 from models import Receive, Aliquot, Result, ResultItem, Review, Order, Panel, TestCode
 from models import AliquotType, TestCodeGroup, AliquotCondition
@@ -35,7 +35,7 @@ admin.site.register(Aliquot, AliquotAdmin)
 class OrderAdmin(BaseModelAdmin):
     list_display = ("order_identifier", "receive_identifier", "req", "to_receive", "to_result", "subject_identifier", "panel", "order_datetime", 'status', 'created', 'modified', 'import_datetime')
     search_fields = ('aliquot__receive__registered_subject__subject_identifier', "order_identifier", "aliquot__receive__receive_identifier")
-    list_filter = ('status', OrderHasRequisitionListFilter, 'import_datetime', 'aliquot__aliquot_condition', 'panel__edc_name')
+    list_filter = ('status', 'import_datetime', 'aliquot__aliquot_condition', 'panel__edc_name')
     list_per_page = 15
     actions = [refresh_order_status, ]
 
