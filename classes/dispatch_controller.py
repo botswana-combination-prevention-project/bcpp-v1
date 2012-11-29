@@ -229,7 +229,8 @@ class DispatchController(object):
                 for obj_new in serializers.deserialize("json", json, use_natural_keys=True):
                     try:
                         obj_new.save(using=using)
-                        logger.info('*******************EXPORTING TO: '+str(kwargs.get('app_name', None)))
+                        print('*******************EXPORTING TO: '+str(kwargs.get('app_name', None))+\
+                              ' INSTANCES: '+export_instances)
                     except IntegrityError:
                         if app_name:
                             # assume Integrity error is because of missing ForeignKey data
