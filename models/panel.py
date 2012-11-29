@@ -1,6 +1,7 @@
 from django.db import models
 from lab_panel.models import BasePanel
 from test_code import TestCode
+from aliquot_type import AliquotType
 from lab_clinic_api.choices import PANEL_TYPE
 
 
@@ -9,6 +10,9 @@ class Panel(BasePanel):
     edc_name = models.CharField(max_length=50, null=True)
 
     test_code = models.ManyToManyField(TestCode, null=True, blank=True)
+
+    aliquot_type = models.ManyToManyField(AliquotType,
+        help_text='Choose all that apply',)
 
     panel_type = models.CharField(max_length=15, choices=PANEL_TYPE, default='TEST')
 
