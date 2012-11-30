@@ -1,8 +1,6 @@
 from datetime import datetime
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import get_model, ForeignKey
+from django.db.models import ForeignKey
 from bhp_visit_tracking.models import BaseVisitTracking
-from bhp_registration.models import RegisteredSubject
 from bhp_dispatch.classes import DispatchController
 from mochudi_survey.models import Survey
 
@@ -64,7 +62,7 @@ class DispatchHelper(DispatchController):
            as is has reference to SubjectVisit.
         """
         print('********** CHECKING OUT MEMBERSHIP FORMS')
-        
+
         # Fetch all the models with reference to HouseholdStructureMember
         membership_form_models = self.get_membership_form_models()
         for membership_form_model in membership_form_models:
@@ -101,11 +99,9 @@ class DispatchHelper(DispatchController):
             print "Fetching data for {0}".format(item_identifier)
 
         self.dispatch_prep(using_source, item_identifier, producer)
-        
 
-
-    def action(self, modeladmin, request, queryset, **kwargs):
-        """Checkout all selected households to specified netbooks.
+    def dispatch_action(self, modeladmin, request, queryset, **kwargs):
+        """ModelAdmin action method to dispatch all selected households to specified netbooks.
 
         Acts on the Algorithm:
             for each Dispatch instance:
