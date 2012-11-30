@@ -33,7 +33,7 @@ class DispatchHelper(DispatchController):
            reference to SubjectVisit.
         """
         print('********** CHECKING OUT SCHEDULED INSTANCES')
-        
+
         scheduled_model_instances = None
         # Get all the models with reference to SubjectVisit
         scheduled_models = self._get_scheduled_models(app_name)
@@ -46,12 +46,12 @@ class DispatchHelper(DispatchController):
         if subject_visits:
             for subject_visit in subject_visits:
                 # export all appointments for this subject
-                self.export_as_json(subject_visit.appointment, self.get_producer(), app_name=app_name)
-            self.export_as_json(subject_visits, self.get_producer(), app_name=app_name)
+                self.dispatch_as_json(subject_visit.appointment, self.get_producer(), app_name=app_name)
+            self.dispatch_as_json(subject_visits, self.get_producer(), app_name=app_name)
             # fetch all scheduled_models for the visits and export
             for model_cls in scheduled_models:
                 scheduled_model_instances = model_cls.objects.filter(subject_visit__in=subject_visits)
-                self.export_as_json(scheduled_model_instances, self.get_producer(), app_name=app_name)
+                self.dispatch_as_json(scheduled_model_instances, self.get_producer(), app_name=app_name)
 
     def checkout_membership_forms(self, member, survey):
         """Sends membership forms to the producer for the given instance of
@@ -77,7 +77,7 @@ class DispatchHelper(DispatchController):
             else:
                 membership_instances = membership_form_model.objects.filter(
                         household_structure_member=member)
-            self.export_as_json(membership_instances, self.get_producer())
+            self.dispatch_as_json(membership_instances, self.get_producer())
 
     def import_current_survey(self):
         """Imports the current survey instance on the producer."""
@@ -88,60 +88,58 @@ class DispatchHelper(DispatchController):
 
         self.survey = surveys[0]
         if self.survey:
-            self.export_as_json(self.survey, self.get_producer())
+            self.dispatch_as_json(self.survey, self.get_producer())
 
-    def checkout(self, household_identifier, producer):
-        """Checkout a household with the given identifier to the specified producer.
+    def dispatch_prep(self, using_source, item_identifier, producer):
+        return None
 
-        1. Find the household, import as a json object, and save it on the producer
-        2. Get the Household Structure for the household, and survey.
-        3. Import the structure as a json object save it on the producer
-        4. Get all household structure members with the HouseholdStructure and survey
-        5. For each member:
-                Fetch registered subject and save on producer
-        """
+    def checkout(self, using_source, item_identifier, producer):
         if producer:
             self.set_producer(producer)
-        if self.debug:
-            print "Fetching data for {0}".format(household_identifier)
-        #Fetch current survey. May be this can be sent as a parameter
-        if not self.survey:
-            self.import_current_survey()
-
-        if not self.survey:
-            raise ValueError("No survey was specified! I'm killing myself")
-        try:
-            h_model = get_model('mochudi_household', 'Household')
-            household = h_model.objects.get(
-                household_identifier=household_identifier
-                )
-            self.export_as_json(household, self.get_producer())
-            hs_model = get_model('mochudi_household', 'HouseholdStructure')
-            if hs_model.objects.filter(household=household, survey=self.survey).exists():
-                household_structure = hs_model.objects.get(
-                    household=household, survey=self.survey
-                    )
-                self.export_as_json(household_structure, self.get_producer())
-                hsm_model = get_model('mochudi_household', 'HouseholdStructureMember')
-                for member in hsm_model.objects.filter(household_structure=household_structure, survey=self.survey):
-                    try:
-                        registered_subject = RegisteredSubject.objects.get(
-                            registration_identifier=member.internal_identifier
-                            )
-                        self.export_as_json(registered_subject, self.get_producer())
-    #                    household_survey = HouseholdSurvey.objects.using("server").get(pk=member.household_survey.pk)
-    #                    self.export_as_json(household_survey, self.get_producer())
-                    except ObjectDoesNotExist:
-                        if self.debug:
-                            print "householdstructuremember {0} has no associated registered subject".format(member.pk)
-                        raise
-                    self.export_as_json(member, self.get_producer())
-                    self.checkout_scheduled_instances(member, self.survey, 'mochudi_subject')
-                    self.checkout_membership_forms(member, self.survey)
-        except ObjectDoesNotExist:
-                raise
-        except:
-            raise
 
         if self.debug:
-            print "Done!"
+            print "Fetching data for {0}".format(item_identifier)
+
+        self.dispatch_prep(using_source, item_identifier, producer)
+        
+
+
+    def action(self, modeladmin, request, queryset, **kwargs):
+        """Checkout all selected households to specified netbooks.
+
+        Acts on the Algorithm:
+            for each Dispatch instance:
+                get a list of household identifiers
+                    foreach household identifier
+                        create a DispatchItem
+                        set the item as Dispatch
+                        set the checkout time to now
+                        invoke controller.checkout (...) checkout the data to the netbook
+                update Dispatch instance as checked out"""
+        if len(queryset):
+            helper = DispatchHelper(True)
+        else:
+            pass
+        for qs in queryset:
+            # Make sure the checkout instance is not already checked out and has not been checked back again
+            if qs.is_checked_out == True and qs.is_checked_in == False:
+                raise ValueError("There are households already checked to {0} that have not been checked back in!".format(qs.producer.name))
+            else:
+                # item identifiers are separated by new lines, so explode them on "\n"
+                item_identifiers = qs.checkout_items.split()
+                for item_identifier in item_identifiers:
+                    # Save to producer
+                    helper.checkout(item_identifier, qs.producer.name)
+                    # create dispatch item
+                    DispatchItem.objects.create(
+                        producer=qs.producer,
+                        hbc_dispatch=qs,
+                        item_identifier=item_identifier,
+                        is_checked_out=True,
+                        datetime_checked_out=datetime.today())
+                    modeladmin.message_user(
+                        request, 'Checkout {0} to {1}.'.format(item_identifier, qs.producer))
+                qs.datetime_checked_out = datetime.today()
+                qs.is_checked_out = True
+                qs.save()
+                modeladmin.message_user(request, 'The selected items were successfully checkout to \'{0}\'.'.format(qs.producer))

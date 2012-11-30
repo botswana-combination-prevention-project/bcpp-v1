@@ -59,7 +59,7 @@ class DispatchController(object):
 
         try:
             site = StudySite.objects.get(site_code=site_code)
-            self.export_as_json(site, self.get_producer())
+            self.dispatch_as_json(site, self.get_producer())
         except ObjectDoesNotExist:
             raise ValueError("No Site was found with site code {0}. I'm " \
                              "therefore killing myself!".format(site_code))
@@ -126,7 +126,7 @@ class DispatchController(object):
                         if field_cls not in list_models:
                             list_models.append(field_cls)
         for model_cls in list_models:
-            self.export_as_json(model_cls.objects.all(), self.producer, app_name=app_name)
+            self.dispatch_as_json(model_cls.objects.all(), self.producer, app_name=app_name)
 
     def _get_scheduled_models(self, app_name):
         """Returns a list of model classes with a key to SubjectVisit excluding audit models."""
@@ -162,7 +162,7 @@ class DispatchController(object):
             for obj in serializers.deserialize("json", json):
                 obj.save(using=self.producer)
 
-    def export_as_json(self, export_instances, using_destination=None, **kwargs):
+    def dispatch_as_json(self, export_instances, using_destination=None, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
             Args:
                 remote_instance: a model instance from a remote server
