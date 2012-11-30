@@ -1,107 +1,125 @@
+import logging
 from datetime import datetime
-from django.db.models import ForeignKey
-from bhp_visit_tracking.models import BaseVisitTracking
+from django.db.models import ForeignKey, OneToOneField
+from django.core.exceptions import FieldError
 from bhp_dispatch.classes import DispatchController
-from mochudi_survey.models import Survey
+from bhp_dispatch.models import DispatchItem
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
+
+
+class AlreadyDispatched(Exception):
+    pass
 
 
 class DispatchHelper(DispatchController):
 
-    def __init__(self, debug=False, producer=None, site_code=None):
-        super(DispatchHelper, self).__init__(debug, producer, site_code)
-        self.survey = None
-        self.visit_models = {}
+    def __init__(self, using_source, producer=None, site_code=None, **kwargs):
+        super(DispatchHelper, self).__init__(using_source, producer, site_code, **kwargs)
+        self._visit_models = {}
 
-    def _set_visit_model_cls(self, app_name, model_cls):
-        if not model_cls:
-            raise TypeError('Parameter model_cls cannot be None.')
+    def set_visit_model_fkey(self, model_cls, visit_model_cls):
+        for fld in model_cls.objects._meta.fields:
+            if isinstance(fld, (ForeignKey, OneToOneField)):
+                if isinstance(fld.rel.to, visit_model_cls):
+                    self._visit_model_fkey_name = fld.name
 
-        for field in model_cls._meta.fields:
-            if isinstance(field, ForeignKey):
-                field_cls = field.rel.to
-                if issubclass(field_cls, BaseVisitTracking):
-                    self.visit_models.update({app_name: (field.name, field_cls)})
+    def get_visit_model_fkey(self, app_name, model_cls, visit_model_cls=None):
+        if not self._visit_model_fkey_name:
+            self.set_visit_model_fkey(model_cls, visit_model_cls)
+        return self._visit_model_fkey_name
 
-    def checkout_scheduled_instances(self, member, survey, app_name):
-        """Sends scheduled instances to the producer for the given an instance of
-        HouseholdStructureMember and instance of Survey.
+    def dispatch_scheduled_instances(self, app_name, registered_subject, **kwargs):
+        """Sends scheduled instances to the producer for the given an instance of registered_subject.
+
+        Keywords:
+            kwargs must be field_attr: value pairs to pass directly to the visit model. Any django syntax will work.
 
         .. note::
-           By subject visit forms, we are referring to forms that have
-           reference to SubjectVisit.
+           By scheduled_instances, we are referring to models that have a foreign key to a subclass on bhp_visittracking's BaseVisitTracking visit model.
+           For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc
         """
-        print('********** CHECKING OUT SCHEDULED INSTANCES')
-
-        scheduled_model_instances = None
         # Get all the models with reference to SubjectVisit
-        scheduled_models = self._get_scheduled_models(app_name)
-        # Fetch the SubjectVisit model
-        visit_model_cls = self.visit_models.get(app_name)[self.VISIT_MODEL_CLS]
+        scheduled_models = self.get_scheduled_models(app_name)
+        # get the visit model class for this app
+        visit_model_cls = self.get_visit_model_cls(app_name, 'cls')
         # Fetch all all subject visits for the member and survey
-        subject_visits = visit_model_cls.objects.filter(
-            household_structure_member=member,
-            survey=survey)
-        if subject_visits:
-            for subject_visit in subject_visits:
+        visits = visit_model_cls.objects.filter(appointment__registered_subject=registered_subject, **kwargs)
+        visit_fld_name = None
+        if visits:
+            for visit in visits:
                 # export all appointments for this subject
-                self.dispatch_as_json(subject_visit.appointment, self.get_producer(), app_name=app_name)
-            self.dispatch_as_json(subject_visits, self.get_producer(), app_name=app_name)
+                self.dispatch_as_json(visit.appointment, self.get_producer(), app_name=app_name)
+            self.dispatch_as_json(visits, self.get_producer(), app_name=app_name)
             # fetch all scheduled_models for the visits and export
             for model_cls in scheduled_models:
-                scheduled_model_instances = model_cls.objects.filter(subject_visit__in=subject_visits)
-                self.dispatch_as_json(scheduled_model_instances, self.get_producer(), app_name=app_name)
+                if not visit_fld_name:
+                    for fld in model_cls.objects._meta.fields:
+                        if isinstance(fld, (ForeignKey, OneToOneField)):
+                            if isinstance(fld.rel.to, visit_model_cls):
+                                visit_fld_name = fld.name
+                scheduled_instances = model_cls.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
+                self.dispatch_as_json(scheduled_instances, self.get_producer(), app_name=app_name)
 
-    def checkout_membership_forms(self, member, survey):
-        """Sends membership forms to the producer for the given instance of
-        HouseholdStructureMember and instance of Survey.
+    def dispatch_membership_forms(self, registered_subject, **kwargs):
+        """Gets all instances of membership forms for this registered_subject and dispatches.
 
-        .. note::
-           By membership forms, we are referring to forms that have
-           reference to HouseholdStructureMember. These include the
-           subject visit form which we consider to be a visit form
-           as is has reference to SubjectVisit.
+        Keywords:
+            kwargs: must be field_attr: value pairs to pass directly to the visit model. Any django syntax will work.
+
+        .. seealso::
+            See app bhp_visit for an explanation of membership forms.
         """
-        print('********** CHECKING OUT MEMBERSHIP FORMS')
-
-        # Fetch all the models with reference to HouseholdStructureMember
-        membership_form_models = self.get_membership_form_models()
-        for membership_form_model in membership_form_models:
-            # If the model has reference to survey, find all instances for the
-            # member and survey year else just filter on member
-            if "survey" in dir(membership_form_model):
-                membership_instances = membership_form_model.objects.filter(
-                    registered_subject=member.registered_subject,
-                    survey=survey)
-            else:
-                membership_instances = membership_form_model.objects.filter(
-                        household_structure_member=member)
-            self.dispatch_as_json(membership_instances, self.get_producer())
-
-    def import_current_survey(self):
-        """Imports the current survey instance on the producer."""
-        surveys = Survey.objects.filter(
-                datetime_start__lte=datetime.today(),
-                datetime_end__gte=datetime.today()
-                )
-
-        self.survey = surveys[0]
-        if self.survey:
-            self.dispatch_as_json(self.survey, self.get_producer())
+        for membershipform_model in self.get_membershipform_models():
+            try:
+                instances = membershipform_model.objects.filter(
+                    registered_subject=registered_subject,
+                    **kwargs)
+            except FieldError:
+                instances = membershipform_model.objects.filter(registered_subject=registered_subject)
+            self.dispatch_as_json(instances, self.get_producer())
 
     def dispatch_prep(self, using_source, item_identifier, producer):
         return None
 
-    def checkout(self, using_source, item_identifier, producer):
+    def dispatch(self, using_source, item_identifier, producer):
         if producer:
             self.set_producer(producer)
-
         if self.debug:
-            print "Fetching data for {0}".format(item_identifier)
+            logger.info("Dispatching items for {0}".format(item_identifier))
+        # is this item already dispatched?
+        if not self.is_dispatched(using_source, item_identifier):
+            dispatch = self.dispatch_prep(using_source, item_identifier, producer)
+            self.create_dispatch_item_instance(dispatch, item_identifier, producer)
 
-        self.dispatch_prep(using_source, item_identifier, producer)
+    def is_dispatched(self, using_source, item_identifier):
+        if DispatchItem.objects.using(using_source).filter(
+                item_identifier=item_identifier,
+                is_checked_out=True).exists():
+            dispatch_item = DispatchItem.objects.using(using_source).filter(
+                item_identifier=item_identifier,
+                is_checked_out=True)
+            raise AlreadyDispatched('Item {0} is already dispatched to producer {1}.'.format(item_identifier, dispatch_item.producer))
+
+    def create_dispatch_item_instance(self, dispatch, item_identifier, producer):
+        # TODO: may want this to be get_or_create so dispatch item instances are re-used.
+        created = True
+        dispatch_item = DispatchItem.objects.create(
+            producer=producer,
+            dispatch=dispatch,
+            item_identifier=item_identifier,
+            is_checked_out=True,
+            datetime_checked_out=datetime.today())
+        return created, dispatch_item
 
     def dispatch_action(self, modeladmin, request, queryset, **kwargs):
-        """ModelAdmin action method to dispatch all selected households to specified netbooks.
+        """ModelAdmin action method to dispatch all selected items to specified producer.
 
         Acts on the Algorithm:
             for each Dispatch instance:
@@ -112,10 +130,6 @@ class DispatchHelper(DispatchController):
                         set the checkout time to now
                         invoke controller.checkout (...) checkout the data to the netbook
                 update Dispatch instance as checked out"""
-        if len(queryset):
-            helper = DispatchHelper(True)
-        else:
-            pass
         for qs in queryset:
             # Make sure the checkout instance is not already checked out and has not been checked back again
             if qs.is_checked_out == True and qs.is_checked_in == False:
@@ -125,14 +139,7 @@ class DispatchHelper(DispatchController):
                 item_identifiers = qs.checkout_items.split()
                 for item_identifier in item_identifiers:
                     # Save to producer
-                    helper.checkout(item_identifier, qs.producer.name)
-                    # create dispatch item
-                    DispatchItem.objects.create(
-                        producer=qs.producer,
-                        hbc_dispatch=qs,
-                        item_identifier=item_identifier,
-                        is_checked_out=True,
-                        datetime_checked_out=datetime.today())
+                    self.dispatch(item_identifier, qs.producer.name)
                     modeladmin.message_user(
                         request, 'Checkout {0} to {1}.'.format(item_identifier, qs.producer))
                 qs.datetime_checked_out = datetime.today()

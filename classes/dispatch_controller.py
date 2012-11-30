@@ -1,12 +1,15 @@
 import logging
 from datetime import datetime
+from django.conf import settings
 from django.core import serializers
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError
 from django.db.models.query import QuerySet
 from django.db.models import get_models, get_app, ForeignKey, OneToOneField
+from bhp_sync.models import Producer
 from bhp_visit.models import MembershipForm
-from bhp_variables.models import StudySite
+from bhp_visit_tracking.models import BaseVisitTracking
+
 from bhp_base_model.classes import BaseListModel
 from bhp_dispatch.models import Dispatch, DispatchItem
 
@@ -25,14 +28,29 @@ class DispatchController(object):
     VISIT_MODEL_FLD = 0
     VISIT_MODEL_CLS = 1
 
-    def __init__(self, debug=False, producer=None, site_code=None):
-        self.dispatch_list = []
-        self.debug = debug
-        self.producer = None
-        if producer:
-            self.set_producer(producer)
+    def __init__(self, using_source, producer=None, site_code=None, **kwargs):
+        self._dispatch_list = []
+        self.debug = kwargs.get('debug', False)
+        self._producer = None
+        self._using_source = None
+        self.set_using_source(using_source)
+        self.set_producer(producer)
 
-    def checkin(self, dispatch):
+    def checkin_all(self):
+        """Updates all the dispatches and dispatch items as checked back in.
+
+        .. note::
+           This will be called after all the transactions for the producer have been consumed
+           therefore, we can assume that the information that was dispatch to the producer
+           has been sent to server; hence, we mark all the dispatch items as checked in
+        """
+        # TODO: confirm all transactions have been consumed?
+
+        # Find all dispatch for the given producer that have not been checked in
+        for dispatch in self.get_dispatch_list():
+            self.checkin_dispatched_items(dispatch)
+
+    def checkin_dispatched_items(self, dispatch):
         """Updates a Item dispatch and dispatch items as checked back in.
         """
         if dispatch:
@@ -53,63 +71,101 @@ class DispatchController(object):
             dispatch.datetime_checked_in = datetime.today()
             dispatch.save()
 
-    def fetch_study_site(self, site_code):
-        if not site_code:
-            raise ValueError("Please specify the site code!")
+#    def fetch_study_site(self, site_code):
+#        if not site_code:
+#            raise ValueError("Please specify the site code!")
+#
+#        try:
+#            site = StudySite.objects.get(site_code=site_code)
+#            self.dispatch_as_json(site, self.get_producer())
+#        except ObjectDoesNotExist:
+#            raise ValueError("No Site was found with site code {0}. I'm " \
+#                             "therefore killing myself!".format(site_code))
 
-        try:
-            site = StudySite.objects.get(site_code=site_code)
-            self.dispatch_as_json(site, self.get_producer())
-        except ObjectDoesNotExist:
-            raise ValueError("No Site was found with site code {0}. I'm " \
-                             "therefore killing myself!".format(site_code))
+    def set_using_source(self, using_source=None):
+        if not using_source:
+            raise TypeError('Parameter \'using_source\' cannot be None.')
+        if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == using_source]:
+            raise ImproperlyConfigured('Dispatcher expects settings attribute DATABASES to have a NAME key to the \'source\'. Got \'{0}\'.'.format(using_source))
+        self._using_source = using_source
+
+    def get_using_source(self):
+        if not self._using_source:
+            self.set_using_source()
+        return self._using_source
+
+    def set_dispatch_list(self, producer=None):
+        """Sets the list of checked-out Dispatch model instances for the current producer."""
+        if not producer:
+            producer = self.get_producer()
+        self._dispatch_list = Dispatch.objects.filter(
+            producer=producer,
+            is_checked_out=True,
+            is_checked_in=False)
 
     def get_dispatch_list(self):
-        return self.dispatch_list
+        """Returns the list of checked-out Dispatch model instances."""
+        if not self._dispatch_list:
+            self.set_dispatch_list()
+        return self._dispatch_list
 
-    def set_producer(self, producer=None):
-        if producer:
-            self.producer = producer
-        else:
-            raise ValueError("PLEASE specify the producer you want checkout models to!")
+    def set_producer(self, producer_name=None):
+        """Sets to the instance of the current producer and updates the list checked-out Dispatch models."""
+        if not producer_name:
+            raise TypeError("Parameter \'producer_name\' cannot be None.")
+        # does this producer exist on the source?
+        if not Producer.objects.using(self.get_using_source()).filter(name=producer_name).exists():
+            raise TypeError('Dispatcher cannot find producer {0} on the source {1}.'.format(producer_name, self.get_using_source()))
+        # TODO: should this be name or instance??
+        self._producer = Producer.objects.using(self.get_using_source()).get(name=producer_name)
+        # check the producers DATABASES key exists
+        # TODO: what if producer is "me", e.g settings key is 'default'
+        settings_key = self._producer.settings_key
+        if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == settings_key]:
+            raise ImproperlyConfigured('Dispatcher expects settings attribute DATABASES to have a NAME key to the \'producer\'. Got \'{0}\'.'.format(producer_name))
+        # producer has changed so update the list of checked-out Dispatch instances for this producer
+        self.set_dispatch_list(self._producer)
 
     def get_producer(self):
-        if not self.producer:
+        """Returns an instance of the current producer."""
+        if not self._producer:
             self.set_producer()
-        return self.producer
+        return self._producer
 
-    def checkin_all(self):
-        """Updates all the Household dispatches and dispatch items as checked back in.
+    def get_membershipform_models(self):
+        return [membership_form.content_type_map.content_type.model_class() for membership_form in MembershipForm.objects.all()]
 
-        .. note::
-           This will called after all the transaction for the producer have been consumed
-           therefore, we can assume that the information that was dispatch to the producer
-           has been sent to server; hence, we mark all the dispatch items a checked in
+    def set_visit_model_cls(self, app_name, model_cls):
+        """Sets the visit_model_cls attribute with a dictionary of tuples (field name, class) by app.
         """
-        # Find all dispatch for the given producer that have not been checked in
-        for dispatch in self.dispatch_list:
-            self.checkin(dispatch)
+        self._visit_models = {}
+        if not model_cls:
+            raise TypeError('Parameter model_cls cannot be None.')
+        for field in model_cls._meta.fields:
+            if isinstance(field, ForeignKey, OneToOneField):
+                field_cls = field.rel.to
+                if issubclass(field_cls, BaseVisitTracking):
+                    # does this dict ever have more than one entry??
+                    self._visit_models.update({app_name: (field.name, field_cls)})
 
-    def update_checkedout_dispatches(self):
-        """Returns all dispatched items for the current producer -- those that are checked out."""
-        self.dispatch_list = Dispatch.objects.filter(
-            producer=self.get_producer(),
-            is_checked_out=True,
-            is_checked_in=False
-            )
+    def get_visit_model_cls(self, app_name, model_cls=None, **kwargs):
+        """Returns a tuple of (field name, class) or just one of the tuple items.
 
-    def get_membership_form_models(self):
-        _models = []
-        for membership_form in MembershipForm.objects.all():
-            _models.append(membership_form.content_type_map.content_type.model_class())
-        return _models
-
-    def _get_visit_model_cls(self, app_name, model_cls=None):
+        Keywords:
+            key: either 'name' or 'cls'. If specified, only returns the item in the tuple instead of the whole tuple.
+        """
+        if not self._visit_models:
+            self.set_visit_models(app_name, model_cls)
+        # check for kwarg 'key' and set key to 0 or 1 (or None if not found)
+        key = {'name': 0, 'cls': 1}.get(kwargs.get('key', None), None)
         if not self.visit_models.get(app_name):
-            self._set_visit_model_cls(app_name, model_cls)
-        if not self.visit_models.get(app_name):
-            return (None, None)
-        return self.visit_models.get(app_name)
+            tpl = (None, None)
+        else:
+            tpl = self._visit_models.get(app_name)
+        if key:
+            return tpl[key]
+        else:
+            return tpl
 
     def _export_foreign_key_models(self, app_name):
         """Finds foreignkey model classes other than the visit model class and exports the instances."""
@@ -118,7 +174,7 @@ class DispatchController(object):
             raise TypeError('Parameter app_name cannot be None.')
         app = get_app(app_name)
         for model_cls in get_models(app):
-            visit_field_name, visit_model_cls = self._get_visit_model_cls(app_name, model_cls)
+            visit_field_name = self._get_visit_model_cls(app_name, model_cls, key='name')
             if getattr(model_cls, visit_field_name, None):
                 for field in model_cls._meta.fields:
                     if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):
@@ -126,26 +182,25 @@ class DispatchController(object):
                         if field_cls not in list_models:
                             list_models.append(field_cls)
         for model_cls in list_models:
-            self.dispatch_as_json(model_cls.objects.all(), self.producer, app_name=app_name)
+            self.dispatch_as_json(model_cls.objects.all(), self.get_producer(), app_name=app_name)
 
-    def _get_scheduled_models(self, app_name):
-        """Returns a list of model classes with a key to SubjectVisit excluding audit models."""
+    def get_scheduled_models(self, app_name):
+        """Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models."""
         app = get_app(app_name)
-        # self._export_foreign_key_models(self, app_name)
-        subject_model_cls = []
+        scheduled_models = []
         for model_cls in get_models(app):
             field_name, visit_model_cls = self._get_visit_model_cls(app_name, model_cls)
             if visit_model_cls:
                 if getattr(model_cls, field_name, None):
                     if not model_cls._meta.object_name.endswith('Audit'):
-                        subject_model_cls.append(model_cls)
-        return subject_model_cls
+                        scheduled_models.append(model_cls)
+        return scheduled_models
 
     def update_lists(self):
         """Update all list models in "default" with data from "server".
         """
         #Make sure we have a target producer to export lists to
-        if not self.producer:
+        if not self.get_producer():
             raise ValueError("PLEASE specify the producer you want checkout models to!")
         list_models = []
         for model in get_models():
@@ -160,7 +215,7 @@ class DispatchController(object):
                 )
 
             for obj in serializers.deserialize("json", json):
-                obj.save(using=self.producer)
+                obj.save(using=self.get_producer().settings_key)
 
     def dispatch_as_json(self, export_instances, using_destination=None, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
