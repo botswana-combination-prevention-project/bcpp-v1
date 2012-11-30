@@ -1,7 +1,7 @@
 import logging
 import itertools
 from datetime import datetime
-from django.core.management.base import BaseCommand, CommandError
+# from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Model
 from django.conf import settings
 from edc_device_prep import EdcDevicePrep
