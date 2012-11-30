@@ -7,7 +7,7 @@ from bhp_sync.models import Producer
 from bhp_visit.models import MembershipForm
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_base_model.classes import BaseListModel
-
+from base import Base
 
 logger = logging.getLogger(__name__)
 
@@ -18,26 +18,14 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class BaseDispatch(object):
+class BaseDispatch(Base):
 
     def __init__(self, using_source, producer=None, site_code=None, **kwargs):
+        super(BaseDispatch, self).__init(**kwargs)
         self.debug = kwargs.get('debug', False)
         self._producer = None
-        self._using_source = None
         self.set_using_source(using_source)
         self.set_producer(producer)
-
-    def set_using_source(self, using_source=None):
-        if not using_source:
-            raise TypeError('Parameter \'using_source\' cannot be None.')
-        if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == using_source]:
-            raise ImproperlyConfigured('Dispatcher expects settings attribute DATABASES to have a NAME key to the \'source\'. Got \'{0}\'.'.format(using_source))
-        self._using_source = using_source
-
-    def get_using_source(self):
-        if not self._using_source:
-            self.set_using_source()
-        return self._using_source
 
     def set_producer(self, producer_name=None):
         """Sets to the instance of the current producer and updates the list checked-out Dispatch models."""
