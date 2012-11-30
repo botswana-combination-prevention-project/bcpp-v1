@@ -69,18 +69,6 @@ class DispatchController(object):
     def get_dispatch_list(self):
         return self.dispatch_list
 
-#    def dispatches_exists(self):
-#        """Check if the current producer has dispatch list
-#        """
-#        # Make sure was a valid producer
-#        if not self.producer:
-#            raise ValueError("PLEASE specify the producer.")
-#
-#        if not self.dispatch_list:
-#            self.update_checkedout_dispatches()
-#
-#        return len(self.dispatch_list) > 0
-
     def set_producer(self, producer=None):
         if producer:
             self.producer = producer
@@ -118,21 +106,6 @@ class DispatchController(object):
             _models.append(membership_form.content_type_map.content_type.model_class())
         return _models
 
-#    def update_crypt(self, using_source=None):
-#        """Gets the entire crypt table from the "server" to the local device
-#        """
-#        if not using_source:
-#            # TODO: this is WRONG if running on netbook!!
-#            using_source = 'default'
-#        if not self.producer:
-#            raise ValueError("PLEASE specify the producer you want checkout models to!")
-#        json = serializers.serialize(
-#            'json',
-#            Crypt.objects.using(using_source).filter(),
-#            use_natural_keys=True)
-#        for obj in serializers.deserialize("json", json):
-#            obj.save(using=self.producer)
-
     def _get_visit_model_cls(self, app_name, model_cls=None):
         if not self.visit_models.get(app_name):
             self._set_visit_model_cls(app_name, model_cls)
@@ -168,11 +141,6 @@ class DispatchController(object):
                 if getattr(model_cls, field_name, None):
                     if not model_cls._meta.object_name.endswith('Audit'):
                         subject_model_cls.append(model_cls)
-#        subject_model_names = ['Qn001', 'Qn002', 'SubjectArtHistory', 'SubjectAbsenteeReport', 'Locator', 'Qn001SectionTwo', 'Qn002SectionOne', 'Qn002SectionTwo', 'Qn002SectionThree', 'Qn002SectionFour', 'Qn002SectionFive', 'Qn002SectionSix', 'Qn002SectionSeven', 'Qn002SectionEightIntro', 'Qn002SectionEightPartnerRecent', 'Qn002SectionEightPartnerSecond', 'Qn002SectionEightPartnerThird']
-#        subject_models = []
-#        for model_name in subject_model_names:
-#            model = get_model('mochudi_subject', model_name)
-#            subject_models.append(model)
         return subject_model_cls
 
     def update_lists(self):
