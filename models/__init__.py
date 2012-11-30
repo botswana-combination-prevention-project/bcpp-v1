@@ -1,3 +1,3 @@
 from base_dispatch import BaseDispatch
-from hbc_dispatch import HBCDispatch
-from hbc_dispatch_item import HBCDispatchItem
+from dispatch import Dispatch
+from dispatch_item import DispatchItem
