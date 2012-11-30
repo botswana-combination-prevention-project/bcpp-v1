@@ -5,10 +5,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models.query import QuerySet
 from django.db.models import get_models, get_app, ForeignKey, OneToOneField
-#from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_visit.models import MembershipForm
 from bhp_variables.models import StudySite
-from bhp_crypto.models import Crypt
 from bhp_base_model.classes import BaseListModel
 from bhp_dispatch.models import Dispatch, DispatchItem
 
