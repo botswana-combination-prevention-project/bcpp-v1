@@ -2,16 +2,14 @@ import logging
 import socket
 from uuid import uuid4
 from datetime import datetime
-from django.conf import settings
+from tastypie.models import ApiKey
 from django.core.management.base import BaseCommand, CommandError
 from django.core import serializers
 from django.db import IntegrityError
 from django.core.serializers.base import DeserializationError
 from django.db.models import Q, Model, get_model, get_models, get_app, Max, Count
-from django.db.models.query import QuerySet
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User, Group, Permission
-from bhp_device.classes import Device
 from bhp_base_model.classes import BaseListModel, BaseModel
 from bhp_userprofile.models import UserProfile
 from bhp_content_type_map.models import ContentTypeMap
@@ -43,6 +41,20 @@ class EdcDevicePrep(BaseCommand):
     def sync_content_type_map(self, using):
         ContentTypeMap.objects.using(using).populate()
         ContentTypeMap.objects.using(using).sync()
+
+    def update_api_keys(self, using_source, using_destination, username=None):
+        for user in User.objects.using(using_destination).all():
+            if not ApiKey.objects.using(using_destination).filter(user=user):
+                ApiKey.objects.using(using_destination).create(user=user)
+        if not username:
+            username = 'django'
+        # get username account api key
+        source_api_key = ApiKey.objects.using(using_source).get(user=User.objects.get(username=username))
+        api_key = ApiKey.objects.using(using_destination).get(user=User.objects.get(username=username))
+        api_key.key = source_api_key.key
+        api_key.save(using=using_destination)
+        print '    updated {0}\'s api key on \'{1}\' to matching key on server.'.format(username, using_destination)
+        print '    to update additional accounts use EdcDevicePrep.update_api_keys(source, destination, username).'.format(username, using_destination)
 
     def update_content_type(self, using_source, using_destination):
         ContentType.objects.using(using_destination).all().delete()
@@ -135,7 +147,7 @@ class EdcDevicePrep(BaseCommand):
             #destination_producer_name = settings.DATABASES.get(using_destination).get('NAME')
             destination_producer_name = using_destination
             if transaction_producer.has_outgoing_transactions(producer_name=destination_producer_name, using=using_destination):
-                raise 'Producer {0} has pending outgoing transactions. Run sync first.'.format(destination_producer_name)
+                raise TypeError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(destination_producer_name))
         if not models:
             raise CommandError('Parameter \'models\' may not be None.')
         # if models is a tuple, convert to model class using get_model
