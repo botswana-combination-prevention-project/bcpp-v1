@@ -1,11 +1,11 @@
 from django.db import models
 from base_dispatch import BaseDispatch
-from hbc_dispatch import HBCDispatch
+from dispatch import Dispatch
 
 
-class HBCDispatchItem(BaseDispatch):
+class DispatchItem(BaseDispatch):
 
-    hbc_dispatch = models.ForeignKey(HBCDispatch, null=True)
+    dispatch = models.ForeignKey(Dispatch, null=True)
     item_identifier = models.CharField(
         verbose_name='Item Identifier',
         max_length=25,
@@ -22,13 +22,10 @@ class HBCDispatchItem(BaseDispatch):
                 ).exclude(pk=self.pk).exists():
             raise ValueError("The item {0} has already been checked to {1} but have not been checked back in!".format(self.item_identifier, self.producer))
         else:
-            super(HBCDispatchItem, self).save(*args, **kwargs)
+            super(DispatchItem, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "{0} -> {1}".format(
-                                self.item_identifier,
-                                self.producer.name
-                                )
+        return "{0} -> {1}".format(self.item_identifier, self.producer.name)
 
     class Meta:
         app_label = "bhp_dispatch"

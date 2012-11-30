@@ -2,7 +2,7 @@ from django.db import models
 from base_dispatch import BaseDispatch
 
 
-class HBCDispatch(BaseDispatch):
+class Dispatch(BaseDispatch):
 
     checkout_items = models.TextField(
         max_length=500,
@@ -21,13 +21,10 @@ class HBCDispatch(BaseDispatch):
                 ).exclude(pk=self.pk).exists():
             raise ValueError("There are items already checked out to {0} that have not been checked back in!".format(self.producer))
         else:
-            super(HBCDispatch, self).save(*args, **kwargs)
+            super(Dispatch, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "{0} @ {1}".format(
-                                self.producer.name,
-                                self.created
-                                )
+        return "{0} @ {1}".format(self.producer.name, self.created)
 
     class Meta:
         app_label = "bhp_dispatch"

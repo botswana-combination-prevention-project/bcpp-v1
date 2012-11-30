@@ -1,5 +1,5 @@
 from dispatch_controller import DispatchController
-from hbc_dispatch_helper import HBCDispatchHelper
+from hbc_dispatch_helper import DispatchHelper
 from edc_device_prep import EdcDevicePrep
 
 

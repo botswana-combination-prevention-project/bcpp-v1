@@ -7,10 +7,10 @@ from bhp_dispatch.classes import DispatchController
 from mochudi_survey.models import Survey
 
 
-class HBCDispatchHelper(DispatchController):
+class DispatchHelper(DispatchController):
 
     def __init__(self, debug=False, producer=None, site_code=None):
-        super(HBCDispatchHelper, self).__init__(debug, producer, site_code)
+        super(DispatchHelper, self).__init__(debug, producer, site_code)
         self.survey = None
         self.visit_models = {}
 

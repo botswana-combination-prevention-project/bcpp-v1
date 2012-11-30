@@ -10,7 +10,7 @@ from bhp_visit.models import MembershipForm
 from bhp_variables.models import StudySite
 from bhp_crypto.models import Crypt
 from bhp_base_model.classes import BaseListModel
-from bhp_dispatch.models import HBCDispatch, HBCDispatchItem
+from bhp_dispatch.models import Dispatch, DispatchItem
 
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ class DispatchController(object):
         if dispatch:
             item_identifiers = dispatch.checkout_items.split()
             for item_identifier in item_identifiers:
-                item = HBCDispatchItem.objects.get(
+                item = DispatchItem.objects.get(
                     producer=dispatch.producer,
                     item_identifier=item_identifier,
                     is_checked_out=True,
@@ -105,9 +105,8 @@ class DispatchController(object):
             self.checkin(dispatch)
 
     def update_checkedout_dispatches(self):
-        """Returns all hbc dispatches for the current producer that have not been checked in.
-        """
-        self.dispatch_list = HBCDispatch.objects.filter(
+        """Returns all dispatched items for the current producer -- those that are checked out."""
+        self.dispatch_list = Dispatch.objects.filter(
             producer=self.get_producer(),
             is_checked_out=True,
             is_checked_in=False
@@ -117,37 +116,22 @@ class DispatchController(object):
         _models = []
         for membership_form in MembershipForm.objects.all():
             _models.append(membership_form.content_type_map.content_type.model_class())
-#        for model in get_models():
-#            if "household_structure_member" in dir(model):
-#                if not model._meta.object_name.endswith('Audit'):
-#                    _models.append(model)
         return _models
 
-    def update_crypt(self):
-        """Gets the entire crypt table from the "server" to the local device
-        """
-        if not self.producer:
-            raise ValueError("PLEASE specify the producer you want checkout models to!")
-        #print "Started! This will take a while ..."
-        json = serializers.serialize(
-            'json',
-            Crypt.objects.using('default').filter(),
-            use_natural_keys=True
-            )
-        for obj in serializers.deserialize("json", json):
-            obj.save(using=self.producer)
-
-        #print "I'm done ..."
-
-#    def _set_visit_model_cls(self, app_name, model_cls):
-#        if not model_cls:
-#            raise TypeError('Parameter model_cls cannot be None.')
-#
-#        for field in model_cls._meta.fields:
-#            if isinstance(field, ForeignKey):
-#                field_cls = field.rel.to
-#                if issubclass(field_cls, BaseVisitTracking):
-#                    self.visit_models.update({app_name: (field.name, field_cls)})
+#    def update_crypt(self, using_source=None):
+#        """Gets the entire crypt table from the "server" to the local device
+#        """
+#        if not using_source:
+#            # TODO: this is WRONG if running on netbook!!
+#            using_source = 'default'
+#        if not self.producer:
+#            raise ValueError("PLEASE specify the producer you want checkout models to!")
+#        json = serializers.serialize(
+#            'json',
+#            Crypt.objects.using(using_source).filter(),
+#            use_natural_keys=True)
+#        for obj in serializers.deserialize("json", json):
+#            obj.save(using=self.producer)
 
     def _get_visit_model_cls(self, app_name, model_cls=None):
         if not self.visit_models.get(app_name):
@@ -212,15 +196,16 @@ class DispatchController(object):
             for obj in serializers.deserialize("json", json):
                 obj.save(using=self.producer)
 
-    def export_as_json(self, export_instances, using=None, **kwargs):
+    def export_as_json(self, export_instances, using_destination=None, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
             Args:
                 remote_instance: a model instance from a remote server
                 using: using parameter for the target server.
         """
         app_name = kwargs.get('app_name', None)
-        if using:
-            if using == 'default':
+        if using_destination:
+            if using_destination == 'default':
+                # don't want to accidentally save to myself
                 raise TypeError('Cannot export to database \'default\' (using).')
             if export_instances:
                 if not isinstance(export_instances, (list, QuerySet)):
@@ -228,7 +213,7 @@ class DispatchController(object):
                 json = serializers.serialize('json', export_instances, use_natural_keys=True)
                 for obj_new in serializers.deserialize("json", json, use_natural_keys=True):
                     try:
-                        obj_new.save(using=using)
+                        obj_new.save(using=using_destination)
                         print('*******************EXPORTING TO: '+str(kwargs.get('app_name', None))+\
                               ' INSTANCES: '+str(export_instances))
                     except IntegrityError:
@@ -236,7 +221,7 @@ class DispatchController(object):
                             # assume Integrity error is because of missing ForeignKey data
                             self._export_foreign_key_models(app_name)
                             # try again
-                            obj_new.save(using=using)
+                            obj_new.save(using=using_destination)
                         else:
                             raise
                     except:
