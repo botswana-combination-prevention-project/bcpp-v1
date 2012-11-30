@@ -13,19 +13,24 @@ class Base(object):
         if not using_source:
             raise self.exception('Parameters \'using_source\' cannot be None')
         if using_source not in ['server', 'default']:
-            raise self.exception('Argument \'<using_source\'> must be either \'default\' (if run from server) or \'server\' if not run from server.  \n\nUsage:{0}'.format(self.usage))
+            raise self.exception('Argument \'<using_source\'> must be either \'default\' (if run from server) or \'server\' if not run from server.')
         if settings.DEVICE_ID == '99':
-            raise self.exception('Argument \'<using_source\'> must be \'default\' if running on the server (settings.DEVICE=99).  \n\nUsage:{0}'.format(self.usage))
+            raise self.exception('Argument \'<using_source\'> must be \'default\' if running on the server (settings.DEVICE=99).')
         if self.is_valid_using(using_source, 'source'):
             self._using_source = using_source
+
+    def get_using_source(self):
+        if not self._using_source:
+            self.set_using_source()
+        return self._using_source
 
     def set_using_destination(self, using_destination=None):
         if not using_destination:
             raise self.exception('Parameters \'using_destination\' cannot be None')
         if using_destination == 'server':
-            raise self.exception('Argument \'<using_destination\'> cannot be \'server\'.  \n\nUsage:{0}'.format(self.usage))
+            raise self.exception('Argument \'<using_destination\'> cannot be \'server\'.')
         if settings.DEVICE_ID == '99':
-            raise self.exception('Argument \'<using_destination\'> cannot be \'default\' if running on the server (settings.DEVICE=99).  \n\nUsage:{0}'.format(self.usage))
+            raise self.exception('Argument \'<using_destination\'> cannot be \'default\' if running on the server (settings.DEVICE=99).')
         if self.is_valid_using(using_destination, 'destination'):
             self._using_destination = using_destination
 

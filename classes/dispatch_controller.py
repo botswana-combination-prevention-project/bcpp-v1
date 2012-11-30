@@ -2,8 +2,8 @@ import logging
 from datetime import datetime
 from django.core import serializers
 from django.db import IntegrityError
+from django.db.models import get_model
 from django.db.models.query import QuerySet
-from bhp_dispatch.models import Dispatch, DispatchItem
 from base_dispatch import BaseDispatch
 
 
@@ -39,6 +39,7 @@ class DispatchController(BaseDispatch):
     def checkin_dispatched_items(self, dispatch):
         """Updates a Item dispatch and dispatch items as checked back in.
         """
+        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         if dispatch:
             item_identifiers = dispatch.checkout_items.split()
             for item_identifier in item_identifiers:
@@ -59,6 +60,7 @@ class DispatchController(BaseDispatch):
 
     def set_dispatch_list(self, producer=None):
         """Sets the list of checked-out Dispatch model instances for the current producer."""
+        Dispatch = get_model('bhp_dispatch', 'Dispatch')
         if not producer:
             producer = self.get_producer()
         self._dispatch_list = Dispatch.objects.filter(

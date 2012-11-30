@@ -2,10 +2,8 @@ import logging
 from django.conf import settings
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import get_models, get_app, ForeignKey, OneToOneField
-from bhp_sync.models import Producer
+from django.db.models import get_model, get_models, get_app, ForeignKey, OneToOneField
 from bhp_visit.models import MembershipForm
-from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_base_model.classes import BaseListModel
 from base import Base
 
@@ -29,6 +27,7 @@ class BaseDispatch(Base):
 
     def set_producer(self, producer_name=None):
         """Sets to the instance of the current producer and updates the list checked-out Dispatch models."""
+        Producer = get_model('bhp_sync', 'Producer')
         if not producer_name:
             raise TypeError("Parameter \'producer_name\' cannot be None.")
         # does this producer exist on the source?
@@ -56,6 +55,7 @@ class BaseDispatch(Base):
     def set_visit_model_cls(self, app_name, model_cls):
         """Sets the visit_model_cls attribute with a dictionary of tuples (field name, class) by app.
         """
+        BaseVisitTracking = get_model('bhp_visit_tracking', 'BaseVisitTracking')
         self._visit_models = {}
         if not model_cls:
             raise TypeError('Parameter model_cls cannot be None.')

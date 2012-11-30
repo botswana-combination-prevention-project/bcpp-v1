@@ -1,9 +1,8 @@
 import logging
 from datetime import datetime
-from django.db.models import ForeignKey, OneToOneField
+from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import DispatchController
-from bhp_dispatch.models import DispatchItem
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +98,7 @@ class DispatchHelper(DispatchController):
             self.create_dispatch_item_instance(dispatch, item_identifier, producer)
 
     def is_dispatched(self, using_source, item_identifier):
+        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         if DispatchItem.objects.using(using_source).filter(
                 item_identifier=item_identifier,
                 is_checked_out=True).exists():
@@ -109,6 +109,7 @@ class DispatchHelper(DispatchController):
 
     def create_dispatch_item_instance(self, dispatch, item_identifier, producer):
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
+        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
         dispatch_item = DispatchItem.objects.create(
             producer=producer,
