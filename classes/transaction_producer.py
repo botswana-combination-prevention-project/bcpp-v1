@@ -1,6 +1,17 @@
 import socket
+import logging
+
 from django.conf import settings
 from django.db.models import get_model
+
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class TransactionProducer(object):
@@ -26,8 +37,9 @@ class TransactionProducer(object):
         producer_name = kwargs.get('producer_name', self.value)
         OutgoingTransaction = get_model('bhp_sync', 'outgoingtransaction')
         Producer = get_model('bhp_sync', 'producer')
-        if not Producer.objects.using(using).filter(name=producer_name).exists():
-            raise AttributeError('Producer {0} is unknown. Cannot check for outgoing transactions. (Note: using database key \'{1}\')'.format(producer_name, using))
-        if OutgoingTransaction.objects.using(using).filter(producer=producer_name, is_consumed=False):
-            retval = True
+        if OutgoingTransaction.objects.using(using).all():
+            if not Producer.objects.using(using).filter(name=producer_name).exists():
+                logger.warning('Unknown Producer {0}. Not checking for outgoing transactions. (Note: using database key \'{1}\')'.format(producer_name, using))
+            if OutgoingTransaction.objects.using(using).filter(producer=producer_name, is_consumed=False):
+                retval = True
         return retval
