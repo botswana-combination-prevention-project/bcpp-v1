@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from django.contrib import messages
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import DispatchController
@@ -41,7 +42,8 @@ class DispatchHelper(DispatchController):
             kwargs must be field_attr: value pairs to pass directly to the visit model. Any django syntax will work.
 
         .. note::
-           By scheduled_instances, we are referring to models that have a foreign key to a subclass on bhp_visittracking's BaseVisitTracking visit model.
+           By scheduled_instances, we are referring to models that have a foreign key to a subclass
+           of :mod:`bhp_visit_tracking`'s :class:`BaseVisitTracking` base model.
            For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc
         """
         # Get all the models with reference to SubjectVisit
@@ -73,7 +75,7 @@ class DispatchHelper(DispatchController):
             kwargs: must be field_attr: value pairs to pass directly to the visit model. Any django syntax will work.
 
         .. seealso::
-            See app bhp_visit for an explanation of membership forms.
+            See app :mod:`bhp_visit` for an explanation of membership forms.
         """
         for membershipform_model in self.get_membershipform_models():
             try:
@@ -84,35 +86,40 @@ class DispatchHelper(DispatchController):
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_as_json(instances, self.get_producer())
 
-    def dispatch_prep(self, using_source, item_identifier, producer):
+    def dispatch_prep(self, item_identifier):
+        """Returns a dispatch instance after dispatching.
+
+        This is the main data query for dispatching and is to be overriden by the user
+        to access local app models."""
         return None
 
-    def dispatch(self, using_source, item_identifier, producer):
-        if producer:
-            self.set_producer(producer)
+    def dispatch(self, item_identifier):
+        """Dispatches items to a device calling the user overridden :func:`dispatch_prep`."""
+        # check source for the producer based on using_destination.
         if self.debug:
             logger.info("Dispatching items for {0}".format(item_identifier))
         # is this item already dispatched?
-        if not self.is_dispatched(using_source, item_identifier):
-            dispatch = self.dispatch_prep(using_source, item_identifier, producer)
-            self.create_dispatch_item_instance(dispatch, item_identifier, producer)
+        if not self.is_dispatched(item_identifier):
+            self.create_dispatch_item_instance(self.dispatch_prep(item_identifier), item_identifier)
 
-    def is_dispatched(self, using_source, item_identifier):
+    def is_dispatched(self, item_identifier):
+        """Checks if a dispatch item is dispatched."""
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-        if DispatchItem.objects.using(using_source).filter(
+        if DispatchItem.objects.using(self.get_using_source()).filter(
                 item_identifier=item_identifier,
                 is_dispatched=True).exists():
-            dispatch_item = DispatchItem.objects.using(using_source).get(
+            dispatch_item = DispatchItem.objects.using(self.get_using_source()).get(
                 item_identifier=item_identifier,
                 is_dispatched=True)
             raise AlreadyDispatched('Item {0} is already dispatched to producer {1}.'.format(item_identifier, dispatch_item.producer))
 
-    def create_dispatch_item_instance(self, dispatch, item_identifier, producer):
+    def create_dispatch_item_instance(self, dispatch, item_identifier):
+        """Creates a dispatch item instance for given dispatch instance and item_identifier."""
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
         dispatch_item = DispatchItem.objects.create(
-            producer=producer,
+            producer=self.get_producer(),
             dispatch=dispatch,
             item_identifier=item_identifier,
             is_dispatched=True,
@@ -122,7 +129,8 @@ class DispatchHelper(DispatchController):
     def dispatch_action(self, modeladmin, request, queryset, **kwargs):
         """ModelAdmin action method to dispatch all selected items to specified producer.
 
-        Acts on the Algorithm:
+        Acts on the Algorithm::
+
             for each Dispatch instance:
                 get a list of household identifiers
                     foreach household identifier
@@ -130,20 +138,25 @@ class DispatchHelper(DispatchController):
                         set the item as Dispatch
                         set the checkout time to now
                         invoke controller.checkout (...) checkout the data to the netbook
-                update Dispatch instance as checked out"""
+                update Dispatch instance as checked out
+        """
         for qs in queryset:
-            # Make sure the checkout instance is not already checked out and has not been checked back again
-            if qs.is_dispatched == True:
-                raise ValueError("There are households currently dispatched to {0}.!".format(qs.producer.name))
+            # Make sure the dispatch instance is not already dispatched
+            if qs.is_dispatched():
+                modeladmin.message_user(request, 'Producer {0} has pending dispatched items. '
+                                                 'Return these items first. Cannot '
+                                                 'continue.'.format(qs.producer.name), level=messages.ERROR)
+                break
             else:
                 # item identifiers are separated by new lines, so explode them on "\n"
                 item_identifiers = qs.dispatch_items.split()
                 for item_identifier in item_identifiers:
-                    # Save to producer
-                    self.dispatch(item_identifier, qs.producer.name)
+                    # dispatch items to this producer
+                    # TODO: this should be the destination and not producer instance??
+                    self.dispatch(item_identifier)
                     modeladmin.message_user(
-                        request, 'Dispatch {0} to {1}.'.format(item_identifier, qs.producer))
+                        request, 'Dispatch {0} to {1}.'.format(item_identifier, qs.producer.name))
                 qs.dispatch_datetime = datetime.today()
                 qs.is_dispatched = True
                 qs.save()
-                modeladmin.message_user(request, 'The selected items were successfully dispatched to \'{0}\'.'.format(qs.producer))
+                modeladmin.message_user(request, 'The selected items were successfully dispatched to \'{0}\'.'.format(qs.producer.name))

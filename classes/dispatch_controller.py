@@ -58,22 +58,6 @@ class DispatchController(BaseDispatch):
             dispatch.datetime_checked_in = datetime.today()
             dispatch.save()
 
-    def set_dispatch_list(self, producer=None):
-        """Sets the list of checked-out Dispatch model instances for the current producer."""
-        Dispatch = get_model('bhp_dispatch', 'Dispatch')
-        if not producer:
-            producer = self.get_producer()
-        self._dispatch_list = Dispatch.objects.filter(
-            producer=producer,
-            is_checked_out=True,
-            is_checked_in=False)
-
-    def get_dispatch_list(self):
-        """Returns the list of checked-out Dispatch model instances."""
-        if not self._dispatch_list:
-            self.set_dispatch_list()
-        return self._dispatch_list
-
     def dispatch_as_json(self, export_instances, using_destination=None, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
             Args:

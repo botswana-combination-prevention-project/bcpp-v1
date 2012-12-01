@@ -1,3 +1,4 @@
+from base import Base
 from base_dispatch import BaseDispatch
 from dispatch_controller import DispatchController
 from dispatch_helper import DispatchHelper
