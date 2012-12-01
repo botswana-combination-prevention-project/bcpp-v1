@@ -30,10 +30,7 @@ class EdcDevicePrep(Base):
     MODEL_NAME = 1
 
     def __init__(self, using_source, using_destination, **kwargs):
-        super(EdcDevicePrep, self).__init__(**kwargs)
-        self.exception = kwargs.get('exception', TypeError)
-        self.set_using_source(using_source)
-        self.set_using_destination(using_destination)
+        super(EdcDevicePrep, self).__init__(using_source, using_destination, **kwargs)
 
     def resize_content_type(self):
         """Resizes the destination content type table to have the same max id."""

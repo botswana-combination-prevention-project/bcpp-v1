@@ -19,7 +19,7 @@ class BaseDispatch(BaseUuidModel):
         null=True
         )
 
-    dispatched_datetime = models.DateTimeField(
+    returned_datetime = models.DateTimeField(
         verbose_name="Return date",
         blank=True,
         null=True

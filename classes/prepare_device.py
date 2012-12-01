@@ -1,10 +1,11 @@
 import logging
 from datetime import datetime
 from django.db.models import Model
-from edc_device_prep import EdcDevicePrep
 from bhp_common.utils import td_to_string
-from bhp_sync.models import Producer
 from bhp_content_type_map.models import ContentTypeMap
+from base import Base
+from edc_device_prep import EdcDevicePrep
+
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +16,9 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class PrepareDevice(object):
+class PrepareDevice(Base):
 
-    def __init__(self, source, destination, **kwargs):
+    def __init__(self, using_source, using_destination, **kwargs):
         """
         Args:
             using_source: settings database key for the source.
@@ -25,21 +26,11 @@ class PrepareDevice(object):
         Keywords:
             exception: exception class to use, e.g. CommandError if this is run as a management command. Default(TypeError)
         """
+        super(PrepareDevice, self).__init(using_source, using_destination, **kwargs)
         self.started = None
         self.start_time = None
         self.end_time = None
-        self.exception = kwargs.get('exception', TypeError)
-        if source == destination:
-            raise self.exception('Arguments \'<source>\' and \'<destination\'> cannot be the same.')
-        self.edc_device_prep = EdcDevicePrep(source, destination, exception=self.exception)
-        if source == 'default':
-            # when source is default (running on server), destination must be an active producer settings key
-            if not destination in Producer.objects.using(self.get_using_source()).filter(is_active=True).values_list('settings_key'):
-                raise self.exception("Destination {0} does not match any database settings keys of the active producers".format(destination))
-        else:
-            # when source is server, destination must be default (running on netbook)
-            if destination != 'default':
-                raise self.exception('When source is \'server\', \'destination\' must be \'default\' (you are running on the netbook)')
+        self.edc_device_prep = EdcDevicePrep(using_source, using_destination, exception=self.exception)
 
     def timer(self, done=None):
         if not self.started:
@@ -93,14 +84,10 @@ class PrepareDevice(object):
         logger.info('    ...update')
         self.edc_device_prep.update_app_models('bhp_content_type_map')
         logger.info('    ...pop and sync')
-        ContentTypeMap.objects.sync()
 
         self.timer()
         logger.info('Populating / re-populating from django content type...')
-
-        self.timer()
-        logger.info("Updating survey instances...")
-        self.edc_device_prep.update_model(('mochudi_survey', 'survey'))
+        ContentTypeMap.objects.using(self.get_using_destination()).sync()
 
         self.timer()
         logger.info("Updating appointment configuration...")
