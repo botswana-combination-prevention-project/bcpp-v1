@@ -1,0 +1,11 @@
+Models
+======
+
+.. autoclass:: bhp_dispatch.models.Dispatch
+  :members:
+  :show-inheritance:
+
+
+.. autoclass:: bhp_dispatch.models.DispatchItem
+  :members:
+  :show-inheritance:
