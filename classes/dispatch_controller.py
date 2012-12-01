@@ -58,32 +58,30 @@ class DispatchController(BaseDispatch):
             dispatch.datetime_checked_in = datetime.today()
             dispatch.save()
 
-    def dispatch_as_json(self, export_instances, using_destination=None, **kwargs):
+    def dispatch_as_json(self, source_instances, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
+
             Args:
-                remote_instance: a model instance from a remote server
-                using: using parameter for the target server.
+                source_instance: a model instance(s) from the source server
+                using: `using` parameter for the destination device.
+            Keywords:
+                app_name: app name for instances
         """
         app_name = kwargs.get('app_name', None)
-        if using_destination:
-            if using_destination == 'default':
-                # don't want to accidentally save to myself
-                raise TypeError('Cannot export to database \'default\' (using).')
-            if export_instances:
-                if not isinstance(export_instances, (list, QuerySet)):
-                    export_instances = [export_instances]
-                json = serializers.serialize('json', export_instances, use_natural_keys=True)
-                for obj_new in serializers.deserialize("json", json, use_natural_keys=True):
-                    try:
-                        obj_new.save(using=using_destination)
-                    except IntegrityError:
-                        if app_name:
-                            # assume Integrity error is because of missing ForeignKey data
-                            self._export_foreign_key_models(app_name)
-                            # try again
-                            obj_new.save(using=using_destination)
-                        else:
-                            raise
-                    except:
-                        raise
-                    logger.info(obj_new.object)
+        if source_instances:
+            if not isinstance(source_instances, (list, QuerySet)):
+                source_instances = [source_instances]
+            json = serializers.serialize('json', source_instances, use_natural_keys=True)
+            for obj_new in serializers.deserialize("json", json, use_natural_keys=True):
+                try:
+                    obj_new.save(using=self.get_using_destination())
+                except IntegrityError:
+                    if not app_name:
+                        app_name = source_instances[0]._meta.app_label
+                    # assume Integrity error was because of missing ForeignKey data
+                    self.dispatch_foreign_key_instances(app_name)
+                    # try again
+                    obj_new.save(using=self.get_using_destination())
+                except:
+                    raise
+                logger.info(obj_new.object)

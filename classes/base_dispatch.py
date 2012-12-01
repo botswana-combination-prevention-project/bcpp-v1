@@ -30,7 +30,7 @@ class BaseDispatch(Base):
     def set_dispatch_list(self, producer=None):
         """Sets the list of dispatched Dispatch model instances for the current producer."""
         Dispatch = get_model('bhp_dispatch', 'Dispatch')
-        self._dispatch_list = Dispatch.objects.filter(
+        self._dispatch_list = Dispatch.objects.using(self.get_using_source()).filter(
             producer=producer,
             is_checked_out=True,
             is_checked_in=False)
@@ -76,7 +76,7 @@ class BaseDispatch(Base):
         return self._producer
 
     def get_membershipform_models(self):
-        return [membership_form.content_type_map.content_type.model_class() for membership_form in MembershipForm.objects.all()]
+        return [membership_form.content_type_map.content_type.model_class() for membership_form in MembershipForm.objects.using(self.get_using_source()).all()]
 
     def set_visit_model_cls(self, app_name, model_cls):
         """Sets the visit_model_cls attribute with a dictionary of tuples (field name, class) by app.
@@ -111,7 +111,7 @@ class BaseDispatch(Base):
         else:
             return tpl
 
-    def _export_foreign_key_models(self, app_name):
+    def dispatch_foreign_key_instances(self, app_name):
         """Finds foreignkey model classes other than the visit model class and exports the instances."""
         list_models = []
         if not app_name:
@@ -126,7 +126,7 @@ class BaseDispatch(Base):
                         if field_cls not in list_models:
                             list_models.append(field_cls)
         for model_cls in list_models:
-            self.dispatch_as_json(model_cls.objects.all(), self.get_producer(), app_name=app_name)
+            self.dispatch_as_json(model_cls.objects.using(self.get_using_source()).all(), app_name=app_name)
 
     def get_scheduled_models(self, app_name):
         """Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models."""
