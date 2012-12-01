@@ -1,55 +1,50 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin, BaseStackedInline
-from models import HBCDispatch, HBCDispatchItem
+from models import Dispatch, DispatchItem
 
 
-class HBCDispatchItemInline(BaseStackedInline):
-    model = HBCDispatchItem
+class DispatchItemInline(BaseStackedInline):
+    model = DispatchItem
 
 
-class HBCDispatchAdmin(BaseModelAdmin):
-    #actions = [process_hbc_dispatch, ]
+class DispatchAdmin(BaseModelAdmin):
     ordering = ['-created', ]
     list_display = (
         'producer',
-        'checkout_items',
+        'dispatch_items',
         'created',
-        'is_checked_out',
-        'is_checked_in',
-        'datetime_checked_out',
-        'datetime_checked_in'
+        'is_dispatched',
+        'dispatched_datetime',
+        'returned_datetime'
         )
     list_filter = (
         'producer',
         'created',
-        'is_checked_out',
-        'is_checked_in',
-        'datetime_checked_out',
-        'datetime_checked_in'
+        'is_dispatched',
+        'dispatched_datetime',
+        'returned_datetime'
         )
-    inlines = [HBCDispatchItemInline, ]
-#admin.site.register(HBCDispatch, HBCDispatchAdmin)
+    inlines = [DispatchItemInline, ]
+admin.site.register(Dispatch, DispatchAdmin)
 
 
-class HBCDispatchItemAdmin(BaseModelAdmin):
+class DispatchItemAdmin(BaseModelAdmin):
     ordering = ['-created', 'item_identifier']
     list_display = (
-        'hbc_dispatch',
+        'dispatch',
         'producer',
         'item_identifier',
         'created',
-        'is_checked_out',
-        'is_checked_in',
-        'datetime_checked_out',
-        'datetime_checked_in'
+        'is_dispatched',
+        'dispatched_datetime',
+        'returned_datetime'
         )
     list_filter = (
         'producer',
         'item_identifier',
         'created',
-        'is_checked_out',
-        'is_checked_in',
-        'datetime_checked_out',
-        'datetime_checked_in'
+        'is_dispatched',
+        'dispatched_datetime',
+        'returned_datetime'
         )
-#admin.site.register(HBCDispatchItem, HBCDispatchItemAdmin)
+admin.site.register(DispatchItem, DispatchItemAdmin)

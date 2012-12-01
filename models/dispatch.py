@@ -4,9 +4,9 @@ from base_dispatch import BaseDispatch
 
 class Dispatch(BaseDispatch):
 
-    checkout_items = models.TextField(
+    dispatch_items = models.TextField(
         max_length=500,
-        help_text='Checked out items. One per line.'
+        help_text='Dispatch items. One per line.'
         )
     objects = models.Manager()
 
@@ -15,11 +15,10 @@ class Dispatch(BaseDispatch):
         # identifiers that has checked out but not checked in yes
         if self.__class__.objects.filter(
                 producer=self.producer,
-                checkout_items=self.checkout_items,
-                is_checked_out=True,
-                is_checked_in=False,
+                dispatch_items=self.dispatch_items,
+                is_dispatched=True,
                 ).exclude(pk=self.pk).exists():
-            raise ValueError("There are items already checked out to {0} that have not been checked back in!".format(self.producer))
+            raise ValueError("There are items in the list that are currently dispatched to {0}.".format(self.producer))
         else:
             super(Dispatch, self).save(*args, **kwargs)
 

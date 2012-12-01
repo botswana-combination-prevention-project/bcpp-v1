@@ -9,7 +9,7 @@ class DispatchItem(BaseDispatch):
     item_identifier = models.CharField(
         verbose_name='Item Identifier',
         max_length=25,
-        help_text="Checked out Item (e.g. Household Identifier)"
+        help_text="Dispatch Item (e.g. Household Identifier)"
         )
     objects = models.Manager()
 
@@ -17,10 +17,9 @@ class DispatchItem(BaseDispatch):
         if self.__class__.objects.filter(
                 producer=self.producer,
                 item_identifier=self.item_identifier,
-                is_checked_out=True,
-                is_checked_in=False,
+                is_dipatched=True,
                 ).exclude(pk=self.pk).exists():
-            raise ValueError("The item {0} has already been checked to {1} but have not been checked back in!".format(self.item_identifier, self.producer))
+            raise ValueError("The item {0} is currently dispatched to {1}.".format(self.item_identifier, self.producer))
         else:
             super(DispatchItem, self).save(*args, **kwargs)
 

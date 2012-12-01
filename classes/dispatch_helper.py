@@ -101,10 +101,10 @@ class DispatchHelper(DispatchController):
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         if DispatchItem.objects.using(using_source).filter(
                 item_identifier=item_identifier,
-                is_checked_out=True).exists():
-            dispatch_item = DispatchItem.objects.using(using_source).filter(
+                is_dispatched=True).exists():
+            dispatch_item = DispatchItem.objects.using(using_source).get(
                 item_identifier=item_identifier,
-                is_checked_out=True)
+                is_dispatched=True)
             raise AlreadyDispatched('Item {0} is already dispatched to producer {1}.'.format(item_identifier, dispatch_item.producer))
 
     def create_dispatch_item_instance(self, dispatch, item_identifier, producer):
@@ -115,8 +115,8 @@ class DispatchHelper(DispatchController):
             producer=producer,
             dispatch=dispatch,
             item_identifier=item_identifier,
-            is_checked_out=True,
-            datetime_checked_out=datetime.today())
+            is_dispatched=True,
+            dispatch_datetime=datetime.today())
         return created, dispatch_item
 
     def dispatch_action(self, modeladmin, request, queryset, **kwargs):
@@ -133,17 +133,17 @@ class DispatchHelper(DispatchController):
                 update Dispatch instance as checked out"""
         for qs in queryset:
             # Make sure the checkout instance is not already checked out and has not been checked back again
-            if qs.is_checked_out == True and qs.is_checked_in == False:
-                raise ValueError("There are households already checked to {0} that have not been checked back in!".format(qs.producer.name))
+            if qs.is_dispatched == True:
+                raise ValueError("There are households currently dispatched to {0}.!".format(qs.producer.name))
             else:
                 # item identifiers are separated by new lines, so explode them on "\n"
-                item_identifiers = qs.checkout_items.split()
+                item_identifiers = qs.dispatch_items.split()
                 for item_identifier in item_identifiers:
                     # Save to producer
                     self.dispatch(item_identifier, qs.producer.name)
                     modeladmin.message_user(
-                        request, 'Checkout {0} to {1}.'.format(item_identifier, qs.producer))
-                qs.datetime_checked_out = datetime.today()
-                qs.is_checked_out = True
+                        request, 'Dispatch {0} to {1}.'.format(item_identifier, qs.producer))
+                qs.dispatch_datetime = datetime.today()
+                qs.is_dispatched = True
                 qs.save()
-                modeladmin.message_user(request, 'The selected items were successfully checkout to \'{0}\'.'.format(qs.producer))
+                modeladmin.message_user(request, 'The selected items were successfully dispatched to \'{0}\'.'.format(qs.producer))

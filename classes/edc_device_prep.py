@@ -37,7 +37,7 @@ class EdcDevicePrep(Base):
 
     def resize_content_type(self):
         """Resizes the destination content type table to have the same max id."""
-        print 'Check django content type max id match on source and destination.'
+        print '    Check django content type max id match on source and destination.'
         source_agg = ContentType.objects.using(self.get_using_source()).all().aggregate(Max('id'))
         destination_count = ContentType.objects.using(self.get_using_destination()).all().count()
         for n in range(1, source_agg.get('id__max') - destination_count):
@@ -80,7 +80,7 @@ class EdcDevicePrep(Base):
         print '    done with Auth.'
 
     def update_app_models(self, app_name):
-        print 'Updating for app {0}...'.format(app_name)
+        print '    updating for app {0}...'.format(app_name)
         models = []
         for model in get_models(get_app(app_name)):
             models.append(model)
@@ -91,7 +91,7 @@ class EdcDevicePrep(Base):
 
     def update_list_models(self):
         list_models = []
-        print 'Updating list models...'
+        print '    updating list models...'
         for model in get_models():
             if issubclass(model, BaseListModel):
                 list_models.append(model)
@@ -168,7 +168,7 @@ class EdcDevicePrep(Base):
                 source_queryset = self.get_recent(model)
             tot = source_queryset.count()
 
-            print '   saving {0} instances for {1} on {2}.'.format(tot, model._meta.object_name, self.get_using_destination())
+            print '    saving {0} instances for {1} on {2}.'.format(tot, model._meta.object_name, self.get_using_destination())
             json = serializers.serialize('json', source_queryset, use_natural_keys=use_natural_keys)
             n = 0
             if json:
@@ -191,4 +191,4 @@ class EdcDevicePrep(Base):
                                     print '    skipping. Duplicate detected for {0} (b).'.format(obj)
                         except:
                             print '    SKIPPING {0}'.format(instance._meta.object_name)
-            print '   done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name)
+            print '    done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name)
