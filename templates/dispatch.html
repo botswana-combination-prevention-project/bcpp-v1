@@ -19,11 +19,11 @@ select a producer
     <div class="fieldWrapper">
         {{ form.producer.errors }}
         <label for="id_producer">Producer:</label>
-        {{ form.producer }}<BR>
-        <label for="dispatch_items">Items:</label>
-        {{ form.dispatch_items }}
+        {{ form.producer }}
+        <input type="submit" value="Dispatch" />
+        <input type="" name="ct" value="{{ ct }}">
+        <input type="" name="pks" value="{{ pks }}">
     </div>
-    <p><input type="submit" value="Dispatch" /></p>
 </form>
 
 <table>
