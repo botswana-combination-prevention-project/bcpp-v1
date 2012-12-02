@@ -22,7 +22,7 @@ class BaseDispatchController(BaseDispatch):
         super(BaseDispatchController, self).__init__(using_source, producer, site_code, **kwargs)
         self._dispatch_list = []
 
-    def checkin_all(self):
+    def return_all(self):
         """Updates all the dispatches and dispatch items as checked back in.
 
         .. note::
@@ -34,28 +34,23 @@ class BaseDispatchController(BaseDispatch):
 
         # Find all dispatch for the given producer that have not been checked in
         for dispatch in self.get_dispatch_list():
-            self.checkin_dispatched_items(dispatch)
+            self.return_from_dispatch(dispatch)
 
-    def checkin_dispatched_items(self, dispatch):
-        """Updates a Item dispatch and dispatch items as checked back in.
-        """
+    def return_from_dispatch(self, dispatch):
+        """Flags all items in a Dispatch as returned and then flags the Dispatch as returned."""
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         if dispatch:
-            item_identifiers = dispatch.checkout_items.split()
+            item_identifiers = dispatch.dispatch_items.split()
             for item_identifier in item_identifiers:
                 item = DispatchItem.objects.get(
                     producer=dispatch.producer,
                     item_identifier=item_identifier,
-                    is_checked_out=True,
-                    is_checked_in=False
-                    )
-                    #Update each item as checked in, and checked in today
-                item.is_checked_in = True
-                item.datetime_checked_in = datetime.today()
+                    is_dispatched=True)
+                item.is_dispatched = False
+                item.return_datetime = datetime.today()
                 item.save()
-                # Now about the the dispatch
-            dispatch.is_checked_in = True
-            dispatch.datetime_checked_in = datetime.today()
+            dispatch.is_dispatched = False
+            dispatch.return_datetime = datetime.today()
             dispatch.save()
 
     def dispatch_as_json(self, source_instances, **kwargs):

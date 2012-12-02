@@ -12,7 +12,7 @@ Dispatch
   :show-inheritance:
 
 
-.. autoclass:: DispatchHelper
+.. autoclass:: BaseDispatchController
   :members:
   :show-inheritance:
 

@@ -57,10 +57,19 @@
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
 <p>Dispatch data from the main server to mobile devices or netbooks. Data is &#8220;dispatched&#8221; to the device
-and edited on the device. When editing is done, data is returned to the server. While &#8220;dispatched&#8221;
+and edited on the device. When editing is complete, data is returned to the server. While &#8220;dispatched&#8221;
 data on the server may not be altered.</p>
-<p>Devices are &#8220;prepared&#8221; to be used with <tt class="xref py py-mod docutils literal"><span class="pre">bhp_dispatch</span></tt>. Once &#8220;prepared&#8221;, data items may be dispatched
+<p>Devices are &#8220;prepared&#8221; for use with <tt class="xref py py-mod docutils literal"><span class="pre">bhp_dispatch</span></tt>. Once &#8220;prepared&#8221;, data may be dispatched
 to the device, edited and returned.</p>
+<p>Data is selected for dispatch by the user. Within a project, the identifier of a single model is used
+to select data for dispatch and track the &#8220;dispatch&#8221; status of data. For example, the subject identifier
+from RegisteredSubject.</p>
+<p>In the Mochudi Project the Household Identifier from the Household model is used instead of RegisteredSubject.
+The Household model contains Household Members which may or may not be referenced in RegisteredSubject.
+Once a Household is selected for dispatch, the household and all the data of the members in the household
+are dispatched to the device. Until the Household is returned, no data contained within the household
+may be edited on the server.</p>
+<p><tt class="xref py py-mod docutils literal"><span class="pre">bhp_dispatch</span></tt> uses <tt class="xref py py-mod docutils literal"><span class="pre">bhp_sync</span></tt> to return data.</p>
 </div>
 
 
