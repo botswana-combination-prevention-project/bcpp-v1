@@ -25,12 +25,13 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class EdcDevicePrep(Base):
+class BasePrepareDevice(Base):
+
     APP_NAME = 0
     MODEL_NAME = 1
 
     def __init__(self, using_source, using_destination, **kwargs):
-        super(EdcDevicePrep, self).__init__(using_source, using_destination, **kwargs)
+        super(BasePrepareDevice, self).__init__(using_source, using_destination, **kwargs)
 
     def resize_content_type(self):
         """Resizes the destination content type table to have the same max id."""
@@ -41,9 +42,9 @@ class EdcDevicePrep(Base):
             print '    {0} / {1} adding instance to django content_type.'.format(n, source_agg.get('id__max') - destination_count)
             ContentType.objects.using(self.get_using_destination()).create(app_label=str(uuid4()), model=str(uuid4()))
 
-    def sync_content_type_map(self, using):
-        ContentTypeMap.objects.using(using).populate()
-        ContentTypeMap.objects.using(using).sync()
+    def sync_content_type_map(self):
+        ContentTypeMap.objects.using(self.get_using_source()).populate()
+        ContentTypeMap.objects.using(self.get_using_source()).sync()
 
     def update_api_keys(self, username=None):
         for user in User.objects.using(self.get_using_destination()).all():

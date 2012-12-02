@@ -2,9 +2,7 @@ import logging
 from datetime import datetime
 from django.db.models import Model
 from bhp_common.utils import td_to_string
-from bhp_content_type_map.models import ContentTypeMap
-from base import Base
-from edc_device_prep import EdcDevicePrep
+from base_prepare_device import BasePrepareDevice
 
 
 logger = logging.getLogger(__name__)
@@ -16,7 +14,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class PrepareDevice(Base):
+class PrepareDevice(BasePrepareDevice):
 
     def __init__(self, using_source, using_destination, **kwargs):
         """
@@ -30,7 +28,6 @@ class PrepareDevice(Base):
         self.started = None
         self.start_time = None
         self.end_time = None
-        self.edc_device_prep = EdcDevicePrep(using_source, using_destination, exception=self.exception)
 
     def timer(self, done=None):
         if not self.started:
@@ -59,59 +56,56 @@ class PrepareDevice(Base):
 
         self.timer()
         logger.info("Updating content_type")
-        self.edc_device_prep.update_content_type()
+        self.update_content_type()
 
         self.timer()
         logger.info("Updating auth...")
-        self.edc_device_prep.update_auth()
+        self.update_auth()
 
         self.timer()
         logger.info("Updating api keys...")
-        self.edc_device_prep.update_model(('tastypie', 'apikey'), base_model_class=Model)
+        self.update_model(('tastypie', 'apikey'), base_model_class=Model)
 
         self.timer()
         logger.info("Updating lists...")
-        self.edc_device_prep.update_list_models()
+        self.update_list_models()
 
         self.timer()
         logger.info("Updating bhp variables...")
-        self.edc_device_prep.update_app_models('bhp_variables')
+        self.update_app_models('bhp_variables')
 
         self.timer()
         logger.info("Updating contenttypemap...")
         logger.info('    ...resize')
-        self.edc_device_prep.resize_content_type()
+        self.resize_content_type()
         logger.info('    ...update')
-        self.edc_device_prep.update_app_models('bhp_content_type_map')
+        self.update_app_models('bhp_content_type_map')
         logger.info('    ...pop and sync')
-
-        self.timer()
-        logger.info('Populating / re-populating from django content type...')
-        ContentTypeMap.objects.using(self.get_using_destination()).sync()
+        self.sync_content_type_map()
 
         self.timer()
         logger.info("Updating appointment configuration...")
-        self.edc_device_prep.update_model(("bhp_appointment", "Configuration"))
+        self.update_model(("bhp_appointment", "Configuration"))
 
         self.timer()
         logger.info("Updating the Crypt table...")
-        self.edc_device_prep.update_model(('bhp_crypto', 'crypt'))
+        self.update_model(('bhp_crypto', 'crypt'))
 
         self.timer()
         logger.info("Updating the visit definitions...")
-        self.edc_device_prep.update_app_models('bhp_visit')
+        self.update_app_models('bhp_visit')
 
         self.timer()
         logger.info("Updating subject identifiers...")
-        self.edc_device_prep.update_app_models('bhp_identifier')
+        self.update_app_models('bhp_identifier')
 
         self.timer()
         logger.info("Updating bhp_entry.models.entry...")
-        self.edc_device_prep.update_model(('bhp_entry', 'entry'))
+        self.update_model(('bhp_entry', 'entry'))
 
         self.timer()
         logger.info("Updating api keys...")
-        self.edc_device_prep.update_api_keys()
+        self.update_api_keys()
 
         self.timer()
         logger.info("Running post procedures...")
