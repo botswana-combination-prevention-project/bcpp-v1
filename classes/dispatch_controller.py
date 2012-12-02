@@ -16,10 +16,10 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class DispatchController(BaseDispatch):
+class BaseDispatchController(BaseDispatch):
 
     def __init__(self, using_source, producer=None, site_code=None, **kwargs):
-        super(DispatchController, self).__init__(using_source, producer, site_code, **kwargs)
+        super(BaseDispatchController, self).__init__(using_source, producer, site_code, **kwargs)
         self._dispatch_list = []
 
     def checkin_all(self):

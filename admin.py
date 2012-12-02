@@ -25,7 +25,7 @@ class DispatchAdmin(BaseModelAdmin):
         'returned_datetime'
         )
     inlines = [DispatchItemInline, ]
-admin.site.register(Dispatch, DispatchAdmin)
+#admin.site.register(Dispatch, DispatchAdmin)
 
 
 class DispatchItemAdmin(BaseModelAdmin):
@@ -47,4 +47,4 @@ class DispatchItemAdmin(BaseModelAdmin):
         'dispatched_datetime',
         'returned_datetime'
         )
-admin.site.register(DispatchItem, DispatchItemAdmin)
+#admin.site.register(DispatchItem, DispatchItemAdmin)

@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
-from bhp_dispatch.classes import DispatchController
+from bhp_dispatch.classes import BaseDispatchController
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +18,10 @@ class AlreadyDispatched(Exception):
     pass
 
 
-class DispatchHelper(DispatchController):
+class DispatchController(BaseDispatchController):
 
     def __init__(self, using_source, producer=None, site_code=None, **kwargs):
-        super(DispatchHelper, self).__init__(using_source, producer, site_code, **kwargs)
+        super(DispatchController, self).__init__(using_source, producer, site_code, **kwargs)
         self._visit_models = {}
 
     def set_visit_model_fkey(self, model_cls, visit_model_cls):

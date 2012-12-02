@@ -2,12 +2,15 @@ import socket
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
-from bhp_sync.models import Producer
 
 
 class Base(object):
 
     def __init__(self, using_source, using_destination, **kwargs):
+        if not 'ALLOW_DISPATCH' in dir(settings):
+            raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
+        if not 'DISPATCH_MODEL' in dir(settings):
+            raise self.exception('Settings attribute \'DISPATCH_MODEL\' not found where DISPATCH_MODEL=(app_label, model_name). Please add to your settings.py.')
         self._using_source = None
         self._using_destination = None
         self._producer = None
