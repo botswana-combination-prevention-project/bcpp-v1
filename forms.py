@@ -1,6 +1,7 @@
 from django import forms
+from bhp_sync.models import Producer
 
 
 class DispatchForm(forms.Form):
-    producer = forms.CharField(max_length=100)
-    dispatch_items = forms.Textarea()
+    producer = forms.ModelChoiceField(queryset=Producer.objects.all().order_by('name'))
+    dispatch_items = forms.MultipleChoiceField()
