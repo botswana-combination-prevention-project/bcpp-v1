@@ -6,7 +6,7 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from bhp_sync.models import Producer
-from bhp_dispatch.classes import DispatchHelper
+from bhp_dispatch.classes import DispatchController
 
 
 @login_required
@@ -26,10 +26,10 @@ def return_items(request, **kwargs):
                     'Returning dispatched items from device {0}.'.format(producer.name)
                     )
 
-            dispatch_helper = DispatchHelper(True, producer)
+            dispatch_controller = DispatchController(True, producer)
             # Check that we have have households checked for this device
-            if dispatch_helper.hbc_dispatches_exists():
-                dispatched_items = dispatch_helper.get_dispatch_list()
+            if dispatch_controller.hbc_dispatches_exists():
+                dispatched_items = dispatch_controller.get_dispatch_list()
                 messages.add_message(
                         request,
                         messages.INFO,
@@ -38,7 +38,7 @@ def return_items(request, **kwargs):
 
                 for dispatch in dispatched_items:
                     #Update checkout and hbc dispatch items
-                    dispatch_helper.dispatch(dispatch)
+                    dispatch_controller.dispatch(dispatch)
 
                     for household_identifier in dispatch.checkout_items.split():
                         messages.add_message(

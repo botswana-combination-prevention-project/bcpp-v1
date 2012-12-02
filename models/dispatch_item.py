@@ -5,7 +5,7 @@ from dispatch import Dispatch
 
 class DispatchItem(BaseDispatch):
 
-    dispatch = models.ForeignKey(Dispatch, null=True)
+    dispatch = models.ForeignKey(Dispatch)
     item_identifier = models.CharField(
         verbose_name='Item Identifier',
         max_length=25,
