@@ -17,7 +17,7 @@ nullhandler = logger.addHandler(NullHandler())
 class BaseDispatch(Base):
 
     def __init__(self, using_source, using_destination, site_code=None, **kwargs):
-        super(BaseDispatch, self).__init(using_source, using_destination, **kwargs)
+        super(BaseDispatch, self).__init__(using_source, using_destination, **kwargs)
         self.debug = kwargs.get('debug', False)
 
     def set_dispatch_list(self, producer=None):

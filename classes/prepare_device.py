@@ -24,7 +24,7 @@ class PrepareDevice(BasePrepareDevice):
         Keywords:
             exception: exception class to use, e.g. CommandError if this is run as a management command. Default(TypeError)
         """
-        super(PrepareDevice, self).__init(using_source, using_destination, **kwargs)
+        super(PrepareDevice, self).__init__(using_source, using_destination, **kwargs)
         self.started = None
         self.start_time = None
         self.end_time = None
