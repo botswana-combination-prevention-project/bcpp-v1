@@ -10,7 +10,7 @@
 {% endblock %}
 
 
-{% block before_messages %}
+{% block content %}
 
 select a producer
 <form action="/contact/" method="post">
@@ -30,18 +30,7 @@ select a producer
     {% endfor %}
 </table>
 
-{% endblock before_messages %}
-
-
-{% if messages %}
-    <table>
-        {% for message in messages %}
-            <tr><td>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</td></tr>
-        {% endfor %}
-    </table>
-{% endif %}
-
-{{ error_response }}
+{% endblock %}
 
 
 {% block section_buttons %}{% endblock section_buttons %}
