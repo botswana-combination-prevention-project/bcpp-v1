@@ -36,3 +36,15 @@ class ConvertLisAttr(object):
                     getattr(panel, field.name).add(aliquot_type)
         panel.save()
         return panel, created
+
+    def aliquot_type(self, lis_aliquot_type):
+        """ Converts a aliquot_type instance from lab_test_code to an instance from lab_clinic_api.
+
+        If lab_clinic_api instance does not exist it will be created."""
+
+        aliquot_type, created = AliquotType.objects.get_or_create(name=lis_aliquot_type.name)
+        for fld in aliquot_type._meta.fields:
+            if fld.name in [fl.name for fl in lis_aliquot_type._meta.fields if fl.name not in ['id', 'name']]:
+                setattr(aliquot_type, fld.name, getattr(lis_aliquot_type, fld.name))
+        aliquot_type.save()
+        return aliquot_type, created
