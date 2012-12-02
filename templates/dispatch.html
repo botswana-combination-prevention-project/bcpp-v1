@@ -22,6 +22,7 @@
         <input type="submit" value="Dispatch" />
         <input type="hidden" name="ct" value="{{ ct }}">
         <input type="hidden" name="items" value="{{ items }}">
+        {% csrf_token %}
     </div>
 </form>
 
