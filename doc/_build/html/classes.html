@@ -156,7 +156,7 @@ using: <cite>using</cite> parameter for the destination device.</dd>
 <dl class="method">
 <dt id="bhp_dispatch.classes.BaseDispatchController.return_all">
 <tt class="descname">return_all</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BaseDispatchController.return_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates all the dispatches and dispatch items as checked back in.</p>
+<dd><p>Returns all Dispatched by flagging <tt class="xref py py-attr docutils literal"><span class="pre">is_dispatched</span></tt> = False.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This will be called after all the transactions for the producer have been consumed
@@ -225,6 +225,52 @@ has been sent to server; hence, we mark all the dispatch items as checked in</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="preparation">
+<h2>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bhp_dispatch.classes.PrepareDevice">
+<em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">PrepareDevice</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.PrepareDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.classes.base_prepare_device.BasePrepareDevice</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_dispatch.classes.BasePrepareDevice">
+<em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">BasePrepareDevice</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.classes.base.Base</span></tt></p>
+<dl class="method">
+<dt id="bhp_dispatch.classes.BasePrepareDevice.dispatch_as_json">
+<tt class="descname">dispatch_as_json</tt><big>(</big><em>models</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.dispatch_as_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes and saves all instances of each model from source to destination.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>models: may be a tuple of (app_name, model_name) or list of model classes.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.BasePrepareDevice.get_last_modified_options">
+<tt class="descname">get_last_modified_options</tt><big>(</big><em>model_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.get_last_modified_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of {&#8216;hostname_modified&#8217;: &#8216;&lt;hostname&gt;&#8217;, &#8216;modified__max&#8217;: &lt;date&gt;, ... }.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.BasePrepareDevice.get_recent">
+<tt class="descname">get_recent</tt><big>(</big><em>model_cls</em>, <em>destination_hostname=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.get_recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a queryset of the most recent instances from the model for all but the current host.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.BasePrepareDevice.resize_content_type">
+<tt class="descname">resize_content_type</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.resize_content_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resizes the destination content type table to have the same max id.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="base">
+<h2>Base<a class="headerlink" href="#base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="bhp_dispatch.classes.Base">
 <em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">Base</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base" title="Permalink to this definition">¶</a></dt>
@@ -236,9 +282,28 @@ has been sent to server; hence, we mark all the dispatch items as checked in</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="bhp_dispatch.classes.Base.get_using_destination">
+<tt class="descname">get_using_destination</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.get_using_destination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the ORM <cite>using</cite> parameter for &#8220;destination&#8221;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.Base.get_using_source">
+<tt class="descname">get_using_source</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.get_using_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the ORM <cite>using</cite> parameter for &#8220;source&#8221;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.Base.is_valid_using">
+<tt class="descname">is_valid_using</tt><big>(</big><em>using</em>, <em>label</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.is_valid_using" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms an ORM <cite>using</cite> parameter is valid by checking <tt class="file docutils literal"><span class="pre">settings.py</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_dispatch.classes.Base.set_producer">
 <tt class="descname">set_producer</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.set_producer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the instance of the current producer and updates the list checked-out Dispatch models.</p>
+<dd><p>Sets the instance of the current producer based on the ORM <cite>using</cite> parameter for the destination
+and refreshes the list of dispatched Dispatch models.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The producer must always exist on the source. If dispatching via the device, try to
@@ -247,47 +312,16 @@ where DBNAME is the NAME attribute of the <tt class="docutils literal"><span cla
 </div>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="preparation">
-<h2>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="bhp_dispatch.classes.PrepareDevice">
-<em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">PrepareDevice</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.PrepareDevice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.classes.base.Base</span></tt></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="bhp_dispatch.classes.EdcDevicePrep">
-<em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">EdcDevicePrep</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.EdcDevicePrep" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.classes.base.Base</span></tt></p>
 <dl class="method">
-<dt id="bhp_dispatch.classes.EdcDevicePrep.dispatch_as_json">
-<tt class="descname">dispatch_as_json</tt><big>(</big><em>models</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.EdcDevicePrep.dispatch_as_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Serializes and saves all instances of each model from source to destination.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>models: may be a tuple of (app_name, model_name) or list of model classes.</dd>
-</dl>
+<dt id="bhp_dispatch.classes.Base.set_using_destination">
+<tt class="descname">set_using_destination</tt><big>(</big><em>using_destination=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.set_using_destination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the ORM <cite>using</cite> parameter for data access on the &#8220;destination&#8221;.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_dispatch.classes.EdcDevicePrep.get_last_modified_options">
-<tt class="descname">get_last_modified_options</tt><big>(</big><em>model_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.EdcDevicePrep.get_last_modified_options" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a dictionary of {&#8216;hostname_modified&#8217;: &#8216;&lt;hostname&gt;&#8217;, &#8216;modified__max&#8217;: &lt;date&gt;, ... }.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="bhp_dispatch.classes.EdcDevicePrep.get_recent">
-<tt class="descname">get_recent</tt><big>(</big><em>model_cls</em>, <em>destination_hostname=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.EdcDevicePrep.get_recent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a queryset of the most recent instances from the model for all but the current host.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="bhp_dispatch.classes.EdcDevicePrep.resize_content_type">
-<tt class="descname">resize_content_type</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.EdcDevicePrep.resize_content_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resizes the destination content type table to have the same max id.</p>
+<dt id="bhp_dispatch.classes.Base.set_using_source">
+<tt class="descname">set_using_source</tt><big>(</big><em>using_source=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.set_using_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the ORM <cite>using</cite> parameter for data access on the &#8220;source&#8221;.</p>
 </dd></dl>
 
 </dd></dl>
@@ -306,6 +340,7 @@ where DBNAME is the NAME attribute of the <tt class="docutils literal"><span cla
 <li><a class="reference internal" href="#">Classes</a><ul>
 <li><a class="reference internal" href="#module-bhp_dispatch.classes">Dispatch</a></li>
 <li><a class="reference internal" href="#preparation">Preparation</a></li>
+<li><a class="reference internal" href="#base">Base</a></li>
 </ul>
 </li>
 </ul>

@@ -25,8 +25,7 @@ class BaseDispatch(Base):
         Dispatch = get_model('bhp_dispatch', 'Dispatch')
         self._dispatch_list = Dispatch.objects.using(self.get_using_source()).filter(
             producer=producer,
-            is_checked_out=True,
-            is_checked_in=False)
+            is_dispatched=True)
 
     def get_dispatch_list(self):
         """Returns the list of checked-out Dispatch model instances."""
@@ -105,23 +104,23 @@ class BaseDispatch(Base):
                         scheduled_models.append(model_cls)
         return scheduled_models
 
-    def update_lists(self):
-        """Updates all list models on the destination with data from the source.
-        """
-        #Make sure we have a target producer to export lists to
-        if not self.get_producer():
-            raise ValueError("PLEASE specify the producer you want checkout models to!")
-        list_models = []
-        for model in get_models():
-            if issubclass(model, BaseListModel):
-                list_models.append(model)
-        for list_model in list_models:
-            logger.info(list_model._meta.object_name)
-            json = serializers.serialize(
-                'json',
-                list_model.objects.using(self.get_using_source()).all().order_by('name'),
-                use_natural_keys=True
-                )
-
-            for obj in serializers.deserialize("json", json):
-                obj.save(using=self.get_using_destination())
+#    def update_lists(self):
+#        """Updates all list models on the destination with data from the source.
+#        """
+#        #Make sure we have a target producer to export lists to
+#        if not self.get_producer():
+#            raise ValueError("PLEASE specify the producer you want checkout models to!")
+#        list_models = []
+#        for model in get_models():
+#            if issubclass(model, BaseListModel):
+#                list_models.append(model)
+#        for list_model in list_models:
+#            logger.info(list_model._meta.object_name)
+#            json = serializers.serialize(
+#                'json',
+#                list_model.objects.using(self.get_using_source()).all().order_by('name'),
+#                use_natural_keys=True
+#                )
+#
+#            for obj in serializers.deserialize("json", json):
+#                obj.save(using=self.get_using_destination())

@@ -19,11 +19,7 @@ Dispatch
 .. autoclass:: BaseDispatch
   :members:
   :show-inheritance:
-  
 
-.. autoclass:: Base
-  :members:
-  :show-inheritance:
 
 Preparation
 +++++++++++
@@ -33,6 +29,13 @@ Preparation
   :show-inheritance:
 
 
-.. autoclass:: EdcDevicePrep
+.. autoclass:: BasePrepareDevice
+  :members:
+  :show-inheritance:
+  
+Base
+++++
+
+.. autoclass:: Base
   :members:
   :show-inheritance:

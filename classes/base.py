@@ -7,6 +7,7 @@ from django.db.models import get_model
 class Base(object):
 
     def __init__(self, using_source, using_destination, **kwargs):
+        """Expects to find settings.py attributes ALLOW_DISPATCH and DISPATCH_MODEL."""
         if not 'ALLOW_DISPATCH' in dir(settings):
             raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
         if not 'DISPATCH_MODEL' in dir(settings):
@@ -22,6 +23,7 @@ class Base(object):
         self.set_producer()
 
     def set_using_source(self, using_source=None):
+        """Sets the ORM `using` parameter for data access on the "source"."""
         if not using_source:
             raise self.exception('Parameters \'using_source\' cannot be None')
         if using_source not in ['server', 'default']:
@@ -32,11 +34,13 @@ class Base(object):
             self._using_source = using_source
 
     def get_using_source(self):
+        """Gets the ORM `using` parameter for "source"."""
         if not self._using_source:
             self.set_using_source()
         return self._using_source
 
     def set_using_destination(self, using_destination=None):
+        """Sets the ORM `using` parameter for data access on the "destination"."""
         if not using_destination:
             raise self.exception('Parameters \'using_destination\' cannot be None')
         if using_destination == 'server':
@@ -51,17 +55,20 @@ class Base(object):
 #                raise self.exception("Destination {0} does not match any database settings keys of the active producers".format(using_destination))
 
     def get_using_destination(self):
+        """Gets the ORM `using` parameter for "destination"."""
         if not self._using_destination:
             self.set_using_destination()
         return self._using_destination
 
     def is_valid_using(self, using, label):
+        """Confirms an ORM `using` parameter is valid by checking :file:`settings.py`."""
         if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == using]:
             raise ImproperlyConfigured('Expected settings attribute DATABASES to have a NAME key to the \'{1}\'. Got \'{0}\'.'.format(using, label))
         return True
 
     def set_producer(self):
-        """Sets the instance of the current producer and updates the list checked-out Dispatch models.
+        """Sets the instance of the current producer based on the ORM `using` parameter for the destination
+        and refreshes the list of dispatched Dispatch models.
 
         .. note:: The producer must always exist on the source. If dispatching via the device, try to
                   find a producer with the settings_key of the format ``DEVICE_HOSTNAME-DBNAME``

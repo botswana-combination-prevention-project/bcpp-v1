@@ -23,7 +23,7 @@ class BaseDispatchController(BaseDispatch):
         self._dispatch_list = []
 
     def return_all(self):
-        """Updates all the dispatches and dispatch items as checked back in.
+        """Returns all Dispatched by flagging :attr:`is_dispatched` = False.
 
         .. note::
            This will be called after all the transactions for the producer have been consumed
