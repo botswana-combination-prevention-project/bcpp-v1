@@ -1,0 +1,48 @@
+{% extends "section.html"%}
+
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; <a href="/bhp_dispatch/admin/">Dispatch</A>
+    </div>
+    
+{% endblock %}
+
+
+{% block before_messages %}
+
+select a producer
+<form action="/contact/" method="post">
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.producer.errors }}
+        <label for="id_producer">Producer:</label>
+        {{ form.producer }}
+    </div>
+    <p><input type="submit" value="Dispatch" /></p>
+</form>
+
+<table>
+<tr><TD><H4>Dispatch</H4></TD></TR>
+    {% for qs in queryset %}
+        <tr><TD>{{ qs }}</TD></TR>
+    {% endfor %}
+</table>
+
+{% endblock before_messages %}
+
+
+{% if messages %}
+    <table>
+        {% for message in messages %}
+            <tr><td>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</td></tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+{{ error_response }}
+
+
+{% block section_buttons %}{% endblock section_buttons %}
+{% block section_title %}{% endblock section_title %}
