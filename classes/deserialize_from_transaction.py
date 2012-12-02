@@ -13,16 +13,6 @@ class DeserializeFromTransaction(object):
     def __init__(self, *args, **kwargs):
         super(DeserializeFromTransaction, self).__init__(*args, **kwargs)
 
-    def deserialize_from_signal(self, sender, incoming_transaction, **kwargs):
-        """ decrypt and deserialize the incoming json object"""
-        allow = True
-        Dispatch = get_model('bhp_dispatch', 'HbcDispatch')
-        if Dispatch:
-            if not Dispatch.objects.filter(producer=incoming_transaction.producer):
-                allow = False
-        if allow:
-            self.deserialize(incoming_transaction)
-
     def deserialize(self, incoming_transaction):
 
         for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)):
