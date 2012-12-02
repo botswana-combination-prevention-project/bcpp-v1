@@ -8,14 +8,14 @@ class Base(object):
 
     def __init__(self, using_source, using_destination, **kwargs):
         """Expects to find settings.py attributes ALLOW_DISPATCH and DISPATCH_MODEL."""
-        if not 'ALLOW_DISPATCH' in dir(settings):
-            raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
-        if not 'DISPATCH_MODEL' in dir(settings):
-            raise self.exception('Settings attribute \'DISPATCH_MODEL\' not found where DISPATCH_MODEL=(app_label, model_name). Please add to your settings.py.')
         self._using_source = None
         self._using_destination = None
         self._producer = None
         self.exception = kwargs.get('exception', TypeError)
+        if not 'ALLOW_DISPATCH' in dir(settings):
+            raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
+        if not 'DISPATCH_MODEL' in dir(settings):
+            raise self.exception('Settings attribute \'DISPATCH_MODEL\' not found where DISPATCH_MODEL=(app_label, model_name). Please add to your settings.py.')
         if using_source == using_destination:
             raise self.exception('Arguments \'<source>\' and \'<destination\'> cannot be the same.')
         self.set_using_source(using_source)
