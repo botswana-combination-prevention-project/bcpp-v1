@@ -20,8 +20,8 @@ class AlreadyDispatched(Exception):
 
 class DispatchController(BaseDispatchController):
 
-    def __init__(self, using_source, producer=None, site_code=None, **kwargs):
-        super(DispatchController, self).__init__(using_source, producer, site_code, **kwargs)
+    def __init__(self, using_source, using_destination, **kwargs):
+        super(DispatchController, self).__init__(using_source, using_destination, **kwargs)
         self._visit_models = {}
 
     def set_visit_model_fkey(self, model_cls, visit_model_cls):

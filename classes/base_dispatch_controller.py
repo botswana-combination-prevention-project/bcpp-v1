@@ -18,8 +18,8 @@ nullhandler = logger.addHandler(NullHandler())
 
 class BaseDispatchController(BaseDispatch):
 
-    def __init__(self, using_source, producer=None, site_code=None, **kwargs):
-        super(BaseDispatchController, self).__init__(using_source, producer, site_code, **kwargs)
+    def __init__(self, using_source, using_destination, **kwargs):
+        super(BaseDispatchController, self).__init__(using_source, using_destination, **kwargs)
         self._dispatch_list = []
 
     def return_all(self):

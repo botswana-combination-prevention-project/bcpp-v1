@@ -17,7 +17,7 @@ class Base(object):
         #if not 'DISPATCH_MODEL' in dir(settings):
         #    raise self.exception('Settings attribute \'DISPATCH_MODEL\' not found where DISPATCH_MODEL=(app_label, model_name). Please add to your settings.py.')
         if using_source == using_destination:
-            raise self.exception('Arguments \'<source>\' and \'<destination\'> cannot be the same.')
+            raise self.exception('Arguments \'<source>\' and \'<destination\'> cannot be the same. Got \'{0}\' and \'{1}\''.format(using_source, using_destination))
         self.set_using_source(using_source)
         self.set_using_destination(using_destination)
         self.set_producer()
