@@ -1,4 +1,4 @@
-from lab_clinic_api.models import TestCode, TestCodeGroup, Panel
+from lab_clinic_api.models import TestCode, TestCodeGroup, Panel, AliquotType
 
 
 class ConvertLisAttr(object):
@@ -24,9 +24,15 @@ class ConvertLisAttr(object):
             if field.name in [fld.name for fld in lis_panel._meta.fields if fld.name not in ['id', 'test_code']]:
                 setattr(panel, field.name, getattr(lis_panel, field.name))
         for field in panel._meta.many_to_many:
-            getattr(panel, field.name).clear()
-            for lis_test_code in getattr(lis_panel, field.name).all():
-                test_code, x = self.test_code(lis_test_code)
-                getattr(panel, field.name).add(test_code)
+            if issubclass(field.rel.to, TestCode):
+                getattr(panel, field.name).clear()
+                for lis_code in getattr(lis_panel, field.name).all():
+                    test_code, x = self.test_code(lis_code)
+                    getattr(panel, field.name).add(test_code)
+            if issubclass(field.rel.to, AliquotType):
+                getattr(panel, field.name).clear()
+                for lis_code in getattr(lis_panel, field.name).all():
+                    aliquot_type, x = self.aliquot_type(lis_code)
+                    getattr(panel, field.name).add(aliquot_type)
         panel.save()
         return panel, created
