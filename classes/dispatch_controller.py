@@ -148,7 +148,7 @@ class DispatchController(BaseDispatchController):
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then tries to dispatch each one."""
-        dispatch_datetime = datetime.today()  # use same timestamp for all items
+        #dispatch_datetime = datetime.today()  # use same timestamp for all items
         any_dispatched = False  # are any items dispatched already?
         for qs in queryset:
             item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
@@ -159,7 +159,7 @@ class DispatchController(BaseDispatchController):
             for qs in queryset:
                 item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
                 self.dispatch(item_identifier)
-                qs.dispatch_datetime = dispatch_datetime
-                qs.is_dispatched = True
-                qs.save()
+                #qs.dispatch_datetime = dispatch_datetime
+                #qs.is_dispatched = True
+                #qs.save()
         return any_dispatched
