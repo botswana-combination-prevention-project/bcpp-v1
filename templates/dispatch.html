@@ -19,15 +19,14 @@
     {% endfor %}
 </table>
 
-<form action="/contact/" method="post">
+<form action="/dispatch/" method="post">
     {{ form.non_field_errors }}
     <div class="fieldWrapper">
         {{ form.producer.errors }}
-        <label for="id_producer">Producer:</label>
-        {{ form.producer }}
+        <label for="id_producer">Producer:</label> {{ form.producer }}
         <input type="submit" value="Dispatch" />
-        <input type="hidden" name="ct" value="{{ ct }}">
-        <input type="hidden" name="items" value="{{ items }}">
+        <input type="hidden" name="ct" id="ct"  value="{{ ct }}">
+        <input type="hidden" name="items" id="items" value="{{ items }}">
         {% csrf_token %}
     </div>
 </form>
