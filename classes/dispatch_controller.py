@@ -100,11 +100,13 @@ class DispatchController(BaseDispatchController):
             self.dispatch_as_json(instances, self.get_producer())
 
     def dispatch_prep(self, item_identifier):
-        """Returns a dispatch item instance after dispatching.
+        """Returns a registered_subject instance (or None) after processing.
 
         This is the main data query for dispatching and is to be overriden by the user
         to access local app models."""
-        return None
+        registered_subject = None
+        options = {}  # extra options for database query
+        return registered_subject, options
 
     def dispatch(self, item_identifier):
         """Dispatches items to a device calling the user overridden :func:`dispatch_prep`."""
@@ -114,7 +116,9 @@ class DispatchController(BaseDispatchController):
         # is this item already dispatched?
         created, dispatch_item = None, None
         if not self.is_dispatched(item_identifier):
-            self.dispatch_prep(item_identifier)
+            registered_subject, options = self.dispatch_prep(item_identifier)
+            if registered_subject:
+                self.dispatch_membership_forms(registered_subject, **options)
             created, dispatch_item = self.create_dispatch_item_instance(item_identifier)
         return dispatch_item
 
