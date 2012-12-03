@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-#from django.contrib import messages
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import BaseDispatchController

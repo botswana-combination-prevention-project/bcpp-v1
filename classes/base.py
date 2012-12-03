@@ -7,10 +7,23 @@ from django.db.models import get_model
 class Base(object):
 
     def __init__(self, using_source, using_destination, **kwargs):
-        """Expects to find settings.py attributes ALLOW_DISPATCH and DISPATCH_MODEL."""
+        """Expects to find settings.py attributes ALLOW_DISPATCH and DISPATCH_MODEL.
+
+        Args:
+            using_source: settings.DATABASE key for source. Source is the server so must
+                          be 'default' if running on the server and 'server'
+                          if running on the device.
+            using_destination: settings.DATABASE key for source. If running from the server
+                               this key must exist in settings.DATABASES and as a valid
+                               producer.settings_key. If on the device, must be 'default'.
+
+        Keywords:
+            server_device_id: settings.DEVICE_ID for server (default=99)
+            """
         self._using_source = None
         self._using_destination = None
         self._producer = None
+        self.server_device_id = kwargs.get('server_device_id', 99)
         self.exception = kwargs.get('exception', TypeError)
         #if not 'ALLOW_DISPATCH' in dir(settings):
         #    raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
@@ -28,8 +41,10 @@ class Base(object):
             raise self.exception('Parameters \'using_source\' cannot be None')
         if using_source not in ['server', 'default']:
             raise self.exception('Argument \'<using_source\'> must be either \'default\' (if run from server) or \'server\' if not run from server.')
-        if settings.DEVICE_ID == '99' and using_source != 'default':
-            raise self.exception('Argument \'<using_source\'> must be \'default\' if running on the server (settings.DEVICE=99).')
+        if settings.DEVICE_ID == self.server_device_id and using_source != 'default':
+            raise self.exception('Argument \'<using_source\'> must be \'default\' if running on the server (check settings.DEVICE).')
+        if settings.DEVICE_ID != self.server_device_id and using_source != 'server':
+            raise self.exception('Argument \'<using_source\'> must be \'server\' if running a device (check settings.DEVICE).')
         if self.is_valid_using(using_source, 'source'):
             self._using_source = using_source
 
