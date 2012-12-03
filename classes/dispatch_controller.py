@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from django.contrib import messages
+#from django.contrib import messages
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import BaseDispatchController
@@ -131,10 +131,6 @@ class DispatchController(BaseDispatchController):
                 item_identifier=item_identifier,
                 is_dispatched=True).exists():
             return True
-            #dispatch_item = DispatchItem.objects.using(self.get_using_source()).get(
-            #    item_identifier=item_identifier,
-            #    is_dispatched=True)
-            #raise AlreadyDispatched('Item {0} is already dispatched to producer {1}.'.format(item_identifier, dispatch_item.producer))
         return False
 
     def create_dispatch_item_instance(self, item_identifier):
@@ -153,7 +149,7 @@ class DispatchController(BaseDispatchController):
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then tries to dispatch each one."""
         dispatch_datetime = datetime.today()  # use same timestamp for all items
-        any_dispatched = False  # are any items dispathed already?
+        any_dispatched = False  # are any items dispatched already?
         for qs in queryset:
             item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
             if self.is_dispatched(item_identifier):
@@ -167,38 +163,3 @@ class DispatchController(BaseDispatchController):
                 qs.is_dispatched = True
                 qs.save()
         return any_dispatched
-
-    def dispatch_action(self, modeladmin, request, queryset, **kwargs):
-        """ModelAdmin action method to dispatch all selected items to specified producer.
-
-        Acts on the Algorithm::
-
-            for each Dispatch instance:
-                get a list of household identifiers
-                    foreach household identifier
-                        create a DispatchItem
-                        set the item as Dispatch
-                        set the checkout time to now
-                        invoke controller.checkout (...) checkout the data to the netbook
-                update Dispatch instance as checked out
-        """
-        for qs in queryset:
-            # Make sure the dispatch instance is not already dispatched
-            if qs.is_dispatched():
-                modeladmin.message_user(request, 'Producer {0} has pending dispatched items. '
-                                                 'Return these items first. Cannot '
-                                                 'continue.'.format(qs.producer.name), level=messages.ERROR)
-                break
-            else:
-                # item identifiers are separated by new lines, so explode them on "\n"
-                item_identifiers = qs.dispatch_items.split()
-                for item_identifier in item_identifiers:
-                    # dispatch items to this producer
-                    # TODO: this should be the destination and not producer instance??
-                    self.dispatch(item_identifier)
-                    modeladmin.message_user(
-                        request, 'Dispatch {0} to {1}.'.format(item_identifier, qs.producer.name))
-                qs.dispatch_datetime = datetime.today()
-                qs.is_dispatched = True
-                qs.save()
-                modeladmin.message_user(request, 'The selected items were successfully dispatched to \'{0}\'.'.format(qs.producer.name))
