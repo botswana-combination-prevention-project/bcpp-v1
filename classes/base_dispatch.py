@@ -50,7 +50,7 @@ class BaseDispatch(Base):
         if not model_cls:
             raise TypeError('Parameter model_cls cannot be None.')
         for field in model_cls._meta.fields:
-            if isinstance(field, ForeignKey, OneToOneField):
+            if isinstance(field, (ForeignKey, OneToOneField)):
                 field_cls = field.rel.to
                 if issubclass(field_cls, BaseVisitTracking):
                     # does this dict ever have more than one entry??
