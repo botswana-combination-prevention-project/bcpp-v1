@@ -19,7 +19,7 @@ class Base(object):
                                source :class:`Producer` model as producer.settings_key (see :func:`set_producer`.)
 
         Keywords:
-            ``server_device_id``: settings.DEVICE_ID for server (default=99)
+            ``server_device_id``: settings.DEVICE_ID for server (default='99')
             """
         self._using_source = None
         self._using_destination = None

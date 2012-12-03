@@ -163,3 +163,10 @@ class DispatchController(BaseDispatchController):
                 #qs.is_dispatched = True
                 #qs.save()
         return any_dispatched
+
+#    def dispatch_on_save(self, dispatch, **kwargs):
+#        """Passes queryset to dispatch_from_view."""
+#        lst = dispatch.dispatch_items.split()
+#        queryset = self.dispatch_model.objects.filter(**{'{0}__in'.format(self.dispatch_model_item_identifier_field): lst})
+#        any_dispatched = self.dispatch_from_view(self, queryset, **kwargs)
+#        return any_dispatched
