@@ -119,11 +119,5 @@ class BaseVisitTracking (BaseUuidModel):
         return self.appointment.natural_key()
     natural_key.dependencies = ['bhp_appointment.appointment', ]
 
-    def save(self, *args, **kwargs):
-
-        # TODO: BaseAppointmentTracking.save() is the correct place to recalculate ScheduledEntryBucket?? no
-
-        return super(BaseVisitTracking, self).save(*args, **kwargs)
-
     class Meta:
         abstract = True
