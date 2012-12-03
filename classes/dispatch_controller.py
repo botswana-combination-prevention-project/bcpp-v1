@@ -115,9 +115,10 @@ class DispatchController(BaseDispatchController):
         # is this item already dispatched?
         created, dispatch_item = None, None
         if not self.is_dispatched(item_identifier):
-            registered_subject, options = self.dispatch_prep(item_identifier)
-            if registered_subject:
-                self.dispatch_membership_forms(registered_subject, **options)
+            registered_subjects, options = self.dispatch_prep(item_identifier)
+            if registered_subjects:
+                for registered_subject in registered_subjects:
+                    self.dispatch_membership_forms(registered_subject, **options)
             created, dispatch_item = self.create_dispatch_item_instance(item_identifier)
         return dispatch_item
 

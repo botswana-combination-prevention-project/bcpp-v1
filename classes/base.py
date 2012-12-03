@@ -44,7 +44,7 @@ class Base(object):
             raise self.exception('Argument \'<using_source\'> must be either \'default\' (if run from server) or \'server\' if not run from server.')
         if settings.DEVICE_ID == self.server_device_id and using_source != 'default':
             raise self.exception('Argument \'<using_source\'> must be \'default\' if running on the server (check settings.DEVICE).')
-        if settings.DEVICE_ID != self.server_device_id and using_source != 'server':
+        if settings.DEVICE_ID != self.server_device_id and using_source == 'default':
             raise self.exception('Argument \'<using_source\'> must be \'server\' if running a device (check settings.DEVICE).')
         if self.is_valid_using(using_source, 'source'):
             self._using_source = using_source

@@ -12,7 +12,7 @@ class DispatchAdmin(BaseModelAdmin):
     ordering = ['-created', ]
     list_display = (
         'producer',
-        'dispatch_items',
+        'to_items',
         'created',
         'is_dispatched',
         'dispatch_datetime',
@@ -25,6 +25,7 @@ class DispatchAdmin(BaseModelAdmin):
         'dispatch_datetime',
         'return_datetime'
         )
+    search_fields = ('pk', )
     inlines = [DispatchItemInline, ]
 admin.site.register(Dispatch, DispatchAdmin)
 
@@ -48,4 +49,6 @@ class DispatchItemAdmin(BaseModelAdmin):
         'dispatch_datetime',
         'return_datetime'
         )
+    search_fields = ('dispatch__pk', )
+
 admin.site.register(DispatchItem, DispatchItemAdmin)

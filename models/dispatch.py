@@ -24,5 +24,12 @@ class Dispatch(BaseDispatch):
     def __unicode__(self):
         return "{0} @ {1}".format(self.producer.name, self.created)
 
+    def to_items(self):
+        DispatchItem = models.get_model('bhp_dispatch', 'DispatchItem')
+        if DispatchItem.objects.filter(dispatch__pk=self.pk):
+            return '<a href="/admin/bhp_dispatch/dispatchitem/?q={pk}">items</a>'.format(pk=self.pk)
+        return None
+    to_items.allow_tags = True
+
     class Meta:
         app_label = "bhp_dispatch"
