@@ -63,7 +63,7 @@ class BaseDispatch(Base):
             key: either 'name' or 'cls'. If specified, only returns the item in the tuple instead of the whole tuple.
         """
         if not self._visit_models:
-            self.set_visit_models(app_name, model_cls)
+            self.set_visit_model_cls(app_name, model_cls)
         # check for kwarg 'key' and set key to 0 or 1 (or None if not found)
         key = {'name': 0, 'cls': 1}.get(kwargs.get('key', None), None)
         if not self.visit_models.get(app_name):
