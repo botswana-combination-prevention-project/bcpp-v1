@@ -15,10 +15,10 @@
 <table>
 <tr><TD><H4>Items selected for dispatch</H4></TD></TR>
     {% for qs in queryset %}
-        <tr><TD>{{ qs }}</TD></TR>
+        <tr><TD>{{ qs }}</TD><td>{% if qs.is_dispatched %}dispatched{% endif %}</td></TR>
     {% endfor %}
 </table>
-
+<font color='red'><B>{{ msg }}</B></font>
 <form action="/dispatch/" method="post">
     {{ form.non_field_errors }}
     <div class="fieldWrapper">

@@ -123,15 +123,18 @@ class DispatchController(BaseDispatchController):
         return dispatch_item
 
     def is_dispatched(self, item_identifier):
-        """Checks if a dispatch item is dispatched."""
+        """Checks if a dispatch item is dispatched.
+
+        .. note:: to block saving a dispatched instance, see the signals."""
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         if DispatchItem.objects.using(self.get_using_source()).filter(
                 item_identifier=item_identifier,
                 is_dispatched=True).exists():
-            dispatch_item = DispatchItem.objects.using(self.get_using_source()).get(
-                item_identifier=item_identifier,
-                is_dispatched=True)
-            raise AlreadyDispatched('Item {0} is already dispatched to producer {1}.'.format(item_identifier, dispatch_item.producer))
+            return True
+            #dispatch_item = DispatchItem.objects.using(self.get_using_source()).get(
+            #    item_identifier=item_identifier,
+            #    is_dispatched=True)
+            #raise AlreadyDispatched('Item {0} is already dispatched to producer {1}.'.format(item_identifier, dispatch_item.producer))
         return False
 
     def create_dispatch_item_instance(self, item_identifier):
@@ -163,6 +166,7 @@ class DispatchController(BaseDispatchController):
                 qs.dispatch_datetime = dispatch_datetime
                 qs.is_dispatched = True
                 qs.save()
+        return any_dispatched
 
     def dispatch_action(self, modeladmin, request, queryset, **kwargs):
         """ModelAdmin action method to dispatch all selected items to specified producer.
