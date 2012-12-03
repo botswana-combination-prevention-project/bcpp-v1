@@ -14,15 +14,15 @@ class DispatchAdmin(BaseModelAdmin):
         'dispatch_items',
         'created',
         'is_dispatched',
-        'dispatched_datetime',
-        'returned_datetime'
+        'dispatch_datetime',
+        'return_datetime'
         )
     list_filter = (
         'producer',
         'created',
         'is_dispatched',
-        'dispatched_datetime',
-        'returned_datetime'
+        'dispatch_datetime',
+        'return_datetime'
         )
     inlines = [DispatchItemInline, ]
 admin.site.register(Dispatch, DispatchAdmin)
@@ -36,15 +36,15 @@ class DispatchItemAdmin(BaseModelAdmin):
         'item_identifier',
         'created',
         'is_dispatched',
-        'dispatched_datetime',
-        'returned_datetime'
+        'dispatch_datetime',
+        'return_datetime'
         )
     list_filter = (
         'producer',
         'item_identifier',
         'created',
         'is_dispatched',
-        'dispatched_datetime',
-        'returned_datetime'
+        'dispatch_datetime',
+        'return_datetime'
         )
 admin.site.register(DispatchItem, DispatchItemAdmin)
