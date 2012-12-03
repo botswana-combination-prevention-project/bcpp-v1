@@ -82,7 +82,7 @@ class BaseDispatch(Base):
             raise TypeError('Parameter app_name cannot be None.')
         app = get_app(app_name)
         for model_cls in get_models(app):
-            visit_field_name = self._get_visit_model_cls(app_name, model_cls, key='name')
+            visit_field_name = self.get_visit_model_cls(app_name, model_cls, key='name')
             if getattr(model_cls, visit_field_name, None):
                 for field in model_cls._meta.fields:
                     if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):
@@ -97,7 +97,7 @@ class BaseDispatch(Base):
         app = get_app(app_name)
         scheduled_models = []
         for model_cls in get_models(app):
-            field_name, visit_model_cls = self._get_visit_model_cls(app_name, model_cls)
+            field_name, visit_model_cls = self.get_visit_model_cls(app_name, model_cls)
             if visit_model_cls:
                 if getattr(model_cls, field_name, None):
                     if not model_cls._meta.object_name.endswith('Audit'):
