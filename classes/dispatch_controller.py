@@ -74,7 +74,7 @@ class DispatchController(BaseDispatchController):
             # fetch all scheduled_models for the visits and export
             for model_cls in scheduled_models:
                 if not visit_fld_name:
-                    for fld in model_cls.objects._meta.fields:
+                    for fld in model_cls._meta.fields:
                         if isinstance(fld, (ForeignKey, OneToOneField)):
                             if isinstance(fld.rel.to, visit_model_cls):
                                 visit_fld_name = fld.name
