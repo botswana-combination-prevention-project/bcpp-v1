@@ -77,12 +77,13 @@ class BaseDispatch(Base):
             return tpl
 
     def dispatch_foreign_key_instances(self, app_name):
-        """Finds foreignkey model classes other than the visit model class and exports the instances."""
+        """Finds foreign_key model classes other than the visit model class and exports the instances."""
         list_models = []
         if not app_name:
             raise TypeError('Parameter app_name cannot be None.')
         app = get_app(app_name)
         for model_cls in get_models(app):
+            # TODO: this could be wrong visit_field_name?
             visit_field_name = self.get_visit_model_cls(app_name, model_cls, index='name')
             if getattr(model_cls, visit_field_name, None):
                 for field in model_cls._meta.fields:
