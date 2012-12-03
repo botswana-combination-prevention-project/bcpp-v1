@@ -276,6 +276,33 @@ has been sent to server; hence, we mark all the dispatch items as checked in</p>
 <em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">Base</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="method">
+<dt id="bhp_dispatch.classes.Base.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes and verifies arguments <tt class="docutils literal"><span class="pre">using_source</span></tt> and <tt class="docutils literal"><span class="pre">using_destination</span></tt>.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><tt class="docutils literal"><span class="pre">using_source</span></tt>: settings.DATABASE key for source. Source is the server so must</dt>
+<dd>be &#8216;default&#8217; if running on the server and &#8216;server&#8217;
+if running on the device.</dd>
+<dt><tt class="docutils literal"><span class="pre">using_destination</span></tt>: settings.DATABASE key for destination. If running from the server</dt>
+<dd>this key must exist in settings.DATABASES. If on the device, must be &#8216;default&#8217;.
+In either case, <tt class="docutils literal"><span class="pre">using_destination</span></tt> must be found in the
+source <tt class="xref py py-class docutils literal"><span class="pre">Producer</span></tt> model as producer.settings_key (see <a class="reference internal" href="#bhp_dispatch.classes.Base.set_producer" title="bhp_dispatch.classes.Base.set_producer"><tt class="xref py py-func docutils literal"><span class="pre">set_producer()</span></tt></a>.)</dd>
+</dl>
+</dd>
+<dt>Keywords:</dt>
+<dd><tt class="docutils literal"><span class="pre">server_device_id</span></tt>: settings.DEVICE_ID for server (default=99)</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bhp_dispatch.classes.Base.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#bhp_dispatch.classes.Base.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_dispatch.classes.Base.get_producer">
 <tt class="descname">get_producer</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.get_producer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an instance of the current producer.</p>

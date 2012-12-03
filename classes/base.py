@@ -7,18 +7,19 @@ from django.db.models import get_model
 class Base(object):
 
     def __init__(self, using_source, using_destination, **kwargs):
-        """Expects to find settings.py attributes ALLOW_DISPATCH and DISPATCH_MODEL.
+        """Initializes and verifies arguments ``using_source`` and ``using_destination``.
 
         Args:
-            using_source: settings.DATABASE key for source. Source is the server so must
+            ``using_source``: settings.DATABASE key for source. Source is the server so must
                           be 'default' if running on the server and 'server'
                           if running on the device.
-            using_destination: settings.DATABASE key for source. If running from the server
-                               this key must exist in settings.DATABASES and as a valid
-                               producer.settings_key. If on the device, must be 'default'.
+            ``using_destination``: settings.DATABASE key for destination. If running from the server
+                               this key must exist in settings.DATABASES. If on the device, must be 'default'.
+                               In either case, ``using_destination`` must be found in the
+                               source :class:`Producer` model as producer.settings_key (see :func:`set_producer`.)
 
         Keywords:
-            server_device_id: settings.DEVICE_ID for server (default=99)
+            ``server_device_id``: settings.DEVICE_ID for server (default=99)
             """
         self._using_source = None
         self._using_destination = None
