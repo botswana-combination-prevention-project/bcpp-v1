@@ -3,6 +3,8 @@ from datetime import datetime
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import BaseDispatchController
+from bhp_sync.models import OutgoingTransaction
+
 
 logger = logging.getLogger(__name__)
 
@@ -148,6 +150,10 @@ class DispatchController(BaseDispatchController):
     
     def has_outgoing_transactions(self):
         return False
+
+    def has_outgoing_transactions(self):
+        """Check if destination has pending Outgoing Transactions."""
+        return OutgoingTransaction.objects.using(self.get_using_destination()).filter(is_consumed=False).exists()
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then tries to dispatch each one."""
