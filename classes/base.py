@@ -90,6 +90,7 @@ class Base(object):
                   find a producer with the settings_key of the format ``DEVICE_HOSTNAME-DBNAME``
                   where DBNAME is the NAME attribute of the ``default`` DATABASE on the device."""
         Producer = get_model('bhp_sync', 'Producer')
+        settings_key = None
         # try to determine producer from using_destination
         if self.get_using_destination() == 'default':
             # try to find the producer on the server with hostname + database name
@@ -100,7 +101,8 @@ class Base(object):
             if Producer.objects.using(self.get_using_source()).filter(settings_key=self.get_using_destination()).exists():
                 self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=self.get_using_destination())
         if not self._producer:
-            raise TypeError('Dispatcher cannot find producer with settings key {0} on the source {1}.'.format(self.get_using_destination(), self.get_using_source()))
+            raise TypeError('Dispatcher cannot find producer {2} with settings key {0} '
+                            'on the source {1}.'.format(self.get_using_destination(), self.get_using_source(), settings_key))
         # check the producers DATABASES key exists
         # TODO: what if producer is "me", e.g settings key is 'default'
         if not self.get_using_destination() == 'default':
