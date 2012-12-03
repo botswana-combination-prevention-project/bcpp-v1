@@ -24,7 +24,7 @@ class Base(object):
         self._using_source = None
         self._using_destination = None
         self._producer = None
-        self.server_device_id = kwargs.get('server_device_id', 99)
+        self.server_device_id = kwargs.get('server_device_id', '99')
         self.exception = kwargs.get('exception', TypeError)
         #if not 'ALLOW_DISPATCH' in dir(settings):
         #    raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
@@ -61,8 +61,8 @@ class Base(object):
             raise self.exception('Parameters \'using_destination\' cannot be None')
         if using_destination == 'server':
             raise self.exception('Argument \'<using_destination\'> cannot be \'server\'.')
-        if settings.DEVICE_ID == '99':
-            raise self.exception('Argument \'<using_destination\'> cannot be \'default\' if running on the server (settings.DEVICE=99).')
+        if settings.DEVICE_ID == self.server_device_id and using_destination == 'default':
+            raise self.exception('Argument \'<using_destination\'> cannot be \'default\' if running on the server (check settings.DEVICE).')
         if self.is_valid_using(using_destination, 'destination'):
             self._using_destination = using_destination
 #        if self.get_using_source() == 'default':
