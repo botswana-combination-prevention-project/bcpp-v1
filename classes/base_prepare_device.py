@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User, Group, Permission
 from bhp_base_model.classes import BaseListModel, BaseModel
 from bhp_userprofile.models import UserProfile
-from bhp_content_type_map.models import ContentTypeMap
+from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_sync.classes import TransactionProducer
 from base import Base
 
@@ -43,8 +43,10 @@ class BasePrepareDevice(Base):
             ContentType.objects.using(self.get_using_destination()).create(app_label=str(uuid4()), model=str(uuid4()))
 
     def sync_content_type_map(self):
-        ContentTypeMap.objects.populate()
-        ContentTypeMap.objects.sync()
+        """Runs content_type_map populate and sync on destination."""
+        content_type_map_helper = ContentTypeMapHelper(self.get_using_destination())
+        content_type_map_helper.populate()
+        content_type_map_helper.sync()
 
     def update_api_keys(self, username=None):
         for user in User.objects.using(self.get_using_destination()).all():
@@ -58,7 +60,7 @@ class BasePrepareDevice(Base):
         api_key.key = source_api_key.key
         api_key.save(using=self.get_using_destination())
         print '    updated {0}\'s api key on \'{1}\' to matching key on server.'.format(username, self.get_using_destination())
-        print '    to update additional accounts use EdcDevicePrep.update_api_keys(source, destination, username).'.format(username, self.get_using_destination())
+        print '    to update additional accounts use update_api_keys(source, destination, username).'.format(username, self.get_using_destination())
 
     def update_content_type(self):
         ContentType.objects.using(self.get_using_destination()).all().delete()

@@ -48,68 +48,76 @@ class PrepareDevice(BasePrepareDevice):
     def post_prepare(self):
         return None
 
-    def prepare(self):
+    def prepare(self, **kwargs):
+        """Runs for all common data needed for an EDC installation.
 
-        self.timer()
-        logger.info("Running pre procedures")
-        self.pre_prepare()
-
-        self.timer()
-        logger.info("Updating content_type")
-        self.update_content_type()
-
-        self.timer()
-        logger.info("Updating auth...")
-        self.update_auth()
-
-        self.timer()
-        logger.info("Updating api keys...")
-        self.update_model(('tastypie', 'apikey'), base_model_class=Model)
-
-        self.timer()
-        logger.info("Updating lists...")
-        self.update_list_models()
-
-        self.timer()
-        logger.info("Updating bhp variables...")
-        self.update_app_models('bhp_variables')
-
-        self.timer()
-        logger.info("Updating contenttypemap...")
-        logger.info('    ...resize')
-        self.resize_content_type()
-        logger.info('    ...update')
-        self.update_app_models('bhp_content_type_map')
-        logger.info('    ...pop and sync')
-        self.sync_content_type_map()
-
-        self.timer()
-        logger.info("Updating appointment configuration...")
-        self.update_model(("bhp_appointment", "Configuration"))
-
-        self.timer()
-        logger.info("Updating the Crypt table...")
-        self.update_model(('bhp_crypto', 'crypt'))
-
-        self.timer()
-        logger.info("Updating the visit definitions...")
-        self.update_app_models('bhp_visit')
-
-        self.timer()
-        logger.info("Updating subject identifiers...")
-        self.update_app_models('bhp_identifier')
-
-        self.timer()
-        logger.info("Updating bhp_entry.models.entry...")
-        self.update_model(('bhp_entry', 'entry'))
-
-        self.timer()
-        logger.info("Updating api keys...")
-        self.update_api_keys()
-
-        self.timer()
-        logger.info("Running post procedures...")
-        self.post_prepare()
+        Keywords:
+            step: if specified skip to the numbered step. default(0)
+        """
+        step = int(kwargs.get('step', 0))
+        logger.info('Starting at step {0}'.format(step))
+        if not step > 1:
+            self.timer()
+            logger.info("1. Running pre procedures")
+            self.pre_prepare()
+        if not step > 2:
+            self.timer()
+            logger.info("2. Updating content_type")
+            self.update_content_type()
+        if not step > 3:
+            self.timer()
+            logger.info("3. Updating auth...")
+            self.update_auth()
+        if not step > 4:
+            self.timer()
+            logger.info("4. Updating api keys...")
+            self.update_model(('tastypie', 'apikey'), base_model_class=Model)
+        if not step > 5:
+            self.timer()
+            logger.info("5. Updating lists...")
+            self.update_list_models()
+        if not step > 6:
+            self.timer()
+            logger.info("6. Updating bhp variables...")
+            self.update_app_models('bhp_variables')
+        if not step > 7:
+            self.timer()
+            logger.info("7. Updating contenttypemap...")
+            logger.info('    ...update')
+            self.update_app_models('bhp_content_type_map')
+            logger.info('    ...resize')
+            self.resize_content_type()
+            self.update_app_models('bhp_content_type_map')
+            logger.info('    ...pop and sync')
+            self.sync_content_type_map()
+        if not step > 8:
+            self.timer()
+            logger.info("8. Updating appointment configuration...")
+            self.update_model(("bhp_appointment", "Configuration"))
+        if not step > 9:
+            self.timer()
+            logger.info("9. Updating the Crypt table...")
+            self.update_model(('bhp_crypto', 'crypt'))
+        if not step > 10:
+            self.timer()
+            logger.info("10. Updating the visit definitions...")
+            self.update_app_models('bhp_visit')
+        if not step > 11:
+            self.timer()
+            logger.info("11. Updating subject identifiers...")
+            self.update_app_models('bhp_identifier')
+        if not step > 12:
+            self.timer()
+            logger.info("12. Updating bhp_entry.models.entry...")
+            self.update_model(('bhp_entry', 'entry'))
+        if not step > 13:
+            self.timer()
+            logger.info("13. Updating api keys...")
+            self.update_api_keys()
+        if not step > 14:
+            self.timer()
+            logger.info("14. Running post procedures...")
+            self.post_prepare()
 
         logger.info("Done")
         self.timer(done=True)

@@ -68,7 +68,8 @@ are correct.</p>
 <p>The database on the device is set up in the same way as any django project except the superuser
 account should NOT be created. The superuser account information will be dispatched from the server
 when <tt class="xref py py-func docutils literal"><span class="pre">prepare_netbook()</span></tt> is run.</p>
-<p>Using mysql on the device, create a new database.</p>
+<ol class="arabic">
+<li><p class="first">Using <tt class="docutils literal"><span class="pre">mysql</span></tt> on the device, create a new database.</p>
 <blockquote>
 <div><p>If DB does not exist on device:</p>
 <div class="highlight-python"><pre>mysql -u root -p -Bse 'create database bhp041_survey;'</pre>
@@ -77,19 +78,32 @@ when <tt class="xref py py-func docutils literal"><span class="pre">prepare_netb
 <div class="highlight-python"><pre>mysql -u root -p -Bse 'drop database bhp041_survey; create database bhp041_survey;'</pre>
 </div>
 </div></blockquote>
-<p>Comment out &#8216;south&#8217; in INSTALLED_APPS and run &#8216;:</p>
+</li>
+<li><p class="first">Comment out &#8216;south&#8217; in INSTALLED_APPS.</p>
+</li>
+<li><p class="first">Run django&#8217;s <tt class="docutils literal"><span class="pre">syncdb</span></tt>:</p>
 <div class="highlight-python"><pre>python manage.py syncdb --noinput</pre>
 </div>
-<div class="admonition note">
+</li>
+</ol>
+<blockquote>
+<div><div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Use parameter &#8216;&#8211;noinput&#8217; so syncdb does not prompt to create a superuser account.</p>
 </div>
-<p>Uncomment &#8216;south&#8217; in INSTALLED_APPS and re-run &#8216;syncdb&#8217; to create the south migration history table:</p>
+</div></blockquote>
+<ol class="arabic" start="4">
+<li><p class="first">Uncomment &#8216;south&#8217; in INSTALLED_APPS.</p>
+</li>
+<li><p class="first">Re-run <tt class="docutils literal"><span class="pre">syncdb</span></tt> to create the south migration history table:</p>
 <div class="highlight-python"><pre>python manage.py syncdb</pre>
 </div>
-<p>Fake migrations:</p>
+</li>
+<li><p class="first">Fake migrations:</p>
 <div class="highlight-python"><pre>python manage.py migrate --fake</pre>
 </div>
+</li>
+</ol>
 <p>The database on the device is now ready for <tt class="xref py py-func docutils literal"><span class="pre">prepare_netbook()</span></tt>.</p>
 </div>
 <div class="section" id="confirm-options-in-settings-database">

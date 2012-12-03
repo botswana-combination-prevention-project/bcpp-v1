@@ -13,7 +13,7 @@ The database on the device is set up in the same way as any django project excep
 account should NOT be created. The superuser account information will be dispatched from the server 
 when :func:`prepare_netbook` is run.
 
-Using mysql on the device, create a new database.
+1. Using ``mysql`` on the device, create a new database.
 
     If DB does not exist on device::
     
@@ -23,17 +23,21 @@ Using mysql on the device, create a new database.
     
         mysql -u root -p -Bse 'drop database bhp041_survey; create database bhp041_survey;'
    
-Comment out 'south' in INSTALLED_APPS and run '::
+2. Comment out 'south' in INSTALLED_APPS.
+
+3. Run django's ``syncdb``::
 
     python manage.py syncdb --noinput
     
-.. note:: Use parameter '--noinput' so syncdb does not prompt to create a superuser account.
+  .. note:: Use parameter '--noinput' so syncdb does not prompt to create a superuser account.
     
-Uncomment 'south' in INSTALLED_APPS and re-run 'syncdb' to create the south migration history table::
+4. Uncomment 'south' in INSTALLED_APPS.
+
+5. Re-run ``syncdb`` to create the south migration history table::
     
     python manage.py syncdb
 
-Fake migrations::
+6. Fake migrations::
 
     python manage.py migrate --fake
     

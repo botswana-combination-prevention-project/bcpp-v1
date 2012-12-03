@@ -1,15 +1,12 @@
 from django.db import models
 from base_dispatch import BaseDispatch
-from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect
 
 
 class Dispatch(BaseDispatch):
 
     dispatch_items = models.TextField(
         max_length=500,
-        help_text='Dispatch items. One per line.'
-        )
+        help_text='Dispatch items. One per line.')
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
