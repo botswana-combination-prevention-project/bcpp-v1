@@ -61,18 +61,18 @@ class BaseDispatch(Base):
         """Returns a tuple of (field name, class) or just one of the tuple items.
 
         Keywords:
-            key: either 'name' or 'cls'. If specified, only returns the item in the tuple instead of the whole tuple.
+            index: either 'name' or 'cls'. If specified, only returns the item in the tuple instead of the whole tuple.
         """
         if not self._visit_models.get(app_name):
             self.set_visit_model_cls(app_name, model_cls)
         # check for kwarg 'key' and set key to 0 or 1 (or None if not found)
-        key = {'name': 0, 'cls': 1}.get(kwargs.get('key', None), None)
+        index = {'name': 0, 'cls': 1}.get(kwargs.get('index', None), None)
         if not self._visit_models.get(app_name):
             tpl = (None, None)
         else:
             tpl = self._visit_models.get(app_name)
-        if key:
-            return tpl[key]
+        if index in [0, 1]:
+            return tpl[index]
         else:
             return tpl
 
@@ -83,7 +83,7 @@ class BaseDispatch(Base):
             raise TypeError('Parameter app_name cannot be None.')
         app = get_app(app_name)
         for model_cls in get_models(app):
-            visit_field_name = self.get_visit_model_cls(app_name, model_cls, key='name')
+            visit_field_name = self.get_visit_model_cls(app_name, model_cls, index='name')
             if getattr(model_cls, visit_field_name, None):
                 for field in model_cls._meta.fields:
                     if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):

@@ -62,7 +62,7 @@ class DispatchController(BaseDispatchController):
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models(app_name)
         # get the visit model class for this app
-        visit_model_cls = self.get_visit_model_cls(app_name, key='cls')
+        visit_model_cls = self.get_visit_model_cls(app_name, index='cls')
         # Fetch all all subject visits for the member and survey
         visits = visit_model_cls.objects.filter(appointment__registered_subject=registered_subject, **kwargs)
         visit_fld_name = None
@@ -76,7 +76,7 @@ class DispatchController(BaseDispatchController):
                 if not visit_fld_name:
                     for fld in model_cls._meta.fields:
                         if isinstance(fld, (ForeignKey, OneToOneField)):
-                            if isinstance(fld.rel.to, visit_model_cls):
+                            if issubclass(fld.rel.to, visit_model_cls):
                                 visit_fld_name = fld.name
                 scheduled_instances = model_cls.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
                 self.dispatch_as_json(scheduled_instances, app_name=app_name)
