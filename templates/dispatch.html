@@ -12,7 +12,13 @@
 
 {% block content %}
 
-<tr><TD><H4>Select a Producer</H4></TD></TR>
+<table>
+<tr><TD><H4>Items selected for dispatch</H4></TD></TR>
+    {% for qs in queryset %}
+        <tr><TD>{{ qs }}</TD></TR>
+    {% endfor %}
+</table>
+
 <form action="/contact/" method="post">
     {{ form.non_field_errors }}
     <div class="fieldWrapper">
@@ -25,14 +31,6 @@
         {% csrf_token %}
     </div>
 </form>
-
-<table>
-<tr><TD><H4>Items selected for dispatch</H4></TD></TR>
-    {% for qs in queryset %}
-        <tr><TD>{{ qs }}</TD></TR>
-    {% endfor %}
-</table>
-
 {% endblock %}
 
 

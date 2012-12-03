@@ -99,8 +99,10 @@ class DispatchController(BaseDispatchController):
         if self.debug:
             logger.info("Dispatching items for {0}".format(item_identifier))
         # is this item already dispatched?
+        created, dispatch_item = None, None
         if not self.is_dispatched(item_identifier):
-            self.create_dispatch_item_instance(self.dispatch_prep(item_identifier), item_identifier)
+            created, dispatch_item = self.create_dispatch_item_instance(self.dispatch_prep(item_identifier), item_identifier)
+        return dispatch_item
 
     def is_dispatched(self, item_identifier):
         """Checks if a dispatch item is dispatched."""
@@ -125,6 +127,23 @@ class DispatchController(BaseDispatchController):
             is_dispatched=True,
             dispatch_datetime=datetime.today())
         return created, dispatch_item
+
+    def dispatch_from_view(self, queryset, **kwargs):
+        """Confirms no items in queryset are dispatched then tries to dispatch each one."""
+        dispatch_datetime = datetime.today()  # use same timestamp for all items
+        any_dispatched = False  # are any items dispathed already?
+        for qs in queryset:
+            item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
+            if self.is_dispatched(item_identifier):
+                any_dispatched = True
+                break
+        if not any_dispatched:
+            for qs in queryset:
+                item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
+                self.dispatch(item_identifier)
+                qs.dispatch_datetime = dispatch_datetime
+                qs.is_dispatched = True
+                qs.save()
 
     def dispatch_action(self, modeladmin, request, queryset, **kwargs):
         """ModelAdmin action method to dispatch all selected items to specified producer.
