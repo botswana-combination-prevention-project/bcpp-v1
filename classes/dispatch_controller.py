@@ -120,7 +120,7 @@ class DispatchController(BaseDispatchController):
             registered_subjects, options = self.dispatch_prep(item_identifier)
             if registered_subjects:
                 for registered_subject in registered_subjects:
-                    self.dispatch_membership_forms(registered_subject, **options)
+                    self.dispatch_membership_forms(registered_subject)
             created, dispatch_item = self.create_dispatch_item_instance(item_identifier)
         return dispatch_item
 
@@ -147,9 +147,6 @@ class DispatchController(BaseDispatchController):
             is_dispatched=True,
             dispatch_datetime=datetime.today())
         return created, dispatch_item
-    
-    def has_outgoing_transactions(self):
-        return False
 
     def has_outgoing_transactions(self):
         """Check if destination has pending Outgoing Transactions."""
