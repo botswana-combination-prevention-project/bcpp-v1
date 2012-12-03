@@ -106,7 +106,7 @@ class DispatchController(BaseDispatchController):
         to access local app models."""
         return None
 
-    def dispatch(self, dispatch, item_identifier):
+    def dispatch(self, item_identifier):
         """Dispatches items to a device calling the user overridden :func:`dispatch_prep`."""
         # check source for the producer based on using_destination.
         if self.debug:
