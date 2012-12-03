@@ -28,7 +28,7 @@ class Base(object):
             raise self.exception('Parameters \'using_source\' cannot be None')
         if using_source not in ['server', 'default']:
             raise self.exception('Argument \'<using_source\'> must be either \'default\' (if run from server) or \'server\' if not run from server.')
-        if settings.DEVICE_ID == '99':
+        if settings.DEVICE_ID == '99' and using_source != 'default':
             raise self.exception('Argument \'<using_source\'> must be \'default\' if running on the server (settings.DEVICE=99).')
         if self.is_valid_using(using_source, 'source'):
             self._using_source = using_source

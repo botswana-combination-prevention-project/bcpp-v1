@@ -60,7 +60,7 @@
 <dt id="bhp_dispatch.models.Dispatch">
 <em class="property">class </em><tt class="descclassname">bhp_dispatch.models.</tt><tt class="descname">Dispatch</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.models.Dispatch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.models.base_dispatch.BaseDispatch</span></tt></p>
-<p>Dispatch(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, producer_id, is_dispatched, dispatched_datetime, returned_datetime, dispatch_items)</p>
+<p>Dispatch(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, producer_id, is_dispatched, dispatch_datetime, return_datetime, dispatch_items)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -74,8 +74,8 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>producer_id</strong> (<em>ForeignKey</em>) &#8211; Producer / netbook</li>
 <li><strong>is_dispatched</strong> (<em>BooleanField</em>) &#8211; Is dispatched</li>
-<li><strong>dispatched_datetime</strong> (<em>DateTimeField</em>) &#8211; Dispatch date</li>
-<li><strong>returned_datetime</strong> (<em>DateTimeField</em>) &#8211; Return date</li>
+<li><strong>dispatch_datetime</strong> (<em>DateTimeField</em>) &#8211; Dispatch date</li>
+<li><strong>return_datetime</strong> (<em>DateTimeField</em>) &#8211; Return date</li>
 <li><strong>dispatch_items</strong> (<em>TextField</em>) &#8211; Dispatch items. One per line.</li>
 </ul>
 </td>
@@ -88,7 +88,7 @@
 <dt id="bhp_dispatch.models.DispatchItem">
 <em class="property">class </em><tt class="descclassname">bhp_dispatch.models.</tt><tt class="descname">DispatchItem</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.models.DispatchItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.models.base_dispatch.BaseDispatch</span></tt></p>
-<p>DispatchItem(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, producer_id, is_dispatched, dispatched_datetime, returned_datetime, dispatch_id, item_identifier)</p>
+<p>DispatchItem(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, producer_id, is_dispatched, dispatch_datetime, return_datetime, dispatch_id, item_identifier)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -102,8 +102,8 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>producer_id</strong> (<em>ForeignKey</em>) &#8211; Producer / netbook</li>
 <li><strong>is_dispatched</strong> (<em>BooleanField</em>) &#8211; Is dispatched</li>
-<li><strong>dispatched_datetime</strong> (<em>DateTimeField</em>) &#8211; Dispatch date</li>
-<li><strong>returned_datetime</strong> (<em>DateTimeField</em>) &#8211; Return date</li>
+<li><strong>dispatch_datetime</strong> (<em>DateTimeField</em>) &#8211; Dispatch date</li>
+<li><strong>return_datetime</strong> (<em>DateTimeField</em>) &#8211; Return date</li>
 <li><strong>dispatch_id</strong> (<em>ForeignKey</em>) &#8211; Dispatch</li>
 <li><strong>item_identifier</strong> (<em>CharField</em>) &#8211; Dispatch Item (e.g. Household Identifier)</li>
 </ul>
