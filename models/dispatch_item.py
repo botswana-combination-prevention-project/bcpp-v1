@@ -17,7 +17,7 @@ class DispatchItem(BaseDispatch):
         if self.__class__.objects.filter(
                 producer=self.producer,
                 item_identifier=self.item_identifier,
-                is_dipatched=True,
+                is_dispatched=True,
                 ).exclude(pk=self.pk).exists():
             raise ValueError("The item {0} is currently dispatched to {1}.".format(self.item_identifier, self.producer))
         else:
