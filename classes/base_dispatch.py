@@ -2,6 +2,7 @@ import logging
 from django.core import serializers
 from django.db.models import get_model, get_models, get_app, ForeignKey, OneToOneField
 from bhp_visit.models import MembershipForm
+from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_base_model.classes import BaseListModel
 from base import Base
 
@@ -45,7 +46,7 @@ class BaseDispatch(Base):
     def set_visit_model_cls(self, app_name, model_cls):
         """Sets the visit_model_cls attribute with a dictionary of tuples (field name, class) by app.
         """
-        BaseVisitTracking = get_model('bhp_visit_tracking', 'BaseVisitTracking')
+        #BaseVisitTracking = get_model('bhp_visit_tracking', 'BaseVisitTracking')
         self._visit_models = {}
         if not model_cls:
             raise TypeError('Parameter model_cls cannot be None.')
@@ -62,11 +63,11 @@ class BaseDispatch(Base):
         Keywords:
             key: either 'name' or 'cls'. If specified, only returns the item in the tuple instead of the whole tuple.
         """
-        if not self._visit_models:
+        if not self._visit_models.get(app_name):
             self.set_visit_model_cls(app_name, model_cls)
         # check for kwarg 'key' and set key to 0 or 1 (or None if not found)
         key = {'name': 0, 'cls': 1}.get(kwargs.get('key', None), None)
-        if not self.visit_models.get(app_name):
+        if not self._visit_models.get(app_name):
             tpl = (None, None)
         else:
             tpl = self._visit_models.get(app_name)
