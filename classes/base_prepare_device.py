@@ -43,8 +43,8 @@ class BasePrepareDevice(Base):
             ContentType.objects.using(self.get_using_destination()).create(app_label=str(uuid4()), model=str(uuid4()))
 
     def sync_content_type_map(self):
-        ContentTypeMap.objects.using(self.get_using_source()).populate()
-        ContentTypeMap.objects.using(self.get_using_source()).sync()
+        ContentTypeMap.objects.populate()
+        ContentTypeMap.objects.sync()
 
     def update_api_keys(self, username=None):
         for user in User.objects.using(self.get_using_destination()).all():

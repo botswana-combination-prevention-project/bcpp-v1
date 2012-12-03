@@ -148,25 +148,17 @@ class DispatchController(BaseDispatchController):
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then tries to dispatch each one."""
-        #dispatch_datetime = datetime.today()  # use same timestamp for all items
         any_dispatched = False  # are any items dispatched already?
-        for qs in queryset:
-            item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
-            if self.is_dispatched(item_identifier):
-                any_dispatched = True
-                break
-        if not any_dispatched:
+        any_transactions = True
+        if not self.has_outgoing_transactions():
+            any_transactions = False
             for qs in queryset:
                 item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
-                self.dispatch(item_identifier)
-                #qs.dispatch_datetime = dispatch_datetime
-                #qs.is_dispatched = True
-                #qs.save()
-        return any_dispatched
-
-#    def dispatch_on_save(self, dispatch, **kwargs):
-#        """Passes queryset to dispatch_from_view."""
-#        lst = dispatch.dispatch_items.split()
-#        queryset = self.dispatch_model.objects.filter(**{'{0}__in'.format(self.dispatch_model_item_identifier_field): lst})
-#        any_dispatched = self.dispatch_from_view(self, queryset, **kwargs)
-#        return any_dispatched
+                if self.is_dispatched(item_identifier):
+                    any_dispatched = True
+                    break
+            if not any_dispatched:
+                for qs in queryset:
+                    item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
+                    self.dispatch(item_identifier)
+        return any_dispatched, any_transactions
