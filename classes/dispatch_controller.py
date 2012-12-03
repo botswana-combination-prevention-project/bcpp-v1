@@ -97,7 +97,7 @@ class DispatchController(BaseDispatchController):
                     **kwargs)
             except FieldError:
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
-            self.dispatch_as_json(instances, self.get_producer())
+            self.dispatch_as_json(instances)
 
     def dispatch_prep(self, item_identifier):
         """Returns a registered_subject instance (or None) after processing.
