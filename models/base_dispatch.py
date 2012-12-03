@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from bhp_base_model.classes import BaseUuidModel
 from bhp_sync.models import Producer
@@ -15,6 +16,7 @@ class BaseDispatch(BaseUuidModel):
 
     dispatched_datetime = models.DateTimeField(
         verbose_name="Dispatch date",
+        default=datetime.today(),
         blank=True,
         null=True
         )

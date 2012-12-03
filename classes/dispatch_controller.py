@@ -23,6 +23,19 @@ class DispatchController(BaseDispatchController):
     def __init__(self, using_source, using_destination, **kwargs):
         super(DispatchController, self).__init__(using_source, using_destination, **kwargs)
         self._visit_models = {}
+        self._dispatch = None
+        self.set_dispatch()
+
+    def set_dispatch(self):
+        """Creates a dispatch instance for this controller sessions."""
+        Dispatch = get_model('bhp_dispatch', 'Dispatch')
+        self._dispatch = Dispatch.objects.create(producer=self.get_producer())
+
+    def get_dispatch(self):
+        """Gets the dispatch instance for this controller sessions."""
+        if not self._dispatch:
+            self.set_dispatch()
+        return self._dispatch
 
     def set_visit_model_fkey(self, model_cls, visit_model_cls):
         for fld in model_cls.objects._meta.fields:
@@ -87,13 +100,13 @@ class DispatchController(BaseDispatchController):
             self.dispatch_as_json(instances, self.get_producer())
 
     def dispatch_prep(self, item_identifier):
-        """Returns a dispatch instance after dispatching.
+        """Returns a dispatch item instance after dispatching.
 
         This is the main data query for dispatching and is to be overriden by the user
         to access local app models."""
         return None
 
-    def dispatch(self, item_identifier):
+    def dispatch(self, dispatch, item_identifier):
         """Dispatches items to a device calling the user overridden :func:`dispatch_prep`."""
         # check source for the producer based on using_destination.
         if self.debug:
@@ -101,7 +114,8 @@ class DispatchController(BaseDispatchController):
         # is this item already dispatched?
         created, dispatch_item = None, None
         if not self.is_dispatched(item_identifier):
-            created, dispatch_item = self.create_dispatch_item_instance(self.dispatch_prep(item_identifier), item_identifier)
+            self.dispatch_prep(item_identifier)
+            created, dispatch_item = self.create_dispatch_item_instance(item_identifier)
         return dispatch_item
 
     def is_dispatched(self, item_identifier):
@@ -114,15 +128,16 @@ class DispatchController(BaseDispatchController):
                 item_identifier=item_identifier,
                 is_dispatched=True)
             raise AlreadyDispatched('Item {0} is already dispatched to producer {1}.'.format(item_identifier, dispatch_item.producer))
+        return False
 
-    def create_dispatch_item_instance(self, dispatch, item_identifier):
+    def create_dispatch_item_instance(self, item_identifier):
         """Creates a dispatch item instance for given dispatch instance and item_identifier."""
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
         dispatch_item = DispatchItem.objects.create(
             producer=self.get_producer(),
-            dispatch=dispatch,
+            dispatch=self.get_dispatch(),
             item_identifier=item_identifier,
             is_dispatched=True,
             dispatch_datetime=datetime.today())

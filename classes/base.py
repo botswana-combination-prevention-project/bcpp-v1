@@ -63,7 +63,7 @@ class Base(object):
     def is_valid_using(self, using, label):
         """Confirms an ORM `using` parameter is valid by checking :file:`settings.py`."""
         if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == using]:
-            raise ImproperlyConfigured('Expected settings attribute DATABASES to have a NAME key to the \'{1}\'. Got \'{0}\'.'.format(using, label))
+            raise ImproperlyConfigured('Cannot find {1} key \'{0}\' in settings attribute DATABASES. Please add to settings.py.'.format(using, label))
         return True
 
     def set_producer(self):
