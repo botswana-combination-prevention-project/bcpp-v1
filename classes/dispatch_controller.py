@@ -145,6 +145,9 @@ class DispatchController(BaseDispatchController):
             is_dispatched=True,
             dispatch_datetime=datetime.today())
         return created, dispatch_item
+    
+    def has_outgoing_transactions(self):
+        return False
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then tries to dispatch each one."""
