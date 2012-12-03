@@ -14,7 +14,7 @@ class BaseDispatch(BaseUuidModel):
 
     is_dispatched = models.BooleanField(default=False)
 
-    dispatched_datetime = models.DateTimeField(
+    dispatch_datetime = models.DateTimeField(
         verbose_name="Dispatch date",
         default=datetime.today(),
         blank=True,
