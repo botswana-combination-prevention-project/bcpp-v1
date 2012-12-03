@@ -103,10 +103,11 @@ class Base(object):
             raise TypeError('Dispatcher cannot find producer with settings key {0} on the source {1}.'.format(self.get_using_destination(), self.get_using_source()))
         # check the producers DATABASES key exists
         # TODO: what if producer is "me", e.g settings key is 'default'
-        settings_key = self._producer.settings_key
-        if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == settings_key]:
-            raise ImproperlyConfigured('Dispatcher expects settings attribute DATABASES to have a NAME '
-                                       'key to the \'producer\'. Got name=\'{0}\', settings_key=\'{1}\'.'.format(self._producer.name, self._producer.settings_key))
+        if not self.get_using_destination() == 'default':
+            settings_key = self._producer.settings_key
+            if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == settings_key]:
+                raise ImproperlyConfigured('Dispatcher expects settings attribute DATABASES to have a NAME '
+                                           'key to the \'producer\'. Got name=\'{0}\', settings_key=\'{1}\'.'.format(self._producer.name, self._producer.settings_key))
 
     def get_producer(self):
         """Returns an instance of the current producer."""
