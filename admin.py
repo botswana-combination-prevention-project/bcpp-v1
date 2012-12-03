@@ -5,6 +5,7 @@ from models import Dispatch, DispatchItem
 
 class DispatchItemInline(BaseStackedInline):
     model = DispatchItem
+    extra = 0
 
 
 class DispatchAdmin(BaseModelAdmin):
