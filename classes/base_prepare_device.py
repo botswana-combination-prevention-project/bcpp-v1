@@ -104,19 +104,3 @@ class BasePrepareDevice(Base):
                         dct.update({'hostname_modified': item.get('hostname_modified'), 'modified__gt': item.get('modified__max')})
                         options[n] = dct
         return options
-
-    def get_recent(self, model_cls, destination_hostname=None):
-        """Returns a queryset of the most recent instances from the model for all but the current host."""
-        source_instances = model_cls.objects.none()
-        if not destination_hostname:
-            destination_hostname = socket.gethostname()
-        options = self.get_last_modified_options(model_cls)
-        if options:
-            qset = Q()
-            for dct in options:
-                #if not dct.get('hostname_modified') == destination_hostname:
-                qset.add(Q(**dct), Q.OR)
-            source_instances = model_cls.objects.using(self.get_using_source()).filter(qset).order_by('id')
-        else:
-            source_instances = model_cls.objects.using(self.get_using_source()).all().order_by('id')
-        return source_instances

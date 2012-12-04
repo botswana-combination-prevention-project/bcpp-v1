@@ -1,7 +1,7 @@
 import socket
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import get_model
+from django.db.models import get_model, Q
 from django.core.serializers.base import DeserializationError
 from django.core import serializers
 from django.db import IntegrityError
@@ -132,6 +132,22 @@ class Base(object):
 
     def update_model(self, model, **kwargs):
         self.dispatch_model_as_json(model, **kwargs)
+
+    def get_recent(self, model_cls, destination_hostname=None):
+        """Returns a queryset of the most recent instances from the model for all but the current host."""
+        source_instances = model_cls.objects.none()
+        if not destination_hostname:
+            destination_hostname = socket.gethostname()
+        options = self.get_last_modified_options(model_cls)
+        if options:
+            qset = Q()
+            for dct in options:
+                #if not dct.get('hostname_modified') == destination_hostname:
+                qset.add(Q(**dct), Q.OR)
+            source_instances = model_cls.objects.using(self.get_using_source()).filter(qset).order_by('id')
+        else:
+            source_instances = model_cls.objects.using(self.get_using_source()).all().order_by('id')
+        return source_instances
 
     def dispatch_model_as_json(self, models, **kwargs):
         """Serializes and saves all instances of each model from source to destination.
