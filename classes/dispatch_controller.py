@@ -162,4 +162,6 @@ class DispatchController(BaseDispatchController):
                 for qs in queryset:
                     item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
                     self.dispatch(item_identifier)
+                logger.info("Updating the Crypt table...")
+                self.update_model(('bhp_crypto', 'crypt'))
         return any_dispatched, any_transactions
