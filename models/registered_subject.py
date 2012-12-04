@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
 from bhp_base_model.fields import IdentityTypeField
+from bhp_dispatch.models import DispatchItem
 from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_subject.classes import BaseSubject
@@ -128,6 +129,26 @@ class RegisteredSubject(BaseSubject):
             return "{0} {1} ({2})".format(self.subject_identifier,
                                           self.subject_type,
                                           mask_encrypted(self.first_name))
+
+    @property
+    def is_dispatched(self):
+        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
+        locked, producer = self.is_dispatched_to_producer()
+        return locked
+
+    def is_dispatched_to_producer(self):
+        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
+        locked = False
+        producer = None
+        if DispatchItem.objects.filter(
+                subject_identifiers__icontains=self.subject_identifier,
+                is_dispatched=True).exists():
+            dispatch_item = DispatchItem.objects.get(
+                subject_identifiers__icontains=self.subject_identifier,
+                is_dispatched=True)
+            producer = dispatch_item.producer
+            locked = True
+        return locked, producer
 
     class Meta:
         app_label = 'bhp_registration'
