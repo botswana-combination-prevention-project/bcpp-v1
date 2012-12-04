@@ -1,4 +1,5 @@
 import socket
+import logging
 from datetime import datetime
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -9,6 +10,15 @@ from django.db import IntegrityError
 from bhp_sync.classes import TransactionProducer
 from bhp_sync.models import OutgoingTransaction
 from bhp_base_model.classes import BaseModel
+
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class Base(object):
@@ -143,7 +153,6 @@ class Base(object):
         if options:
             qset = Q()
             for dct in options:
-                #if not dct.get('hostname_modified') == destination_hostname:
                 qset.add(Q(**dct), Q.OR)
             source_instances = model_cls.objects.using(self.get_using_source()).filter(qset).order_by('id')
         else:
@@ -203,7 +212,7 @@ class Base(object):
                 source_queryset = self.get_recent(model)
             tot = source_queryset.count()
 
-            print '    saving {0} instances for {1} on {2}.'.format(tot, model._meta.object_name, self.get_using_destination())
+            logger.info('    saving {0} instances for {1} on {2}.'.format(tot, model._meta.object_name, self.get_using_destination()))
             json = serializers.serialize('json', source_queryset, use_natural_keys=use_natural_keys)
             n = 0
             if json:
@@ -213,7 +222,7 @@ class Base(object):
                         try:
                             obj.save(using=self.get_using_destination())
                         except IntegrityError:
-                            print '    skipping. Duplicate detected for {0} (a).'.format(obj)
+                            logger.info('    skipping. Duplicate detected for {0} (a).'.format(obj))
                 except DeserializationError:
                     for instance in source_queryset:
                         json = serializers.serialize('json', [instance], use_natural_keys=True)
@@ -223,7 +232,7 @@ class Base(object):
                                 try:
                                     obj.save(using=self.get_using_destination())
                                 except IntegrityError:
-                                    print '    skipping. Duplicate detected for {0} (b).'.format(obj)
+                                    logger.info('    skipping. Duplicate detected for {0} (b).'.format(obj))
                         except:
-                            print '    SKIPPING {0}'.format(instance._meta.object_name)
-            print '    done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name)
+                            logger.info('    SKIPPING {0}'.format(instance._meta.object_name))
+            logger.info('    done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name))

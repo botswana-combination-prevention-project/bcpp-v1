@@ -82,7 +82,7 @@ class DispatchController(BaseDispatchController):
                 self.dispatch_as_json(scheduled_instances, app_name=app_name)
 
     def dispatch_membership_forms(self, registered_subject, **kwargs):
-        """Gets all instances of membership forms for this registered_subject and dispatches.
+        """Gets all instances of visible membership forms for this registered_subject and dispatches.
 
         Keywords:
             kwargs: must be field_attr: value pairs to pass directly to the visit model. Any django syntax will work.

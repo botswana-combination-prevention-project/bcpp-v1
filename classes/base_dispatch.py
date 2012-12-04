@@ -38,7 +38,8 @@ class BaseDispatch(Base):
         self.set_dispatch_list(self._producer)
 
     def get_membershipform_models(self):
-        return [membership_form.content_type_map.content_type.model_class() for membership_form in MembershipForm.objects.using(self.get_using_source()).all()]
+        """Returns a list of 'visible' membership form model classes."""
+        return [membership_form.content_type_map.content_type.model_class() for membership_form in MembershipForm.objects.using(self.get_using_source()).filter(visible=True)]
 
     def set_visit_model_cls(self, app_name, model_cls):
         """Sets the visit_model_cls attribute with a dictionary of tuples (field name, class) by app.
