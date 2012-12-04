@@ -2,7 +2,12 @@ import socket
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
+from django.core.serializers.base import DeserializationError
+from django.core import serializers
+from django.db import IntegrityError
+from bhp_sync.classes import TransactionProducer
 from bhp_sync.models import OutgoingTransaction
+from bhp_base_model.classes import BaseModel
 
 
 class Base(object):
@@ -118,7 +123,71 @@ class Base(object):
             self.set_producer()
         return self._producer
 
-
     def has_outgoing_transactions(self):
         """Check if destination has pending Outgoing Transactions."""
         return OutgoingTransaction.objects.using(self.get_using_destination()).filter(is_consumed=False).exists()
+
+    def update_model(self, model, **kwargs):
+        self.dispatch_model_as_json(model, **kwargs)
+
+    def dispatch_model_as_json(self, models, **kwargs):
+        """Serializes and saves all instances of each model from source to destination.
+
+            Args:
+                models: may be a tuple of (app_name, model_name) or list of model classes.
+        """
+        base_model_class = kwargs.get('base_model_class', BaseModel)
+        use_natural_keys = kwargs.get('use_natural_keys', True)
+        select_recent = kwargs.get('select_recent', True)
+        check_transactions = kwargs.get('check_transactions', True)
+        if check_transactions:
+            transaction_producer = TransactionProducer()
+            #destination_producer_name = settings.DATABASES.get(self.get_using_destination()).get('NAME')
+            destination_producer_name = self.get_using_destination()
+            if transaction_producer.has_outgoing_transactions(producer_name=destination_producer_name, using=self.get_using_destination()):
+                raise TypeError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(destination_producer_name))
+        if not models:
+            raise self.exception('Parameter \'models\' may not be None.')
+        # if models is a tuple, convert to model class using get_model
+        if isinstance(models, tuple):
+            mdl = get_model(models[self.APP_NAME], models[self.MODEL_NAME])
+            if not mdl:
+                raise self.exception('Unable to get_model() using app_name={0}, model_name={1}.'.format(models[self.APP_NAME], models[self.MODEL_NAME]))
+            models = mdl
+        # models must be a list
+        if not isinstance(models, (list,)):
+            models = [models]
+        for model in models:
+            if not issubclass(model, base_model_class):
+                raise self.exception('Parameter \'model\' must be an instance of BaseModel. Got {0}'.format(model))
+
+            if not select_recent:
+                source_queryset = model.objects.using(self.get_using_source()).all().order_by('id')
+            else:
+                source_queryset = self.get_recent(model)
+            tot = source_queryset.count()
+
+            print '    saving {0} instances for {1} on {2}.'.format(tot, model._meta.object_name, self.get_using_destination())
+            json = serializers.serialize('json', source_queryset, use_natural_keys=use_natural_keys)
+            n = 0
+            if json:
+                try:
+                    for obj in serializers.deserialize("json", json):
+                        n += 1
+                        try:
+                            obj.save(using=self.get_using_destination())
+                        except IntegrityError:
+                            print '    skipping. Duplicate detected for {0} (a).'.format(obj)
+                except DeserializationError:
+                    for instance in source_queryset:
+                        json = serializers.serialize('json', [instance], use_natural_keys=True)
+                        try:
+                            for obj in serializers.deserialize("json", json):
+                                n += 1
+                                try:
+                                    obj.save(using=self.get_using_destination())
+                                except IntegrityError:
+                                    print '    skipping. Duplicate detected for {0} (b).'.format(obj)
+                        except:
+                            print '    SKIPPING {0}'.format(instance._meta.object_name)
+            print '    done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name)

@@ -3,16 +3,12 @@ import socket
 from uuid import uuid4
 from datetime import datetime
 from tastypie.models import ApiKey
-from django.core import serializers
-from django.db import IntegrityError
-from django.core.serializers.base import DeserializationError
-from django.db.models import Q, Model, get_model, get_models, get_app, Max, Count
+from django.db.models import Q, Model, get_models, get_app, Max, Count
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User, Group, Permission
-from bhp_base_model.classes import BaseListModel, BaseModel
+from bhp_base_model.classes import BaseListModel
 from bhp_userprofile.models import UserProfile
 from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_sync.classes import TransactionProducer
 from base import Base
 
 
@@ -84,10 +80,7 @@ class BasePrepareDevice(Base):
         models = []
         for model in get_models(get_app(app_name)):
             models.append(model)
-        self.dispatch_as_json(models)
-
-    def update_model(self, model, **kwargs):
-        self.dispatch_as_json(model, **kwargs)
+        self.dispatch_model_as_json(models)
 
     def update_list_models(self):
         list_models = []
@@ -97,7 +90,7 @@ class BasePrepareDevice(Base):
                 list_models.append(model)
         print '    found {0} list models'.format(len(list_models))
         for list_model in list_models:
-            self.dispatch_as_json(list_model)
+            self.dispatch_model_as_json(list_model)
 
     def get_last_modified_options(self, model_cls):
         """Returns a dictionary of {'hostname_modified': '<hostname>', 'modified__max': <date>, ... }."""
@@ -130,65 +123,3 @@ class BasePrepareDevice(Base):
         else:
             source_instances = model_cls.objects.using(self.get_using_source()).all().order_by('id')
         return source_instances
-
-    def dispatch_as_json(self, models, **kwargs):
-        """Serializes and saves all instances of each model from source to destination.
-
-            Args:
-                models: may be a tuple of (app_name, model_name) or list of model classes.
-        """
-        base_model_class = kwargs.get('base_model_class', BaseModel)
-        use_natural_keys = kwargs.get('use_natural_keys', True)
-        select_recent = kwargs.get('select_recent', True)
-        check_transactions = kwargs.get('check_transactions', True)
-        if check_transactions:
-            transaction_producer = TransactionProducer()
-            #destination_producer_name = settings.DATABASES.get(self.get_using_destination()).get('NAME')
-            destination_producer_name = self.get_using_destination()
-            if transaction_producer.has_outgoing_transactions(producer_name=destination_producer_name, using=self.get_using_destination()):
-                raise TypeError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(destination_producer_name))
-        if not models:
-            raise self.exception('Parameter \'models\' may not be None.')
-        # if models is a tuple, convert to model class using get_model
-        if isinstance(models, tuple):
-            mdl = get_model(models[self.APP_NAME], models[self.MODEL_NAME])
-            if not mdl:
-                raise self.exception('Unable to get_model() using app_name={0}, model_name={1}.'.format(models[self.APP_NAME], models[self.MODEL_NAME]))
-            models = mdl
-        # models must be a list
-        if not isinstance(models, (list,)):
-            models = [models]
-        for model in models:
-            if not issubclass(model, base_model_class):
-                raise self.exception('Parameter \'model\' must be an instance of BaseModel. Got {0}'.format(model))
-
-            if not select_recent:
-                source_queryset = model.objects.using(self.get_using_source()).all().order_by('id')
-            else:
-                source_queryset = self.get_recent(model)
-            tot = source_queryset.count()
-
-            print '    saving {0} instances for {1} on {2}.'.format(tot, model._meta.object_name, self.get_using_destination())
-            json = serializers.serialize('json', source_queryset, use_natural_keys=use_natural_keys)
-            n = 0
-            if json:
-                try:
-                    for obj in serializers.deserialize("json", json):
-                        n += 1
-                        try:
-                            obj.save(using=self.get_using_destination())
-                        except IntegrityError:
-                            print '    skipping. Duplicate detected for {0} (a).'.format(obj)
-                except DeserializationError:
-                    for instance in source_queryset:
-                        json = serializers.serialize('json', [instance], use_natural_keys=True)
-                        try:
-                            for obj in serializers.deserialize("json", json):
-                                n += 1
-                                try:
-                                    obj.save(using=self.get_using_destination())
-                                except IntegrityError:
-                                    print '    skipping. Duplicate detected for {0} (b).'.format(obj)
-                        except:
-                            print '    SKIPPING {0}'.format(instance._meta.object_name)
-            print '    done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name)
