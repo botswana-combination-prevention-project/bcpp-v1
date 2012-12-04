@@ -14,6 +14,13 @@ class AppointmentForm(forms.ModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
+        if cleaned_data.get('registered_subject', None):
+            registered_subject = cleaned_data.get('registered_subject')
+            dispatched, producer_name = registered_subject.is_dispatched_to_producer()
+            if dispatched:
+                raise forms.ValidationError("Data for {0} is currently dispatched to netbook {1}. "
+                                 "This form may not be modified.".format(registered_subject.subject_identifier,
+                                                                          producer_name))
         appt_datetime = cleaned_data.get("appt_datetime")
         if not appt_datetime:
             raise forms.ValidationError('Appointment date and time are required')
