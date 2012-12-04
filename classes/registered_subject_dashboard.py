@@ -55,6 +55,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.subject_identifier = None
         self._subject_type = None
         self.requisition_model = None
+        self.is_dispatched, self.dispatch_producer = False, None
         self.appointment_row_template = 'appointment_row.html'
         self.appointment_map = {}
         self.exclude_others_if_keyed_model_name = ''  # this is a form name or regex pattern
@@ -68,6 +69,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(appointment_row_template=self.appointment_row_template)
         self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if self.registered_subject:
+            self.is_dispatched, self.dispatch_producer = self.registered_subject.is_dispatched_to_producer()
             self.set_subject_type(kwargs.get('subject_type'))
             # subject identifier is almost always available
             self.subject_identifier = self.registered_subject.subject_identifier
@@ -92,6 +94,8 @@ class RegisteredSubjectDashboard(Dashboard):
         if self.extra_url_context == {}:
             self.extra_url_context = ''
         self.context.add(
+            is_dispatched=self.is_dispatched,
+            dispatch_producer=self.dispatch_producer,
             visit_model=visit_model,
             visit_instance=visit_instance,
             visit_code=visit_code,
