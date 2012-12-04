@@ -89,6 +89,7 @@ class BaseDispatch(Base):
                         field_cls = field.rel.to
                         if field_cls not in list_models:
                             list_models.append(field_cls)
+        logger.info('Ready to dispatch foreign keys: {0}'.format(list_models))
         for model_cls in list_models:
             self.dispatch_as_json(model_cls.objects.using(self.get_using_source()).all(), app_name=app_name)
 

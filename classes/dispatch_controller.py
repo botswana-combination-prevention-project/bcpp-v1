@@ -48,6 +48,11 @@ class DispatchController(BaseDispatchController):
             self.set_visit_model_fkey(model_cls, visit_model_cls)
         return self._visit_model_fkey_name
 
+    def dispatch_appointments(self, registered_subject):
+        """Dispatches all apoointments for this registered subject."""
+        Appointments = get_model('bhp_appointment', 'Appointment')
+        self.dispatch_as_json(Appointments.objects.filter(registered_subject=registered_subject))
+
     def dispatch_scheduled_instances(self, app_name, registered_subject, **kwargs):
         """Sends scheduled instances to the producer for the given an instance of registered_subject.
 
@@ -59,6 +64,7 @@ class DispatchController(BaseDispatchController):
            of :mod:`bhp_visit_tracking`'s :class:`BaseVisitTracking` base model.
            For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc
         """
+        self.dispatch_appointments(registered_subject)
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models(app_name)
         # get the visit model class for this app
@@ -68,7 +74,7 @@ class DispatchController(BaseDispatchController):
         visit_fld_name = None
         if visits:
             for visit in visits:
-                # export all appointments for this subject
+                # export all appointments for this visit
                 self.dispatch_as_json(visit.appointment, app_name=app_name)
             self.dispatch_as_json(visits, app_name=app_name)
             # fetch all scheduled_models for the visits and export

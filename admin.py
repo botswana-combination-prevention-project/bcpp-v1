@@ -25,7 +25,7 @@ class DispatchAdmin(BaseModelAdmin):
         'dispatch_datetime',
         'return_datetime'
         )
-    search_fields = ('pk', )
+    search_fields = ('id', )
     inlines = [DispatchItemInline, ]
 admin.site.register(Dispatch, DispatchAdmin)
 
@@ -49,6 +49,6 @@ class DispatchItemAdmin(BaseModelAdmin):
         'dispatch_datetime',
         'return_datetime'
         )
-    search_fields = ('dispatch__pk', )
+    search_fields = ('dispatch__pk', 'item_identifier')
 
 admin.site.register(DispatchItem, DispatchItemAdmin)
