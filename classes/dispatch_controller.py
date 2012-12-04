@@ -145,10 +145,13 @@ class DispatchController(BaseDispatchController):
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
+        registered_subjects = kwargs.get('registered_subjects', [])
+        subject_identifier_list = [rs.subject_identifier for rs in registered_subjects]
         dispatch_item = DispatchItem.objects.create(
             producer=self.get_producer(),
             dispatch=self.get_dispatch(),
             item_identifier=item_identifier,
+            subject_identifiers=' '.join(subject_identifier_list),
             is_dispatched=True,
             dispatch_datetime=datetime.today())
         return created, dispatch_item

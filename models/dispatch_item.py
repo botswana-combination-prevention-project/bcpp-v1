@@ -11,6 +11,13 @@ class DispatchItem(BaseDispatch):
         max_length=25,
         help_text="Dispatch Item (e.g. Household Identifier)"
         )
+    subject_identifiers = models.TextField(
+        verbose_name='Subject Identifiers',
+        #max_length=25,
+        null=True,
+        blank=True,
+        help_text="Subject identifiers associated with this Dispatch Item"
+        )
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
