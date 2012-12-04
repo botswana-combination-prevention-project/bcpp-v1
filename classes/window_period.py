@@ -18,6 +18,8 @@ class WindowPeriod(object):
         self.error_message = None
         diff = 0  # always in days for now
         retval = True
+        if not reference_datetime:
+            raise TypeError('Parameter \'reference_datetime\' cannot be None. Is appointment.best_appt_datetime = None?')
         # calculate the actual datetime for the window's upper and lower boundary relative to new_appt_datetime
         rdelta = relativedelta()
         setattr(rdelta, visit_definition.get_rdelta_attrname(visit_definition.upper_window_unit), visit_definition.upper_window)
