@@ -13,7 +13,6 @@ class DispatchItem(BaseDispatch):
         )
     subject_identifiers = models.TextField(
         verbose_name='Subject Identifiers',
-        #max_length=25,
         null=True,
         blank=True,
         help_text="Subject identifiers associated with this Dispatch Item"
