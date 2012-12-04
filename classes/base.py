@@ -2,6 +2,7 @@ import socket
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
+from bhp_sync.models import OutgoingTransaction
 
 
 class Base(object):
@@ -116,3 +117,8 @@ class Base(object):
         if not self._producer:
             self.set_producer()
         return self._producer
+
+
+    def has_outgoing_transactions(self):
+        """Check if destination has pending Outgoing Transactions."""
+        return OutgoingTransaction.objects.using(self.get_using_destination()).filter(is_consumed=False).exists()

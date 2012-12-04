@@ -3,7 +3,6 @@ from datetime import datetime
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import BaseDispatchController
-from bhp_sync.models import OutgoingTransaction
 
 
 logger = logging.getLogger(__name__)
@@ -117,11 +116,11 @@ class DispatchController(BaseDispatchController):
         # is this item already dispatched?
         created, dispatch_item = None, None
         if not self.is_dispatched(item_identifier):
-            registered_subjects, options = self.dispatch_prep(item_identifier)
-            if registered_subjects:
-                for registered_subject in registered_subjects:
-                    self.dispatch_membership_forms(registered_subject)
-            created, dispatch_item = self.create_dispatch_item_instance(item_identifier)
+            registered_subjects = self.dispatch_prep(item_identifier)
+            #if registered_subjects:
+            #    for registered_subject in registered_subjects:
+            #        self.dispatch_membership_forms(registered_subject)
+            created, dispatch_item = self.create_dispatch_item_instance(item_identifier, registered_subjects=registered_subjects)
         return dispatch_item
 
     def is_dispatched(self, item_identifier):
@@ -135,7 +134,7 @@ class DispatchController(BaseDispatchController):
             return True
         return False
 
-    def create_dispatch_item_instance(self, item_identifier):
+    def create_dispatch_item_instance(self, item_identifier, **kwargs):
         """Creates a dispatch item instance for given dispatch instance and item_identifier."""
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
@@ -147,10 +146,6 @@ class DispatchController(BaseDispatchController):
             is_dispatched=True,
             dispatch_datetime=datetime.today())
         return created, dispatch_item
-
-    def has_outgoing_transactions(self):
-        """Check if destination has pending Outgoing Transactions."""
-        return OutgoingTransaction.objects.using(self.get_using_destination()).filter(is_consumed=False).exists()
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then tries to dispatch each one."""

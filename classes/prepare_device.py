@@ -54,6 +54,9 @@ class PrepareDevice(BasePrepareDevice):
         Keywords:
             step: if specified skip to the numbered step. default(0)
         """
+        # check for outgoing transactions first
+        if self.has_outgoing_transactions():
+            raise self.exception("Destination has outgoing transactions. Please sync and try again.")
         step = int(kwargs.get('step', 0))
         logger.info('Starting at step {0}'.format(step))
         if not step > 1:
@@ -118,6 +121,5 @@ class PrepareDevice(BasePrepareDevice):
             self.timer()
             logger.info("14. Running post procedures...")
             self.post_prepare()
-
         logger.info("Done")
         self.timer(done=True)

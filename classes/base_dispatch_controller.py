@@ -70,7 +70,8 @@ class BaseDispatchController(BaseDispatch):
             for obj_new in serializers.deserialize("json", json, use_natural_keys=True):
                 try:
                     obj_new.save(using=self.get_using_destination())
-                except IntegrityError:
+                except IntegrityError as e:
+                    logger.info(e)
                     if not app_name:
                         app_name = source_instances[0]._meta.app_label
                     # assume Integrity error was because of missing ForeignKey data
@@ -79,4 +80,4 @@ class BaseDispatchController(BaseDispatch):
                     obj_new.save(using=self.get_using_destination())
                 except:
                     raise
-                logger.info(obj_new.object)
+                logger.info('dispatched {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))
