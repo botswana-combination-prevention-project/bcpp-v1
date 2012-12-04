@@ -88,19 +88,3 @@ class BasePrepareDevice(Base):
         print '    found {0} list models'.format(len(list_models))
         for list_model in list_models:
             self.dispatch_model_as_json(list_model)
-
-    def get_last_modified_options(self, model_cls):
-        """Returns a dictionary of {'hostname_modified': '<hostname>', 'modified__max': <date>, ... }."""
-        options = []
-        # get hostnames from source and populate default dictionary
-        if 'hostname_modified' in [field.name for field in model_cls._meta.fields]:
-            hostnames = model_cls.objects.using(self.get_using_source()).values('hostname_modified').annotate(Count('hostname_modified')).order_by()
-            for item in hostnames:
-                options.append({'hostname_modified': item.get('hostname_modified'), 'modified__gt': datetime(1900, 1, 1)})
-            valuesset = model_cls.objects.using(self.get_using_destination()).values('hostname_modified').all().annotate(Max('modified')).order_by()
-            for item in valuesset:
-                for n, dct in enumerate(options):
-                    if dct.get('hostname_modified') == item.get('hostname_modified'):
-                        dct.update({'hostname_modified': item.get('hostname_modified'), 'modified__gt': item.get('modified__max')})
-                        options[n] = dct
-        return options

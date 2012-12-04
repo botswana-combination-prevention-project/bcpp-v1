@@ -72,12 +72,17 @@ class BaseDispatchController(BaseDispatch):
                     obj_new.save(using=self.get_using_destination())
                 except IntegrityError as e:
                     logger.info(e)
-                    if not app_name:
-                        app_name = source_instances[0]._meta.app_label
-                    # assume Integrity error was because of missing ForeignKey data
-                    self.dispatch_foreign_key_instances(app_name)
-                    # try again
-                    obj_new.save(using=self.get_using_destination())
+                    if 'Duplicate' in e.args[1]:
+                        pass
+                    elif 'Cannot add or update a child row' in e.args[1]:
+                        if not app_name:
+                            app_name = source_instances[0]._meta.app_label
+                        # assume Integrity error was because of missing ForeignKey data
+                        self.dispatch_foreign_key_instances(app_name)
+                        # try again
+                        obj_new.save(using=self.get_using_destination())
+                    else:
+                        raise
                 except:
                     raise
                 logger.info('dispatched {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))

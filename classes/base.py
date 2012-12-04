@@ -1,7 +1,8 @@
 import socket
+from datetime import datetime
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import get_model, Q
+from django.db.models import get_model, Q, Count, Max
 from django.core.serializers.base import DeserializationError
 from django.core import serializers
 from django.db import IntegrityError
@@ -148,6 +149,22 @@ class Base(object):
         else:
             source_instances = model_cls.objects.using(self.get_using_source()).all().order_by('id')
         return source_instances
+
+    def get_last_modified_options(self, model_cls):
+        """Returns a dictionary of {'hostname_modified': '<hostname>', 'modified__max': <date>, ... }."""
+        options = []
+        # get hostnames from source and populate default dictionary
+        if 'hostname_modified' in [field.name for field in model_cls._meta.fields]:
+            hostnames = model_cls.objects.using(self.get_using_source()).values('hostname_modified').annotate(Count('hostname_modified')).order_by()
+            for item in hostnames:
+                options.append({'hostname_modified': item.get('hostname_modified'), 'modified__gt': datetime(1900, 1, 1)})
+            valuesset = model_cls.objects.using(self.get_using_destination()).values('hostname_modified').all().annotate(Max('modified')).order_by()
+            for item in valuesset:
+                for n, dct in enumerate(options):
+                    if dct.get('hostname_modified') == item.get('hostname_modified'):
+                        dct.update({'hostname_modified': item.get('hostname_modified'), 'modified__gt': item.get('modified__max')})
+                        options[n] = dct
+        return options
 
     def dispatch_model_as_json(self, models, **kwargs):
         """Serializes and saves all instances of each model from source to destination.
