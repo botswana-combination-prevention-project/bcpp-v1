@@ -12,6 +12,9 @@ from bhp_base_model.classes import BaseModel
 
 class Base(object):
 
+    APP_NAME = 0
+    MODEL_NAME = 1
+
     def __init__(self, using_source, using_destination, **kwargs):
         """Initializes and verifies arguments ``using_source`` and ``using_destination``.
 

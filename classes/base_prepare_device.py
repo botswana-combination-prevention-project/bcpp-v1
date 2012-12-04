@@ -23,9 +23,6 @@ nullhandler = logger.addHandler(NullHandler())
 
 class BasePrepareDevice(Base):
 
-    APP_NAME = 0
-    MODEL_NAME = 1
-
     def __init__(self, using_source, using_destination, **kwargs):
         super(BasePrepareDevice, self).__init__(using_source, using_destination, **kwargs)
 
