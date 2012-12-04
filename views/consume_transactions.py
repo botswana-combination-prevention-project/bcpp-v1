@@ -4,7 +4,7 @@ if _platform == "linux" or _platform == "linux2":
     # linux
     import json
 elif _platform == "darwin":
-    import simplejson as json
+    import json as simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
