@@ -313,7 +313,14 @@ class RegisteredSubjectDashboard(Dashboard):
         edc_lab = EdcLab()
         return edc_lab.render(self.subject_identifier, False)
 
-    def render_locator(self, locator_cls, template=None):
+    def render_locator(self, locator_cls, template=None, **kwargs):
+        """Renders to string the locator for the current registered subject or that passed as a keyword.
+
+            Keywords:
+                registered_subject: if locator information for the current registered subject is collected
+                    on another. For example, with mother/infant pairs.
+        """
+        source_registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if isinstance(locator_cls, models.Model) or locator_cls is None:
             raise TypeError('Expected first parameter to be a Locator model class. Got an instance. Please correct in local dashboard view.')
         if locator_cls is None:
@@ -325,8 +332,8 @@ class RegisteredSubjectDashboard(Dashboard):
         locator_add_url = reverse('admin:' + locator_cls._meta.app_label + '_' + locator_cls._meta.module_name + '_add')
         if not template:
             template = 'locator_include.html'
-        if locator_cls.objects.filter(registered_subject=self.registered_subject):
-            locator_instance = locator_cls.objects.get(registered_subject=self.registered_subject)
+        if locator_cls.objects.filter(registered_subject=source_registered_subject):
+            locator_instance = locator_cls.objects.get(registered_subject=source_registered_subject)
             for field in locator_instance._meta.fields:
                 if isinstance(field, (TextField, EncryptedTextField)):
                     setattr(locator_instance, field.name, '<BR>'.join(wrap(getattr(locator_instance, field.name), 25)))
