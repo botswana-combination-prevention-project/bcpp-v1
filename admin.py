@@ -9,6 +9,7 @@ from actions import recalculate_grading, flag_as_reviewed, unflag_as_reviewed, r
 
 
 class ReceiveAdmin(BaseModelAdmin):
+    date_hierarchy = 'receive_datetime'
     list_display = ('registered_subject', 'to_order', "receive_identifier", "receive_datetime", "requisition_identifier", "drawn_datetime", 'created', 'modified', 'import_datetime')
     search_fields = ('registered_subject__subject_identifier', "receive_identifier", "requisition_identifier",)
     list_filter = ('created', "receive_datetime", "drawn_datetime", 'modified', 'import_datetime', )
@@ -33,6 +34,7 @@ admin.site.register(Aliquot, AliquotAdmin)
 
 
 class OrderAdmin(BaseModelAdmin):
+    date_hierarchy = 'order_datetime'
     list_display = ("order_identifier", "receive_identifier", "req", "to_receive", "to_result", "subject_identifier", "panel", "order_datetime", 'status', 'created', 'modified', 'import_datetime')
     search_fields = ('aliquot__receive__registered_subject__subject_identifier', "order_identifier", "aliquot__receive__receive_identifier")
     list_filter = ('status', 'import_datetime', 'aliquot__aliquot_condition', 'panel__edc_name')
@@ -83,7 +85,7 @@ admin.site.register(Review, ReviewAdmin)
 
 
 class ResultAdmin(BaseModelAdmin):
-
+    date_hierarchy = 'result_datetime'
     actions = [flag_as_reviewed, unflag_as_reviewed]
     form = ResultForm
     search_fields = ("result_identifier", "subject_identifier",
@@ -116,7 +118,7 @@ class ResultItemAdmin(BaseModelAdmin):
 
     def __init__(self, *args, **kwargs):
         super(ResultItemAdmin, self).__init__(*args, **kwargs)
-
+    date_hierarchy = 'result_item_datetime'
     form = ResultItemForm
     list_display = (
         "test_code",
