@@ -9,16 +9,16 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'Sequence'
-#        db.create_table('bhp_identifier_sequence', (
-#            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-#            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-#            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-#            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-#            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
-#            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-#            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-#        ))
-#        db.send_create_signal('bhp_identifier', ['Sequence'])
+        db.create_table('bhp_identifier_sequence', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+        ))
+        db.send_create_signal('bhp_identifier', ['Sequence'])
 
         # Adding field 'SubjectIdentifier.sequence_number'
         db.add_column('bhp_identifier_subjectidentifier', 'sequence_number',
@@ -28,7 +28,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'Sequence'
-        # db.delete_table('bhp_identifier_sequence')
+        db.delete_table('bhp_identifier_sequence')
 
         # Deleting field 'SubjectIdentifier.sequence_number'
         db.delete_column('bhp_identifier_subjectidentifier', 'sequence_number')
