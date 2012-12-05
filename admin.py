@@ -27,6 +27,7 @@ admin.site.register(Configuration, ConfigurationAdmin)
 class AppointmentAdmin(BaseModelAdmin):
 
     form = AppointmentForm
+    date_hierarchy = 'appt_datetime'
 
     def save_model(self, request, obj, form, change):
 

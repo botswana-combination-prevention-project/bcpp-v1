@@ -18,6 +18,7 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
         requisition_model = MaternalRequisition
 
     """
+    date_hierarchy = 'report_datetime'
 
     def __init__(self, *args, **kwargs):
         # dashboard_type is required to reverse url back to dashboard
