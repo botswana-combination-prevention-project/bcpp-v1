@@ -137,7 +137,10 @@ class DmisTools(object):
     def flag_withdrawn_order(self, order, save=True):
         """Deletes an order if it no longer exists on the DMIS and does not have a result on file.
 
-        .. note:: Order identifier is LAB21.id.
+        Only try for order identifiers that are the id from lab21.id. In some cases the order identifier
+        is the PID of lab01response when received only on the LIS.
+
+        .. note:: Order identifier is LAB21.id in almost all cases except for samples received only.
         """
         try:
             cnxn = pyodbc.connect(self.dmis_data_source)
@@ -151,12 +154,12 @@ class DmisTools(object):
         # make sure the order identifier is an integer
         sql_template = 'select id from lab21response where id={0}'
         if not re.match('^\d+$', order.order_identifier):
-            logger.info('    invalid order identifier {0}'.format(order.order_identifier))
-            if re.match('^\w+$', order.order_identifier):
-                sql_template = 'select id from lab21response where pid=\'{0}\''
+            # if not an integer, query against PID instead of ID
+            logger.info('    INVALID order identifier {0}'.format(order.order_identifier))
+            #if re.match('^\w+$', order.order_identifier):
+            #    sql_template = 'select id from lab21response where pid=\'{0}\''
         # query DMIS for this LAB21.id
         sql = (sql_template).format(order.order_identifier)
-        #print str(sql)
         lab21_id = cursor.execute(str(sql)).fetchone()
         if not lab21_id:
             # does not exist on the DMIS. prepare to flag as withdrawn on django-lis and EDC
@@ -175,9 +178,9 @@ class DmisTools(object):
         return order_status
 
     def is_withdrawn_order(self, order):
-        """Wraps :mod:`flag_withdrawn_order` to return True/False. 
+        """Wraps :mod:`flag_withdrawn_order` to return True/False.
 
-        Called by Order :finc:save()."""
+        Called by Order :func:save()."""
         if self.flag_withdrawn_order(order, False):
             return True
         else:
