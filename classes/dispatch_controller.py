@@ -98,9 +98,10 @@ class DispatchController(BaseDispatchController):
         """
         for membershipform_model in self.get_membershipform_models():
             try:
-                instances = membershipform_model.objects.filter(
-                    registered_subject=registered_subject,
-                    **kwargs)
+                if membershipform_model:
+                    instances = membershipform_model.objects.filter(
+                        registered_subject=registered_subject,
+                        **kwargs)
             except FieldError:
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_as_json(instances)
