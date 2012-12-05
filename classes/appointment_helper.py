@@ -95,7 +95,7 @@ class AppointmentHelper(object):
         appointments = Appointment.objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)
         count = 0
         visit_model = model_instance.get_visit_model(model_instance)
-        # find the most recent visit model instance and delete any appoiintments after that
+        # find the most recent visit model instance and delete any appointments after that
         for appointment in appointments:
             if not visit_model.objects.filter(appointment=appointment):
                 appointment.delete()
@@ -129,8 +129,8 @@ class AppointmentHelper(object):
                     visit_instance=next_visit_instance,
                     appt_datetime=appt_datetime)
 
-    def list_for_model(self, registered_subject, model_name):
-        """ Lists created appointments for this registered_subject for this model_name """
-        visit_definitions = VisitDefinitionHelper().list_all_for_model(registered_subject, model_name)
-        Appointment = get_model('bhp_appointment', 'appointment')
-        return Appointment.objects.filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)
+#    def list_for_model(self, registered_subject, model_name):
+#        """ Lists created appointments for this registered_subject for this model_name """
+#        visit_definitions = VisitDefinitionHelper().list_all_for_model(registered_subject, model_name)
+#        Appointment = get_model('bhp_appointment', 'appointment')
+#        return Appointment.objects.filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)
