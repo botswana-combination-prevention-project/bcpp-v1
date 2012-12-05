@@ -7,6 +7,8 @@ from forms import RegisteredSubjectForm
 class RegisteredSubjectAdmin (BaseModelAdmin):
 
     form = RegisteredSubjectForm
+    date_hierarchy = 'registration_datetime'
+
     list_display = (
         'subject_identifier',
         'first_name',

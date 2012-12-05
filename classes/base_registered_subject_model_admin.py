@@ -16,6 +16,7 @@ class BaseRegisteredSubjectModelAdmin (BaseModelAdmin):
     delete()
 
     """
+    date_hierarchy = 'created'
 
     def __init__(self, *args, **kwargs):
 
