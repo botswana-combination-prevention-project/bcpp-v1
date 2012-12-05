@@ -34,11 +34,11 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'PendingIdentifier'
-        db.delete_table('bhp_identifier_pendingidentifier')
+        #db.delete_table('bhp_identifier_pendingidentifier')
 
         # Deleting field 'Sequence.device_id'
-        db.delete_column('bhp_identifier_sequence', 'device_id')
-
+        #db.delete_column('bhp_identifier_sequence', 'device_id')
+        pass
 
     models = {
         'bhp_identifier.derivedsubjectidentifier': {
