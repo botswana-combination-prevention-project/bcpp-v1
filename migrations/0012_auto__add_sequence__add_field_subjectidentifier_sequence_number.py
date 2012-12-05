@@ -28,7 +28,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'Sequence'
-        db.delete_table('bhp_identifier_sequence')
+        # db.delete_table('bhp_identifier_sequence')
 
         # Deleting field 'SubjectIdentifier.sequence_number'
         db.delete_column('bhp_identifier_subjectidentifier', 'sequence_number')
