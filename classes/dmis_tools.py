@@ -152,29 +152,33 @@ class DmisTools(object):
         cursor = cnxn.cursor()
         order_status = None
         # make sure the order identifier is an integer
-        sql_template = 'select id from lab21response where id={0}'
-        if not re.match('^\d+$', order.order_identifier):
-            # if not an integer, query against PID instead of ID
-            logger.info('    INVALID order identifier {0}'.format(order.order_identifier))
-            #if re.match('^\w+$', order.order_identifier):
-            #    sql_template = 'select id from lab21response where pid=\'{0}\''
+        sql_template = None
+        lab21_id = None
+        'select id from lab21response where id={0}'
+        if re.match('^\d+$', order.order_identifier):
+            sql_template = 'select id from lab21response where id={0}'
+        #else:
+        #    # if not an integer, query against PID instead of ID
+        #    logger.info('    INVALID order identifier {0}'.format(order.order_identifier))
+        #    if re.match('^\w+$', order.order_identifier):
+        #        sql_template = 'select id from lab21response where pid=\'{0}\''
         # query DMIS for this LAB21.id
-        sql = (sql_template).format(order.order_identifier)
-        lab21_id = cursor.execute(str(sql)).fetchone()
-        if not lab21_id:
-            # does not exist on the DMIS. prepare to flag as withdrawn on django-lis and EDC
-            order_status = 'WITHDRAWN'
-            if LisOrder.objects.using('lab_api').filter(order_identifier=order.order_identifier).exists():
-                lis_order = LisOrder.objects.using('lab_api').get(order_identifier=order.order_identifier)
-                lis_order.status = order_status
+            sql = (sql_template).format(order.order_identifier)
+            lab21_id = cursor.execute(str(sql)).fetchone()
+            if not lab21_id:
+                # does not exist on the DMIS. prepare to flag as withdrawn on django-lis and EDC
+                order_status = 'WITHDRAWN'
+                if LisOrder.objects.using('lab_api').filter(order_identifier=order.order_identifier).exists():
+                    lis_order = LisOrder.objects.using('lab_api').get(order_identifier=order.order_identifier)
+                    lis_order.status = order_status
+                    if save:
+                        logger.info('    changing order {0} to WITHDRAWN on django-lis.'.format(order.order_identifier))
+                        lis_order.save(using='lab_api')
                 if save:
-                    logger.info('    changing order {0} to WITHDRAWN on django-lis.'.format(order.order_identifier))
-                    lis_order.save(using='lab_api')
-            if save:
-                # only save if you are not in Order.save()
-                order.status = order_status
-                logger.info('    changing order {0} to WITHDRAWN on edc.'.format(order.order_identifier))
-                order.save()
+                    # only save if you are not in Order.save()
+                    order.status = order_status
+                    logger.info('    changing order {0} to WITHDRAWN on edc.'.format(order.order_identifier))
+                    order.save()
         return order_status
 
     def is_withdrawn_order(self, order):
