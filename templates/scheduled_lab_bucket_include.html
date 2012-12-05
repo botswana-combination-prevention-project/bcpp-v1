@@ -29,7 +29,7 @@
         <tr class="{% cycle 'row1' 'row2' %}">
         <td><span {% if f.entry_status == 'NEW'%}style="background:red;"{% endif %}>&nbsp;</span></td>        
         <td>{{ forloop.counter }}</td>
-        {% if f.entry_status == 'NEW' or f.entry_status == 'KEYED' or f.entry_status == 'QUERY' %}            
+        {% if f.entry_status == 'NEW' or f.entry_status == 'KEYED' or f.entry_status == 'QUERY' or f.entry_status == 'OPTIONAL' %}            
             {% if appointment.appt_status == 'in_progress' %}
              <td><A href="{% requisition_model_admin_url requisition_model f.lab_entry.panel registered_subject appointment visit_model dashboard_type %}{{extra_url_context}}">{{ f.lab_entry.panel.name|title }}</A></td>
             {% else %}                
