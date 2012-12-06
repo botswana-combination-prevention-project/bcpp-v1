@@ -73,8 +73,12 @@ class AppointmentHelper(object):
                                 registered_subject=registered_subject,
                                 visit_definition=visit_definition,
                                 visit_instance=0)
-                    if appt.appt_datetime != appt_datetime:
-                        appt.appt_datetime = appt_datetime
+                    if appt.best_appt_datetime != appt_datetime:
+                        # the calculated appointment date does not match the best_appt_datetime
+                        # which means you changed the date on the membership form and now
+                        # need to correct the best_appt_datetime
+                        appt.appt_datetime = appt_datetime  # TODO: are you sure you want to change this date?"
+                        appt.best_appt_datetime = appt_datetime
                         appt.save()
                 # else create a new appointment
                 else:
