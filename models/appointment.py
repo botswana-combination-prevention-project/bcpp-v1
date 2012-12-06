@@ -23,7 +23,9 @@ class Appointment(BaseAppointment):
 
     best_appt_datetime = models.DateTimeField(null=True, editable=False)
 
-    study_site = models.ForeignKey(StudySite, null=True, blank=False)
+    study_site = models.ForeignKey(StudySite,
+        null=True,
+        blank=False)
 
     visit_definition = models.ForeignKey(VisitDefinition, related_name='+',
         verbose_name=_("Visit"),
@@ -32,9 +34,7 @@ class Appointment(BaseAppointment):
     visit_instance = models.CharField(
         max_length=1,
         verbose_name=_("Instance"),
-        validators=[
-            RegexValidator(r'[0-9]', 'Must be a number from 0-9'),
-            ],
+        validators=[RegexValidator(r'[0-9]', 'Must be a number from 0-9')],
         default='0',
         null=True,
         blank=True,
