@@ -147,11 +147,7 @@ class DispatchController(BaseDispatchController):
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
         registered_subjects = kwargs.get('registered_subjects', [])
-#        subject_identifier_list = [rs.subject_identifier for rs in registered_subjects]
-        subject_identifier_list = []
-        for rs in registered_subjects:
-            if rs.subject_identifier:
-                subject_identifier_list.append(rs.subject_identifier)
+        subject_identifier_list = [rs.subject_identifier for rs in registered_subjects if rs.subject_identifier]
         dispatch_item = DispatchItem.objects.create(
             producer=self.get_producer(),
             dispatch=self.get_dispatch(),
