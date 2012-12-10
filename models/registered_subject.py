@@ -130,11 +130,11 @@ class RegisteredSubject(BaseSubject):
                                           self.subject_type,
                                           mask_encrypted(self.first_name))
 
-    @property
-    def is_dispatched(self):
-        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-        locked, producer = self.is_dispatched_to_producer()
-        return locked
+#    @property
+#    def is_dispatched(self):
+#        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
+#        locked, producer = self.is_dispatched_to_producer()
+#        return locked
 
     def is_dispatched_to_producer(self):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
