@@ -1,5 +1,5 @@
 from django import forms
-
+from bhp_dispatch.helpers import is_dispatched, is_dispatched_registered_subject
 from logic_check import LogicCheck
 
 
@@ -13,7 +13,16 @@ class BaseModelForm(forms.ModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-
+        # check if dispatched
+        if 'registered_subject' in cleaned_data:
+            registered_subject = cleaned_data.get('registered_subject', None)
+            is_dispatched, producer = is_dispatched_registered_subject(registered_subject)
+            if is_dispatched:
+                raise forms.ValidationError('Subject is currently dispatched to {0}.'.format(producer))
+        if 'subject_identifier' in cleaned_data:
+            subject_identifier = cleaned_data.get('subject_identifier', None)
+            if is_dispatched(subject_identifier):
+                raise forms.ValidationError('Subject is currently dispatched.')
         # encrypted fields may have their own validation code to run.
         # See the custom field objects in bhp_crypto.
         try:
