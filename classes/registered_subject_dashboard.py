@@ -12,6 +12,7 @@ from bhp_appointment.models import Appointment
 from bhp_visit.models import ScheduleGroup, MembershipForm
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
+from bhp_dispatch.helpers import is_dispatched_registered_subject
 from bhp_subject_summary.models import Link
 from lab_clinic_api.classes import EdcLab
 from bhp_entry.classes import ScheduledEntry
@@ -69,7 +70,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(appointment_row_template=self.appointment_row_template)
         self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if self.registered_subject:
-            self.is_dispatched, self.dispatch_producer = self.registered_subject.is_dispatched_to_producer()
+            self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
             self.set_subject_type(kwargs.get('subject_type'))
             # subject identifier is almost always available
             self.subject_identifier = self.registered_subject.subject_identifier

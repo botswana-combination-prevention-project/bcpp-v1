@@ -3,7 +3,9 @@
 {% load registered_subject_dashboard_tags %}
 
 {% block dispatch %}
-    {% if is_dispatched %}<p><font color="red">Data for this subject is currently dispatched to {{ dispatch_producer }}.</p> </font>{% endif %}
+    {% if is_dispatched %}
+        <div align="center"><h1>This subject is currently <font color="red">dispatched</font> to {{ dispatch_producer }}. Please do not edit any information.</h1></div>
+    {% endif %}
 {% endblock%}
 
 {% block membership_forms %} 
