@@ -1,5 +1,5 @@
 {% extends "section.html"%}
-
+{% load dispatch_tags %}
 {% block breadcrumbs %}
 
     <div class="breadcrumbs">
@@ -16,7 +16,7 @@
 <tr><TD><H4>Items selected for dispatch</H4></TD></TR>
 <tr><TD colspan=2>Dispatch by <A href="{{ dispatch_admin_url }}">{{ dispatch_model_name }}</A></TD></td></TR>
     {% for qs in queryset %}
-        <tr><TD><A href="{{ dispatch_url }}{{ qs }}/">{{ qs }}</A></TD><td>{% if qs.is_dispatched %}dispatched{% endif %}</td></TR>
+        <tr><TD><A href="{{ dispatch_url }}{{ qs }}/">{{ qs }}</A></TD><td>{% if qs|is_dispatched %}<A href="/admin/bhp_dispatch/dispatchitem/?q={{ qs }}">dispatched</A>{% endif %}</td></TR>
     {% endfor %}
 </table>
 <form action="/dispatch/" method="post">

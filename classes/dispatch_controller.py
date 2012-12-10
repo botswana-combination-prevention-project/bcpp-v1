@@ -20,21 +20,97 @@ class AlreadyDispatched(Exception):
 
 class DispatchController(BaseDispatchController):
 
-    def __init__(self, using_source, using_destination, **kwargs):
+    def __init__(self, using_source, using_destination, app_name, model_name, identifier_field_name, dispatch_url, **kwargs):
         super(DispatchController, self).__init__(using_source, using_destination, **kwargs)
+        self._dispatch_app_name = None
+        self._dispatch_model_name = None
         self._visit_models = {}
         self._dispatch = None
-        self.set_dispatch()
+        self._dispatch_url = None
+        self._dispatch_admin_url = None
+        self._dispatch_model = None
+        self._dispatch_model_item_identifier_field = None
+        self._dispatch_admin_url = None
+        self.set_dispatch_app_name(app_name)
+        self.set_dispatch_model_name(model_name)
+        self.set_dispatch_model_item_identifier_field(identifier_field_name)
+        self.set_dispatch_url(dispatch_url)
+        self.set_dispatch_instance()
 
-    def set_dispatch(self):
+    def set_dispatch_app_name(self, value):
+        if not value:
+            raise AttributeError('The app_name of the dispatch model cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_app_name = value
+
+    def get_dispatch_app_name(self):
+        """Gets the app_name for the dispatching model."""
+        if not self._dispatch_app_name:
+            self.set_dispatch_app_name()
+        return self._dispatch_app_name
+
+    def set_dispatch_model_name(self, value):
+        if not value:
+            raise AttributeError('The model_name of the dispatch model cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_model_name = value
+
+    def get_dispatch_model_name(self):
+        """Gets the model name for the dispatching model."""
+        if not self._dispatch_model_name:
+            self.set_dispatch_model_name()
+        return self._dispatch_model_name
+
+    def set_dispatch_model_item_identifier_field(self, value=None):
+        """Sets identifier field attribute of the dispatch model."""
+        if not value:
+            raise AttributeError('The identifier field of the dispatch model cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_model_item_identifier_field = value
+
+    def get_dispatch_model_item_identifier_field(self):
+        """Gets the model name for the dispatching model."""
+        if not self._dispatch_model_item_identifier_field:
+            self.set_dispatch_model_item_identifier_field()
+        return self._dispatch_model_item_identifier_field
+
+    def set_dispatch_model(self):
+        """Sets the model class for the dispatching model."""
+        self._dispatch_model = get_model(self.get_dispatch_app_name(), self.get_dispatch_model_name())
+        self.set_dispatch_modeladmin_url()
+
+    def get_dispatch_model(self):
+        """Gets the model class for the dispatching model."""
+        if not self._dispatch_model:
+            self.set_dispatch_model()
+        return self._dispatch_model
+
+    def set_dispatch_modeladmin_url(self):
+        """Sets the modeladmin url for the dispatching model."""
+        self._dispatch_modeladmin_url = '/admin/{0}/{1}/'.format(self.get_dispatch_app_name(), self.get_dispatch_model_name())
+
+    def get_dispatch_modeladmin_url(self):
+        """Gets the modeladmin url for the dispatching model."""
+        if not self._dispatch_modeladmin_url:
+            self.set_dispatch_modeladmin_url()
+        return self._dispatch_modeladmin_url
+
+    def set_dispatch_url(self, value=None):
+        if not value:
+            raise AttributeError('Dispatch url cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_url = value
+
+    def get_dispatch_url(self):
+        if not self._dispatch_url:
+            self.set_dispatch_url()
+        return self._dispatch_url
+
+    def set_dispatch_instance(self):
         """Creates a dispatch instance for this controller sessions."""
         Dispatch = get_model('bhp_dispatch', 'Dispatch')
         self._dispatch = Dispatch.objects.create(producer=self.get_producer())
 
-    def get_dispatch(self):
+    def get_dispatch_instance(self):
         """Gets the dispatch instance for this controller sessions."""
         if not self._dispatch:
-            self.set_dispatch()
+            self.set_dispatch_instance()
         return self._dispatch
 
     def set_visit_model_fkey(self, model_cls, visit_model_cls):
@@ -142,17 +218,19 @@ class DispatchController(BaseDispatchController):
         return False
 
     def create_dispatch_item_instance(self, item_identifier, **kwargs):
-        """Creates a dispatch item instance for given dispatch instance and item_identifier."""
+        """Creates a dispatch item instance for given dispatch instance and item_identifier
+
+        .. note:: Uses the pk instead of subject_identifier as subject_identifier may be None."""
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
         registered_subjects = kwargs.get('registered_subjects', [])
-        subject_identifier_list = [rs.subject_identifier for rs in registered_subjects if rs.subject_identifier]
+        pk_list = [rs.pk for rs in registered_subjects]
         dispatch_item = DispatchItem.objects.create(
             producer=self.get_producer(),
-            dispatch=self.get_dispatch(),
+            dispatch=self.get_dispatch_instance(),
             item_identifier=item_identifier,
-            subject_identifiers=' '.join(subject_identifier_list),
+            subject_identifiers=' '.join(pk_list),
             is_dispatched=True,
             dispatch_datetime=datetime.today())
         return created, dispatch_item
@@ -164,14 +242,17 @@ class DispatchController(BaseDispatchController):
         if not self.has_outgoing_transactions():
             any_transactions = False
             for qs in queryset:
-                item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
+                item_identifier = getattr(qs, self.get_dispatch_model_item_identifier_field())
                 if self.is_dispatched(item_identifier):
                     any_dispatched = True
                     break
             if not any_dispatched:
                 for qs in queryset:
-                    item_identifier = getattr(qs, self.dispatch_model_item_identifier_field)
+                    item_identifier = getattr(qs, self.get_dispatch_model_item_identifier_field())
                     self.dispatch(item_identifier)
-                logger.info("Updating the Crypt table...")
-                self.update_model(('bhp_crypto', 'crypt'))
+                self.dispatch_crypt()
         return any_dispatched, any_transactions
+
+    def dispatch_crypt(self):
+        logger.info("Updating the Crypt table...")
+        self.update_model(('bhp_crypto', 'crypt'))
