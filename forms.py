@@ -1,9 +1,9 @@
 from datetime import date
-from django.db.models import Max
 from django import forms
 from django.core.exceptions import ValidationError
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_appointment.models import Appointment
+from bhp_dispatch.helpers import is_dispatched_registered_subject
 
 
 class AppointmentForm(forms.ModelForm):
@@ -16,7 +16,7 @@ class AppointmentForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
         if cleaned_data.get('registered_subject', None):
             registered_subject = cleaned_data.get('registered_subject')
-            dispatched, producer_name = registered_subject.is_dispatched_to_producer()
+            dispatched, producer_name = is_dispatched_registered_subject(registered_subject)
             if dispatched:
                 raise forms.ValidationError("Data for {0} is currently dispatched to netbook {1}. "
                                  "This form may not be modified.".format(registered_subject.subject_identifier,
