@@ -33,7 +33,8 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
         off study form."""
         return None
 
-    def save(self, ):
+    def save(self, *args, **kwargs):
+        super(BaseOffStudy, self).__save(*args, **kwargs)
         Appointment = models.get_model('bhp_appointment', 'appointment')
         for appointment in Appointment.objects.filter(
                 registered_subject__subject_identifier=self.registered_subject.subject_identifier,
