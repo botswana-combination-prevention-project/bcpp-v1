@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import NoReverseMatch
 from django_extensions.db.models import TimeStampedModel
 from bhp_base_model.fields import HostnameCreationField, HostnameModificationField
 
@@ -16,6 +18,13 @@ class BaseModel(TimeStampedModel):
 
     hostname_modified = HostnameModificationField(
         db_index=True)
+
+    def get_absolute_url(self):
+        if self.id:
+            url = reverse('admin:{app_label}_{object_name}_change'.format(app_label=self._meta.app_label, object_name=self._meta.object_name.lower()), args=(self.id,))
+        else:
+            url = reverse('admin:{app_label}_{object_name}_add'.format(app_label=self._meta.app_label, object_name=self._meta.object_name.lower()))
+        return url
 
     class Meta:
         abstract = True
