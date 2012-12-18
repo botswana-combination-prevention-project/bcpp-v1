@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from bhp_base_model.classes import BaseModel
 from lab_common.choices import UNITS, ABS_CALC
+from lab_clinic_api.managers import TestCodeManager
 
 
 class BaseTestCode(BaseModel):
@@ -47,7 +48,7 @@ class BaseTestCode(BaseModel):
         blank=True,
         )
 
-    objects = models.Manager()
+    objects = TestCodeManager()
 
     def __unicode__(self):
         return self.name
