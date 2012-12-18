@@ -4,11 +4,9 @@ from bhp_crypto.fields import EncryptedIdentityField
 
 
 class EncryptedOmangField(EncryptedIdentityField):
-    
+
     def validate_with_cleaned_data(self, attname, cleaned_data):
-        
-        """ Test the OMANG, this field validator must have access to the keys identity_type, gender """
-        
+        """ Tests the OMANG, this field validator must have access to the keys identity_type, gender """
         if attname  in cleaned_data:
             value = cleaned_data.get(attname, None)
             if value:
@@ -24,12 +22,11 @@ class EncryptedOmangField(EncryptedIdentityField):
                     gender = cleaned_data.get('gender', None)
                     identity_type = cleaned_data.get('identity_type', None)
                     if value:
-                        if identity_type == 'OMANG' and gender in ['M','F']:
+                        if identity_type == 'OMANG' and gender in ['M', 'F']:
                             # the OMANG uses the format below which ties it to the gender on digit 5.
                             # the OMANG digits have no other known meaning.
                             str_value = "%s" % (value)
-                            pattern = {'M':'^[0-9]{4}[1]{1}[0-9]{4}$', 'F': '^[0-9]{4}[2]{1}[0-9]{4}$'}
+                            pattern = {'M': '^[0-9]{4}[1]{1}[0-9]{4}$', 'F': '^[0-9]{4}[2]{1}[0-9]{4}$'}
                             p = re.compile(pattern[gender])
                             if p.match(str_value) == None:
                                 raise ValidationError(u'Invalid Omang number format and/or invalid Omang format for gender (%s). You entered %s.' % (gender, str_value))
-                
