@@ -5,6 +5,7 @@ from bhp_variables.models import StudySpecific
 from bhp_variables.choices import GENDER_OF_CONSENT
 from bhp_common.utils import formatted_age
 from bhp_base_form.classes import BaseModelForm
+from bhp_crypto.classes import BaseEncryptedField
 
 
 class BaseSubjectConsentForm(BaseModelForm):
@@ -13,15 +14,13 @@ class BaseSubjectConsentForm(BaseModelForm):
 
         cleaned_data = self.cleaned_data
 
-        """
-        check omang if identity_type is omang
-        """
+        # check omang if identity_type is omang
         # encrypted fields may cause problems if existing values
         # cannot be decrypted, so call a custom field method validate_with_cleaned_data()
         # to validate.
-        #for field in self._meta.model._meta.fields:
-        #    if isinstance(field, BaseEncryptedField):
-        #        field.validate_with_cleaned_data(field.attname, cleaned_data)
+        for field in self._meta.model._meta.fields:
+            if isinstance(field, BaseEncryptedField):
+                field.validate_with_cleaned_data(field.attname, cleaned_data)
 
         """
         check 1st and last letters of initials match subjects name
