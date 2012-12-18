@@ -2,6 +2,7 @@ from django.db import models
 from lab_account.models import Account
 from lab_test_code.models import TestCode
 from lab_aliquot_list.models import AliquotType
+from lab_clinic_api.managers import PanelManager
 from panel_group import PanelGroup
 from base_panel import BasePanel
 
@@ -29,7 +30,7 @@ class Panel(BasePanel):
         blank=True,
         )
 
-    objects = models.Manager()
+    objects = PanelManager()
 
     def __unicode__(self):
         return self.name

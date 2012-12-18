@@ -1,5 +1,6 @@
 from django.db import models
 from bhp_base_model.classes import BaseModel
+from lab_clinic_api.managers import PanelGroupManager
 
 
 class PanelGroup (BaseModel):
@@ -10,7 +11,7 @@ class PanelGroup (BaseModel):
         unique=True,
         )
 
-    objects = models.Manager()
+    objects = PanelGroupManager()
 
     def __unicode__(self):
         return self.name
