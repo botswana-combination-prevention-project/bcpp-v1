@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from bhp_base_model.classes import BaseModel
+from lab_clinic_api.managers import AliquotTypeManager
 
 
 class BaseAliquotType(BaseModel):
@@ -11,7 +12,7 @@ class BaseAliquotType(BaseModel):
         )
 
     alpha_code = models.CharField(
-        verbose_name='Aplha code',
+        verbose_name='Alpha code',
         validators=[
             RegexValidator('^[A-Z]{2,15}$')
             ],
@@ -27,10 +28,10 @@ class BaseAliquotType(BaseModel):
         unique=True,
         )
 
-    objects = models.Manager()
+    objects = AliquotTypeManager()
 
     def __unicode__(self):
-        return "%s %s: %s" % (self.alpha_code, self.numeric_code, self.name.lower())
+        return "{0} {0}: {0}".format(self.alpha_code, self.numeric_code, self.name.lower())
 
     def natural_key(self):
         return (self.alpha_code, self.numeric_code)
