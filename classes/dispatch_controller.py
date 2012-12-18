@@ -142,19 +142,20 @@ class DispatchController(BaseDispatchController):
         """
         self.dispatch_appointments(registered_subject)
         # Get all the models with reference to SubjectVisit
-        scheduled_models = self.get_scheduled_models(app_name)
+        scheduled_models = self.get_scheduled_models()
         # get the visit model class for this app
-        visit_model_cls = self.get_visit_model_cls(app_name, index='cls')
-        # Fetch all all subject visits for the member and survey
-        visits = visit_model_cls.objects.filter(appointment__registered_subject=registered_subject, **kwargs)
-        visit_fld_name = None
-        if visits:
-            for visit in visits:
-                # export all appointments for this visit
-                self.dispatch_as_json(visit.appointment, app_name=app_name)
-            self.dispatch_as_json(visits, app_name=app_name)
+        for app_name, scheduled_model_classes in scheduled_models.iteritems():
+            visit_model_cls = self.get_visit_model_cls(app_name, index='cls')
+            # Fetch all all subject visits for the member and survey
+            visits = visit_model_cls.objects.filter(appointment__registered_subject=registered_subject, **kwargs)
+            visit_fld_name = None
+            if visits:
+                for visit in visits:
+                    # export all appointments for this visit
+                    self.dispatch_as_json(visit.appointment, app_name=app_name)
+                    self.dispatch_as_json(visits, app_name=app_name)
             # fetch all scheduled_models for the visits and export
-            for model_cls in scheduled_models:
+            for model_cls in scheduled_model_classes:
                 if not visit_fld_name:
                     for fld in model_cls._meta.fields:
                         if isinstance(fld, (ForeignKey, OneToOneField)):

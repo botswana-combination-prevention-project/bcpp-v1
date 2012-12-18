@@ -9,6 +9,7 @@ class DispatchItemInline(BaseStackedInline):
 
 
 class DispatchAdmin(BaseModelAdmin):
+    date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', ]
     list_display = (
         'producer',
@@ -31,6 +32,7 @@ admin.site.register(Dispatch, DispatchAdmin)
 
 
 class DispatchItemAdmin(BaseModelAdmin):
+    date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', 'item_identifier']
     list_display = (
         'dispatch',
