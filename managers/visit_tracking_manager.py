@@ -5,13 +5,9 @@ from bhp_appointment.models import Appointment
 
 
 class VisitTrackingManager(models.Manager):
-    def get_by_natural_key(self, visit_instance, visit_definition, identity, first_name, dob, initials, registration_identifier):
+    def get_by_natural_key(self, visit_instance, visit_definition, subject_identifier):
         registered_subject = RegisteredSubject.objects.get(
-            identity=identity,
-            first_name=first_name,
-            dob=dob,
-            initials=initials,
-            registration_identifier=registration_identifier
+            subject_identifier=subject_identifier
             )
         visit_definition = VisitDefinition.objects.get(code=visit_definition)
 
