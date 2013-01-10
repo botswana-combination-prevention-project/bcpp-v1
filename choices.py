@@ -67,6 +67,25 @@ COUNTRY = (
     ('OTHER', 'Other'),
     )
 
+DAYS_OF_WEEK = (
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+    ('Saturday', 'Saturday'),
+    ('Sunday', 'Sunday'),
+    ('AnyDay', 'Any Day'),
+)
+
+TIME_OF_DAY = (
+    ('Morning', 'Morning'),
+    ('Afternoon', 'Afternoon'),
+    ('Evening', 'Evening'),
+    ('Anytime', 'Anytime'),
+)
+
+
 DATE_ESTIMATED = (
     ('-', 'No'),
     ('D', 'Yes, estimated the Day'),
