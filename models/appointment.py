@@ -47,7 +47,7 @@ class Appointment(BaseAppointment):
         null=True,
         blank=True,
         db_index=True,
-        help_text='hold dashboard_type variable, set by dashbaord')
+        help_text='hold dashboard_type variable, set by dashboard')
 
     objects = AppointmentManager()
 
@@ -114,3 +114,4 @@ class Appointment(BaseAppointment):
     class Meta:
         ordering = ['registered_subject', 'appt_datetime', ]
         app_label = 'bhp_appointment'
+        unique_together = (('registered_subject', 'visit_definition', 'visit_instance'),)
