@@ -144,8 +144,9 @@ class DispatchController(BaseDispatchController):
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models()
         # get the visit model class for this app
-        for app_name, scheduled_model_classes in scheduled_models.iteritems():
-            visit_model_cls = self.get_visit_model_cls(app_name, index='cls')
+        #for app_name, scheduled_model_classes in scheduled_models.iteritems():
+        for scheduled_model_class in scheduled_models:
+            visit_model_cls = self.get_visit_model_cls(app_name, scheduled_model_class, index='cls')
             # Fetch all all subject visits for the member and survey
             visits = visit_model_cls.objects.filter(appointment__registered_subject=registered_subject, **kwargs)
             visit_fld_name = None
@@ -155,13 +156,13 @@ class DispatchController(BaseDispatchController):
                     self.dispatch_as_json(visit.appointment, app_name=app_name)
                     self.dispatch_as_json(visits, app_name=app_name)
             # fetch all scheduled_models for the visits and export
-            for model_cls in scheduled_model_classes:
-                if not visit_fld_name:
-                    for fld in model_cls._meta.fields:
-                        if isinstance(fld, (ForeignKey, OneToOneField)):
-                            if issubclass(fld.rel.to, visit_model_cls):
-                                visit_fld_name = fld.name
-                scheduled_instances = model_cls.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
+            #for model_cls in scheduled_model_class:
+                #if not visit_fld_name:
+                for fld in scheduled_model_class._meta.fields:
+                    if isinstance(fld, (ForeignKey, OneToOneField)):
+                        if issubclass(fld.rel.to, visit_model_cls):
+                            visit_fld_name = fld.name
+                scheduled_instances = scheduled_model_class.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
                 self.dispatch_as_json(scheduled_instances, app_name=app_name)
 
     def dispatch_membership_forms(self, registered_subject, **kwargs):
