@@ -116,9 +116,9 @@ class BaseVisitTracking (BaseUuidModel):
     def natural_key_as_dict(self):
         return {'appointment': self.appointment, }
 
-#    def natural_key(self):
-#        return self.appointment.natural_key()
-#    natural_key.dependencies = ['bhp_appointment.appointment', ]
+    def natural_key(self):
+        return self.appointment.natural_key()
+    natural_key.dependencies = ['bhp_appointment.appointment', ]
 
     @property
     def is_dispatched(self):
