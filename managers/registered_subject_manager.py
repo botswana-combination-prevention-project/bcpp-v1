@@ -5,19 +5,20 @@ from django.db import models
 
 class RegisteredSubjectManager(models.Manager):
 
-#    def get_by_natural_key(self, identity, first_name, dob, initials, registration_identifier):
-#        return self.get(
-#            identity=identity,
-#            first_name=first_name,
-#            dob=dob,
-#            initials=initials,
-#            registration_identifier=registration_identifier
-#            )
-
-    def get_by_natural_key(self, subject_identifier):
+    def get_by_natural_key(self, identity, first_name, dob, initials, registration_identifier, subject_identifier):
         return self.get(
+            identity=identity,
+            first_name=first_name,
+            dob=dob,
+            initials=initials,
+            registration_identifier=registration_identifier,
             subject_identifier=subject_identifier
             )
+
+#    def get_by_natural_key(self, subject_identifier):
+#        return self.get(
+#            subject_identifier=subject_identifier
+#            )
         
     def update_with(self, instance, attrname='subject_identifier', **kwargs):
         """ Use an instance, usually a consent, to update registered subject.
