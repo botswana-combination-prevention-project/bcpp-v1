@@ -125,7 +125,7 @@ class DispatchController(BaseDispatchController):
         return self._visit_model_fkey_name
 
     def dispatch_appointments(self, registered_subject):
-        """Dispatches all apoointments for this registered subject."""
+        """Dispatches all appointments for this registered subject."""
         Appointments = get_model('bhp_appointment', 'Appointment')
         self.dispatch_as_json(Appointments.objects.filter(registered_subject=registered_subject))
 
@@ -153,8 +153,8 @@ class DispatchController(BaseDispatchController):
             if visits:
                 for visit in visits:
                     # export all appointments for this visit
-                    self.dispatch_as_json(visit.appointment, app_name=app_name)
-                    self.dispatch_as_json(visits, app_name=app_name)
+                    #self.dispatch_as_json(visit.appointment, app_name=app_name)
+                    self.dispatch_as_json(visit, app_name=app_name)
             # fetch all scheduled_models for the visits and export
             #for model_cls in scheduled_model_class:
                 #if not visit_fld_name:
