@@ -8,12 +8,13 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
 
     """ModelAdmin subclass for models with a ForeignKey to 'appointment', such as your visit model(s).
 
-    In the child ModelAdmin class set the following attributes, for example
+    In the child ModelAdmin class set the following attributes, for example::
 
         visit_model_foreign_key = 'maternal_visit'
         dashboard_type = 'maternal'
 
-    if you are tracking labs, also include a model that inherets from lab_requisition.models.BaseRequisition, e.g.:
+    if you are tracking labs, also include a model that inherets from lab_requisition.models.BaseRequisition, e.g.::
+    
         requisition_model = MaternalRequisition
 
     """

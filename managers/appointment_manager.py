@@ -5,6 +5,7 @@ from bhp_visit.models import VisitDefinition
 class AppointmentManager(models.Manager):
 
     def get_by_natural_key(self, visit_instance, code, identity, first_name, dob, initials, registration_identifier, subject_identifier):
+        """Determines the natural key for serialization."""
         RegisteredSubject = self.registered_subject.__class__
         registered_subject = RegisteredSubject.objects.get(
             identity=identity,

@@ -8,7 +8,6 @@ from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition
 from bhp_dispatch.models import DispatchItem
 from bhp_appointment.managers import AppointmentManager
-from bhp_appointment_helper.classes import AppointmentDateHelper
 from base_appointment import BaseAppointment
 
 
@@ -17,7 +16,7 @@ class Appointment(BaseAppointment):
     """Tracks appointments for a registered subject's visit.
 
         Only one appointment per subject visit_definition+visit_instance.
-        Attribute 'visit_instance' should be populated by the system
+        Attribute 'visit_instance' should be populated by the system.
     """
     registered_subject = models.ForeignKey(RegisteredSubject, related_name='+')
 
@@ -58,6 +57,7 @@ class Appointment(BaseAppointment):
     natural_key.dependencies = ['bhp_registration.registeredsubject', 'bhp_visit.visitdefinition']
 
     def save(self, *args, **kwargs):
+        from bhp_appointment_helper.classes import AppointmentDateHelper
         appointment_date_helper = AppointmentDateHelper()
         if not self.id:
             self.appt_datetime = appointment_date_helper.get_best_datetime(self.appt_datetime, self.study_site)

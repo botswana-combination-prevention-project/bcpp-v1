@@ -36,6 +36,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="classes.html" title="Classes"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">bhp_appointment 1.0 documentation</a> &raquo;</li> 
@@ -47,15 +50,38 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="models">
-<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-bhp_appointment.models">
+<span id="models"></span><h1>Models<a class="headerlink" href="#module-bhp_appointment.models" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bhp_appointment.models.BaseAppointment">
+<em class="property">class </em><tt class="descclassname">bhp_appointment.models.</tt><tt class="descname">BaseAppointment</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_appointment.models.BaseAppointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_sync.classes.base_sync_model.BaseSyncModel</span></tt></p>
+<p>Base class for Appointments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>appt_datetime</strong> (<em>DateTimeField</em>) &#8211; Appointment date and time</li>
+<li><strong>timepoint_datetime</strong> (<em>DateTimeField</em>) &#8211; calculated appointment datetime. Do not change</li>
+<li><strong>appt_status</strong> (<em>CharField</em>) &#8211; Status</li>
+<li><strong>appt_reason</strong> (<em>CharField</em>) &#8211; Reason for appointment</li>
+<li><strong>contact_tel</strong> (<em>CharField</em>) &#8211; Contact tel</li>
+<li><strong>comment</strong> (<em>CharField</em>) &#8211; Comment</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="class">
 <dt id="bhp_appointment.models.Appointment">
 <em class="property">class </em><tt class="descclassname">bhp_appointment.models.</tt><tt class="descname">Appointment</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_appointment.models.Appointment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_appointment.models.base_appointment.BaseAppointment</span></tt></p>
 <p>Tracks appointments for a registered subject&#8217;s visit.</p>
 <p>Only one appointment per subject visit_definition+visit_instance.
-Attribute &#8216;visit_instance&#8217; should be populated by the system</p>
+Attribute &#8216;visit_instance&#8217; should be populated by the system.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -98,6 +124,57 @@ Attribute &#8216;visit_instance&#8217; should be populated by the system</p>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="bhp_appointment.models.Configuration">
+<em class="property">class </em><tt class="descclassname">bhp_appointment.models.</tt><tt class="descname">Configuration</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_appointment.models.Configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_uuid_model.BaseUuidModel</span></tt></p>
+<p>Only allows a single record.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Name :</th><td class="field-body"><p class="first">configuration</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">bhp_appointment_configuration</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>allowed_iso_weekdays</strong> (<em>IntegerField</em>) &#8211; List ISO weekdays to which appointments may be scheduled. For example, 12345 where 1 is Monday.</li>
+<li><strong>use_same_weekday</strong> (<em>BooleanField</em>) &#8211; If Ticked, adjust the appointment date to have appointments always land on the same weekday.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_appointment.models.Holiday">
+<em class="property">class </em><tt class="descclassname">bhp_appointment.models.</tt><tt class="descname">Holiday</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_appointment.models.Holiday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_uuid_model.BaseUuidModel</span></tt></p>
+<p>Holiday(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, configuration_id, holiday_name, holiday_date)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Name :</th><td class="field-body"><p class="first">holiday</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">bhp_appointment_holiday</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>configuration_id</strong> (<em>ForeignKey</em>) &#8211; Configuration</li>
+<li><strong>holiday_name</strong> (<em>CharField</em>) &#8211; Holiday name</li>
+<li><strong>holiday_date</strong> (<em>DateField</em>) &#8211; Holiday date</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -137,6 +214,9 @@ Attribute &#8216;visit_instance&#8217; should be populated by the system</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="classes.html" title="Classes"
              >previous</a> |</li>

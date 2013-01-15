@@ -26,11 +26,17 @@ admin.site.register(Configuration, ConfigurationAdmin)
 
 class AppointmentAdmin(BaseModelAdmin):
 
+    """ModelAdmin class to handle appointments."""
+
     form = AppointmentForm
     date_hierarchy = 'appt_datetime'
 
     def save_model(self, request, obj, form, change):
+        """Saves an appointment if handled through admin.
 
+            1. On change, checks the window period using :class:`bhp_visit.classes.WindowPeriod` and warns if out.
+            2. If new, sets the visit 'instance' to '0' or one plus the max.
+        """
         if change:
             obj.user_modified = request.user
             window_period = WindowPeriod()
@@ -50,6 +56,7 @@ class AppointmentAdmin(BaseModelAdmin):
 
     #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """Limits the dropdown for 'registered_subject'"""
         if db_field.name == "registered_subject":
             if request.GET.get('registered_subject'):
                 kwargs["queryset"] = RegisteredSubject.objects.filter(pk=request.GET.get('registered_subject'))

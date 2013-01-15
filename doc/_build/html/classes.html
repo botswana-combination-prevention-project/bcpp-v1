@@ -37,6 +37,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="models.html" title="Models"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -51,21 +54,45 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="classes">
-<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-bhp_appointment.classes">
+<span id="classes"></span><h1>Classes<a class="headerlink" href="#module-bhp_appointment.classes" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="bhp_appointment.classes.BaseAppointmentModelAdmin">
 <em class="property">class </em><tt class="descclassname">bhp_appointment.classes.</tt><tt class="descname">BaseAppointmentModelAdmin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_appointment.classes.BaseAppointmentModelAdmin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_model_admin.BaseModelAdmin</span></tt></p>
 <p>ModelAdmin subclass for models with a ForeignKey to &#8216;appointment&#8217;, such as your visit model(s).</p>
-<p>In the child ModelAdmin class set the following attributes, for example</p>
-<blockquote>
-<div>visit_model_foreign_key = &#8216;maternal_visit&#8217;
-dashboard_type = &#8216;maternal&#8217;</div></blockquote>
-<dl class="docutils">
-<dt>if you are tracking labs, also include a model that inherets from lab_requisition.models.BaseRequisition, e.g.:</dt>
-<dd>requisition_model = MaternalRequisition</dd>
-</dl>
+<p>In the child ModelAdmin class set the following attributes, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">visit_model_foreign_key</span> <span class="o">=</span> <span class="s">&#39;maternal_visit&#39;</span>
+<span class="n">dashboard_type</span> <span class="o">=</span> <span class="s">&#39;maternal&#39;</span>
+</pre></div>
+</div>
+<p>if you are tracking labs, also include a model that inherets from lab_requisition.models.BaseRequisition, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">requisition_model</span> <span class="o">=</span> <span class="n">MaternalRequisition</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_appointment.admin.AppointmentAdmin">
+<em class="property">class </em><tt class="descclassname">bhp_appointment.admin.</tt><tt class="descname">AppointmentAdmin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bhp_appointment/admin.html#AppointmentAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_appointment.admin.AppointmentAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.classes.base_model_admin.BaseModelAdmin</span></tt></p>
+<p>ModelAdmin class to handle appointments.</p>
+<dl class="method">
+<dt id="bhp_appointment.admin.AppointmentAdmin.formfield_for_foreignkey">
+<tt class="descname">formfield_for_foreignkey</tt><big>(</big><em>db_field</em>, <em>request</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/bhp_appointment/admin.html#AppointmentAdmin.formfield_for_foreignkey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_appointment.admin.AppointmentAdmin.formfield_for_foreignkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limits the dropdown for &#8216;registered_subject&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_appointment.admin.AppointmentAdmin.save_model">
+<tt class="descname">save_model</tt><big>(</big><em>request</em>, <em>obj</em>, <em>form</em>, <em>change</em><big>)</big><a class="reference internal" href="_modules/bhp_appointment/admin.html#AppointmentAdmin.save_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bhp_appointment.admin.AppointmentAdmin.save_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves an appointment if handled through admin.</p>
+<ol class="arabic simple">
+<li>On change, checks the window period using <tt class="xref py py-class docutils literal"><span class="pre">bhp_visit.classes.WindowPeriod</span></tt> and warns if out.</li>
+<li>If new, sets the visit &#8216;instance&#8217; to &#8216;0&#8217; or one plus the max.</li>
+</ol>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -110,6 +137,9 @@ dashboard_type = &#8216;maternal&#8217;</div></blockquote>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="models.html" title="Models"
              >next</a> |</li>

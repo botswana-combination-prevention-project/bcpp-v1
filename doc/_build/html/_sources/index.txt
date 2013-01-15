@@ -12,9 +12,11 @@ Contents:
    :maxdepth: 2
 
    overview
+   scheduling_appointments
    installation
    classes
    models
+   managers
 
 
 Indices and tables

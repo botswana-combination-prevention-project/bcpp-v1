@@ -5,7 +5,7 @@ from bhp_appointment.managers import ConfigurationManager
 
 
 class Configuration(BaseUuidModel):
-
+    """Only allows a single record."""
     allowed_iso_weekdays = models.IntegerField(
         default=12345,
         help_text='List ISO weekdays to which appointments may be scheduled. For example, 12345 where 1 is Monday.' ,
