@@ -5,7 +5,7 @@ try:
     from bhp_sync.classes import BaseSyncModel as BaseUuidModel
 except ImportError:
     from bhp_base_model.classes import BaseUuidModel
-from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
+
 from bhp_appointment_helper.classes import AppointmentHelper
 
 
@@ -27,6 +27,7 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
         return self.registered_subject.subject_identifier
 
     def get_visit_model(self, instance):
+        from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
         for model in get_models(get_app(instance._meta.app_label)):
             if isinstance(model(), BaseVisitTracking):
                 return model
