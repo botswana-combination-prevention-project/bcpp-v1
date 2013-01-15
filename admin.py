@@ -25,7 +25,7 @@ class RegisteredSubjectAdmin (BaseModelAdmin):
     readonly_fields = (
         'subject_identifier',
         )
-    search_fields = ('subject_identifier', 'first_name', 'initials', 'sid', 'identity', 'id')
+    search_fields = ('subject_identifier', 'first_name', 'initials', 'sid', 'identity', 'id', 'registration_identifier')
     list_filter = ('subject_type', 'registration_status', 'registration_datetime', 'gender',
                    'study_site', 'hiv_status', 'survival_status', 'may_store_samples', 'hostname_created')
 
