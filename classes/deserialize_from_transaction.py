@@ -6,6 +6,7 @@ from django.db.models import ForeignKey, get_model
 from django.db.utils import IntegrityError
 from bhp_crypto.classes import FieldCryptor
 from transaction_producer import TransactionProducer
+import pdb
 
 
 class DeserializeFromTransaction(object):
@@ -37,9 +38,11 @@ class DeserializeFromTransaction(object):
                     # and the next incoming_transaction to be consumed will be that same model instance with a different pk.
 
                     #  get_by_natural_key_with_dict is disabled, just save()
+                    #pdb.set_trace()
                     if 'DISABLEDget_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
                         if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
                             obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
+                            #UPDATE EXISTING RECORD.
                             obj.save()
                         else:
                             raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,))
@@ -55,7 +58,7 @@ class DeserializeFromTransaction(object):
                             try:
                                 # force insert even if it is an update
                                 # to trigger an integrity error if it is an update
-                                obj.save(force_insert=True)
+                                obj.save()
                                 print '    OK on force insert'
                                 is_success = True
                             except:
