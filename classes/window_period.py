@@ -2,7 +2,10 @@ from dateutil.relativedelta import relativedelta
 
 
 class WindowPeriod(object):
+    """Class to manage an appointment's or visit's window period.
 
+    An appointment datetime must fall within the date range determined by the lower and upper bounds set in the visit definition.
+    """
     def __init__(self):
         self.error = None
         self.error_message = None

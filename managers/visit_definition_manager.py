@@ -5,19 +5,12 @@ from django.db import models
 
 class VisitDefinitionManager(models.Manager):
 
-    """
-    schedule_group=ScheduleGroup.objects.all()
-    schedule_group=schedule_group[4]
-    visit_definition = VisitDefinition.objects.filter(code='2010',schedule_group=schedule_group).order_by('time_point')[0]
-    VisitDefinition.objects.next_visit_definition(visit_definition=visit_definition)
-    """
-
     def get_by_natural_key(self, code):
+        """Returns the natural key for serialization."""
         return self.get(code=code)
 
     def next_visit_definition(self, **kwargs):
-
-        """ return next visit_definition for the given visit_definition """
+        """Returns next visit_definition for the given visit_definition. """
 
         if kwargs.get('visit_definition'):
             visit_definition = kwargs.get('visit_definition')
@@ -43,7 +36,7 @@ class VisitDefinitionManager(models.Manager):
         return next_visit_def
 
     def list_all_for_model(self, registered_subject, model_name):
-        """ Lists all visit_definitions for which appointments would be created or updated for this model_name"""
+        """Lists all visit_definitions for which appointments would be created or updated for this model_name."""
         ScheduleGroup = models.get_model('bhp_visit', 'schedulegroup')
         #s = super(VisitDefinitionManager, self)._meta
         if ScheduleGroup.objects.filter(membership_form__content_type_map__model=model_name):
@@ -55,13 +48,12 @@ class VisitDefinitionManager(models.Manager):
         return visit_definitions
 
     def relativedelta_from_base(self, **kwargs):
-
-        """ return the relativedelta from the zero time_point visit_definition """
+        """Returns the relativedelta from the zero time_point visit_definition."""
 
         if kwargs.get('visit_definition'):
             visit_definition = kwargs.get('visit_definition')
         else:
-            raise AttributeError, '%s method %s requires a visit_definition instance' % (self.__name__, inspect.stack()[0][3],)
+            raise AttributeError('%s method %s requires a visit_definition instance' % (self.__name__, inspect.stack()[0][3],))
 
         interval = visit_definition.base_interval
         unit = visit_definition.base_interval_unit
@@ -80,6 +72,3 @@ class VisitDefinitionManager(models.Manager):
                 raise AttributeError("Cannot calculate relativedelta, visit_definition.base_interval_unit "
                                      "must be Y,M,D or H. Got %s" % (unit, ))
         return rdelta
-
-
-

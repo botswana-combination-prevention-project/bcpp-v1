@@ -5,6 +5,7 @@ from bhp_content_type_map.models import ContentTypeMap
 class MembershipFormManager(models.Manager):
 
     def get_by_natural_key(self, app_label, model):
+        """Returns the natural key for serialization."""
         return self.get(
             content_type_map=ContentTypeMap.objects.get_by_natural_key(
                 app_label, model

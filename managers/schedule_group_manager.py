@@ -7,6 +7,7 @@ from django.db.models import Q
 class ScheduleGroupManager(models.Manager):
 
     def get_by_natural_key(self, group_name):
+        """Returns the natural key for serialization."""
         return self.get(group_name=group_name)
 
     def get_membership_forms_for(self, registered_subject, membership_form_category, **kwargs):
