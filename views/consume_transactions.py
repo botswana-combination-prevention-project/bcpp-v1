@@ -123,13 +123,14 @@ def consume_transactions(request, **kwargs):
                                         response = f.read()
                                         f.close()
                                         producer.sync_status = 'OK'
-                    if OutgoingTransaction.objects.using(producer.name).filter(is_consumed=False).exists():
-                        messages.add_message(request, messages.ERROR, 'Not all Transactions consumed from producer %s.' % (kwargs.get('producer')))
-                    else:
-                        for item in DispatchItem.objects.filter(producer__name=producer.name):
-                            item.is_dispatched = False
-                            item.save()
-                    #producer.sync_status = 'OK'
+                    if 'ALLOW_DISPATCH' in dir(settings) and settings.ALLOW_DISPATCH:
+                        if OutgoingTransaction.objects.using(producer.name).filter(is_consumed=False).exists():
+                            messages.add_message(request, messages.ERROR, 'Not all Transactions consumed from producer %s.' % (kwargs.get('producer')))
+                        else:
+                            for item in DispatchItem.objects.filter(producer__name=producer.name):
+                                item.is_dispatched = False
+                                item.save()
+
                     producer.save()
         return render_to_response('consume_transactions.html', {
             'producer': producer,
