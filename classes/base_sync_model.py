@@ -28,6 +28,9 @@ class BaseSyncModel(BaseUuidModel):
 
     def deserialize_prep(self):
         """Users may override to manipulate the incoming object before calling save()"""
+        
+    def deserialize_post(self):
+        """Users may override to manipulate the incoming object after calling save()"""
 
     def deserialize_on_duplicate(self):
         """Users may override this to determine how to handle a duplicate error on deserialization.

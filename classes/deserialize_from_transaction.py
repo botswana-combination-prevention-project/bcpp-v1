@@ -40,6 +40,7 @@ class DeserializeFromTransaction(object):
                     #  get_by_natural_key_with_dict is disabled, just save()
                     #pdb.set_trace()
                     if 'DISABLEDget_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
+                    #if self.object_instace_of(obj,['RegisteredSubject']):
                         if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
                             obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
                             #UPDATE EXISTING RECORD.
@@ -59,6 +60,7 @@ class DeserializeFromTransaction(object):
                                 # force insert even if it is an update
                                 # to trigger an integrity error if it is an update
                                 obj.save()
+                                obj.object.deserialize_post()
                                 print '    OK on force insert'
                                 is_success = True
                             except:
