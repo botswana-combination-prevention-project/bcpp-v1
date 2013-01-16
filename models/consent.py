@@ -5,7 +5,9 @@ from bhp_consent.classes import BaseConsent
 
 class Consent(BaseConsent):
 
-    """ Standard consent model, may prefer to use the local model, e.g bhp_botswana.classes.base_consent """
+    """ Standard consent model.
+
+    .. seealso:: :class:`BaseConsent` in :mod:`bhp_botswana.classes` """
 
     identity = EncryptedIdentityField(
         unique=True,

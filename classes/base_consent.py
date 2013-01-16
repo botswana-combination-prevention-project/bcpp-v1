@@ -49,6 +49,18 @@ class BaseConsent(BaseSubject):
         null=True
         )
 
+    consent_version_on_entry = models.IntegerField(
+        editable=False,
+        default=1,
+        help_text='Version of subject\'s initial consent.'
+        )
+
+    consent_version_recent = models.IntegerField(
+        editable=False,
+        default=1,
+        help_text='Version of subject\'s most recent consent.'
+        )
+
     is_verified = models.BooleanField(default=False, editable=False)
 
     is_verified_datetime = models.DateTimeField(null=True)
@@ -79,6 +91,8 @@ class BaseConsent(BaseSubject):
     def save(self, *args, **kwargs):
         if not self.id:
             self.save_new_consent()
+            self.consent_version_on_entry = self.get_current_consent_version(self.consent_datetime)
+            self.consent_version_recent = self.consent_version_on_entry
         super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
         # so need to create appointments

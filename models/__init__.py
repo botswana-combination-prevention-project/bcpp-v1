@@ -1,2 +1,2 @@
-#from consent_nonunique_model import ConsentNonUniqueModel
 from consent import Consent
+from base_consent_update import BaseConsentUpdate
