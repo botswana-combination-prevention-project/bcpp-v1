@@ -88,3 +88,13 @@ class BasePrepareDevice(Base):
         print '    found {0} list models'.format(len(list_models))
         for list_model in list_models:
             self.dispatch_model_as_json(list_model)
+
+    def reset_model(self, model_cls):
+        for instance in model_cls.objects.all():
+            print '    deleting {0}...'.format(instance)
+            instance.delete()
+
+    def reset_app_models(self, app_name):
+        print '    deleting for app {0}...'.format(app_name)
+        for model_cls in get_models(get_app(app_name)):
+            self.reset_model(model_cls)
