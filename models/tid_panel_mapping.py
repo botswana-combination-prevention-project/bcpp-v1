@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 from lab_panel.models import Panel
 
 
