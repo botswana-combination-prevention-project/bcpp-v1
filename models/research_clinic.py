@@ -1,6 +1,7 @@
 from django.db import models
 from bhp_research_protocol.models import Site, Protocol
 
+
 class ResearchClinic(models.Model):
 
     site = models.ForeignKey(Site)
@@ -14,7 +15,7 @@ class ResearchClinic(models.Model):
 
     def __unicode__(self):
         return '%s %s %s' % (self.site.site_identifier, self.name, self.site.location)
-        
+
     class Meta:
         ordering = ['name']
-        app_label = 'bhp_research_protocol'        
+        app_label = 'bhp_research_protocol'

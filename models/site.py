@@ -1,6 +1,7 @@
 from django.db import models
 from bhp_research_protocol.models import Location
 
+
 class Site(models.Model):
 
     site_identifier = models.CharField(
@@ -17,9 +18,7 @@ class Site(models.Model):
 
     def __unicode__(self):
         return '%s' % (self.site_identifier)
-        
+
     class Meta:
         ordering = ['site_identifier']
         app_label = 'bhp_research_protocol'
-        
-

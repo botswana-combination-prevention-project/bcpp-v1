@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Sponsor(models.Model):
 
     name = models.CharField(max_length=50)
@@ -13,7 +14,7 @@ class Sponsor(models.Model):
         )
 
     contact_tel = models.CharField(
-        max_length=50,    
+        max_length=50,
         blank=True,
         )
 
@@ -21,10 +22,9 @@ class Sponsor(models.Model):
         blank=True,
         )
 
-
     def __unicode__(self):
         return '%s %s' % (self.name, self.reference)
-        
+
     class Meta:
         ordering = ['name']
         app_label = 'bhp_research_protocol'
