@@ -6,7 +6,7 @@ from bhp_base_model.fields import IdentityTypeField
 from bhp_dispatch.models import DispatchItem
 from bhp_variables.models import StudySite
 from bhp_registration.managers import RegisteredSubjectManager
-from bhp_subject.classes import BaseSubject
+from bhp_subject.models import BaseSubject
 from bhp_crypto.fields import EncryptedIdentityField, SaltField
 from bhp_crypto.utils import mask_encrypted
 
