@@ -2,7 +2,7 @@
 from django.utils.translation import ugettext_lazy as _
 from bhp_base_model.fields import IdentityTypeField
 from bhp_botswana.fields import EncryptedOmangField
-from bhp_consent.classes import BaseConsent as BaseBaseConsent
+from bhp_consent.models import BaseConsent as BaseBaseConsent
 
 
 class BaseConsent(BaseBaseConsent):
