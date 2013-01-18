@@ -84,4 +84,3 @@ class LabEntryInline (admin.TabularInline):
         'upper_window_unit',
 
     )
-
