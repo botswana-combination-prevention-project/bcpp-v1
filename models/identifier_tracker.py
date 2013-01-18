@@ -1,51 +1,47 @@
 from django.db import models
-#from bhp_common.classes import LockableObject
-try:
-    from bhp_sync.classes import BaseSyncModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel as BaseSyncModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class IdentifierTracker(BaseSyncModel): #, LockableObject):
+class IdentifierTracker(BaseSyncUuidModel):  # , LockableObject):
 
     """
     A lockable model to create and track unique identifiers for new records such as requsitions, receive, etc.
-    
+
     See also, classes/identifier.py
-    
+
     """
-    
+
     identifier = models.CharField(
-        max_length = 25,
-        db_index=True,                
+        max_length=25,
+        db_index=True,
         )
-    
+
     identifier_string = models.CharField(
-        max_length = 50,
-        db_index=True,                
-        )    
-    
+        max_length=50,
+        db_index=True,
+        )
+
     root_number = models.IntegerField(db_index=True)
-    
+
     counter = models.IntegerField(db_index=True)
 
     identifier_type = models.CharField(
-        max_length = 35
+        max_length=35
         )
-        
+
     device_id = models.CharField(
-        max_length = 10,
-        null = True,
-        blank = True,
-        )       
+        max_length=10,
+        null=True,
+        blank=True,
+        )
 
     def is_serialized(self):
         return super(IdentifierTracker, self).is_serialized(True)
-   
+
     def __unicode__(self):
-        return self.identifier   
-   
+        return self.identifier
+
     class Meta:
-        app_label = 'bhp_identifier'        
+        app_label = 'bhp_identifier'
         ordering = ['root_number', 'counter']
         unique_together = ['root_number', 'counter']

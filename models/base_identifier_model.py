@@ -1,13 +1,10 @@
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class BaseIdentifierModel(BaseUuidModel):
+class BaseIdentifierModel(BaseSyncUuidModel):
     """Store identifiers as allocated.
 
     Will not include identifiers derived from other identifiers, for example, infant and partner
