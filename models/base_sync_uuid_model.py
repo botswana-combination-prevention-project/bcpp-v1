@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core import serializers
 from django.db.models import get_model
 from bhp_sync.classes import TransactionProducer
-from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.models import BaseUuidModel
 
 
 logger = logging.getLogger(__name__)

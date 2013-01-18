@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from bhp_sync.classes import DeserializeFromTransaction
+#from bhp_sync.classes import DeserializeFromTransaction
 from incoming_transaction import IncomingTransaction
 
 

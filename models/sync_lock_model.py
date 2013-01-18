@@ -1,4 +1,3 @@
-
 from bhp_lock.models import BaseLockModel
 
 

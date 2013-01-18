@@ -3,7 +3,6 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from base_transaction import BaseTransaction
 from bhp_sync.managers import IncomingTransactionManager
-#from bhp_crypto.fields import EncryptedTextField
 
 
 class IncomingTransaction(BaseTransaction):

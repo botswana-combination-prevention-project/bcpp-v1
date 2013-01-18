@@ -1,7 +1,7 @@
 # requires django-extensions 0.7
 from datetime import datetime
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.models import BaseUuidModel
 from bhp_sync.classes import TransactionProducer
 
 
