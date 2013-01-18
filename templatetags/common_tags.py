@@ -1,13 +1,13 @@
 import socket
 from math import ceil
-from datetime import *
-from dateutil.relativedelta import *
+from datetime import date
+#from dateutil.relativedelta import *
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from bhp_common.utils import formatted_age, round_up
+from bhp_common.utils import formatted_age
 
 register = template.Library()
 
@@ -158,5 +158,3 @@ def divide_by(x, y):
         return 0
     else:
         return x / y
-
-
