@@ -1,19 +1,15 @@
 from django.db import models
-#from django.db import IntegrityError
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from bhp_common.choices import GENDER_UNDETERMINED
 from bhp_base_model.fields import IsDateEstimatedField
 from bhp_crypto.fields import EncryptedFirstnameField, EncryptedLastnameField
 
 
-class BaseSubject (BaseUuidModel):
+class BaseSubject (BaseSyncUuidModel):
 
     # may be null so uniqueness is enforce in save() if not null
     subject_identifier = models.CharField(
