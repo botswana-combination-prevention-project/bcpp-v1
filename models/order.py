@@ -35,6 +35,9 @@ class Order(BaseOrder):
         help_text="non-user helper field to simplify search and filter")
     objects = OrderManager()
 
+    def natural_key(self):
+        return self.order_identifier
+    
     def save(self, *args, **kwargs):
 
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
