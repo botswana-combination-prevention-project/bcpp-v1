@@ -1,5 +1,4 @@
 from django.db import models
-
 from audit_trail.audit import AuditTrail
 from lab_reference.models import BaseReferenceListItem
 from lab_reference.utils import get_lower_range_days, get_upper_range_days
