@@ -1,6 +1,5 @@
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
-#from lab_clinic_api.managers import LabManager
+from bhp_base_model.models import BaseUuidModel
 
 
 class Lab(BaseUuidModel):
