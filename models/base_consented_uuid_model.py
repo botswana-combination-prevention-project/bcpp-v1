@@ -1,10 +1,9 @@
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from django.db import models
 from bhp_sync.classes import BaseSyncUuidModel
+from bhp_consent.classes import ConsentHelper
 
 
-class BaseConsentedUuidModel(BaseSyncUuidModel):
+class BaseConsentedUuidModel(BaseSyncUuidModel, ConsentHelper):
 
     """Base model class for all models that collect data requiring consent. """
 
@@ -56,18 +55,6 @@ class BaseConsentedUuidModel(BaseSyncUuidModel):
                     #retval = True
         return retval
 
-    def get_current_consent_version(self, name, instance_datetime):
-        """Returns the current consent version relative to the given instance_datetime."""
-        current_consent_version = None
-        ConsentCatalogue = models.get_model('bhp_consent', 'ConsentCatalogue')
-        for consent_catalogue in ConsentCatalogue.objects.filter(name=name):
-            end_date = consent_catalogue.end_datetime or datetime.today() + relativedelta(days=1)
-            if instance_datetime >= consent_catalogue.start_datetime and instance_datetime < end_date:
-                current_consent_version = consent_catalogue.version
-        if not current_consent_version:
-            raise TypeError('Cannot determine the version of consent \'{0}\' using \'{1}\''.format(name, instance_datetime))
-        return current_consent_version
-
     def get_versioned_field_names(self, version_number):
         """Returns a list of field names under version control by version number.
 
@@ -81,7 +68,7 @@ class BaseConsentedUuidModel(BaseSyncUuidModel):
         specific validation logic."""
         ConsentCatalogue = models.get_model('bhp_consent', 'ConsentCatalogue')
         consent_name = self.get_consent_name()
-        current_consent_version = self.get_current_consent_version(consent_name, instance_datetime)
+        current_consent_version = self.get_current_consent_version(consent_instance, instance_datetime)
         if not cleaned_data:
             cleaned_data = {}
         if not exception_cls:

@@ -6,10 +6,11 @@ from bhp_common.choices import YES_NO
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_variables.models import StudySite
+from bhp_consent.classes import ConsentHelper
 from consent_catalogue import ConsentCatalogue
 
 
-class BaseConsentUpdate(BaseSyncUuidModel):
+class BaseConsentUpdate(BaseSyncUuidModel, ConsentHelper):
     """Tracks updates to the original consent.
 
     In the subclass:

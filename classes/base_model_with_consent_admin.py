@@ -2,13 +2,13 @@ from datetime import datetime
 from django.db.models import ForeignKey
 from bhp_crypto.classes import BaseCryptorModelAdmin as BaseModelAdmin
 from bhp_registration.models import RegisteredSubject
-from bhp_appointment.models import Appointment
 
+# is this used??
 
 class BaseModelWithConsentAdmin(BaseModelAdmin):
     """ For models with a key to consent"""
     def save_model(self, request, obj, form, change):
-
+        from bhp_appointment.models import Appointment
         if not change:
             consent_fk_name = [fk for fk in [f for f in self.model._meta.fields if isinstance(f, ForeignKey)] if fk.rel.to._meta.module_name == self.consent_model._meta.module_name][0].name
             subject_identifier = self.form.__dict__['base_fields'][consent_fk_name].__dict__['_queryset'][0].subject_identifier
