@@ -1,11 +1,8 @@
 from django.db import models
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class Crypt (BaseUuidModel):
+class Crypt (BaseSyncUuidModel):
 
     """ A secrets lookup model searchable by hash """
 
