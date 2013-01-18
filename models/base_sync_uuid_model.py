@@ -16,7 +16,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class BaseSyncModel(BaseUuidModel):
+class BaseSyncUuidModel(BaseUuidModel):
 
     """ Base model for all UUID models and adds synchronization methods and signals. """
 
@@ -28,9 +28,6 @@ class BaseSyncModel(BaseUuidModel):
 
     def deserialize_prep(self):
         """Users may override to manipulate the incoming object before calling save()"""
-        
-    def deserialize_post(self):
-        """Users may override to manipulate the incoming object after calling save()"""
 
     def deserialize_on_duplicate(self):
         """Users may override this to determine how to handle a duplicate error on deserialization.
@@ -60,7 +57,7 @@ class BaseSyncModel(BaseUuidModel):
         # as these will be serialized on the producer
         if 'suppress_autocreate_on_deserialize' in kwargs:
             del kwargs['suppress_autocreate_on_deserialize']
-        super(BaseSyncModel, self).save(*args, **kwargs)
+        super(BaseSyncUuidModel, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         #TODO: get this to work in pre_delete signal
@@ -81,7 +78,7 @@ class BaseSyncModel(BaseUuidModel):
                 timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
                 producer=str(transaction_producer),
                 action='D')
-        super(BaseSyncModel, self).delete(*args, **kwargs)
+        super(BaseSyncUuidModel, self).delete(*args, **kwargs)
 
     class Meta:
         abstract = True

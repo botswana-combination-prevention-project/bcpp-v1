@@ -1,3 +1,4 @@
+from base_sync_uuid_model import BaseSyncUuidModel
 from base_transaction import BaseTransaction
 from sync_lock_model import SyncLockModel
 from sync_import_history_model import SyncImportHistoryModel
