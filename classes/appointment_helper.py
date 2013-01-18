@@ -6,9 +6,6 @@ from appointment_date_helper import AppointmentDateHelper
 
 
 class AppointmentHelper(object):
-    """ """
-    def __init__(self):
-        pass
 
     def create_all(self, registered_subject, model_name, base_appt_datetime=None, dashboard_type=None):
         """Creates appointments for a registered subject based on a list of visit definitions if given model_name is a member of a schedule group.
@@ -132,9 +129,3 @@ class AppointmentHelper(object):
                     visit_definition=appointment.visit_definition,
                     visit_instance=next_visit_instance,
                     appt_datetime=appt_datetime)
-
-#    def list_for_model(self, registered_subject, model_name):
-#        """ Lists created appointments for this registered_subject for this model_name """
-#        visit_definitions = VisitDefinitionHelper().list_all_for_model(registered_subject, model_name)
-#        Appointment = get_model('bhp_appointment', 'appointment')
-#        return Appointment.objects.filter(registered_subject=registered_subject, visit_definition__in=visit_definitions)
