@@ -1,15 +1,11 @@
 from django.db import models
-#from audit_trail.audit import AuditTrail
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_registration.models import RegisteredSubject
 from lab_panel.models import Panel
 from base_packing_list import BasePackingList
 
 
-class BasePackingListItem(BaseUuidModel):
+class BasePackingListItem(BaseSyncUuidModel):
 
     requisition = models.CharField(
         max_length=35,
