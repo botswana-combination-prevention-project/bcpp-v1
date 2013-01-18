@@ -6,7 +6,7 @@ from bhp_crypto.utils import mask_encrypted
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
-from bhp_subject.classes import BaseSubject
+from bhp_subject.models import BaseSubject
 from bhp_consent.classes import ConsentedSubjectIdentifier
 from bhp_appointment_helper.classes import AppointmentHelper
 from bhp_common.utils import formatted_age
