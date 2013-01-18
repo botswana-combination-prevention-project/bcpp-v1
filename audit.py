@@ -7,7 +7,7 @@ import copy
 import re
 
 from bhp_sync.classes import SerializeToTransaction
-from bhp_sync.classes import BaseSyncModel
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_base_model.fields import MyUUIDField
 from bhp_crypto.classes import BaseEncryptedField
@@ -104,7 +104,7 @@ class AuditTrail(object):
                 """ serialize the AUDIT model instance to the outgoing transaction model """
                 if not kwargs.get('raw'):
                     model = models.get_model(instance._meta.app_label, instance._meta.object_name.lower().replace('audit', ''))
-                    if issubclass(model, BaseSyncModel):
+                    if issubclass(model, BaseSyncUuidModel):
                         serialize_to_transaction = SerializeToTransaction()
                         serialize_to_transaction.serialize(sender, instance, **kwargs)
             models.signals.post_save.connect(_serialize_on_save, sender=model,
