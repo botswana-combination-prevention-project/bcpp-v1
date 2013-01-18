@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.models import BaseUuidModel
 from bhp_base_model.validators import datetime_not_future
 from lab_order.choices import ORDER_STATUS
 
