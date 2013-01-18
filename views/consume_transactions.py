@@ -5,6 +5,7 @@ from sys import platform as _platform
 import json
 #elif _platform == "darwin":
 #    import json
+from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -129,6 +130,7 @@ def consume_transactions(request, **kwargs):
                         else:
                             for item in DispatchItem.objects.filter(producer__name=producer.name):
                                 item.is_dispatched = False
+                                item.return_datetime = datetime.datetime.today()
                                 item.save()
 
                     producer.save()
