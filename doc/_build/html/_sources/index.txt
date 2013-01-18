@@ -10,6 +10,7 @@ bhp_entry
    overview
    classes
    models
+   managers
    signals
 
 Indices and tables

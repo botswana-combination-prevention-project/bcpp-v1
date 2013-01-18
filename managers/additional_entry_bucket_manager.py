@@ -7,7 +7,7 @@ from bhp_entry.managers import BaseEntryBucketManager
 class AdditionalEntryBucketManager(BaseEntryBucketManager):
 
     def is_keyed(self):
-        """ Confirms if model instance exists / is_keyed """
+        """ Confirms if model instance exists / is_keyed. """
         model = models.get_model(
                         self.content_type_map.content_type.app_label,
                         self.content_type_map.content_type.model)
@@ -45,6 +45,7 @@ class AdditionalEntryBucketManager(BaseEntryBucketManager):
                     due_datetime=datetime.today())
 
     def update_status(self, **kwargs):
+        """Updates status."""
         self.registered_subject = kwargs.get('registered_subject')
         if not self.registered_subject:
             raise AttributeError('AdditionalEntryBucketManager.update_status requires \'registered_subject\'. Got None')
