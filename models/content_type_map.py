@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from bhp_content_type_map.managers import ContentTypeMapManager
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 
 
 class ContentTypeMap(BaseModel):
