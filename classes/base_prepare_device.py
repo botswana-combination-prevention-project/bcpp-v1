@@ -3,7 +3,8 @@ import socket
 from uuid import uuid4
 from datetime import datetime
 from tastypie.models import ApiKey
-from django.db.models import Q, Model, get_models, get_app, Max, Count
+from django.db import IntegrityError
+from django.db.models import Model, get_model, get_models, get_app, Max
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User, Group, Permission
 from bhp_base_model.classes import BaseListModel
@@ -90,10 +91,39 @@ class BasePrepareDevice(Base):
             self.dispatch_model_as_json(list_model)
 
     def reset_model(self, model_cls):
-        for instance in model_cls.objects.all():
+        using = self.get_using_destination()
+        for instance in model_cls.objects.using(using).all():
             print '    deleting {0}...'.format(instance)
-            instance.delete()
-
+            try:
+                instance.delete(using=using)
+            except IntegrityError as e:
+                logger.info(e)
+                if 'Duplicate' in e.args[1]:
+                    pass
+                elif 'Cannot delete or update a parent row' in e.args[1]:
+                    if '_audit' in e.args[1]:
+                        # assume Integrity error was because of an undeleted related Audit model
+                        self.delete_audit_instances(model_cls)
+                        instance.delete(using=using)
+                        
+                    else:
+                        raise
+                else:
+                    raise
+            except:
+                    raise
+            print '    {0} deleted..'.format(instance)
+                
+    def delete_audit_instances(self, model_cls): 
+        from django.db import connection, transaction
+        cursor = connection[self.get_using_destination()].cursor()
+        print "    deleting {0} audit logs".format(model_cls.history.count()) 
+        audit_table_name = "{0}_audit".format(model_cls._meta.db_table)
+        query = "TRUNCATE TABLE `{0}`".format(audit_table_name)
+        cursor.execute(query)
+        transaction.commit_unless_managed(using=self.get_using_destination())
+        print " deleted"   
+            
     def reset_app_models(self, app_name):
         print '    deleting for app {0}...'.format(app_name)
         for model_cls in get_models(get_app(app_name)):
