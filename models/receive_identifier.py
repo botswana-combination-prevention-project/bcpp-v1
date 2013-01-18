@@ -1,4 +1,4 @@
-from bhp_identifier.classes import BaseIdentifierModel
+from bhp_identifier.models import BaseIdentifierModel
 
 
 class ReceiveIdentifier(BaseIdentifierModel):
