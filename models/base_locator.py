@@ -1,9 +1,6 @@
 from datetime import date, datetime
 from django.db import models
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
+from bhp_consent.models import BaseConsentedUuidModel
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_common.choices import YES_NO, YES_NO_DOESNT_WORK
 from bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
@@ -11,7 +8,7 @@ from bhp_crypto.fields import EncryptedCharField, EncryptedTextField
 from bhp_registration.models import RegisteredSubject
 
 
-class BaseLocator(BaseUuidModel):
+class BaseLocator(BaseConsentedUuidModel):
 
     registered_subject = models.OneToOneField(RegisteredSubject, null=True)
 
