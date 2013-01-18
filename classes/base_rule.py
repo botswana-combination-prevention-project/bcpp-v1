@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from django.db.models import get_model, Model
 from bhp_content_type_map.models import ContentTypeMap
+from bhp_consent.classes import ConsentHelper
 from bhp_registration.models import RegisteredSubject
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_entry.models import BaseEntryBucket
@@ -148,6 +149,11 @@ class BaseRule(object):
         if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status']]:
             registered_subject = self.get_visit_model_instance().appointment.registered_subject
             self._field_value = getattr(registered_subject, attr_name)
+        elif attr_name == 'consent_version':
+            # TODO: get current_consent_version
+            consent_helper = ConsentHelper()
+            #self._field_value = consent_helper.get_current_consent_version(instance.get_report_datetime())
+            self._field_value = 1
         else:
             self._field_value = getattr(instance, attr_name)
         if self._field_value:
