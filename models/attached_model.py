@@ -6,10 +6,14 @@ from consent_catalogue import ConsentCatalogue
 
 
 class AttachedModel(BaseSyncUuidModel):
+    """Models that are linked to a catalogue entry.
 
+    Search the attached models by content_type_map to determine the consent_catalogue and from that, the consent model."""
     consent_catalogue = models.ForeignKey(ConsentCatalogue)
 
-    content_type_map = models.ForeignKey(ContentTypeMap)
+    # the content type map of a subject model
+    content_type_map = models.ForeignKey(ContentTypeMap,
+        verbose_name='Subject model')
 
     history = AuditTrail()
 

@@ -12,6 +12,7 @@ class ConsentCatalogue(BaseSyncUuidModel):
         max_length=50,
         )
 
+    # content_type_map for the consent model
     content_type_map = models.ForeignKey(ContentTypeMap, null=True)
 
     consent_type = models.CharField(
