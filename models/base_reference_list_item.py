@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 from bhp_common.choices import POS_NEG_ANY
 from lab_common.choices import UNITS
 from lab_reference.choices import GENDER_OF_REFERENCE
