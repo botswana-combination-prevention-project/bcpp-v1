@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 from lab_clinic_api.managers import AliquotTypeManager
 
 

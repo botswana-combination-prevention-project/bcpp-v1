@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_base_model.classes import BaseListModel
+from bhp_base_model.models import BaseListModel
 
 
 class AliquotCondition(BaseListModel):
