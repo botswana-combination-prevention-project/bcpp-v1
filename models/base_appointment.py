@@ -36,5 +36,8 @@ class BaseAppointment (BaseConsentedUuidModel):
         max_length=250,
         blank=True)
 
+    def get_report_datetime(self):
+        return self.appt_datetime
+    
     class Meta:
         abstract = True
