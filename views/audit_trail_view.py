@@ -2,7 +2,7 @@ from django.db.models import get_model
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 from bhp_model_selector.classes import ModelSelector
 from audit_trail.models import AuditComment
 from audit_trail.forms import AuditTrailForm
