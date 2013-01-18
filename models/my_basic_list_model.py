@@ -1,4 +1,4 @@
-from bhp_base_model.classes import BaseListModel
+from bhp_base_model.models import BaseListModel
 
 
 class MyBasicListModel(BaseListModel):
@@ -8,6 +8,4 @@ class MyBasicListModel(BaseListModel):
 
     class Meta:
         abstract = True
-        ordering=['display_index']
-
-
+        ordering = ['display_index']

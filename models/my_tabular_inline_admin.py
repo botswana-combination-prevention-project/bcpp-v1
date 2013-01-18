@@ -13,7 +13,6 @@ class MyTabularInline (admin.TabularInline):
 
         if change:
             obj.user_modified = request.user.username
-            obj.modified = datetime.today()            
+            obj.modified = datetime.today()
 
         super(MyTabularInline, self).save_model(request, obj, form, change)
-

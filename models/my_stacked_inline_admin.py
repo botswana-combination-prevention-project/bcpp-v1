@@ -13,6 +13,6 @@ class MyStackedInline (admin.StackedInline):
 
         if change:
             obj.user_modified = request.user.username
-            obj.modified = datetime.today()            
+            obj.modified = datetime.today()
 
         super(MyStackedInline, self).save_model(request, obj, form, change)
