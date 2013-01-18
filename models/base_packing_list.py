@@ -57,7 +57,3 @@ class BasePackingList(BaseSyncUuidModel):
         abstract = True
         #app_label = 'lab_packing'
         ordering = ['list_datetime', ]
-
-
-
-
