@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_base_model.classes import BaseUuidModel
+from bhp_base_model.models import BaseUuidModel
 from bhp_visit.managers import MembershipFormManager
 
 
