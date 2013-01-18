@@ -1,7 +1,4 @@
 from django.db import models
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from bhp_base_model.fields import InitialsField
 from bhp_userprofile.choices import SALUTATION
