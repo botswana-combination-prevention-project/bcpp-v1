@@ -1,9 +1,7 @@
 import copy
-from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.module_loading import module_has_submodule
-from bhp_consent.models import ConsentCatalogue
 
 
 class AlreadyRegistered(Exception):
