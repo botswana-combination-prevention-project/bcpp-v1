@@ -1,4 +1,4 @@
-from bhp_base_model.classes import BaseListModel
+from bhp_base_model.models import BaseListModel
 from lab_clinic_api.managers import AliquotConditionManager
 
 
