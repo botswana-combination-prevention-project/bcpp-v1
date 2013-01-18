@@ -1,8 +1,8 @@
 from django.db import models
 try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
+    from bhp_sync.classes import BaseSyncConsentedModel as BaseUuidConsentedModel
 except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
+    from bhp_consent.classes import BaseUuidConsentedModel
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
 from bhp_base_model.fields import OtherCharField
 from bhp_appointment.models import Appointment
@@ -10,7 +10,7 @@ from bhp_visit_tracking.managers import VisitTrackingManager
 from bhp_dispatch.models import DispatchItem
 
 
-class BaseVisitTracking (BaseUuidModel):
+class BaseVisitTracking (BaseUuidConsentedModel):
 
     """Base model for Appt/Visit Tracking (AF002).
 
@@ -125,6 +125,9 @@ class BaseVisitTracking (BaseUuidModel):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
         locked, producer = self.is_dispatched_to_producer()
         return locked
+
+    def get_subject_identifier(self):
+        return self.appointment.registered_subject.subject_identifier
 
     def is_dispatched_to_producer(self):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
