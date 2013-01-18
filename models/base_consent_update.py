@@ -1,18 +1,15 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
 from django.core.validators import RegexValidator
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_common.choices import YES_NO
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
 from bhp_variables.models import StudySite
+from consent_catalogue import ConsentCatalogue
 
 
-class BaseConsentUpdate(BaseUuidModel):
+class BaseConsentUpdate(BaseSyncUuidModel):
     """Tracks updates to the original consent.
 
     In the subclass:
@@ -27,6 +24,8 @@ class BaseConsentUpdate(BaseUuidModel):
                 super(MaternalConsentUpdate, self).save(*args, **kwargs)
                 self.maternal_consent.consent_version_recent = self.consent_version
     """
+
+    consent_catalogue = models.ForeignKey(ConsentCatalogue)
 
     study_site = models.ForeignKey(StudySite,
         verbose_name='Site',
@@ -62,12 +61,12 @@ class BaseConsentUpdate(BaseUuidModel):
         null=True
         )
 
-    consent_version = models.IntegerField(
-        editable=False,
-        )
+    consent_version = models.IntegerField(null=True)
 
     def save(self, *args, **kwargs):
-        self.consent_version = self.get_current_consent_version(self.consent_datetime)
+        if not self.consent_catalogue:
+            super(BaseConsentUpdate, self).save(*args, **kwargs)
+        self.consent_version = self.get_current_consent_version(self.consent_catalogue.name, self.consent_datetime)
         super(BaseConsentUpdate, self).save(*args, **kwargs)
 
     class Meta:
