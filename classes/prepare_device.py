@@ -111,15 +111,61 @@ class PrepareDevice(BasePrepareDevice):
             self.update_app_models('bhp_identifier')
         if not step > 12:
             self.timer()
-            logger.info("12. Updating bhp_entry.models.entry...")
-            self.update_model(('bhp_entry', 'entry'))
+            logger.info("12. Updating lab test code groups from lab_test_code...")
+            self.update_model(('lab_test_code', 'TestCodeGroup'))
         if not step > 13:
             self.timer()
-            logger.info("13. Updating api keys...")
-            self.update_api_keys()
+            logger.info("13. Updating lab test codes from lab_test_code...")
+            self.update_model(('lab_test_code', 'TestCode'))
         if not step > 14:
             self.timer()
-            logger.info("14. Running post procedures...")
+            logger.info("14. Updating lab aliquot types from lab_aliquot_list...")
+            self.update_model(('lab_aliquot_list', 'AliquotType'))
+        if not step > 15:
+            self.timer()
+            logger.info("15. Updating lab panel models from lab_panel...")
+            self.update_app_models('lab_panel')         
+        if not step > 16:
+            self.timer()
+            logger.info("16. Updating aliquot types from lab_clinic_api...")
+            self.update_model(('lab_clinic_api', 'AliquotType'))
+        if not step > 17:
+            self.timer()
+            logger.info("17. Updating test code groups from lab_clinic_api...")
+            self.update_model(('lab_clinic_api', 'TestCodeGroup'))  
+        if not step > 18:
+            self.timer()
+            logger.info("18. Updating test codes from lab_clinic_api...")
+            self.update_model(('lab_clinic_api', 'TestCode'))
+
+        if not step > 19:
+            self.timer()
+            logger.info("19. Updating panel from lab_clinic_api...")
+            self.update_model(('lab_clinic_api', 'Panel'))
+        if not step > 20:
+            self.timer()
+            logger.info("20. Updating review from lab_clinic_api...")
+            self.update_model(('lab_clinic_api', 'Review'))
+        if not step > 21:
+            self.timer()
+            logger.info("21. Updating un-scheduled lab entry buckets from bhp_lab_entry...")
+            self.update_model(('bhp_lab_entry', 'UnscheduledLabEntryBucket'))
+        if not step > 22:
+            self.timer()
+            logger.info("22. Updating lab entry from bhp_lab_entry...")
+            self.update_model(('bhp_lab_entry', 'LabEntry'))
+            
+        if not step > 23:
+            self.timer()
+            logger.info("23. Updating bhp_entry.models.entry...")
+            self.update_model(('bhp_entry', 'entry'))
+        if not step > 24:
+            self.timer()
+            logger.info("24. Updating api keys...")
+            self.update_api_keys()
+        if not step > 25:
+            self.timer()
+            logger.info("25. Running post procedures...")
             self.post_prepare()
         logger.info("Done")
         self.timer(done=True)
