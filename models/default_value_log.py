@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class DefaultValueLog(BaseUuidModel):
+class DefaultValueLog(BaseSyncUuidModel):
 
     subject_identifier = models.CharField(max_length=50)
     subject_type = models.CharField(max_length=25, null=True)

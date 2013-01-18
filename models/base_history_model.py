@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class BaseHistoryModel(BaseUuidModel):
+class BaseHistoryModel(BaseSyncUuidModel):
 
     subject_identifier = models.CharField(max_length=25)
     group_name = models.CharField(max_length=25)
