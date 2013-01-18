@@ -1,10 +1,10 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 from configuration import Configuration
 
 
-class Holiday(BaseUuidModel):
+class Holiday(BaseSyncUuidModel):
 
     configuration = models.ForeignKey(Configuration)
     holiday_name = models.CharField(

@@ -56,7 +56,12 @@
             
   <div class="section" id="scheduling-appointments">
 <h1>Scheduling Appointments<a class="headerlink" href="#scheduling-appointments" title="Permalink to this headline">¶</a></h1>
-<p>Appointments are scheduled in <tt class="xref py py-mod docutils literal"><span class="pre">bhp_visit</span></tt>.</p>
+<p>Appointments are created according to the visit definition by default in the <tt class="xref py py-func docutils literal"><span class="pre">save()</span></tt> method
+in models based on <tt class="xref py py-class docutils literal"><span class="pre">BaseRegisteredSubjectModel</span></tt> in module <tt class="xref py py-mod docutils literal"><span class="pre">bhp_registration</span></tt>.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">AppointmentHelper</span><span class="p">()</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</pre></div>
+</div>
 </div>
 
 

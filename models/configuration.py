@@ -1,10 +1,10 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_appointment.managers import ConfigurationManager
 
 
-class Configuration(BaseUuidModel):
+class Configuration(BaseSyncUuidModel):
     """Only allows a single record."""
     allowed_iso_weekdays = models.IntegerField(
         default=12345,
