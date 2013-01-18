@@ -1,7 +1,6 @@
 import re
 from django.conf import settings
 from django.shortcuts import render_to_response
-#from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.db.models import get_model
 from django.conf.urls.defaults import patterns as url_patterns, url

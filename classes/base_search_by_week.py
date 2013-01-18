@@ -1,4 +1,3 @@
-from datetime import date, timedelta
 from django.db.models import Q
 from bhp_search.forms import WeekYearSearchForm
 from base_search import BaseSearch
