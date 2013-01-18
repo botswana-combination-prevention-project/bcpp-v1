@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_identifier.classes import BaseIdentifierModel
+from base_identifier_model import BaseIdentifierModel
 
 
 class SubjectIdentifier(BaseIdentifierModel):
