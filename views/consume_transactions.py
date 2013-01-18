@@ -128,9 +128,9 @@ def consume_transactions(request, **kwargs):
                         if OutgoingTransaction.objects.using(producer.name).filter(is_consumed=False).exists():
                             messages.add_message(request, messages.ERROR, 'Not all Transactions consumed from producer %s.' % (kwargs.get('producer')))
                         else:
-                            for item in DispatchItem.objects.filter(producer__name=producer.name):
+                            for item in DispatchItem.objects.filter(producer__name=producer.name, is_dispatched=True):
                                 item.is_dispatched = False
-                                item.return_datetime = datetime.datetime.today()
+                                item.return_datetime = datetime.today()
                                 item.save()
 
                     producer.save()
