@@ -1,6 +1,7 @@
 import logging
+from django.db.models import get_model
 from bhp_lock.classes import BaseImportHistory
-from bhp_sync.models import SyncImportHistoryModel
+#from bhp_sync.models import SyncImportHistoryModel
 from sync_lock import SyncLock
 
 
@@ -16,4 +17,5 @@ nullhandler = logger.addHandler(NullHandler())
 class ImportHistory(BaseImportHistory):
 
     def __init__(self, db, lock_name):
+        SyncImportHistoryModel = get_model('bhp_sync','SyncImportHistoryModel')
         super(ImportHistory, self).__init__(db, lock_name, SyncLock, SyncImportHistoryModel)
