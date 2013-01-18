@@ -1,15 +1,10 @@
 from django.db import models
 from django.db.models import get_app, get_models
+from bhp_appointment_helper.models import BaseAppointmentHelperModel
 from registered_subject import RegisteredSubject
-try:
-    from bhp_sync.classes import BaseSyncModel as BaseUuidModel
-except ImportError:
-    from bhp_base_model.classes import BaseUuidModel
-
-from bhp_appointment_helper.classes import AppointmentHelper
 
 
-class BaseRegisteredSubjectModel (BaseUuidModel):
+class BaseRegisteredSubjectModel (BaseAppointmentHelperModel):
 
     """ Base model for models that need a key to RegisteredSubject.
 
@@ -20,24 +15,23 @@ class BaseRegisteredSubjectModel (BaseUuidModel):
 
     Use this along with BaseRegisteredSubjectModelAdmin()
 
+    .. seealso:: This class inherits methods from bhp_appointment_helper that create appointments if the model
+                 is configured as a ScheduledGroup model. See base class :mod:`bhp_appointment_helper.classes.BaseAppointmentHelperModel`.
+
     """
     registered_subject = models.OneToOneField(RegisteredSubject)
 
     def get_subject_identifier(self):
+        """Returns the subject_identifier."""
         return self.registered_subject.subject_identifier
 
     def get_visit_model(self, instance):
+        """Returns the visit model which is a subclass of :class:`BaseVisitTracking`."""
         from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
         for model in get_models(get_app(instance._meta.app_label)):
             if isinstance(model(), BaseVisitTracking):
                 return model
         raise TypeError('Unable to determine the visit model from instance {0} for app {1}'.format(instance._meta.model_name, instance._meta.app_label))
-
-    def save(self, *args, **kwargs):
-
-        super(BaseRegisteredSubjectModel, self).save(*args, **kwargs)
-        if not kwargs.get('suppress_autocreate_on_deserialize', False):
-            AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
 
     class Meta:
         abstract = True

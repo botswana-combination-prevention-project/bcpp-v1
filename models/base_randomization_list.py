@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_base_model.classes import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class BaseRandomizationList (BaseUuidModel):
+class BaseRandomizationList (BaseSyncUuidModel):
 
     sid = models.IntegerField(
         unique=True,

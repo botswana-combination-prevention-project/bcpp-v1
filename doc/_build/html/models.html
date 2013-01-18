@@ -25,7 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="bhp_registration 1.0 documentation" href="index.html" /> 
+    <link rel="top" title="bhp_registration 1.0 documentation" href="index.html" />
+    <link rel="next" title="Managers" href="managers.html" />
+    <link rel="prev" title="Classes" href="classes.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,6 +39,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="managers.html" title="Managers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">bhp_registration 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,41 +60,34 @@
 <dt id="bhp_registration.models.RegisteredSubject">
 <em class="property">class </em><tt class="descclassname">bhp_registration.models.</tt><tt class="descname">RegisteredSubject</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_registration.models.RegisteredSubject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_subject.classes.base_subject.BaseSubject</span></tt></p>
-<p>RegisteredSubject(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, first_name, last_name, initials, dob, is_dob_estimated, gender, subject_type, screening_datetime, registration_datetime, randomization_datetime, registration_status, subject_consent_id, registration_identifier, sid, study_site_id, relative_identifier, identity, identity_type, may_store_samples, hiv_status, survival_status, comment, salt)</p>
+<p>RegisteredSubject(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, first_name, last_name, initials, dob, is_dob_estimated, gender, subject_type, subject_consent_id, registration_identifier, sid, study_site_id, relative_identifier, identity, identity_type, may_store_samples, hiv_status, survival_status, screening_datetime, registration_datetime, randomization_datetime, registration_status, comment, salt)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>created</strong> (<em>CreationDateTimeField</em>) &#8211; Created</li>
-<li><strong>modified</strong> (<em>ModificationDateTimeField</em>) &#8211; Modified</li>
-<li><strong>user_created</strong> (<em>CharField</em>) &#8211; User created</li>
-<li><strong>user_modified</strong> (<em>CharField</em>) &#8211; User modified</li>
-<li><strong>hostname_created</strong> (<em>HostnameCreationField</em>) &#8211; Hostname</li>
-<li><strong>hostname_modified</strong> (<em>HostnameModificationField</em>) &#8211; Hostname</li>
-<li><strong>id</strong> (<em>MyUUIDField</em>) &#8211; Id</li>
 <li><strong>subject_identifier</strong> (<em>CharField</em>) &#8211; Subject identifier</li>
-<li><strong>first_name</strong> (<em>EncryptedFirstnameField</em>) &#8211; (Encryption: local-rsa)</li>
-<li><strong>last_name</strong> (<em>EncryptedLastnameField</em>) &#8211; (Encryption: restricted-rsa)</li>
+<li><strong>first_name</strong> (<em>EncryptedFirstnameField</em>) &#8211; (Encryption: rsa local)</li>
+<li><strong>last_name</strong> (<em>EncryptedLastnameField</em>) &#8211; (Encryption: rsa restricted)</li>
 <li><strong>initials</strong> (<em>CharField</em>) &#8211; Initials</li>
 <li><strong>dob</strong> (<em>DateField</em>) &#8211; Format is YYYY-MM-DD</li>
 <li><strong>is_dob_estimated</strong> (<em>IsDateEstimatedField</em>) &#8211; If the exact date is not known, please indicate which part of the date is estimated.</li>
 <li><strong>gender</strong> (<em>CharField</em>) &#8211; Gender</li>
 <li><strong>subject_type</strong> (<em>CharField</em>) &#8211; Subject type</li>
-<li><strong>screening_datetime</strong> (<em>DateTimeField</em>) &#8211; Screening datetime</li>
-<li><strong>registration_datetime</strong> (<em>DateTimeField</em>) &#8211; Registration datetime</li>
-<li><strong>randomization_datetime</strong> (<em>DateTimeField</em>) &#8211; Randomization datetime</li>
-<li><strong>registration_status</strong> (<em>CharField</em>) &#8211; Registration status</li>
 <li><strong>subject_consent_id</strong> (<em>CharField</em>) &#8211; Subject consent id</li>
 <li><strong>registration_identifier</strong> (<em>CharField</em>) &#8211; Registration identifier</li>
 <li><strong>sid</strong> (<em>CharField</em>) &#8211; Sid</li>
 <li><strong>study_site_id</strong> (<em>ForeignKey</em>) &#8211; Site</li>
 <li><strong>relative_identifier</strong> (<em>CharField</em>) &#8211; For example, mother&#8217;s identifier, if available / appropriate</li>
-<li><strong>identity</strong> (<em>EncryptedIdentityField</em>) &#8211; (Encryption: restricted-rsa)</li>
+<li><strong>identity</strong> (<em>EncryptedIdentityField</em>) &#8211; (Encryption: rsa restricted)</li>
 <li><strong>identity_type</strong> (<em>IdentityTypeField</em>) &#8211; What type of identity number is this?</li>
 <li><strong>may_store_samples</strong> (<em>CharField</em>) &#8211; Does the subject agree to have samples stored after the study has ended</li>
 <li><strong>hiv_status</strong> (<em>CharField</em>) &#8211; Hiv status</li>
 <li><strong>survival_status</strong> (<em>CharField</em>) &#8211; Survival status</li>
+<li><strong>screening_datetime</strong> (<em>DateTimeField</em>) &#8211; Screening datetime</li>
+<li><strong>registration_datetime</strong> (<em>DateTimeField</em>) &#8211; Registration datetime</li>
+<li><strong>randomization_datetime</strong> (<em>DateTimeField</em>) &#8211; Randomization datetime</li>
+<li><strong>registration_status</strong> (<em>CharField</em>) &#8211; Registration status</li>
 <li><strong>comment</strong> (<em>TextField</em>) &#8211; Comment</li>
 <li><strong>salt</strong> (<em>SaltField</em>) &#8211; Salt</li>
 </ul>
@@ -94,36 +95,56 @@
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="bhp_registration.models.RegisteredSubject.is_dispatched_to_producer">
+<tt class="descname">is_dispatched_to_producer</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_registration.models.RegisteredSubject.is_dispatched_to_producer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns lock status as a boolean needed when using this model with bhp_dispatch.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bhp_registration.models.RegisteredSubject.registration_datetime">
+<tt class="descname">registration_datetime</tt><em class="property"> = None</em><a class="headerlink" href="#bhp_registration.models.RegisteredSubject.registration_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>for simplicity, if going straight from screen to rando,
+update both registration date and randomization date</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="bhp_registration.models.BaseRegisteredSubjectModel">
 <em class="property">class </em><tt class="descclassname">bhp_registration.models.</tt><tt class="descname">BaseRegisteredSubjectModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_registration.models.BaseRegisteredSubjectModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_sync.classes.base_sync_model.BaseSyncModel</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_appointment_helper.models.base_appointment_helper_model.BaseAppointmentHelperModel</span></tt></p>
 <p>Base model for models that need a key to RegisteredSubject.</p>
 <p>Such models may be listed by name in the ScheduledGroup model and thus
 trigger the creation of appointments. Other instances may be Additional
-forms which are link to a subject but not a time point (for example, 
+forms which are link to a subject but not a time point (for example,
 a Death model or OffStudy model (see also AdditionalEntryBucket)</p>
 <p>Use this along with BaseRegisteredSubjectModelAdmin()</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">This class inherits methods from bhp_appointment_helper that create appointments if the model
+is configured as a ScheduledGroup model. See base class <tt class="xref py py-mod docutils literal"><span class="pre">bhp_appointment_helper.classes.BaseAppointmentHelperModel</span></tt>.</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>created</strong> (<em>CreationDateTimeField</em>) &#8211; Created</li>
-<li><strong>modified</strong> (<em>ModificationDateTimeField</em>) &#8211; Modified</li>
-<li><strong>user_created</strong> (<em>CharField</em>) &#8211; User created</li>
-<li><strong>user_modified</strong> (<em>CharField</em>) &#8211; User modified</li>
-<li><strong>hostname_created</strong> (<em>HostnameCreationField</em>) &#8211; Hostname</li>
-<li><strong>hostname_modified</strong> (<em>HostnameModificationField</em>) &#8211; Hostname</li>
-<li><strong>id</strong> (<em>MyUUIDField</em>) &#8211; Id</li>
-<li><strong>registered_subject_id</strong> (<em>OneToOneField</em>) &#8211; Registered subject</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>registered_subject_id</strong> (<em>OneToOneField</em>) &#8211; Registered subject</td>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="bhp_registration.models.BaseRegisteredSubjectModel.get_subject_identifier">
+<tt class="descname">get_subject_identifier</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_registration.models.BaseRegisteredSubjectModel.get_subject_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the subject_identifier.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_registration.models.BaseRegisteredSubjectModel.get_visit_model">
+<tt class="descname">get_visit_model</tt><big>(</big><em>instance</em><big>)</big><a class="headerlink" href="#bhp_registration.models.BaseRegisteredSubjectModel.get_visit_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the visit model which is a subclass of <tt class="xref py py-class docutils literal"><span class="pre">BaseVisitTracking</span></tt>.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -134,6 +155,12 @@ a Death model or OffStudy model (see also AdditionalEntryBucket)</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="classes.html"
+                        title="previous chapter">Classes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="managers.html"
+                        title="next chapter">Managers</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/models.txt"
@@ -165,6 +192,12 @@ a Death model or OffStudy model (see also AdditionalEntryBucket)</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="managers.html" title="Managers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             >previous</a> |</li>
         <li><a href="index.html">bhp_registration 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>

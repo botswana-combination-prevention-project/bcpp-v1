@@ -51,24 +51,12 @@
 <dl class="class">
 <dt id="bhp_registration.managers.RegisteredSubjectManager">
 <em class="property">class </em><tt class="descclassname">bhp_registration.managers.</tt><tt class="descname">RegisteredSubjectManager</tt><a class="headerlink" href="#bhp_registration.managers.RegisteredSubjectManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.managers.crypto_manager.CryptoManager</span></tt></p>
-<dl class="method">
-<dt id="bhp_registration.managers.RegisteredSubjectManager.register_live_infants">
-<tt class="descname">register_live_infants</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_registration.managers.RegisteredSubjectManager.register_live_infants" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identify and register the number of live infants &#8220;to register&#8221; and return identifier(s).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="bhp_registration.managers.RegisteredSubjectManager.register_partner">
-<tt class="descname">register_partner</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_registration.managers.RegisteredSubjectManager.register_partner" title="Permalink to this definition">¶</a></dt>
-<dd><p>Allocate partner identifiers.</p>
-</dd></dl>
-
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">django.db.models.manager.Manager</span></tt></p>
 <dl class="method">
 <dt id="bhp_registration.managers.RegisteredSubjectManager.update_with">
 <tt class="descname">update_with</tt><big>(</big><em>instance</em>, <em>attrname='subject_identifier'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_registration.managers.RegisteredSubjectManager.update_with" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use an instance, usually a consent, to update registered subject.
-Assume all required fields attributes are included in the instance. 
+<dd><p>Use an instance, usually a consent, to update registered subject.</p>
+<p>Assume all required fields attributes are included in the instance.
 Additional fields may be passed as kwargs.</p>
 <p>To avoid creating a new registered subject record/instance for a subject that
 already exists, access the registered_subject attribute on &#8216;instance&#8217;, if it exists

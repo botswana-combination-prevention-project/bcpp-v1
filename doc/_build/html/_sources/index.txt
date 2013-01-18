@@ -11,11 +11,11 @@ Welcome to bhp_registration's documentation!
 .. toctree::
    :maxdepth: 2
     
-    overview
-    classes
-    models
-    managers
-    signals
+   overview
+   classes
+   models
+   managers
+   signals
 
 
 Indices and tables
