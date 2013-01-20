@@ -12,3 +12,4 @@ class Logic(object):
             self.predicate = kwargs.get('predicate')
             self.consequence = kwargs.get('consequence')
             self.alternative = kwargs.get('alternative')
+            self.comment = kwargs.get('comment')

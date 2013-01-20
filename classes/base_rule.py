@@ -16,6 +16,7 @@ class BaseRule(object):
         self._predicate = None
         self._consequent_action = None
         self._alternative_action = None
+        self._comment = None
         self._target_model_list = None
         self._target_model_cls = None
         self._source_model_cls = None
@@ -77,6 +78,8 @@ class BaseRule(object):
                 self.set_consequent_action(logic.consequence)
             if self.is_valid_action(logic.alternative):
                 self.set_alternative_action(logic.alternative)
+            if 'comment' in dir(logic):
+                self.set_comment(logic.comment)
         else:
             raise AttributeError('Attribute \'logic\' must be an instance of class Logic.')
 
@@ -96,6 +99,12 @@ class BaseRule(object):
 
     def get_alternative_action(self):
         return self._alternative_action
+
+    def set_comment(self, value):
+        self._comment = value
+
+    def get_comment(self):
+        return self._comment
 
     def get_action_list(self):
         """Users should override to return a valid list of actions for consequent and alternative actions.
@@ -150,10 +159,9 @@ class BaseRule(object):
             registered_subject = self.get_visit_model_instance().appointment.registered_subject
             self._field_value = getattr(registered_subject, attr_name)
         elif attr_name == 'consent_version':
-            # TODO: get current_consent_version
-            consent_helper = ConsentHelper()
-            #self._field_value = consent_helper.get_current_consent_version(instance.get_report_datetime())
-            self._field_value = 1
+            self._field_value = ConsentHelper(self.get_visit_model_instance(), suppress_exception=True).get_current_consent_version()
+            if not self._field_value:
+                self._field_value = 0
         else:
             self._field_value = getattr(instance, attr_name)
         if self._field_value:

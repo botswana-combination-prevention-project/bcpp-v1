@@ -85,4 +85,5 @@ class ScheduledDataRule(BaseRule):
                         self.get_target_bucket_instance_id(),
                         self.get_visit_model_instance(),
                         self.get_filter_instance(),  # visit_model_instance or registered subject instance
-                        self.get_filter_fieldname())  # visit_model fieldname or 'registered subject'
+                        self.get_filter_fieldname(),
+                        self.get_comment())  # visit_model fieldname or 'registered subject'
