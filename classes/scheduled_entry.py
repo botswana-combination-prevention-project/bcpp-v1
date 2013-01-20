@@ -93,7 +93,9 @@ class ScheduledEntry(BaseEntry):
             self.get_filter_model_instance().report_datetime
         bucket_instance.report_datetime = report_datetime
         if comment:
-            bucket_instance.comment = comment
+            bucket_instance.entry_comment = comment
+        else:
+            bucket_instance.entry_comment = ''
         entry_status = self.get_status(action)
         bucket_instance.entry_status = entry_status
         #if entry_status.lower() != action.lower():
