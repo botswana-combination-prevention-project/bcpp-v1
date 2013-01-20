@@ -1,6 +1,7 @@
 from django import forms
 from bhp_dispatch.helpers import is_dispatched, is_dispatched_registered_subject
 from logic_check import LogicCheck
+from bhp_consent.classes import ConsentHelper
 
 
 class BaseModelForm(forms.ModelForm):
@@ -13,6 +14,7 @@ class BaseModelForm(forms.ModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
+
         # check if dispatched
         if 'registered_subject' in cleaned_data:
             registered_subject = cleaned_data.get('registered_subject', None)
@@ -39,8 +41,7 @@ class BaseModelForm(forms.ModelForm):
                 if not cleaned_data['{0}_other'.format(k)]:
                     raise forms.ValidationError('If {0} is \'OTHER\', please specify. '
                                                 'You wrote \'{1}\''.format(k, cleaned_data['{0}_other'.format(k)]))
-        super(BaseModelForm, self).clean()
-        return cleaned_data
+        return super(BaseModelForm, self).clean()
 
     def validate_m2m(self, **kwargs):
 
@@ -53,7 +54,7 @@ class BaseModelForm(forms.ModelForm):
             Be sure to check cleaned_data for the 'key' of the m2m field first.
 
             For example, in the ModelForm clean() method call::
-                
+
                 if cleaned_data.has_key('chronic_cond'):
                     self.validate_m2m(
                             label = 'chronic condition',
