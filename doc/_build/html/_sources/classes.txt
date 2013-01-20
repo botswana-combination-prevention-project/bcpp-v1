@@ -1,19 +1,17 @@
+
 Classes
 =======
 
-.. automodule:: bhp_consent.classes
+.. autoclass:: consent_helper.ConsentHelper
+    :members:  
 
-.. autoclass:: bhp_consent.classes.BaseConsent
-    :members:    
-    :show-inheritance: 
-    
 Admin Classes
 =============
 
-.. autoclass:: bhp_consent.classes.BaseConsentModelAdmin
+.. autoclass:: base_consent_model_admin.BaseConsentModelAdmin
     :members:    
     :show-inheritance:
     
-.. autoclass:: bhp_consent.classes.BaseModelWithConsentAdmin
+.. autoclass:: base_model_with_consent_admin.BaseModelWithConsentAdmin
     :members:    
     :show-inheritance:

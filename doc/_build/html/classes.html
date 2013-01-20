@@ -26,8 +26,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="bhp_consent 1.0 documentation" href="index.html" />
-    <link rel="next" title="Models" href="models.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Forms" href="forms.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,13 +37,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="models.html" title="Models"
+          <a href="forms.html" title="Forms"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation"
+          <a href="models.html" title="Models"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">bhp_consent 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -54,45 +51,66 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-bhp_consent.classes">
-<span id="classes"></span><h1>Classes<a class="headerlink" href="#module-bhp_consent.classes" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="classes">
+<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="bhp_consent.classes.BaseConsent">
-<em class="property">class </em><tt class="descclassname">bhp_consent.classes.</tt><tt class="descname">BaseConsent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_consent.classes.BaseConsent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_subject.classes.base_subject.BaseSubject</span></tt></p>
-<p>Consent models should be subclasses of this</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>subject_identifier</strong> (<em>CharField</em>) &#8211; Subject identifier</li>
-<li><strong>first_name</strong> (<em>EncryptedFirstnameField</em>) &#8211; (Encryption: rsa local)</li>
-<li><strong>last_name</strong> (<em>EncryptedLastnameField</em>) &#8211; (Encryption: rsa restricted)</li>
-<li><strong>initials</strong> (<em>CharField</em>) &#8211; Initials</li>
-<li><strong>dob</strong> (<em>DateField</em>) &#8211; Format is YYYY-MM-DD</li>
-<li><strong>is_dob_estimated</strong> (<em>IsDateEstimatedField</em>) &#8211; If the exact date is not known, please indicate which part of the date is estimated.</li>
-<li><strong>gender</strong> (<em>CharField</em>) &#8211; Gender</li>
-<li><strong>subject_type</strong> (<em>CharField</em>) &#8211; Subject type</li>
-<li><strong>study_site_id</strong> (<em>ForeignKey</em>) &#8211; This refers to the site or &#8216;clinic area&#8217; where the subject is being consented.</li>
-<li><strong>consent_datetime</strong> (<em>DateTimeField</em>) &#8211; Consent date and time</li>
-<li><strong>guardian_name</strong> (<em>EncryptedLastnameField</em>) &#8211; Required only if subject is a minor. Format is &#8216;LASTNAME,FIRSTNAME&#8217;. All uppercase separated by a comma (Encryption: rsa restricted)</li>
-<li><strong>may_store_samples</strong> (<em>CharField</em>) &#8211; Does the subject agree to have samples stored after the study has ended</li>
-<li><strong>comment</strong> (<em>EncryptedTextField</em>) &#8211; (Encryption: aes local)</li>
-<li><strong>consent_version_on_entry</strong> (<em>IntegerField</em>) &#8211; Version of subject&#8217;s initial consent.</li>
-<li><strong>consent_version_recent</strong> (<em>IntegerField</em>) &#8211; Version of subject&#8217;s most recent consent.</li>
-<li><strong>is_verified</strong> (<em>BooleanField</em>) &#8211; Is verified</li>
-<li><strong>is_verified_datetime</strong> (<em>DateTimeField</em>) &#8211; Is verified datetime</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="consent_helper.ConsentHelper">
+<em class="property">class </em><tt class="descclassname">consent_helper.</tt><tt class="descname">ConsentHelper</tt><big>(</big><em>subject_instance</em>, <em>exception_cls=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="consent_helper.ConsentHelper.get_consent_models">
+<tt class="descname">get_consent_models</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.get_consent_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.get_consent_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets consent models for this subject_instance.</p>
+</dd></dl>
+
 <dl class="method">
-<dt id="bhp_consent.classes.BaseConsent.save_new_consent">
-<tt class="descname">save_new_consent</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_consent.classes.BaseConsent.save_new_consent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates or gets a subject identifier and updates registered subject.</p>
-<p>Users may override this to change the default behavior for new instances</p>
+<dt id="consent_helper.ConsentHelper.get_current_consent_version">
+<tt class="descname">get_current_consent_version</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.get_current_consent_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.get_current_consent_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current consent version relative to the given subject_instance report_datetime and subject_identifier.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="consent_helper.ConsentHelper.is_consented_for_subject_instance">
+<tt class="descname">is_consented_for_subject_instance</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.is_consented_for_subject_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.is_consented_for_subject_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for a valid consent instance for this subject for the possible consent models.</p>
+<p>If model class of the subject instance is listed in the consent catalogue under the consent of a different subject, such
+as with mother and their infants, get the other subject&#8217;s identifier from the <tt class="xref py py-func docutils literal"><span class="pre">get_consent_subject_identifier()</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="consent_helper.ConsentHelper.set_consent_models">
+<tt class="descname">set_consent_models</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_consent_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_consent_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets consent models for this instance by querying the AttachedModel class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="consent_helper.ConsentHelper.set_report_datetime">
+<tt class="descname">set_report_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_report_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_report_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the datetime field to use to compare with the start and end dates of consents listed in the consent catalogue.</p>
+<p>The report_datetime comes from the subject_instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="consent_helper.ConsentHelper.set_subject_identifier">
+<tt class="descname">set_subject_identifier</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_subject_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_subject_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the subject_identifier from the instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="consent_helper.ConsentHelper.set_subject_instance">
+<tt class="descname">set_subject_instance</tt><big>(</big><em>subject_instance</em><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_subject_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_subject_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the subject instance after confirming model is listed and active in AttachedModels.</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Results may not be as expected. See comment on <a class="reference internal" href="forms.html#base_consented_model_form.BaseConsentedModelForm" title="base_consented_model_form.BaseConsentedModelForm"><tt class="xref py py-class docutils literal"><span class="pre">base_consented_model_form.BaseConsentedModelForm</span></tt></a> <tt class="xref py py-func docutils literal"><span class="pre">check_attached()</span></tt>.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="consent_helper.ConsentHelper.validate_versioned_fields">
+<tt class="descname">validate_versioned_fields</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.validate_versioned_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.validate_versioned_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate fields under consent version control to be set to the default value or not (None).</p>
+<p>This validation logic should also be applied in the forms.py along with more field
+specific validation logic.</p>
 </dd></dl>
 
 </dd></dl>
@@ -101,15 +119,15 @@
 <div class="section" id="admin-classes">
 <h1>Admin Classes<a class="headerlink" href="#admin-classes" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="bhp_consent.classes.BaseConsentModelAdmin">
-<em class="property">class </em><tt class="descclassname">bhp_consent.classes.</tt><tt class="descname">BaseConsentModelAdmin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_consent.classes.BaseConsentModelAdmin" title="Permalink to this definition">¶</a></dt>
+<dt id="base_consent_model_admin.BaseConsentModelAdmin">
+<em class="property">class </em><tt class="descclassname">base_consent_model_admin.</tt><tt class="descname">BaseConsentModelAdmin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/base_consent_model_admin.html#BaseConsentModelAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_consent_model_admin.BaseConsentModelAdmin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base_cryptor_model_admin.BaseCryptorModelAdmin</span></tt></p>
 <p>Serves as the ModelAdmin for all consent models.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="bhp_consent.classes.BaseModelWithConsentAdmin">
-<em class="property">class </em><tt class="descclassname">bhp_consent.classes.</tt><tt class="descname">BaseModelWithConsentAdmin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_consent.classes.BaseModelWithConsentAdmin" title="Permalink to this definition">¶</a></dt>
+<dt id="base_model_with_consent_admin.BaseModelWithConsentAdmin">
+<em class="property">class </em><tt class="descclassname">base_model_with_consent_admin.</tt><tt class="descname">BaseModelWithConsentAdmin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/base_model_with_consent_admin.html#BaseModelWithConsentAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#base_model_with_consent_admin.BaseModelWithConsentAdmin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_crypto.classes.base_cryptor_model_admin.BaseCryptorModelAdmin</span></tt></p>
 <p>For models with a key to consent</p>
 </dd></dl>
@@ -129,11 +147,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="installation.html"
-                        title="previous chapter">Installation</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="models.html"
-                        title="next chapter">Models</a></p>
+                        title="previous chapter">Models</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="forms.html"
+                        title="next chapter">Forms</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/classes.txt"
@@ -163,13 +181,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="models.html" title="Models"
+          <a href="forms.html" title="Forms"
              >next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation"
+          <a href="models.html" title="Models"
              >previous</a> |</li>
         <li><a href="index.html">bhp_consent 1.0 documentation</a> &raquo;</li> 
       </ul>

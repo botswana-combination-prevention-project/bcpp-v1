@@ -13,5 +13,12 @@ class ConsentCatalogueAdmin(BaseModelAdmin):
     form = ConsentCatalogueForm
     list_display = ('name', 'version', 'consent_type', 'start_datetime', 'end_datetime')
     list_filter = ('consent_type', 'created')
-    inlines = [AttachedModelInlineAdmin, ]
+    #inlines = [AttachedModelInlineAdmin, ]
 admin.site.register(ConsentCatalogue, ConsentCatalogueAdmin)
+
+
+class AttachedModelAdmin(BaseModelAdmin):
+    list_display = ('content_type_map', 'consent_catalogue', 'is_active', 'created')
+    list_filter = ('consent_catalogue', 'is_active', 'created')
+    search_fields = ('content_type_map__model', 'content_type_map__app_label', 'content_type_map__name',)
+admin.site.register(AttachedModel, AttachedModelAdmin)

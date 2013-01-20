@@ -7,7 +7,6 @@ from bhp_base_model.validators import datetime_not_future, datetime_not_before_s
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from bhp_subject.models import BaseSubject
-from bhp_consent.classes import ConsentedSubjectIdentifier
 from bhp_appointment_helper.classes import AppointmentHelper
 from bhp_common.utils import formatted_age
 
@@ -73,6 +72,7 @@ class BaseConsent(BaseSubject):
         """ Creates or gets a subject identifier and updates registered subject.
 
         Users may override this to change the default behavior for new instances"""
+        from bhp_consent.classes import ConsentedSubjectIdentifier
         consented_subject_identifier = ConsentedSubjectIdentifier()
         try:
             registered_subject = getattr(self, 'registered_subject')
@@ -92,8 +92,8 @@ class BaseConsent(BaseSubject):
     def save(self, *args, **kwargs):
         if not self.id:
             self.save_new_consent()
-            self.consent_version_on_entry = self.get_current_consent_version(self.consent_datetime)
-            self.consent_version_recent = self.consent_version_on_entry
+            #self.consent_version_on_entry = self.get_current_consent_version(self.consent_datetime)
+            #self.consent_version_recent = self.consent_version_on_entry
         super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
         # so need to create appointments

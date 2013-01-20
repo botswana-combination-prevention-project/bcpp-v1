@@ -13,9 +13,9 @@ Contents:
 
    overview
    installation
-   classes
    models
-
+   classes
+   forms
 
 Indices and tables
 ==================

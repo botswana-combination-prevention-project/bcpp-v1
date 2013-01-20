@@ -9,7 +9,7 @@ from bhp_crypto.classes import BaseEncryptedField
 
 
 class BaseSubjectConsentForm(BaseModelForm):
-
+    """Form for models that are a subclass of BaseConsent."""
     def clean(self):
 
         cleaned_data = self.cleaned_data
@@ -82,4 +82,4 @@ class BaseSubjectConsentForm(BaseModelForm):
             if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
                 raise forms.ValidationError('Identity mismatch. Identity number must match the confirmation field.')
         # Always return the full collection of cleaned data.
-        return cleaned_data
+        return super(BaseSubjectConsentForm, self).clean()

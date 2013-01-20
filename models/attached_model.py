@@ -15,9 +15,14 @@ class AttachedModel(BaseSyncUuidModel):
     content_type_map = models.ForeignKey(ContentTypeMap,
         verbose_name='Subject model')
 
+    is_active = models.BooleanField(default=True)
+
     history = AuditTrail()
 
     objects = models.Manager()
+
+    def __unicode__(self):
+        return self.content_type_map.model
 
     class Meta:
         app_label = 'bhp_consent'

@@ -26,7 +26,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="bhp_consent 1.0 documentation" href="index.html" />
-    <link rel="prev" title="Classes" href="classes.html" /> 
+    <link rel="next" title="Classes" href="classes.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +37,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="classes.html" title="Classes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">bhp_consent 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -50,96 +51,26 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-bhp_consent.models">
-<span id="models"></span><h1>Models<a class="headerlink" href="#module-bhp_consent.models" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="bhp_consent.models.BaseConsentUpdate">
-<em class="property">class </em><tt class="descclassname">bhp_consent.models.</tt><tt class="descname">BaseConsentUpdate</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_consent.models.BaseConsentUpdate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_sync.classes.base_sync_model.BaseSyncModel</span></tt></p>
-<p>Tracks updates to the original consent.</p>
-<dl class="docutils">
-<dt>In the subclass:</dt>
-<dd><ol class="first last arabic">
-<li><p class="first">add your consent as a OneToOneField():</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">maternal_consent</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">MaternalConsent</span><span class="p">)</span>
-</pre></div>
+  <div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+<p>#Base Classes for Subject Models
+#++++++++++++++++++++++++++++++++
+#
+#.. autoclass:: base_consented_uuid_model.BaseConsentedUuidModel
+#    :members:</p>
+<div class="section" id="consent-base-classes">
+<h2>Consent Base Classes<a class="headerlink" href="#consent-base-classes" title="Permalink to this headline">¶</a></h2>
 </div>
-</li>
-<li><p class="first">add a save method to update the main consent&#8217;s most recent version number:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="c">#After save, updates the most recent consent version on the &quot;entry&quot; consent.</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">MaternalConsentUpdate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">maternal_consent</span><span class="o">.</span><span class="n">consent_version_recent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">consent_version</span>
-</pre></div>
+<div class="section" id="consent-catalogue">
+<h2>Consent Catalogue<a class="headerlink" href="#consent-catalogue" title="Permalink to this headline">¶</a></h2>
+<p>Each consent type is catalogued by name, version and time period. For each catalogued
+consent, the models it covers are listed. When a subject_instance is saved, ModelForm <tt class="xref py py-func docutils literal"><span class="pre">clean()</span></tt> and
+Model <tt class="xref py py-func docutils literal"><span class="pre">save()</span></tt> check that the model class of the subject instance is named in the list of
+models covered by the subject&#8217;s consent.</p>
 </div>
-</li>
-</ol>
-</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>study_site_id</strong> (<em>ForeignKey</em>) &#8211; This refers to the site or &#8216;clinic area&#8217; where the subject is being consented.</li>
-<li><strong>consent_datetime</strong> (<em>DateTimeField</em>) &#8211; Consent date and time</li>
-<li><strong>guardian_name</strong> (<em>EncryptedLastnameField</em>) &#8211; Required only if subject is a minor. Format is &#8216;LASTNAME,FIRSTNAME&#8217;. All uppercase separated by a comma (Encryption: rsa restricted)</li>
-<li><strong>may_store_samples</strong> (<em>CharField</em>) &#8211; Subject agrees for samples to be stored after the study closure</li>
-<li><strong>comment</strong> (<em>EncryptedTextField</em>) &#8211; (Encryption: aes local)</li>
-<li><strong>consent_version</strong> (<em>IntegerField</em>) &#8211; Consent version</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="class">
-<dt id="bhp_consent.models.Consent">
-<em class="property">class </em><tt class="descclassname">bhp_consent.models.</tt><tt class="descname">Consent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_consent.models.Consent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_consent.classes.base_consent.BaseConsent</span></tt></p>
-<p>Standard consent model.</p>
-<div class="admonition-see-also admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><tt class="xref py py-class docutils literal"><span class="pre">BaseConsent</span></tt> in <tt class="xref py py-mod docutils literal"><span class="pre">bhp_botswana.classes</span></tt> </p>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Name :</th><td class="field-body"><p class="first">consent</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">models_consent</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>subject_identifier</strong> (<em>CharField</em>) &#8211; Subject identifier</li>
-<li><strong>first_name</strong> (<em>EncryptedFirstnameField</em>) &#8211; (Encryption: rsa local)</li>
-<li><strong>last_name</strong> (<em>EncryptedLastnameField</em>) &#8211; (Encryption: rsa restricted)</li>
-<li><strong>initials</strong> (<em>CharField</em>) &#8211; Initials</li>
-<li><strong>dob</strong> (<em>DateField</em>) &#8211; Format is YYYY-MM-DD</li>
-<li><strong>is_dob_estimated</strong> (<em>IsDateEstimatedField</em>) &#8211; If the exact date is not known, please indicate which part of the date is estimated.</li>
-<li><strong>gender</strong> (<em>CharField</em>) &#8211; Gender</li>
-<li><strong>subject_type</strong> (<em>CharField</em>) &#8211; Subject type</li>
-<li><strong>study_site_id</strong> (<em>ForeignKey</em>) &#8211; This refers to the site or &#8216;clinic area&#8217; where the subject is being consented.</li>
-<li><strong>consent_datetime</strong> (<em>DateTimeField</em>) &#8211; Consent date and time</li>
-<li><strong>guardian_name</strong> (<em>EncryptedLastnameField</em>) &#8211; Required only if subject is a minor. Format is &#8216;LASTNAME,FIRSTNAME&#8217;. All uppercase separated by a comma (Encryption: rsa restricted)</li>
-<li><strong>may_store_samples</strong> (<em>CharField</em>) &#8211; Does the subject agree to have samples stored after the study has ended</li>
-<li><strong>comment</strong> (<em>EncryptedTextField</em>) &#8211; (Encryption: aes local)</li>
-<li><strong>consent_version_on_entry</strong> (<em>IntegerField</em>) &#8211; Version of subject&#8217;s initial consent.</li>
-<li><strong>consent_version_recent</strong> (<em>IntegerField</em>) &#8211; Version of subject&#8217;s most recent consent.</li>
-<li><strong>is_verified</strong> (<em>BooleanField</em>) &#8211; Is verified</li>
-<li><strong>is_verified_datetime</strong> (<em>DateTimeField</em>) &#8211; Is verified datetime</li>
-<li><strong>identity</strong> (<em>EncryptedIdentityField</em>) &#8211; (Encryption: rsa restricted)</li>
-<li><strong>identity_type</strong> (<em>IdentityTypeField</em>) &#8211; What type of identity number is this?</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 
 
@@ -148,9 +79,22 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Models</a><ul>
+<li><a class="reference internal" href="#consent-base-classes">Consent Base Classes</a></li>
+<li><a class="reference internal" href="#consent-catalogue">Consent Catalogue</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
   <p class="topless"><a href="classes.html"
-                        title="previous chapter">Classes</a></p>
+                        title="next chapter">Classes</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/models.txt"
@@ -180,10 +124,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="classes.html" title="Classes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
              >previous</a> |</li>
         <li><a href="index.html">bhp_consent 1.0 documentation</a> &raquo;</li> 
       </ul>

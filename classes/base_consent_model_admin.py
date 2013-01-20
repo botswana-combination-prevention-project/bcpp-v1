@@ -53,6 +53,7 @@ class BaseConsentModelAdmin(BaseModelAdmin):
         'identity',
         'identity_type',
         'confirm_identity',
+        'is_incarcerated',
         'may_store_samples',
         'comment']
     radio_fields = {
@@ -60,6 +61,7 @@ class BaseConsentModelAdmin(BaseModelAdmin):
         "study_site": admin.VERTICAL,
         "is_dob_estimated": admin.VERTICAL,
         "identity_type": admin.VERTICAL,
+        "is_incarcerated": admin.VERTICAL,
         "may_store_samples": admin.VERTICAL}
 
 

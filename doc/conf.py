@@ -15,10 +15,12 @@ import sys
 import os
 #sys.path.append(os.path.realpath('_ext'))
 sys.path.append(os.path.realpath('../../'))
-sys.path.append(os.path.realpath('../'))
+#sys.path.append(os.path.realpath('../'))
 sys.path.append(os.path.realpath('../classes'))
-sys.path.append(os.path.realpath('../fields'))
-sys.path.append(os.path.realpath('../../'))
+sys.path.append(os.path.realpath('../forms'))
+#sys.path.append(os.path.realpath('../admin'))
+sys.path.append(os.path.realpath('../models'))
+#sys.path.append(os.path.realpath('../fields'))
 import django 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 

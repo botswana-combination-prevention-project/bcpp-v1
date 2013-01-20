@@ -10,7 +10,7 @@ from bhp_consent.classes import ConsentHelper
 from consent_catalogue import ConsentCatalogue
 
 
-class BaseConsentUpdate(BaseSyncUuidModel, ConsentHelper):
+class BaseConsentUpdate(BaseSyncUuidModel):
     """Tracks updates to the original consent.
 
     In the subclass:
@@ -64,10 +64,13 @@ class BaseConsentUpdate(BaseSyncUuidModel, ConsentHelper):
 
     consent_version = models.IntegerField(null=True)
 
+    def get_report_datetime(self):
+        return self.consent_datetime
+
     def save(self, *args, **kwargs):
         if not self.consent_catalogue:
             super(BaseConsentUpdate, self).save(*args, **kwargs)
-        self.consent_version = self.get_current_consent_version(self.consent_catalogue.name, self.consent_datetime)
+        self.consent_version = ConsentHelper(self).get_current_consent_version(self.consent_catalogue.name, self.consent_datetime)
         super(BaseConsentUpdate, self).save(*args, **kwargs)
 
     class Meta:

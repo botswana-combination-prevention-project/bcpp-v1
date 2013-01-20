@@ -56,6 +56,39 @@
             
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p><tt class="xref py py-mod docutils literal"><span class="pre">bhp_consent</span></tt> handles consent issues as they relate to data entry. In a nutshell:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a subject must be consented before data is collected.</li>
+<li>For protocols with more than one version of a consent, models and model fields may be restricted depending on the
+subject&#8217;s consent</li>
+<li>a consent covers a fixed time period before which data entry may not begin and after which data entry stops.</li>
+</ul>
+</div></blockquote>
+<p>The class <tt class="xref py py-class docutils literal"><span class="pre">ConsentHelper</span></tt> provides the methods to enforce consent versions and time periods. It is accessed
+both from a model&#8217;s <tt class="xref py py-func docutils literal"><span class="pre">save()</span></tt> method when subclassed from the class <tt class="xref py py-class docutils literal"><span class="pre">base_consented_uuid_model.BaseConsentedUuidModel</span></tt>
+and a modelform&#8217;s <tt class="xref py py-func docutils literal"><span class="pre">clean()</span></tt> method when the subclassed from class <a class="reference internal" href="forms.html#base_consented_model_form.BaseConsentedModelForm" title="base_consented_model_form.BaseConsentedModelForm"><tt class="xref py py-class docutils literal"><span class="pre">base_consented_model_form.BaseConsentedModelForm</span></tt></a>.</p>
+<p>Protocol subject consents are subclasses from <tt class="xref py py-class docutils literal"><span class="pre">BaseConsent</span></tt> where each subject has a unique entry.</p>
+<p><tt class="xref py py-mod docutils literal"><span class="pre">bhp_consent</span></tt> provides a model :class:ConsentCatalogue` with one entry per consent type. Attached to each consent
+type are all the model names that are covered by that consent type. These model names are listed in the model <tt class="xref py py-class docutils literal"><span class="pre">AttahcedModel</span></tt>.</p>
+<div class="section" id="using-a-consent-from-another-subject">
+<h2>Using a consent from another subject<a class="headerlink" href="#using-a-consent-from-another-subject" title="Permalink to this headline">¶</a></h2>
+<p>For some protocols, the consent of one subject covers the data collection for the other. For example, a mother&#8217;s
+consent covers data collection for the infant. In such a case, models for the subject that does not consent (infant) must return the
+subject identifier of the consenting subject (mother). The :class:consent_helper.ConsentHelper` class will check for the method
+<tt class="xref py py-func docutils literal"><span class="pre">get_consenting_subject_identifier()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">get_consenting_subject_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns mother&#39;s identifier.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">infant_visit</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">relative_identifier</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">get_consenting_subject_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns mother&#39;s identifier.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">relative_identifier</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -64,6 +97,14 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Overview</a><ul>
+<li><a class="reference internal" href="#using-a-consent-from-another-subject">Using a consent from another subject</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to bhp_appointment&#8217;s documentation!</a></p>
