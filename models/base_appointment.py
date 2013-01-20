@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from bhp_appointment.choices import APPT_STATUS
-from bhp_consent.models import BaseConsentedUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class BaseAppointment (BaseConsentedUuidModel):
+class BaseAppointment (BaseSyncUuidModel):
     """Base class for Appointments."""
     appt_datetime = models.DateTimeField(
         verbose_name=_("Appointment date and time"),
