@@ -1,12 +1,10 @@
 import sys
 import socket
-from datetime import datetime
 from django.core import serializers
-from django.db.models import ForeignKey, get_model
+from django.db.models import ForeignKey
 from django.db.utils import IntegrityError
 from bhp_crypto.classes import FieldCryptor
 from transaction_producer import TransactionProducer
-import pdb
 
 
 class DeserializeFromTransaction(object):

@@ -1,10 +1,7 @@
 from datetime import datetime
 from django.db.models import get_model
 from django.core import serializers
-#try:
 from bhp_crypto.classes import FieldCryptor
-#except ImportError:
-#    pass
 from transaction_producer import TransactionProducer
 
 

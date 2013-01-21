@@ -3,7 +3,6 @@ import sys
 from django.conf import settings
 from django.db.models import get_model
 from import_history import ImportHistory
-#from bhp_sync.models import OutgoingTransaction, IncomingTransaction, Producer
 from bhp_sync.classes import DeserializeFromTransaction
 
 
@@ -17,7 +16,7 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class Consumer(object):
-    
+
     def fetch_from_producer(self, producer_hostname):
         OutgoingTransaction = get_model('bhp_sync','OutgoingTransaction')
         IncomingTransaction = get_model('bhp_sync','IncomingTransaction')
