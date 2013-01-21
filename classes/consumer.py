@@ -18,8 +18,8 @@ nullhandler = logger.addHandler(NullHandler())
 class Consumer(object):
 
     def fetch_from_producer(self, producer_hostname):
-        OutgoingTransaction = get_model('bhp_sync','OutgoingTransaction')
-        IncomingTransaction = get_model('bhp_sync','IncomingTransaction')
+        OutgoingTransaction = get_model('bhp_sync', 'OutgoingTransaction')
+        IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')
         db = 'default'
         lock_name = producer_hostname
         producer = self.get_producer(producer_hostname)
@@ -59,7 +59,7 @@ class Consumer(object):
 
     def get_producer(self, producer_hostname):
         """Confirm address of producer listed in model matches that listed in settings."""
-        Producer = get_model('bhp_sync','Producer')
+        Producer = get_model('bhp_sync', 'Producer')
         if not Producer.objects.filter(settings_key=producer_hostname):
             raise AttributeError('Unknown producer {0}. Not found in producer table.'.format(producer_hostname))
         producer = Producer.objects.get(settings_key=producer_hostname)
@@ -75,7 +75,7 @@ class Consumer(object):
         return producer
 
     def consume(self, lock_name):
-        IncomingTransaction = get_model('bhp_sync','IncomingTransaction')
+        IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')
         deserialize_from_transaction = DeserializeFromTransaction()
         n = 0
         tot = IncomingTransaction.objects.filter(is_consumed=False).count()
@@ -94,7 +94,7 @@ class Consumer(object):
             print '    {0}'.format(action)
 
     def copy_incoming_from_server(self):
-        IncomingTransaction = get_model('bhp_sync','IncomingTransaction')
+        IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')
         if not 'server' in settings.DATABASES.keys():
             raise AttributeError('Cannot find key "server" in settings.DATABASES. '
                                  'Please add and try again.')
