@@ -65,7 +65,8 @@ class BaseRequisitionModelAdmin(BaseVisitTrackingModelAdmin):
         self.search_fields = [
             '{0}__appointment__registered_subject__subject_identifier'.format(self.visit_fieldname,),
             'specimen_identifier',
-            'requisition_identifier']
+            'requisition_identifier',
+            'panel__name']
         self.filter_horizontal = ["test_code", ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
