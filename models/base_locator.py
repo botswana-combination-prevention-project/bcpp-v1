@@ -144,8 +144,5 @@ class BaseLocator(BaseConsentedUuidModel):
         null=True,
         )
 
-    def get_subject_identifier(self):
-        return self.registered_subject.subject_identifier
-
     class Meta:
         abstract = True
