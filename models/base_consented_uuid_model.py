@@ -1,4 +1,4 @@
-from bhp_sync.classes import BaseSyncUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_consent.classes import ConsentHelper
 
 
