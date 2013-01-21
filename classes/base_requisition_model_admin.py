@@ -7,6 +7,7 @@ from lab_requisition.actions import print_requisition_label
 
 class BaseRequisitionModelAdmin(BaseVisitTrackingModelAdmin):
 
+    date_hierarchy = 'requisition_datetime'
     actions = [flag_as_received,
                flag_as_not_received,
                flag_as_not_labelled,
