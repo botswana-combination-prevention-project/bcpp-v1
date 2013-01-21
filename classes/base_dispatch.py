@@ -95,15 +95,15 @@ class BaseDispatch(Base):
 
     def get_scheduled_models(self, app_name=None):
         """Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models."""
-        for app_name in self.get_dispatch_app_name():
-            app = get_app(self.get_dispatch_app_name())
-            scheduled_models = []
-            for model_cls in get_models(app):
-                field_name, visit_model_cls = self.get_visit_model_cls(app_name, model_cls)
-                if visit_model_cls:
-                    if getattr(model_cls, field_name, None):
-                        if not model_cls._meta.object_name.endswith('Audit'):
-                            scheduled_models.append(model_cls)
+        app_name = self.get_dispatch_app_name()
+        app = get_app(self.get_dispatch_app_name())
+        scheduled_models = []
+        for model_cls in get_models(app):
+            field_name, visit_model_cls = self.get_visit_model_cls(app_name, model_cls)
+            if visit_model_cls:
+                if getattr(model_cls, field_name, None):
+                    if not model_cls._meta.object_name.endswith('Audit'):
+                        scheduled_models.append(model_cls)
         return scheduled_models
 
 #    def update_lists(self):
