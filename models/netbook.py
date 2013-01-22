@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 
 
 class Netbook(BaseModel):

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 from netbook import Netbook
 
 
