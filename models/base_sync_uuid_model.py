@@ -18,7 +18,7 @@ nullhandler = logger.addHandler(NullHandler())
 
 class BaseSyncUuidModel(BaseUuidModel):
 
-    """ Base model for all UUID models and adds synchronization methods and signals. """
+    """Base model for all UUID models and adds synchronization methods and signals. """
 
     def is_serialized(self, serialize=True):
         if 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
@@ -60,6 +60,7 @@ class BaseSyncUuidModel(BaseUuidModel):
         super(BaseSyncUuidModel, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        """Deletes"""
         #TODO: get this to work in pre_delete signal
         transaction_producer = TransactionProducer()
         if 'transaction_producer' in kwargs:
