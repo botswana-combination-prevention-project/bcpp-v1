@@ -13,7 +13,9 @@ Contents:
 
    overview
    installation
+   consent_helper
    models
+   signals
    classes
    forms
 

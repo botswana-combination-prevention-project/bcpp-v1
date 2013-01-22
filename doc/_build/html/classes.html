@@ -37,6 +37,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="forms.html" title="Forms"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -51,15 +54,32 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="classes">
+  <span class="target" id="module-bhp_consent.classes"></span><div class="section" id="classes">
 <h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="consent_helper.ConsentHelper">
 <em class="property">class </em><tt class="descclassname">consent_helper.</tt><tt class="descname">ConsentHelper</tt><big>(</big><em>subject_instance</em>, <em>exception_cls=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="consent_helper.ConsentHelper.get_consent_models">
-<tt class="descname">get_consent_models</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.get_consent_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.get_consent_models" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets consent models for this subject_instance.</p>
+<dd><p>Provides methods to help manage subject consents and the data models covered by consent.</p>
+<p>May be subclassed at the protocol module to override <tt class="xref py py-func docutils literal"><span class="pre">clean_versioned_field()</span></tt> to add more detailed
+data checks for versioned fields than the default. For example, from mpepu_maternal:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bhp_consent.classes</span> <span class="kn">import</span> <span class="n">ConsentHelper</span>
+
+<span class="k">class</span> <span class="nc">MaternalEligibilityConsentHelper</span><span class="p">(</span><span class="n">ConsentHelper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">clean_versioned_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_value</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">start_datetime</span><span class="p">,</span> <span class="n">consent_version</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subject_instance</span><span class="p">(),</span> <span class="s">&#39;feeding_choice&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;Yes&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;maternal_haart&#39;</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subject_instance</span><span class="p">(),</span> <span class="s">&#39;is_cd4_low&#39;</span><span class="p">):</span>
+                <span class="k">if</span>  <span class="n">field_value</span> <span class="o">==</span> <span class="s">&#39;No&#39;</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subject_instance</span><span class="p">(),</span> <span class="s">&#39;is_cd4_low&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">250</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_exception_cls</span><span class="p">()(</span><span class="s">&#39;Mother must be willing to &#39;</span>
+                                                   <span class="s">&#39;initiate HAART if feeding choice is BF and &#39;</span>
+                                                   <span class="s">&#39;CD4 &lt; 250 for data captured during or after &#39;</span>
+                                                   <span class="s">&#39;version {2}. [{3}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">start_datetime</span><span class="p">,</span> <span class="n">consent_version</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">verbose_name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">50</span><span class="p">]))</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="consent_helper.ConsentHelper.clean_versioned_field">
+<tt class="descname">clean_versioned_field</tt><big>(</big><em>field_value</em>, <em>field</em>, <em>start_datetime</em>, <em>consent_version</em><big>)</big><a class="headerlink" href="#consent_helper.ConsentHelper.clean_versioned_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs checks on a versioned field.</p>
+<p>Users may override.</p>
 </dd></dl>
 
 <dl class="method">
@@ -74,35 +94,6 @@
 <dd><p>Searches for a valid consent instance for this subject for the possible consent models.</p>
 <p>If model class of the subject instance is listed in the consent catalogue under the consent of a different subject, such
 as with mother and their infants, get the other subject&#8217;s identifier from the <tt class="xref py py-func docutils literal"><span class="pre">get_consent_subject_identifier()</span></tt>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="consent_helper.ConsentHelper.set_consent_models">
-<tt class="descname">set_consent_models</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_consent_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_consent_models" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets consent models for this instance by querying the AttachedModel class.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="consent_helper.ConsentHelper.set_report_datetime">
-<tt class="descname">set_report_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_report_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_report_datetime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the datetime field to use to compare with the start and end dates of consents listed in the consent catalogue.</p>
-<p>The report_datetime comes from the subject_instance.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="consent_helper.ConsentHelper.set_subject_identifier">
-<tt class="descname">set_subject_identifier</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_subject_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_subject_identifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the subject_identifier from the instance.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="consent_helper.ConsentHelper.set_subject_instance">
-<tt class="descname">set_subject_instance</tt><big>(</big><em>subject_instance</em><big>)</big><a class="reference internal" href="_modules/consent_helper.html#ConsentHelper.set_subject_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#consent_helper.ConsentHelper.set_subject_instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the subject instance after confirming model is listed and active in AttachedModels.</p>
-<div class="admonition-see-also admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">Results may not be as expected. See comment on <a class="reference internal" href="forms.html#base_consented_model_form.BaseConsentedModelForm" title="base_consented_model_form.BaseConsentedModelForm"><tt class="xref py py-class docutils literal"><span class="pre">base_consented_model_form.BaseConsentedModelForm</span></tt></a> <tt class="xref py py-func docutils literal"><span class="pre">check_attached()</span></tt>.</p>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -180,6 +171,9 @@ specific validation logic.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="forms.html" title="Forms"
              >next</a> |</li>

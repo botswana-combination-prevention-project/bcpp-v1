@@ -1,6 +1,5 @@
 from django import forms
 #from django.db.models import get_model
-from bhp_consent.classes import ConsentHelper
 from bhp_base_form.classes import BaseModelForm
 from bhp_consent.models import AttachedModel
 
@@ -25,14 +24,17 @@ class BaseConsentedModelForm(BaseModelForm):
                                  'in AttachedModel of the ConsentCatalogue. Model {0} not found or not active.'.format(self._meta.model._meta.object_name.lower()))
 
     def clean(self):
-        """Checks if subject has a valid consent for this subject model instance."""
+        """Checks if subject has a valid consent for this subject model instance and versioned fields."""
         cleaned_data = self.cleaned_data
-        #check if consented to complete this form
         #check to remove m2m fields from cleaned data
         field_names = [field.name for field in self._meta.model._meta.fields]
         del_keys = [k for k in cleaned_data.iterkeys() if k not in field_names]
         for k in del_keys:
             del cleaned_data[k]
-        ConsentHelper(self._meta.model(**cleaned_data), forms.ValidationError).is_consented_for_subject_instance()
-
+        # get the helper class
+        consent_helper_cls = self._meta.model().get_consent_helper_cls()
+        #check if consented to complete this form
+        consent_helper_cls(self._meta.model(**cleaned_data), forms.ValidationError).is_consented_for_subject_instance()
+        # Validates fields under consent version control and other checks.
+        consent_helper_cls(self._meta.model(**cleaned_data), forms.ValidationError).validate_versioned_fields()
         return super(BaseConsentedModelForm, self).clean()

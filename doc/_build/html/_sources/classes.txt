@@ -1,3 +1,4 @@
+.. automodule:: bhp_consent.classes
 
 Classes
 =======

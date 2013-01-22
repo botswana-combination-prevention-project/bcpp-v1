@@ -8,6 +8,7 @@ from bhp_content_type_map.models import ContentTypeMap
 
 @receiver(post_save, weak=False, dispatch_uid='add_models_to_catalogue')
 def add_models_to_catalogue(sender, instance, **kwargs):
+    """Automatically adds all models to the AttachedModel model if ConsentCatalogue.add_for_app is a valid app_label."""
     if sender == ConsentCatalogue:
         if instance.add_for_app:
             try:
