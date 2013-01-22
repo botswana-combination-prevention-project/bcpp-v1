@@ -22,7 +22,7 @@ class ConsentHelper(object):
                                                            'CD4 < 250 for data captured during or after '
                                                            'version {2}. [{3}]'.format(field.name, start_datetime, consent_version, field.verbose_name[0:50]))
 
-    """ 
+    """
     def __init__(self, subject_instance, exception_cls=None, **kwargs):
         self._report_datetime = None
         self._subject_identifier = None
@@ -52,7 +52,7 @@ class ConsentHelper(object):
                 raise self._get_exception_cls()('Subject Model must be listed, and active, in AttachedModel of the ConsentCatalogue. Model {0} not found or not active.'.format(subject_instance._meta.object_name.lower()))
         self._subject_instance = subject_instance
 
-    def _get_subject_instance(self):
+    def get_subject_instance(self):
         return self._subject_instance
 
     def _set_report_datetime(self):
@@ -61,18 +61,18 @@ class ConsentHelper(object):
         The report_datetime comes from the subject_instance."""
 
         self._report_datetime = None
-        if 'get_report_datetime' in dir(self._get_subject_instance()):
-            self._report_datetime = self._get_subject_instance().get_report_datetime()
-        elif 'get_visit' in dir(self._get_subject_instance()):
-            self._report_datetime = self._get_subject_instance().get_visit().report_datetime
-        elif 'report_datetime' in dir(self._get_subject_instance()):
-            self._report_datetime = self._get_subject_instance().report_datetime
-        elif 'registration_datetime' in dir(self._get_subject_instance()):
-            self._report_datetime = self._get_subject_instance().registration_datetime
-        elif 'get_registration_datetime' in dir(self._get_subject_instance()):
-            self._report_datetime = self._get_subject_instance().get_registration_datetime()
+        if 'get_report_datetime' in dir(self.get_subject_instance()):
+            self._report_datetime = self.get_subject_instance().get_report_datetime()
+        elif 'get_visit' in dir(self.get_subject_instance()):
+            self._report_datetime = self.get_subject_instance().get_visit().report_datetime
+        elif 'report_datetime' in dir(self.get_subject_instance()):
+            self._report_datetime = self.get_subject_instance().report_datetime
+        elif 'registration_datetime' in dir(self.get_subject_instance()):
+            self._report_datetime = self.get_subject_instance().registration_datetime
+        elif 'get_registration_datetime' in dir(self.get_subject_instance()):
+            self._report_datetime = self.get_subject_instance().get_registration_datetime()
         else:
-            raise self._get_exception_cls()('Cannot determine datetime to use for model {0} to compare with the consent catalogue. Add get_report_datetime() to the model.'.format(self._get_subject_instance()._meta.object_name))
+            raise self._get_exception_cls()('Cannot determine datetime to use for model {0} to compare with the consent catalogue. Add get_report_datetime() to the model.'.format(self.get_subject_instance()._meta.object_name))
 
     def _get_report_datetime(self):
         if not self._report_datetime:
@@ -82,14 +82,14 @@ class ConsentHelper(object):
     def _set_subject_identifier(self):
         """Gets the subject_identifier from the instance."""
         self._subject_identifier = None
-        if 'subject_identifier' in dir(self._get_subject_instance()):
-            self._subject_identifier = self._get_subject_instance().subject_identifier
-        elif 'get_subject_identifier' in dir(self._get_subject_instance()):
-            self._subject_identifier = self._get_subject_instance().get_subject_identifier()
-        elif 'get_visit' in dir(self._get_subject_instance()):
-            self._subject_identifier = self._get_subject_instance().get_visit().get_subject_identifier()
+        if 'subject_identifier' in dir(self.get_subject_instance()):
+            self._subject_identifier = self.get_subject_instance().subject_identifier
+        elif 'get_subject_identifier' in dir(self.get_subject_instance()):
+            self._subject_identifier = self.get_subject_instance().get_subject_identifier()
+        elif 'get_visit' in dir(self.get_subject_instance()):
+            self._subject_identifier = self.get_subject_instance().get_visit().get_subject_identifier()
         else:
-            raise self._get_exception_cls()('Cannot determine the subject_identifier for model {0} needed to lookup the consent. Perhaps add method get_subject_identifier() to the model.'.format(self._get_subject_instance()._meta.object_name))
+            raise self._get_exception_cls()('Cannot determine the subject_identifier for model {0} needed to lookup the consent. Perhaps add method get_subject_identifier() to the model.'.format(self.get_subject_instance()._meta.object_name))
 
     def _get_subject_identifier(self):
         if not self._subject_identifier:
@@ -101,12 +101,12 @@ class ConsentHelper(object):
         self._consent_models = []
         AttachedModel = get_model('bhp_consent', 'AttachedModel')
         # find if any consent models listed in the catalogue cover this report_datetime
-        for attached_model in AttachedModel.objects.filter(content_type_map__model=self._get_subject_instance()._meta.object_name.lower()):
+        for attached_model in AttachedModel.objects.filter(content_type_map__model=self.get_subject_instance()._meta.object_name.lower()):
             if self._get_report_datetime() >= attached_model.consent_catalogue.start_datetime and self._get_report_datetime() < attached_model.consent_catalogue.end_datetime:
                 self._consent_models.append(attached_model.consent_catalogue.content_type_map.content_type.model_class())
         if not self._consent_models:
             if not self._suppress_exception:
-                raise self._get_exception_cls()('Data collection not permitted. Subject has no consent to cover form \'{0}\' with date {1}.'.format(self._get_subject_instance()._meta.verbose_name, self._get_report_datetime()))
+                raise self._get_exception_cls()('Data collection not permitted. Subject has no consent to cover form \'{0}\' with date {1}.'.format(self.get_subject_instance()._meta.verbose_name, self._get_report_datetime()))
             else:
                 pass
 
@@ -126,7 +126,7 @@ class ConsentHelper(object):
                 current_consent_version = consent_catalogue.version
         if not current_consent_version:
             if not self._suppress_exception:
-                raise self._get_exception_cls()('Cannot determine the version of consent \'{0}\' using \'{1}\''.format(self._get_subject_instance(), self._get_report_datetime()))
+                raise self._get_exception_cls()('Cannot determine the version of consent \'{0}\' using \'{1}\''.format(self.get_subject_instance(), self._get_report_datetime()))
             else:
                 pass
         return current_consent_version
@@ -138,8 +138,8 @@ class ConsentHelper(object):
         as with mother and their infants, get the other subject's identifier from the :func:`get_consent_subject_identifier`. """
         consent_models = []
         consent_subject_identifier = None
-        if 'get_consenting_subject_identifier' in dir(self._get_subject_instance()):
-            consent_subject_identifier = self._get_subject_instance().get_consenting_subject_identifier()
+        if 'get_consenting_subject_identifier' in dir(self.get_subject_instance()):
+            consent_subject_identifier = self.get_subject_instance().get_consenting_subject_identifier()
         else:
             consent_subject_identifier = self._get_subject_identifier()
         for consent_model in self._get_consent_models():
@@ -173,10 +173,10 @@ class ConsentHelper(object):
             start_datetime = consent_catalogue.start_datetime
             if not start_datetime:
                 raise TypeError('Cannot determine consent version start date. Check the Consent Catalogue')
-            if self._get_subject_instance().get_versioned_field_names(consent_version):
-                for field in self._get_subject_instance()._meta.fields:
-                    if field.name in self._get_subject_instance().get_versioned_field_names(consent_version):
-                        field_value = getattr(self._get_subject_instance(), field.name)
+            if self.get_subject_instance().get_versioned_field_names(consent_version):
+                for field in self.get_subject_instance()._meta.fields:
+                    if field.name in self.get_subject_instance().get_versioned_field_names(consent_version):
+                        field_value = getattr(self.get_subject_instance(), field.name)
                         if self._get_report_datetime() < start_datetime and field_value:
                             # enforce None / default
                             raise self._get_exception_cls()('Field \'{0}\' must be left blank for data captured prior to version {2}. [{3}]'.format(field.name, start_datetime, consent_version, field.verbose_name[0:50]))
