@@ -3,8 +3,6 @@ from django.core.urlresolvers import reverse
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from visit_model_helper import VisitModelHelper
-#from bhp_visit_tracking.actions import update_entry_bucket_rules
-# from bhp_entry.classes import ScheduledEntry
 
 
 class BaseVisitTrackingModelAdmin(BaseModelAdmin):
@@ -98,7 +96,6 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
                                                                      'visit_code': unicode(visit_code)})
         return result
 
-    #override, limit dropdown in add_view to id passed in the URL
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         visit_model_helper = VisitModelHelper()
         if db_field.name == visit_model_helper.get_visit_field(model=self.model, visit_model=self.visit_model):
