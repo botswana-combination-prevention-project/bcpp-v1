@@ -27,10 +27,11 @@ class ConsentHelper(object):
         self._report_datetime = None
         self._subject_identifier = None
         self._current_consent_version = None
+        self._exception_cls = None
         self._consent_models = []
-        self._set_subject_instance(subject_instance)
         self._suppress_exception = kwargs.get('suppress_exception', False)
         self._set_exception_cls(exception_cls)
+        self._set_subject_instance(subject_instance)
 
     def _set_exception_cls(self, cls=None):
         if cls:
