@@ -72,7 +72,7 @@ class ConsentHelper(object):
         elif 'get_registration_datetime' in dir(self._get_subject_instance()):
             self._report_datetime = self._get_subject_instance().get_registration_datetime()
         else:
-            raise self._get_exception_cls()('Cannot determine datetime to use for model {0} to compare with the consent catalogue. Add _get_report_datetime() to the model.'.format(self._get_subject_instance()._meta.object_name))
+            raise self._get_exception_cls()('Cannot determine datetime to use for model {0} to compare with the consent catalogue. Add get_report_datetime() to the model.'.format(self._get_subject_instance()._meta.object_name))
 
     def _get_report_datetime(self):
         if not self._report_datetime:
@@ -84,12 +84,12 @@ class ConsentHelper(object):
         self._subject_identifier = None
         if 'subject_identifier' in dir(self._get_subject_instance()):
             self._subject_identifier = self._get_subject_instance().subject_identifier
-        elif '_get_subject_identifier' in dir(self._get_subject_instance()):
+        elif 'get_subject_identifier' in dir(self._get_subject_instance()):
             self._subject_identifier = self._get_subject_instance()._get_subject_identifier()
         elif 'get_visit' in dir(self._get_subject_instance()):
             self._subject_identifier = self._get_subject_instance().get_visit()._get_subject_identifier()
         else:
-            raise self._get_exception_cls()('Cannot determine the subject_identifier for model {0} needed to lookup the consent. Perhaps add method _get_subject_identifier() to the model.'.format(self._get_subject_instance()._meta.object_name))
+            raise self._get_exception_cls()('Cannot determine the subject_identifier for model {0} needed to lookup the consent. Perhaps add method get_subject_identifier() to the model.'.format(self._get_subject_instance()._meta.object_name))
 
     def _get_subject_identifier(self):
         if not self._subject_identifier:
