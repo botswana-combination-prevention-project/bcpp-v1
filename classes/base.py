@@ -9,7 +9,7 @@ from django.core import serializers
 from django.db import IntegrityError
 from bhp_sync.classes import TransactionProducer
 from bhp_sync.models import OutgoingTransaction
-from bhp_base_model.classes import BaseModel
+from bhp_base_model.models import BaseModel
 
 
 logger = logging.getLogger(__name__)
