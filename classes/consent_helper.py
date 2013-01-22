@@ -62,7 +62,7 @@ class ConsentHelper(object):
 
         self._report_datetime = None
         if 'get_report_datetime' in dir(self._get_subject_instance()):
-            self._report_datetime = self._get_subject_instance()._get_report_datetime()
+            self._report_datetime = self._get_subject_instance().get_report_datetime()
         elif 'get_visit' in dir(self._get_subject_instance()):
             self._report_datetime = self._get_subject_instance().get_visit().report_datetime
         elif 'report_datetime' in dir(self._get_subject_instance()):
@@ -85,9 +85,9 @@ class ConsentHelper(object):
         if 'subject_identifier' in dir(self._get_subject_instance()):
             self._subject_identifier = self._get_subject_instance().subject_identifier
         elif 'get_subject_identifier' in dir(self._get_subject_instance()):
-            self._subject_identifier = self._get_subject_instance()._get_subject_identifier()
+            self._subject_identifier = self._get_subject_instance().get_subject_identifier()
         elif 'get_visit' in dir(self._get_subject_instance()):
-            self._subject_identifier = self._get_subject_instance().get_visit()._get_subject_identifier()
+            self._subject_identifier = self._get_subject_instance().get_visit().get_subject_identifier()
         else:
             raise self._get_exception_cls()('Cannot determine the subject_identifier for model {0} needed to lookup the consent. Perhaps add method get_subject_identifier() to the model.'.format(self._get_subject_instance()._meta.object_name))
 
