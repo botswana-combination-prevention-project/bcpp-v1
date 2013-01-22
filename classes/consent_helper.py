@@ -61,7 +61,7 @@ class ConsentHelper(object):
         The report_datetime comes from the subject_instance."""
 
         self._report_datetime = None
-        if '_get_report_datetime' in dir(self._get_subject_instance()):
+        if 'get_report_datetime' in dir(self._get_subject_instance()):
             self._report_datetime = self._get_subject_instance()._get_report_datetime()
         elif 'get_visit' in dir(self._get_subject_instance()):
             self._report_datetime = self._get_subject_instance().get_visit().report_datetime
