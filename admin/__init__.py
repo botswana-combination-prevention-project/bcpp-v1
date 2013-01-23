@@ -1,0 +1,1 @@
+from attached_model_admin import AttachedModelAdmin
