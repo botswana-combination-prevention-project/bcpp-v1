@@ -117,7 +117,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._prepare_membership_forms(membership_form_category)
         self._set_appointments(visit_code, visit_instance, **kwargs)
         self._set_current_appointment(visit_code, visit_instance)
-        visit_model_instance = self._set_current_visit(visit_model, self._get_appointment())
+        visit_model_instance = self._set_current_visit(visit_model, self.appointment)
         self._add_or_update_entry_buckets(visit_model_instance)
         self._run_rule_groups(self.subject_identifier, visit_code, visit_model_instance)
         self._prepare_additional_entry_bucket()
@@ -253,12 +253,12 @@ class RegisteredSubjectDashboard(Dashboard):
         return visit
 
     def _set_current_appointment(self, visit_code, visit_instance):
-        self._appointment = Appointment.objects.none()
+        self.appointment = Appointment.objects.none()
         # get the appointment that has focus based on visit_code
         if visit_code:
             # get visit associated with this appointment (in progress) and visit code and instance
-            self._appointment = self._get_appointment_map(visit_code, visit_instance)
-        self.context.add(appointment=self._appointment)
+            self.appointment = self._get_appointment_map(visit_code, visit_instance)
+        self.context.add(appointment=self.appointment)
 
     def _prepare_additional_entry_bucket(self):
         # get additional crfs
@@ -338,9 +338,9 @@ class RegisteredSubjectDashboard(Dashboard):
             for field in locator_instance._meta.fields:
                 if isinstance(field, (TextField, EncryptedTextField)):
                     setattr(locator_instance, field.name, '<BR>'.join(wrap(getattr(locator_instance, field.name), 25)))
-            if self._get_appointment():
-                visit_code = self._get_appointment().visit_definition.code
-                visit_instance = self._get_appointment().visit_instance
+            if self.appointment:
+                visit_code = self.appointment.visit_definition.code
+                visit_instance = self.appointment.visit_instance
         else:
             locator_instance = None
 
@@ -350,7 +350,7 @@ class RegisteredSubjectDashboard(Dashboard):
                                            'dashboard_type': self.dashboard_type,
                                            'visit_code': visit_code,
                                            'visit_instance': visit_instance,
-                                           'appointment': self._get_appointment(),
+                                           'appointment': self.appointment,
                                            'locator_add_url': locator_add_url})
 
     def get_urlpatterns(self, view, regex, **kwargs):
