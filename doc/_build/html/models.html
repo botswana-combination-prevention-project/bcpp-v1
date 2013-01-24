@@ -88,7 +88,7 @@
 <dt id="bhp_dispatch.models.DispatchItem">
 <em class="property">class </em><tt class="descclassname">bhp_dispatch.models.</tt><tt class="descname">DispatchItem</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.models.DispatchItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.models.base_dispatch.BaseDispatch</span></tt></p>
-<p>DispatchItem(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, producer_id, is_dispatched, dispatch_datetime, return_datetime, dispatch_id, item_identifier)</p>
+<p>DispatchItem(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, producer_id, is_dispatched, dispatch_datetime, return_datetime, dispatch_id, item_identifier, subject_identifiers)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -106,6 +106,55 @@
 <li><strong>return_datetime</strong> (<em>DateTimeField</em>) &#8211; Return date</li>
 <li><strong>dispatch_id</strong> (<em>ForeignKey</em>) &#8211; Dispatch</li>
 <li><strong>item_identifier</strong> (<em>CharField</em>) &#8211; Dispatch Item (e.g. Household Identifier)</li>
+<li><strong>subject_identifiers</strong> (<em>TextField</em>) &#8211; Subject identifiers associated with this Dispatch Item</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_dispatch.models.BaseDispatch">
+<em class="property">class </em><tt class="descclassname">bhp_dispatch.models.</tt><tt class="descname">BaseDispatch</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.models.BaseDispatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.models.base_uuid_model.BaseUuidModel</span></tt></p>
+<p>A base model for dispatching models to a mobile device</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>producer_id</strong> (<em>ForeignKey</em>) &#8211; Producer / netbook</li>
+<li><strong>is_dispatched</strong> (<em>BooleanField</em>) &#8211; Is dispatched</li>
+<li><strong>dispatch_datetime</strong> (<em>DateTimeField</em>) &#8211; Dispatch date</li>
+<li><strong>return_datetime</strong> (<em>DateTimeField</em>) &#8211; Return date</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_dispatch.models.PrepareHistory">
+<em class="property">class </em><tt class="descclassname">bhp_dispatch.models.</tt><tt class="descname">PrepareHistory</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.models.PrepareHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_base_model.models.base_uuid_model.BaseUuidModel</span></tt></p>
+<p>Tracks the history of running <tt class="xref py py-func docutils literal"><span class="pre">prepare_device()</span></tt> for producer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Name :</th><td class="field-body"><p class="first">prepare history</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">bhp_dispatch_preparehistory</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>source</strong> (<em>CharField</em>) &#8211; Source</li>
+<li><strong>destination</strong> (<em>CharField</em>) &#8211; Destination</li>
+<li><strong>producer_id</strong> (<em>ForeignKey</em>) &#8211; Producer</li>
+<li><strong>prepare_datetime</strong> (<em>DateTimeField</em>) &#8211; Prepare datetime</li>
 </ul>
 </td>
 </tr>

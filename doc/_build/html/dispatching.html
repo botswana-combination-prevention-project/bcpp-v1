@@ -56,6 +56,45 @@
             
   <div class="section" id="dispatching">
 <h1>Dispatching<a class="headerlink" href="#dispatching" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="preventing-data-edits-on-dispatched-items">
+<h2>Preventing data edits on dispatched items<a class="headerlink" href="#preventing-data-edits-on-dispatched-items" title="Permalink to this headline">¶</a></h2>
+<p>To prevent data edits on Subject data, add a model method to test that dispatch status and
+refer to this method in the <tt class="file docutils literal"><span class="pre">forms.py</span></tt> <tt class="xref py py-func docutils literal"><span class="pre">clean()</span></tt> method.</p>
+<p>This is in place by default for appointments and visit models.</p>
+<p>Add to the registered subject model:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">is_dispatched</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns lock status as a boolean needed when using this model with bhp_dispatch.&quot;&quot;&quot;</span>
+    <span class="n">locked</span><span class="p">,</span> <span class="n">producer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dispatched_to_producer</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">locked</span>
+
+<span class="k">def</span> <span class="nf">is_dispatched_to_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns lock status as a boolean needed when using this model with bhp_dispatch.&quot;&quot;&quot;</span>
+    <span class="n">locked</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">DispatchItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">subject_identifiers__icontains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span>
+            <span class="n">is_dispatched</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">dispatch_item</span> <span class="o">=</span> <span class="n">DispatchItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">subject_identifiers__icontains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span>
+            <span class="n">is_dispatched</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">producer</span> <span class="o">=</span> <span class="n">dispatch_item</span><span class="o">.</span><span class="n">producer</span>
+        <span class="n">locked</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="n">locked</span><span class="p">,</span> <span class="n">producer</span>
+</pre></div>
+</div>
+<p>Add to the <tt class="file docutils literal"><span class="pre">forms.py</span></tt> <tt class="xref py py-func docutils literal"><span class="pre">clean()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;registered_subject&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="n">registered_subject</span> <span class="o">=</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;registered_subject&#39;</span><span class="p">)</span>
+        <span class="n">dispatched</span><span class="p">,</span> <span class="n">producer_name</span> <span class="o">=</span> <span class="n">registered_subject</span><span class="o">.</span><span class="n">is_dispatched_to_producer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">dispatched</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">forms</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s">&quot;Data for {0} is currently dispatched to netbook {1}. &quot;</span>
+                             <span class="s">&quot;This form may not be modified.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span>
+                                                                      <span class="n">producer_name</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -64,6 +103,14 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Dispatching</a><ul>
+<li><a class="reference internal" href="#preventing-data-edits-on-dispatched-items">Preventing data edits on dispatched items</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="preparation.html"
                         title="previous chapter">Preparation</a></p>

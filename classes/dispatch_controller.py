@@ -60,13 +60,18 @@ class DispatchController(BaseDispatchController):
         return self._dispatch_model_name
 
     def set_dispatch_model_item_identifier_field(self, value=None):
-        """Sets identifier field attribute of the dispatch model."""
+        """Sets identifier field attribute of the dispatch model.
+           This is an identifier for the model thats the starting point of dispatching
+           e.g household_identifier if starting with household or subject identifier if starting with registered subject.
+           This identifier will be determined by the application specific controller/model sub classing a base model
+           e.g MochudiDispatchController or mochudi_household        
+        """
         if not value:
             raise AttributeError('The identifier field of the dispatch model cannot be None. Set this in __init__() of the subclass.')
         self._dispatch_model_item_identifier_field = value
 
     def get_dispatch_model_item_identifier_field(self):
-        """Gets the model name for the dispatching model."""
+        """Gets the item identifier for the dispatching model."""
         if not self._dispatch_model_item_identifier_field:
             self.set_dispatch_model_item_identifier_field()
         return self._dispatch_model_item_identifier_field
@@ -93,11 +98,13 @@ class DispatchController(BaseDispatchController):
         return self._dispatch_modeladmin_url
 
     def set_dispatch_url(self, value=None):
+        """Sets the dispatch url for the dispatching model."""
         if not value:
             raise AttributeError('Dispatch url cannot be None. Set this in __init__() of the subclass.')
         self._dispatch_url = value
 
     def get_dispatch_url(self):
+        """Gets the dispatch url for the dispatching model."""
         if not self._dispatch_url:
             self.set_dispatch_url()
         return self._dispatch_url
@@ -114,12 +121,14 @@ class DispatchController(BaseDispatchController):
         return self._dispatch
 
     def set_visit_model_fkey(self, model_cls, visit_model_cls):
+        """Subject forms will have a foreign key to a visit model instance. This sets that foreign key."""
         for fld in model_cls.objects._meta.fields:
             if isinstance(fld, (ForeignKey, OneToOneField)):
                 if isinstance(fld.rel.to, visit_model_cls):
                     self._visit_model_fkey_name = fld.name
 
     def get_visit_model_fkey(self, app_name, model_cls, visit_model_cls=None):
+        """Gets the foreign key to the subject visit model instance."""
         if not self._visit_model_fkey_name:
             self.set_visit_model_fkey(model_cls, visit_model_cls)
         return self._visit_model_fkey_name
@@ -269,7 +278,9 @@ class DispatchController(BaseDispatchController):
         return created, dispatch_item
 
     def dispatch_from_view(self, queryset, **kwargs):
-        """Confirms no items in queryset are dispatched then tries to dispatch each one."""
+        """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
+           Does this by checking bhp_sync.outgoing_transactions in the netbook.
+        """
         any_dispatched = False  # are any items dispatched already?
         any_transactions = True
         if not self.has_outgoing_transactions():

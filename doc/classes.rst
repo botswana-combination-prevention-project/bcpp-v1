@@ -6,11 +6,10 @@ Dispatch
 
 .. automodule:: bhp_dispatch.classes
   :members:
-  
+
 .. autoclass:: DispatchController
   :members:
   :show-inheritance:
-
 
 .. autoclass:: BaseDispatchController
   :members:
@@ -27,7 +26,6 @@ Preparation
 .. autoclass:: PrepareDevice
   :members:
   :show-inheritance:
-
 
 .. autoclass:: BasePrepareDevice
   :members:

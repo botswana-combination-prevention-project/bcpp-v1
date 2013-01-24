@@ -60,12 +60,16 @@
 <span id="dispatch"></span><h2>Dispatch<a class="headerlink" href="#module-bhp_dispatch.classes" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="bhp_dispatch.classes.DispatchController">
-<em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">DispatchController</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">DispatchController</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>app_name</em>, <em>model_name</em>, <em>identifier_field_name</em>, <em>dispatch_url</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.classes.base_dispatch_controller.BaseDispatchController</span></tt></p>
 <dl class="method">
 <dt id="bhp_dispatch.classes.DispatchController.create_dispatch_item_instance">
-<tt class="descname">create_dispatch_item_instance</tt><big>(</big><em>item_identifier</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.create_dispatch_item_instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a dispatch item instance for given dispatch instance and item_identifier.</p>
+<tt class="descname">create_dispatch_item_instance</tt><big>(</big><em>item_identifier</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.create_dispatch_item_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a dispatch item instance for given dispatch instance and item_identifier</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Uses the pk instead of subject_identifier as subject_identifier may be None.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -75,15 +79,28 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.dispatch_appointments">
+<tt class="descname">dispatch_appointments</tt><big>(</big><em>registered_subject</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.dispatch_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches all appointments for this registered subject.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_dispatch.classes.DispatchController.dispatch_from_view">
 <tt class="descname">dispatch_from_view</tt><big>(</big><em>queryset</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.dispatch_from_view" title="Permalink to this definition">¶</a></dt>
-<dd><p>Confirms no items in queryset are dispatched then tries to dispatch each one.</p>
+<dd><p>Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
+Does this by checking bhp_sync.outgoing_transactions in the netbook.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.dispatch_labs_requisitions">
+<tt class="descname">dispatch_labs_requisitions</tt><big>(</big><em>subject_visit</em>, <em>registered_subject</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.dispatch_labs_requisitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches all lab requisitions for this subject visit.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_dispatch.classes.DispatchController.dispatch_membership_forms">
 <tt class="descname">dispatch_membership_forms</tt><big>(</big><em>registered_subject</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.dispatch_membership_forms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets all instances of membership forms for this registered_subject and dispatches.</p>
+<dd><p>Gets all instances of visible membership forms for this registered_subject and dispatches.</p>
 <dl class="docutils">
 <dt>Keywords:</dt>
 <dd>kwargs: must be field_attr: value pairs to pass directly to the visit model. Any django syntax will work.</dd>
@@ -119,9 +136,51 @@ For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc<
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_dispatch.classes.DispatchController.get_dispatch">
-<tt class="descname">get_dispatch</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch" title="Permalink to this definition">¶</a></dt>
+<dt id="bhp_dispatch.classes.DispatchController.get_dispatch_app_name">
+<tt class="descname">get_dispatch_app_name</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch_app_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the app_name for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.get_dispatch_instance">
+<tt class="descname">get_dispatch_instance</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch_instance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the dispatch instance for this controller sessions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.get_dispatch_model">
+<tt class="descname">get_dispatch_model</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the model class for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.get_dispatch_model_item_identifier_field">
+<tt class="descname">get_dispatch_model_item_identifier_field</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch_model_item_identifier_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the item identifier for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.get_dispatch_model_name">
+<tt class="descname">get_dispatch_model_name</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch_model_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the model name for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.get_dispatch_modeladmin_url">
+<tt class="descname">get_dispatch_modeladmin_url</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch_modeladmin_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the modeladmin url for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.get_dispatch_url">
+<tt class="descname">get_dispatch_url</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_dispatch_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the dispatch url for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.get_visit_model_fkey">
+<tt class="descname">get_visit_model_fkey</tt><big>(</big><em>app_name</em>, <em>model_cls</em>, <em>visit_model_cls=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.get_visit_model_fkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the foreign key to the subject visit model instance.</p>
 </dd></dl>
 
 <dl class="method">
@@ -135,9 +194,43 @@ For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc<
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_dispatch.classes.DispatchController.set_dispatch">
-<tt class="descname">set_dispatch</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.set_dispatch" title="Permalink to this definition">¶</a></dt>
+<dt id="bhp_dispatch.classes.DispatchController.set_dispatch_instance">
+<tt class="descname">set_dispatch_instance</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.set_dispatch_instance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a dispatch instance for this controller sessions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.set_dispatch_model">
+<tt class="descname">set_dispatch_model</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.set_dispatch_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the model class for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.set_dispatch_model_item_identifier_field">
+<tt class="descname">set_dispatch_model_item_identifier_field</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.set_dispatch_model_item_identifier_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets identifier field attribute of the dispatch model.
+This is an identifier for the model thats the starting point of dispatching
+e.g household_identifier if starting with household or subject identifier if starting with registered subject.
+This identifier will be determined by the application specific controller/model sub classing a base model
+e.g MochudiDispatchController or mochudi_household</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.set_dispatch_modeladmin_url">
+<tt class="descname">set_dispatch_modeladmin_url</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.set_dispatch_modeladmin_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the modeladmin url for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.set_dispatch_url">
+<tt class="descname">set_dispatch_url</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.set_dispatch_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the dispatch url for the dispatching model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.DispatchController.set_visit_model_fkey">
+<tt class="descname">set_visit_model_fkey</tt><big>(</big><em>model_cls</em>, <em>visit_model_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.DispatchController.set_visit_model_fkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subject forms will have a foreign key to a visit model instance. This sets that foreign key.</p>
 </dd></dl>
 
 </dd></dl>
@@ -196,8 +289,14 @@ has been sent to server; hence, we mark all the dispatch items as checked in</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="bhp_dispatch.classes.BaseDispatch.get_membershipform_models">
+<tt class="descname">get_membershipform_models</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BaseDispatch.get_membershipform_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of &#8216;visible&#8217; membership form model classes.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_dispatch.classes.BaseDispatch.get_scheduled_models">
-<tt class="descname">get_scheduled_models</tt><big>(</big><em>app_name</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BaseDispatch.get_scheduled_models" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_scheduled_models</tt><big>(</big><em>app_name=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BaseDispatch.get_scheduled_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models.</p>
 </dd></dl>
 
@@ -232,6 +331,16 @@ has been sent to server; hence, we mark all the dispatch items as checked in</p>
 <dt id="bhp_dispatch.classes.PrepareDevice">
 <em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">PrepareDevice</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.PrepareDevice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.classes.base_prepare_device.BasePrepareDevice</span></tt></p>
+<dl class="method">
+<dt id="bhp_dispatch.classes.PrepareDevice.prepare">
+<tt class="descname">prepare</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.PrepareDevice.prepare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs for all common data needed for an EDC installation.</p>
+<dl class="docutils">
+<dt>Keywords:</dt>
+<dd>step: if specified skip to the numbered step. default(0)</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -239,31 +348,34 @@ has been sent to server; hence, we mark all the dispatch items as checked in</p>
 <em class="property">class </em><tt class="descclassname">bhp_dispatch.classes.</tt><tt class="descname">BasePrepareDevice</tt><big>(</big><em>using_source</em>, <em>using_destination</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_dispatch.classes.base.Base</span></tt></p>
 <dl class="method">
-<dt id="bhp_dispatch.classes.BasePrepareDevice.dispatch_as_json">
-<tt class="descname">dispatch_as_json</tt><big>(</big><em>models</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.dispatch_as_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Serializes and saves all instances of each model from source to destination.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>models: may be a tuple of (app_name, model_name) or list of model classes.</dd>
-</dl>
+<dt id="bhp_dispatch.classes.BasePrepareDevice.delete_depended_model_instances">
+<tt class="descname">delete_depended_model_instances</tt><big>(</big><em>model_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.delete_depended_model_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes all scheduled and visit models that depend on the given model</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_dispatch.classes.BasePrepareDevice.get_last_modified_options">
-<tt class="descname">get_last_modified_options</tt><big>(</big><em>model_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.get_last_modified_options" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a dictionary of {&#8216;hostname_modified&#8217;: &#8216;&lt;hostname&gt;&#8217;, &#8216;modified__max&#8217;: &lt;date&gt;, ... }.</p>
+<dt id="bhp_dispatch.classes.BasePrepareDevice.get_depended_models">
+<tt class="descname">get_depended_models</tt><big>(</big><em>fk_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.get_depended_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of scheduled and visit models that depend 
+(ForeignKey,OneToOneField) of the given model</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_dispatch.classes.BasePrepareDevice.get_recent">
-<tt class="descname">get_recent</tt><big>(</big><em>model_cls</em>, <em>destination_hostname=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.get_recent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a queryset of the most recent instances from the model for all but the current host.</p>
+<dt id="bhp_dispatch.classes.BasePrepareDevice.reset_model">
+<tt class="descname">reset_model</tt><big>(</big><em>model_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.reset_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes all instances of the given model and its audit log entries</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="bhp_dispatch.classes.BasePrepareDevice.resize_content_type">
 <tt class="descname">resize_content_type</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.resize_content_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resizes the destination content type table to have the same max id.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.BasePrepareDevice.sync_content_type_map">
+<tt class="descname">sync_content_type_map</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.BasePrepareDevice.sync_content_type_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs content_type_map populate and sync on destination.</p>
 </dd></dl>
 
 </dd></dl>
@@ -303,9 +415,31 @@ source <tt class="xref py py-class docutils literal"><span class="pre">Producer<
 </dd></dl>
 
 <dl class="method">
+<dt id="bhp_dispatch.classes.Base.dispatch_model_as_json">
+<tt class="descname">dispatch_model_as_json</tt><big>(</big><em>models</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.dispatch_model_as_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes and saves all instances of each model from source to destination.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>models: may be a tuple of (app_name, model_name) or list of model classes.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.Base.get_last_modified_options">
+<tt class="descname">get_last_modified_options</tt><big>(</big><em>model_cls</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.get_last_modified_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of {&#8216;hostname_modified&#8217;: &#8216;&lt;hostname&gt;&#8217;, &#8216;modified__max&#8217;: &lt;date&gt;, ... }.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_dispatch.classes.Base.get_producer">
 <tt class="descname">get_producer</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.get_producer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an instance of the current producer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.Base.get_recent">
+<tt class="descname">get_recent</tt><big>(</big><em>model_cls</em>, <em>destination_hostname=None</em><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.get_recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a queryset of the most recent instances from the model for all but the current host.</p>
 </dd></dl>
 
 <dl class="method">
@@ -318,6 +452,13 @@ source <tt class="xref py py-class docutils literal"><span class="pre">Producer<
 <dt id="bhp_dispatch.classes.Base.get_using_source">
 <tt class="descname">get_using_source</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.get_using_source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the ORM <cite>using</cite> parameter for &#8220;source&#8221;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dispatch.classes.Base.has_outgoing_transactions">
+<tt class="descname">has_outgoing_transactions</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dispatch.classes.Base.has_outgoing_transactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if destination has pending Outgoing Transactions by checking is_consumed in 
+bhp_sync.outgoing_transactions.</p>
 </dd></dl>
 
 <dl class="method">

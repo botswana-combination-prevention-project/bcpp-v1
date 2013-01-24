@@ -138,7 +138,9 @@ class Base(object):
         return self._producer
 
     def has_outgoing_transactions(self):
-        """Check if destination has pending Outgoing Transactions."""
+        """Check if destination has pending Outgoing Transactions by checking is_consumed in 
+           bhp_sync.outgoing_transactions.
+        """
         return OutgoingTransaction.objects.using(self.get_using_destination()).filter(is_consumed=False).exists()
 
     def update_model(self, model, **kwargs):
