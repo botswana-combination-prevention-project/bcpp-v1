@@ -295,8 +295,13 @@ class DispatchController(BaseDispatchController):
                     item_identifier = getattr(qs, self.get_dispatch_model_item_identifier_field())
                     self.dispatch(item_identifier)
                 self.dispatch_crypt()
+                self.dispatch_registered_subjects()
         return any_dispatched, any_transactions
 
     def dispatch_crypt(self):
         logger.info("Updating the Crypt table...")
         self.update_model(('bhp_crypto', 'crypt'))
+
+    def dispatch_registered_subjects(self):
+        logger.info("Updating the Registered Subjects table...")
+        self.update_model(('bhp_registration', 'RegisteredSubject'))
