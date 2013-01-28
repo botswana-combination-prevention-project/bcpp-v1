@@ -164,7 +164,6 @@ class DispatchController(BaseDispatchController):
                     # export all appointments for this visit
                     #self.dispatch_as_json(visit.appointment, app_name=app_name)
                     self.dispatch_as_json(visit, app_name=app_name)
-                    self.dispatch_labs_requisitions(visit, registered_subject)
             # fetch all scheduled_models for the visits and export
             #for model_cls in scheduled_model_class:
                 #if not visit_fld_name:
@@ -175,30 +174,34 @@ class DispatchController(BaseDispatchController):
                 scheduled_instances = scheduled_model_class.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
                 self.dispatch_as_json(scheduled_instances, app_name=app_name)
     
-    def dispatch_labs_requisitions(self, subject_visit, registered_subject):
+    def dispatch_labs_requisitions(self, registered_subject):
         """Dispatches all lab requisitions for this subject visit."""
         Lab_requisitions = get_model('mochudi_survey_lab', 'SubjectRequisition')
-        self.dispatch_as_json(Lab_requisitions.objects.filter(subject_visit=subject_visit.pk))
+        self.dispatch_as_json(
+            Lab_requisitions.objects.filter(
+                subject_visit__household_structure_member__registered_subject=registered_subject
+                )
+            )
         
-        Receive = get_model('lab_clinic_api', 'Receive')
-        receives_list = Receive.objects.filter(registered_subject=registered_subject)
-        self.dispatch_as_json(receives_list)
-        
-        Aliquot = get_model('lab_clinic_api', 'Aliquot')
-        aliquot_list = Aliquot.objects.filter(receive__in=receives_list)
-        self.dispatch_as_json(aliquot_list)
-        
-        Order = get_model('lab_clinic_api', 'Order')
-        order_list = Order.objects.filter(aliquot__in=aliquot_list)
-        self.dispatch_as_json(order_list)
-        
-        Result = get_model('lab_clinic_api', 'Result')
-        result_list = Result.objects.filter(order__in=order_list)
-        self.dispatch_as_json(result_list)
-        
-        ResultItem = get_model('lab_clinic_api', 'ResultItem')
-        result_item_list = ResultItem.objects.filter(result__in=order_list)
-        self.dispatch_as_json(result_item_list)
+#        Receive = get_model('lab_clinic_api', 'Receive')
+#        receives_list = Receive.objects.filter(registered_subject=registered_subject)
+#        self.dispatch_as_json(receives_list)
+#        
+#        Aliquot = get_model('lab_clinic_api', 'Aliquot')
+#        aliquot_list = Aliquot.objects.filter(receive__in=receives_list)
+#        self.dispatch_as_json(aliquot_list)
+#        
+#        Order = get_model('lab_clinic_api', 'Order')
+#        order_list = Order.objects.filter(aliquot__in=aliquot_list)
+#        self.dispatch_as_json(order_list)
+#        
+#        Result = get_model('lab_clinic_api', 'Result')
+#        result_list = Result.objects.filter(order__in=order_list)
+#        self.dispatch_as_json(result_list)
+#        
+#        ResultItem = get_model('lab_clinic_api', 'ResultItem')
+#        result_item_list = ResultItem.objects.filter(result__in=order_list)
+#        self.dispatch_as_json(result_item_list)
         
         AdditionalLabEntryBucket = get_model('bhp_lab_entry', 'AdditionalLabEntryBucket')
         self.dispatch_as_json(AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk))
@@ -214,7 +217,9 @@ class DispatchController(BaseDispatchController):
         .. seealso::
             See app :mod:`bhp_visit` for an explanation of membership forms.
         """
-        for membershipform_model in self.get_membershipform_models():
+
+        membership_forms = self.get_membershipform_models()        
+        for membershipform_model in membership_forms:
             try:
                 if membershipform_model:
                     instances = membershipform_model.objects.filter(
