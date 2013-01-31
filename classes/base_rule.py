@@ -4,6 +4,7 @@ from bhp_content_type_map.models import ContentTypeMap
 from bhp_consent.classes import ConsentHelper
 from bhp_registration.models import RegisteredSubject
 from bhp_visit_tracking.models import BaseVisitTracking
+from bhp_lab_tracker.classes import lab_tracker
 from bhp_entry.models import BaseEntryBucket
 from bhp_entry.classes import BaseEntry
 from logic import Logic
@@ -154,14 +155,16 @@ class BaseRule(object):
         """ Returns a field value either by applying getattr to the source model or, if the field name matches one in RegisteredSubject, returns that value.
 
         Some RegisteredSubject field names are excluded:
-            ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status']"""
-        if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status']]:
+            ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status', 'hiv_status']"""
+        if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status', 'hiv_status']]:
             registered_subject = self.get_visit_model_instance().appointment.registered_subject
             self._field_value = getattr(registered_subject, attr_name)
         elif attr_name == 'consent_version':
             self._field_value = ConsentHelper(self.get_visit_model_instance(), suppress_exception=True).get_current_consent_version()
             if not self._field_value:
                 self._field_value = 0
+        elif attr_name == 'hiv_status':
+            self._field_value = lab_tracker.get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().report_datetime)
         else:
             self._field_value = getattr(instance, attr_name)
         if self._field_value:
