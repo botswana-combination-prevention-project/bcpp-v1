@@ -1,4 +1,5 @@
 from textwrap import wrap
+from datetime import datetime
 from django.db import models
 from django.db.models import TextField
 from django.core.urlresolvers import reverse
@@ -17,6 +18,7 @@ from bhp_subject_summary.models import Link
 from lab_clinic_api.classes import EdcLab
 from bhp_entry.classes import ScheduledEntry
 from bhp_locator.models import BaseLocator
+from bhp_lab_tracker.classes import lab_tracker
 
 
 class RegisteredSubjectDescriptor(object):
@@ -53,7 +55,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_instance = None  # this is not a model instance!!
         self.visit_model = None
         self.visit_messages = None
-        self.subject_identifier = None
+        self._subject_identifier = None
+        self._subject_hiv_status = None
         self._subject_type = None
         self.requisition_model = None
         self.is_dispatched, self.dispatch_producer = False, None
@@ -73,21 +76,22 @@ class RegisteredSubjectDashboard(Dashboard):
             self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
             self.set_subject_type(kwargs.get('subject_type'))
             # subject identifier is almost always available
-            self.subject_identifier = self.registered_subject.subject_identifier
-            self.dashboard_identifier = self.subject_identifier
-            if not self.subject_identifier:
+            self.set_subject_identifier(self.registered_subject.subject_identifier)
+            self.dashboard_identifier = self.get_subject_identifier()
+            if not self.get_subject_identifier():
                 # but if not, check for registration_identifier
-                self.subject_identifier = self.registered_subject.registration_identifier
+                self.set_subject_identifier(self.registered_subject.registration_identifier)
                 self.dashboard_identifier = ('{0} [{1}] {2}'.format(self.registered_subject.first_name,
                                                                     self.registered_subject.initials,
                                                                     self.registered_subject.gender,))
-            if not self.subject_identifier:
+            if not self.get_subject_identifier():
                 raise AttributeError('RegisteredSubjectDashboard requires a subject_identifier. '
                                      'RegisteredSubject has no identifier for this subject.')
             self.context.add(
                 registered_subject=self.registered_subject,
-                subject_identifier=self.subject_identifier,
+                subject_identifier=self.get_subject_identifier(),
                 subject_type=self.get_subject_type(),
+                subject_hiv_status=self.get_subject_hiv_status(),
                 )
         visit_code = kwargs.pop('visit_code', self.visit_code)
         visit_instance = kwargs.pop("visit_instance", self.visit_instance)
@@ -119,7 +123,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._set_current_appointment(visit_code, visit_instance)
         visit_model_instance = self._set_current_visit(visit_model, self._get_current_appointment())
         self._add_or_update_entry_buckets(visit_model_instance)
-        self._run_rule_groups(self.subject_identifier, visit_code, visit_model_instance)
+        self._run_rule_groups(self.get_subject_identifier(), visit_code, visit_model_instance)
         self._prepare_additional_entry_bucket()
         self._prepare_visit_messages(visit_code)
         self._prepare_scheduled_entry_bucket(visit_code)
@@ -280,6 +284,33 @@ class RegisteredSubjectDashboard(Dashboard):
     def get_subject_type(self, value=None):
         return self._subject_type
 
+    def set_subject_identifier(self, value=None):
+        if value:
+            self._subject_identifier = value
+        else:
+            raise TypeError('Attribute subject_identifier cannot be None')
+
+    def get_subject_identifier(self):
+        if not self._subject_identifier:
+            self.set_subject_identifier()
+        return self._subject_identifier
+
+    def _set_subject_hiv_status(self):
+        """Sets the hiv_status to the value from bhp_lab_tracker history model."""
+        RESULT = 0
+        IS_DEFAULT = 1
+        subject_hiv_status = lab_tracker.get_value('HIV', self.get_subject_identifier(), datetime.today())
+        if isinstance(subject_hiv_status, tuple):
+            if subject_hiv_status[IS_DEFAULT]:
+                self._subject_hiv_status = 'UNKNOWN'
+            else:
+                self._subject_hiv_status = subject_hiv_status[RESULT]
+
+    def get_subject_hiv_status(self):
+        if not self._subject_hiv_status:
+            self._set_subject_hiv_status()
+        return self._subject_hiv_status
+
     def _set_membership_form_category(self, membership_form_category=None):
         """Sets the membership_form_category, otherwise just uses subject type."""
         if membership_form_category:
@@ -311,13 +342,13 @@ class RegisteredSubjectDashboard(Dashboard):
             template_filename = 'summary_side_bar.html'
         summary_links = render_to_string(template_filename, {
                 'links': Link.objects.filter(dashboard_type=self.dashboard_type),
-                'subject_identifier': self.subject_identifier})
+                'subject_identifier': self.get_subject_identifier()})
         self.context.add(summary_links=summary_links)
 
     def render_labs(self, update=False):
         # prepare results for dashboard sidebar
         edc_lab = EdcLab()
-        return edc_lab.render(self.subject_identifier, False)
+        return edc_lab.render(self.get_subject_identifier(), False)
 
     def render_locator(self, locator_cls, template=None, **kwargs):
         """Renders to string the locator for the current registered subject or that passed as a keyword.
@@ -351,7 +382,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         return render_to_string(template, {'locator': locator_instance,
                                            'registered_subject': self.registered_subject,
-                                           'subject_identifier': self.subject_identifier,
+                                           'subject_identifier': self.get_subject_identifier(),
                                            'dashboard_type': self.dashboard_type,
                                            'visit_code': visit_code,
                                            'visit_instance': visit_instance,
