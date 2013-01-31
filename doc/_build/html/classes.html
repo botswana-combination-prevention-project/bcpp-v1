@@ -56,6 +56,129 @@
             
   <div class="section" id="module-bhp_entry.classes">
 <span id="classes"></span><h1>Classes<a class="headerlink" href="#module-bhp_entry.classes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bhp_entry.classes.BaseEntry">
+<em class="property">class </em><tt class="descclassname">bhp_entry.classes.</tt><tt class="descname">BaseEntry</tt><a class="headerlink" href="#bhp_entry.classes.BaseEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Base class for all classes that manage the entry state of additional, scheduled and unscheduled data.</p>
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.get_status">
+<tt class="descname">get_status</tt><big>(</big><em>action</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.get_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Figures out the the current status of the user model instance, KEYED or NEW (not keyed).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.is_keyed">
+<tt class="descname">is_keyed</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.is_keyed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates that the model instance exists (and is therefore keyed).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.set_bucket_model_cls">
+<tt class="descname">set_bucket_model_cls</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_bucket_model_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users need to override this to set with something like ScheduledEnrtyBucket.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.set_filter_fieldname">
+<tt class="descname">set_filter_fieldname</tt><big>(</big><em>filter_field_name=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_filter_fieldname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the field name to be used to &#8216;get&#8217;  the target_model_instance or filter the user model class.</p>
+<p>Users need to override this</p>
+<p>For example may return &#8216;registered_subject&#8217; for bucket model classes that do
+not have a visit model foreign key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.set_filter_model_instance">
+<tt class="descname">set_filter_model_instance</tt><big>(</big><em>filter_model_instance=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_filter_model_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the filter model instance to be the users visit model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.set_target_model_base_cls">
+<tt class="descname">set_target_model_base_cls</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_target_model_base_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users need to override this to set to something like BaseVisitTracking.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.set_target_model_cls">
+<tt class="descname">set_target_model_cls</tt><big>(</big><em>model_cls=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_target_model_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the user&#8217;s model class that the entry class is tracking.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.set_target_model_instance">
+<tt class="descname">set_target_model_instance</tt><big>(</big><em>target_model_instance=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_target_model_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the instance of the target model class if it can using the visit_model_instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.set_visit_model_fieldname">
+<tt class="descname">set_visit_model_fieldname</tt><big>(</big><em>visit_model_fieldname=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_visit_model_fieldname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the field name for the foreignkey that points to the visit model.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_entry.classes.ScheduledEntry">
+<em class="property">class </em><tt class="descclassname">bhp_entry.classes.</tt><tt class="descname">ScheduledEntry</tt><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_entry.classes.base_entry.BaseEntry</span></tt></p>
+<dl class="method">
+<dt id="bhp_entry.classes.ScheduledEntry.add_or_update_for_visit">
+<tt class="descname">add_or_update_for_visit</tt><big>(</big><em>visit_model_instance</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry.add_or_update_for_visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loops thru the list of entries configured for the visit_definition of this visit_model_instance
+and Adds entries to or updates existing entries in the bucket.</p>
+<p>This just determines KEYED or NEW, bucket rules with reassess later.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.ScheduledEntry.get_entries_for">
+<tt class="descname">get_entries_for</tt><big>(</big><em>appointment</em>, <em>entry_category</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry.get_entries_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of Bucket instance for the given subject and zero instance appointment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.ScheduledEntry.set_filter_fieldname">
+<tt class="descname">set_filter_fieldname</tt><big>(</big><em>filter_field_name=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry.set_filter_fieldname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the field name for the foreignkey that points to the visit model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.ScheduledEntry.update_status_from_instance">
+<tt class="descname">update_status_from_instance</tt><big>(</big><em>action</em>, <em>target_model_instance</em>, <em>filter_model_cls</em>, <em>comment=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry.update_status_from_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up then calls update bucket using a user model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.ScheduledEntry.update_status_from_rule">
+<tt class="descname">update_status_from_rule</tt><big>(</big><em>action</em>, <em>target_model_cls</em>, <em>scheduled_entry_bucket_id</em>, <em>visit_model_instance</em>, <em>filter_model_instance</em>, <em>filter_model_field</em>, <em>comment=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry.update_status_from_rule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up then calls update bucket given a bucket instance id.</p>
+<p>Usually called from bucket controller.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_entry.classes.AdditionalEntry">
+<em class="property">class </em><tt class="descclassname">bhp_entry.classes.</tt><tt class="descname">AdditionalEntry</tt><a class="headerlink" href="#bhp_entry.classes.AdditionalEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_entry.classes.base_entry.BaseEntry</span></tt></p>
+<dl class="method">
+<dt id="bhp_entry.classes.AdditionalEntry.add_from_rule">
+<tt class="descname">add_from_rule</tt><big>(</big><em>rule_name</em>, <em>visit_model_instance</em>, <em>content_type_map</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.AdditionalEntry.add_from_rule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an entry to the bucket</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.AdditionalEntry.remove_from_rule">
+<tt class="descname">remove_from_rule</tt><big>(</big><em>rule_name</em>, <em>target_model_cls</em>, <em>visit_model_instance</em>, <em>content_type_map</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.AdditionalEntry.remove_from_rule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an entry to the bucket using criteria including the rule group.name.</p>
+<p>To avoid rules overriding eachother, only the rule that created the bucket_instance
+may delete the bucket_instance.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
