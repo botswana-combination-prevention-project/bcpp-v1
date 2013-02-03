@@ -8,7 +8,7 @@ class BaseLocatorModelAdmin(BaseModelAdmin):
         'subject_consent',
         'date_signed',
         'mail_address',
-        #'care_clinic',
+        # 'care_clinic',
         'home_visit_permission',
         'physical_address',
         'may_follow_up',
@@ -30,13 +30,13 @@ class BaseLocatorModelAdmin(BaseModelAdmin):
         'caretaker_cell',
         'caretaker_tel',
         )
-        
+
     radio_fields = {
-        "home_visit_permission":admin.VERTICAL,
-        "may_follow_up":admin.VERTICAL,
-        "may_call_work":admin.VERTICAL,
-        "may_contact_someone":admin.VERTICAL,  
-        "has_caretaker_alt":admin.VERTICAL, 
-              
-        }                
-#admin.site.register(BaseLocatorForm, BaseLocatorFormAdmin)
+        "home_visit_permission": admin.VERTICAL,
+        "may_follow_up": admin.VERTICAL,
+        "may_call_work": admin.VERTICAL,
+        "may_contact_someone": admin.VERTICAL,
+        "has_caretaker_alt": admin.VERTICAL,
+
+        }
+# admin.site.register(BaseLocatorForm, BaseLocatorFormAdmin)
