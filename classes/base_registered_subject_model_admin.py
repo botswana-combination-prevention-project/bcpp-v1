@@ -27,7 +27,6 @@ class BaseRegisteredSubjectModelAdmin (BaseModelAdmin):
         self.list_filter = [
             'registered_subject__gender',
             'registered_subject__study_site',
-            'registered_subject__hiv_status',
             'registered_subject__survival_status',
             'registered_subject__registration_datetime',
             'created',
