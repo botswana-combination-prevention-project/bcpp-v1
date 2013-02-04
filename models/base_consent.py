@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
 from bhp_crypto.utils import mask_encrypted
-from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start
+from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start, eligible_if_no
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from bhp_subject.models import BaseSubject
@@ -41,6 +41,15 @@ class BaseConsent(BaseSubject):
         max_length=3,
         choices=YES_NO,
         help_text=_("Does the subject agree to have samples stored after the study has ended")
+        )
+
+    is_incarcerated = models.CharField(
+        verbose_name="Is the participant under involuntary incarceration?",
+        max_length=3,
+        choices=YES_NO,
+        validators=[eligible_if_no, ],
+        default='No',
+        help_text="( if 'YES' STOP patient cannot be consented )",
         )
 
     comment = EncryptedTextField("Comment",
