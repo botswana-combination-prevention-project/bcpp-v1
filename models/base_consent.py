@@ -77,7 +77,7 @@ class BaseConsent(BaseSubject):
     def __unicode__(self):
         return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
 
-    def save_new_consent(self):
+    def save_new_consent(self, subject_identifier=None):
         """ Creates or gets a subject identifier and updates registered subject.
 
         Users may override this to change the default behavior for new instances"""
@@ -90,7 +90,11 @@ class BaseConsent(BaseSubject):
         # check for  registered subject key and if it already has
         # a subject_identifier (e.g for subjects re-consenting)
         if registered_subject:
-            self.subject_identifier = self.registered_subject.subject_identifier
+                        # test for user provided subject_identifier field attr
+            if 'get_user_provided_subject_identifier' in dir(self):
+                self.subject_identifier = self.get_user_provided_subject_identifier()
+            else:
+                self.subject_identifier = self.registered_subject.subject_identifier
         if not self.subject_identifier:
             self.subject_identifier = consented_subject_identifier.get_identifier(
                 consent=self,
