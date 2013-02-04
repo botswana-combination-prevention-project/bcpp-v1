@@ -84,7 +84,10 @@ class SiteLabTracker(object):
                 retval = lab_tracker_cls().get_history_as_string(subject_identifier, mapped)
         return retval
 
-    def get_value(self, group_name, subject_identifier, value_datetime):
+    def get_current_value(self, group_name, subject_identifier):
+        return self.get_value(group_name, subject_identifier)
+
+    def get_value(self, group_name, subject_identifier, value_datetime=None):
         """Searches thru the registry to find a class that can be used to search for the value.
 
             Args:
