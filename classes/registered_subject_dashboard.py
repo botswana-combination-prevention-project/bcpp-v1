@@ -285,10 +285,11 @@ class RegisteredSubjectDashboard(Dashboard):
         return self._subject_type
 
     def set_subject_identifier(self, value=None):
+        self._subject_identifier = None
         if value:
             self._subject_identifier = value
-        else:
-            raise TypeError('Attribute subject_identifier cannot be None')
+        #else:
+        #    raise TypeError('Attribute subject_identifier cannot be None')
 
     def get_subject_identifier(self):
         if not self._subject_identifier:
