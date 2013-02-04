@@ -90,7 +90,7 @@ class BaseConsent(BaseSubject):
         # check for  registered subject key and if it already has
         # a subject_identifier (e.g for subjects re-consenting)
         if registered_subject:
-                        # test for user provided subject_identifier field attr
+            # test for user provided subject_identifier field method
             if 'get_user_provided_subject_identifier' in dir(self):
                 self.subject_identifier = self.get_user_provided_subject_identifier()
             else:
