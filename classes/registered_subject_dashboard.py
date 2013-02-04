@@ -299,7 +299,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """Sets the hiv_status to the value from bhp_lab_tracker history model."""
         RESULT = 0
         IS_DEFAULT = 1
-        subject_hiv_status = lab_tracker.get_value('HIV', self.get_subject_identifier(), datetime.today())
+        subject_hiv_status = lab_tracker.get_current_value('HIV', self.get_subject_identifier())
         if isinstance(subject_hiv_status, tuple):
             if subject_hiv_status[IS_DEFAULT]:
                 self._subject_hiv_status = 'UNKNOWN'
