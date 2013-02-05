@@ -175,14 +175,15 @@ class DispatchController(BaseDispatchController):
                 self.dispatch_as_json(scheduled_instances, app_name=app_name)
     
     def dispatch_labs_requisitions(self, registered_subject):
-        """Dispatches all lab requisitions for this subject visit."""
+        """Dispatches all lab requisitions for this subject."""
         Lab_requisitions = get_model('mochudi_survey_lab', 'SubjectRequisition')
-        self.dispatch_as_json(
-            Lab_requisitions.objects.filter(
+        labs = Lab_requisitions.objects.filter(
                 subject_visit__household_structure_member__registered_subject=registered_subject
                 )
-            )
-        
+        for lab in labs:
+            if lab.subject_visit:
+                self.dispatch_as_json(lab.subject_visit)
+        self.dispatch_as_json(labs)
 #        Receive = get_model('lab_clinic_api', 'Receive')
 #        receives_list = Receive.objects.filter(registered_subject=registered_subject)
 #        self.dispatch_as_json(receives_list)
