@@ -13,7 +13,6 @@ from bhp_appointment.models import Appointment
 from bhp_visit.models import ScheduleGroup, MembershipForm
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
-from bhp_dispatch.helpers import is_dispatched_registered_subject
 from bhp_subject_summary.models import Link
 from lab_clinic_api.classes import EdcLab
 from bhp_entry.classes import ScheduledEntry
@@ -66,6 +65,17 @@ class RegisteredSubjectDashboard(Dashboard):
         self.include_after_exclusion_model_keyed = []
         self.scheduled_entry_bucket_rules = []
 
+    def _prepare_dispatch_subject(self):
+        if self.registered_subject:
+            try:
+                from bhp_dispatch.helpers import is_dispatched_registered_subject
+                self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
+                self.context.add(
+                    is_dispatched=self.is_dispatched,
+                    dispatch_producer=self.dispatch_producer)
+            except:
+                pass
+
     def create(self, **kwargs):
         super(RegisteredSubjectDashboard, self).create(**kwargs)
         if not self.appointment_row_template:
@@ -73,7 +83,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(appointment_row_template=self.appointment_row_template)
         self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if self.registered_subject:
-            self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
+            #self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
             self.set_subject_type(kwargs.get('subject_type'))
             # subject identifier is almost always available
             self.set_subject_identifier(self.registered_subject.subject_identifier)
@@ -99,8 +109,8 @@ class RegisteredSubjectDashboard(Dashboard):
         if self.extra_url_context == {}:
             self.extra_url_context = ''
         self.context.add(
-            is_dispatched=self.is_dispatched,
-            dispatch_producer=self.dispatch_producer,
+            #is_dispatched=self.is_dispatched,
+            #dispatch_producer=self.dispatch_producer,
             visit_model=visit_model,
             visit_instance=visit_instance,
             visit_code=visit_code,
@@ -129,6 +139,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._prepare_scheduled_entry_bucket(visit_code)
         self._prepare_scheduled_lab_bucket(visit_code)
         self._prepare_additional_lab_bucket(visit_code)
+        self._prepare_dispatch_subject()
         self.render_summary_links()
 
     def _add_or_update_entry_buckets(self, visit_model_instance):
