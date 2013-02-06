@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
@@ -87,20 +88,24 @@ class BaseConsent(BaseSubject):
             registered_subject = getattr(self, 'registered_subject')
         except:
             registered_subject = None
-        # check for  registered subject key and if it already has
-        # a subject_identifier (e.g for subjects re-consenting)
-        if registered_subject:
+
+        if not subject_identifier:
             # test for user provided subject_identifier field method
             if 'get_user_provided_subject_identifier' in dir(self):
                 self.subject_identifier = self.get_user_provided_subject_identifier()
-            else:
+                if not registered_subject:
+                    RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+                    RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
+            elif registered_subject:
+                # check for  registered subject key and if it already has
+                # a subject_identifier (e.g for subjects re-consenting)
                 self.subject_identifier = self.registered_subject.subject_identifier
-        if not self.subject_identifier:
-            self.subject_identifier = consented_subject_identifier.get_identifier(
-                consent=self,
-                consent_attrname='subject_identifier',
-                registration_status='consented',
-                site_code=self.study_site.site_code)
+            else:
+                self.subject_identifier = consented_subject_identifier.get_identifier(
+                    consent=self,
+                    consent_attrname='subject_identifier',
+                    registration_status='consented',
+                    site_code=self.study_site.site_code)
 
     def save(self, *args, **kwargs):
         if not self.id:
