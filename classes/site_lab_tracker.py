@@ -112,7 +112,7 @@ class SiteLabTracker(object):
                 break
         if not value:
             # a value should always be returned, even if it is the classes' default value.
-            raise TypeError('Value cannot be None. Using ({0}, {1}, {2})'.format(group_name, subject_identifier, value_datetime))
+            raise TypeError('Value cannot be None. Using ({0}, {1}, {2}). Lab tracker class not found for group name. Define at least one.'.format(group_name, subject_identifier, value_datetime))
         return (value, is_default_value)
 
     def autodiscover(self):
