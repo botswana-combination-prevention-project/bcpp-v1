@@ -171,6 +171,7 @@ class RegisteredSubjectDashboard(Dashboard):
         app_label = visit_model._meta.app_label
         self.context.add(visit_model_app_label=app_label)
         try:
+            # if this fails, confirm the model has been registered with admin!
             url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
         except:
             # model must be registered in admin
