@@ -171,7 +171,7 @@ class RegisteredSubjectDashboard(Dashboard):
         app_label = visit_model._meta.app_label
         self.context.add(visit_model_app_label=app_label)
         try:
-            url = reverse('admin:%s_%s_add' % (app_label, model_name))
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
         except:
             # model must be registered in admin
             raise ValueError('NoReverseMatch: Reverse for \'%s_%s_add\'. Check model is '
