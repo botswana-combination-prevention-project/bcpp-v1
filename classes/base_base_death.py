@@ -1,10 +1,8 @@
 from django.db import models
-from bhp_adverse.models import DeathCauseInfo, DeathCauseCategory, \
-    DeathMedicalResponsibility, DeathReasonHospitalized
+from bhp_adverse.models import DeathCauseInfo, DeathCauseCategory, DeathReasonHospitalized
 from bhp_base_model.fields import OtherCharField
 from bhp_common.choices import YES_NO
-from bhp_base_model.validators import date_not_before_study_start, \
-    date_not_future
+from bhp_base_model.validators import date_not_before_study_start, date_not_future
 from bhp_registration.models import BaseRegisteredSubjectModel
 
 
