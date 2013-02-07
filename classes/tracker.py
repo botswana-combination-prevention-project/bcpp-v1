@@ -39,6 +39,7 @@ class LabTracker(object):
     VALUE_ATTR = 1
     DATE_ATTR = 2
     IDENTIFIER_ATTR = 3
+    ALLOW_NULL = 4
     #result_item_tpl = (get_model('lab_clinic_api', 'resultitem'), 'result_item_value', 'result_item_datetime', 'result__order__order_identifier')
 
     def __init__(self):
@@ -126,25 +127,39 @@ class LabTracker(object):
         """Unpacks and returns the model_tpl to always include identifier_attr, or, if index provided, returns just the one item.
 
         .. note:: the first element, the model_cls, may be a tuple of (app_label, model_name)."""
-        if index in range(0, 4):
+        if index in range(0, 5):
             retval = model_tpl[index]
             if index == 0:
                 if isinstance(model_tpl[index], tuple):
                     retval = get_model(model_tpl[index][0], model_tpl[index][1])
         else:
+            allow_null = False
+            identifier_attr = None
             try:
                 model_cls, value_attr, date_attr = model_tpl
                 if isinstance(model_cls, tuple):
                     model_cls = get_model(model_cls[0], model_cls[1])
-                identifier_attr = None
             except ValueError:
-                model_cls, value_attr, date_attr, identifier_attr = model_tpl
-                if isinstance(model_cls, tuple):
-                    model_cls = get_model(model_cls[0], model_cls[1])
-                identifier_attr = model_tpl[self.IDENTIFIER_ATTR]
+                try:
+                    model_cls, value_attr, date_attr, identifier_attr = model_tpl
+                    if isinstance(model_cls, tuple):
+                        model_cls = get_model(model_cls[0], model_cls[1])
+                    identifier_attr = model_tpl[self.IDENTIFIER_ATTR]
+                    if identifier_attr:
+                        if not isinstance(identifier_attr, basestring):
+                            raise TypeError('Model tuple element \'identifier_attr\' must be a string.')
+                except ValueError:
+                    model_cls, value_attr, date_attr, identifier_attr, allow_null = model_tpl
+                    if isinstance(model_cls, tuple):
+                        model_cls = get_model(model_cls[0], model_cls[1])
+                    #identifier_attr = model_tpl[self.IDENTIFIER_ATTR]
+                    if identifier_attr:
+                        if not isinstance(identifier_attr, basestring):
+                            raise TypeError('Model tuple element \'identifier_attr\' must be a string.')
+                    #allow_null = model_tpl[self.ALLOW_NULL]
             except:
                 raise
-            retval = (model_cls, value_attr, date_attr, identifier_attr)
+            retval = (model_cls, value_attr, date_attr, identifier_attr, allow_null)
         return retval
 
     def _get_source_identifier_value(self, instance, identifier_attr):
@@ -167,7 +182,9 @@ class LabTracker(object):
         .. note:: An instance from ResultItem may be sent from the signal. Do not automatically
                   accept it, first send it to check if the testcode is being tracked.
         """
-        model_cls, value_attr, date_attr, identifier_attr = self.unpack_model_tpl(model_tpl)
+        history_model = None
+        created = False
+        model_cls, value_attr, date_attr, identifier_attr, allow_null = self.unpack_model_tpl(model_tpl)
         if not model_cls == instance.__class__:
             raise TypeError('Model tuple item \'model_cls\' {0} does not match instance class. Got {1}.'.format(model_cls, instance._meta.object_name.lower()))
         source_identifier = self._get_source_identifier_value(instance, identifier_attr)
@@ -179,19 +196,21 @@ class LabTracker(object):
             # will return nothing if the test code is not being tracked.
             history_model, created = self._update_from_result_item_instance(instance)
         else:
-            history_model, created = self._update_history_model(
-                instance._meta.object_name.lower(),
-                source_identifier,
-                instance.get_subject_identifier(),
-                self._get_test_code(instance),
-                self._get_tracker_result_value(instance, value_attr),
-                self._get_tracker_result_datetime(instance, date_attr),
-                )
+            result_value = self._get_tracker_result_value(instance, value_attr, allow_null=allow_null)
+            if result_value:
+                history_model, created = self._update_history_model(
+                    instance._meta.object_name.lower(),
+                    source_identifier,
+                    instance.get_subject_identifier(),
+                    self._get_test_code(instance),
+                    result_value,
+                    self._get_tracker_result_datetime(instance, date_attr),
+                    )
         return history_model, created
 
     def delete_with_tracker_instance(self, instance, model_tpl):
         """Deletes a single instance from the HistoryModel."""
-        model_cls, value_attr, date_attr, identifier_attr = self.unpack_model_tpl(model_tpl)
+        model_cls, value_attr, date_attr, identifier_attr, allow_null = self.unpack_model_tpl(model_tpl)
         if not model_cls == instance.__class__:
             raise TypeError('Model tuple item \'model_cls\' {0} does not match instance class. Got {1}.'.format(model_cls, instance._meta.object_name.lower()))
         source_identifier = self._get_source_identifier_value(instance, identifier_attr)
@@ -212,7 +231,7 @@ class LabTracker(object):
         query_string = None
         result_item_cls = self.result_item_tpl[self.MODEL_CLS]
         for model_tpl in self.models:
-            model_cls, value_attr, date_attr, identifier_attr = self.unpack_model_tpl(model_tpl)
+            model_cls, value_attr, date_attr, identifier_attr, allow_null = self.unpack_model_tpl(model_tpl)
             if model_cls != result_item_cls:
                 for field in model_cls._meta.fields:
                     if isinstance(field, (ForeignKey, OneToOneField)):
@@ -234,7 +253,7 @@ class LabTracker(object):
                 #except:
                 #    AttributeError('Lab Tracker model {0} must have a key to either a visit model or RegisteredSubject'.format(model._meta.object_name))
                 for instance in queryset:
-                    self.update_with_tracker_instance(instance, (model_cls, value_attr, date_attr))
+                    self.update_with_tracker_instance(instance, (model_cls, value_attr, date_attr, identifier_attr, allow_null))
 
     def _update_history_model(self, source, source_identifier, subject_identifier, test_code, value, value_datetime):
         """Inserts or Updates to the history model using get_or_create() with the given criteria."""
@@ -323,14 +342,20 @@ class LabTracker(object):
             retval = getattr(instance, date_attr)
         return retval
 
-    def _get_tracker_result_value(self, instance, value_attr=None):
+    def _get_tracker_result_value(self, instance, value_attr=None, **kwargs):
         """Returns a result item value which, if a map exists, is mapped to a value label that matches the tracker.
 
         Qualitative values must be translated / mapped to how they appear in ResultItem.
 
         Args:
             * value_attr: the instance attribute that holds the result item value. (default: result_item_value)
+
+        Kwargs:
+            * allow_null: if True, will not throw an error if the source model returns a None. For example, source model may have
+              skip logic that leaves the field value as None.
+
         """
+        allow_null = kwargs.get('allow_null', False)
         if not value_attr:
             # default to attr name in result_item model
             value_attr = 'result_item_value'
@@ -349,7 +374,7 @@ class LabTracker(object):
         else:
             retval = result_value
         # fail if there is no return value
-        if not retval:
+        if not retval and not allow_null:
             raise ValueError('Tracker value cannot be None. Instance value is {0}, map={1}'.format(result_value, result_value_map))
         return retval
 
