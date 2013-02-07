@@ -197,14 +197,15 @@ class LabTracker(object):
             history_model, created = self._update_from_result_item_instance(instance)
         else:
             result_value = self._get_tracker_result_value(instance, value_attr, allow_null=allow_null)
-            if result_value:
+            value_datetime = self._get_tracker_result_datetime(instance, date_attr)
+            if result_value and value_datetime:
                 history_model, created = self._update_history_model(
                     instance._meta.object_name.lower(),
                     source_identifier,
                     instance.get_subject_identifier(),
                     self._get_test_code(instance),
                     result_value,
-                    self._get_tracker_result_datetime(instance, date_attr),
+                    value_datetime,
                     )
         return history_model, created
 
