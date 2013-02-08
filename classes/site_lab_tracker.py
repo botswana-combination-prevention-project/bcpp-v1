@@ -57,6 +57,10 @@ class SiteLabTracker(object):
                     raise ImproperlyConfigured('Model {0} cannot be registered to a lab tracker. '
                                                'Define the method \'get_subject_identifier()\' on '
                                                'the model first.'.format(model_cls._meta.object_name))
+                if 'get_report_datetime' not in dir(model_cls):
+                    raise ImproperlyConfigured('Model {0} cannot be registered to a lab tracker. '
+                                               'Define the method \'get_report_datetime()\' on '
+                                               'the model first.'.format(model_cls._meta.object_name))
         else:
             lab_tracker_cls.models = []
         # add result_item model

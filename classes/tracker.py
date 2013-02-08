@@ -126,7 +126,10 @@ class LabTracker(object):
     def unpack_model_tpl(self, model_tpl, index=None):
         """Unpacks and returns the model_tpl to always include identifier_attr, or, if index provided, returns just the one item.
 
-        .. note:: the first element, the model_cls, may be a tuple of (app_label, model_name)."""
+        Size of tuple may vary depending on the options provided.
+
+        .. note:: the first element, the model_cls, may be a tuple of (app_label, model_name).
+        """
         if index in range(0, 5):
             retval = model_tpl[index]
             if index == 0:
@@ -198,16 +201,28 @@ class LabTracker(object):
         else:
             result_value = self._get_tracker_result_value(instance, value_attr, allow_null=allow_null)
             value_datetime = self._get_tracker_result_datetime(instance, date_attr)
+            report_datetime = instance.get_report_datetime()
+            test_code = self._get_test_code(instance, value_attr=value_attr)
             if result_value and value_datetime:
                 history_model, created = self._update_history_model(
                     instance._meta.object_name.lower(),
                     source_identifier,
                     instance.get_subject_identifier(),
-                    self._get_test_code(instance),
+                    test_code,
                     result_value,
                     value_datetime,
+                    report_datetime,
                     )
+            else:
+                self.delete_with_tracker_source(instance, source_identifier, test_code)
         return history_model, created
+
+    def delete_with_tracker_source(self, instance, source_identifier, test_code):
+        """Deletes a history model instance for this source and source identifier.
+
+        Called if the source data has changed and is now not complete enough for an update."""
+        if HistoryModel.objects.filter(test_code=test_code, source_identifier=source_identifier, source=instance._meta.object_name.lower()).exists():
+            HistoryModel.objects.get(test_code=test_code, source_identifier=source_identifier, source=instance._meta.object_name.lower()).delete()
 
     def delete_with_tracker_instance(self, instance, model_tpl):
         """Deletes a single instance from the HistoryModel."""
@@ -219,7 +234,7 @@ class LabTracker(object):
             source=instance._meta.object_name.lower(),
             source_identifier=source_identifier,
             subject_identifier=instance.get_subject_identifier(),
-            test_code=self._get_test_code(instance),
+            test_code=self._get_test_code(instance, value_attr=value_attr),
             value_datetime=self._get_tracker_result_datetime(instance, date_attr),
             ).delete()
 
@@ -256,9 +271,8 @@ class LabTracker(object):
                 for instance in queryset:
                     self.update_with_tracker_instance(instance, (model_cls, value_attr, date_attr, identifier_attr, allow_null))
 
-    def _update_history_model(self, source, source_identifier, subject_identifier, test_code, value, value_datetime):
+    def _update_history_model(self, source, source_identifier, subject_identifier, test_code, value, value_datetime, report_datetime):
         """Inserts or Updates to the history model using get_or_create() with the given criteria."""
-        # logger.info('          ...source {0}'.format(source))
         history_model, created = HistoryModel.objects.get_or_create(
             source=source,
             source_identifier=source_identifier,
@@ -266,10 +280,11 @@ class LabTracker(object):
             subject_identifier=subject_identifier,
             test_code=test_code,
             value_datetime=value_datetime,
-            defaults={'value': value, 'history_datetime': datetime.today()})
+            defaults={'value': value, 'history_datetime': datetime.today(), 'report_datetime': report_datetime})
         if not created:
             history_model.value = value
             history_model.history_datetime = datetime.today()
+            history_model.report_datetime = report_datetime
             history_model.save()
         return history_model, created
 
@@ -280,7 +295,15 @@ class LabTracker(object):
         date_attr = self.result_item_tpl[self.DATE_ATTR]
         identifier_attr = self.result_item_tpl[self.IDENTIFIER_ATTR]
         for result_item in result_item_cls.objects.filter(result__subject_identifier=subject_identifier, test_code__code__in=self._get_resultitem_test_codes()):
-            self._update_history_model('resultitem', self._get_source_identifier_value(result_item, identifier_attr), subject_identifier, result_item.test_code.code, getattr(result_item, value_attr), getattr(result_item, date_attr))
+            report_datetime = result_item.get_report_datetime()
+            self._update_history_model(
+                'resultitem',
+                self._get_source_identifier_value(result_item, identifier_attr),
+                subject_identifier,
+                result_item.test_code.code,
+                getattr(result_item, value_attr),
+                getattr(result_item, date_attr),
+                report_datetime)
 
     def _update_from_result_item_instance(self, instance):
         """Updates the history model from values in ResultItem for this subject."""
@@ -297,7 +320,8 @@ class LabTracker(object):
                 instance.get_subject_identifier(),
                 instance.test_code.code,
                 getattr(instance, value_attr),
-                getattr(instance, date_attr))
+                getattr(instance, date_attr),
+                instance.get_report_datetime())
         return history_model, created
 
     def _get_resultitem_test_codes(self):
@@ -308,9 +332,15 @@ class LabTracker(object):
             self.resultitem_test_code = (self.resultitem_test_code, )
         return self.resultitem_test_code
 
-    def _get_test_code(self, instance):
+    def _get_test_code(self, instance, **kwargs):
+        """Returns test_code for this value by inspecting the model instance or defers to the default."""
         if instance.__class__ == self.result_item_tpl[self.MODEL_CLS]:
             return instance.test_code.code
+        elif 'get_test_code' in dir(instance):
+            value_attr = kwargs.get('value_attr', None)
+            if not value_attr:
+                raise AttributeError('Expected a value for kwarg \'value_attr\'. Got None. Needed for model {0}: method get_test_code().'.format(instance._meta.object_name))
+            return instance.get_test_code(kwargs.get('value_attr', None))
         else:
             return self._get_tracker_item_test_code()
 
