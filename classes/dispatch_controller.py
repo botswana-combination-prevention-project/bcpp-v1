@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import BaseDispatchController
+from bhp_lab_tracker.models import HistoryModel
 
 
 logger = logging.getLogger(__name__)
@@ -132,6 +133,14 @@ class DispatchController(BaseDispatchController):
         if not self._visit_model_fkey_name:
             self.set_visit_model_fkey(model_cls, visit_model_cls)
         return self._visit_model_fkey_name
+
+    def dispatch_hiv_history (self, registered_subject):
+        """Dispatches all lab tracker history models for this subject"""
+        if registered_subject:
+            if registered_subject.subject_identifier:
+                history_models = HistoryModel.objects.filter(subject_identifier=registered_subject.subject_identifier)
+                self.dispatch_as_json(history_models)
+
 
     def dispatch_appointments(self, registered_subject):
         """Dispatches all appointments for this registered subject."""
