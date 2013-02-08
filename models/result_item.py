@@ -45,6 +45,9 @@ class ResultItem(BaseResultItem):
         return '{result}{reviewed}'.format(result=result, reviewed=reviewed)
     to_result.allow_tags = True
 
+    def get_report_datetime(self):
+        return self.validation_datetime
+
     @property
     def get_drawn_datetime(self):
         return self.result.order.aliquot.receive.drawn_datetime
