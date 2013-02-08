@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from bhp_base_model.fields import OtherCharField
 from bhp_registration.models import BaseRegisteredSubjectModel
@@ -25,6 +26,9 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
         blank=True,
         null=True,
         )
+
+    def get_report_datetime(self):
+        return datetime(self.offstudy_date.year, self.offstudy_date.month, self.offstudy_date.day)
 
     def get_visit_model(self):
         """Returns the visit model class from the app needed to clear appointments on save().
