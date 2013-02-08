@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_sync.models import BaseSyncUuidModel
+from bhp_base_model.models import BaseUuidModel
 
 
-class BaseHistoryModel(BaseSyncUuidModel):
+class BaseHistoryModel(BaseUuidModel):
 
     subject_identifier = models.CharField(max_length=25)
     report_datetime = models.DateTimeField(null=True)

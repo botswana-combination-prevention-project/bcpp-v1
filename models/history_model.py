@@ -9,4 +9,4 @@ class HistoryModel(BaseHistoryModel):
     class Meta:
         app_label = 'bhp_lab_tracker'
         #unique_together = (('subject_identifier', 'group_name', 'test_code', 'value_datetime'), ('source', 'source_identifier'), )
-        unique_together = (('source', 'source_identifier'), )
+        unique_together = (('source', 'source_identifier', 'test_code'), )
