@@ -126,6 +126,9 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     def get_subject_identifier(self):
         return self.appointment.registered_subject.subject_identifier
 
+    def get_report_datetime(self):
+        return self.report_datetime
+
     def is_dispatched_to_producer(self):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
         locked = False
