@@ -9,6 +9,7 @@ class HistoryModelAdmin(BaseModelAdmin):
     search_fields = ('subject_identifier', 'value')
     list_filter = ('group_name', 'source', 'test_code', 'modified')
     actions = [update_lab_tracker, ]
+    date_hierarchy = 'value_datetime'
 admin.site.register(HistoryModel, HistoryModelAdmin)
 
 
