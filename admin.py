@@ -17,6 +17,7 @@ class HistoryModelErrorAdmin(BaseModelAdmin):
     list_display = ('subject_identifier', 'group_name', 'test_code', 'value', 'value_datetime', 'source_identifier', 'history_datetime', 'modified')
     search_fields = ('subject_identifier', 'value', 'error_message')
     list_filter = ('group_name', 'source', 'test_code', 'modified')
+    date_hierarchy = 'value_datetime'
 admin.site.register(HistoryModelError, HistoryModelErrorAdmin)
 
 
@@ -24,4 +25,5 @@ class DefaultValueLogAdmin(BaseModelAdmin):
     list_display = ('subject_identifier', 'group_name', 'value_datetime', 'modified')
     search_fields = ('subject_identifier', 'error_message')
     list_filter = ('group_name', 'subject_type', 'modified')
+    date_hierarchy = 'value_datetime'
 admin.site.register(DefaultValueLog, DefaultValueLogAdmin)
