@@ -4,8 +4,8 @@ from bhp_base_model.models import BaseUuidModel
 
 class BaseHistoryModel(BaseUuidModel):
 
-    subject_identifier = models.CharField(max_length=25)
-    report_datetime = models.DateTimeField(null=True)
+    subject_identifier = models.CharField(max_length=25, db_index=True)
+    report_datetime = models.DateTimeField(null=True, db_index=True)
     group_name = models.CharField(max_length=25)
     test_code = models.CharField(max_length=25)
     value = models.CharField(max_length=25)
