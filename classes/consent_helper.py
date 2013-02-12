@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.db.models import get_model
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.db.models import get_model
@@ -121,7 +122,8 @@ class ConsentHelper(object):
         """Returns the current consent version relative to the given subject_instance report_datetime and subject_identifier."""
         ConsentCatalogue = get_model('bhp_consent', 'ConsentCatalogue')
         current_consent_version = None
-        for consent_catalogue in ConsentCatalogue.objects.filter(content_type_map__model__in=[consent_model._meta.object_name.lower() for consent_model in self._get_consent_models()]):
+        catalogues = ConsentCatalogue.objects.filter(content_type_map__model__in=[consent_model._meta.object_name.lower() for consent_model in self._get_consent_models()])
+        for consent_catalogue in catalogues:
             end_date = consent_catalogue.end_datetime or datetime.today() + relativedelta(days=1)
             if self._get_report_datetime() >= consent_catalogue.start_datetime and self._get_report_datetime() < end_date:
                 current_consent_version = consent_catalogue.version
