@@ -96,7 +96,7 @@ class BaseConsent(BaseSubject):
                 if not registered_subject:
                     RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
                     RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
-            elif registered_subject.subject_identifier:
+            elif registered_subject and registered_subject.subject_identifier:
                 # check for  registered subject key and if it already has
                 # a subject_identifier (e.g for subjects re-consenting)
                 self.subject_identifier = self.registered_subject.subject_identifier
