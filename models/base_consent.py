@@ -125,5 +125,8 @@ class BaseConsent(BaseSubject):
     def get_consent_update_model(self):
         raise TypeError('The ConsentUpdateModel is required. Specify a class method get_consent_update_model() on the model to return the ConsentUpdateModel class.')
 
+    def get_report_datetime(self):
+        return self.consent_datetime
+
     class Meta:
         abstract = True
