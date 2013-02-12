@@ -10,5 +10,8 @@ class BaseRegistrationModel (BaseRegisteredSubjectModel):
             datetime_not_before_study_start,
             datetime_not_future, ])
 
+    def get_report_datetime(self):
+        return self.registration_datetime
+
     class Meta:
         abstract = True
