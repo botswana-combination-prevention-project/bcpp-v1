@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
@@ -131,6 +132,15 @@ class RegisteredSubject(BaseSubject):
             return "{0} {1} ({2})".format(self.subject_identifier,
                                           self.subject_type,
                                           mask_encrypted(self.first_name))
+
+    def dashboard(self):
+        ret = None
+        if self.subject_identifier:
+            url = reverse('dashboard_url', kwargs={'dashboard_type': self.subject_type.lower(),
+                                                   'subject_identifier': self.subject_identifier})
+            ret = """<a href="{url}" />dashboard</a>""".format(url=url)
+        return ret
+    dashboard.allow_tags = True
 
 #    @property
 #    def is_dispatched(self):

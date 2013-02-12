@@ -11,6 +11,7 @@ class RegisteredSubjectAdmin (BaseModelAdmin):
 
     list_display = (
         'subject_identifier',
+        'dashboard',
         'first_name',
         'initials',
         'gender',

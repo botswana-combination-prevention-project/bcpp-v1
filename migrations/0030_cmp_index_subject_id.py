@@ -8,7 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        pass
+        db.create_index('bhp_registration_registeredsubject', ['subject_identifier', 'subject_type', 'relative_identifier', 'registration_datetime'], unique=False)
 
     def backwards(self, orm):
         pass
