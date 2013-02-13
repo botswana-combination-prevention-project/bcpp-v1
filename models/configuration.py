@@ -17,6 +17,13 @@ class Configuration(BaseSyncUuidModel):
         help_text='If Ticked, adjust the appointment date to have appointments always land on the same weekday.',
         )
 
+    default_appt_type = models.CharField(
+        max_length=10,
+        default='clinic',
+        choices=(('clinic', 'In clinic'), ('telephone', 'By telephone')),
+        help_text=''
+        )
+
     objects = ConfigurationManager()
 
     def natural_key(self):

@@ -5,3 +5,9 @@ APPT_STATUS = (
     ('done', 'Done'),
     ('cancelled', 'Cancelled'),
     )
+
+APPT_TYPE = (
+    ('clinic', 'In clinic'),
+    ('telephone', 'By telephone'),
+    ('home', 'At home'),
+    )

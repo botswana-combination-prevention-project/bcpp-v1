@@ -1,27 +1,12 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin
-from bhp_common.models import MyTabularInline
 from django.db.models import Max
 from django.contrib import messages
 from bhp_visit.classes import WindowPeriod
 from bhp_registration.models import RegisteredSubject
-from bhp_appointment.models import Appointment, Holiday, Configuration
+from bhp_appointment.models import Appointment
 from bhp_appointment.forms import AppointmentForm
-
-
-class HolidayAdmin(BaseModelAdmin):
-    pass
-admin.site.register(Holiday, HolidayAdmin)
-
-
-class HolidayInlineAdmin(MyTabularInline):
-    model = Holiday
-    extra = 0
-
-
-class ConfigurationAdmin(BaseModelAdmin):
-    inlines = [HolidayInlineAdmin, ]
-admin.site.register(Configuration, ConfigurationAdmin)
+from contact_log_item_admin import ContactLogItemInlineAdmin
 
 
 class AppointmentAdmin(BaseModelAdmin):
@@ -30,6 +15,7 @@ class AppointmentAdmin(BaseModelAdmin):
 
     form = AppointmentForm
     date_hierarchy = 'appt_datetime'
+    inlines = [ContactLogItemInlineAdmin, ]
 
     def save_model(self, request, obj, form, change):
         """Saves an appointment if handled through admin.
@@ -71,6 +57,7 @@ class AppointmentAdmin(BaseModelAdmin):
         'study_site',
         'visit_definition',
         'visit_instance',
+        'appt_type',
     )
 
     search_fields = ('registered_subject__subject_identifier', 'id')
@@ -101,6 +88,7 @@ class AppointmentAdmin(BaseModelAdmin):
     radio_fields = {
         "appt_status": admin.VERTICAL,
         'study_site': admin.VERTICAL,
+        'appt_type': admin.VERTICAL,
         }
 
 admin.site.register(Appointment, AppointmentAdmin)

@@ -1,0 +1,4 @@
+from appointment_admin import AppointmentAdmin
+from holiday_admin import HolidayInlineAdmin, HolidayAdmin
+from configuration_admin import ConfigurationAdmin
+from contact_log_item_admin import ContactLogItemInlineAdmin, ContactLogItemAdmin

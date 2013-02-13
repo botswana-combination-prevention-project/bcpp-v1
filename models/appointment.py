@@ -8,6 +8,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition
 from bhp_dispatch.models import DispatchItem
 from bhp_appointment.managers import AppointmentManager
+from bhp_appointment.choices import APPT_TYPE
 from base_appointment import BaseAppointment
 
 
@@ -47,6 +48,13 @@ class Appointment(BaseAppointment):
         blank=True,
         db_index=True,
         help_text='hold dashboard_type variable, set by dashboard')
+
+    appt_type = models.CharField(
+        verbose_name='Appointment type',
+        choices=APPT_TYPE,
+        default='clinic',
+        max_length=20,
+        help_text='Default is set in configuration.')
 
     objects = AppointmentManager()
 
