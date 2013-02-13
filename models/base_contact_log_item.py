@@ -6,6 +6,8 @@ from bhp_crypto.fields import EncryptedCharField
 
 class BaseContactLogItem(BaseConsentedUuidModel):
 
+    """Detail model for "inline" of a Contact Log."""
+
     contact_datetime = models.DateTimeField()
 
     contact_type = models.CharField(
