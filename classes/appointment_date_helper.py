@@ -2,9 +2,10 @@ from datetime import datetime, timedelta
 from django.conf import settings
 #from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import get_model
 from bhp_visit.classes import WindowPeriod
 from bhp_visit.models import VisitDefinition
-from bhp_appointment.models import Holiday, Configuration
+#from bhp_appointment.models import Holiday, Configuration
 
 
 class AppointmentDateHelper(object):
@@ -23,6 +24,7 @@ class AppointmentDateHelper(object):
         # not used
         self.allow_backwards = False
         # True if appointments should land on the same day for a subject
+        Configuration = get_model('bhp_appointment','configuration')
         config = Configuration.objects.get_configuration()
         self.use_same_weekday = config.use_same_weekday
         self.allowed_iso_weekdays = config.allowed_iso_weekdays
@@ -87,6 +89,7 @@ class AppointmentDateHelper(object):
 
     def _check_if_holiday(self, appt_datetime):
         """ Checks if appt_datetime lands on a holiday, if so, move forward """
+        Holiday = get_model('bhp_appointment','holiday')
         while appt_datetime.date() in [holiday.holiday_date for holiday in Holiday.objects.all()]:
             appt_datetime = appt_datetime + timedelta(days=+1)
             appt_datetime = self._check_if_allowed_isoweekday(appt_datetime)
