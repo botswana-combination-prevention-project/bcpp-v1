@@ -6,7 +6,7 @@ from bhp_visit.classes import WindowPeriod
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 from bhp_appointment.forms import AppointmentForm
-from contact_log_item_admin import ContactLogItemInlineAdmin
+from pre_appointment_contact_admin import PreAppointmentContactInlineAdmin
 
 
 class AppointmentAdmin(BaseModelAdmin):
@@ -15,7 +15,7 @@ class AppointmentAdmin(BaseModelAdmin):
 
     form = AppointmentForm
     date_hierarchy = 'appt_datetime'
-    inlines = [ContactLogItemInlineAdmin, ]
+    inlines = [PreAppointmentContactInlineAdmin, ]
 
     def save_model(self, request, obj, form, change):
         """Saves an appointment if handled through admin.
