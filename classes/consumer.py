@@ -79,7 +79,7 @@ class Consumer(object):
         deserialize_from_transaction = DeserializeFromTransaction()
         n = 0
         tot = IncomingTransaction.objects.filter(is_consumed=False).count()
-        for incoming_transaction in IncomingTransaction.objects.filter(is_consumed=False).order_by('producer', 'timestamp'):
+        for incoming_transaction in IncomingTransaction.objects.filter(is_consumed=False, is_ignored=False).order_by('producer', 'timestamp'):
             n += 1
             action = ''
             print '{0} / {1} {2} {3}'.format(n, tot, incoming_transaction.producer, incoming_transaction.tx_name)
