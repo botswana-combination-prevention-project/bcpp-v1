@@ -25,6 +25,20 @@ class PreAppointmentContact(BaseContactLogItem):
     def get_report_datetime(self):
         return self.appointment.get_report_datetime()
 
+    def post_save(self):
+        """Counts number of attempts to contact and if confirmed and updated appointment."""
+        dirty = False
+        contact_count = self.__class__.objects.filter(appointment=self.appointment).count()
+        if self.appointment.contact_count != contact_count:
+            self.appointment.contact_count = contact_count
+            dirty = True
+        if self.__class__.objects.filter(appointment=self.appointment, is_confirmed='Yes'):
+            if not self.appointment.is_confirmed:
+                self.appointment.is_confirmed = True
+                dirty = True
+        if dirty:
+            self.appointment.save()
+
 #    def save(self, *args, **kwargs):
 #        """Looks for a new_appt_datetime and decides if it can be used to modify the current appt datetime."""
 #        super(PreAppointmentContact, self).save(*args, **kwargs)

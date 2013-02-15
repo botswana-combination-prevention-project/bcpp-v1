@@ -36,6 +36,9 @@ class BaseAppointment (BaseSyncUuidModel):
         max_length=250,
         blank=True)
 
+    is_confirmed = models.BooleanField(default=False, editable=False)
+    contact_count = models.IntegerField(default=0, editable=False)
+
     def get_report_datetime(self):
         return self.appt_datetime
 
