@@ -15,7 +15,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
 from bhp_subject_summary.models import Link
 from lab_clinic_api.classes import EdcLab
-from bhp_entry.classes import ScheduledEntry
+from bhp_entry.classes import ScheduledEntry, AdditionalEntry
 from bhp_locator.models import BaseLocator
 from bhp_lab_tracker.classes import lab_tracker
 
@@ -152,6 +152,9 @@ class RegisteredSubjectDashboard(Dashboard):
                 ScheduledLabEntryBucket.objects.add_for_visit(
                     visit_model_instance=visit_model_instance,
                     requisition_model=self.requisition_model)
+        if self.registered_subject:
+            additional_entry = AdditionalEntry()
+            additional_entry.update_for_registered_subject(self.registered_subject)
 
     def _run_rule_groups(self, subject_identifier, visit_code, visit_model_instance):
         """ Runs rules in any rule groups if visit_code is known and update entries as (new, not required) when the visit dashboard is refreshed.
@@ -283,6 +286,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def _prepare_additional_entry_bucket(self):
         # get additional crfs
+        
         additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.registered_subject)
         self.context.add(additional_entry_bucket=additional_entry_bucket)
         return additional_entry_bucket
