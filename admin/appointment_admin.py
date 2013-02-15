@@ -66,6 +66,7 @@ class AppointmentAdmin(BaseModelAdmin):
         'registered_subject',
         'dashboard',
         'appt_datetime',
+        'appt_type',
         'appt_status',
         'visit_definition',
         'visit_instance',
@@ -76,6 +77,7 @@ class AppointmentAdmin(BaseModelAdmin):
     list_filter = (
         'study_site',
         'registered_subject__subject_type',
+        'appt_type',
         'appt_datetime',
         'appt_status',
         'visit_instance',

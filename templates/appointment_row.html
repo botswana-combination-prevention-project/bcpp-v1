@@ -25,6 +25,7 @@
             </B>
         {% endif %}
 </td>
+<td>{{ appointment.appt_type|appt_type }}</td>
 <td nowrap>{{ appointment.appt_datetime|date:"Y-m-d D" }}</td>
 {% endblock appointment_columns %}
 

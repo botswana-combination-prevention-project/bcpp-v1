@@ -11,3 +11,8 @@ APPT_TYPE = (
     ('telephone', 'By telephone'),
     ('home', 'At home'),
     )
+
+INFO_PROVIDER = (
+    ('subject', 'Subject'),
+    ('other', 'Other person'),
+)

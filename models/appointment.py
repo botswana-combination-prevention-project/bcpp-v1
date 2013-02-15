@@ -99,6 +99,12 @@ class Appointment(BaseAppointment):
     def get_absolute_url(self):
         return reverse('admin:bhp_appointment_appointment_change', args=(self.id,))
 
+    def get_subject_identifier(self):
+        return self.registered_subject.subject_identifier
+
+    def get_report_datetime(self):
+        return self.appt_datetime
+
     @property
     def is_dispatched(self):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""

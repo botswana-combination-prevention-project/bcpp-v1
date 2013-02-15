@@ -10,8 +10,12 @@ class PreAppointmentContactInlineAdmin(MyTabularInline):
     model = PreAppointmentContact
     form = PreAppointmentContactForm
     extra = 1
+    radio_fields = {"is_contacted": admin.VERTICAL,
+                    "is_confirmed": admin.VERTICAL}
 
 
 class PreAppointmentContactAdmin(BaseModelAdmin):
     form = PreAppointmentContactForm
+    radio_fields = {"is_contacted": admin.VERTICAL,
+                    "is_confirmed": admin.VERTICAL}
 admin.site.register(PreAppointmentContact, PreAppointmentContactAdmin)
