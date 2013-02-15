@@ -29,13 +29,14 @@ class AppointmentDateHelper(object):
         self.use_same_weekday = config.use_same_weekday
         self.allowed_iso_weekdays = config.allowed_iso_weekdays
 
-    def get_best_datetime(self, appt_datetime, site, weekday=None):
+    def get_best_datetime(self, appt_datetime, site, weekday=None, exception_cls=None):
         """ Gets the appointment datetime on insert.
 
         For example, may be configured to be on the same day as the base, not on holiday, etc.
 
         Note, appt_datetime comes from the membership_form model method get_registration_datetime"""
-
+        if not exception_cls:
+            exception_cls = AttributeError
         if not isinstance(appt_datetime, datetime):
             raise AttributeError('Expected parameter \'appt_datetime\' to be an instance of datetime')
         if weekday and self.use_same_weekday:
