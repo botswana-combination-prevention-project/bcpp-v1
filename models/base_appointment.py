@@ -38,6 +38,14 @@ class BaseAppointment (BaseSyncUuidModel):
 
     def get_report_datetime(self):
         return self.appt_datetime
-    
+
+    def is_new_appointment(self):
+        if 'new' not in [s[0] for s in APPT_STATUS]:
+            raise TypeError('Choices tuple does not contain a \'new\' element.')
+        retval = False
+        if self.appt_status.lower == 'new':
+            retval = True
+        return retval
+
     class Meta:
         abstract = True

@@ -2,6 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from audit_trail.audit import AuditTrail
 from bhp_variables.models import StudySite
 from bhp_registration.models import RegisteredSubject
@@ -64,17 +65,29 @@ class Appointment(BaseAppointment):
         return (self.visit_instance, ) + self.visit_definition.natural_key() + self.registered_subject.natural_key()
     natural_key.dependencies = ['bhp_registration.registeredsubject', 'bhp_visit.visitdefinition']
 
-    def save(self, *args, **kwargs):
+    def validate_appt_datetime(self, exception_cls=None):
+        """Returns the appt_datetime, possibly adjusted, and the best_appt_datetime, the calculated ideal timepoint datetime.
+
+        .. note:: best_appt_datetime is not editable by the user. If 'None', will raise an exception."""
         from bhp_appointment_helper.classes import AppointmentDateHelper
+        if not exception_cls:
+            exception_cls = ValidationError
         appointment_date_helper = AppointmentDateHelper()
         if not self.id:
-            self.appt_datetime = appointment_date_helper.get_best_datetime(self.appt_datetime, self.study_site)
-            self.best_appt_datetime = self.appt_datetime
+            appt_datetime = appointment_date_helper.get_best_datetime(self.appt_datetime, self.study_site)
+            best_appt_datetime = self.appt_datetime
         else:
             if not self.best_appt_datetime:
                 # did you update best_appt_datetime for existing instances since the migration?
-                raise TypeError('Appointment instance attribute \'best_appt_datetime\' cannot be null on change.')
-            self.appt_datetime = appointment_date_helper.change_datetime(self.best_appt_datetime, self.appt_datetime, self.study_site, self.visit_definition)
+                raise exception_cls('Appointment instance attribute \'best_appt_datetime\' cannot be null on change.')
+            #if not self.is_new_appointment():
+            #    raise exception_cls('Appointment date can no longer be changed. Appointment is not \'New\'')
+            appt_datetime = appointment_date_helper.change_datetime(self.best_appt_datetime, self.appt_datetime, self.study_site, self.visit_definition)
+            best_appt_datetime = self.best_appt_datetime
+        return appt_datetime, best_appt_datetime
+
+    def save(self, *args, **kwargs):
+        self.appt_datetime, self.best_appt_datetime = self.validate_appt_datetime()
         super(Appointment, self).save(*args, **kwargs)
 
     def __unicode__(self):
