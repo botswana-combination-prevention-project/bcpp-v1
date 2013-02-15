@@ -24,10 +24,15 @@ class BaseConsentedUuidModel(BaseSyncUuidModel):
         """Validate fields under consent version control to be set to the default value or not (None)."""
         return self.get_consent_helper_cls()(self).validate_versioned_fields()
 
+    def get_requires_consent(self):
+        """Users may override to return False to bypass consent checks for this model instance."""
+        return True
+
     def save(self, *args, **kwargs):
-        if not self.is_consented_for_instance():
-            raise TypeError('Data may not be collected. Model {0} is not covered by a valid consent for this subject.'.format(self._meta.object_name))
-        self.validate_versioned_fields()
+        if self.get_requires_consent():
+            if not self.is_consented_for_instance():
+                raise TypeError('Data may not be collected. Model {0} is not covered by a valid consent for this subject.'.format(self._meta.object_name))
+            self.validate_versioned_fields()
         super(BaseConsentedUuidModel, self).save(*args, **kwargs)
 
     class Meta:

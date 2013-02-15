@@ -46,6 +46,8 @@ class ConsentHelper(object):
     def _set_subject_instance(self, subject_instance):
         """Sets the subject instance after confirming model is listed and active in AttachedModels.
 
+        You can add to the model a method :func:`get_requires_consent` returning False, to bypass, or True to force.
+
         .. seealso:: Results may not be as expected. See comment on :class:`base_consented_model_form.BaseConsentedModelForm` :func:`check_attached`."""
         RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
         if not isinstance(subject_instance, RegisteredSubject):
