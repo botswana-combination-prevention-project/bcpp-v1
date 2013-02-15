@@ -10,7 +10,7 @@ class BaseEntry(object):
         self._filter_fieldname = None  # field to filter the target_model
         self._filter_model_instance = None  # instance of field to filter the user model
         self._target_model_cls = None
-        self._bucket_model_cls = None  # for example, ScheduledEntryBucket
+        self._bucket_model_cls = None  # for example, ScheduledEntryBucket, AdditionalEnrtyBucket
         self._bucket_model_instance = None
         self._target_model_base_cls = None  # for error reporting
         self._content_type_map = None  # to help get the correct instance from the model 'Entry'
@@ -119,21 +119,7 @@ class BaseEntry(object):
         return self._target_model_cls
 
     def set_target_model_instance(self, target_model_instance=None):
-        """ Sets the instance of the target model class if it can using the visit_model_instance."""
-        self._target_model_instance = None
-        if target_model_instance:
-            self._target_model_instance = target_model_instance
-            self.set_target_model_cls(self._target_model_instance.__class__)
-        elif self.get_visit_model_fieldname() and self.get_visit_model_instance():
-            try:
-                if self.get_target_model_cls().objects.filter(**{self.get_visit_model_fieldname(): self.get_visit_model_instance()}).exists():
-                    self._target_model_instance = self.get_target_model_cls().objects.get(**{self.get_visit_model_fieldname(): self.get_visit_model_instance()})
-            except FieldError as e:
-                raise FieldError('Field {0} does not exist in model class {1}. Got {2}'.format(self.get_visit_model_fieldname(), self.get_target_model_cls(), e))
-            except:
-                raise
-        else:
-            pass
+        raise TypeError("Method must be overridden")
 
     def get_target_model_instance(self):
         if not self._target_model_instance:
@@ -202,4 +188,17 @@ class BaseEntry(object):
             retval = 'NEW'
         return retval
 
-
+    def update_bucket(self, action, report_datetime=None, comment=None):
+        bucket_instance = self.get_bucket_model_instance()
+        if not bucket_instance:
+            raise TypeError('Attribute for bucket model instance cannot be None.')
+        if not report_datetime:
+            self.get_filter_model_instance().report_datetime
+        bucket_instance.report_datetime = report_datetime
+        if comment:
+            bucket_instance.entry_comment = comment
+        else:
+            bucket_instance.entry_comment = ''
+        entry_status = self.get_status(action)
+        bucket_instance.entry_status = entry_status
+        bucket_instance.save()

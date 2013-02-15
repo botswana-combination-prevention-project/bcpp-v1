@@ -2,15 +2,12 @@ from datetime import datetime
 from bhp_entry.models import Entry
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_entry.models import ScheduledEntryBucket
-from base_entry import BaseEntry
+from base_scheduled_entry import BaseScheduledEntry
 
 
-class ScheduledEntry(BaseEntry):
+class ScheduledEntry(BaseScheduledEntry):
     def set_bucket_model_cls(self):
         self._bucket_model_cls = ScheduledEntryBucket
-
-    def set_target_model_base_cls(self):
-        self._target_model_base_cls = BaseVisitTracking
 
     def set_filter_fieldname(self, filter_field_name=None):
         """Returns the field name for the foreignkey that points to the visit model."""
@@ -84,23 +81,6 @@ class ScheduledEntry(BaseEntry):
                     bucket_instance.report_datetime = report_datetime
                     bucket_instance.entry_status = entry_status
                     bucket_instance.save()
-
-    def update_bucket(self, action, report_datetime=None, comment=None):
-        bucket_instance = self.get_bucket_model_instance()
-        if not bucket_instance:
-            raise TypeError('Attribute for bucket model instance cannot be None.')
-        if not report_datetime:
-            self.get_filter_model_instance().report_datetime
-        bucket_instance.report_datetime = report_datetime
-        if comment:
-            bucket_instance.entry_comment = comment
-        else:
-            bucket_instance.entry_comment = ''
-        entry_status = self.get_status(action)
-        bucket_instance.entry_status = entry_status
-        #if entry_status.lower() != action.lower():
-        bucket_instance.save()
-        #print 'updated from {0} to {1}.for {2}'.format(action, entry_status, bucket_instance)
 
     def update_status_from_instance(self, action, target_model_instance, filter_model_cls, comment=None):
         "Sets up then calls update bucket using a user model instance."""
