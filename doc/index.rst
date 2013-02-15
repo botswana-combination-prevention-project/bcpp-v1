@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 2
 
    overview
-   scheduling_appointments
+   mananging_appointments
    installation
    classes
    models
