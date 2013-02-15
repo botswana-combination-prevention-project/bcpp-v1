@@ -10,6 +10,8 @@
 #    model = InfantContactLogItem
 #    form = InfantContactLogItemForm
 #    extras = 1
+#    radio_fields = {"is_contacted": admin.VERTICAL,
+#                    "infant_status": admin.VERTICAL}
 #
 #
 #class InfantContactLogAdmin(InfantVisitModelAdmin):
