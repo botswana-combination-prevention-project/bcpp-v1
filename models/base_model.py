@@ -10,9 +10,9 @@ class BaseModel(TimeStampedModel):
 
     """Base model class for all models. Adds created and modified values for user, date and hostname (computer). """
 
-    user_created = models.CharField(max_length=250, verbose_name='user created', editable=False, default="")
+    user_created = models.CharField(max_length=250, verbose_name='user created', editable=False, default="", db_index=True)
 
-    user_modified = models.CharField(max_length=250, verbose_name='user modified', editable=False, default="")
+    user_modified = models.CharField(max_length=250, verbose_name='user modified', editable=False, default="", db_index=True)
 
     hostname_created = HostnameCreationField(
          db_index=True)
