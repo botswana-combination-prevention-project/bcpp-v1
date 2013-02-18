@@ -4,14 +4,14 @@ from pre_appointment_contact import PreAppointmentContact
 
 
 @receiver(post_save, weak=False, dispatch_uid="PreAppointmentContact_on_post_save")
-def PreAppointmentContact_on_post_save(sender, instance, **kwargs):
+def pre_appointment_contact_on_post_save(sender, instance, **kwargs):
     """Calls post_save method which will only call save."""
     if isinstance(instance, PreAppointmentContact):
         instance.post_save()
 
 
 @receiver(post_delete, weak=False, dispatch_uid="PreAppointmentContact_on_post_delete")
-def PreAppointmentContact_on_post_delete(sender, instance, **kwargs):
+def pre_appointment_contact_on_post_delete(sender, instance, **kwargs):
     """Calls post_delete method."""
     if isinstance(instance, PreAppointmentContact):
         instance.post_delete()
