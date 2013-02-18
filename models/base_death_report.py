@@ -1,7 +1,7 @@
 from django.db import models
-from bhp_adverse.classes import BaseDeath
 from bhp_common.choices import YES_NO
 from bhp_code_lists.models import DxCode
+from base_death import BaseDeath
 
 
 class BaseDeathReport(BaseDeath):

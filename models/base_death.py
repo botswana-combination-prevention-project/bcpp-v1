@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_adverse.models import DeathMedicalResponsibility
+from death_list import DeathMedicalResponsibility
 from base_base_death import BaseBaseDeath
 
 
