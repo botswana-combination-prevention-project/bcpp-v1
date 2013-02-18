@@ -1,4 +1,4 @@
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, OneToOneField
 from django.db.models import get_app, get_models
 from bhp_visit_tracking.models import BaseVisitTracking
 
@@ -39,7 +39,7 @@ class VisitModelHelper(object):
             pass
         if not visit_fk:
             for f in model._meta.fields:
-                if isinstance(f, ForeignKey):
+                if isinstance(f, ForeignKey, OneToOneField):
                     cls = f.rel.to
                     if isinstance(visit_model, cls):
                         visit_fk = f
