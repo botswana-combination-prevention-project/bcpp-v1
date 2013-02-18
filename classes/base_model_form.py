@@ -1,4 +1,7 @@
 from django import forms
+from django.conf import settings
+from django.db.models import OneToOneField, ForeignKey
+from bhp_visit_tracking.models import BaseVisitTracking
 from logic_check import LogicCheck
 
 
@@ -9,17 +12,36 @@ class BaseModelForm(forms.ModelForm):
         super(BaseModelForm, self).__init__(*args, **kwargs)
         self.logic = LogicCheck(self._meta.model)
 
+    def get_subject_identifier(self, cleaned_data):
+        subject_identifier = None
+        if 'subject_identifier' in cleaned_data:
+            subject_identifier = cleaned_data.get('subject_identifier')
+        if not subject_identifier:
+            if 'registered_subject' in cleaned_data:
+                subject_identifier = cleaned_data.get('registered_subject').subject_identifier
+        if not subject_identifier:
+            # look for a visit model field
+            for field in self._meta.model._meta.fields:
+                if isinstance(field, (OneToOneField, ForeignKey)):
+                    if isinstance(field.rel.to, BaseVisitTracking):
+                        attrname = field.attrname
+                        visit = cleaned_data.get(attrname, None)
+                        if visit:
+                            subject_identifier = visit.get_subject_identifier()
+        #if not subject_identifier:
+        #    raise forms.ValidationError('Cannot determine subject_identifier for dispatch (bhp_dispatch).')
+        return subject_identifier
+
     def clean(self):
 
         cleaned_data = self.cleaned_data
-
         # check if dispatched
-        #if 'registered_subject' in cleaned_data:
-            #registered_subject = cleaned_data.get('registered_subject', None)
-        if 'is_dispatched' in dir(self._meta.model()):
-            is_dispatched, producer = self._meta.model().is_dispatched()
-            if is_dispatched:
-                raise forms.ValidationError('Subject is currently dispatched to {0}.'.format(producer))
+        if 'bhp_dispatch' in settings.INSTALLED_APPS:
+            subject_identifier = self.get_subject_identifier(cleaned_data)
+            if 'is_dispatched' in dir(self._meta.model()):
+                is_dispatched, producer = self._meta.model().is_dispatched_to_producer(subject_identifier)
+                if is_dispatched:
+                    raise forms.ValidationError('Model {0} for subject {1} is currently dispatched to {3}.'.format(producer))
 #        if 'subject_identifier' in cleaned_data:
 #            #subject_identifier = cleaned_data.get('subject_identifier', None)
 #            if 'is_dispatched' in dir(self._meta.model()):
