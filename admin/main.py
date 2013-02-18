@@ -1,6 +1,5 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
-from models import SimpleAdverseEvent, DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility, DeathReasonHospitalized
+from bhp_adverse.models import SimpleAdverseEvent, DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility, DeathReasonHospitalized
 
 admin.site.register(DeathCauseInfo)
 admin.site.register(DeathCauseCategory)
