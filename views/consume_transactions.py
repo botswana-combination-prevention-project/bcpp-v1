@@ -1,20 +1,20 @@
 import urllib2
-from sys import platform as _platform
+import json
+#from sys import platform as _platform
 #if _platform == "linux" or _platform == "linux2":
     # linux
-import json
 #elif _platform == "darwin":
 #    import json
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.db.models import get_model
 from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from bhp_sync.models import Producer, RequestLog, IncomingTransaction, OutgoingTransaction
 from bhp_sync.classes import TransactionProducer
-from bhp_dispatch.models import DispatchItem
 
 
 @login_required
@@ -125,6 +125,7 @@ def consume_transactions(request, **kwargs):
                                         f.close()
                                         producer.sync_status = 'OK'
                     if 'ALLOW_DISPATCH' in dir(settings) and settings.ALLOW_DISPATCH:
+                        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
                         if OutgoingTransaction.objects.using(producer.name).filter(is_consumed=False).exists():
                             messages.add_message(request, messages.ERROR, 'Not all Transactions consumed from producer %s.' % (kwargs.get('producer')))
                         else:
