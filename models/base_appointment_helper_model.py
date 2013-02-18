@@ -1,3 +1,4 @@
+from django.db.models.signals import Signal, post_save
 from bhp_consent.models import BaseConsentedUuidModel
 
 
@@ -9,6 +10,12 @@ class BaseAppointmentHelperModel (BaseConsentedUuidModel):
     trigger the creation of appointments.
 
     """
+
+    def deserialize_prep(self):
+        Signal.disconnect(post_save, None, weak=False, dispatch_uid="prepare_appointments_on_post_save")
+
+    def deserialize_post(self):
+        Signal.connect(post_save, None, weak=False, dispatch_uid="prepare_appointments_on_post_save")
 
     def pre_prepare_appointments(self):
         """Users may override to add functionality before creating appointments."""
@@ -28,11 +35,6 @@ class BaseAppointmentHelperModel (BaseConsentedUuidModel):
         from bhp_appointment_helper.classes import AppointmentHelper
         AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
         self.post_prepare_appointments()
-
-#    def save(self, *args, **kwargs):
-#        """Calls method to check if appointments need to be prepared (see :func:`prepare_appointments`)."""
-#        super(BaseAppointmentHelperModel, self).save(*args, **kwargs)
-#        #self.prepare_appointments()  # moved to a signal
 
     class Meta:
         abstract = True
