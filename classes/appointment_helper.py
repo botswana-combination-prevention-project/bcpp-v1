@@ -65,11 +65,11 @@ class AppointmentHelper(object):
                 if Appointment.objects.filter(
                             registered_subject=registered_subject,
                             visit_definition=visit_definition,
-                            visit_instance=0):
+                            visit_instance='0'):
                     appt = Appointment.objects.get(
                                 registered_subject=registered_subject,
                                 visit_definition=visit_definition,
-                                visit_instance=0)
+                                visit_instance='0')
                     if appt.best_appt_datetime != appt_datetime:
                         # the calculated appointment date does not match the best_appt_datetime
                         # which means you changed the date on the membership form and now
@@ -82,7 +82,7 @@ class AppointmentHelper(object):
                     Appointment.objects.create(
                         registered_subject=registered_subject,
                         visit_definition=visit_definition,
-                        visit_instance=0,
+                        visit_instance='0',
                         appt_datetime=appt_datetime,
                         timepoint_datetime=appt_datetime,
                         dashboard_type=dashboard_type)
@@ -127,5 +127,5 @@ class AppointmentHelper(object):
                 Appointment.objects.create(
                     registered_subject=appointment.registered_subject,
                     visit_definition=appointment.visit_definition,
-                    visit_instance=next_visit_instance,
+                    visit_instance=str(next_visit_instance),
                     appt_datetime=appt_datetime)
