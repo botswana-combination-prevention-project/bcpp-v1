@@ -4,7 +4,6 @@ from bhp_base_model.validators import datetime_not_before_study_start, datetime_
 from bhp_base_model.fields import OtherCharField
 from bhp_appointment.models import Appointment
 from bhp_visit_tracking.managers import VisitTrackingManager
-from bhp_dispatch.models import DispatchItem
 
 
 class BaseVisitTracking (BaseConsentedUuidModel):
@@ -128,20 +127,6 @@ class BaseVisitTracking (BaseConsentedUuidModel):
 
     def get_report_datetime(self):
         return self.report_datetime
-
-    def is_dispatched_to_producer(self):
-        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-        locked = False
-        producer = None
-        if DispatchItem.objects.filter(
-                subject_identifiers__icontains=self.appointment.registered_subject.subject_identifier,
-                is_dispatched=True).exists():
-            dispatch_item = DispatchItem.objects.get(
-                subject_identifiers__icontains=self.appointment.registered_subject.subject_identifier,
-                is_dispatched=True)
-            producer = dispatch_item.producer
-            locked = True
-        return locked, producer
 
     class Meta:
         abstract = True
