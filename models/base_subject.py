@@ -71,6 +71,9 @@ class BaseSubject (BaseSyncUuidModel):
         null=True,
         )
 
+    def get_subject_identifier(self):
+        return self.subject_identifier
+
     def save(self, *args, **kwargs):
         # for new instances, enforce unique subject_identifier if not null
         if not self.pk and self.subject_identifier:
