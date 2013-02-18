@@ -44,6 +44,27 @@ class BaseSyncUuidModel(BaseUuidModel):
         logger.info('method deserialize_get_missing_fk is not defined, raising TypeError()')
         raise TypeError()
 
+    @property
+    def is_dispatched(self):
+        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
+        locked, producer = self.is_dispatched_to_producer()
+        return locked
+
+    def is_dispatched_to_producer(self):
+        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
+        locked = False
+        producer = None
+        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
+        if DispatchItem.objects.filter(
+                subject_identifiers__icontains=self.get_subject_identifier(),
+                is_dispatched=True).exists():
+            dispatch_item = DispatchItem.objects.get(
+                subject_identifiers__icontains=self.get_subject_identifier(),
+                is_dispatched=True)
+            producer = dispatch_item.producer
+            locked = True
+        return locked, producer
+
     def save(self, *args, **kwargs):
         # sneek in the transaction_producer, if called from
         # view in bhp_sync.
