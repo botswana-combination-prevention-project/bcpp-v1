@@ -40,6 +40,7 @@ class SiteLabTracker(object):
     def __init__(self):
         self._registry = []
         self._group_names = []
+        self.autodiscovered = False
 
     def register(self, lab_tracker_cls):
         """Registers lab_tracker classes to a list.
@@ -82,6 +83,7 @@ class SiteLabTracker(object):
         return None
 
     def get_history_as_string(self, group_name, subject_identifier, mapped=True):
+        self.check_autodiscovered()
         retval = ''
         for lab_tracker_cls in self._registry:
             if lab_tracker_cls().get_group_name() == group_name:
@@ -106,6 +108,7 @@ class SiteLabTracker(object):
            was drawn in order to grade a test result.
            See :func:`lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status`.
         """
+        self.check_autodiscovered()
         value = None
         is_default_value = None  # if no value is found in the classes' history model, is there a default?
         for lab_tracker_cls in self._registry:
@@ -121,6 +124,7 @@ class SiteLabTracker(object):
 
     def autodiscover(self):
         """Searches all apps for :file:`lab_tracker.py` and registers and :class:`LabTracker` subclasses found."""
+        self.autodiscovered = True
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             try:
@@ -130,5 +134,12 @@ class SiteLabTracker(object):
                 lab_tracker._registry = before_import_registry
                 if module_has_submodule(mod, 'lab_tracker'):
                     raise
+
+    def check_autodiscovered(self):
+        """Confirms that autodiscover() was called at least once."""
+        if not self.autodiscovered:
+            raise ImproperlyConfigured('Call lab_tracker.autodiscover() before accessing values. Perhaps place this in the urls.py')
+
+
 # A global to contain all lab_tracker instances from modules
 lab_tracker = SiteLabTracker()

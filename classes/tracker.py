@@ -33,6 +33,19 @@ class LabTracker(object):
           model :class:`lab_clinic_api.models.ResultItem`.
 
         .. note:: If models is not defined, the class will just track values in :mod:`lab_clinic_api.result_item`.
+
+    You may also need to add a method on the model to return a known value. For example, for HIV::
+
+        def get_result_value(self, attr=None):
+            retval = None
+            if not attr in dir(self):
+                raise TypeError('Attribute {0} does not exist in model {1}'.format(attr, self._meta.object_name))
+            if attr == 'is_hiv_pos':
+                if self.is_hiv_pos.lower() == 'yes':
+                    retval = 'POS'
+                else:
+                    retval = 'NEG'
+            return retval
     """
 
     MODEL_CLS = 0
@@ -129,6 +142,8 @@ class LabTracker(object):
         Size of tuple may vary depending on the options provided.
 
         .. note:: the first element, the model_cls, may be a tuple of (app_label, model_name).
+
+        .. seealso:: :func:`_get_tracker_result_value` for expalnation of `allow_null`.
         """
         if index in range(0, 5):
             retval = model_tpl[index]

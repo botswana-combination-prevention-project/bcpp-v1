@@ -1,7 +1,7 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin
-from models import HistoryModel, HistoryModelError, DefaultValueLog
-from actions import update_lab_tracker
+from bhp_lab_tracker.models import HistoryModel, HistoryModelError, DefaultValueLog
+from bhp_lab_tracker.actions import update_lab_tracker
 
 
 class HistoryModelAdmin(BaseModelAdmin):
