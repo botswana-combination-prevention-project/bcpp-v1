@@ -29,10 +29,10 @@ class BaseAppointmentHelperModel (BaseConsentedUuidModel):
         AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
         self.post_prepare_appointments()
 
-    def save(self, *args, **kwargs):
-        """Calls method to check if appointments need to be prepared (see :func:`prepare_appointments`)."""
-        super(BaseAppointmentHelperModel, self).save(*args, **kwargs)
-        self.prepare_appointments()
+#    def save(self, *args, **kwargs):
+#        """Calls method to check if appointments need to be prepared (see :func:`prepare_appointments`)."""
+#        super(BaseAppointmentHelperModel, self).save(*args, **kwargs)
+#        #self.prepare_appointments()  # moved to a signal
 
     class Meta:
         abstract = True
