@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from django.conf import settings
 from django.core import serializers
+from django.core.exceptions import ValidationError
 from django.db.models import get_model
 from bhp_sync.classes import TransactionProducer
 from bhp_base_model.models import BaseUuidModel
@@ -47,37 +48,40 @@ class BaseSyncUuidModel(BaseUuidModel):
     @property
     def is_dispatched(self):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-        locked, producer = self.is_dispatched_to_producer()
-        return locked
+        is_dispatched, producer = self.is_dispatched_to_producer()
+        return is_dispatched
 
-    def is_dispatched_to_producer(self):
+    def is_dispatched_to_producer(self, subject_identifier=None):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-        locked = False
+        is_dispatched = False
         producer = None
+        if not subject_identifier:
+            if 'get_subject_identifier' in dir(self):
+                self.get_subject_identifier()
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-        if DispatchItem.objects.filter(
-                subject_identifiers__icontains=self.get_subject_identifier(),
-                is_dispatched=True).exists():
-            dispatch_item = DispatchItem.objects.get(
-                subject_identifiers__icontains=self.get_subject_identifier(),
-                is_dispatched=True)
-            producer = dispatch_item.producer
-            locked = True
-        return locked, producer
+        if DispatchItem:
+            if DispatchItem.objects.filter(
+                    subject_identifiers__icontains=subject_identifier,
+                    is_dispatched=True).exists():
+                dispatch_item = DispatchItem.objects.get(
+                    subject_identifiers__icontains=subject_identifier,
+                    is_dispatched=True)
+                producer = dispatch_item.producer
+                is_dispatched = True
+        return (is_dispatched, producer)
 
     def save(self, *args, **kwargs):
-        # sneek in the transaction_producer, if called from
-        # view in bhp_sync.
-        # get value and delete from kwargs before calling super
-        #transaction_producer = TransactionProducer()
         if 'transaction_producer' in kwargs:
             #transaction_producer = kwargs.get('transaction_producer')
             del kwargs['transaction_producer']
-        # used 'suppress_autocreate_on_deserialize' to not allow save methods
-        # to create new model instances such as appointments, ScheduledEntry, etc
-        # as these will be serialized on the producer
-        if 'suppress_autocreate_on_deserialize' in kwargs:
-            del kwargs['suppress_autocreate_on_deserialize']
+        # for bhp_dispatch, catch instances that may not be saved
+        if 'bhp_dispatch' in settings.INSTALLED_APPS:
+            is_dispatched, producer = self.is_dispatched_to_producer()
+            if is_dispatched:
+                raise ValidationError('Save not allowed. Model {0} for subject {1} is currently dispatched to {3}.'
+                                  '(You should catch this in the form validation.)'.format(self._meta.object_name,
+                                                                                           self.get_subject_identifier(),
+                                                                                           producer))
         super(BaseSyncUuidModel, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -89,7 +93,6 @@ class BaseSyncUuidModel(BaseUuidModel):
             del kwargs['transaction_producer']
 
         if self.is_serialized() and not self._meta.proxy:
-
             outgoing_transaction = get_model('bhp_sync', 'outgoingtransaction')
             json_obj = serializers.serialize(
                 "json", self.__class__.objects.filter(pk=self.pk), use_natural_keys=True)
