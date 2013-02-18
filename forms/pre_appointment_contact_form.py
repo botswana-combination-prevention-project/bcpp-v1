@@ -10,7 +10,7 @@ class PreAppointmentContactForm (BaseModelForm):
 
     information_provider = forms.ChoiceField(
         label='Who answered?',
-        choices=[choice for choice in INFO_PROVIDER],
+        choices=[('', 'None')] + list(INFO_PROVIDER),
         required=False,
         widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer),
         )

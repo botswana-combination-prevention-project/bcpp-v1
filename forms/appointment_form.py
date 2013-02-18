@@ -31,6 +31,8 @@ class AppointmentForm(BaseModelForm):
         visit_instance = cleaned_data.get("visit_instance")
         #default_entry_status = cleaned_data.get('default_entry_status')
 
+        self._meta.model().validate_visit_instance(forms.ValidationError)
+
         # do not create an appointment unless visit_code+visit_instance=0 already exists
         # visit_instance 0 visits should be created automatically
         # create appointment link is just for creating continuation appointment
@@ -40,7 +42,7 @@ class AppointmentForm(BaseModelForm):
                 registered_subject=registered_subject,
                 visit_definition=visit_definition,
                 visit_instance=0).exists():
-            raise ValidationError('Cannot create continuation appointment for visit %s. Cannot find the original appointment (visit instance equal to 0).' % (visit_definition,))
+            raise forms.ValidationError('Cannot create continuation appointment for visit %s. Cannot find the original appointment (visit instance equal to 0).' % (visit_definition,))
         else:
             pass
         # check appointment date relative to status

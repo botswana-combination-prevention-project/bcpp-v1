@@ -34,7 +34,7 @@ class ContinuationAppointmentAnchor(template.Node):
                 # TODO: resolve error when using extra_url_context...give back variable name ???
                 # rev_url = '%s?next=dashboard_url&dashboard_type=%s&registered_subject=%s&visit_definition=%s&visit_instance=%s%s' % (reverse(view), self.dashboard_type, self.appointment.registered_subject.pk,self.appointment.visit_definition.pk, str(int(self.appointment.visit_instance) + 1), self.extra_url_context)
                 rev_url = '%s?next=dashboard_url&dashboard_type=%s&registered_subject=%s&visit_definition=%s&visit_instance=%s' % (reverse(view), self.dashboard_type, self.appointment.registered_subject.pk, self.appointment.visit_definition.pk, str(int(self.appointment.visit_instance) + 1))
-                anchor = '<A href="%s">(add continuation?)</A>' % (rev_url)
+                anchor = '|&nbsp;<A href="%s">Add continuation</A>' % (rev_url)
             except:
                 raise TypeError('ContinuationAppointmentUrl Tag: NoReverseMatch while rendering reverse for %s. Is model registered in admin?' % (self.appointment._meta.module_name))
 

@@ -14,7 +14,7 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
         dashboard_type = 'maternal'
 
     if you are tracking labs, also include a model that inherets from lab_requisition.models.BaseRequisition, e.g.::
-    
+
         requisition_model = MaternalRequisition
 
     """

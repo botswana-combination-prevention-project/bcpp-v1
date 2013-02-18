@@ -70,6 +70,7 @@ class Appointment(BaseAppointment):
 
         .. note:: best_appt_datetime is not editable by the user. If 'None', will raise an exception."""
         from bhp_appointment_helper.classes import AppointmentDateHelper
+        # for tests
         if not exception_cls:
             exception_cls = ValidationError
         appointment_date_helper = AppointmentDateHelper()
@@ -86,8 +87,29 @@ class Appointment(BaseAppointment):
             best_appt_datetime = self.best_appt_datetime
         return appt_datetime, best_appt_datetime
 
+    def validate_visit_instance(self, exception_cls=None):
+        """Confirms a 0 instance appointment exists before allowing a continuation appt and keep a sequence."""
+        if not exception_cls:
+            exception_cls = ValidationError
+        if self.visit_instance != '0':
+            if not Appointment.objects.filter(
+                    registered_subject=self.registered_subject,
+                    visit_definition=self.visit_definition,
+                    visit_instance='0').exclude(pk=self.pk).exists():
+                raise exception_cls('Cannot create continuation appointment for visit %s. Cannot find the original appointment (visit instance equal to 0).' % (self.visit_definition,))
+            if int(self.visit_instance) - 1 != 0:
+                if not Appointment.objects.filter(
+                        registered_subject=self.registered_subject,
+                        visit_definition=self.visit_definition,
+                        visit_instance=str(int(self.visit_instance) - 1)).exists():
+                    raise exception_cls('Cannot create continuation appointment for visit {0}. '
+                                        'Expected next visit instance to be {1}. Got {2}'.format(self.visit_definition,
+                                                                                                 str(int(self.visit_instance) - 1),
+                                                                                                 self.visit_instance))
+
     def save(self, *args, **kwargs):
         self.appt_datetime, self.best_appt_datetime = self.validate_appt_datetime()
+        self.validate_visit_instance()
         super(Appointment, self).save(*args, **kwargs)
 
     def __unicode__(self):
