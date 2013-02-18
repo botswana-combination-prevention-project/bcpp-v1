@@ -7,7 +7,6 @@ from audit_trail.audit import AuditTrail
 from bhp_variables.models import StudySite
 from bhp_registration.models import RegisteredSubject
 from bhp_visit.models import VisitDefinition
-from bhp_dispatch.models import DispatchItem
 from bhp_appointment.managers import AppointmentManager
 from bhp_appointment.choices import APPT_TYPE
 from base_appointment import BaseAppointment
@@ -141,26 +140,6 @@ class Appointment(BaseAppointment):
 
     def get_report_datetime(self):
         return self.appt_datetime
-
-    @property
-    def is_dispatched(self):
-        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-        locked, producer = self.is_dispatched_to_producer()
-        return locked
-
-    def is_dispatched_to_producer(self):
-        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-        locked = False
-        producer = None
-        if DispatchItem.objects.filter(
-                subject_identifiers__icontains=self.registered_subject.subject_identifier,
-                is_dispatched=True).exists():
-            dispatch_item = DispatchItem.objects.get(
-                subject_identifiers__icontains=self.registered_subject.subject_identifier,
-                is_dispatched=True)
-            producer = dispatch_item.producer
-            locked = True
-        return locked, producer
 
     class Meta:
         ordering = ['registered_subject', 'appt_datetime', ]
