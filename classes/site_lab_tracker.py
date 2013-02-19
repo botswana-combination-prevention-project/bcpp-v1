@@ -40,7 +40,7 @@ class SiteLabTracker(object):
     def __init__(self):
         self._registry = []
         self._group_names = []
-        self.autodiscovered = False
+        self._autodiscovered = False
 
     def register(self, lab_tracker_cls):
         """Registers lab_tracker classes to a list.
@@ -83,7 +83,7 @@ class SiteLabTracker(object):
         return None
 
     def get_history_as_string(self, group_name, subject_identifier, mapped=True):
-        self.check_autodiscovered()
+        self.confirm_autodiscovered()
         retval = ''
         for lab_tracker_cls in self._registry:
             if lab_tracker_cls().get_group_name() == group_name:
@@ -108,7 +108,7 @@ class SiteLabTracker(object):
            was drawn in order to grade a test result.
            See :func:`lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status`.
         """
-        self.check_autodiscovered()
+        self.confirm_autodiscovered()
         value = None
         is_default_value = None  # if no value is found in the classes' history model, is there a default?
         for lab_tracker_cls in self._registry:
@@ -119,12 +119,12 @@ class SiteLabTracker(object):
                 break
         if not value:
             # a value should always be returned, even if it is the classes' default value.
-            raise TypeError('Value cannot be None. Using ({0}, {1}, {2}). Lab tracker class not found for group name. Define at least one.'.format(group_name, subject_identifier, value_datetime))
+            raise TypeError('Value cannot be None. Using ({0}, {1}, {2}). Lab tracker class not found for group name or no get_default_value() method.'.format(group_name, subject_identifier, value_datetime))
         return (value, is_default_value)
 
     def autodiscover(self):
         """Searches all apps for :file:`lab_tracker.py` and registers and :class:`LabTracker` subclasses found."""
-        self.autodiscovered = True
+        self._autodiscovered = True
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             try:
@@ -135,9 +135,9 @@ class SiteLabTracker(object):
                 if module_has_submodule(mod, 'lab_tracker'):
                     raise
 
-    def check_autodiscovered(self):
+    def confirm_autodiscovered(self):
         """Confirms that autodiscover() was called at least once."""
-        if not self.autodiscovered:
+        if not self._autodiscovered:
             raise ImproperlyConfigured('Call lab_tracker.autodiscover() before accessing values. Perhaps place this in the urls.py')
 
 
