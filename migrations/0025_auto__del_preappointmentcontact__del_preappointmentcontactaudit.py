@@ -8,11 +8,11 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        pass
-
+        # Adding index on 'AppointmentAudit', fields ['_audit_subject_identifier']
+        db.create_index('bhp_appointment_appointment_audit', ['_audit_subject_identifier'])
+        
     def backwards(self, orm):
         pass
-
 
     models = {
         'bhp_appointment.appointment': {
@@ -23,12 +23,14 @@ class Migration(SchemaMigration):
             'appt_type': ('django.db.models.fields.CharField', [], {'default': "'clinic'", 'max_length': '20'}),
             'best_appt_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
+            'contact_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'contact_tel': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dashboard_type': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'is_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
             'study_site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_variables.StudySite']", 'null': 'True'}),
@@ -50,12 +52,14 @@ class Migration(SchemaMigration):
             'appt_type': ('django.db.models.fields.CharField', [], {'default': "'clinic'", 'max_length': '20'}),
             'best_appt_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
+            'contact_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'contact_tel': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dashboard_type': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
+            'is_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_+'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
             'study_site': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_appointment'", 'null': 'True', 'to': "orm['bhp_variables.StudySite']"}),
@@ -88,23 +92,6 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'bhp_appointment.preappointmentcontact': {
-            'Meta': {'object_name': 'PreAppointmentContact'},
-            'appointment': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_appointment.Appointment']"}),
-            'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'contact_datetime': ('django.db.models.fields.DateTimeField', [], {}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            'information_provider': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
-            'is_confirmed': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'is_contacted': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'new_appt_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },

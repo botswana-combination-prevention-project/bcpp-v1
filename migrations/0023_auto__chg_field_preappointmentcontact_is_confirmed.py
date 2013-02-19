@@ -8,14 +8,10 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-
-        # Changing field 'PreAppointmentContact.is_confirmed'
-        db.alter_column('bhp_appointment_preappointmentcontact', 'is_confirmed', self.gf('django.db.models.fields.BooleanField')())
+        pass
 
     def backwards(self, orm):
-
-        # Changing field 'PreAppointmentContact.is_confirmed'
-        db.alter_column('bhp_appointment_preappointmentcontact', 'is_confirmed', self.gf('django.db.models.fields.CharField')(max_length=10))
+        pass
 
     models = {
         'bhp_appointment.appointment': {

@@ -8,6 +8,24 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'PreAppointmentContact'
+        db.create_table('bhp_appointment_preappointmentcontact', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('contact_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('is_contacted', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('information_provider', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
+            ('appointment', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_appointment.Appointment'])),
+            ('is_confirmed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal('bhp_appointment', ['PreAppointmentContact'])
+
         # Adding model 'PreAppointmentContactAudit'
         db.create_table('bhp_appointment_preappointmentcontact_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -30,17 +48,8 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('bhp_appointment', ['PreAppointmentContactAudit'])
 
-        # Adding index on 'AppointmentAudit', fields ['_audit_subject_identifier']
-        db.create_index('bhp_appointment_appointment_audit', ['_audit_subject_identifier'])
-
-
     def backwards(self, orm):
-        # Removing index on 'AppointmentAudit', fields ['_audit_subject_identifier']
-        db.delete_index('bhp_appointment_appointment_audit', ['_audit_subject_identifier'])
-
-        # Deleting model 'PreAppointmentContactAudit'
-        db.delete_table('bhp_appointment_preappointmentcontact_audit')
-
+        pass
 
     models = {
         'bhp_appointment.appointment': {
@@ -72,7 +81,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'AppointmentAudit', 'db_table': "'bhp_appointment_appointment_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            '_audit_subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'db_index': 'True'}),
+            '_audit_subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'appt_datetime': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
             'appt_reason': ('django.db.models.fields.CharField', [], {'max_length': '25', 'blank': 'True'}),
@@ -143,7 +152,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'PreAppointmentContactAudit', 'db_table': "'bhp_appointment_preappointmentcontact_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            '_audit_subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'db_index': 'True'}),
+            '_audit_subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'appointment': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_preappointmentcontact'", 'to': "orm['bhp_appointment.Appointment']"}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),

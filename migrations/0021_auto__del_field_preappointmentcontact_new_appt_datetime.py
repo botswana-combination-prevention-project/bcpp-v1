@@ -8,15 +8,10 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'PreAppointmentContact.new_appt_datetime'
-        db.delete_column('bhp_appointment_preappointmentcontact', 'new_appt_datetime')
-
+        pass
 
     def backwards(self, orm):
-        # Adding field 'PreAppointmentContact.new_appt_datetime'
-        db.add_column('bhp_appointment_preappointmentcontact', 'new_appt_datetime',
-                      self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True),
-                      keep_default=False)
+        pass
 
 
     models = {
