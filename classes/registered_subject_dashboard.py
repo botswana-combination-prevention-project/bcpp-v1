@@ -304,8 +304,6 @@ class RegisteredSubjectDashboard(Dashboard):
         self._subject_identifier = None
         if value:
             self._subject_identifier = value
-        #else:
-        #    raise TypeError('Attribute subject_identifier cannot be None')
 
     def get_subject_identifier(self):
         if not self._subject_identifier:
@@ -390,7 +388,9 @@ class RegisteredSubjectDashboard(Dashboard):
             locator_instance = locator_cls.objects.get(registered_subject=source_registered_subject)
             for field in locator_instance._meta.fields:
                 if isinstance(field, (TextField, EncryptedTextField)):
-                    setattr(locator_instance, field.name, '<BR>'.join(wrap(getattr(locator_instance, field.name), 25)))
+                    value = getattr(locator_instance, field.name)
+                    if value:
+                        setattr(locator_instance, field.name, '<BR>'.join(wrap(value, 25)))
             if self._appointment:
                 visit_code = self._appointment.visit_definition.code
                 visit_instance = self._appointment.visit_instance
