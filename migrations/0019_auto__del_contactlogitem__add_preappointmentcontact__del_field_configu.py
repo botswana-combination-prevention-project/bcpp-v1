@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting model 'ContactLogItem'
-#        db.delete_table('bhp_appointment_contactlogitem')
+        db.delete_table('bhp_appointment_contactlogitem')
 
         # Adding model 'PreAppointmentContact'
 
