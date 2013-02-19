@@ -9,28 +9,9 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting model 'ContactLogItem'
-        db.delete_table('bhp_appointment_contactlogitem')
+#        db.delete_table('bhp_appointment_contactlogitem')
 
         # Adding model 'PreAppointmentContact'
-        db.create_table('bhp_appointment_preappointmentcontact', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('contact_datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('contact_type', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('is_contacted', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('information_provider', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('appointment', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_appointment.Appointment'])),
-            ('contact', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('is_confirmed', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('new_appt_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('bhp_appointment', ['PreAppointmentContact'])
 
         # Deleting field 'Configuration.default_contact'
         db.delete_column('bhp_appointment_configuration', 'default_contact')

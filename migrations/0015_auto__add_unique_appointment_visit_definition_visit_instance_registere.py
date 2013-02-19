@@ -9,25 +9,25 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding index on 'AppointmentAudit', fields ['user_created']
-        db.create_index('bhp_appointment_appointment_audit', ['user_created'])
+#        db.create_index('bhp_appointment_appointment_audit', ['user_created'])
 
         # Adding index on 'AppointmentAudit', fields ['user_modified']
-        db.create_index('bhp_appointment_appointment_audit', ['user_modified'])
+#        db.create_index('bhp_appointment_appointment_audit', ['user_modified'])
 
         # Adding index on 'Holiday', fields ['user_modified']
-        db.create_index('bhp_appointment_holiday', ['user_modified'])
+#        db.create_index('bhp_appointment_holiday', ['user_modified'])
 
         # Adding index on 'Holiday', fields ['user_created']
-        db.create_index('bhp_appointment_holiday', ['user_created'])
+#        db.create_index('bhp_appointment_holiday', ['user_created'])
 
         # Adding index on 'Appointment', fields ['user_modified']
-        db.create_index('bhp_appointment_appointment', ['user_modified'])
+#        db.create_index('bhp_appointment_appointment', ['user_modified'])
 
         # Adding index on 'Appointment', fields ['user_created']
-        db.create_index('bhp_appointment_appointment', ['user_created'])
+#        db.create_index('bhp_appointment_appointment', ['user_created'])
 
         # Adding unique constraint on 'Appointment', fields ['visit_definition', 'visit_instance', 'registered_subject']
-        db.create_unique('bhp_appointment_appointment', ['visit_definition_id', 'visit_instance', 'registered_subject_id'])
+#        db.create_unique('bhp_appointment_appointment', ['visit_definition_id', 'visit_instance', 'registered_subject_id'])
 
         # Adding field 'Configuration.default_contact'
         db.add_column('bhp_appointment_configuration', 'default_contact',
