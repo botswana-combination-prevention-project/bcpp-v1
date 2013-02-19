@@ -88,7 +88,7 @@ class Appointment(BaseAppointment):
 
     def validate_visit_instance(self, exception_cls=None):
         """Confirms a 0 instance appointment exists before allowing a continuation appt and keep a sequence."""
-	if not exception_cls:
+        if not exception_cls:
             exception_cls = ValidationError
         if not isinstance(self.visit_instance, basestring):
             raise exception_cls('Expected \'visit_instance\' to be of type basestring')
