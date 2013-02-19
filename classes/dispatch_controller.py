@@ -141,7 +141,6 @@ class DispatchController(BaseDispatchController):
                 history_models = HistoryModel.objects.filter(subject_identifier=registered_subject.subject_identifier)
                 self.dispatch_as_json(history_models)
 
-
     def dispatch_appointments(self, registered_subject):
         """Dispatches all appointments for this registered subject."""
         Appointments = get_model('bhp_appointment', 'Appointment')
