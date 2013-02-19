@@ -59,7 +59,7 @@ class BaseSyncUuidModel(BaseUuidModel):
             if 'get_subject_identifier' in dir(self):
                 self.get_subject_identifier()
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-        if DispatchItem:
+        if DispatchItem and subject_identifier:
             if DispatchItem.objects.filter(
                     subject_identifiers__icontains=subject_identifier,
                     is_dispatched=True).exists():
