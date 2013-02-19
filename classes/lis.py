@@ -4,6 +4,7 @@ from django.db.models import Q, get_model
 from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core.exceptions import MultipleObjectsReturned
+from django.db import IntegrityError
 from django.db.models import ForeignKey
 from bhp_poll_mysql.poll_mysql import PollMySQL
 from bhp_research_protocol.models import Protocol
@@ -297,7 +298,13 @@ class Lis(object):
                 # exclude the key fields ('result', 'test_code') plus others
                 if field.name in [fld_name for fld_name in defaults.iterkeys() if fld_name not in ['id', 'created', 'user_created', 'hostname_created', 'result', 'test_code']]:
                     setattr(target, field.name, defaults.get(field.name))
-            target.save()
+            # trap if resultitem is modified to violate integrity
+            try:
+                target.save()
+            except IntegrityError:
+                logger.warning('    UPDATE FAILED, IntegrityError {0} {1}'.format(target._meta.object_name, target))
+            except:
+                raise
             logger.info('    updated {0} {1}'.format(target._meta.object_name, target))
         return target
 
