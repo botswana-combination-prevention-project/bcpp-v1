@@ -25,6 +25,7 @@ class BaseTransaction(BaseUuidModel):
         max_length=25,
         default=str(transaction_producer),
         db_index=True,
+        help_text='Producer instance',
         )
 
     action = models.CharField(

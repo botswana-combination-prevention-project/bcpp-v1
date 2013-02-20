@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from django.conf import settings
 from django.core import serializers
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.db.models import get_model
 from bhp_sync.classes import TransactionProducer
 from bhp_base_model.models import BaseUuidModel
@@ -20,6 +20,12 @@ nullhandler = logger.addHandler(NullHandler())
 class BaseSyncUuidModel(BaseUuidModel):
 
     """Base model for all UUID models and adds synchronization methods and signals. """
+
+    def get_registered_subject(self):
+        """Primarily needed by bhp_dispatch to return the registered_subject instance.
+
+        Users must override."""
+        raise ImproperlyConfigured('Model method get_registered_subject() not configured. Are you attempting to dispatch? Items included for dispatch must have access to registered_subject through this method.')
 
     def is_serialized(self, serialize=True):
         if 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
@@ -55,20 +61,20 @@ class BaseSyncUuidModel(BaseUuidModel):
         """Override in subclass to run the specific checks for each subclass before unlocking its instance on the server."""
         pass
     
-    def is_dispatched_to_producer(self, subject_identifier=None):
+    def is_dispatched_to_producer(self, registered_subject=None):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
         is_dispatched = False
         producer = None
-        if not subject_identifier:
-            if 'get_subject_identifier' in dir(self):
-                self.get_subject_identifier()
+        if not registered_subject:
+            if 'get_registered_subject' in dir(self):
+                self.get_registered_subject()
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-        if DispatchItem and subject_identifier:
+        if DispatchItem and registered_subject:
             if DispatchItem.objects.filter(
-                    subject_identifiers__icontains=subject_identifier,
+                    subject_identifiers__icontains=registered_subject,
                     is_dispatched=True).exists():
                 dispatch_item = DispatchItem.objects.get(
-                    subject_identifiers__icontains=subject_identifier,
+                    subject_identifiers__icontains=registered_subject,
                     is_dispatched=True)
                 producer = dispatch_item.producer
                 is_dispatched = True
@@ -82,10 +88,11 @@ class BaseSyncUuidModel(BaseUuidModel):
         if 'bhp_dispatch' in settings.INSTALLED_APPS:
             is_dispatched, producer = self.is_dispatched_to_producer()
             if is_dispatched:
-                raise ValidationError('Save not allowed. Model {0} for subject {1} is currently dispatched to {3}.'
-                                  '(You should catch this in the form validation.)'.format(self._meta.object_name,
-                                                                                           self.get_subject_identifier(),
-                                                                                           producer))
+                raise ValidationError('Save not allowed. Model {0} for {1} is currently dispatched to {3}.'
+                                      '(You should catch this in the form validation.)'.format(self._meta.object_name,
+                                                                                               'subject \'{0}\' with registered_subject.pk=\'{1}\''.format(self.get_registered_subject().subject_identifier(),
+                                                                                                                                                           self.get_registered_subject()),
+                                                                                               producer))
         super(BaseSyncUuidModel, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

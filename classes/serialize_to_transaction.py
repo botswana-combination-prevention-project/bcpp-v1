@@ -85,6 +85,6 @@ class SerializeToTransaction(object):
             tx_pk=instance.pk,
             tx=json_tx,
             timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
-            producer=str(transaction_producer),
+            producer=str(transaction_producer)[0:25],
             action=action,
             )
