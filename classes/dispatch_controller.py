@@ -1,5 +1,7 @@
 import logging
+import socket
 from datetime import datetime
+from django.conf import settings
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_dispatch.classes import BaseDispatchController
@@ -134,7 +136,7 @@ class DispatchController(BaseDispatchController):
             self.set_visit_model_fkey(model_cls, visit_model_cls)
         return self._visit_model_fkey_name
 
-    def dispatch_hiv_history (self, registered_subject):
+    def dispatch_hiv_history(self, registered_subject):
         """Dispatches all lab tracker history models for this subject"""
         if registered_subject:
             if registered_subject.subject_identifier:
@@ -247,7 +249,7 @@ class DispatchController(BaseDispatchController):
         options = {}  # extra options for database query
         return registered_subject, options
 
-    def dispatch(self, item_identifier):
+    def dispatch(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label):
         """Dispatches items to a device calling the user overridden :func:`dispatch_prep`."""
         # check source for the producer based on using_destination.
         if self.debug:
@@ -259,7 +261,12 @@ class DispatchController(BaseDispatchController):
             #if registered_subjects:
             #    for registered_subject in registered_subjects:
             #        self.dispatch_membership_forms(registered_subject)
-            created, dispatch_item = self.create_dispatch_item_instance(item_identifier, registered_subjects=registered_subjects)
+            created, dispatch_item = self.create_dispatch_item_instance(
+                item_identifier,
+                item_identifier_attrname,
+                item_model_name,
+                item_app_label,
+                registered_subjects=registered_subjects)
         return dispatch_item
 
     def is_dispatched(self, item_identifier):
@@ -273,10 +280,10 @@ class DispatchController(BaseDispatchController):
             return True
         return False
 
-    def create_dispatch_item_instance(self, item_identifier, **kwargs):
+    def create_dispatch_item_instance(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label, **kwargs):
         """Creates a dispatch item instance for given dispatch instance and item_identifier
 
-        .. note:: Uses the pk instead of subject_identifier as subject_identifier may be None."""
+        .. note:: Uses the pk of registered_subject."""
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
@@ -286,7 +293,12 @@ class DispatchController(BaseDispatchController):
             producer=self.get_producer(),
             dispatch=self.get_dispatch_instance(),
             item_identifier=item_identifier,
-            subject_identifiers=' '.join(pk_list),
+            item_app_label=item_app_label,
+            item_model_name=item_model_name,
+            item_identifier_attrname=item_identifier_attrname,
+            dispatch_using=settings.DATABASE.default.name,
+            dispatch_host=socket.gethostname(),
+            registered_subjects=' '.join(pk_list),
             is_dispatched=True,
             dispatch_datetime=datetime.today())
         return created, dispatch_item
@@ -307,7 +319,7 @@ class DispatchController(BaseDispatchController):
             if not any_dispatched:
                 for qs in queryset:
                     item_identifier = getattr(qs, self.get_dispatch_model_item_identifier_field())
-                    self.dispatch(item_identifier)
+                    self.dispatch(item_identifier, self.get_dispatch_model_item_identifier_field(), qs._meta.object_name, qs._meta.app_label)
                 self.dispatch_crypt()
                 self.dispatch_registered_subjects()
         return any_dispatched, any_transactions
