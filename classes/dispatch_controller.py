@@ -4,8 +4,9 @@ from datetime import datetime
 from django.conf import settings
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
-from bhp_dispatch.classes import BaseDispatchController
 from bhp_lab_tracker.models import HistoryModel
+from bhp_registration.models import RegisteredSubject
+from bhp_dispatch.classes import BaseDispatchController
 
 
 logger = logging.getLogger(__name__)
@@ -229,7 +230,7 @@ class DispatchController(BaseDispatchController):
             See app :mod:`bhp_visit` for an explanation of membership forms.
         """
 
-        membership_forms = self.get_membershipform_models()        
+        membership_forms = self.get_membershipform_models()
         for membershipform_model in membership_forms:
             try:
                 if membershipform_model:
@@ -240,24 +241,35 @@ class DispatchController(BaseDispatchController):
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_as_json(instances)
 
-    def dispatch_prep(self, item_identifier):
-        """Returns a registered_subject instance (or None) after processing.
+    def _dispatch_prep(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label):
+        """Wrapper for user method :func:`dispatch_prep`."""
+        registered_subjects = self.dispatch_prep(item_identifier, item_identifier_attrname, item_model_name, item_app_label)
+        if not isinstance(registered_subjects, list):
+            raise TypeError('Expected a list. Return value of dispatch_prep() must be a list.')
+        for item in registered_subjects:
+            if not isinstance(item, RegisteredSubject):
+                raise TypeError('List returned by dispatch_prep() may only contain instances of model RegisteredSubject.')
+        return registered_subjects
+
+    def dispatch_prep(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label):
+        """Returns a list of RegisteredSubject instances.
 
         This is the main data query for dispatching and is to be overriden by the user
         to access local app models."""
-        registered_subject = None
-        options = {}  # extra options for database query
-        return registered_subject, options
+        registered_subjects = []
+        return registered_subjects
 
     def dispatch(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label):
-        """Dispatches items to a device calling the user overridden :func:`dispatch_prep`."""
+        """Dispatches items to a device by creating a dispatch item instance.
+
+        ..note:: calls the user overridden :func:`dispatch_prep`."""
         # check source for the producer based on using_destination.
         if self.debug:
             logger.info("Dispatching items for {0}".format(item_identifier))
         # is this item already dispatched?
         created, dispatch_item = None, None
         if not self.is_dispatched(item_identifier):
-            registered_subjects = self.dispatch_prep(item_identifier)
+            registered_subjects = self._dispatch_prep(item_identifier, item_identifier_attrname, item_model_name, item_app_label)
             #if registered_subjects:
             #    for registered_subject in registered_subjects:
             #        self.dispatch_membership_forms(registered_subject)
@@ -266,7 +278,7 @@ class DispatchController(BaseDispatchController):
                 item_identifier_attrname,
                 item_model_name,
                 item_app_label,
-                registered_subjects=registered_subjects)
+                registered_subjects)
         return dispatch_item
 
     def is_dispatched(self, item_identifier):
@@ -280,14 +292,13 @@ class DispatchController(BaseDispatchController):
             return True
         return False
 
-    def create_dispatch_item_instance(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label, **kwargs):
+    def create_dispatch_item_instance(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label, registered_subjects):
         """Creates a dispatch item instance for given dispatch instance and item_identifier
 
         .. note:: Uses the pk of registered_subject."""
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
         DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
-        registered_subjects = kwargs.get('registered_subjects', [])
         pk_list = [rs.pk for rs in registered_subjects]
         dispatch_item = DispatchItem.objects.create(
             producer=self.get_producer(),
