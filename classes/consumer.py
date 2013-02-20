@@ -16,7 +16,23 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class Consumer(object):
-
+    def check_all_synched_from_producer(self, producer_hostname):
+        OutgoingTransaction = get_model('bhp_sync', 'OutgoingTransaction')
+        producer = self.get_producer(producer_hostname)
+        tot = OutgoingTransaction.objects.using(producer.settings_key).filter(is_consumed=False, producer=producer_hostname).count()
+        if tot > 0:
+            raise AttributeError('There exists transanctions not synced in producer {0}. '
+                                 'Please sync the producer and try again.'.format(producer_hostname))
+    
+    def check_all_consumed_in_server(self, producer_hostname):
+        IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')
+        if not 'server' in settings.DATABASES.keys():
+            raise AttributeError('Cannot find key "server" in settings.DATABASES. '
+                                 'Please add and try again.')
+        tot = IncomingTransaction.objects.using('server').filter(is_consumed=False, producer=producer_hostname).count()
+        if tot > 0:
+            raise AttributeError('There exists transanctions not consumed in the server. Please consume transactions and try again.')
+               
     def fetch_from_producer(self, producer_hostname):
         OutgoingTransaction = get_model('bhp_sync', 'OutgoingTransaction')
         IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')

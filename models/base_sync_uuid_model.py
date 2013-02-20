@@ -50,7 +50,11 @@ class BaseSyncUuidModel(BaseUuidModel):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
         is_dispatched, producer = self.is_dispatched_to_producer()
         return is_dispatched
-
+    
+    def unlocking_prep(self):
+        """Override in subclass to run the specific checks for each subclass before unlocking its instance on the server."""
+        pass
+    
     def is_dispatched_to_producer(self, subject_identifier=None):
         """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
         is_dispatched = False
