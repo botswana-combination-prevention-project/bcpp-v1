@@ -24,9 +24,9 @@ class AlreadyDispatched(Exception):
 
 class DispatchController(BaseDispatchController):
 
-    def __init__(self, using_source, using_destination, app_name, model_name, identifier_field_name, dispatch_url, **kwargs):
+    def __init__(self, using_source, using_destination, dispatch_item_app_label, dispatch_item_model_name, item_identifier_field_name, dispatch_url, **kwargs):
         super(DispatchController, self).__init__(using_source, using_destination, **kwargs)
-        self._dispatch_app_name = None
+        self._dispatch_app_label = None
         self._dispatch_model_name = None
         self._visit_models = {}
         self._dispatch = None
@@ -35,22 +35,22 @@ class DispatchController(BaseDispatchController):
         self._dispatch_model = None
         self._dispatch_model_item_identifier_field = None
         self._dispatch_admin_url = None
-        self.set_dispatch_app_name(app_name)
-        self.set_dispatch_model_name(model_name)
-        self.set_dispatch_model_item_identifier_field(identifier_field_name)
+        self.set_dispatch_app_label(dispatch_item_app_label)
+        self.set_dispatch_model_name(dispatch_item_model_name)
+        self.set_dispatch_item_identifier_field_name(item_identifier_field_name)
         self.set_dispatch_url(dispatch_url)
         self.set_dispatch_instance()
 
-    def set_dispatch_app_name(self, value):
+    def set_dispatch_app_label(self, value):
         if not value:
-            raise AttributeError('The app_name of the dispatch model cannot be None. Set this in __init__() of the subclass.')
-        self._dispatch_app_name = value
+            raise AttributeError('The app_label of the dispatch model cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_app_label = value
 
-    def get_dispatch_app_name(self):
-        """Gets the app_name for the dispatching model."""
-        if not self._dispatch_app_name:
-            self.set_dispatch_app_name()
-        return self._dispatch_app_name
+    def get_dispatch_app_label(self):
+        """Gets the app_label for the dispatching model."""
+        if not self._dispatch_app_label:
+            self.set_dispatch_app_label()
+        return self._dispatch__dispatch_app_label
 
     def set_dispatch_model_name(self, value):
         if not value:
@@ -63,7 +63,7 @@ class DispatchController(BaseDispatchController):
             self.set_dispatch_model_name()
         return self._dispatch_model_name
 
-    def set_dispatch_model_item_identifier_field(self, value=None):
+    def set_dispatch_item_identifier_field_name(self, value=None):
         """Sets identifier field attribute of the dispatch model.
            This is an identifier for the model thats the starting point of dispatching
            e.g household_identifier if starting with household or subject identifier if starting with registered subject.
@@ -74,15 +74,15 @@ class DispatchController(BaseDispatchController):
             raise AttributeError('The identifier field of the dispatch model cannot be None. Set this in __init__() of the subclass.')
         self._dispatch_model_item_identifier_field = value
 
-    def get_dispatch_model_item_identifier_field(self):
+    def get_dispatch_item_identifier_field_name(self):
         """Gets the item identifier for the dispatching model."""
         if not self._dispatch_model_item_identifier_field:
-            self.set_dispatch_model_item_identifier_field()
+            self.set_dispatch_item_identifier_field_name()
         return self._dispatch_model_item_identifier_field
 
     def set_dispatch_model(self):
         """Sets the model class for the dispatching model."""
-        self._dispatch_model = get_model(self.get_dispatch_app_name(), self.get_dispatch_model_name())
+        self._dispatch_model = get_model(self.get_dispatch_app_label(), self.get_dispatch_model_name())
         self.set_dispatch_modeladmin_url()
 
     def get_dispatch_model(self):
@@ -93,7 +93,7 @@ class DispatchController(BaseDispatchController):
 
     def set_dispatch_modeladmin_url(self):
         """Sets the modeladmin url for the dispatching model."""
-        self._dispatch_modeladmin_url = '/admin/{0}/{1}/'.format(self.get_dispatch_app_name(), self.get_dispatch_model_name())
+        self._dispatch_modeladmin_url = '/admin/{0}/{1}/'.format(self.get_dispatch_app_label(), self.get_dispatch_model_name())
 
     def get_dispatch_modeladmin_url(self):
         """Gets the modeladmin url for the dispatching model."""
@@ -131,7 +131,7 @@ class DispatchController(BaseDispatchController):
                 if isinstance(fld.rel.to, visit_model_cls):
                     self._visit_model_fkey_name = fld.name
 
-    def get_visit_model_fkey(self, app_name, model_cls, visit_model_cls=None):
+    def get_visit_model_fkey(self, app_label, model_cls, visit_model_cls=None):
         """Gets the foreign key to the subject visit model instance."""
         if not self._visit_model_fkey_name:
             self.set_visit_model_fkey(model_cls, visit_model_cls)
@@ -149,7 +149,7 @@ class DispatchController(BaseDispatchController):
         Appointments = get_model('bhp_appointment', 'Appointment')
         self.dispatch_as_json(Appointments.objects.filter(registered_subject=registered_subject))
 
-    def dispatch_scheduled_instances(self, app_name, registered_subject, **kwargs):
+    def dispatch_scheduled_instances(self, app_label, registered_subject, **kwargs):
         """Sends scheduled instances to the producer for the given an instance of registered_subject.
 
         Keywords:
@@ -164,17 +164,17 @@ class DispatchController(BaseDispatchController):
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models()
         # get the visit model class for this app
-        #for app_name, scheduled_model_classes in scheduled_models.iteritems():
+        #for app_label, scheduled_model_classes in scheduled_models.iteritems():
         for scheduled_model_class in scheduled_models:
-            visit_model_cls = self.get_visit_model_cls(app_name, scheduled_model_class, index='cls')
+            visit_model_cls = self.get_visit_model_cls(app_label, scheduled_model_class, index='cls')
             # Fetch all all subject visits for the member and survey
             visits = visit_model_cls.objects.filter(appointment__registered_subject=registered_subject, **kwargs)
             visit_fld_name = None
             if visits:
                 for visit in visits:
                     # export all appointments for this visit
-                    #self.dispatch_as_json(visit.appointment, app_name=app_name)
-                    self.dispatch_as_json(visit, app_name=app_name)
+                    #self.dispatch_as_json(visit.appointment, app_label=app_label)
+                    self.dispatch_as_json(visit, app_label=app_label)
             # fetch all scheduled_models for the visits and export
             #for model_cls in scheduled_model_class:
                 #if not visit_fld_name:
@@ -183,7 +183,7 @@ class DispatchController(BaseDispatchController):
                         if issubclass(fld.rel.to, visit_model_cls):
                             visit_fld_name = fld.name
                 scheduled_instances = scheduled_model_class.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
-                self.dispatch_as_json(scheduled_instances, app_name=app_name)
+                self.dispatch_as_json(scheduled_instances, app_label=app_label)
     
     def dispatch_labs_requisitions(self, registered_subject):
         """Dispatches all lab requisitions for this subject."""
@@ -241,9 +241,9 @@ class DispatchController(BaseDispatchController):
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_as_json(instances)
 
-    def _dispatch_prep(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label):
+    def _dispatch_prep(self, item_identifier):
         """Wrapper for user method :func:`dispatch_prep`."""
-        registered_subjects = self.dispatch_prep(item_identifier, item_identifier_attrname, item_model_name, item_app_label)
+        registered_subjects = self.dispatch_prep(item_identifier)
         if not isinstance(registered_subjects, list):
             raise TypeError('Expected a list. Return value of dispatch_prep() must be a list.')
         for item in registered_subjects:
@@ -251,7 +251,7 @@ class DispatchController(BaseDispatchController):
                 raise TypeError('List returned by dispatch_prep() may only contain instances of model RegisteredSubject.')
         return registered_subjects
 
-    def dispatch_prep(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label):
+    def dispatch_prep(self, item_identifier):
         """Returns a list of RegisteredSubject instances.
 
         This is the main data query for dispatching and is to be overriden by the user
@@ -259,7 +259,7 @@ class DispatchController(BaseDispatchController):
         registered_subjects = []
         return registered_subjects
 
-    def dispatch(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label):
+    def dispatch(self, item_identifier):
         """Dispatches items to a device by creating a dispatch item instance.
 
         ..note:: calls the user overridden :func:`dispatch_prep`."""
@@ -269,15 +269,15 @@ class DispatchController(BaseDispatchController):
         # is this item already dispatched?
         created, dispatch_item = None, None
         if not self.is_dispatched(item_identifier):
-            registered_subjects = self._dispatch_prep(item_identifier, item_identifier_attrname, item_model_name, item_app_label)
+            registered_subjects = self._dispatch_prep(item_identifier)
             #if registered_subjects:
             #    for registered_subject in registered_subjects:
             #        self.dispatch_membership_forms(registered_subject)
             created, dispatch_item = self.create_dispatch_item_instance(
                 item_identifier,
-                item_identifier_attrname,
-                item_model_name,
-                item_app_label,
+                self.get_dispatch_item_identifier_field_name(),
+                self.get_dispatch_model_name(),
+                self.get_dispatch_app_label(),
                 registered_subjects)
         return dispatch_item
 
@@ -304,9 +304,9 @@ class DispatchController(BaseDispatchController):
             producer=self.get_producer(),
             dispatch=self.get_dispatch_instance(),
             item_identifier=item_identifier,
-            item_app_label=item_app_label,
-            item_model_name=item_model_name,
-            item_identifier_attrname=item_identifier_attrname,
+            item_app_label=self.get_dispatch_app_label(),
+            item_model_name=self.get_dispatch_model_name(),
+            item_identifier_attrname=self.get_dispatch_item_identifier_field_name(),
             dispatch_using=settings.DATABASE.default.name,
             dispatch_host=socket.gethostname(),
             registered_subjects=' '.join(pk_list),
@@ -323,14 +323,14 @@ class DispatchController(BaseDispatchController):
         if not self.has_outgoing_transactions():
             any_transactions = False
             for qs in queryset:
-                item_identifier = getattr(qs, self.get_dispatch_model_item_identifier_field())
+                item_identifier = getattr(qs, self.get_dispatch_item_identifier_field_name())
                 if self.is_dispatched(item_identifier):
                     any_dispatched = True
                     break
             if not any_dispatched:
                 for qs in queryset:
-                    item_identifier = getattr(qs, self.get_dispatch_model_item_identifier_field())
-                    self.dispatch(item_identifier, self.get_dispatch_model_item_identifier_field(), qs._meta.object_name, qs._meta.app_label)
+                    item_identifier = getattr(qs, self.get_dispatch_item_identifier_field_name())
+                    self.dispatch(item_identifier, self.get_dispatch_item_identifier_field_name(), qs._meta.object_name, qs._meta.app_label)
                 self.dispatch_crypt()
                 self.dispatch_registered_subjects()
         return any_dispatched, any_transactions

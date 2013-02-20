@@ -60,9 +60,9 @@ class BaseDispatchController(BaseDispatch):
                 source_instance: a model instance(s) from the source server
                 using: `using` parameter for the destination device.
             Keywords:
-                app_name: app name for instances
+                app_label: app name for instances
         """
-        app_name = kwargs.get('app_name', None)
+        app_label = kwargs.get('app_label', None)
         if source_instances:
             if not isinstance(source_instances, (list, QuerySet)):
                 source_instances = [source_instances]
@@ -75,10 +75,10 @@ class BaseDispatchController(BaseDispatch):
                     if 'Duplicate' in e.args[1]:
                         pass
                     elif 'Cannot add or update a child row' in e.args[1]:
-                        if not app_name:
-                            app_name = source_instances[0]._meta.app_label
+                        if not app_label:
+                            app_label = source_instances[0]._meta.app_label
                         # assume Integrity error was because of missing ForeignKey data
-                        self.dispatch_foreign_key_instances(app_name)
+                        self.dispatch_foreign_key_instances(app_label)
                         # try again
                         obj_new.save(using=self.get_using_destination())
                     else:
