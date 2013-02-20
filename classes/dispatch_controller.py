@@ -35,13 +35,13 @@ class DispatchController(BaseDispatchController):
         self._dispatch_model = None
         self._dispatch_model_item_identifier_field = None
         self._dispatch_admin_url = None
-        self.set_dispatch_app_label(dispatch_item_app_label)
-        self.set_dispatch_model_name(dispatch_item_model_name)
-        self.set_dispatch_item_identifier_field_name(item_identifier_field_name)
-        self.set_dispatch_url(dispatch_url)
+        self._set_dispatch_app_label(dispatch_item_app_label)
+        self._set_dispatch_model_name(dispatch_item_model_name)
+        self._set_dispatch_item_identifier_field_name(item_identifier_field_name)
+        self._set_dispatch_url(dispatch_url)
         self.set_dispatch_instance()
 
-    def set_dispatch_app_label(self, value):
+    def _set_dispatch_app_label(self, value):
         if not value:
             raise AttributeError('The app_label of the dispatch model cannot be None. Set this in __init__() of the subclass.')
         self._dispatch_app_label = value
@@ -49,10 +49,10 @@ class DispatchController(BaseDispatchController):
     def get_dispatch_app_label(self):
         """Gets the app_label for the dispatching model."""
         if not self._dispatch_app_label:
-            self.set_dispatch_app_label()
+            self._set_dispatch_app_label()
         return self._dispatch__dispatch_app_label
 
-    def set_dispatch_model_name(self, value):
+    def _set_dispatch_model_name(self, value):
         if not value:
             raise AttributeError('The model_name of the dispatch model cannot be None. Set this in __init__() of the subclass.')
         self._dispatch_model_name = value
@@ -60,15 +60,15 @@ class DispatchController(BaseDispatchController):
     def get_dispatch_model_name(self):
         """Gets the model name for the dispatching model."""
         if not self._dispatch_model_name:
-            self.set_dispatch_model_name()
+            self._set_dispatch_model_name()
         return self._dispatch_model_name
 
-    def set_dispatch_item_identifier_field_name(self, value=None):
+    def _set_dispatch_item_identifier_field_name(self, value=None):
         """Sets identifier field attribute of the dispatch model.
            This is an identifier for the model thats the starting point of dispatching
            e.g household_identifier if starting with household or subject identifier if starting with registered subject.
            This identifier will be determined by the application specific controller/model sub classing a base model
-           e.g MochudiDispatchController or mochudi_household        
+           e.g MochudiDispatchController or mochudi_household
         """
         if not value:
             raise AttributeError('The identifier field of the dispatch model cannot be None. Set this in __init__() of the subclass.')
@@ -77,7 +77,7 @@ class DispatchController(BaseDispatchController):
     def get_dispatch_item_identifier_field_name(self):
         """Gets the item identifier for the dispatching model."""
         if not self._dispatch_model_item_identifier_field:
-            self.set_dispatch_item_identifier_field_name()
+            self._set_dispatch_item_identifier_field_name()
         return self._dispatch_model_item_identifier_field
 
     def set_dispatch_model(self):
@@ -101,7 +101,7 @@ class DispatchController(BaseDispatchController):
             self.set_dispatch_modeladmin_url()
         return self._dispatch_modeladmin_url
 
-    def set_dispatch_url(self, value=None):
+    def _set_dispatch_url(self, value=None):
         """Sets the dispatch url for the dispatching model."""
         if not value:
             raise AttributeError('Dispatch url cannot be None. Set this in __init__() of the subclass.')
@@ -110,7 +110,7 @@ class DispatchController(BaseDispatchController):
     def get_dispatch_url(self):
         """Gets the dispatch url for the dispatching model."""
         if not self._dispatch_url:
-            self.set_dispatch_url()
+            self._set_dispatch_url()
         return self._dispatch_url
 
     def set_dispatch_instance(self):
@@ -137,11 +137,14 @@ class DispatchController(BaseDispatchController):
             self.set_visit_model_fkey(model_cls, visit_model_cls)
         return self._visit_model_fkey_name
 
-    def dispatch_hiv_history(self, registered_subject):
+    def dispatch_lab_tracker_history(self, registered_subject, group_name=None):
         """Dispatches all lab tracker history models for this subject"""
         if registered_subject:
             if registered_subject.subject_identifier:
-                history_models = HistoryModel.objects.filter(subject_identifier=registered_subject.subject_identifier)
+                options = {'subject_identifier': registered_subject.subject_identifier}
+                if group_name:
+                    options.update({'group_name': group_name})
+                history_models = HistoryModel.objects.filter(**options)
                 self.dispatch_as_json(history_models)
 
     def dispatch_appointments(self, registered_subject):
