@@ -2,15 +2,17 @@ import socket
 import logging
 from datetime import datetime
 from django.conf import settings
+from django.db.models import signals  # Signal, post_save
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Q, Count, Max
 from django.core.serializers.base import DeserializationError
 from django.core import serializers
 from django.db import IntegrityError
-from bhp_sync.classes import TransactionProducer
-from bhp_sync.models import OutgoingTransaction
-from bhp_base_model.models import BaseModel
+from bhp_sync.models import BaseSyncUuidModel, OutgoingTransaction, IncomingTransaction
+from bhp_sync.models.signals import serialize_on_save
 
+from bhp_sync.exceptions import PendingTransactionError
+from bhp_dispatch.exceptions import DispatchError, DispatchModelError
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +47,7 @@ class Base(object):
         self._using_destination = None
         self._producer = None
         self.server_device_id = kwargs.get('server_device_id', '99')
-        self.exception = kwargs.get('exception', TypeError)
+        self.exception = kwargs.get('exception', DispatchError)
         #if not 'ALLOW_DISPATCH' in dir(settings):
         #    raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
         #if not 'DISPATCH_MODEL' in dir(settings):
@@ -55,6 +57,7 @@ class Base(object):
         self.set_using_source(using_source)
         self.set_using_destination(using_destination)
         self.set_producer()
+        return None
 
     def set_using_source(self, using_source=None):
         """Sets the ORM `using` parameter for data access on the "source"."""
@@ -115,13 +118,13 @@ class Base(object):
         if self.get_using_destination() == 'default':
             # try to find the producer on the server with hostname + database name
             settings_key = '{0}-{1}'.format(socket.gethostname().lower(), settings.DATABASES.get('default').get('NAME'))
-            if Producer.objects.using(self.get_using_source()).filter(settings_key=settings_key).exists():
-                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=settings_key)
+            if Producer.objects.using(self.get_using_source()).filter(settings_key=settings_key, is_active=True).exists():
+                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=settings_key, is_active=True)
         else:
-            if Producer.objects.using(self.get_using_source()).filter(settings_key=self.get_using_destination()).exists():
-                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=self.get_using_destination())
+            if Producer.objects.using(self.get_using_source()).filter(settings_key=self.get_using_destination(), is_active=True).exists():
+                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=self.get_using_destination(), is_active=True)
         if not self._producer:
-            raise TypeError('Dispatcher cannot find producer {2} with settings key {0} '
+            raise DispatchError('Dispatcher cannot find producer {2} with settings key {0} '
                             'on the source {1}.'.format(self.get_using_destination(), self.get_using_source(), settings_key))
         # check the producers DATABASES key exists
         # TODO: what if producer is "me", e.g settings key is 'default'
@@ -137,11 +140,23 @@ class Base(object):
             self.set_producer()
         return self._producer
 
+    def get_producer_name(self):
+        return self.get_producer().name
+
+    def has_pending_transactions(self):
+        return self.has_incoming_transactions() or self.has_outgoing_transactions()
+
     def has_outgoing_transactions(self):
-        """Check if destination has pending Outgoing Transactions by checking is_consumed in 
+        """Check if destination has pending Outgoing Transactions on destination by checking is_consumed in
            bhp_sync.outgoing_transactions.
         """
         return OutgoingTransaction.objects.using(self.get_using_destination()).filter(is_consumed=False).exists()
+
+    def has_incoming_transactions(self):
+        """Check if destination has pending Incoming Transactions on source by checking is_consumed in
+           bhp_sync.incoming_transactions.
+        """
+        return IncomingTransaction.objects.using(self.get_using_source()).filter(producer=self.get_producer_name(), is_consumed=False).exists()
 
     def update_model(self, model, **kwargs):
         self.dispatch_model_as_json(model, **kwargs)
@@ -183,18 +198,18 @@ class Base(object):
             Args:
                 models: may be a tuple of (app_name, model_name) or list of model classes.
         """
-        base_model_class = kwargs.get('base_model_class', BaseModel)
+        # TODO: when would this NOT be a subclass of BaseSyncUuidModel??
+        base_model_class = kwargs.get('base_model_class', BaseSyncUuidModel)
         use_natural_keys = kwargs.get('use_natural_keys', True)
         select_recent = kwargs.get('select_recent', True)
-        check_transactions = kwargs.get('check_transactions', True)
-        if check_transactions:
-            transaction_producer = TransactionProducer()
-            #destination_producer_name = settings.DATABASES.get(self.get_using_destination()).get('NAME')
-            destination_producer_name = self.get_using_destination()
-            if transaction_producer.has_outgoing_transactions(producer_name=destination_producer_name, using=self.get_using_destination()):
-                raise TypeError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(destination_producer_name))
+        #check_transactions = kwargs.get('check_transactions', True)
+        #if check_transactions:
+        if self.has_outgoing_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+        if self.has_incoming_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
         if not models:
-            raise self.exception('Parameter \'models\' may not be None.')
+            raise DispatchModelError('Parameter \'models\' may not be None.')
         # if models is a tuple, convert to model class using get_model
         if isinstance(models, tuple):
             mdl = get_model(models[self.APP_NAME], models[self.MODEL_NAME])
@@ -206,8 +221,7 @@ class Base(object):
             models = [models]
         for model in models:
             if not issubclass(model, base_model_class):
-                raise self.exception('Parameter \'model\' must be an instance of BaseModel. Got {0}'.format(model))
-
+                raise DispatchModelError('Dispatch model {0} must be an instance of \'{1}\'.'.format(model, base_model_class))
             if not select_recent:
                 source_queryset = model.objects.using(self.get_using_source()).all().order_by('id')
             else:
@@ -222,7 +236,10 @@ class Base(object):
                     for obj in serializers.deserialize("json", json):
                         n += 1
                         try:
+                            # disconnect signal to avoid creating transactions on the source for data saved on destination
+                            signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                             obj.save(using=self.get_using_destination())
+                            signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                         except IntegrityError:
                             logger.info('    skipping. Duplicate detected for {0} (a).'.format(obj))
                 except DeserializationError:
@@ -232,7 +249,10 @@ class Base(object):
                             for obj in serializers.deserialize("json", json):
                                 n += 1
                                 try:
+                                    # disconnect signal to avoid creating transactions on the source for data saved on destination
+                                    signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                                     obj.save(using=self.get_using_destination())
+                                    signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                                 except IntegrityError:
                                     logger.info('    skipping. Duplicate detected for {0} (b).'.format(obj))
                         except:
