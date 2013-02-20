@@ -1,6 +1,7 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin, BaseStackedInline
 from models import Dispatch, DispatchItem
+from bhp_dispatch.actions import set_is_dispatched
 
 
 class DispatchItemInline(BaseStackedInline):
@@ -52,5 +53,6 @@ class DispatchItemAdmin(BaseModelAdmin):
         'return_datetime'
         )
     search_fields = ('dispatch__pk', 'item_identifier', 'subject_identifiers')
+    actions = [set_is_dispatched, ]
 
 admin.site.register(DispatchItem, DispatchItemAdmin)
