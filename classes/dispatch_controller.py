@@ -39,7 +39,7 @@ class DispatchController(BaseDispatchController):
         self._set_dispatch_model_name(dispatch_item_model_name)
         self._set_dispatch_item_identifier_field_name(item_identifier_field_name)
         self._set_dispatch_url(dispatch_url)
-        self.set_dispatch_instance()
+        self._set_dispatch_instance()
 
     def _set_dispatch_app_label(self, value):
         if not value:
@@ -47,18 +47,18 @@ class DispatchController(BaseDispatchController):
         self._dispatch_app_label = value
 
     def get_dispatch_app_label(self):
-        """Gets the app_label for the dispatching model."""
+        """Gets the app_label for the dispatching item."""
         if not self._dispatch_app_label:
             self._set_dispatch_app_label()
         return self._dispatch__dispatch_app_label
 
     def _set_dispatch_model_name(self, value):
         if not value:
-            raise AttributeError('The model_name of the dispatch model cannot be None. Set this in __init__() of the subclass.')
+            raise AttributeError('The model_name of the dispatching item cannot be None. Set this in __init__() of the subclass.')
         self._dispatch_model_name = value
 
     def get_dispatch_model_name(self):
-        """Gets the model name for the dispatching model."""
+        """Gets the model name for the dispatching item."""
         if not self._dispatch_model_name:
             self._set_dispatch_model_name()
         return self._dispatch_model_name
@@ -113,7 +113,7 @@ class DispatchController(BaseDispatchController):
             self._set_dispatch_url()
         return self._dispatch_url
 
-    def set_dispatch_instance(self):
+    def _set_dispatch_instance(self):
         """Creates a dispatch instance for this controller sessions."""
         Dispatch = get_model('bhp_dispatch', 'Dispatch')
         self._dispatch = Dispatch.objects.create(producer=self.get_producer())
@@ -121,7 +121,7 @@ class DispatchController(BaseDispatchController):
     def get_dispatch_instance(self):
         """Gets the dispatch instance for this controller sessions."""
         if not self._dispatch:
-            self.set_dispatch_instance()
+            self._set_dispatch_instance()
         return self._dispatch
 
     def set_visit_model_fkey(self, model_cls, visit_model_cls):
@@ -138,7 +138,10 @@ class DispatchController(BaseDispatchController):
         return self._visit_model_fkey_name
 
     def dispatch_lab_tracker_history(self, registered_subject, group_name=None):
-        """Dispatches all lab tracker history models for this subject"""
+        """Dispatches all lab tracker history models for this subject.
+
+        ..seealso:: module :mod:`bhp_lab_tracker`.
+        """
         if registered_subject:
             if registered_subject.subject_identifier:
                 options = {'subject_identifier': registered_subject.subject_identifier}
@@ -148,7 +151,10 @@ class DispatchController(BaseDispatchController):
                 self.dispatch_as_json(history_models)
 
     def dispatch_appointments(self, registered_subject):
-        """Dispatches all appointments for this registered subject."""
+        """Dispatches all appointments for this registered subject.
+
+        ..seealso:: module :mod:`bhp_appointment`
+        """
         Appointments = get_model('bhp_appointment', 'Appointment')
         self.dispatch_as_json(Appointments.objects.filter(registered_subject=registered_subject))
 
