@@ -1,6 +1,7 @@
 from django.db import models
 from base_dispatch import BaseDispatch
 from dispatch import Dispatch
+from bhp_sync.classes import Consumer
 
 
 class DispatchItem(BaseDispatch):
@@ -24,7 +25,13 @@ class DispatchItem(BaseDispatch):
         help_text="List of Registered Subjects linked to this DispatchItem"
         )
     objects = models.Manager()
-
+    
+    def run_pre_unlocking_checks(self):
+        #self.unlocking_prep(self.item_identifier,)
+        consumer = Consumer()
+        consumer.check_all_synched_from_producer(self.producer.name)
+        consumer.check_all_consumed_in_server(self.producer.name)
+                
     def save(self, *args, **kwargs):
         """Confirms an instance does not exist for this item_identifier."""
         if self.__class__.objects.filter(
@@ -36,6 +43,8 @@ class DispatchItem(BaseDispatch):
                 is_dispatched=True,
                 ).exclude(pk=self.pk)
             raise ValueError("Cannot dispatch. The item \'{0}\' is already dispatched to \'{1}\'.".format(dispatch_item.item_identifier, dispatch_item.producer))
+        if not self.is_dispatched:
+            self.run_pre_unlocking_checks()
         super(DispatchItem, self).save(*args, **kwargs)
 
     def __unicode__(self):

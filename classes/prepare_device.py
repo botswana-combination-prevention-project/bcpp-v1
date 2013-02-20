@@ -97,10 +97,10 @@ class PrepareDevice(BasePrepareDevice):
             self.timer()
             logger.info("8. Updating appointment configuration...")
             self.update_model(("bhp_appointment", "Configuration"))
-        if not step > 9:
-            self.timer()
-            logger.info("9. Updating the Crypt table...")
-            self.update_model(('bhp_crypto', 'crypt'))
+#        if not step > 9:
+#            self.timer()
+#            logger.info("9. Updating the Crypt table...")
+#            self.update_model(('bhp_crypto', 'crypt'))
 #        if not step > 10:
 #            self.timer()
 #            logger.info("10. Updating the visit definitions...")
