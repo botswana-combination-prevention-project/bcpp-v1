@@ -3,6 +3,7 @@ from bhp_base_model.models import BaseUuidModel
 
 
 class Consumer(BaseUuidModel):
+
     name = models.CharField(
         max_length=25,
         )

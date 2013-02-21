@@ -50,3 +50,4 @@ class Producer(BaseUuidModel):
     class Meta:
         app_label = 'bhp_sync'
         ordering = ['name']
+        unique_together = (('settings_key', 'is_active'), )
