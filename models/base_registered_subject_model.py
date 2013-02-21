@@ -33,5 +33,8 @@ class BaseRegisteredSubjectModel (BaseAppointmentHelperModel):
                 return model
         raise TypeError('Unable to determine the visit model from instance {0} for app {1}'.format(instance._meta.model_name, instance._meta.app_label))
 
+    def get_registered_subject(self):
+        return self.registered_subject
+
     class Meta:
         abstract = True

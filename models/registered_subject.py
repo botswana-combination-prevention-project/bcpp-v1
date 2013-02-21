@@ -114,6 +114,9 @@ class RegisteredSubject(BaseSubject):
 
     history = AuditTrail()
 
+    def get_registered_subject(self):
+        return self
+
     def natural_key(self):
         return (self.identity, self.first_name, self.dob, self.initials, self.registration_identifier, self.subject_identifier, )
     #def natural_key(self):
