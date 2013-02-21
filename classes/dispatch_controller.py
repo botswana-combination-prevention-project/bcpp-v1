@@ -7,7 +7,7 @@ from django.core.exceptions import FieldError
 from bhp_lab_tracker.models import HistoryModel
 from bhp_registration.models import RegisteredSubject
 from bhp_dispatch.classes import BaseDispatchController
-from bhp_dispatch.models import Dispatch
+from bhp_dispatch.models import DispatchItem
 
 
 logger = logging.getLogger(__name__)
@@ -257,7 +257,7 @@ class DispatchController(BaseDispatchController):
         """Checks if a dispatch item is dispatched.
 
         .. note:: to block saving a dispatched instance, see the signals."""
-        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
+        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         if DispatchItem.objects.using(self.get_using_source()).filter(
                 item_identifier=item_identifier,
                 is_dispatched=True).exists():
@@ -269,12 +269,12 @@ class DispatchController(BaseDispatchController):
 
         .. note:: Uses the pk of registered_subject."""
         # TODO: may want this to be get_or_create so dispatch item instances are re-used.
-        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
+        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
         created = True
         pk_list = [rs.pk for rs in registered_subjects]
         dispatch_item = DispatchItem.objects.create(
             producer=self.get_producer(),
-            dispatch_container=self.get_dispatch_instance(),
+            dispatch_container=self.get_dispatch_container_instance(),
             item_identifier=item_identifier,
             item_app_label=self.get_dispatch_app_label(),
             item_model_name=self.get_dispatch_model_name(),

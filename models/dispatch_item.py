@@ -5,7 +5,6 @@ from bhp_sync.classes import Consumer
 
 
 class DispatchItem(BaseDispatch):
-
     dispatch_container = models.ForeignKey(DispatchContainer)
     item_identifier = models.CharField(
         verbose_name='Item Identifier',
@@ -25,13 +24,13 @@ class DispatchItem(BaseDispatch):
         help_text="List of Registered Subjects linked to this DispatchItem"
         )
     objects = models.Manager()
-    
+
     def run_pre_unlocking_checks(self):
         #self.unlocking_prep(self.item_identifier,)
         consumer = Consumer()
         consumer.check_all_synched_from_producer(self.producer.name)
         consumer.check_all_consumed_in_server(self.producer.name)
-                
+
     def save(self, *args, **kwargs):
         """Confirms an instance does not exist for this item_identifier."""
         if self.__class__.objects.filter(
