@@ -281,11 +281,12 @@ class BaseDispatch(Base):
             #serialize
             json = serializers.serialize('json', source_instances, use_natural_keys=True)
             # deserialize on destination
-            for obj_new in serializers.deserialize("json", json, use_natural_keys=True):
+            for dest_instance in serializers.deserialize("json", json, use_natural_keys=True):
                 try:
                     # disconnect signal to avoid creating transactions on the source for data saved on destination
                     signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                    obj_new.save(using=self.get_using_destination())
+                    #save
+                    dest_instance.save(using=self.get_using_destination())
                     # reconnect
                     signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                 except IntegrityError as e:
@@ -298,19 +299,20 @@ class BaseDispatch(Base):
                         # assume Integrity error was because of missing ForeignKey data
                         self.dispatch_foreign_key_instances(app_label)
                         # try again
-                        # disconnect signal to avoid creating transactions on the source for data saved on destination
+                        # disconnect signal
                         signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                        obj_new.save(using=self.get_using_destination())
+                        #save
+                        dest_instance.save(using=self.get_using_destination())
                         # reconnect
                         signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                     else:
                         raise
                 except:
                     raise
-                # create_dispatched_item_instance for this dispatched obj_new
-                if not self.create_dispatched_item_instance(obj_new):
-                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))
-                logger.info('dispatched {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))
+                # create_dispatched_item_instance for this dispatched dest_instance
+                if not self.create_dispatched_item_instance(dest_instance):
+                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(dest_instance.object._meta.object_name, dest_instance.object, self.get_using_destination()))
+                logger.info('dispatched {0} {1} to {2}.'.format(dest_instance.object._meta.object_name, dest_instance.object, self.get_using_destination()))
 
 #    def dispatch_model_as_json(self, models, **kwargs):
 #        # TODO: what is the difference betweeen this and dispatch_as_json??
