@@ -1,7 +1,16 @@
 import logging
+import socket
+from django.conf import settings
 from django.db.models import get_model, get_models, get_app, ForeignKey, OneToOneField
+from django.db.models import signals
 from bhp_visit.models import MembershipForm
-from bhp_dispatch.exceptions import DispatchError
+from django.db.models.query import QuerySet
+from django.core import serializers
+from django.db import IntegrityError
+from bhp_sync.models import BaseSyncUuidModel
+from bhp_sync.models.signals import serialize_on_save
+from bhp_sync.exceptions import PendingTransactionError
+from bhp_dispatch.exceptions import DispatchModelError, DispatchError
 from bhp_dispatch.models import DispatchItem, DispatchContainer
 from base import Base
 
@@ -127,6 +136,23 @@ class BaseDispatch(Base):
             self._set_dispatch_container_instance()
         return self._dispatch_container
 
+    def create_dispatched_item_instance(self, instance):
+        """Creates an instance of DispatchItem for an item being dispatched."""
+        if not instance.is_dispatched:
+            dispatch_item = DispatchItem.objects.create(
+                dispatch_container=self.get_dispatch_container_instance(),
+                producer=self.get_producer(),
+                item_app_label=instance._meta.app_label,
+                item_model_name=instance._meta.model_name,
+                item_pk=instance.pk,
+                item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
+                item_identifier=getattr(instance, self.get_dispatch_item_identifier_attrname()),
+                dispatch_using=settings.DATABASE.default.name,
+                dispatch_host=socket.gethostname(),
+                is_dispatched=True)
+            return dispatch_item
+        return False
+
     def set_dispatched_items_for_producer(self):
         """Sets a queryset of dispatched DispatchItem model instances for the current producer."""
         self._dispatched_items_for_producer = DispatchItem.objects.using(self.get_using_source()).filter(
@@ -227,6 +253,134 @@ class BaseDispatch(Base):
                     if not model_cls._meta.object_name.endswith('Audit'):
                         scheduled_models.append(model_cls)
         return scheduled_models
+
+    def dispatch_as_json(self, source_instances, **kwargs):
+        """Serialize a remote model instance, deserialize and save to local instances.
+
+            Args:
+                source_instance: a model instance(s) from the source server
+                using: `using` parameter for the destination device.
+            Keywords:
+                app_label: app name for instances
+        """
+        base_model_class = BaseSyncUuidModel
+        app_label = kwargs.get('app_label', None)
+        # check for pending transactions
+        if self.has_outgoing_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+        if self.has_incoming_transactions(source_instances):
+            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
+        if source_instances:
+            # convert to list if not iterable
+            if not isinstance(source_instances, (list, QuerySet)):
+                source_instances = [source_instances]
+            # confirm all instances are of the correct base class
+            for instance in source_instances:
+                if not isinstance(instance, base_model_class):
+                    raise DispatchModelError('Dispatch model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
+            #serialize
+            json = serializers.serialize('json', source_instances, use_natural_keys=True)
+            # deserialize on destination
+            for obj_new in serializers.deserialize("json", json, use_natural_keys=True):
+                try:
+                    # disconnect signal to avoid creating transactions on the source for data saved on destination
+                    signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                    obj_new.save(using=self.get_using_destination())
+                    # reconnect
+                    signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                except IntegrityError as e:
+                    logger.info(e)
+                    if 'Duplicate' in e.args[1]:
+                        pass
+                    elif 'Cannot add or update a child row' in e.args[1]:
+                        if not app_label:
+                            app_label = source_instances[0]._meta.app_label
+                        # assume Integrity error was because of missing ForeignKey data
+                        self.dispatch_foreign_key_instances(app_label)
+                        # try again
+                        # disconnect signal to avoid creating transactions on the source for data saved on destination
+                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                        obj_new.save(using=self.get_using_destination())
+                        # reconnect
+                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                    else:
+                        raise
+                except:
+                    raise
+                # create_dispatched_item_instance for this dispatched obj_new
+                if not self.create_dispatched_item_instance(obj_new):
+                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))
+                logger.info('dispatched {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))
+
+#    def dispatch_model_as_json(self, models, **kwargs):
+#        # TODO: what is the difference betweeen this and dispatch_as_json??
+#        """Serializes and saves all instances of each model from source to destination.
+#
+#            Args:
+#                models: may be a tuple of (app_name, model_name) or list of model classes.
+#        """
+#        # TODO: when would this NOT be a subclass of BaseSyncUuidModel??
+#        base_model_class = kwargs.get('base_model_class', BaseSyncUuidModel)
+#        use_natural_keys = kwargs.get('use_natural_keys', True)
+#        select_recent = kwargs.get('select_recent', True)
+#        #check_transactions = kwargs.get('check_transactions', True)
+#        #if check_transactions:
+#        if not models:
+#            raise DispatchModelError('Parameter \'models\' may not be None.')
+#        # if models is a tuple, convert to model class using get_model
+#        if isinstance(models, tuple):
+#            mdl = get_model(models[self.APP_NAME], models[self.MODEL_NAME])
+#            if not mdl:
+#                raise self.exception('Unable to get_model() using app_name={0}, model_name={1}.'.format(models[self.APP_NAME], models[self.MODEL_NAME]))
+#            models = mdl
+#        # models must be a list
+#        if not isinstance(models, (list,)):
+#            models = [models]
+#        if self.has_outgoing_transactions():
+#            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+#        if self.has_incoming_transactions(models):
+#            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
+#
+#        for model in models:
+#            if not issubclass(model, base_model_class):
+#                raise DispatchModelError('Dispatch model {0} must be an instance of \'{1}\'.'.format(model, base_model_class))
+#            if not select_recent:
+#                source_queryset = model.objects.using(self.get_using_source()).all().order_by('id')
+#            else:
+#                source_queryset = self.get_recent(model)
+#            tot = source_queryset.count()
+#
+#            logger.info('    saving {0} instances for {1} on {2}.'.format(tot, model._meta.object_name, self.get_using_destination()))
+#            json = serializers.serialize('json', source_queryset, use_natural_keys=use_natural_keys)
+#            n = 0
+#            if json:
+#                try:
+#                    for obj in serializers.deserialize("json", json):
+#                        n += 1
+#                        try:
+#                            # disconnect signal to avoid creating transactions on the source for data saved on destination
+#                            signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+#                            obj.save(using=self.get_using_destination())
+#                            signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+#                        except IntegrityError:
+#                            logger.info('    skipping. Duplicate detected for {0} (a).'.format(obj))
+#                except DeserializationError:
+#                    for instance in source_queryset:
+#                        json = serializers.serialize('json', [instance], use_natural_keys=True)
+#                        try:
+#                            for obj in serializers.deserialize("json", json):
+#                                n += 1
+#                                try:
+#                                    # disconnect signal to avoid creating transactions on the source for data saved on destination
+#                                    signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+#                                    obj.save(using=self.get_using_destination())
+#                                    signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+#                                except IntegrityError:
+#                                    logger.info('    skipping. Duplicate detected for {0} (b).'.format(obj))
+#                        except:
+#                            logger.info('    SKIPPING {0}'.format(instance._meta.object_name))
+#            logger.info('    done. saved {0} / {1} for model {2}'.format(n, tot, model._meta.object_name))
+
 
 #    def update_lists(self):
 #        """Updates all list models on the destination with data from the source.

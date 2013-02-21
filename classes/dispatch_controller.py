@@ -213,28 +213,15 @@ class DispatchController(BaseDispatchController):
         registered_subjects = []
         return registered_subjects
 
-    def dispatch(self, item_identifier):
+    def dispatch(self):
         """Dispatches items to a device by creating a dispatch item instance.
 
         ..note:: calls the user overridden :func:`dispatch_prep`."""
         # check source for the producer based on using_destination.
         if self.debug:
-            logger.info("Dispatching items for {0}".format(item_identifier))
-        # is this item already dispatched?
-        created, dispatch_item = None, None
-        # TODO: need the instance or something else than a container identifier
-        if not self.is_dispatched(item_identifier):
-            registered_subjects = self._dispatch_prep(item_identifier)
-            #if registered_subjects:
-            #    for registered_subject in registered_subjects:
-            #        self.dispatch_membership_forms(registered_subject)
-            created, dispatch_item = self.create_dispatch_item_instance(
-                item_identifier,
-                self.get_dispatch_item_identifier_attrname(),
-                self.get_dispatch_model_name(),
-                self.get_dispatch_app_label(),
-                registered_subjects)
-        return dispatch_item
+            logger.info("Dispatching items for {0}".format(self.get_dispatch_container_identifier()))
+        self._dispatch_prep(self.get_dispatch_container_identifier())
+        #return dispatch_item
 
 # removed -erikvw
 #    def is_dispatched(self, item_identifier):
@@ -248,27 +235,28 @@ class DispatchController(BaseDispatchController):
 #            return True
 #        return False
 
-    def create_dispatch_item_instance(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label, registered_subjects):
-        """Creates a dispatch item instance for given dispatch instance and item_identifier
-
-        .. note:: Uses the pk of registered_subject."""
-        # TODO: may want this to be get_or_create so dispatch item instances are re-used.
-        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-        created = True
-        pk_list = [rs.pk for rs in registered_subjects]
-        dispatch_item = DispatchItem.objects.create(
-            producer=self.get_producer(),
-            dispatch_container=self.get_dispatch_container_instance(),
-            item_identifier=item_identifier,
-            item_app_label=self.get_dispatch_app_label(),
-            item_model_name=self.get_dispatch_model_name(),
-            item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
-            dispatch_using=settings.DATABASE.default.name,
-            dispatch_host=socket.gethostname(),
-            registered_subjects=' '.join(pk_list),
-            is_dispatched=True,
-            dispatch_datetime=datetime.today())
-        return created, dispatch_item
+#    def create_dispatch_item_instance(self, item_identifier,
+#                                      item_identifier_attrname,
+#                                      item_model_name,
+#                                      item_app_label):
+#        """Creates a dispatch item instance for given dispatch instance and item_identifier
+#
+#        .. note:: Uses the pk of registered_subject."""
+#        # TODO: may want this to be get_or_create so dispatch item instances are re-used.
+#        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
+#        created = True
+#        dispatch_item = DispatchItem.objects.create(
+#            producer=self.get_producer(),
+#            dispatch_container=self.get_dispatch_container_instance(),
+#            item_identifier=item_identifier,
+#            item_app_label=self.get_dispatch_app_label(),
+#            item_model_name=self.get_dispatch_model_name(),
+#            item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
+#            dispatch_using=settings.DATABASE.default.name,
+#            dispatch_host=socket.gethostname(),
+#            is_dispatched=True,
+#            dispatch_datetime=datetime.today())
+#        return created, dispatch_item
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
