@@ -21,10 +21,15 @@ class DispatchItem(BaseDispatch):
     objects = models.Manager()
 
     def run_pre_unlocking_checks(self):
-        #self.unlocking_prep(self.item_identifier,)
+        #unlock_instance = self.item_model_name.objects.get(item_identifier_attrname=self.item_identifier)
+        #unlock_instance.unlocking_prep()
         consumer = Consumer()
         consumer.check_all_synched_from_producer(self.producer.name)
         consumer.check_all_consumed_in_server(self.producer.name)
+        
+    def unlock_dispatch_item(self):
+        self.is_dispatched = False
+        self.save()
 
     def save(self, *args, **kwargs):
         """Confirms an instance does not exist for this item_identifier."""

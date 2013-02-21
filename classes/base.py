@@ -10,9 +10,9 @@ from django.core import serializers
 from django.db import IntegrityError
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
-from bhp_sync.helpers import TransactionHelper
-from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.exceptions import DispatchError, DispatchModelError
+#from bhp_sync.helpers import TransactionHelper
+#from bhp_sync.exceptions import PendingTransactionError
+#from bhp_dispatch.exceptions import DispatchError, DispatchModelError
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +158,7 @@ class Base(object):
         """Check if destination has pending Outgoing Transactions by checking is_consumed in
            bhp_sync.outgoing_transactions.
         """
-        return TransactionHelper().has_outgoing(self.get_using_destination())
+        return 1#TransactionHelper().has_outgoing(self.get_using_destination())
 
     def has_incoming_transactions(self, models):
         """Check if source has pending Incoming Transactions for this porcuder and model(s).
@@ -166,7 +166,7 @@ class Base(object):
         retval = False
         if not isinstance(models, list):
             models = [models]
-        if TransactionHelper().has_incoming_for_producer(self.get_producer_name(), self.get_using_source()):
+        #if TransactionHelper().has_incoming_for_producer(self.get_producer_name(), self.get_using_source()):
             retval = True
         if TransactionHelper().has_incoming_for_model([model._meta.object_name for model in models], self.get_using_source()):
             retval = True
