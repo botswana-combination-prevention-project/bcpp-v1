@@ -22,6 +22,7 @@
 <thead>
 <th></th>
 <th>Producer</th>
+<th>Unlock Households</th>
 <th>Sync URL</th>
 <th>Transactions</th>
 {% if show_checkin_link %}<th>Return URL</th>{% endif %}
@@ -34,6 +35,7 @@
     <tr>
     <td>{{ forloop.counter }}.&nbsp;</td>
     <td>{{ producer.name }}</td>
+    <td><A href="/bhp_dispatch/return/{{ producer.name }}/">unlock households</A></td>
     <td><A href="/bhp_sync/consume/{{ producer.name }}/">synchronize with server</A></td>
     <td><A href="{{ producer.url }}admin/bhp_sync/outgoingtransaction/?is_consumed__exact=0&producer={{ producer.name }}">producer outgoing transactions</A></td>    
 {% if show_checkin_link %}
