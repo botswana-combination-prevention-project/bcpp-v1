@@ -9,7 +9,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsentedUuidModel
 from bhp_dispatch.classes import BaseDispatch
 from bhp_dispatch.exceptions import AlreadyDispatched, DispatchError, DispatchModelError
-from bhp_dispatch.models import DispatchContainer
+from bhp_dispatch.models import DispatchContainer, DispatchItem
 
 
 class BaseDispatchControllerMethodsTests(TestCase):
@@ -110,3 +110,29 @@ class BaseDispatchControllerMethodsTests(TestCase):
         self.assertEqual(new_producer.name, self.base_controller.get_producer_name())
         # assert dispatch list is None as there is no dispatch item yet
         self.assertQuerysetEqual(self.base_controller.get_dispatched_items_for_producer(), [])
+
+    def test_dispatch(self):
+        dispatch_container = self.base_controller.get_dispatch_container_instance()
+        obj_cls = get_model(
+            self.base_controller.get_dispatch_container_instance().container_app_label,
+            self.base_controller.get_dispatch_container_instance().container_model_name)
+        obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_controller.get_dispatch_container_instance().container_identifier})
+        self.base_controller.dispatch_as_json(obj)
+        # assert that the item was dispacthed to its destination
+        self.assertIsInstance(obj.__class__.objects.using(self.base_controller.get_using_destination()).get(pk=obj.pk), obj.__class__)
+        # assert that the disptched item was tracked in DispatchItem
+        self.assertEqual(DispatchItem.objects.all().count(), 1)
+        self.assertTrue(DispatchItem.objects.get(item_pk=obj.pk).is_dispatched)
+        self.assertTrue(obj.is_dispatched)
+        self.assertTrue(obj.is_dispatched_to_producer())
+        # assert that you cannot dispatch it again
+        self.assertRaises(AlreadyDispatched, self.base_controller.dispatch_as_json, obj)
+        dispatch_item = DispatchItem.objects.get(item_pk=obj.pk)
+        # flag is dispatched as False
+        dispatch_item.is_dispatched = False
+        dispatch_item.return_datetime = datetime.today()
+        dispatch_item.save()
+        # dispatch again ...
+        self.assertIsNone(self.base_controller.dispatch_as_json(obj))
+        # assert that a new dispatch item was created
+        self.assertEqual(DispatchItem.objects.all().count(), 2)

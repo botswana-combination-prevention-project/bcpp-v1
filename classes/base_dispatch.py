@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.exceptions import DispatchModelError, DispatchError
+from bhp_dispatch.exceptions import DispatchModelError, DispatchError, AlreadyDispatched
 from bhp_dispatch.models import DispatchItem, DispatchContainer
 from base import Base
 
@@ -143,11 +143,11 @@ class BaseDispatch(Base):
                 dispatch_container=self.get_dispatch_container_instance(),
                 producer=self.get_producer(),
                 item_app_label=instance._meta.app_label,
-                item_model_name=instance._meta.model_name,
+                item_model_name=instance._meta.object_name,
                 item_pk=instance.pk,
                 item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
                 item_identifier=getattr(instance, self.get_dispatch_item_identifier_attrname()),
-                dispatch_using=settings.DATABASE.default.name,
+                dispatch_using=settings.DATABASES.get(self.get_using_source()).get('name'),
                 dispatch_host=socket.gethostname(),
                 is_dispatched=True)
             return dispatch_item
@@ -281,12 +281,14 @@ class BaseDispatch(Base):
             #serialize
             json = serializers.serialize('json', source_instances, use_natural_keys=True)
             # deserialize on destination
-            for dest_instance in serializers.deserialize("json", json, use_natural_keys=True):
+            for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
+                if d_obj.object.is_dispatched:
+                    raise AlreadyDispatched('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
                 try:
                     # disconnect signal to avoid creating transactions on the source for data saved on destination
                     signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                     #save
-                    dest_instance.save(using=self.get_using_destination())
+                    d_obj.save(using=self.get_using_destination())
                     # reconnect
                     signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                 except IntegrityError as e:
@@ -302,17 +304,17 @@ class BaseDispatch(Base):
                         # disconnect signal
                         signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                         #save
-                        dest_instance.save(using=self.get_using_destination())
+                        d_obj.save(using=self.get_using_destination())
                         # reconnect
                         signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                     else:
                         raise
                 except:
                     raise
-                # create_dispatched_item_instance for this dispatched dest_instance
-                if not self.create_dispatched_item_instance(dest_instance):
-                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(dest_instance.object._meta.object_name, dest_instance.object, self.get_using_destination()))
-                logger.info('dispatched {0} {1} to {2}.'.format(dest_instance.object._meta.object_name, dest_instance.object, self.get_using_destination()))
+                # create_dispatched_item_instance for this dispatched d_obj
+                if not self.create_dispatched_item_instance(d_obj.object):
+                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
+                logger.info('dispatched {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
 
 #    def dispatch_model_as_json(self, models, **kwargs):
 #        # TODO: what is the difference betweeen this and dispatch_as_json??
