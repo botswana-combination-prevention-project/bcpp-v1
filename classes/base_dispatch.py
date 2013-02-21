@@ -1,7 +1,8 @@
 import logging
 from django.db.models import get_model, get_models, get_app, ForeignKey, OneToOneField
 from bhp_visit.models import MembershipForm
-from bhp_dispatch.models import DispatchContainer
+from bhp_dispatch.exceptions import DispatchError
+from bhp_dispatch.models import DispatchItem, DispatchContainer
 from base import Base
 
 logger = logging.getLogger(__name__)
@@ -15,17 +16,21 @@ nullhandler = logger.addHandler(NullHandler())
 
 class BaseDispatch(Base):
 
-    def __init__(self, using_source, using_destination, dispatch_item_app_label, dispatch_item_model_name, dispatch_app_label, **kwargs):
+    def __init__(self, using_source, using_destination, dispatch_container_app_label, dispatch_container_model_name, dispatch_container_identifier_attrname, dispatch_container_identifier, dispatch_item_app_label, **kwargs):
         super(BaseDispatch, self).__init__(using_source, using_destination, **kwargs)
         self._dispatch_item_app_label = None
         self._dispatch_item_model_name = None
-        self._dispatch_app_label = None
+        self._dispatch_container_app_label = None
+        self._dispatch_container_identifier_attrname = None
+        self._dispatch_container_identifier = None
         self._dispatch = None
         self._visit_models = {}
+        self._set_dispatch_container_app_label(dispatch_container_app_label)
+        self._set_dispatch_container_model_name(dispatch_container_model_name)
+        self._set_dispatch_container_identifier_attrname(dispatch_container_identifier_attrname)
+        self.set_dispatch_container_identifier(dispatch_container_identifier)
         self._set_dispatch_item_app_label(dispatch_item_app_label)
-        self._set_dispatch_item_model_name(dispatch_item_model_name)
-        self._set_dispatch_instance()
-        self._set_dispatch_app_label(dispatch_app_label)
+        self._set_dispatch_container_instance()
         self.debug = kwargs.get('debug', False)
 
     def _set_dispatch_item_app_label(self, value):
@@ -39,68 +44,110 @@ class BaseDispatch(Base):
             self._set_dispatch_item_app_label()
         return self._dispatch_item_app_label
 
-    def _set_dispatch_item_model_name(self, value):
+    def _set_dispatch_container_model_name(self, value):
         if not value:
-            raise AttributeError('The model_name of the dispatching item cannot be None. Set this in __init__() of the subclass.')
-        self._dispatch_item_model_name = value
+            raise AttributeError('The model_name of the dispatch container cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_container_model_name = value
 
-    def get_dispatch_item_model_name(self):
+    def get_dispatch_container_model_name(self):
         """Gets the model name for the dispatching item."""
-        if not self._dispatch_item_model_name:
-            self._set_dispatch_item_model_name()
-        return self._dispatch_item_model_name
+        if not self._dispatch_container_model_name:
+            self._set_dispatch_container_model_name()
+        return self._dispatch_container_model_name
 
-    def _set_dispatch_app_label(self, value):
+    def _set_dispatch_container_app_label(self, value):
         if not value:
-            raise AttributeError('The app_label of the dispatch model cannot be None. Set this in __init__() of the subclass.')
-        self._dispatch_app_label = value
+            raise AttributeError('The app_label of the dispatch container model cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_container_app_label = value
 
-    def get_dispatch_app_label(self):
-        """Gets the app_label for the dispatching item."""
-        if not self._dispatch_app_label:
-            self._set_dispatch_app_label()
-        return self._dispatch_app_label
+    def get_dispatch_container_app_label(self):
+        """Gets the app_label for the dispatching container."""
+        if not self._dispatch_container_app_label:
+            self._set_dispatch_container_app_label()
+        return self._dispatch_container_app_label
 
-#    def _set_dispatch_model_name(self, value):
-#        if not value:
-#            raise AttributeError('The model_name of the dispatching item cannot be None. Set this in __init__() of the subclass.')
-#        self._dispatch_model_name = value
-#
-#    def get_dispatch_model_name(self):
-#        """Gets the model name for the dispatching item."""
-#        if not self._dispatch_model_name:
-#            self._set_dispatch_model_name()
-#        return self._dispatch_model_name
+    def _set_dispatch_container_identifier_attrname(self, value=None):
+        """Sets identifier field attribute of the dispatch model.
+           This is an identifier for the model thats the starting point of dispatching
+           e.g household_identifier if starting with household or subject identifier if starting with registered subject.
+           This identifier will be determined by the application specific controller/model sub classing a base model
+           e.g MochudiDispatchController or mochudi_household
+        """
+        if not value:
+            raise AttributeError('The identifier field of the dispatch model cannot be None. Set this in __init__() of the subclass.')
+        self._dispatch_container_identifier_attrname = value
+
+    def get_dispatch_container_identifier_attrname(self):
+        """Gets the item identifier for the dispatching model."""
+        if not self._dispatch_container_identifier_attrname:
+            self._set_dispatch_container_identifier_attrname()
+        return self._dispatch_container_identifier_attrname
+
+    def set_dispatch_container_identifier(self, value=None):
+        if not value:
+            raise AttributeError('The identifier of the user\'s dispatch container model instance cannot be None.')
+        self._dispatch_container_identifier = value
+
+    def get_dispatch_container_identifier(self):
+        """Gets the identifier for the user's dispatch container instance."""
+        if not self._dispatch_container_identifier:
+            self.set_dispatch_container_identifier()
+        return self._dispatch_container_identifier
 
     def _set_dispatch_container_instance(self):
-        """Creates a dispatch instance for this controller sessions."""
-        DispatchContainer = get_model('bhp_dispatch', 'Dispatch')
-        self._dispatch_container = DispatchContainer.objects.create(producer=self.get_producer(), is_dispatched=True)
+        """Creates a dispatch container instance for this controller sessions."""
+        user_dispatch_container_model = get_model(self.get_dispatch_container_app_label(), self.get_dispatch_container_model_name())
+        obj = user_dispatch_container_model.objects.get(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()})
+        if not getattr(obj, self.get_dispatch_container_identifier_attrname()):
+            raise DispatchError('Attribute {0} not found on model instance {1}.'.format(self.get_dispatch_container_identifier_attrname(), self.get_dispatch_container_model_name()))
+        self._dispatch_container = DispatchContainer.objects.create(
+            producer=self.get_producer(),
+            is_dispatched=True,
+            container_app_label=self.get_dispatch_container_app_label(),
+            container_model_name=self.get_dispatch_container_model_name(),
+            container_identifier_attrname=self.get_dispatch_container_identifier_attrname(),
+            container_identifier=getattr(obj, self.get_dispatch_container_identifier_attrname()),
+            container_pk=obj.pk)
+        # update the dispatch_items queryset
+        self.set_dispatched_items_for_container()
 
     def get_dispatch_container_instance(self):
-        """Gets the dispatch instance for this controller sessions."""
+        """Gets the dispatch container instance for this controller sessions."""
         if not self._dispatch_container:
-            self._set_dispatch_instance()
+            self._set_dispatch_container_instance()
         return self._dispatch_container
 
-    def set_dispatch_list(self):
-        """Sets a queryset of dispatched Dispatch model instances for the current producer."""
-        Dispatch = get_model('bhp_dispatch', 'Dispatch')
-        self._dispatch_list = Dispatch.objects.using(self.get_using_source()).filter(
+    def set_dispatched_items_for_producer(self):
+        """Sets a queryset of dispatched DispatchItem model instances for the current producer."""
+        self._dispatched_items_for_producer = DispatchItem.objects.using(self.get_using_source()).filter(
             producer=self.get_producer(),
-            is_dispatched=True)
+            is_dispatched=True,
+            return_datetime__isnull=True)
 
-    def get_dispatch_list(self):
-        """Returns a queryset of checked-out Dispatch model instances."""
-        if not self._dispatch_list:
-            self.set_dispatch_list()
-        return self._dispatch_list
+    def get_dispatched_items_for_producer(self):
+        """Returns a queryset of dispatched DispatchItem model instances for this producer."""
+        if not self._dispatched_items_for_producer:
+            self.set_dispatched_items_for_producer()
+        return self._dispatched_items_for_producer
+
+    def set_dispatched_items_for_container(self):
+        """Sets a queryset of dispatched DispatchItem model instances for the current container."""
+        self._dispatched_items_for_container = DispatchItem.objects.using(self.get_using_source()).filter(
+            dispatch_container=self.get_dispatch_container_instance(),
+            is_dispatched=True,
+            return_datetime__isnull=True)
+
+    def get_dispatched_items_for_container(self):
+        """Returns a queryset of dispatched DispatchItem model instances for this container."""
+        if not self._dispatched_items_for_container:
+            self.set_dispatched_items_for_container()
+        return self._dispatched_items_for_container
 
     def set_producer(self):
         super(BaseDispatch, self).set_producer()
         # producer has changed so update the list of
         # dispatched Dispatch items instances for this producer
-        self.set_dispatch_list()
+        self.set_dispatched_items_for_producer()
 
     def get_membershipform_models(self):
         """Returns a list of 'visible' membership form model classes."""
@@ -160,10 +207,10 @@ class BaseDispatch(Base):
 
     def get_scheduled_models(self, app_label=None):
         """Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models."""
-        app = get_app(self.get_dispatch_app_label())
+        app = get_app(self.get_dispatch_item_app_label())
         scheduled_models = []
         for model_cls in get_models(app):
-            field_name, visit_model_cls = self.get_visit_model_cls(self.get_dispatch_app_label(), model_cls)
+            field_name, visit_model_cls = self.get_visit_model_cls(self.get_dispatch_item_app_label(), model_cls)
             if visit_model_cls:
                 if getattr(model_cls, field_name, None):
                     if not model_cls._meta.object_name.endswith('Audit'):

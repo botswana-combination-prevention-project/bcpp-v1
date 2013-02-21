@@ -11,11 +11,6 @@ class DispatchItem(BaseDispatch):
         max_length=25,
         help_text=""
         )
-
-    item_app_name = models.CharField(max_length=35, null=True)
-    item_model_name = models.CharField(max_length=35, null=True)
-    item_identifier_attrname = models.CharField(max_length=35, null=True)
-    dispatched_using = models.CharField(max_length=35, null=True)
     dispatch_host = models.CharField(max_length=35, null=True),
     registered_subjects = models.TextField(
         verbose_name='List of Registered Subjects',

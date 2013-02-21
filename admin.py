@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin, BaseStackedInline
-from models import Dispatch, DispatchItem
+from models import DispatchContainer, DispatchItem
 from bhp_dispatch.actions import set_is_dispatched
 
 
@@ -9,12 +9,14 @@ class DispatchItemInline(BaseStackedInline):
     extra = 0
 
 
-class DispatchAdmin(BaseModelAdmin):
+class DispatchContainerAdmin(BaseModelAdmin):
     date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', ]
     list_display = (
         'producer',
         'to_items',
+        'container_model_name',
+        'container_identifier',
         'created',
         'is_dispatched',
         'dispatch_datetime',
@@ -29,14 +31,14 @@ class DispatchAdmin(BaseModelAdmin):
         )
     search_fields = ('id', )
     inlines = [DispatchItemInline, ]
-admin.site.register(Dispatch, DispatchAdmin)
+admin.site.register(DispatchContainer, DispatchContainerAdmin)
 
 
 class DispatchItemAdmin(BaseModelAdmin):
     date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', 'item_identifier']
     list_display = (
-        'dispatch',
+        'dispatch_container',
         'producer',
         'item_identifier',
         'created',
@@ -52,7 +54,7 @@ class DispatchItemAdmin(BaseModelAdmin):
         'dispatch_datetime',
         'return_datetime'
         )
-    search_fields = ('dispatch__pk', 'item_identifier', 'subject_identifiers')
+    search_fields = ('dispatch_container__pk', 'item_identifier', 'subject_identifiers')
     actions = [set_is_dispatched, ]
 
 admin.site.register(DispatchItem, DispatchItemAdmin)

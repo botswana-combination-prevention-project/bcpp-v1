@@ -25,8 +25,8 @@ class AlreadyDispatched(Exception):
 
 class DispatchController(BaseDispatchController):
 
-    def __init__(self, using_source, using_destination, dispatch_item_app_label, dispatch_item_model_name, item_identifier_field_name, dispatch_url, **kwargs):
-        super(DispatchController, self).__init__(using_source, using_destination, dispatch_item_app_label, dispatch_item_model_name, **kwargs)
+    def __init__(self, using_source, using_destination, dispatch_container_app_name, dispatch_container_model_name, dispatch_container_identifier_fieldattr, dispatch_url, **kwargs):
+        super(DispatchController, self).__init__(using_source, using_destination, dispatch_container_app_name, dispatch_container_model_name, dispatch_container_identifier_fieldattr, **kwargs)
         self._dispatch_app_label = None
         self._dispatch_model_name = None
         self._dispatch_url = None
@@ -36,23 +36,6 @@ class DispatchController(BaseDispatchController):
         self._dispatch_admin_url = None
         self._set_dispatch_item_identifier_field_name(item_identifier_field_name)
         self._set_dispatch_url(dispatch_url)
-
-    def _set_dispatch_item_identifier_field_name(self, value=None):
-        """Sets identifier field attribute of the dispatch model.
-           This is an identifier for the model thats the starting point of dispatching
-           e.g household_identifier if starting with household or subject identifier if starting with registered subject.
-           This identifier will be determined by the application specific controller/model sub classing a base model
-           e.g MochudiDispatchController or mochudi_household
-        """
-        if not value:
-            raise AttributeError('The identifier field of the dispatch model cannot be None. Set this in __init__() of the subclass.')
-        self._dispatch_model_item_identifier_field = value
-
-    def get_dispatch_item_identifier_field_name(self):
-        """Gets the item identifier for the dispatching model."""
-        if not self._dispatch_model_item_identifier_field:
-            self._set_dispatch_item_identifier_field_name()
-        return self._dispatch_model_item_identifier_field
 
     def set_dispatch_model(self):
         """Sets the model class for the dispatching model."""

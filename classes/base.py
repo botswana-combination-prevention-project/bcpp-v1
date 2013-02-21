@@ -42,12 +42,20 @@ class Base(object):
 
         Keywords:
             ``server_device_id``: settings.DEVICE_ID for server (default='99')
+
+        Settings:
+            DISPATCH_APP_LABELS = a list of app_labels for apps that contain models to be monitored by bhp_dispatch. Models in apps not
+                                  here will be ignored by default. To ignore a model that exists in an app listed here, override the
+                                  :func:`ignore_for_dispatch` method on the model. See model base class :class:`BaseSyncUuidModel` in
+                                  module :mod:`bhp_sync`. For example: DISPATCH_APP_LABELS = ['mochudi_household', 'mochudi_subject', 'mochudi_lab']
             """
         self._using_source = None
         self._using_destination = None
         self._producer = None
         self.server_device_id = kwargs.get('server_device_id', '99')
         self.exception = kwargs.get('exception', DispatchError)
+        if not 'DISPATCH_APP_LABELS' in dir(settings):
+            raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
         #if not 'ALLOW_DISPATCH' in dir(settings):
         #    raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
         #if not 'DISPATCH_MODEL' in dir(settings):

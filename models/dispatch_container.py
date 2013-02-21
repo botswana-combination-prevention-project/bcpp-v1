@@ -4,6 +4,12 @@ from base_dispatch import BaseDispatch
 
 class DispatchContainer(BaseDispatch):
 
+    container_app_label = models.CharField(max_length=35, null=True)
+    container_model_name = models.CharField(max_length=35, null=True)
+    container_identifier_attrname = models.CharField(max_length=35, null=True)
+    container_identifier = models.CharField(max_length=35, null=True)
+    container_pk = models.CharField(max_length=50, null=True)
+    dispatched_using = models.CharField(max_length=35, null=True)
     dispatch_items = models.TextField(
         max_length=500,
         help_text='Dispatch items. One per line.')
