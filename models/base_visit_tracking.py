@@ -116,17 +116,14 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         return self.appointment.natural_key()
     natural_key.dependencies = ['bhp_appointment.appointment', ]
 
-    @property
-    def is_dispatched(self):
-        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-        locked, producer = self.is_dispatched_to_producer()
-        return locked
-
     def get_subject_identifier(self):
-        return self.appointment.registered_subject.subject_identifier
+        return self.get_registered_subject().subject_identifier
 
     def get_report_datetime(self):
         return self.report_datetime
+
+    def get_registered_subject(self):
+        return self.appointment.registered_subject
 
     class Meta:
         abstract = True
