@@ -4,6 +4,8 @@ from django.core import serializers
 from django.db import IntegrityError
 from django.db.models import get_model
 from django.db.models.query import QuerySet
+from bhp_dispatch.models import DispatchItem
+from bhp_dispatch.exceptions import DispatchError
 from base_dispatch import BaseDispatch
 
 
@@ -53,6 +55,21 @@ class BaseDispatchController(BaseDispatch):
             dispatch.return_datetime = datetime.today()
             dispatch.save()
 
+    def create_dispatched_item_instance(self, instance):
+        """Creates an instance of DispatchItem."""
+        if not instance.is_dispatched:
+            dispatch_item = DispatchItem.objects.create(
+                dispatch_container=self.get_dispatch_container_instance(),
+                producer=self.get_producer(),
+                item_app_label=instance._meta.app_label,
+                item_model_name=instance._meta.model_name,
+                item_pk=instance.pk,
+                item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
+                item_identifier=getattr(instance, self.get_dispatch_item_identifier_attrname()),
+                is_dispatched=True)
+            return dispatch_item
+        return False
+
     def dispatch_as_json(self, source_instances, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
 
@@ -85,4 +102,7 @@ class BaseDispatchController(BaseDispatch):
                         raise
                 except:
                     raise
+                # create_dispatched_item_instance for this dispatched obj_new
+                if not self.create_dispatched_item_instance():
+                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))
                 logger.info('dispatched {0} {1} to {2}.'.format(obj_new.object._meta.object_name, obj_new.object, self.get_using_destination()))

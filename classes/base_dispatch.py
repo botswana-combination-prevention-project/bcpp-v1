@@ -15,7 +15,13 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class BaseDispatch(Base):
+    """A model is tracked as dispatched by a instance in DispatchItem searchable on its pk, app_label, model_name.
 
+    Additionally, a model can be configured as a container model so that the DispatchContainer makes reference to it.
+
+    All models are tacked in DispatchItem. Container models are also referenced in DispatchContainer.
+
+    """
     def __init__(self, using_source, using_destination, dispatch_container_app_label, dispatch_container_model_name, dispatch_container_identifier_attrname, dispatch_container_identifier, dispatch_item_app_label, **kwargs):
         super(BaseDispatch, self).__init__(using_source, using_destination, **kwargs)
         self._dispatch_item_app_label = None
@@ -54,6 +60,9 @@ class BaseDispatch(Base):
         if not self._dispatch_container_model_name:
             self._set_dispatch_container_model_name()
         return self._dispatch_container_model_name
+
+    def get_dispatch_item_identifier_attrname(self):
+        return 'id'
 
     def _set_dispatch_container_app_label(self, value):
         if not value:
@@ -109,6 +118,7 @@ class BaseDispatch(Base):
             container_identifier=getattr(obj, self.get_dispatch_container_identifier_attrname()),
             container_pk=obj.pk)
         # update the dispatch_items queryset
+        #TODO: probably remove this
         self.set_dispatched_items_for_container()
 
     def get_dispatch_container_instance(self):
@@ -147,6 +157,7 @@ class BaseDispatch(Base):
         super(BaseDispatch, self).set_producer()
         # producer has changed so update the list of
         # dispatched Dispatch items instances for this producer
+        #TODO: probably remove this
         self.set_dispatched_items_for_producer()
 
     def get_membershipform_models(self):

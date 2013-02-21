@@ -6,11 +6,11 @@ from bhp_sync.classes import Consumer
 
 class DispatchItem(BaseDispatch):
     dispatch_container = models.ForeignKey(DispatchContainer)
-    item_identifier = models.CharField(
-        verbose_name='Item Identifier',
-        max_length=25,
-        help_text=""
-        )
+    item_app_label = models.CharField(max_length=35, null=True)
+    item_model_name = models.CharField(max_length=35, null=True)
+    item_identifier_attrname = models.CharField(max_length=35, null=True)
+    item_identifier = models.CharField(max_length=35, null=True)
+    item_pk = models.CharField(max_length=50, null=True)
     dispatch_host = models.CharField(max_length=35, null=True),
     registered_subjects = models.TextField(
         verbose_name='List of Registered Subjects',
@@ -21,8 +21,6 @@ class DispatchItem(BaseDispatch):
     objects = models.Manager()
 
     def run_pre_unlocking_checks(self):
-        #unlock_instance = self.item_model_name.objects.get(item_identifier_attrname=self.item_identifier)
-        #unlock_instance.unlocking_prep()
         consumer = Consumer()
         consumer.check_all_synched_from_producer(self.producer.name)
         consumer.check_all_consumed_in_server(self.producer.name)

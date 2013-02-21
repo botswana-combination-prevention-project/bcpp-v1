@@ -25,32 +25,54 @@ class BaseDispatchControllerMethodsTests(TestCase):
             dispatch_container_identifier,
             dispatch_item_app_label)
 
-    def test_get_dispatch_instance(self):
-        #assert a dispatch instance exists
+    def test_get_dispatch_container_instance(self):
+        #assert a dispatch container instance exists
         self.assertIsInstance(self.base_controller.get_dispatch_container_instance(), DispatchContainer)
-        # assert that dispatch instance producer
-        self.assertEqual(self.base_controller.get_dispatch_container_instance().producer, self.base_controller.get_producer())
-        # assert dispatch instance is_dispatched=True
-        self.assertTrue(self.base_controller.get_dispatch_container_instance().is_dispatched)
+        # assert there is only one
+        self.assertEqual(DispatchContainer.objects.all().count(), 1)
+        # assert that dispatch container instance producer
+        dispatch_container = self.base_controller.get_dispatch_container_instance()
+        self.assertEqual(dispatch_container.producer, self.base_controller.get_producer())
+        # assert dispatch container instance is_dispatched=True
+        self.assertTrue(dispatch_container.is_dispatched)
         # assert values in dispatch_container_instance
-        self.assertEquals(self.base_controller.get_dispatch_container_instance().container_identifier, self.base_controller.get_dispatch_container_identifier())
-        # get the container user instance
+        self.assertEquals(dispatch_container.container_identifier, self.base_controller.get_dispatch_container_identifier())
+        # get the container user instance, e.g. Household
         obj_cls = get_model(
             self.base_controller.get_dispatch_container_instance().container_app_label,
             self.base_controller.get_dispatch_container_instance().container_model_name)
         self.assertIsInstance(
-            obj_cls.objects.get(**{self.base_controller.get_dispatch_container_instance().container_identifier_attrname: self.base_controller.get_dispatch_container_instance().container_identifier}),
+            obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: dispatch_container.container_identifier}),
             obj_cls)
-        self.assertEquals(self.base_controller.get_dispatch_container_instance().container_identifier, self.base_controller.get_dispatch_container_identifier())
+        self.assertEquals(dispatch_container.container_identifier, self.base_controller.get_dispatch_container_identifier())
         #assert container user model now is dispatched on updates
-        obj = obj_cls.objects.get(**{self.base_controller.get_dispatch_container_instance().container_identifier_attrname: self.base_controller.get_dispatch_container_instance().container_identifier})
+        obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_controller.get_dispatch_container_instance().container_identifier})
         # assert that user container model identifier attrname is same as one used to init the class
         self.assertEqual(obj.dispatched_as_container_identifier_attr(), self.base_controller.get_dispatch_container_identifier_attrname())
+        # assert that DispatchContainer exists this user container model
+        self.assertIsInstance(DispatchContainer.objects.get(container_identifier=getattr(obj, dispatch_container.container_identifier_attrname)), DispatchContainer)
+        # assert that DispatchContainer for this user container model is flagged as is_dispatched
+        self.assertTrue(DispatchContainer.objects.get(container_identifier=getattr(obj, dispatch_container.container_identifier_attrname)).is_dispatched)
+        # assert that DispatchContainer for this user container model return_datetime is not set
+        self.assertIsNone(DispatchContainer.objects.get(container_identifier=getattr(obj, dispatch_container.container_identifier_attrname)).return_datetime)
         # assert that user container model is flagged as a container model
         self.assertTrue(obj.is_dispatch_container_model())
-        # assert that users container model is flagged as dispatched
+        # assert that users container model is flagged as dispatched as a container (DispatchContainer)
+        self.assertTrue(obj._is_dispatched_to_producer_as_container())
+        # assert that users container model is NOT flagged as dispatched as an item (DipatchItem)
+        self.assertFalse(obj.is_dispatched_to_producer())
+        # assert that model instance, in some way, is dispatched.
+        self.assertRaises(AlreadyDispatched, obj.save)
+        # assert that model property also indicates that the instance is dispatched
         self.assertTrue(obj.is_dispatched)
-        #self.assertRaises(AlreadyDispatched, obj.save)
+        # update the dispatch_container instance as returned
+        dispatch_container.is_dispatched = False
+        dispatch_container.return_datetime = datetime.today()
+        dispatch_container.save()
+        # assert that model property also indicates that the instance is NOT dispatched
+        self.assertFalse(obj.is_dispatched)
+        # assert the model saves without an exception
+        self.assertIsNone(obj.save())
 
     def test_get_scheduled_models(self):
         # assert that the dispatch item app is set (set in setUp)

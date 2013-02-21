@@ -12,7 +12,7 @@ class BaseDispatch(BaseUuidModel):
         verbose_name="Producer / Netbook"
         )
 
-    is_dispatched = models.BooleanField(default=False)
+    is_dispatched = models.BooleanField(default=True)
 
     dispatch_datetime = models.DateTimeField(
         verbose_name="Dispatch date",

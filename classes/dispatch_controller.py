@@ -34,7 +34,6 @@ class DispatchController(BaseDispatchController):
         self._dispatch_model = None
         self._dispatch_model_item_identifier_field = None
         self._dispatch_admin_url = None
-        self._set_dispatch_item_identifier_field_name(item_identifier_field_name)
         self._set_dispatch_url(dispatch_url)
 
     def set_dispatch_model(self):
@@ -230,7 +229,7 @@ class DispatchController(BaseDispatchController):
             #        self.dispatch_membership_forms(registered_subject)
             created, dispatch_item = self.create_dispatch_item_instance(
                 item_identifier,
-                self.get_dispatch_item_identifier_field_name(),
+                self.get_dispatch_item_identifier_attrname(),
                 self.get_dispatch_model_name(),
                 self.get_dispatch_app_label(),
                 registered_subjects)
@@ -261,7 +260,7 @@ class DispatchController(BaseDispatchController):
             item_identifier=item_identifier,
             item_app_label=self.get_dispatch_app_label(),
             item_model_name=self.get_dispatch_model_name(),
-            item_identifier_attrname=self.get_dispatch_item_identifier_field_name(),
+            item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
             dispatch_using=settings.DATABASE.default.name,
             dispatch_host=socket.gethostname(),
             registered_subjects=' '.join(pk_list),
@@ -271,21 +270,20 @@ class DispatchController(BaseDispatchController):
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
-           Does this by checking bhp_sync.outgoing_transactions in the netbook.
+
+        Does this by checking bhp_sync.outgoing_transactions in the netbook.
         """
         any_dispatched = False  # are any items dispatched already?
         any_transactions = True
         if not self.has_outgoing_transactions():
             any_transactions = False
             for qs in queryset:
-                item_identifier = getattr(qs, self.get_dispatch_item_identifier_field_name())
-                if self.is_dispatched(item_identifier):
+                if qs.is_dispatched:
                     any_dispatched = True
                     break
             if not any_dispatched:
                 for qs in queryset:
-                    item_identifier = getattr(qs, self.get_dispatch_item_identifier_field_name())
-                    self.dispatch(item_identifier, self.get_dispatch_item_identifier_field_name(), qs._meta.object_name, qs._meta.app_label)
+                    self.dispatch(getattr(qs, self.get_dispatch_item_identifier_attrname()), self.get_dispatch_item_identifier_attrname(), qs._meta.object_name, qs._meta.app_label)
                 self.dispatch_crypt()
                 self.dispatch_registered_subjects()
         return any_dispatched, any_transactions

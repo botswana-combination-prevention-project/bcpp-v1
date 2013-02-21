@@ -12,7 +12,7 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
     """Receives a list of item identifiers and user selects the producer to dispatch to.
 
         Args:
-            dispatch_controller_cls: a subclass of :class:`DispatchController`.
+            dispatch_controller_cls: a subclass of :class:`DispatchController` coming from a user app, e.g. MochudiDispatchController.
     """
     if not issubclass(dispatch_controller_cls, DispatchController):
         raise AttributeError('Parameter \'dispatch_controller_cls\' must be a subclass of DispatchController.')
