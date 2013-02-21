@@ -7,6 +7,7 @@ from django.core.exceptions import FieldError
 from bhp_lab_tracker.models import HistoryModel
 from bhp_registration.models import RegisteredSubject
 from bhp_dispatch.classes import BaseDispatchController
+from bhp_dispatch.models import Dispatch
 
 
 logger = logging.getLogger(__name__)
@@ -25,43 +26,16 @@ class AlreadyDispatched(Exception):
 class DispatchController(BaseDispatchController):
 
     def __init__(self, using_source, using_destination, dispatch_item_app_label, dispatch_item_model_name, item_identifier_field_name, dispatch_url, **kwargs):
-        super(DispatchController, self).__init__(using_source, using_destination, **kwargs)
+        super(DispatchController, self).__init__(using_source, using_destination, dispatch_item_app_label, dispatch_item_model_name, **kwargs)
         self._dispatch_app_label = None
         self._dispatch_model_name = None
-        self._visit_models = {}
-        self._dispatch = None
         self._dispatch_url = None
         self._dispatch_admin_url = None
         self._dispatch_model = None
         self._dispatch_model_item_identifier_field = None
         self._dispatch_admin_url = None
-        self._set_dispatch_app_label(dispatch_item_app_label)
-        self._set_dispatch_model_name(dispatch_item_model_name)
         self._set_dispatch_item_identifier_field_name(item_identifier_field_name)
         self._set_dispatch_url(dispatch_url)
-        self._set_dispatch_instance()
-
-    def _set_dispatch_app_label(self, value):
-        if not value:
-            raise AttributeError('The app_label of the dispatch model cannot be None. Set this in __init__() of the subclass.')
-        self._dispatch_app_label = value
-
-    def get_dispatch_app_label(self):
-        """Gets the app_label for the dispatching item."""
-        if not self._dispatch_app_label:
-            self._set_dispatch_app_label()
-        return self._dispatch__dispatch_app_label
-
-    def _set_dispatch_model_name(self, value):
-        if not value:
-            raise AttributeError('The model_name of the dispatching item cannot be None. Set this in __init__() of the subclass.')
-        self._dispatch_model_name = value
-
-    def get_dispatch_model_name(self):
-        """Gets the model name for the dispatching item."""
-        if not self._dispatch_model_name:
-            self._set_dispatch_model_name()
-        return self._dispatch_model_name
 
     def _set_dispatch_item_identifier_field_name(self, value=None):
         """Sets identifier field attribute of the dispatch model.
@@ -112,17 +86,6 @@ class DispatchController(BaseDispatchController):
         if not self._dispatch_url:
             self._set_dispatch_url()
         return self._dispatch_url
-
-    def _set_dispatch_instance(self):
-        """Creates a dispatch instance for this controller sessions."""
-        Dispatch = get_model('bhp_dispatch', 'Dispatch')
-        self._dispatch = Dispatch.objects.create(producer=self.get_producer())
-
-    def get_dispatch_instance(self):
-        """Gets the dispatch instance for this controller sessions."""
-        if not self._dispatch:
-            self._set_dispatch_instance()
-        return self._dispatch
 
     def set_visit_model_fkey(self, model_cls, visit_model_cls):
         """Subject forms will have a foreign key to a visit model instance. This sets that foreign key."""
@@ -311,7 +274,7 @@ class DispatchController(BaseDispatchController):
         pk_list = [rs.pk for rs in registered_subjects]
         dispatch_item = DispatchItem.objects.create(
             producer=self.get_producer(),
-            dispatch=self.get_dispatch_instance(),
+            dispatch_container=self.get_dispatch_instance(),
             item_identifier=item_identifier,
             item_app_label=self.get_dispatch_app_label(),
             item_model_name=self.get_dispatch_model_name(),

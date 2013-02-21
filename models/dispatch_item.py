@@ -1,12 +1,12 @@
 from django.db import models
 from base_dispatch import BaseDispatch
-from dispatch import Dispatch
+from dispatch_container import DispatchContainer
 from bhp_sync.classes import Consumer
 
 
 class DispatchItem(BaseDispatch):
 
-    dispatch = models.ForeignKey(Dispatch)
+    dispatch_container = models.ForeignKey(DispatchContainer)
     item_identifier = models.CharField(
         verbose_name='Item Identifier',
         max_length=25,

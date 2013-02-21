@@ -2,7 +2,7 @@ from django.db import models
 from base_dispatch import BaseDispatch
 
 
-class Dispatch(BaseDispatch):
+class DispatchContainer(BaseDispatch):
 
     dispatch_items = models.TextField(
         max_length=500,
@@ -18,7 +18,7 @@ class Dispatch(BaseDispatch):
 #        if self.__class__.objects.filter(dispatch_items__in=items, is_dispatched=True).exclude(pk=self.pk).exists():
 #            dispatches = self.__class__.objects.filter(dispatch_items__in=items, is_dispatched=True).exclude(pk=self.pk)
 #            raise ValueError("There are items in the list that are currently dispatched to {0}.".format([dispatch.producer.name for dispatch in dispatches]))
-        super(Dispatch, self).save(*args, **kwargs)
+        super(DispatchContainer, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "{0} @ {1}".format(self.producer.name, self.created)

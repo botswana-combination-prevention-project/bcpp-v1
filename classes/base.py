@@ -8,9 +8,9 @@ from django.db.models import get_model, Q, Count, Max
 from django.core.serializers.base import DeserializationError
 from django.core import serializers
 from django.db import IntegrityError
-from bhp_sync.models import BaseSyncUuidModel, OutgoingTransaction, IncomingTransaction
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
-
+from bhp_sync.helpers import TransactionHelper
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.exceptions import DispatchError, DispatchModelError
 
@@ -143,20 +143,26 @@ class Base(object):
     def get_producer_name(self):
         return self.get_producer().name
 
-    def has_pending_transactions(self):
-        return self.has_incoming_transactions() or self.has_outgoing_transactions()
+    def has_pending_transactions(self, models):
+        return self.has_incoming_transactions(models) or self.has_outgoing_transactions()
 
     def has_outgoing_transactions(self):
-        """Check if destination has pending Outgoing Transactions on destination by checking is_consumed in
+        """Check if destination has pending Outgoing Transactions by checking is_consumed in
            bhp_sync.outgoing_transactions.
         """
-        return OutgoingTransaction.objects.using(self.get_using_destination()).filter(is_consumed=False).exists()
+        return TransactionHelper().has_outgoing(self.get_using_destination())
 
-    def has_incoming_transactions(self):
-        """Check if destination has pending Incoming Transactions on source by checking is_consumed in
-           bhp_sync.incoming_transactions.
+    def has_incoming_transactions(self, models):
+        """Check if source has pending Incoming Transactions for this porcuder and model(s).
         """
-        return IncomingTransaction.objects.using(self.get_using_source()).filter(producer=self.get_producer_name(), is_consumed=False).exists()
+        retval = False
+        if not isinstance(models, list):
+            models = [models]
+        if TransactionHelper().has_incoming_for_producer(self.get_producer_name(), self.get_using_source()):
+            retval = True
+        if TransactionHelper().has_incoming_for_model([model._meta.object_name for model in models], self.get_using_source()):
+            retval = True
+        return retval
 
     def update_model(self, model, **kwargs):
         self.dispatch_model_as_json(model, **kwargs)
@@ -204,10 +210,6 @@ class Base(object):
         select_recent = kwargs.get('select_recent', True)
         #check_transactions = kwargs.get('check_transactions', True)
         #if check_transactions:
-        if self.has_outgoing_transactions():
-            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
-        if self.has_incoming_transactions():
-            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
         if not models:
             raise DispatchModelError('Parameter \'models\' may not be None.')
         # if models is a tuple, convert to model class using get_model
@@ -219,6 +221,11 @@ class Base(object):
         # models must be a list
         if not isinstance(models, (list,)):
             models = [models]
+        if self.has_outgoing_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+        if self.has_incoming_transactions(models):
+            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
+
         for model in models:
             if not issubclass(model, base_model_class):
                 raise DispatchModelError('Dispatch model {0} must be an instance of \'{1}\'.'.format(model, base_model_class))
