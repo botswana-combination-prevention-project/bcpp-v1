@@ -45,7 +45,9 @@ def return_items(request, **kwargs):
                 messages.add_message(
                     request,
                     messages.INFO,
-                    'Checked in {0}.'.format(dispatch.item_identifier)
+                    'Unlocked {0} where {1}={2}.'.format(dispatch.dispatch_container.container_model_name,
+                                                         dispatch.dispatch_container.container_identifier_attrname,
+                                                         dispatch.dispatch_container.container_identifier)
                     )
         else:
             messages.add_message(
