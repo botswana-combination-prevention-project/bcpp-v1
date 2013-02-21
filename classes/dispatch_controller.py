@@ -222,6 +222,7 @@ class DispatchController(BaseDispatchController):
             logger.info("Dispatching items for {0}".format(item_identifier))
         # is this item already dispatched?
         created, dispatch_item = None, None
+        # TODO: need the instance or something else than a container identifier
         if not self.is_dispatched(item_identifier):
             registered_subjects = self._dispatch_prep(item_identifier)
             #if registered_subjects:
@@ -235,16 +236,17 @@ class DispatchController(BaseDispatchController):
                 registered_subjects)
         return dispatch_item
 
-    def is_dispatched(self, item_identifier):
-        """Checks if a dispatch item is dispatched.
-
-        .. note:: to block saving a dispatched instance, see the signals."""
-        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-        if DispatchItem.objects.using(self.get_using_source()).filter(
-                item_identifier=item_identifier,
-                is_dispatched=True).exists():
-            return True
-        return False
+# removed -erikvw
+#    def is_dispatched(self, item_identifier):
+#        """Checks if a dispatch item is dispatched.
+#
+#        .. note:: to block saving a dispatched instance, see the signals."""
+#        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
+#        if DispatchItem.objects.using(self.get_using_source()).filter(
+#                item_identifier=item_identifier,
+#                is_dispatched=True).exists():
+#            return True
+#        return False
 
     def create_dispatch_item_instance(self, item_identifier, item_identifier_attrname, item_model_name, item_app_label, registered_subjects):
         """Creates a dispatch item instance for given dispatch instance and item_identifier

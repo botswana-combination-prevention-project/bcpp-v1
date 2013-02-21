@@ -63,8 +63,9 @@ class BaseDispatchControllerMethodsTests(TestCase):
         self.assertFalse(obj.is_dispatched_to_producer())
         # assert that model instance, in some way, is dispatched.
         self.assertRaises(AlreadyDispatched, obj.save)
-        # assert that model property also indicates that the instance is dispatched
-        self.assertTrue(obj.is_dispatched)
+        # assert that model property also indicates that the instance is NOT dispatched as this proprty only
+        # checks with DispatchItem
+        self.assertFalse(obj.is_dispatched)
         # update the dispatch_container instance as returned
         dispatch_container.is_dispatched = False
         dispatch_container.return_datetime = datetime.today()
