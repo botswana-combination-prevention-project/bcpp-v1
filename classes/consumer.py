@@ -16,29 +16,29 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class Consumer(object):
-    def check_all_synched_from_producer(self, producer_hostname):
+    def check_all_synched_from_producer(self, producer_name):
         OutgoingTransaction = get_model('bhp_sync', 'OutgoingTransaction')
-        producer = self.get_producer(producer_hostname)
-        tot = OutgoingTransaction.objects.using(producer.settings_key).filter(is_consumed=False, producer=producer_hostname).count()
+        producer = self.get_producer(producer_name)
+        tot = OutgoingTransaction.objects.using(producer.settings_key).filter(is_consumed=False, producer=producer_name).count()
         if tot > 0:
             raise AttributeError('There exists transanctions not synced in producer {0}. '
-                                 'Please sync the producer and try again.'.format(producer_hostname))
+                                 'Please sync the producer and try again.'.format(producer_name))
     
-    def check_all_consumed_in_server(self, producer_hostname):
+    def check_all_consumed_in_server(self, producer_name):
         IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')
         if not 'server' in settings.DATABASES.keys():
             raise AttributeError('Cannot find key "server" in settings.DATABASES. '
                                  'Please add and try again.')
-        tot = IncomingTransaction.objects.using('server').filter(is_consumed=False, producer=producer_hostname).count()
+        tot = IncomingTransaction.objects.using('server').filter(is_consumed=False, producer=producer_name).count()
         if tot > 0:
             raise AttributeError('There exists transanctions not consumed in the server. Please consume transactions and try again.')
                
-    def fetch_from_producer(self, producer_hostname):
+    def fetch_from_producer(self, producer_name):
         OutgoingTransaction = get_model('bhp_sync', 'OutgoingTransaction')
         IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')
         db = 'default'
-        lock_name = producer_hostname
-        producer = self.get_producer(producer_hostname)
+        lock_name = producer_name
+        producer = self.get_producer(producer_name)
         import_history = ImportHistory(db, lock_name)
         if import_history.start():
             n = 0
@@ -73,21 +73,21 @@ class Consumer(object):
                 outgoing_transaction.save(using=producer.settings_key)
         return import_history.finish()
 
-    def get_producer(self, producer_hostname):
+    def get_producer(self, producer_name):
         """Confirm address of producer listed in model matches that listed in settings."""
         Producer = get_model('bhp_sync', 'Producer')
-        if not Producer.objects.filter(settings_key=producer_hostname):
-            raise AttributeError('Unknown producer {0}. Not found in producer table.'.format(producer_hostname))
-        producer = Producer.objects.get(settings_key=producer_hostname)
+        if not Producer.objects.filter(settings_key=producer_name):
+            raise AttributeError('Unknown producer {0}. Not found in producer table.'.format(producer_name))
+        producer = Producer.objects.get(settings_key=producer_name)
         if not producer.settings_key in settings.DATABASES.keys():
             raise AttributeError('Cannot find key in settings.DATABASES for producer {0}. '
-                                 'Please add and try again.'.format(producer_hostname))
-        if not producer.url.replace('/', '').replace('http:', '') == settings.DATABASES[producer_hostname]['HOST']:
+                                 'Please add and try again.'.format(producer_name))
+        if not producer.url.replace('/', '').replace('http:', '') == settings.DATABASES[producer_name]['HOST']:
             raise AttributeError('IP address in settings.DATABASES ({0}) does not match that listed '
                                  'in the producer table ({1}) for producer {2}. '
-                                 'Please correct.'.format(settings.DATABASES[producer_hostname]['HOST'],
+                                 'Please correct.'.format(settings.DATABASES[producer_name]['HOST'],
                                                           producer.url.replace('/', '').replace('http:', ''),
-                                                          producer_hostname))
+                                                          producer_name))
         return producer
 
     def consume(self, lock_name):
