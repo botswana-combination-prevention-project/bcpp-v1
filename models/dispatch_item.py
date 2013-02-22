@@ -30,6 +30,9 @@ class DispatchItem(BaseDispatch):
         self.is_dispatched = False
         self.save()
 
+# temp removed - erikvw (fails on unknown producer when setting dispatched to False)
+# no longer necessary to check if the instance is dispatched, as this is done by
+# the controller class.
 #    def save(self, *args, **kwargs):
 #        """Confirms an instance does not exist for this item_identifier."""
 #        if self.__class__.objects.filter(
