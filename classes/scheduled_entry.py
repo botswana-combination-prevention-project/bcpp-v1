@@ -50,7 +50,7 @@ class ScheduledEntry(BaseScheduledEntry):
         """ Loops thru the list of entries configured for the visit_definition of this visit_model_instance
         and Adds entries to or updates existing entries in the bucket.
 
-        This just determines KEYED or NEW, bucket rules with reassess later.
+        This just determines KEYED or NEW, bucket rules will reassess later.
         """
         self.set_visit_model_instance(visit_model_instance)
         self.set_filter_model_instance(self.get_visit_model_instance())
