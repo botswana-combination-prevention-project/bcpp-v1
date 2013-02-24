@@ -2,6 +2,7 @@ import re
 from django.core.exceptions import FieldError
 from django.db import models
 from django.db.models import Q
+from bhp_dashboard_registered_subject.exceptions import DashboardError, DashboardFieldError
 
 
 class ScheduleGroupManager(models.Manager):
@@ -36,9 +37,9 @@ class ScheduleGroupManager(models.Manager):
 
         #  membership form 'category' should appear in the category field of membership_form.
         if not MembershipForm.objects.filter(category__iexact=membership_form_category).exists():
-            raise ValueError('Can\'t find any membership forms! Have you configured any for category \'%s\'.' % membership_form_category)
+            raise DashboardError('Can\'t find any membership forms! Have you configured any for category \'%s\'.' % membership_form_category)
         if not super(ScheduleGroupManager, self).filter(membership_form__category__iexact=membership_form_category).exists():
-            raise ValueError('Can\'t find any schedule groups! Have you configured any for category \'%s\'.' % membership_form_category)
+            raise DashboardError('Can\'t find any schedule groups! Have you configured any for category \'%s\'.' % membership_form_category)
 
         # a list of "keys" that link like membership forms together. If they share this
         # key it means that only one form should be KEYED per subject.
@@ -61,7 +62,7 @@ class ScheduleGroupManager(models.Manager):
                     keyed_membership_forms.update({schedule_group.membership_form.content_type_map.name: membership_form_model.objects.get(registered_subject=registered_subject)})
             except FieldError:
                 # raise error is attribute is missing
-                raise FieldError('Membership forms require attribute \'registered_subject\'. Model \'%s\' does not have this attribute but is listed as a membership form.' % schedule_group.membership_form.content_type_map.name)
+                raise DashboardFieldError('Membership forms require attribute \'registered_subject\'. Model \'%s\' does not have this attribute but is listed as a membership form.' % schedule_group.membership_form.content_type_map.name)
         #get UNKEYED schedule group membership forms
         # ...use the grouping key to eliminate membership forms related to a KEYED membership form from above
         qset = (
