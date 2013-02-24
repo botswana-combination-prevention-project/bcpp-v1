@@ -1,4 +1,7 @@
-from bhp_sync.models import BaseSyncUuidModel
+try:
+    from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
+except ImportError:
+    from bhp_sync.models import BaseSyncUuidModel
 from bhp_consent.classes import ConsentHelper
 
 
