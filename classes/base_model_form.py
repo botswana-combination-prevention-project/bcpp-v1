@@ -37,11 +37,9 @@ class BaseModelForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
         # check if dispatched
         if 'bhp_dispatch' in settings.INSTALLED_APPS:
-            subject_identifier = self.get_subject_identifier(cleaned_data)
             if 'is_dispatched' in dir(self._meta.model()):
-                is_dispatched, producer = self._meta.model().is_dispatched_to_producer(subject_identifier)
-                if is_dispatched:
-                    raise forms.ValidationError('Model {0} for subject {1} is currently dispatched to {3}.'.format(producer))
+                if self._meta.model().is_dispatched:
+                    raise forms.ValidationError('Cannot update. Form is currently dispatched')
 #        if 'subject_identifier' in cleaned_data:
 #            #subject_identifier = cleaned_data.get('subject_identifier', None)
 #            if 'is_dispatched' in dir(self._meta.model()):
