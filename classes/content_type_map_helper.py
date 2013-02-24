@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import get_model, F
+from django.db.models import get_model, F, Max
 
 
 class ContentTypeMapHelper(object):
@@ -29,6 +29,13 @@ class ContentTypeMapHelper(object):
                         model=content_type.model)
                 except:
                     pass
+#        # make sure content_type_map_model_cls has as many records as djangos
+#        django_count = ContentType.objects.using(self.using).all().aggregate(Max('id'))
+#        bhp_count = self.content_type_map_model_cls.objects.using(self.using).all().aggregate(Max('id'))
+#        creation_count = django_count.get('id__max') - bhp_count.get('id__max')
+#        if creation_count > 0:
+#            for i in range(0, creation_count):
+#                self.content_type_map_model_cls.objects.create()
 
     def sync(self):
         """Syncs content type map foreignkey with django's ContentType id.
