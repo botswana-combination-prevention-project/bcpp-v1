@@ -1,3 +1,4 @@
+from base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
 from base_dispatch import BaseDispatch
 from dispatch_item import DispatchItem
 from dispatch_container import DispatchContainer
