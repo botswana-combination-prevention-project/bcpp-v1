@@ -1,3 +1,4 @@
+# http://djangosnippets.org/snippets/918/
 #save into anyapp/management/commands/makefixture.py
 #or back into django/core/management/commands/makefixture.py
 #v0.1 -- current version
