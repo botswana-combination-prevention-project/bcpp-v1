@@ -1,4 +1,4 @@
-from datetime import datetime
+#from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from bhp_base_model.classes import BaseModelAdmin
@@ -72,32 +72,32 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
                 visit_model_instance=obj,
                 requisition_model=self.requisition_model,
                 )
-        #set other appointments that are in progress to incomplete
-        this_appointment = obj.appointment
-        this_appt_tdelta = datetime.today() - obj.appointment.appt_datetime
-        if this_appt_tdelta.days == 0:
-            # if today is the appointment, set to this_appointment in progress and
-            # the others to incomplete if not 'done' and not 'cancelled'
-            appointments = obj.appointment.__class__.objects.filter(registered_subject=obj.appointment.registered_subject,
-                                                      appt_status='in_progress')
-            for appointment in appointments:
-                tdelta = datetime.today() - obj.appointment.appt_datetime
-                if tdelta.days < 0 and appointment.appt_status != 'done' and appointment.appt_status != 'cancelled':
-                    appointment.appt_status = 'incomplete'
-                    appointment.save()
-            # set this_appointment to in_progress
-            this_appointment.appt_status = 'in_progress'
-            this_appointment.save()
-        elif this_appt_tdelta.days > 0 and this_appointment.appt_status != 'done' and this_appointment.appt_status != 'cancelled':
-            # this_appointment is in the past
-            this_appointment.appt_status = 'incomplete'
-            this_appointment.save()
-        elif this_appt_tdelta.days < 0 and this_appointment.appt_status != 'cancelled':
-            # this_appointment is in the future
-            this_appointment.appt_status = 'new'
-            this_appointment.save()
-        else:
-            pass
+#        #set other appointments that are in progress to incomplete
+#        this_appointment = obj.appointment
+#        this_appt_tdelta = datetime.today() - obj.appointment.appt_datetime
+#        if this_appt_tdelta.days == 0:
+#            # if today is the appointment, set to this_appointment in progress and
+#            # the others to incomplete if not 'done' and not 'cancelled'
+#            appointments = obj.appointment.__class__.objects.filter(registered_subject=obj.appointment.registered_subject,
+#                                                      appt_status='in_progress')
+#            for appointment in appointments:
+#                tdelta = datetime.today() - obj.appointment.appt_datetime
+#                if tdelta.days < 0 and appointment.appt_status != 'done' and appointment.appt_status != 'cancelled':
+#                    appointment.appt_status = 'incomplete'
+#                    appointment.save()
+#            # set this_appointment to in_progress
+#            this_appointment.appt_status = 'in_progress'
+#            this_appointment.save()
+#        elif this_appt_tdelta.days > 0 and this_appointment.appt_status != 'done' and this_appointment.appt_status != 'cancelled':
+#            # this_appointment is in the past
+#            this_appointment.appt_status = 'incomplete'
+#            this_appointment.save()
+#        elif this_appt_tdelta.days < 0 and this_appointment.appt_status != 'cancelled':
+#            # this_appointment is in the future
+#            this_appointment.appt_status = 'new'
+#            this_appointment.save()
+#        else:
+#            pass
         return super(BaseAppointmentModelAdmin, self).save_model(request, obj, form, change)
 
     def delete_model(self, request, obj):
