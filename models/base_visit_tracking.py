@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from bhp_consent.models import BaseConsentedUuidModel
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
@@ -108,6 +109,37 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     """
 
     objects = VisitTrackingManager()
+
+    def post_save(self):
+        pass
+        #set other appointments that are in progress to incomplete
+#        dirty = False
+#        this_appt_tdelta = datetime.today() - self.appointment.appt_datetime
+#        if this_appt_tdelta.days == 0:
+#            # if today is the appointment, set to self.appointment in progress and
+#            # the others to incomplete if not 'done' and not 'cancelled'
+#            appointments = self.appointment.__class__.objects.filter(registered_subject=self.appointment.registered_subject,
+#                                                      appt_status='in_progress')
+#            for appointment in appointments:
+#                tdelta = datetime.today() - self.appointment.appt_datetime
+#                if tdelta.days < 0 and appointment.appt_status != 'done' and appointment.appt_status != 'cancelled':
+#                    appointment.appt_status = 'incomplete'
+#                    self.appointment.save()
+#            # set self.appointment to in_progress
+#            self.appointment.appt_status = 'in_progress'
+#            dirty = True
+#        elif this_appt_tdelta.days > 0 and self.appointment.appt_status != 'done' and self.appointment.appt_status != 'cancelled':
+#            # self.appointment is in the past
+#            self.appointment.appt_status = 'incomplete'
+#            dirty = True
+#        elif this_appt_tdelta.days < 0 and self.appointment.appt_status != 'cancelled':
+#            # self.appointment is in the future
+#            self.appointment.appt_status = 'new'
+#            dirty = True
+#        else:
+#            pass
+#        if dirty:
+#            self.appointment.save()
 
     def natural_key_as_dict(self):
         return {'appointment': self.appointment, }
