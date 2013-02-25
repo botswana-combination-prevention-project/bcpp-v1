@@ -5,7 +5,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib import admin
 import copy
 import re
-import types
 
 from bhp_sync.classes import SerializeToTransaction
 from bhp_sync.models import BaseSyncUuidModel
@@ -241,13 +240,6 @@ def create_audit_model(cls, **kwargs):
             raise NameError('Field named "%s" already exists in audit version of %s' % (track_field['name'], cls.__name__))
         attrs[track_field['name']] = copy.copy(track_field['field'])
 
-#    new_audit_cls = type(name, (models.Model,), attrs)
-#    # copy deserialize methods
-#    for cls_attr in dir(cls):
-#        if 'deserialize' in cls_attr:
-#            if type(getattr(cls, cls_attr)) == types.MethodType and 'deserialize' in cls_attr:
-#                func = getattr(cls, cls_attr)
-#                setattr(new_audit_cls, func.__name__, func)
     return type(name, (models.Model,), attrs)
 
 
