@@ -37,15 +37,16 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
         off study form."""
         return None
 
-    def save(self, *args, **kwargs):
-        super(BaseOffStudy, self).save(*args, **kwargs)
+    def post_save(self):
+        """Deletes appointments created after the off-study datetime if the appointment has no visit report."""
         Appointment = models.get_model('bhp_appointment', 'appointment')
-        for appointment in Appointment.objects.filter(
-                registered_subject__subject_identifier=self.registered_subject.subject_identifier,
-                appt_datetime__gt=self.offstudy_date):
-            visit_model_cls = self.get_visit_model()
-            if visit_model_cls:
-                if not visit_model_cls.objects.filter(appointment=appointment):
+        visit_model_cls = self.get_visit_model_cls()
+        if visit_model_cls:
+            for appointment in Appointment.objects.filter(
+                    registered_subject=self.registered_subject,
+                    appt_datetime__gt=self.offstudy_date):
+                # only delete appointments that have no visit report
+                if not visit_model_cls.objects.filter(appointment=appointment).exists():
                     appointment.delete()
 
     def __unicode__(self):
