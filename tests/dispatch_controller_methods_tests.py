@@ -20,26 +20,12 @@ class DispatchControllerMethodsTests(BaseControllerTests):
 #    def setUp(self):
 #        super(DispatchControllerMethodsTests, self).setUp()
 
-    def create_test_item(self):
-        self.test_item = TestItem.objects.create(test_item_identifier=self.dispatch_container_identifier)
-
-    def create_producer(self, is_active=False):
-        # add a in_active producer
-        self.producer = Producer.objects.create(name='test_producer', settings_key=self.using_destination, is_active=is_active)
-
-    def create_sync_transactions(self):
-                # add outgoing transactions and check is properly detects pending transactions before dispatching
-        self.outgoing_transaction = OutgoingTransaction.objects.using(self.using_destination).create(
-            tx='tx',
-            tx_pk='tx_pk',
-            producer=self.producer.name,
-            is_consumed=False)
-        # create an incoming transaction
-        self.incoming_transaction = IncomingTransaction.objects.using(self.using_source).create(
-            tx='tx',
-            tx_pk='tx_pk',
-            producer=self.producer.name,
-            is_consumed=False)
+#    def create_test_item(self):
+#        self.test_item = TestItem.objects.create(test_item_identifier=self.dispatch_container_identifier)
+#
+#    def create_producer(self, is_active=False):
+#        # add a in_active producer
+#        self.producer = Producer.objects.create(name='test_producer', settings_key=self.using_destination, is_active=is_active)
 
     def test_base_methods(self):
         # Base tests

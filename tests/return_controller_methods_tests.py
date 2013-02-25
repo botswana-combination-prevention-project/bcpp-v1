@@ -1,14 +1,6 @@
-from datetime import datetime
-from django.core.exceptions import ImproperlyConfigured
-from django.conf import settings
-from django.test import TestCase
 from django.db.models import get_model
-from bhp_registration.models import RegisteredSubject
-from bhp_consent.models import BaseConsentedUuidModel
-from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.classes import Base, BaseDispatchController
-from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched
+from bhp_dispatch.exceptions import AlreadyDispatched
 from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer
 from bhp_dispatch.classes import ReturnController
 from base_controller_tests import BaseControllerTests
@@ -65,6 +57,22 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         # what happens now??
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=False).count(), 1)
         obj.comment = 'TEST_COMMENT'
+        # assert saving the TestItem will fail because this is a container model as well!
+        self.assertRaises(AlreadyDispatched, obj.save)
+        # set the dispatch container to False
+        dispatch_container.is_dispatched = False
+        dispatch_container.save()
+        # try to change the TestItem again
         obj.save()
+        # flip the dispatch_container back to dispatched
+        dispatch_container.is_dispatched = True
+        dispatch_container.save()
+        # dispatch the TestItem to the producer, again
         self.base_dispatch_controller.dispatch_as_json(obj)
-        self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).get(item_identifier=obj.item_identifier).comment, 'TEST_COMMENT')
+        # assert changed comment field is correct on the producer
+        self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).get(test_item_identifier=obj.test_item_identifier).comment, 'TEST_COMMENT')
+        # create some sync transactions on the source
+        self.create_sync_transactions()
+        # assert that return_dispatched_items will fail
+        self.assertRaises(PendingTransactionError, return_controller.return_dispatched_items)
+        # TODO: confirm that transactions can be synced while is_dispatched=True
