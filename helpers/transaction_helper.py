@@ -9,6 +9,8 @@ class TransactionHelper(object):
         return IncomingTransaction.objects.using(using).filter(producer=producer, is_consumed=False).exists()
 
     def has_incoming_for_model(self, models, using=None):
+        if not models:
+            return False
         if not using:
             using = 'default'
         if not isinstance(models, (list, tuple)):
