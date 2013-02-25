@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from django.core.exceptions import ImproperlyConfigured
 from bhp_base_model.fields import OtherCharField
 from bhp_registration.models import BaseRegisteredSubjectModel
 from bhp_crypto.utils import mask_encrypted
@@ -30,17 +31,19 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
     def get_report_datetime(self):
         return datetime(self.offstudy_date.year, self.offstudy_date.month, self.offstudy_date.day)
 
-    def get_visit_model(self):
-        """Returns the visit model class from the app needed to clear appointments on save().
-
-        Users should override to return the visit model relavant to the
-        off study form."""
-        return None
+#    def get_visit_model(self):
+#        """Returns the visit model class from the app needed to clear appointments on save().
+#
+#        Users should override to return the visit model relavant to the
+#        off study form."""
+#        return None
 
     def post_save(self):
         """Deletes appointments created after the off-study datetime if the appointment has no visit report."""
         Appointment = models.get_model('bhp_appointment', 'appointment')
         visit_model_cls = self.get_visit_model_cls()
+        if not visit_model_cls:
+            raise ImproperlyConfigured('Model {0} cannot determine the visit model class for the app'.format(self._meta.object_name))
         if visit_model_cls:
             for appointment in Appointment.objects.filter(
                     registered_subject=self.registered_subject,
