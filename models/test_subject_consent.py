@@ -17,6 +17,12 @@ class TestSubjectConsent(BaseConsent):
 
     identity_type = IdentityTypeField()
 
+    confirm_identity = EncryptedIdentityField(
+        unique=True,
+        null=True,
+        blank=True,
+        )
+
     def __unicode__(self):
         return unicode(self.subject_identifier)
 
