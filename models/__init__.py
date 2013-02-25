@@ -4,4 +4,5 @@ from consent import Consent
 from base_consent_update import BaseConsentUpdate
 from consent_catalogue import ConsentCatalogue
 from attached_model import AttachedModel
+from test_subject_consent import TestSubjectConsent
 from signals import *
