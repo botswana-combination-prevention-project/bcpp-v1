@@ -95,7 +95,7 @@ class AppointmentHelper(object):
         # only delete appointments without a visit model
         appointments = Appointment.objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)
         count = 0
-        visit_model = model_instance.get_visit_model(model_instance)
+        visit_model = model_instance.get_visit_model_cls(model_instance)
         # find the most recent visit model instance and delete any appointments after that
         for appointment in appointments:
             if not visit_model.objects.filter(appointment=appointment):
