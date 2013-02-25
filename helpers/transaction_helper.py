@@ -18,4 +18,6 @@ class TransactionHelper(object):
         return IncomingTransaction.objects.using(using).filter(tx_name__in=models, is_consumed=False).exists()
 
     def has_outgoing(self, using=None):
+        if not using:
+            using = 'default'
         return OutgoingTransaction.objects.using(using).filter(is_consumed=False).exists()
