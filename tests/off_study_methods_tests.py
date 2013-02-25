@@ -63,5 +63,8 @@ class OffStudyMethodsTests(TestCase):
             Appointment.objects.create(registered_subject=self.registered_subject, appt_datetime=dte, visit_definition=VisitDefinition.objects.get(code=visit_code))
         # create off study with date before last appointment
         TestOffStudy.objects.create(registered_subject=self.registered_subject, offstudy_date=date(now.year, now.month, now.day))
+        self.assertTrue(Appointment.objects.filter(appt_datetime=now - relativedelta(months=6)).exists())
+        self.assertTrue(Appointment.objects.filter(appt_datetime=now - relativedelta(months=3)).exists())
+        self.assertTrue(Appointment.objects.filter(appt_datetime=now).exists())
         # assert last appointment does not exist
         self.assertFalse(Appointment.objects.filter(appt_datetime=now + relativedelta(months=6)).exists())
