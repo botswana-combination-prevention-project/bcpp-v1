@@ -30,9 +30,8 @@ class BaseDispatchController(BaseDispatch):
                  dispatch_container_identifier,
                  dispatch_item_app_label,
                  **kwargs):
-        if not kwargs.get('action') == 'returning':
-            self._dispatch_item_app_label = None
-            self._set_dispatch_item_app_label(dispatch_item_app_label)
+        self._dispatch_item_app_label = None
+        self._set_dispatch_item_app_label(dispatch_item_app_label)
         super(BaseDispatchController, self).__init__(
             using_source,
             using_destination,
