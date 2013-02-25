@@ -25,8 +25,23 @@ class AlreadyDispatched(Exception):
 
 class DispatchController(BaseDispatchController):
 
-    def __init__(self, using_source, using_destination, dispatch_container_app_name, dispatch_container_model_name, dispatch_container_identifier_fieldattr, dispatch_url, **kwargs):
-        super(DispatchController, self).__init__(using_source, using_destination, dispatch_container_app_name, dispatch_container_model_name, dispatch_container_identifier_fieldattr, **kwargs)
+    def __init__(self, using_source,
+                 using_destination,
+                 dispatch_container_app_label,
+                 dispatch_container_model_name,
+                 dispatch_container_identifier_attrname,
+                 dispatch_container_identifier,
+                 dispatch_item_app_label,
+                 dispatch_url,
+                 **kwargs):
+        super(DispatchController, self).__init__(using_source,
+            using_destination,
+            dispatch_container_app_label,
+            dispatch_container_model_name,
+            dispatch_container_identifier_attrname,
+            dispatch_container_identifier,
+            dispatch_item_app_label,
+            **kwargs)
         self._dispatch_app_label = None
         self._dispatch_model_name = None
         self._dispatch_url = None
@@ -195,15 +210,9 @@ class DispatchController(BaseDispatchController):
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_as_json(instances)
 
-    def _dispatch_prep(self, item_identifier):
+    def _dispatch_prep(self):
         """Wrapper for user method :func:`dispatch_prep`."""
-        registered_subjects = self.dispatch_prep(item_identifier)
-        if not isinstance(registered_subjects, list):
-            raise TypeError('Expected a list. Return value of dispatch_prep() must be a list.')
-        for item in registered_subjects:
-            if not isinstance(item, RegisteredSubject):
-                raise TypeError('List returned by dispatch_prep() may only contain instances of model RegisteredSubject.')
-        return registered_subjects
+        self.dispatch_prep()
 
     def dispatch_prep(self, item_identifier):
         """Returns a list of RegisteredSubject instances.
@@ -220,7 +229,7 @@ class DispatchController(BaseDispatchController):
         # check source for the producer based on using_destination.
         if self.debug:
             logger.info("Dispatching items for {0}".format(self.get_dispatch_container_identifier()))
-        self._dispatch_prep(self.get_dispatch_container_identifier())
+        self._dispatch_prep()
         #return dispatch_item
 
 # removed -erikvw
@@ -273,7 +282,7 @@ class DispatchController(BaseDispatchController):
                     break
             if not any_dispatched:
                 for qs in queryset:
-                    self.dispatch(getattr(qs, self.get_dispatch_item_identifier_attrname()), self.get_dispatch_item_identifier_attrname(), qs._meta.object_name, qs._meta.app_label)
+                    self.dispatch()
                 self.dispatch_crypt()
                 self.dispatch_registered_subjects()
         return any_dispatched, any_transactions

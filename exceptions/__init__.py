@@ -8,3 +8,7 @@ class DispatchModelError(Exception):
 
 class DispatchError(Exception):
     pass
+
+
+class DispatchAttributeError(Exception):
+    pass

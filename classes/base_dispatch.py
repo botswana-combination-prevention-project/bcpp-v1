@@ -1,8 +1,8 @@
 import logging
 import socket
 from django.conf import settings
-from django.db.models import get_model, get_models, get_app, ForeignKey, OneToOneField
-from django.db.models import signals
+from django.db.models import get_model, ForeignKey, OneToOneField
+from django.core.exceptions import ImproperlyConfigured
 from bhp_visit.models import MembershipForm
 from django.db.models.query import QuerySet
 from django.core import serializers
@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.exceptions import DispatchModelError, DispatchError, AlreadyDispatched
+from bhp_dispatch.exceptions import DispatchModelError, DispatchError
 from bhp_dispatch.models import DispatchItem, DispatchContainer
 from base import Base
 
@@ -31,9 +31,15 @@ class BaseDispatch(Base):
     All models are tacked in DispatchItem. Container models are also referenced in DispatchContainer.
 
     """
-    def __init__(self, using_source, using_destination, dispatch_container_app_label, dispatch_container_model_name, dispatch_container_identifier_attrname, dispatch_container_identifier, dispatch_item_app_label, **kwargs):
+    def __init__(self,
+                 using_source,
+                 using_destination,
+                 dispatch_container_app_label,
+                 dispatch_container_model_name,
+                 dispatch_container_identifier_attrname,
+                 dispatch_container_identifier,
+                 **kwargs):
         super(BaseDispatch, self).__init__(using_source, using_destination, **kwargs)
-        self._dispatch_item_app_label = None
         self._dispatch_item_model_name = None
         self._dispatch_container_app_label = None
         self._dispatch_container_identifier_attrname = None
@@ -44,20 +50,8 @@ class BaseDispatch(Base):
         self._set_dispatch_container_model_name(dispatch_container_model_name)
         self._set_dispatch_container_identifier_attrname(dispatch_container_identifier_attrname)
         self.set_dispatch_container_identifier(dispatch_container_identifier)
-        self._set_dispatch_item_app_label(dispatch_item_app_label)
         self._set_dispatch_container_instance()
         self.debug = kwargs.get('debug', False)
-
-    def _set_dispatch_item_app_label(self, value):
-        if not value:
-            raise AttributeError('The app_label of the dispatching item model cannot be None. Set this in __init__() of the subclass.')
-        self._dispatch_item_app_label = value
-
-    def get_dispatch_item_app_label(self):
-        """Gets the app_label for the dispatching item."""
-        if not self._dispatch_item_app_label:
-            self._set_dispatch_item_app_label()
-        return self._dispatch_item_app_label
 
     def _set_dispatch_container_model_name(self, value):
         if not value:
@@ -115,7 +109,10 @@ class BaseDispatch(Base):
     def _set_dispatch_container_instance(self):
         """Creates a dispatch container instance for this controller sessions."""
         user_dispatch_container_model = get_model(self.get_dispatch_container_app_label(), self.get_dispatch_container_model_name())
-        obj = user_dispatch_container_model.objects.get(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()})
+        if not user_dispatch_container_model.objects.filter(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()}):
+            raise DispatchModelError('Cannot set container model instance. Container model {0} matching query does not exist for {1}=\'{2}\'.'.format(user_dispatch_container_model._meta.object_name, self.get_dispatch_container_identifier_attrname(), self.get_dispatch_container_identifier()))
+        else:
+            obj = user_dispatch_container_model.objects.get(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()})
         if not getattr(obj, self.get_dispatch_container_identifier_attrname()):
             raise DispatchError('Attribute {0} not found on model instance {1}.'.format(self.get_dispatch_container_identifier_attrname(), self.get_dispatch_container_model_name()))
         self._dispatch_container = DispatchContainer.objects.create(
@@ -135,23 +132,6 @@ class BaseDispatch(Base):
         if not self._dispatch_container:
             self._set_dispatch_container_instance()
         return self._dispatch_container
-
-    def create_dispatched_item_instance(self, instance):
-        """Creates an instance of DispatchItem for an item being dispatched."""
-        if not instance.is_dispatched:
-            dispatch_item = DispatchItem.objects.create(
-                dispatch_container=self.get_dispatch_container_instance(),
-                producer=self.get_producer(),
-                item_app_label=instance._meta.app_label,
-                item_model_name=instance._meta.object_name,
-                item_pk=instance.pk,
-                item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
-                item_identifier=getattr(instance, self.get_dispatch_item_identifier_attrname()),
-                dispatch_using=settings.DATABASES.get(self.get_using_source()).get('name'),
-                dispatch_host=socket.gethostname(),
-                is_dispatched=True)
-            return dispatch_item
-        return False
 
     def set_dispatched_items_for_producer(self):
         """Sets a queryset of dispatched DispatchItem model instances for the current producer."""
@@ -185,6 +165,28 @@ class BaseDispatch(Base):
         # dispatched Dispatch items instances for this producer
         #TODO: probably remove this
         self.set_dispatched_items_for_producer()
+
+    def create_dispatched_item_instance(self, instance):
+        """Creates an instance of DispatchItem for an item being dispatched."""
+        if instance._meta.app_label not in settings.DISPATCH_APP_LABELS and not instance.include_for_dispatch():
+            raise ImproperlyConfigured('Model {0} is not configured for dispatch. See model method \'include_for_dispatch\'  or settings attribute DISPATCH_APP_LABELS.'.format(instance._meta.object_name))
+        if not instance.is_dispatched:
+            try:
+                dispatch_item = DispatchItem.objects.create(
+                    dispatch_container=self.get_dispatch_container_instance(),
+                    producer=self.get_producer(),
+                    item_app_label=instance._meta.app_label,
+                    item_model_name=instance._meta.object_name,
+                    item_pk=instance.pk,
+                    item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
+                    item_identifier=getattr(instance, self.get_dispatch_item_identifier_attrname()),
+                    dispatch_using=settings.DATABASES.get(self.get_using_source()).get('name'),
+                    dispatch_host=socket.gethostname(),
+                    is_dispatched=True)
+            except IntegrityError:
+                raise ImproperlyConfigured('Attempting to dispatch a model that is not \"dispatchable\". Expected instance.is_dispatched=True for Model{0}. Please check that this model has method \'include_for_dispatch()\' or model\'s app_label is included in settings.DISPATCH_APP_LABELS'.format(instance._meta.object_name))
+            return dispatch_item
+        return False
 
     def get_membershipform_models(self):
         """Returns a list of 'visible' membership form model classes."""
@@ -223,98 +225,6 @@ class BaseDispatch(Base):
         else:
             return tpl
 
-    def dispatch_foreign_key_instances(self, app_label):
-        """Finds foreign_key model classes other than the visit model class and exports the instances."""
-        list_models = []
-        if not app_label:
-            raise TypeError('Parameter app_label cannot be None.')
-        app = get_app(app_label)
-        for model_cls in get_models(app):
-            # TODO: this could be wrong visit_field_name?
-            visit_field_name = self.get_visit_model_cls(app_label, model_cls, index='name')
-            if getattr(model_cls, visit_field_name, None):
-                for field in model_cls._meta.fields:
-                    if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):
-                        field_cls = field.rel.to
-                        if field_cls not in list_models:
-                            list_models.append(field_cls)
-        logger.info('Ready to dispatch foreign keys: {0}'.format(list_models))
-        for model_cls in list_models:
-            self.dispatch_model_as_json(model_cls.objects.using(self.get_using_source()).all(), app_label=app_label)
-
-    def get_scheduled_models(self, app_label=None):
-        """Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models."""
-        app = get_app(self.get_dispatch_item_app_label())
-        scheduled_models = []
-        for model_cls in get_models(app):
-            field_name, visit_model_cls = self.get_visit_model_cls(self.get_dispatch_item_app_label(), model_cls)
-            if visit_model_cls:
-                if getattr(model_cls, field_name, None):
-                    if not model_cls._meta.object_name.endswith('Audit'):
-                        scheduled_models.append(model_cls)
-        return scheduled_models
-
-    def dispatch_as_json(self, source_instances, **kwargs):
-        """Serialize a remote model instance, deserialize and save to local instances.
-
-            Args:
-                source_instance: a model instance(s) from the source server
-                using: `using` parameter for the destination device.
-            Keywords:
-                app_label: app name for instances
-        """
-        base_model_class = BaseSyncUuidModel
-        app_label = kwargs.get('app_label', None)
-        # check for pending transactions
-        if self.has_outgoing_transactions():
-            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
-        if self.has_incoming_transactions(source_instances):
-            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
-        if source_instances:
-            # convert to list if not iterable
-            if not isinstance(source_instances, (list, QuerySet)):
-                source_instances = [source_instances]
-            # confirm all instances are of the correct base class
-            for instance in source_instances:
-                if not isinstance(instance, base_model_class):
-                    raise DispatchModelError('Dispatch model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
-            #serialize
-            json = serializers.serialize('json', source_instances, use_natural_keys=True)
-            # deserialize on destination
-            for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
-                if d_obj.object.is_dispatched:
-                    raise AlreadyDispatched('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
-                try:
-                    # disconnect signal to avoid creating transactions on the source for data saved on destination
-                    signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                    #save
-                    d_obj.save(using=self.get_using_destination())
-                    # reconnect
-                    signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                except IntegrityError as e:
-                    logger.info(e)
-                    if 'Duplicate' in e.args[1]:
-                        pass
-                    elif 'Cannot add or update a child row' in e.args[1]:
-                        if not app_label:
-                            app_label = source_instances[0]._meta.app_label
-                        # assume Integrity error was because of missing ForeignKey data
-                        self.dispatch_foreign_key_instances(app_label)
-                        # try again
-                        # disconnect signal
-                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                        #save
-                        d_obj.save(using=self.get_using_destination())
-                        # reconnect
-                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                    else:
-                        raise
-                except:
-                    raise
-                # create_dispatched_item_instance for this dispatched d_obj
-                if not self.create_dispatched_item_instance(d_obj.object):
-                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
-                logger.info('dispatched {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
 
 #    def dispatch_model_as_json(self, models, **kwargs):
 #        # TODO: what is the difference betweeen this and dispatch_as_json??
