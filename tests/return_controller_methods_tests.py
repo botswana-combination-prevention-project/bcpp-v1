@@ -64,3 +64,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         return_controller.return_dispatched_items()
         # what happens now??
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=False).count(), 1)
+        obj.comment = 'TEST_COMMENT'
+        obj.save()
+        self.base_dispatch_controller.dispatch_as_json(obj)
+        self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).get(item_identifier=obj.item_identifier).comment, 'TEST_COMMENT')
