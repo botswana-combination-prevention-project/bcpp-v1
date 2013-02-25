@@ -164,8 +164,6 @@ class Base(object):
     def has_incoming_transactions(self, models=None):
         """Check if source has pending Incoming Transactions for this producer and model(s).
         """
-        if not models:
-            raise DispatchError('Attribute \'models\' cannot be None.')
         retval = False
         if TransactionHelper().has_incoming_for_producer(self.get_producer_name(), self.get_using_source()):
             retval = True
@@ -210,3 +208,5 @@ class Base(object):
                         dct.update({'hostname_modified': item.get('hostname_modified'), 'modified__gt': item.get('modified__max')})
                         options[n] = dct
         return options
+
+ 
