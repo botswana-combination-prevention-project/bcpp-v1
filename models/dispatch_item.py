@@ -1,7 +1,6 @@
 from django.db import models
 from base_dispatch import BaseDispatch
 from dispatch_container import DispatchContainer
-from bhp_sync.classes import Consumer
 
 
 class DispatchItem(BaseDispatch):
@@ -20,8 +19,6 @@ class DispatchItem(BaseDispatch):
         help_text="List of Registered Subjects linked to this DispatchItem"
         )
     objects = models.Manager()
-
-
 
 # temp removed - erikvw (fails on unknown producer when setting dispatched to False)
 # no longer necessary to check if the instance is dispatched, as this is done by
