@@ -7,7 +7,6 @@ from bhp_visit.models import MembershipForm
 from django.db.models.query import QuerySet
 from django.core import serializers
 from django.db import IntegrityError
-from datetime import datetime
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
@@ -47,12 +46,11 @@ class BaseDispatch(Base):
         self._dispatch_container_identifier = None
         self._dispatch = None
         self._visit_models = {}
-        if not kwargs.get('action') == 'returning':
-            self._set_dispatch_container_app_label(dispatch_container_app_label)
-            self._set_dispatch_container_modesl_name(dispatch_container_model_name)
-            self._set_dispatch_container_identifier_attrname(dispatch_container_identifier_attrname)
-            self.set_dispatch_container_identifier(dispatch_container_identifier)
-            self._set_dispatch_container_instance()
+        self._set_dispatch_container_app_label(dispatch_container_app_label)
+        self._set_dispatch_container_model_name(dispatch_container_model_name)
+        self._set_dispatch_container_identifier_attrname(dispatch_container_identifier_attrname)
+        self.set_dispatch_container_identifier(dispatch_container_identifier)
+        self._set_dispatch_container_instance()
         self.debug = kwargs.get('debug', False)
 
     def _set_dispatch_container_model_name(self, value):
