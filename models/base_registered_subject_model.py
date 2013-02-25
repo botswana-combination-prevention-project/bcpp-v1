@@ -25,6 +25,14 @@ class BaseRegisteredSubjectModel (BaseAppointmentHelperModel):
         """Returns the subject_identifier."""
         return self.registered_subject.subject_identifier
 
+    def get_visit_model_cls(self):
+        """Returns the visit model which is a subclass of :class:`BaseVisitTracking`."""
+        from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
+        for model in get_models(get_app(self._meta.app_label)):
+            if isinstance(model(), BaseVisitTracking):
+                return model
+        raise TypeError('Unable to determine the visit model for app {1} from instance {0}. Needed to clear future appointments.'.format(self._meta.model_name, self._meta.app_label))
+
     def get_visit_model(self, instance):
         """Returns the visit model which is a subclass of :class:`BaseVisitTracking`."""
         from bhp_visit_tracking.models.base_visit_tracking import BaseVisitTracking
