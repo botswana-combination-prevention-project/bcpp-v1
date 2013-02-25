@@ -210,5 +210,3 @@ class Base(object):
                         dct.update({'hostname_modified': item.get('hostname_modified'), 'modified__gt': item.get('modified__max')})
                         options[n] = dct
         return options
-
- 
