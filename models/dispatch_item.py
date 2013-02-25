@@ -21,10 +21,14 @@ class DispatchItem(BaseDispatch):
         )
     objects = models.Manager()
 
-    def run_pre_unlocking_checks(self):
-        consumer = Consumer()
-        consumer.check_all_synched_from_producer(self.dispatch_container.producer.name)
-        consumer.check_all_consumed_in_server(self.dispatch_container.producer.name)
+#    def run_pre_unlocking_checks(self):
+#        consumer = Consumer()
+#        consumer.check_all_synched_from_producer(self.dispatch_container.producer.name)
+#        consumer.check_all_consumed_in_server(self.dispatch_container.producer.name)
+#
+#    def unlock_dispatch_item(self):
+#        self.is_dispatched = False
+#        self.save()
 
     def unlock_dispatch_item(self):
         self.is_dispatched = False
@@ -46,7 +50,7 @@ class DispatchItem(BaseDispatch):
 #            raise ValueError("Cannot dispatch. The item \'{0}\' is already dispatched to \'{1}\'.".format(dispatch_item.item_identifier, dispatch_item.dispatch_container.producer))
 #        if not self.is_dispatched:
 #            self.run_pre_unlocking_checks()
-#        super(DispatchItem, self).save(*args, **kwargs)
+        super(DispatchItem, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "{0} -> {1}".format(self.item_identifier, self.producer.name)

@@ -54,7 +54,7 @@ class DispatchItemAdmin(BaseModelAdmin):
         'dispatch_datetime',
         'return_datetime'
         )
-    search_fields = ('dispatch_container__pk', 'item_identifier', 'subject_identifiers')
+    search_fields = ('dispatch_container__pk', 'item_identifier')
     actions = [set_is_dispatched, ]
 
 admin.site.register(DispatchItem, DispatchItemAdmin)

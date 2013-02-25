@@ -7,6 +7,7 @@ from bhp_visit.models import MembershipForm
 from django.db.models.query import QuerySet
 from django.core import serializers
 from django.db import IntegrityError
+from datetime import datetime
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
@@ -225,6 +226,33 @@ class BaseDispatch(Base):
         else:
             return tpl
 
+    def return_from_producer(self, producer, source_instances=None, **kwargs):
+        msgs = []
+        if self.has_outgoing_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+        if self.has_incoming_transactions(source_instances):
+            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
+        else:
+            container_instances = DispatchContainer.objects.filter(producer=producer, is_dispatched=True)
+            if container_instances.count() > 0:
+                for container in container_instances:
+                    #dispatched_models = container.get_dispatched_items_for_container()
+                    dispatched_models = DispatchItem.objects.filter(dispatch_container=container)
+                    for dispatched_model in dispatched_models:
+                        dispatched_model.return_datetime = datetime.now()
+                        dispatched_model.is_dispatched = False
+                        dispatched_model.save()
+                    container.is_dispatched = False
+                    container.return_datetime = datetime.now()
+                    container.save()
+                    #dispatched_models.delete()  
+                    msgs.append('Returned {0} items of {1} with {2}={3}'.format(dispatched_models.count(),
+                                                                                container.container_model_name,
+                                                                                container.container_identifier_attrname,
+                                                                                container.container_identifier))
+            else:
+                msgs.append('Nothing to return. There are no current dipatched items.')
+        return msgs
 
 #    def dispatch_model_as_json(self, models, **kwargs):
 #        # TODO: what is the difference betweeen this and dispatch_as_json??

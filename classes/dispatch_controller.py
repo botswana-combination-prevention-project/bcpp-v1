@@ -49,7 +49,8 @@ class DispatchController(BaseDispatchController):
         self._dispatch_model = None
         self._dispatch_model_item_identifier_field = None
         self._dispatch_admin_url = None
-        self._set_dispatch_url(dispatch_url)
+        if not kwargs.get('action') == 'returning':
+            self._set_dispatch_url(dispatch_url)
 
     def set_dispatch_model(self):
         """Sets the model class for the dispatching model."""

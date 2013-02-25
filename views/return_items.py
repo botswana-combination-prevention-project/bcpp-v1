@@ -21,40 +21,47 @@ def return_items(request, **kwargs):
     #if kwargs.get('device'):
     try:
         producer = Producer.objects.get(name__iexact=kwargs.get('producer'))
-        messages.add_message(
-                request,
-                messages.INFO,
-                'Returning dispatched items from device {0}.'.format(producer.name)
-                )
-        
+#        DispatchController('default', producer.name, action='returning').return_from_producer(producer)
+#        messages.add_message(
+#                request,
+#                messages.INFO,
+#                'Returning dispatched items from device {0}.'.format(producer.name)
+#                )
+        if not 'default' in settings.DATABASES.keys():
+            raise AttributeError('Cannot find key "server" in settings.DATABASES. '
+                                 'Please add and try again.')
+        message_list = DispatchController('default', producer.name, action='returning').return_from_producer(producer)
 #            dispatch_controller = DispatchController(True, producer)
         # Check that we have have households checked for this device
-        dispatched_items = DispatchItem.objects.filter(producer=producer)
-        if dispatched_items:
+#        dispatched_items = DispatchItem.objects.filter(producer=producer)
+#        if dispatched_items:
+#        if False:
+#            pass
+        for msg in message_list:
             messages.add_message(
                     request,
                     messages.INFO,
-                    'Found {0} dispatch(es).'.format(len(dispatched_items))
+                    msg
                     )
-
-            for dispatch in dispatched_items:
-                #Update checkout and hbc dispatch items
-                #dispatch_controller.dispatch(dispatch)
-                dispatch.unlock_dispatch_item()
-
-                messages.add_message(
-                    request,
-                    messages.INFO,
-                    'Unlocked {0} where {1}={2}.'.format(dispatch.dispatch_container.container_model_name,
-                                                         dispatch.dispatch_container.container_identifier_attrname,
-                                                         dispatch.dispatch_container.container_identifier)
-                    )
-        else:
-            messages.add_message(
-                    request,
-                    messages.INFO,
-                    'Device {0} does not have any dispatched households.'.format(producer.name)
-                    )
+#
+#            for dispatch in dispatched_items:
+#                #Update checkout and hbc dispatch items
+#                #dispatch_controller.dispatch(dispatch)
+#                dispatch.unlock_dispatch_item()
+#
+#                messages.add_message(
+#                    request,
+#                    messages.INFO,
+#                    'Unlocked {0} where {1}={2}.'.format(dispatch.dispatch_container.container_model_name,
+#                                                         dispatch.dispatch_container.container_identifier_attrname,
+#                                                         dispatch.dispatch_container.container_identifier)
+#                    )
+#        else:
+#            messages.add_message(
+#                    request,
+#                    messages.INFO,
+#                    'Device {0} does not have any dispatched households.'.format(producer.name)
+#                    )
     except ObjectDoesNotExist:
         raise Http404
     except:
