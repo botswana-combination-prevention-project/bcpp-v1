@@ -154,7 +154,7 @@ class DispatchController(BaseDispatchController):
                             visit_fld_name = fld.name
                 scheduled_instances = scheduled_model_class.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
                 self.dispatch_as_json(scheduled_instances, app_label=app_label)
-    
+
     def dispatch_labs_requisitions(self, registered_subject):
         """Dispatches all lab requisitions for this subject."""
         Lab_requisitions = get_model('mochudi_survey_lab', 'SubjectRequisition')
@@ -165,31 +165,11 @@ class DispatchController(BaseDispatchController):
             if lab.subject_visit:
                 self.dispatch_as_json(lab.subject_visit)
         self.dispatch_as_json(labs)
-#        Receive = get_model('lab_clinic_api', 'Receive')
-#        receives_list = Receive.objects.filter(registered_subject=registered_subject)
-#        self.dispatch_as_json(receives_list)
-#        
-#        Aliquot = get_model('lab_clinic_api', 'Aliquot')
-#        aliquot_list = Aliquot.objects.filter(receive__in=receives_list)
-#        self.dispatch_as_json(aliquot_list)
-#        
-#        Order = get_model('lab_clinic_api', 'Order')
-#        order_list = Order.objects.filter(aliquot__in=aliquot_list)
-#        self.dispatch_as_json(order_list)
-#        
-#        Result = get_model('lab_clinic_api', 'Result')
-#        result_list = Result.objects.filter(order__in=order_list)
-#        self.dispatch_as_json(result_list)
-#        
-#        ResultItem = get_model('lab_clinic_api', 'ResultItem')
-#        result_item_list = ResultItem.objects.filter(result__in=order_list)
-#        self.dispatch_as_json(result_item_list)
-        
         AdditionalLabEntryBucket = get_model('bhp_lab_entry', 'AdditionalLabEntryBucket')
         self.dispatch_as_json(AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk))
         ScheduledLabEntryBucket = get_model('bhp_lab_entry', 'ScheduledLabEntryBucket')
         self.dispatch_as_json(ScheduledLabEntryBucket.objects.filter(registered_subject=registered_subject.pk))
-    
+
     def dispatch_membership_forms(self, registered_subject, **kwargs):
         """Gets all instances of visible membership forms for this registered_subject and dispatches.
 
@@ -232,41 +212,6 @@ class DispatchController(BaseDispatchController):
             logger.info("Dispatching items for {0}".format(self.get_dispatch_container_identifier()))
         self._dispatch_prep()
         #return dispatch_item
-
-# removed -erikvw
-#    def is_dispatched(self, item_identifier):
-#        """Checks if a dispatch item is dispatched.
-#
-#        .. note:: to block saving a dispatched instance, see the signals."""
-#        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-#        if DispatchItem.objects.using(self.get_using_source()).filter(
-#                item_identifier=item_identifier,
-#                is_dispatched=True).exists():
-#            return True
-#        return False
-
-#    def create_dispatch_item_instance(self, item_identifier,
-#                                      item_identifier_attrname,
-#                                      item_model_name,
-#                                      item_app_label):
-#        """Creates a dispatch item instance for given dispatch instance and item_identifier
-#
-#        .. note:: Uses the pk of registered_subject."""
-#        # TODO: may want this to be get_or_create so dispatch item instances are re-used.
-#        #DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-#        created = True
-#        dispatch_item = DispatchItem.objects.create(
-#            producer=self.get_producer(),
-#            dispatch_container=self.get_dispatch_container_instance(),
-#            item_identifier=item_identifier,
-#            item_app_label=self.get_dispatch_app_label(),
-#            item_model_name=self.get_dispatch_model_name(),
-#            item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
-#            dispatch_using=settings.DATABASE.default.name,
-#            dispatch_host=socket.gethostname(),
-#            is_dispatched=True,
-#            dispatch_datetime=datetime.today())
-#        return created, dispatch_item
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.

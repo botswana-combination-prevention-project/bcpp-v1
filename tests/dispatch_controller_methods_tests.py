@@ -10,26 +10,15 @@ from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.classes import Base, BaseDispatchController
 from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched
 from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer
+from base_controller_tests import BaseControllerTests
 
 
-class DispatchControllerMethodsTests(TestCase):
+class DispatchControllerMethodsTests(BaseControllerTests):
 
     #fixtures = ['test_configuration.json']
 
-    def setUp(self):
-        self.base_dispatch_controller = None
-        self.producer = None
-        self.outgoing_transaction = None
-        self.incoming_transaction = None
-        self.using_source = 'default'
-        self.using_destination = 'dispatch_destination'
-        self.dispatch_container_app_label = 'bhp_dispatch'
-        self.dispatch_container_model_name = 'testitem'
-        self.dispatch_container_identifier_attrname = 'test_item_identifier'
-        self.dispatch_container_identifier = 'TEST_IDENTIFIER'
-        self.dispatch_item_app_label = 'bhp_dispatch'  # usually something like 'mochudi_subject'
-        DispatchContainer.objects.all().delete()
-        DispatchItem.objects.all().delete()
+#    def setUp(self):
+#        super(DispatchControllerMethodsTests, self).setUp()
 
     def create_test_item(self):
         self.test_item = TestItem.objects.create(test_item_identifier=self.dispatch_container_identifier)
@@ -37,15 +26,6 @@ class DispatchControllerMethodsTests(TestCase):
     def create_producer(self, is_active=False):
         # add a in_active producer
         self.producer = Producer.objects.create(name='test_producer', settings_key=self.using_destination, is_active=is_active)
-
-    def create_base_controller(self):
-        # create base controller instance
-        self.base_dispatch_controller = BaseDispatchController(self.using_source, self.using_destination,
-                                                self.dispatch_container_app_label,
-                                                self.dispatch_container_model_name,
-                                                self.dispatch_container_identifier_attrname,
-                                                self.dispatch_container_identifier,
-                                                self.dispatch_item_app_label)
 
     def create_sync_transactions(self):
                 # add outgoing transactions and check is properly detects pending transactions before dispatching
@@ -108,7 +88,7 @@ class DispatchControllerMethodsTests(TestCase):
         OutgoingTransaction.objects.all().update(is_consumed=True)
 
         # create base controller instance
-        self.create_base_controller()
+        self.create_base_dispatch_controller()
 
         # assert there ARE outgoing transactions
         self.assertTrue(self.base_dispatch_controller.has_outgoing_transactions())
@@ -183,7 +163,7 @@ class DispatchControllerMethodsTests(TestCase):
         self.create_producer(True)
         self.create_test_item()
         # create base controller instance
-        self.create_base_controller()
+        self.create_base_dispatch_controller()
         # assert that the dispatch item app is set (set in setUp)
         self.assertIsNotNone(self.base_dispatch_controller.get_dispatch_item_app_label())
         # get the scheduled models
@@ -201,7 +181,7 @@ class DispatchControllerMethodsTests(TestCase):
         self.create_producer(True)
         self.create_test_item()
         # create base controller instance
-        self.create_base_controller()
+        self.create_base_dispatch_controller()
         membershipform_models = self.base_dispatch_controller.get_membershipform_models()
         self.assertIsInstance(membershipform_models, list)
         for membershipform_model in membershipform_models:
@@ -211,7 +191,7 @@ class DispatchControllerMethodsTests(TestCase):
         self.create_producer(True)
         self.create_test_item()
         # create base controller instance
-        self.create_base_controller()
+        self.create_base_dispatch_controller()
         dispatch_container = self.base_dispatch_controller.get_dispatch_container_instance()
         obj_cls = get_model(
             self.base_dispatch_controller.get_dispatch_container_instance().container_app_label,

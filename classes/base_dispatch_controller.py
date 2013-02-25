@@ -1,9 +1,8 @@
 import logging
-from datetime import datetime
 from django.core import serializers
 from django.db import IntegrityError
 from django.db.models.query import QuerySet
-from django.db.models import get_model, get_models, get_app, ForeignKey, OneToOneField, signals
+from django.db.models import get_models, get_app, ForeignKey, OneToOneField, signals
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
@@ -54,37 +53,6 @@ class BaseDispatchController(BaseDispatch):
         if not self._dispatch_item_app_label:
             self._set_dispatch_item_app_label()
         return self._dispatch_item_app_label
-
-    def return_all(self):
-        """Returns all Dispatched by flagging :attr:`is_dispatched` = False.
-
-        .. note::
-           This will be called after all the transactions for the producer have been consumed
-           therefore, we can assume that the information that was dispatch to the producer
-           has been sent to server; hence, we mark all the dispatch items as checked in
-        """
-        # TODO: confirm all transactions have been consumed?
-
-        # Find all dispatch for the given producer that have not been checked in
-        for dispatch in self.get_dispatch_list():
-            self.return_from_dispatch(dispatch)
-
-    def return_from_dispatch(self, dispatch):
-        """Flags all items in a Dispatch as returned and then flags the Dispatch as returned."""
-        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-        if dispatch:
-            item_identifiers = dispatch.dispatch_items.split()
-            for item_identifier in item_identifiers:
-                item = DispatchItem.objects.get(
-                    producer=dispatch.producer,
-                    item_identifier=item_identifier,
-                    is_dispatched=True)
-                item.is_dispatched = False
-                item.return_datetime = datetime.today()
-                item.save()
-            dispatch.is_dispatched = False
-            dispatch.return_datetime = datetime.today()
-            dispatch.save()
 
     def dispatch_foreign_key_instances(self):
         """Finds foreign_key model classes other than the visit model class and exports the instances."""

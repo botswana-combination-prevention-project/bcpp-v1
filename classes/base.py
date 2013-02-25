@@ -161,20 +161,20 @@ class Base(object):
         """
         return TransactionHelper().has_outgoing(self.get_using_destination())
 
-    def has_incoming_transactions(self, models):
+    def has_incoming_transactions(self, models=None):
         """Check if source has pending Incoming Transactions for this producer and model(s).
         """
         if not models:
             raise DispatchError('Attribute \'models\' cannot be None.')
         retval = False
-        if not isinstance(models, list):
-            models = [models]
         if TransactionHelper().has_incoming_for_producer(self.get_producer_name(), self.get_using_source()):
             retval = True
         if not retval:
-            # look for transactions on source for these models but not from this producer
-            if TransactionHelper().has_incoming_for_model([model._meta.object_name for model in models], self.get_using_source()):
-                retval = True
+            if models:
+                if not isinstance(models, list):
+                    models = [models]
+                if TransactionHelper().has_incoming_for_model([model._meta.object_name for model in models], self.get_using_source()):
+                    retval = True
         return retval
 
     def update_model(self, model, **kwargs):
