@@ -88,5 +88,8 @@ class BaseSubject (BaseSyncUuidModel):
     def __unicode__(self):
         return "%s %s" % (self.subject_identifier, self.subject_type)
 
+    def include_for_dispatch(self):
+        return True
+
     class Meta:
         abstract = True
