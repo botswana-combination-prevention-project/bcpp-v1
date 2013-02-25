@@ -12,7 +12,7 @@ from django.db import IntegrityError
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
-#from bhp_sync.exceptions import PendingTransactionError
+from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.exceptions import DispatchError, DispatchModelError
 
 logger = logging.getLogger(__name__)
