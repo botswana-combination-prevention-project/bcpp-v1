@@ -23,6 +23,9 @@ class TestSubjectConsent(BaseConsent):
         blank=True,
         )
 
+    def get_subject_type(self):
+        return 'subject'
+
     def __unicode__(self):
         return unicode(self.subject_identifier)
 
