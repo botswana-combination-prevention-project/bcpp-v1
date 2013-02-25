@@ -47,11 +47,12 @@ class BaseDispatch(Base):
         self._dispatch_container_identifier = None
         self._dispatch = None
         self._visit_models = {}
-        self._set_dispatch_container_app_label(dispatch_container_app_label)
-        self._set_dispatch_container_model_name(dispatch_container_model_name)
-        self._set_dispatch_container_identifier_attrname(dispatch_container_identifier_attrname)
-        self.set_dispatch_container_identifier(dispatch_container_identifier)
-        self._set_dispatch_container_instance()
+        if not kwargs.get('action') == 'returning':
+            self._set_dispatch_container_app_label(dispatch_container_app_label)
+            self._set_dispatch_container_modesl_name(dispatch_container_model_name)
+            self._set_dispatch_container_identifier_attrname(dispatch_container_identifier_attrname)
+            self.set_dispatch_container_identifier(dispatch_container_identifier)
+            self._set_dispatch_container_instance()
         self.debug = kwargs.get('debug', False)
 
     def _set_dispatch_container_model_name(self, value):

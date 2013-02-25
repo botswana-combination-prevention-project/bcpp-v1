@@ -27,20 +27,20 @@ class DispatchController(BaseDispatchController):
 
     def __init__(self, using_source,
                  using_destination,
-                 dispatch_container_app_label,
-                 dispatch_container_model_name,
-                 dispatch_container_identifier_attrname,
-                 dispatch_container_identifier,
-                 dispatch_item_app_label,
-                 dispatch_url,
+                 dispatch_container_app_label = None,
+                 dispatch_container_model_name = None,
+                 dispatch_container_identifier_attrname = None,
+                 dispatch_container_identifier = None,
+                 dispatch_item_app_label = None,
+                 dispatch_url = None,
                  **kwargs):
         super(DispatchController, self).__init__(using_source,
             using_destination,
-            dispatch_container_app_label,
-            dispatch_container_model_name,
-            dispatch_container_identifier_attrname,
-            dispatch_container_identifier,
-            dispatch_item_app_label,
+            dispatch_container_app_label = None,
+            dispatch_container_model_name = None,
+            dispatch_container_identifier_attrname = None,
+            dispatch_container_identifier = None,
+            dispatch_item_app_label = None,
             **kwargs)
         self._dispatch_app_label = None
         self._dispatch_model_name = None
@@ -49,8 +49,8 @@ class DispatchController(BaseDispatchController):
         self._dispatch_model = None
         self._dispatch_model_item_identifier_field = None
         self._dispatch_admin_url = None
-        #if not kwargs.get('action') == 'returning':
-        self._set_dispatch_url(dispatch_url)
+        if not kwargs.get('action') == 'returning':
+            self._set_dispatch_url(dispatch_url)
 
     def set_dispatch_model(self):
         """Sets the model class for the dispatching model."""
