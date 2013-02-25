@@ -172,17 +172,30 @@ class BaseDispatch(Base):
             raise ImproperlyConfigured('Model {0} is not configured for dispatch. See model method \'include_for_dispatch\'  or settings attribute DISPATCH_APP_LABELS.'.format(instance._meta.object_name))
         if not instance.is_dispatched:
             try:
-                dispatch_item = DispatchItem.objects.create(
+                defaults = {
+                    'is_dispatched': True,
+                    'producer': self.get_producer(),
+                    'dispatch_host': socket.gethostname(),
+                    'dispatch_using': settings.DATABASES.get(self.get_using_source()).get('name'),
+                    'item_app_label': instance._meta.app_label,
+                    'item_model_name': instance._meta.object_name,
+                    'item_identifier_attrname': self.get_dispatch_item_identifier_attrname(),
+                    }
+                dispatch_item, created = DispatchItem.objects.get_or_create(
                     dispatch_container=self.get_dispatch_container_instance(),
-                    producer=self.get_producer(),
-                    item_app_label=instance._meta.app_label,
-                    item_model_name=instance._meta.object_name,
-                    item_pk=instance.pk,
-                    item_identifier_attrname=self.get_dispatch_item_identifier_attrname(),
                     item_identifier=getattr(instance, self.get_dispatch_item_identifier_attrname()),
-                    dispatch_using=settings.DATABASES.get(self.get_using_source()).get('name'),
-                    dispatch_host=socket.gethostname(),
-                    is_dispatched=True)
+                    item_pk=instance.pk,
+                    defaults=defaults)
+                if not created:
+                    dispatch_item.is_dispatched = True
+                    dispatch_item.return_datetime = None
+                    dispatch_item.producer = self.get_producer()
+                    dispatch_item.dispatch_host = socket.gethostname()
+                    dispatch_item.dispatch_using = settings.DATABASES.get(self.get_using_source()).get('name')
+                    dispatch_item.item_app_label = instance._meta.app_label
+                    dispatch_item.item_model_name = instance._meta.object_name
+                    dispatch_item.item_identifier_attrname = self.get_dispatch_item_identifier_attrname()
+                    dispatch_item.save()
             except IntegrityError:
                 raise ImproperlyConfigured('Attempting to dispatch a model that is not \"dispatchable\". Expected instance.is_dispatched=True for Model{0}. Please check that this model has method \'include_for_dispatch()\' or model\'s app_label is included in settings.DISPATCH_APP_LABELS'.format(instance._meta.object_name))
             return dispatch_item

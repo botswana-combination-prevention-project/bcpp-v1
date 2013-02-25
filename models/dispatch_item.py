@@ -43,4 +43,4 @@ class DispatchItem(BaseDispatch):
 
     class Meta:
         app_label = "bhp_dispatch"
-        unique_together = (('item_identifier', 'is_dispatched'), )
+        unique_together = (('dispatch_container', 'item_pk', 'item_identifier', 'is_dispatched'), )
