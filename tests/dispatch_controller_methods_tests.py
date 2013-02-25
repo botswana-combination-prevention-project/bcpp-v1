@@ -216,6 +216,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         dispatch_item.save()
         # dispatch again ...
         self.assertIsNone(self.base_dispatch_controller.dispatch_as_json(obj))
-        # assert that a new dispatch item was created
-        self.assertEqual(DispatchItem.objects.all().count(), 2)
+        # assert that a the existing dispatch item was edited (uses get_or_create)
+        self.assertEqual(DispatchItem.objects.all().count(), 1)
+        self.assertEqual(DispatchItem.objects.filter(is_dispatched=True, return_datetime__isnull=True).count(), 1)
         DispatchItem.objects.all().delete()

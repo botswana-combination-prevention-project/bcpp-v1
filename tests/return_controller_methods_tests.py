@@ -17,24 +17,50 @@ from base_controller_tests import BaseControllerTests
 class ReturnControllerMethodsTests(BaseControllerTests):
 
     def test_return_controller(self):
+        TestItem.objects.using(self.using_destination).all().delete()
+        TestItem.objects.all().delete()
         self.create_producer(is_active=True)
         self.create_test_item()
+        self.assertEqual(DispatchItem.objects.all().count(), 0)
+        self.assertEquals(TestItem.objects.using(self.using_destination).all().count(), 0)
         return_controller = ReturnController(self.using_source, self.using_destination)
+        self.assertEqual(DispatchItem.objects.all().count(), 0)
         dispatch_container = None
         return_controller.return_dispatch_items_for_container(dispatch_container)
+        # assert nothing was dispatched to the producer
+        self.assertEquals(TestItem.objects.using(return_controller.get_using_destination()).all().count(), 0)
+        self.assertEqual(DispatchItem.objects.all().count(), 0)
         self.create_base_dispatch_controller()
-        dispatch_container = self.base_dispatch_controller.get_dispatch_container_instance()
-        self.assertIsInstance(dispatch_container, DispatchContainer)
-        return_controller.return_dispatch_items_for_container(dispatch_container)
         obj_cls = get_model(
             self.base_dispatch_controller.get_dispatch_container_instance().container_app_label,
             self.base_dispatch_controller.get_dispatch_container_instance().container_model_name)
-        obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier})
-        self.base_dispatch_controller.dispatch_as_json(obj)
-        self.assertEqual(DispatchItem.objects.filter(is_dispatched=True).count(), 1)
+        dispatch_container = self.base_dispatch_controller.get_dispatch_container_instance()
+        self.assertIsInstance(dispatch_container, DispatchContainer)
+        # assert that nothing was dispatched to the producer yet
+        self.assertEquals(obj_cls.objects.using(self.base_dispatch_controller.get_using_destination()).filter(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier}).count(), 0)
+        # assert no dispatch items yet
+        self.assertEqual(DispatchItem.objects.all().count(), 0)
         return_controller.return_dispatch_items_for_container(dispatch_container)
-        self.assertEqual(DispatchItem.objects.filter(is_dispatched=False).count(), 1)
+        self.assertEqual(DispatchItem.objects.all().count(), 0)
+        obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier})
+        self.assertEquals(TestItem.objects.using(return_controller.get_using_destination()).all().count(), 0)
+        # dispatch the test_item
         self.base_dispatch_controller.dispatch_as_json(obj)
+        # assert dispatch item created
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=True).count(), 1)
+        # return the test item
+        return_controller.return_dispatch_items_for_container(dispatch_container)
+        # assert the dispatch item is flagged as is_dispatched = false
+        self.assertEqual(DispatchItem.objects.filter(is_dispatched=False, return_datetime__isnull=False).count(), 1)
+        # dispatch the test item again
+        self.base_dispatch_controller.dispatch_as_json(obj)
+        # assert dispatch item is updated
+        self.assertEqual(DispatchItem.objects.filter(is_dispatched=True, return_datetime__isnull=True).count(), 1)
+        # assert that only one instance was ever created on the producer
+        self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).all().count(), 1)
+        # delete the item on the producer
+        obj.__class__.objects.using(return_controller.get_using_destination()).all().delete()
+        # return items for producer
         return_controller.return_dispatched_items()
-        self.assertEqual(DispatchItem.objects.filter(is_dispatched=False).count(), 2)
+        # what happens now??
+        self.assertEqual(DispatchItem.objects.filter(is_dispatched=False).count(), 1)

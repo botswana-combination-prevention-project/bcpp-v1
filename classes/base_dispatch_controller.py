@@ -130,9 +130,12 @@ class BaseDispatchController(BaseDispatch):
                     signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
                 except IntegrityError as e:
                     logger.info(e)
-                    if 'Duplicate' in e.args[1]:
+                    logger.info(e.message)
+                    if 'is not unique' in e.message:
+                        raise DispatchError('Model instance {0} is already on producer {1}.'.format(d_obj.object, self.get_producer_name()))
+                    if 'Duplicate' in e.message:
                         pass
-                    elif 'Cannot add or update a child row' in e.args[1]:
+                    elif 'Cannot add or update a child row' in e.message:
                         if not app_label:
                             app_label = source_instances[0]._meta.app_label
                         # assume Integrity error was because of missing ForeignKey data

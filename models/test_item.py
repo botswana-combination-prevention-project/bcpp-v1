@@ -7,6 +7,8 @@ class TestItem(BaseDispatchSyncUuidModel):
 
     test_item_identifier = models.CharField(max_length=35, unique=True)
 
+    comment = models.CharField(max_length=50, null=True)
+
     history = AuditTrail()
 
     def dispatched_as_container_identifier_attr(self):

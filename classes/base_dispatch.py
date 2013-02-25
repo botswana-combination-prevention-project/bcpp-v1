@@ -80,10 +80,12 @@ class BaseDispatch(Base):
 
     def _set_dispatch_container_identifier_attrname(self, value=None):
         """Sets identifier field attribute of the dispatch model.
-           This is an identifier for the model thats the starting point of dispatching
-           e.g household_identifier if starting with household or subject identifier if starting with registered subject.
-           This identifier will be determined by the application specific controller/model sub classing a base model
-           e.g MochudiDispatchController or mochudi_household
+
+        This is an identifier for the model thats the starting point of dispatching
+        e.g household_identifier if starting with household or subject identifier if starting with registered subject.
+
+        This identifier will be determined by the application specific controller/model sub classing a base model
+        e.g MochudiDispatchController or mochudi_household
         """
         if not value:
             raise AttributeError('The identifier field of the dispatch model cannot be None. Set this in __init__() of the subclass.')
@@ -107,7 +109,7 @@ class BaseDispatch(Base):
         return self._dispatch_container_identifier
 
     def _set_dispatch_container_instance(self):
-        """Creates a dispatch container instance for this controller sessions."""
+        """Creates a dispatch container instance for this controller session."""
         user_dispatch_container_model = get_model(self.get_dispatch_container_app_label(), self.get_dispatch_container_model_name())
         if not user_dispatch_container_model.objects.filter(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()}):
             raise DispatchModelError('Cannot set container model instance. Container model {0} matching query does not exist for {1}=\'{2}\'.'.format(user_dispatch_container_model._meta.object_name, self.get_dispatch_container_identifier_attrname(), self.get_dispatch_container_identifier()))
@@ -167,7 +169,9 @@ class BaseDispatch(Base):
         self.set_dispatched_items_for_producer()
 
     def create_dispatched_item_instance(self, instance):
-        """Creates an instance of DispatchItem for an item being dispatched."""
+        """Creates an instance of DispatchItem for an item being dispatched.
+
+        ...note: If an instance of dispatch item already exists it will be reused (get_or_create)"""
         if instance._meta.app_label not in settings.DISPATCH_APP_LABELS and not instance.include_for_dispatch():
             raise ImproperlyConfigured('Model {0} is not configured for dispatch. See model method \'include_for_dispatch\'  or settings attribute DISPATCH_APP_LABELS.'.format(instance._meta.object_name))
         if not instance.is_dispatched:
