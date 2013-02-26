@@ -17,7 +17,7 @@ class BaseConsentMethodsTests(TestCase):
         subject_consent = TestSubjectConsent.objects.create(
             first_name='TEST',
             last_name='TESTER',
-            user_provided_subject_identifier=None, 
+            user_provided_subject_identifier=None,
             initials='TT',
             identity='111111111',
             confirm_identity='111111111',
@@ -61,3 +61,4 @@ class BaseConsentMethodsTests(TestCase):
         self.assertRaises(ConsentError, subject_consent.save)
         # assert subject identifier was not modified
         self.assertEqual(subject_consent.subject_identifier, user_provided_subject_identifier)
+        
