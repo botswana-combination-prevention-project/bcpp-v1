@@ -91,16 +91,18 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                         is_dispatched=True).exists()
         return is_dispatched
 
-    def get_dispatched_item(self):
-        retval = None
+    def get_dispatched_item(self, using=None):
+        if not using:
+            using = 'default'
+        dispatch_item = None
         if self.id:
             if self.is_dispatched:
-                retval = DispatchItem.objects.get(
+                dispatch_item = DispatchItem.objects.using(using).get(
                             item_app_label=self._meta.app_label,
                             item_model_name=self._meta.object_name,
                             item_pk=self.pk,
                             is_dispatched=True)
-        return retval
+        return dispatch_item
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using', None)
