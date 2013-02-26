@@ -3,6 +3,7 @@ from django.db.models import get_model
 from django.core import serializers
 from bhp_crypto.classes import FieldCryptor
 from transaction_producer import TransactionProducer
+from bhp_sync.exceptions import SerializationTransactionError
 
 
 class SerializeToTransaction(object):
@@ -36,6 +37,10 @@ class SerializeToTransaction(object):
                         serialize_to_transaction = SerializeToTransaction()
                         serialize_to_transaction.serialize(sender, instance,**kwargs)
         """
+        if not kwargs.get('using', None):
+            raise SerializationTransactionError('Keyword argument \'using\' may not be None.')
+        else:
+            using = kwargs.get('using')
 
         # watch out for this. The producer is the device that created
         # the "transaction" instance and not necessarily the one that created the model instance
