@@ -2,6 +2,10 @@ class AlreadyDispatched(Exception):
     pass
 
 
+class AlreadyDispatchedItem(Exception):
+    pass
+
+
 class AlreadyDispatchedContainer(Exception):
     pass
 

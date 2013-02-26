@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_dispatch.exceptions import AlreadyDispatched, AlreadyDispatchedContainer
+from bhp_dispatch.exceptions import AlreadyDispatchedContainer, AlreadyDispatchedItem
 #from bhp_dispatch.models import DispatchItem, DispatchContainer
 
 
@@ -112,7 +112,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                     if self._is_dispatched_as_container(using):
                         raise AlreadyDispatchedContainer('Model {0}-{1} is currently dispatched as a container for other dispatched items.'.format(self._meta.object_name, self.pk))
                 if self.is_dispatched_as_item(using):
-                    raise AlreadyDispatched('Model {0}-{1} is currently dispatched'.format(self._meta.object_name, self.pk))
+                    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(self._meta.object_name, self.pk))
         super(BaseDispatchSyncUuidModel, self).save(*args, **kwargs)
 
     class Meta:
