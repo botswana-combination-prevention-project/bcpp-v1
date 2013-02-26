@@ -80,14 +80,16 @@ class BaseConsent(BaseSubject):
         return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
 
     def _get_user_provided_subject_identifier(self):
-        """Return a user provided subject_identifier."""
+        """Return a user provided subject_identifier.
+
+        Do not override."""
         if self.get_user_provided_subject_identifier_attrname() in dir(self):
             return getattr(self, self.get_user_provided_subject_identifier_attrname())
         else:
             return None
 
     def get_user_provided_subject_identifier_attrname(self):
-        """override to return the attribute name of the user provided subject_identifier."""
+        """Override to return the attribute name of the user provided subject_identifier."""
         return None
 
     def save_new_consent(self, subject_identifier=None):
@@ -109,10 +111,11 @@ class BaseConsent(BaseSubject):
                     RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
                     RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
             if not self.subject_identifier:
-                if registered_subject and registered_subject.subject_identifier:
-                    # check for  registered subject key and if it already has
-                    # a subject_identifier (e.g for subjects re-consenting)
-                    self.subject_identifier = self.registered_subject.subject_identifier
+                if registered_subject:
+                    if registered_subject.subject_identifier:
+                        # check for  registered subject key and if it already has
+                        # a subject_identifier (e.g for subjects re-consenting)
+                        self.subject_identifier = self.registered_subject.subject_identifier
                 else:
                     self.subject_identifier = consented_subject_identifier.get_identifier(
                         consent=self,
@@ -121,6 +124,10 @@ class BaseConsent(BaseSubject):
                         site_code=self.study_site.site_code)
 
     def save(self, *args, **kwargs):
+        if self.id:
+            if self.get_user_provided_subject_identifier_attrname():
+                if not self.subject_identifier == getattr(self, self.get_user_provided_subject_identifier_attrname()):
+                    raise ConsentError('Field {0} cannot be changed.'.format(self.get_user_provided_subject_identifier_attrname()))
         if not self.id:
             self.save_new_consent()
             #self.consent_version_on_entry = self.get_current_consent_version(self.consent_datetime)

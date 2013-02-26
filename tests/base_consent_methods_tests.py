@@ -61,4 +61,21 @@ class BaseConsentMethodsTests(TestCase):
         self.assertRaises(ConsentError, subject_consent.save)
         # assert subject identifier was not modified
         self.assertEqual(subject_consent.subject_identifier, user_provided_subject_identifier)
-        
+        registered_subject = RegisteredSubject.objects.create()
+        subject_consent = TestSubjectConsent.objects.create(
+            registered_subject=registered_subject,
+            first_name='TEST',
+            last_name='TESTER',
+            user_provided_subject_identifier=None,
+            initials='TT',
+            identity='111111113',
+            confirm_identity='111111113',
+            identity_type='omang',
+            dob=datetime(1990, 01, 01),
+            is_dob_estimated='No',
+            gender='M',
+            subject_type='subject',
+            consent_datetime=datetime.today(),
+            study_site=self.study_site,
+            may_store_samples='Yes',
+            )
