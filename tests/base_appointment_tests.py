@@ -9,8 +9,6 @@ from bhp_registration.models import RegisteredSubject
 
 class BaseAppointmentTests(TestCase):
 
-    fixtures = ['test_configuration.json', 'test_variables.json']
-
     def __init__(self, *args, **kwargs):
         self.visit_definition = None
         self.registered_subject = None
