@@ -93,6 +93,7 @@ class BaseConsent(BaseSubject):
             # test for user provided subject_identifier field method
             if 'get_user_provided_subject_identifier' in dir(self):
                 self.subject_identifier = self.get_user_provided_subject_identifier()
+            if self.subject_identifier:
                 RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
                 RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
             elif registered_subject and registered_subject.subject_identifier:
@@ -111,6 +112,8 @@ class BaseConsent(BaseSubject):
             self.save_new_consent()
             #self.consent_version_on_entry = self.get_current_consent_version(self.consent_datetime)
             #self.consent_version_recent = self.consent_version_on_entry
+        if not self.subject_identifier:
+            raise ValueError("Subject identifier cannot be blank! It appears it was not provided or not generated")
         super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
         # so need to create appointments
