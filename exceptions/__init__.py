@@ -12,3 +12,11 @@ class DispatchError(Exception):
 
 class DispatchAttributeError(Exception):
     pass
+
+
+class DispatchContainerError(Exception):
+    pass
+
+
+class AlreadyReturned(Exception):
+    pass

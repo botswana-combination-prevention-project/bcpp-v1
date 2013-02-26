@@ -1,5 +1,6 @@
 from django.db.models import get_model
 from bhp_sync.exceptions import PendingTransactionError
+from bhp_sync.models import OutgoingTransaction
 from bhp_dispatch.exceptions import AlreadyDispatched
 from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer
 from bhp_dispatch.classes import ReturnController
@@ -60,6 +61,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         # assert saving the TestItem will fail because this is a container model as well!
         self.assertRaises(AlreadyDispatched, obj.save)
         # set the dispatch container to False
+        return_controller.return_dispatched_container(dispatch_container)
         dispatch_container.is_dispatched = False
         dispatch_container.save()
         # try to change the TestItem again
@@ -71,8 +73,13 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         self.base_dispatch_controller.dispatch_as_json(obj)
         # assert changed comment field is correct on the producer
         self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).get(test_item_identifier=obj.test_item_identifier).comment, 'TEST_COMMENT')
+        # edit the TestItem on producer so that a transaction is created
+        obj.__class__.objects.using(return_controller.get_using_destination()).get(test_item_identifier=obj.test_item_identifier).comment = 'CHANGED TEST COMMENT'
+        obj.save(using=return_controller.get_using_destination())
+        # assert an Outgoing sync transaction exists on the producer
+        self.assertEqual(OutgoingTransaction.objects.using(return_controller.get_using_destination()).all().count(), 1)
         # create some sync transactions on the source
-        self.create_sync_transactions()
+        #self.create_sync_transactions()
         # assert that return_dispatched_items will fail
         self.assertRaises(PendingTransactionError, return_controller.return_dispatched_items)
         # TODO: confirm that transactions can be synced while is_dispatched=True

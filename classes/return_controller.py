@@ -1,5 +1,6 @@
 from datetime import datetime
 from bhp_sync.exceptions import PendingTransactionError
+from bhp_dispatch.exceptions import DispatchContainerError, AlreadyReturned
 from bhp_dispatch.models import DispatchContainer, DispatchItem
 from base import Base
 
@@ -19,6 +20,31 @@ class ReturnController(Base):
         DispatchItem.objects.filter(dispatch_container=dispatch_container, is_dispatched=True, return_datetime__isnull=True).update(
             return_datetime=datetime.now(),
             is_dispatched=False)
+
+    def return_dispatched_container(self, dispatch_container):
+        """Returns the dispatch container after first checking transactions and dispatch items."""
+        if not dispatch_container:
+            raise DispatchContainerError('Attribute dispatch_container may not be None.')
+        # confirm dispatch container has not already been returned
+        if not dispatch_container.is_dispatched and not dispatch_container.return_datetime:
+            raise AlreadyReturned('The dispatch container {0} is not dispatched.'.format(dispatch_container))
+        # confirm no pending transaction on the producer
+        if self.has_outgoing_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. '
+                                          'Run bhp_sync first.'.format(self.get_producer_name()))
+        # confirm no pending transaction for this producer on the source
+        if self.has_incoming_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on '
+                                          'this server. Consume them first.'.format(self.get_producer_name()))
+        # confirm all dispatch items in the container are returned
+        # TODO: does the dispatch container as a dispatch item cause a problem?
+        if self.get_dispatched_item_instances_for_container():
+            raise DispatchContainerError('Dispatch container {0} has items that are still dispatched.'.format(dispatch_container))
+        # return dispatch container
+        dispatch_container.is_dispatched = False
+        dispatch_container.return_datetime = datetime.today()
+        dispatch_container.save()
+        return True
 
     def return_dispatched_items(self):
 
