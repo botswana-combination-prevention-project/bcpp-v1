@@ -10,6 +10,7 @@ from bhp_variables.models import StudySite
 from bhp_subject.models import BaseSubject
 from bhp_appointment_helper.classes import AppointmentHelper
 from bhp_common.utils import formatted_age
+from bhp_consent.exceptions import ConsentError
 
 
 class BaseConsent(BaseSubject):
@@ -125,7 +126,7 @@ class BaseConsent(BaseSubject):
             #self.consent_version_on_entry = self.get_current_consent_version(self.consent_datetime)
             #self.consent_version_recent = self.consent_version_on_entry
         if not self.subject_identifier:
-            raise ValueError("Subject identifier cannot be blank! It appears it was not provided or not generated")
+            raise ConsentError("Subject identifier cannot be blank! It appears it was not provided or not generated")
         super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
         # so need to create appointments
