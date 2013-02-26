@@ -78,6 +78,17 @@ class BaseConsent(BaseSubject):
     def __unicode__(self):
         return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
 
+    def get_user_provided_subject_identifier(self):
+        """Return a user provided subject_identifier."""
+        if self.get_user_provided_subject_identifier_attrname() in dir(self):
+            return getattr(self, self.get_user_provided_subject_identifier_attrname())
+        else:
+            return None
+
+    def get_user_provided_subject_identifier_attrname(self):
+        """override to return the attribute name of the user provided subject_identifier."""
+        return None
+
     def save_new_consent(self, subject_identifier=None):
         """ Creates or gets a subject identifier and updates registered subject.
 
@@ -91,21 +102,22 @@ class BaseConsent(BaseSubject):
 
         if not subject_identifier:
             # test for user provided subject_identifier field method
-            if 'get_user_provided_subject_identifier' in dir(self):
+            if self.get_user_provided_subject_identifier_attrname():
                 self.subject_identifier = self.get_user_provided_subject_identifier()
-            if self.subject_identifier:
-                RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-                RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
-            elif registered_subject and registered_subject.subject_identifier:
-                # check for  registered subject key and if it already has
-                # a subject_identifier (e.g for subjects re-consenting)
-                self.subject_identifier = self.registered_subject.subject_identifier
-            else:
-                self.subject_identifier = consented_subject_identifier.get_identifier(
-                    consent=self,
-                    consent_attrname='subject_identifier',
-                    registration_status='consented',
-                    site_code=self.study_site.site_code)
+                if self.subject_identifier and not registered_subject:
+                    RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+                    RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
+            if not self.subject_identifier:
+                if registered_subject and registered_subject.subject_identifier:
+                    # check for  registered subject key and if it already has
+                    # a subject_identifier (e.g for subjects re-consenting)
+                    self.subject_identifier = self.registered_subject.subject_identifier
+                else:
+                    self.subject_identifier = consented_subject_identifier.get_identifier(
+                        consent=self,
+                        consent_attrname='subject_identifier',
+                        registration_status='consented',
+                        site_code=self.study_site.site_code)
 
     def save(self, *args, **kwargs):
         if not self.id:

@@ -1,0 +1,1 @@
+from base_consent_methods_tests import BaseConsentMethodsTests
