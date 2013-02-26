@@ -1,7 +1,7 @@
 from django.db.models import get_model
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_sync.models import OutgoingTransaction
-from bhp_dispatch.exceptions import AlreadyDispatched
+from bhp_dispatch.exceptions import AlreadyDispatched, AlreadyDispatchedContainer
 from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer
 from bhp_dispatch.classes import ReturnController
 from base_controller_tests import BaseControllerTests
@@ -51,6 +51,9 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=True, return_datetime__isnull=True).count(), 1)
         # assert that only one instance was ever created on the producer
         self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).all().count(), 1)
+        # try to change the item and confirm no DispatchError raised
+        obj.comment = 'TEST_COMMENT'
+        self.assertIsNone(obj.save(using=return_controller.get_using_destination()))
         # delete the item on the producer
         obj.__class__.objects.using(return_controller.get_using_destination()).all().delete()
         # return items for producer
@@ -59,23 +62,25 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=False).count(), 1)
         obj.comment = 'TEST_COMMENT'
         # assert saving the TestItem will fail because this is a container model as well!
-        self.assertRaises(AlreadyDispatched, obj.save)
+        self.assertRaises(AlreadyDispatchedContainer, obj.save)
         # set the dispatch container to False
         return_controller.return_dispatched_container(dispatch_container)
-        dispatch_container.is_dispatched = False
-        dispatch_container.save()
+        self.assertFalse(dispatch_container.is_dispatched)
         # try to change the TestItem again
         obj.save()
         # flip the dispatch_container back to dispatched
-        dispatch_container.is_dispatched = True
-        dispatch_container.save()
+        #dispatch_container.is_dispatched = True
+        #dispatch_container.save()
         # dispatch the TestItem to the producer, again
         self.base_dispatch_controller.dispatch_as_json(obj)
         # assert changed comment field is correct on the producer
         self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).get(test_item_identifier=obj.test_item_identifier).comment, 'TEST_COMMENT')
         # edit the TestItem on producer so that a transaction is created
         obj.__class__.objects.using(return_controller.get_using_destination()).get(test_item_identifier=obj.test_item_identifier).comment = 'CHANGED TEST COMMENT'
-        obj.save(using=return_controller.get_using_destination())
+        # if instance is saved on source, raises an exception
+        self.assertRaises(AlreadyDispatchedContainer, obj.save)
+        # if instance is saved on producer does not raise an exception
+        self.assertIsInstance(obj.save(using=return_controller.get_using_destination()), TestItem)
         # assert an Outgoing sync transaction exists on the producer
         self.assertEqual(OutgoingTransaction.objects.using(return_controller.get_using_destination()).all().count(), 1)
         # create some sync transactions on the source

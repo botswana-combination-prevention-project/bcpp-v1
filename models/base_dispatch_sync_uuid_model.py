@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_dispatch.exceptions import AlreadyDispatched
+from bhp_dispatch.exceptions import AlreadyDispatched, AlreadyDispatchedContainer
 #from bhp_dispatch.models import DispatchItem, DispatchContainer
 
 
@@ -55,7 +55,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             not yet tracked in the DispatchItem model, the return value is False."""
         if self.id:
             if self.is_dispatchable_model():
-                if self.is_dispatched_to_producer():
+                if self.is_dispatched_as_item():
                     return True
         return False
 
@@ -63,27 +63,32 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         """Override to return the field attrname of the identifier used for the dispatch container."""
         raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
 
-    def _is_dispatched_to_producer_as_container(self):
+    def _is_dispatched_as_container(self, using=None):
+        if not using:
+            using = 'default'
         is_dispatched = False
         DispatchContainer = get_model('bhp_dispatch', 'DispatchContainer')
         if DispatchContainer:
-            is_dispatched = DispatchContainer.objects.filter(
+            is_dispatched = DispatchContainer.objects.using(using).filter(
                 container_identifier=getattr(self, self.dispatched_as_container_identifier_attr()),
                 is_dispatched=True,
                 return_datetime__isnull=True).exists()
         return is_dispatched
 
-    def is_dispatched_to_producer(self):
-        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
+    def is_dispatched_as_item(self, using=None):
+        """Returns the models 'dispatched' status in model DispatchItem."""
+        if not using:
+            using = 'default'
         is_dispatched = False
         if self.id:
-            DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-            if DispatchItem:
-                is_dispatched = DispatchItem.objects.filter(
-                    item_app_label=self._meta.app_label,
-                    item_model_name=self._meta.object_name,
-                    item_pk=self.pk,
-                    is_dispatched=True).exists()
+            if self.is_dispatchable_model():
+                DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
+                if DispatchItem:
+                    is_dispatched = DispatchItem.objects.using(using).filter(
+                        item_app_label=self._meta.app_label,
+                        item_model_name=self._meta.object_name,
+                        item_pk=self.pk,
+                        is_dispatched=True).exists()
         return is_dispatched
 
     def get_dispatched_item(self):
@@ -98,12 +103,13 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         return retval
 
     def save(self, *args, **kwargs):
+        using = kwargs.get('using', None)
         if self.id:
             if self.is_dispatchable_model():
                 if self.is_dispatch_container_model():
-                    if self._is_dispatched_to_producer_as_container():
-                        raise AlreadyDispatched('Model {0}-{1} is currently dispatched as a container for other dispatched items.'.format(self._meta.object_name, self.pk))
-                if self.is_dispatched_to_producer():
+                    if self._is_dispatched_as_container(using):
+                        raise AlreadyDispatchedContainer('Model {0}-{1} is currently dispatched as a container for other dispatched items.'.format(self._meta.object_name, self.pk))
+                if self.is_dispatched_as_item(using):
                     raise AlreadyDispatched('Model {0}-{1} is currently dispatched'.format(self._meta.object_name, self.pk))
         super(BaseDispatchSyncUuidModel, self).save(*args, **kwargs)
 
