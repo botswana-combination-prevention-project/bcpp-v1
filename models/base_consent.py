@@ -79,7 +79,7 @@ class BaseConsent(BaseSubject):
     def __unicode__(self):
         return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
 
-    def get_user_provided_subject_identifier(self):
+    def _get_user_provided_subject_identifier(self):
         """Return a user provided subject_identifier."""
         if self.get_user_provided_subject_identifier_attrname() in dir(self):
             return getattr(self, self.get_user_provided_subject_identifier_attrname())
@@ -104,7 +104,7 @@ class BaseConsent(BaseSubject):
         if not subject_identifier:
             # test for user provided subject_identifier field method
             if self.get_user_provided_subject_identifier_attrname():
-                self.subject_identifier = self.get_user_provided_subject_identifier()
+                self.subject_identifier = self._get_user_provided_subject_identifier()
                 if self.subject_identifier and not registered_subject:
                     RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
                     RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
