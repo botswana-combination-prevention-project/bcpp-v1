@@ -18,7 +18,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         return_controller = ReturnController(self.using_source, self.using_destination)
         self.assertEqual(DispatchItem.objects.all().count(), 0)
         dispatch_container = None
-        return_controller.return_dispatch_items_for_container(dispatch_container)
+        return_controller.return_dispatched_items_for_container(dispatch_container)
         # assert nothing was dispatched to the producer
         self.assertEquals(TestItem.objects.using(return_controller.get_using_destination()).all().count(), 0)
         self.assertEqual(DispatchItem.objects.all().count(), 0)
@@ -32,7 +32,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         self.assertEquals(obj_cls.objects.using(self.base_dispatch_controller.get_using_destination()).filter(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier}).count(), 0)
         # assert no dispatch items yet
         self.assertEqual(DispatchItem.objects.all().count(), 0)
-        return_controller.return_dispatch_items_for_container(dispatch_container)
+        return_controller.return_dispatched_items_for_container(dispatch_container)
         self.assertEqual(DispatchItem.objects.all().count(), 0)
         obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier})
         self.assertEquals(TestItem.objects.using(return_controller.get_using_destination()).all().count(), 0)
@@ -41,7 +41,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         # assert dispatch item created
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=True).count(), 1)
         # return the test item
-        return_controller.return_dispatch_items_for_container(dispatch_container)
+        return_controller.return_dispatched_items_for_container(dispatch_container)
         # assert the dispatch item is flagged as is_dispatched = false
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=False, return_datetime__isnull=False).count(), 1)
         # dispatch the test item again
