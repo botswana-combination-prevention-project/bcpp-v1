@@ -1,0 +1,4 @@
+
+
+class ConsentError(Exception):
+    pass
