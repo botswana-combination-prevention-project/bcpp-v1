@@ -11,6 +11,7 @@ from bhp_subject.models import BaseSubject
 from bhp_appointment_helper.classes import AppointmentHelper
 from bhp_common.utils import formatted_age
 from bhp_consent.exceptions import ConsentError
+from bhp_consent.classes import ConsentedSubjectIdentifier
 
 
 class BaseConsent(BaseSubject):
@@ -93,15 +94,18 @@ class BaseConsent(BaseSubject):
         return None
 
     def save_new_consent(self, subject_identifier=None):
-        """ Creates or gets a subject identifier and updates registered subject.
+        """ Users may override this to compliment the default behavior for new instances"""
+        return subject_identifier
 
-        Users may override this to change the default behavior for new instances"""
-        from bhp_consent.classes import ConsentedSubjectIdentifier
+    def _save_new_consent(self):
+        """ Creates or gets a subject identifier and updates registered subject."""
         consented_subject_identifier = ConsentedSubjectIdentifier()
         try:
             registered_subject = getattr(self, 'registered_subject')
         except:
             registered_subject = None
+
+        subject_identifier = self.save_new_consent(self.subject_identifier)
 
         if not subject_identifier:
             # test for user provided subject_identifier field method
@@ -110,33 +114,37 @@ class BaseConsent(BaseSubject):
                 if self.subject_identifier and not registered_subject:
                     RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
                     RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
+            # try to get from registered_subject
             if not self.subject_identifier:
                 if registered_subject:
                     if registered_subject.subject_identifier:
                         # check for  registered subject key and if it already has
                         # a subject_identifier (e.g for subjects re-consenting)
                         self.subject_identifier = self.registered_subject.subject_identifier
-                else:
-                    self.subject_identifier = consented_subject_identifier.get_identifier(
-                        consent=self,
-                        consent_attrname='subject_identifier',
-                        registration_status='consented',
-                        site_code=self.study_site.site_code)
+            # create a subject identifier, if not already done
+            if not self.subject_identifier:
+                self.subject_identifier = consented_subject_identifier.get_identifier(
+                    consent=self,
+                    consent_attrname='subject_identifier',
+                    registration_status='consented',
+                    site_code=self.study_site.site_code)
 
     def save(self, *args, **kwargs):
+        # if editing, confirm that identifier fields are not changed
         if self.id:
             if self.get_user_provided_subject_identifier_attrname():
                 if not self.subject_identifier == getattr(self, self.get_user_provided_subject_identifier_attrname()):
-                    raise ConsentError('Field {0} cannot be changed.'.format(self.get_user_provided_subject_identifier_attrname()))
+                    raise ConsentError('Identifier field {0} cannot be changed.'.format(self.get_user_provided_subject_identifier_attrname()))
+        # if adding, call _save_new_consent()
         if not self.id:
-            self.save_new_consent()
-            #self.consent_version_on_entry = self.get_current_consent_version(self.consent_datetime)
-            #self.consent_version_recent = self.consent_version_on_entry
+            self._save_new_consent()
+        # no matter what, make sure there is a subject_identifier
         if not self.subject_identifier:
             raise ConsentError("Subject identifier cannot be blank! It appears it was not provided or not generated")
         super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
         # so need to create appointments
+        # TODO: is this required?? isn't this on a signal?
         if 'registered_subject' in dir(self):
             AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
 
