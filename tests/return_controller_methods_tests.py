@@ -38,7 +38,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier})
         self.assertEquals(TestItem.objects.using(return_controller.get_using_destination()).all().count(), 0)
         # dispatch the test_item
-        self.base_dispatch_controller.dispatch_as_json(obj)
+        self.base_dispatch_controller.dispatch_as_json(dispatch_container, obj)
         # assert dispatch item created
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=True).count(), 1)
         # return the test item
@@ -46,7 +46,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         # assert the dispatch item is flagged as is_dispatched = false
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=False, return_datetime__isnull=False).count(), 1)
         # dispatch the test item again
-        self.base_dispatch_controller.dispatch_as_json(obj)
+        self.base_dispatch_controller.dispatch_as_json(dispatch_container, obj)
         # assert dispatch item is updated
         self.assertEqual(DispatchItem.objects.filter(is_dispatched=True, return_datetime__isnull=True).count(), 1)
         # assert that only one instance was ever created on the producer
@@ -78,7 +78,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         #dispatch_container.save()
         # dispatch the TestItem to the producer, again
         #TODO: note this is being dispatched without a container??
-        self.base_dispatch_controller.dispatch_as_json(obj)
+        self.base_dispatch_controller.dispatch_as_json(dispatch_container, obj)
         # assert changed comment field is correct on the producer
         self.assertEqual(obj.__class__.objects.using(return_controller.get_using_destination()).get(test_item_identifier=obj.test_item_identifier).comment, 'TEST_COMMENT2')
         # edit the TestItem on producer so that a transaction is created

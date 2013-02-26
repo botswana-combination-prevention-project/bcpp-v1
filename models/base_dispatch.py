@@ -9,8 +9,7 @@ class BaseDispatch(BaseUuidModel):
     """
     producer = models.ForeignKey(
         Producer,
-        verbose_name="Producer / Netbook"
-        )
+        verbose_name="Producer / Netbook")
 
     is_dispatched = models.BooleanField(default=True)
 
@@ -18,14 +17,12 @@ class BaseDispatch(BaseUuidModel):
         verbose_name="Dispatch date",
         default=datetime.today(),
         blank=True,
-        null=True
-        )
+        null=True)
 
     return_datetime = models.DateTimeField(
         verbose_name="Return date",
         blank=True,
-        null=True
-        )
+        null=True)
 
     class Meta:
         abstract = True

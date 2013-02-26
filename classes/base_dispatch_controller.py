@@ -6,7 +6,8 @@ from django.db.models import get_models, get_app, ForeignKey, OneToOneField, sig
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.exceptions import DispatchModelError, AlreadyDispatched, DispatchError
+from bhp_dispatch.exceptions import DispatchModelError, AlreadyDispatchedItem, DispatchError
+from bhp_dispatch.models import DispatchContainer
 from base_dispatch import BaseDispatch
 
 
@@ -85,23 +86,26 @@ class BaseDispatchController(BaseDispatch):
                         scheduled_models.append(model_cls)
         return scheduled_models
 
-    def dispatch_model_as_json(self, model_cls):
+    def dispatch_model_as_json(self, dispatch_container, model_cls):
         base_model_class = BaseSyncUuidModel
         if not issubclass(model_cls, BaseSyncUuidModel):
             raise DispatchModelError('Dispatch model {0} must be a subclass of \'{1}\'.'.format(model_cls, base_model_class))
-        self.dispatch_as_json([instance for instance in model_cls.objects.all()])
+        self.dispatch_as_json(dispatch_container, [instance for instance in model_cls.objects.all()])
 
-    def dispatch_as_json(self, source_instances, **kwargs):
+    def dispatch_as_json(self, source_instances, dispatch_container, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
 
             Args:
+                dispatch_container: instance of DispatchContainer. Note items may not
+                                    may not be dispatched without a container.
                 source_instance: a model instance(s) from the source server
-                using: `using` parameter for the destination device.
-            Keywords:
-                app_label: app name for instances
         """
         base_model_class = BaseSyncUuidModel
-        app_label = kwargs.get('app_label', None)
+        dispatch_container = dispatch_container or self.get_dispatch_container_instance()
+        if not dispatch_container:
+            raise DispatchError('Attribute dispatch_container may not be None')
+        if not isinstance(dispatch_container, DispatchContainer):
+            raise DispatchError('Attribute dispatch_container must be an instance on DispatchContainer')
         # check for pending transactions
         if self.has_outgoing_transactions():
             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
@@ -120,7 +124,7 @@ class BaseDispatchController(BaseDispatch):
             # deserialize on destination
             for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
                 if d_obj.object.is_dispatched:
-                    raise AlreadyDispatched('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
+                    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
                 try:
                     # disconnect signal to avoid creating transactions on the source for data saved on destination
                     signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
@@ -136,10 +140,8 @@ class BaseDispatchController(BaseDispatch):
                     if 'Duplicate' in e.message:
                         pass
                     elif 'Cannot add or update a child row' in e.message:
-                        if not app_label:
-                            app_label = source_instances[0]._meta.app_label
                         # assume Integrity error was because of missing ForeignKey data
-                        self.dispatch_foreign_key_instances(app_label)
+                        self.dispatch_foreign_key_instances(self.get_dispatch_item_app_label())
                         # try again
                         # disconnect signal
                         signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")

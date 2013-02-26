@@ -64,7 +64,6 @@ class ReturnController(Base):
         msgs = []
         for dispatch_container in self.get_dispatch_container_instances_for_producer():
             self.return_dispatched_items_for_container(dispatch_container)
-            
 #                msgs.append('Returned {0} items of {1} with {2}={3}'.format(dispatched_models.count(),
 #                                                                            container.container_model_name,
 #                                                                            container.container_identifier_attrname,
