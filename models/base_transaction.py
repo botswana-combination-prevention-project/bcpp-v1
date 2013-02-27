@@ -81,6 +81,9 @@ class BaseTransaction(BaseUuidModel):
     def is_serialized(self):
         return False
 
+    def __unicode__(self):
+        return self.tx_name+' '+self.producer +' '+self.action
+
     def save(self, *args, **kwargs):
 
         if self.is_consumed is True and not self.consumed_datetime:
