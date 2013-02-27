@@ -35,6 +35,8 @@ class IdentifierTracker(BaseSyncUuidModel):  # , LockableObject):
         blank=True,
         )
 
+    objects = models.Manager()
+
     def is_serialized(self):
         return super(IdentifierTracker, self).is_serialized(True)
 

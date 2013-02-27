@@ -2,6 +2,7 @@ from datetime import datetime
 from django.utils import unittest
 from bhp_identifier.classes import Identifier
 from bhp_identifier.models import IdentifierTracker
+from bhp_identifier.exceptions import CheckDigitError
 
 """
 from django.utils import unittest
@@ -39,7 +40,7 @@ class IdentifierTestCase(unittest.TestCase):
         self.assertEqual(self.id.is_valid(), True)      
                   
         # specify has_check_digit = True
-        self.assertEqual(self.id.encode(1231231234, True), 'KD1K3M')                  
+        self.assertRaises(CheckDigitError, self.id.encode(1231231234, True))
         self.assertEqual(self.id.identifier_string, '123123123')
         self.assertEqual(self.id.identifier, 'KD1K3M')              
         self.assertEqual(self.id.is_valid(), True)        
