@@ -30,6 +30,8 @@ class BaseBaseDeath(BaseRegisteredSubjectModel):
 
     death_cause = models.TextField(
         max_length=1000,
+        blank=True,
+        null=True,
         verbose_name="Describe the major cause of death(including pertinent autopsy information if available),starting with the first noticeable illness thought to be related to death,continuing to time of death. ",
         help_text="Note: Cardiac and pulmonary arrest are not major reasons and should not be used to describe major cause)"
         )
