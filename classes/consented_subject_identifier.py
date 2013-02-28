@@ -13,3 +13,4 @@ class ConsentedSubjectIdentifier(SubjectIdentifier):
         attrname = kwargs.get('consent_attrname')
         setattr(consent, attrname, new_identifier)
         RegisteredSubject.objects.update_with(consent, attrname, **kwargs)
+        return new_identifier

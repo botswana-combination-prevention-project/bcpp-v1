@@ -95,13 +95,13 @@ class BaseConsent(ConsentBasics):
 
     def save_new_consent(self, subject_identifier=None):
         """ Users may override this to compliment the default behavior for new instances.
-        
+
         Must return a subject_identifier or None."""
         return subject_identifier
 
     def _save_new_consent(self):
         """ Creates or gets a subject identifier and updates registered subject.
-        
+
         Also, calls user method :func:`save_new_consent`"""
         consented_subject_identifier = ConsentedSubjectIdentifier()
         try:
