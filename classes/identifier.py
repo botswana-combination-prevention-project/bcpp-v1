@@ -75,7 +75,7 @@ class Identifier(object):
             raise CheckDigitError('value used to calculate the check digit must be an integer.')
         return number % self.get_modulus()
 
-    def increment(self):
+    def increment(self, identifier_tracker=None):
         """Increments last counter by 1 using last counter (or None) from IdentifierTracker model
            for given root_segment and create a new IdentifierTracker record."""
 
@@ -85,12 +85,17 @@ class Identifier(object):
         else:
             self.set_counter(1)
         try:
-            # create record, we'll update with the identifier later
-            self._identifier_tracker = IdentifierTracker(
-                root_number=self.get_root_segment(),
-                counter=self.get_counter(),
-                identifier_type=self.get_identifier_type(),
-                )
+            if isinstance(identifier_tracker, IdentifierTracker):
+                self.self.set_counter(self.get_counter() + 1)
+                identifier_tracker.counter = self.get_counter()
+                self._identifier_tracker = identifier_tracker
+            else:
+                # create record, we'll update with the identifier later
+                self._identifier_tracker = IdentifierTracker(
+                    root_number=self.get_root_segment(),
+                    counter=self.get_counter(),
+                    identifier_type=self.get_identifier_type(),
+                    )
             self._identifier_tracker.save()
         except IntegrityError as e:
             raise e
@@ -205,6 +210,10 @@ class Identifier(object):
         self.increment()
         # set the identifier
         self._identifier = self.encode(int(self._get_identifier_string()), self.get_encoding(), has_check_digit=True)
+        # check if identifier is unique
+        while self._identifier_tracker.__class__.objects.filter(identifier=self._identifier).exists():
+            self.increment()
+            self._identifier = self.encode(int(self._get_identifier_string()), self.get_encoding(), has_check_digit=True)
         # update the tracker
         self.update_tracker()
 

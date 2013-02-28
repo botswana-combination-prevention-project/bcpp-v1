@@ -2,10 +2,10 @@ from datetime import datetime
 from django.forms import ValidationError
 from django.db.models import get_model
 from bhp_identifier.models import SubjectIdentifier
-from base_identifier import BaseIdentifier
+from base_identifier import BaseSubjectIdentifier
 
 
-class InfantIdentifier(BaseIdentifier):
+class InfantIdentifier(BaseSubjectIdentifier):
 
     """ Creates an infant identifier derived from the maternal identifier, considers the number of infants
     during this registration session and their birth order and returns a dictionary {infant order: identifier}.

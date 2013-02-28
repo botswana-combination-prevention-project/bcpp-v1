@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from bhp_sync.models import BaseSyncUuidModel
+from sequence import Sequence
 
 
 class BaseIdentifierModel(BaseSyncUuidModel):
@@ -28,7 +29,6 @@ class BaseIdentifierModel(BaseSyncUuidModel):
     device_id = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        from bhp_identifier.models import Sequence
         if not 'DEVICE_ID' in dir(settings):
             raise ImproperlyConfigured('Settings attribute DEVICE_ID not found. Add DEVICE_ID =  to your settings.py where DEVICE_ID is a project wide unique integer.')
         sequence = Sequence.objects.create(device_id=settings.DEVICE_ID)

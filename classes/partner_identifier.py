@@ -1,9 +1,9 @@
 from django.forms import ValidationError
 from bhp_identifier.models import SubjectIdentifier
-from base_identifier import BaseIdentifier
+from base_identifier import BaseSubjectIdentifier
 
 
-class PartnerIdentifier(BaseIdentifier):
+class PartnerIdentifier(BaseSubjectIdentifier):
 
     """ Create the subject identifier for a partner by calling get_identifier() with the index subject identifier. """
 

@@ -1,7 +1,7 @@
-from base_identifier import BaseIdentifier
+from base_identifier import BaseSubjectIdentifier
 
 
-class SubjectIdentifier(BaseIdentifier):
+class SubjectIdentifier(BaseSubjectIdentifier):
 
     def get_identifier_prep(self, **kwargs):
         """Changes the identifier model and format for subject identifiers."""

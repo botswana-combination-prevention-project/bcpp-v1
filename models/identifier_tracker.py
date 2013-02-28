@@ -2,7 +2,7 @@ from django.db import models
 from bhp_sync.models import BaseSyncUuidModel
 
 
-class IdentifierTracker(BaseSyncUuidModel):  # , LockableObject):
+class IdentifierTracker(BaseSyncUuidModel):
 
     """
     A lockable model to create and track unique identifiers for new records such as requsitions, receive, etc.

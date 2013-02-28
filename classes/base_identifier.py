@@ -6,7 +6,7 @@ from bhp_device.classes import Device
 from check_digit import CheckDigit
 
 
-class BaseIdentifier(object):
+class BaseSubjectIdentifier(object):
     """ Base class for all identifiers."""
 
     def get_identifier_prep(self, **kwargs):
