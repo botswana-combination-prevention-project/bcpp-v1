@@ -84,7 +84,7 @@ class SerializeToTransaction(object):
             pass
         except:
             raise
-        # save to Outgoing Transaction if the model is saved on this device.
+        # save to Outgoing Transaction ONLY if the model is saved on this device.
         if using == 'default':
             OutgoingTransaction.objects.using(using).create(
                 tx_name=instance._meta.object_name,
