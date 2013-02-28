@@ -84,22 +84,12 @@ class SerializeToTransaction(object):
             pass
         except:
             raise
-        # save to Outgoing Transaction.
-        if kwargs.get('using'):
-            OutgoingTransaction.objects.using(kwargs.get('using')).create(
+        # save to Outgoing Transaction if the model is saved on this device.
+        if using == 'default':
+            OutgoingTransaction.objects.using(using).create(
                 tx_name=instance._meta.object_name,
                 tx_pk=instance.pk,
                 tx=json_tx,
                 timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
-                producer=str(transaction_producer)[0:25],
-                action=action,
-                )
-        else:
-            OutgoingTransaction.objects.create(
-                tx_name=instance._meta.object_name,
-                tx_pk=instance.pk,
-                tx=json_tx,
-                timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
-                producer=str(transaction_producer)[0:25],
-                action=action,
-                )
+                producer=str(transaction_producer),
+                action=action)
