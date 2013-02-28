@@ -1,4 +1,4 @@
-#from base_encrypted_field import BaseEncryptedField
+from base_encrypted_field import BaseEncryptedField
 from irreversible_rsa_encryption_field import IrreversibleRsaEncryptionField
 from restricted_rsa_encryption_field import RestrictedRsaEncryptionField
 from local_aes_encryption_field import LocalAesEncryptionField
