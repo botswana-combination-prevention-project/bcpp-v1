@@ -39,6 +39,6 @@ class TransactionProducer(object):
         if OutgoingTransaction.objects.using(using).all().exists():
             if not Producer.objects.using(using).filter(name=producer_name).exists():
                 logger.warning('Unknown Producer {0}. Not checking for outgoing transactions. (Note: using database key \'{1}\')'.format(producer_name, using))
-            if OutgoingTransaction.objects.using(using).filter(producer=producer_name, is_consumed=False):
+            if OutgoingTransaction.objects.using(using).filter(producer=producer_name, is_consumed=False).exists():
                 retval = True
         return retval
