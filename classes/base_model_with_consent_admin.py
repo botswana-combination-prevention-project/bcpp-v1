@@ -1,11 +1,11 @@
 from datetime import datetime
 from django.db.models import ForeignKey
-from bhp_crypto.classes import BaseCryptorModelAdmin as BaseModelAdmin
+from bhp_crypto.admin import BaseCryptorModelAdmin
 from bhp_registration.models import RegisteredSubject
 
 # is this used??
 
-class BaseModelWithConsentAdmin(BaseModelAdmin):
+class BaseModelWithConsentAdmin(BaseCryptorModelAdmin):
     """ For models with a key to consent"""
     def save_model(self, request, obj, form, change):
         from bhp_appointment.models import Appointment
