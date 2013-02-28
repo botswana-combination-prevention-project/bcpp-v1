@@ -1,5 +1,4 @@
 from django.db.models import CharField
-#from bhp_crypto.classes import BaseCrypter
 
 
 class SaltField (CharField):

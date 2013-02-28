@@ -1,4 +1,4 @@
-from bhp_crypto.classes import BaseEncryptedField
+from base_encrypted_field import BaseEncryptedField
 
 
 class IrreversibleRsaEncryptionField(BaseEncryptedField):

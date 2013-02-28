@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from bhp_crypto.classes import BaseEncryptedField
+from base_encrypted_field import BaseEncryptedField
 
 
 class RestrictedRsaEncryptionField(BaseEncryptedField):

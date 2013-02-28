@@ -1,3 +1,4 @@
+#from base_encrypted_field import BaseEncryptedField
 from irreversible_rsa_encryption_field import IrreversibleRsaEncryptionField
 from restricted_rsa_encryption_field import RestrictedRsaEncryptionField
 from local_aes_encryption_field import LocalAesEncryptionField
@@ -12,4 +13,3 @@ from encrypted_text_field import EncryptedTextField
 from salt_field import SaltField
 from encrypted_integer_field import EncryptedIntegerField
 from encrypted_decimal_field import EncryptedDecimalField
-

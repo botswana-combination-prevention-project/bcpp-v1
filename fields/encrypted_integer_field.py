@@ -10,4 +10,3 @@ class EncryptedIntegerField(LocalRsaEncryptionField):
         retval = super(EncryptedIntegerField, self).to_python(value)
         retval = int(retval)
         return retval
-
