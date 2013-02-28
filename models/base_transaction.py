@@ -1,4 +1,4 @@
-# requires django-extensions 0.7
+    # requires django-extensions 0.7
 from datetime import datetime
 from django.db import models
 from bhp_base_model.models import BaseUuidModel
@@ -82,11 +82,10 @@ class BaseTransaction(BaseUuidModel):
         return False
 
     def __unicode__(self):
-        return self.tx_name+' '+self.producer +' '+self.action
+        return '{0} {1} {2}'.format(self.tx_name, self.producer, self.action)
 
     def save(self, *args, **kwargs):
-
-        if self.is_consumed is True and not self.consumed_datetime:
+        if self.is_consumed and not self.consumed_datetime:
             self.consumed_datetime = datetime.today()
         super(BaseTransaction, self).save(*args, **kwargs)
 
