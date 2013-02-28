@@ -45,8 +45,7 @@ class BaseSyncUuidModel(BaseUuidModel):
         raise TypeError()
 
     def delete(self, *args, **kwargs):
-        """Deletes"""
-        #TODO: get this to work in pre_delete signal
+        """Creates a delete transaction on delete"""
         transaction_producer = TransactionProducer()
         if 'transaction_producer' in kwargs:
             transaction_producer = kwargs.get('transaction_producer')
@@ -54,24 +53,15 @@ class BaseSyncUuidModel(BaseUuidModel):
 
         if self.is_serialized() and not self._meta.proxy:
             outgoing_transaction = get_model('bhp_sync', 'outgoingtransaction')
-            json_obj = serializers.serialize(
-                "json", self.__class__.objects.filter(pk=self.pk), use_natural_keys=True)
-            if kwargs.get('using'):
-                outgoing_transaction.objects.using(kwargs.get('using')).create(
-                    tx_name=self._meta.object_name,
-                    tx_pk=self.pk,
-                    tx=json_obj,
-                    timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
-                    producer=str(transaction_producer),
-                    action='D')
-            else:
-                outgoing_transaction.objects.create(
-                    tx_name=self._meta.object_name,
-                    tx_pk=self.pk,
-                    tx=json_obj,
-                    timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
-                    producer=str(transaction_producer),
-                    action='D')
+            json_obj = serializers.serialize("json", self.__class__.objects.filter(pk=self.pk), use_natural_keys=True)
+            using = kwargs.get('using', 'default')
+            outgoing_transaction.objects.using(using).create(
+                tx_name=self._meta.object_name,
+                tx_pk=self.pk,
+                tx=json_obj,
+                timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
+                producer=str(transaction_producer),
+                action='D')
         super(BaseSyncUuidModel, self).delete(*args, **kwargs)
 
     class Meta:
