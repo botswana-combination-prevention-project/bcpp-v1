@@ -7,14 +7,14 @@ from bhp_crypto.utils import mask_encrypted
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start, eligible_if_no
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
-from bhp_subject.models import BaseSubject
 from bhp_appointment_helper.classes import AppointmentHelper
 from bhp_common.utils import formatted_age
 from bhp_consent.exceptions import ConsentError
 from bhp_consent.classes import ConsentedSubjectIdentifier
+from consent_basics import ConsentBasics
 
 
-class BaseConsent(BaseSubject):
+class BaseConsent(ConsentBasics):
 
     """ Consent models should be subclasses of this """
 
