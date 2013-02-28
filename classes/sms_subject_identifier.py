@@ -20,3 +20,4 @@ class SmsSubjectIdentifier(SubjectIdentifier):
         else:
             pending_identifier.request_id = sms_queue_id
             pending_identifier.save()
+        return identifier

@@ -5,28 +5,21 @@ from bhp_identifier.models import SubjectIdentifier, DerivedSubjectIdentifier
 
 
 class Partner(object):
-    
     """ Create the subject identifier for a partner by calling get_identifier() with the index subject identifier. """
-    
     def __init__(self):
-        pass
-    
-    def get_identifier(self, index_identifier, subject_type="partner", **kwargs):
+        raise TypeError('This class is broken')
+
+    def get_identifier_prep(self, index_identifier, subject_type="partner", **kwargs):
         """ Just add a -10 to the index identifier and register.
-        *Probably not creating the identifier because of a consent
-        *Subject Identifier is derived from the index identifier so the
-        SubjectIdentifier model is referenced but not updated.""" 
-        # index_identifier identifier should exist in SubjectIdentifier
-        
-        #..todo: TODO: for maikalelo, this needs to be updated
-        # STOP!!
-        #raise TypeError('You may not overrise get_identifier.')
-#        consent=None
-        
-#        kwargs.get('subject_identifier')
+
+        * Probably not creating the identifier because of a consent
+        * Subject Identifier is derived from the index identifier so the
+
+        SubjectIdentifier model is referenced but not updated."""
+
         if not SubjectIdentifier.objects.filter(identifier=index_identifier):
             raise ValidationError('Unknown index_identifier {0}.'.format(index_identifier))
-        subject_identifier = "{}-10".format(index_identifier)
+        subject_identifier = "{0}-10".format(index_identifier)
         # create/save to DerivedSubjectIdentifier
         DerivedSubjectIdentifier.objects.create(subject_identifier=subject_identifier, 
                                                 base_identifier=index_identifier)        

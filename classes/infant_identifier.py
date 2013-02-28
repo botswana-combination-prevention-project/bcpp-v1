@@ -83,6 +83,7 @@ class InfantIdentifier(BaseSubjectIdentifier):
                 registration_status='registered',
                 relative_identifier=kwargs.get('maternal_identifier'),
                 study_site=kwargs.get('maternal_study_site'))
+        return new_identifier
 
     def _get_suffix(self, birth_order, live_infants):
         """ Returns a suffix for the identifier."""

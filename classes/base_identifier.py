@@ -3,6 +3,7 @@ import uuid
 from django.db.models import get_model
 from django.conf import settings
 from bhp_device.classes import Device
+from bhp_identifier.exceptions import IdentifierError
 from check_digit import CheckDigit
 
 
@@ -16,19 +17,24 @@ class BaseSubjectIdentifier(object):
         return options
 
     def get_identifier_post(self, identifier, **kwargs):
-        """ Users may override to run something after the identifier is created."""
-        return None
+        """ Users may override to run something after the identifier is created.
+
+        Must return the identifier."""
+        return identifier
 
     def _prepare_identifier(self, options, **kwargs):
         """Calls user method self.get_identifier_prep() and adds/updates custom options to the defaults."""
         custom_options = self.get_identifier_prep(**kwargs)
+        if not isinstance(custom_options, dict):
+            raise IdentifierError('get_identifier_prep()')
         for k, v in custom_options.iteritems():
             options.update({k: v})
         return options
 
     def _post_identifier(self, identifier, **kwargs):
-        self.get_identifier_post(identifier, **kwargs)
-        return None
+        """Must return the identifier."""
+        identifier = self.get_identifier_post(identifier, **kwargs)
+        return identifier
 
     def get_identifier(self, add_check_digit=True, is_derived=False, **kwargs):
         """ Returns a formatted identifier based on the identifier format and the dictionary
@@ -106,5 +112,7 @@ class BaseSubjectIdentifier(object):
         if identifier_model:
             identifier_model.save()
         # call custom post method
-        self._post_identifier(new_identifier, **kwargs)
+        new_identifier = self._post_identifier(new_identifier, **kwargs)
+        if not new_identifier:
+            raise IdentifierError('Identifier cannot be None. Confirm overridden methods return the correct value. See BaseSubjectIdentifier')
         return new_identifier
