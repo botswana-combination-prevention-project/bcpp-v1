@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from field_cryptor import FieldCryptor
+from bhp_crypto.classes import FieldCryptor
 
 
 class BaseEncryptedField(models.Field):
