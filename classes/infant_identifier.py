@@ -2,7 +2,7 @@ from datetime import datetime
 from django.forms import ValidationError
 from django.db.models import get_model
 from bhp_identifier.models import SubjectIdentifier
-from base_identifier import BaseSubjectIdentifier
+from base_subject_identifier import BaseSubjectIdentifier
 
 
 class InfantIdentifier(BaseSubjectIdentifier):

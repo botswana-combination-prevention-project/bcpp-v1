@@ -113,6 +113,6 @@ class BaseSubjectIdentifier(object):
             identifier_model.save()
         # call custom post method
         new_identifier = self._post_identifier(new_identifier, **kwargs)
-        if not new_identifier:
-            raise IdentifierError('Identifier cannot be None. Confirm overridden methods return the correct value. See BaseSubjectIdentifier')
+        #if not new_identifier:
+        #    raise IdentifierError('Identifier cannot be None. Confirm overridden methods return the correct value. See BaseSubjectIdentifier')
         return new_identifier

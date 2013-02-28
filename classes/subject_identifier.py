@@ -1,4 +1,4 @@
-from base_identifier import BaseSubjectIdentifier
+from base_subject_identifier import BaseSubjectIdentifier
 
 
 class SubjectIdentifier(BaseSubjectIdentifier):
