@@ -23,6 +23,8 @@ class Appointment(BaseAppointment):
 
     best_appt_datetime = models.DateTimeField(null=True, editable=False)
 
+    appt_close_datetime = models.DateTimeField(null=True, editable=False)
+
     study_site = models.ForeignKey(StudySite,
         null=True,
         blank=False)

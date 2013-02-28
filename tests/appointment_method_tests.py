@@ -7,8 +7,7 @@ from base_appointment_tests import BaseAppointmentTests
 
 
 class AppointmentMethodTests(BaseAppointmentTests):
-
-    fixtures = ['test_configuration.json']
+    fixtures = ['test_configuration.json', 'test_variables.json']
 
     def test_save(self):
         # create an appointment
