@@ -145,26 +145,6 @@ class RegisteredSubject(BaseSubject):
         return ret
     dashboard.allow_tags = True
 
-#    @property
-#    def is_dispatched(self):
-#        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-#        locked, producer = self.is_dispatched_to_producer()
-#        return locked
-
-#    def is_dispatched_to_producer(self):
-#        """Returns lock status as a boolean needed when using this model with bhp_dispatch."""
-#        locked = False
-#        producer = None
-#        if DispatchItem.objects.filter(
-#                subject_identifiers__icontains=self.subject_identifier,
-#                is_dispatched=True).exists():
-#            dispatch_item = DispatchItem.objects.get(
-#                subject_identifiers__icontains=self.subject_identifier,
-#                is_dispatched=True)
-#            producer = dispatch_item.producer
-#            locked = True
-#        return locked, producer
-
     class Meta:
         app_label = 'bhp_registration'
         verbose_name = 'Registered Subject'
