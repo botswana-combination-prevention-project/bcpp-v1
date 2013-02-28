@@ -10,7 +10,7 @@ from bhp_sync.classes import SerializeToTransaction
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_base_model.fields import MyUUIDField
-from bhp_crypto.classes import BaseEncryptedField
+from bhp_crypto.fields import BaseEncryptedField
 
 try:
     import settings_audit
