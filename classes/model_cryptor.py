@@ -205,13 +205,14 @@ class ModelCryptor(object):
 
     def _is_encrypted(self, **kwargs):
         """ Check if field values in instance/model are encrypted.
-        Note: this is much slower than just saving the instance!!
+
+        ..note:: Note: this is much slower than just saving the instance!!
 
         Keyword Arguments:
-        instance -- limits the check to just this model instance (default: None)
-        model -- checks all instances within model (default: None)
-        field_name -- filter model or instance on the field object with this attname only
-        suppress_messages -- whether to print messages to stdout (default: False)
+            instance -- limits the check to just this model instance (default: None)
+            model -- checks all instances within model (default: None)
+            field_name -- filter model or instance on the field object with this attname only
+            suppress_messages -- whether to print messages to stdout (default: False)
         """
         instance = kwargs.get('instance', None)
         model = kwargs.get('model', None)

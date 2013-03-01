@@ -8,6 +8,7 @@ import logging
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 #from django.contrib.auth.models import User
+from bhp_crypto.exceptions import EncryptionError, AlgorithmError, EncryptionKeyError, ModeError
 
 from base_cryptor import BaseCryptor
 
@@ -65,13 +66,13 @@ class Cryptor(BaseCryptor):
         self.mode = mode
         # check algorithm and mode
         if self.algorithm not in self._get_keypaths().keys():
-            raise KeyError('Invalid algorithm \'{algorithm}\'. '
+            raise AlgorithmError('Invalid algorithm \'{algorithm}\'. '
                            'Must be one of {keys}'.format(algorithm=self.algorithm,
                                                           keys=', '.join(self._get_keypaths().keys())))
         if self.mode:
             if (self.mode not in
                 self._get_keypaths().get(self.algorithm).iterkeys()):
-                raise KeyError('Invalid mode \'{mode}\' for algorithm {algorithm}.'
+                raise ModeError('Invalid mode \'{mode}\' for algorithm {algorithm}.'
                                ' Must be one of {keys}'.format(mode=self.mode, algorithm=self.algorithm,
                                                            keys=', '.join(self._get_keypaths().get(self.algorithm).keys())))
         if kwargs.get('preload', True):
@@ -96,7 +97,7 @@ class Cryptor(BaseCryptor):
             # keyfile not specified, so get the default for this
             # algorithm and mode
             if not algorithm or not mode:
-                raise AttributeError('Algorithm and mode must be set \
+                raise EncryptionKeyError('Algorithm and mode must be set \
                                       before attempting to set the \
                                       public key')
             keyfile = (self._get_keypaths().get(algorithm).get(mode)
@@ -132,7 +133,7 @@ class Cryptor(BaseCryptor):
         if not keyfile:
             # keyfile not specified, so get default for algorithm and mode
             if not algorithm or not mode:
-                raise AttributeError('Algorithm and mode must be set '
+                raise EncryptionKeyError('Algorithm and mode must be set '
                                      'before attempting to set the '
                                      'private key')
             keyfile = self._get_keypaths().get(algorithm).get(mode).get('private', None)
@@ -163,7 +164,7 @@ class Cryptor(BaseCryptor):
         algorithm = kwargs.get('algorithm', self.algorithm)
         mode = kwargs.get('mode', self.mode)
         if algorithm != 'aes':
-            raise TypeError('Invalid algorithm. Expected \'aes\', Got {0}'.format(algorithm))
+            raise AlgorithmError('Invalid algorithm. Expected \'aes\', Got {0}'.format(algorithm))
         self.has_encryption_key = False
         if self._get_preloaded_keypaths().get(algorithm).get(mode).get('key') and self.KEY_PATH not in self._get_preloaded_keypaths().get(algorithm).get(mode).get('key'):
             self.aes_key = self._get_preloaded_keypaths().get(algorithm).get(mode).get('key')
@@ -192,8 +193,9 @@ class Cryptor(BaseCryptor):
             # FAIL here if key not available and user is trying to save data
             raise ImproperlyConfigured('RSA key not available, unable to '
                                        'encrypt sensitive data using the RSA algorithm.')
+        #TODO: is_encrypted() does not work unless called from the FieldCryptor!
         if self.is_encrypted(plaintext):
-            raise ValueError('Attempt to rsa encrypt an already '
+            raise EncryptionError('Attempt to rsa encrypt an already '
                              'encrypted value.')
         return self.public_key.public_encrypt(plaintext, RSA.pkcs1_oaep_padding)
 
@@ -250,8 +252,9 @@ class Cryptor(BaseCryptor):
                 raise ImproperlyConfigured('AES key not available, unable to '
                                            'encrypt sensitive data using the '
                                            'AES algorithm.')
+            #TODO: is_encrypted() does not work unless called from the FieldCryptor!
             if self.is_encrypted(plaintext):
-                raise ValueError('Attempt to aes encrypt an already '
+                raise EncryptionError('Attempt to aes encrypt an already '
                                   'encrypted value.')
             iv = os.urandom(16)
             cipher = self._build_aes_cipher(self.aes_key, iv, self.ENC)
@@ -296,7 +299,7 @@ class Cryptor(BaseCryptor):
                 elif key_name == 'salt':
                     key = self.get_encrypted_salt(algorithm, mode)
                 else:
-                    raise TypeError('Unexpected key type for {algorithm} {mode}.'
+                    raise EncryptionKeyError('Unexpected key type for {algorithm} {mode}.'
                                     'Got {key_name}'.format(algorithm=algorithm, mode=mode, key_name=key_name))
             elif algorithm == 'aes':
                 if key_name == 'key':
@@ -306,10 +309,10 @@ class Cryptor(BaseCryptor):
                 elif key_name == 'salt':
                     key = self.get_encrypted_salt(algorithm, mode)
                 else:
-                    raise TypeError('Unexpected key type for {algorithm} {mode}.'
+                    raise EncryptionKeyError('Unexpected key type for {algorithm} {mode}.'
                                     'Got {key_name}'.format(algorithm=algorithm, mode=mode, key_name=key_name))
             else:
-                raise TypeError('Unknown algorithm. Got {0}.'.format(algorithm))
+                raise AlgorithmError('Unknown algorithm. Got {0}.'.format(algorithm))
             return key
 
         if not self.is_preloaded_with_keys():

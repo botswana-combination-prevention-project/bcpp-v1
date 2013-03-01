@@ -11,10 +11,9 @@ class BaseEncryptedField(models.Field):
 
     * To maintain uniqueness and searchability, only the hash is ever
       stored in the model field.
-    * The cipher is stored with the hash in the :class:`bhp_crypto.models.
-      Crypt` cipher lookup model and will be
-      made available when required for decryption (e.g. the private key is
-      available)
+    * The cipher is stored with the hash in the :class:`bhp_crypto.models.Crypt`
+      cipher lookup model and will be made available when required for
+      de-encryption (e.g. the private key is available)
     * Salt, public key filename and private key filename are referred to
       via the settings file """
 
@@ -71,7 +70,7 @@ class BaseEncryptedField(models.Field):
                len(self.field_cryptor.cryptor.SECRET_PREFIX))
 
     def is_encrypted(self, value):
-        """ wrap the cryptor method of same name """
+        """ Wraps the cryptor method of same name """
         return self.field_cryptor.is_encrypted(self.to_string(value))
 
     def to_string(self, value):
@@ -79,11 +78,11 @@ class BaseEncryptedField(models.Field):
         return value
 
     def decrypt(self, value, **kwargs):
-        """ wrap the cryptor method of same name """
+        """ Wraps the cryptor method of same name """
         return self.field_cryptor.decrypt(value)
 
     def encrypt(self, value, **kwargs):
-        """ wrap the cryptor method of same name """
+        """ Wraps the cryptor method of same name """
         return self.field_cryptor.encrypt(value)
 
     def validate_with_cleaned_data(self, attname, cleaned_data):

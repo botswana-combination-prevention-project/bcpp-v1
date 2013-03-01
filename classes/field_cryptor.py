@@ -21,7 +21,7 @@ class FieldCryptor(object):
         self.hasher = Hasher(algorithm=algorithm, mode=mode)
 
     def encrypt(self, value, **kwargs):
-        """ Return the encrypted field value (hash+secret) where secret is secret or secret+secret_iv. """
+        """ Returns the encrypted field value (hash+secret) where secret is secret or secret+secret_iv. """
         if not value:
             hash_secret = value   # value is None
         else:
@@ -47,7 +47,7 @@ class FieldCryptor(object):
         return hash_secret
 
     def decrypt(self, secret, secret_is_hash=True, **kwargs):
-        """ Decrypt secret and if secret is a hash, use hash to lookup the real secret first.
+        """ Decrypts secret and if secret is a hash, uses hash to lookup the real secret first.
 
         Do not assume secret is an encrypted value, look for HASH_PREFIX or secret prefix.
         By default we expect secret to be the stored field value -- which is a hash.
@@ -80,10 +80,11 @@ class FieldCryptor(object):
         return plaintext
 
     def is_encrypted(self, value, prefix=None):
+        """Wraps cryptor method of same name."""
         return self.cryptor.is_encrypted(value, prefix)
 
     def update_secret_in_lookup(self, hash_secret):
-        """ Given a hash+secret string, updates lookup with hashed_value and secret pairs """
+        """ Updates lookup with hashed_value and secret pairs given a hash+secret string."""
         hashed_value = None
         if hash_secret:
             # get and update or create the crypt model with this hash, cipher pair
