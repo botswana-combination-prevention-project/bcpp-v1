@@ -2,7 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsent
-from bhp_crypto.classes import BaseEncryptedField
+from bhp_crypto.fields import BaseEncryptedField
 from bhp_search.forms import SearchForm
 from base_search import BaseSearch
 
