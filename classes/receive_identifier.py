@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 from django.conf import settings
-from bhp_identifier.classes import BaseIdentifier
+from bhp_identifier.classes import BaseSubjectIdentifier
 
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class ReceiveIdentifier(BaseIdentifier):
+class ReceiveIdentifier(BaseSubjectIdentifier):
     """ Sets and returns a receive identifier of format {lab_code}{date_prefix}{sequence} where lab_code is the value of settings.LIS_FACILITY_CODE."""
     def get_identifier_prep(self, **kwargs):
         options = {}
