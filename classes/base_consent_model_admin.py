@@ -55,14 +55,22 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
         'confirm_identity',
         'is_incarcerated',
         'may_store_samples',
-        'comment']
+        'comment',
+        'consent_reviewed',
+        'study_questions',
+        'assessment_score',
+        'consent_copy']
     radio_fields = {
         "gender": admin.VERTICAL,
         "study_site": admin.VERTICAL,
         "is_dob_estimated": admin.VERTICAL,
         "identity_type": admin.VERTICAL,
         "is_incarcerated": admin.VERTICAL,
-        "may_store_samples": admin.VERTICAL}
+        "may_store_samples": admin.VERTICAL,
+        "consent_reviewed": admin.VERTICAL,
+        "study_questions": admin.VERTICAL,
+        "assessment_score": admin.VERTICAL,
+        "consent_copy": admin.VERTICAL}
 
 
 class SubjectConsentAdminBase(BaseConsentModelAdmin):
