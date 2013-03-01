@@ -193,10 +193,11 @@ class BaseBaseRequisition (BaseSyncUuidModel):
     def prepare_requisition_identifier(self, **kwargs):
         """Generate and returns a locally unique requisition identifier for a device (adds device id)"""
         device = Device()
+        device_id = kwargs.get('device_id', device.device_id)
         string = BaseString()
         length = 5
         template = '{device_id}{random_string}'
-        opts = {'device_id': device.device_id, 'random_string': string.get_safe_random_string(length=length)}
+        opts = {'device_id': device_id, 'random_string': string.get_safe_random_string(length=length)}
         requisition_identifier = template.format(**opts)
         # look for a duplicate
         if self.__class__.objects.filter(requisition_identifier=requisition_identifier):

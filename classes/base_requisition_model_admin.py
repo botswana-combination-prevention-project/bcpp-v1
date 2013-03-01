@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_visit_tracking.classes import BaseVisitTrackingModelAdmin
+from bhp_visit_tracking.admin import BaseVisitTrackingModelAdmin
 from lab_panel.models import Panel
 from lab_requisition.actions import flag_as_received, flag_as_not_received, flag_as_not_labelled
 from lab_requisition.actions import print_requisition_label
