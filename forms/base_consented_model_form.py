@@ -1,3 +1,4 @@
+import copy
 from django import forms
 #from django.db.models import get_model
 from bhp_base_form.classes import BaseModelForm
@@ -25,7 +26,7 @@ class BaseConsentedModelForm(BaseModelForm):
 
     def clean(self):
         """Checks if subject has a valid consent for this subject model instance and versioned fields."""
-        cleaned_data = self.cleaned_data
+        cleaned_data = copy.deepcopy(self.cleaned_data)
         #check to remove m2m fields from cleaned data
         field_names = [field.name for field in self._meta.model._meta.fields]
         del_keys = [k for k in cleaned_data.iterkeys() if k not in field_names]

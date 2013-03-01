@@ -1,17 +1,22 @@
 from datetime import datetime
 from django.test import TestCase
-from bhp_variables.models import StudySite
+from bhp_variables.models import StudySite, StudySpecific
 from bhp_registration.models import RegisteredSubject
-from bhp_consent.models import TestSubjectConsent
+from bhp_base_model.models import TestForeignKey, TestManyToMany
+from bhp_consent.models import TestSubjectConsent, TestSubjectUuidModel, ConsentCatalogue
 from bhp_consent.exceptions import ConsentError
+from bhp_content_type_map.classes import ContentTypeMapHelper
+from bhp_content_type_map.models import ContentTypeMap
+from base_methods import BaseMethod
 
 
-class BaseConsentMethodsTests(TestCase):
+
+class BaseConsentMethodsTests(TestCase, BaseMethod):
 
     def setUp(self):
-        self.study_site = StudySite.objects.create(site_code='10', site_name='TEST_SITE')
+        self.create_study_variables()
 
-    def test_save(self):
+    def test_subject_consent_save(self):
         # create a consent without a user provided identifier
         subject_consent = TestSubjectConsent.objects.create(
             first_name='TEST',
@@ -110,3 +115,52 @@ class BaseConsentMethodsTests(TestCase):
         self.assertEqual(subject_consent.subject_identifier, "REGISTERED_SUBJECT_ID")
         # assert the identifier on registered_subject was not changed
         self.assertEqual(RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier).subject_identifier, "REGISTERED_SUBJECT_ID")
+
+    def test_consent_catalogue(self):
+        content_type_map_helper = ContentTypeMapHelper()
+        content_type_map_helper.populate()
+        content_type_map_helper.sync()
+        # prepare the consent catalogue
+        content_type_map = ContentTypeMap.objects.get(model__iexact=TestSubjectConsent._meta.object_name)
+        ConsentCatalogue.objects.create(
+            name='consent',
+            content_type_map=content_type_map,
+            consent_type='study',
+            version=1,
+            start_datetime=StudySpecific.objects.all()[0].study_start_datetime,
+            end_datetime=datetime(datetime.today().year + 5, 1, 1),
+            add_for_app='bhp_consent')
+
+    def test_subject_uuid_model(self):
+        self.test_consent_catalogue()
+        test_m2m1 = TestManyToMany.objects.create(name='test_m2m1', short_name='test_m2m1')
+        test_m2m2 = TestManyToMany.objects.create(name='test_m2m2', short_name='test_m2m2')
+        TestManyToMany.objects.create(name='test_m2m3', short_name='test_m2m3')
+        TestForeignKey.objects.create(name='test_fk', short_name='test_fk')
+        registered_subject = RegisteredSubject.objects.create(subject_identifier="TEST_SUBJECT_UUID")
+        subject_consent = TestSubjectConsent.objects.create(
+            registered_subject=registered_subject,
+            first_name='TEST_SUBJECT_UUID',
+            last_name='TEST_SUBJECT_UUIDER',
+            user_provided_subject_identifier=None,
+            initials='TT',
+            identity='111111115',
+            confirm_identity='111111115',
+            identity_type='omang',
+            dob=datetime(1990, 01, 01),
+            is_dob_estimated='No',
+            gender='M',
+            subject_type='subject',
+            consent_datetime=datetime.today(),
+            study_site=self.study_site,
+            may_store_samples='Yes',
+            )
+        test_subject_uuid_model = TestSubjectUuidModel(
+            name='TEST',
+            registered_subject=registered_subject,
+            test_foreign_key=TestForeignKey.objects.all()[0],
+            )
+        test_subject_uuid_model.save()
+        test_subject_uuid_model.test_many_to_many.add(test_m2m2)
+        test_subject_uuid_model = TestSubjectUuidModel.objects.get(pk=test_subject_uuid_model.pk)
+        self.assertEqual([m2m.name for m2m in test_subject_uuid_model.test_many_to_many.all()], [test_m2m2.name])

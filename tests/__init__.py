@@ -1,1 +1,2 @@
 from base_consent_methods_tests import BaseConsentMethodsTests
+from selenium_tests import SeleniumTests

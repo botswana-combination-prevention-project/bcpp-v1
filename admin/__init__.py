@@ -1,2 +1,3 @@
 from attached_model_admin import AttachedModelAdmin
 from consent_catalogue_admin import ConsentCatalogueAdmin
+from test_model_admin import *
