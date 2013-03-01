@@ -81,5 +81,14 @@ class BaseSubjectConsentForm(BaseModelForm):
         if cleaned_data.get('identity') and cleaned_data.get('confirm_identity'):
             if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
                 raise forms.ValidationError('Identity mismatch. Identity number must match the confirmation field.')
+        # consent cannot be submitted if answer is none to last four consent questions
+        if cleaned_data['consent_reviewed'] == None:
+            raise forms.ValidationError('If consent reviewed is None, patient cannot be enrolled')
+        if cleaned_data['study_questions'] == None:
+            raise forms.ValidationError('If unable to answer questions from client and/or None, patient cannot be enrolled')
+        if cleaned_data['assessment_score'] == None:
+            raise forms.ValidationError('Client assessment should atleast be a passing score. If None, patient cannot be enrolled')
+        if cleaned_data['consent_copy'] == None:
+            raise forms.ValidationError('If patient has not been given consent copy and/or None, patient cannot be enrolled')
         # Always return the full collection of cleaned data.
         return super(BaseSubjectConsentForm, self).clean()
