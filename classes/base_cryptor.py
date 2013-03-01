@@ -11,7 +11,11 @@ class BaseCryptor(BaseString):
 
     def is_encrypted(self, value, prefix=None):
         """ Determines that a value string is encrypted if it starts
-        with 'self.HASH_PREFIX' or whichever prefix is passed."""
+        with 'self.HASH_PREFIX' or whichever prefix is passed.
+
+        ..warning:: This method can only detect encrypted values coming from
+                    FieldCryptor since it looks for a prefix. The method
+                    should be moved up to FieldCryptor. See tests."""
         if not value:
             is_encrypted = False
         else:
