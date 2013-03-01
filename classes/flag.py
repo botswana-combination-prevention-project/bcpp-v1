@@ -54,7 +54,7 @@ class Flag(object):
                                                self.group_name))
 
     def get_list_prep(self, value, test_code, gender, hiv_status, age_in_days, **kwargs):
-        """Returns a filtered list of list items .
+        """Returns a filtered ordered list of list items.
 
         Users should override this."""
         raise TypeError('No reference list has been associated with this class. Cannot continue')
