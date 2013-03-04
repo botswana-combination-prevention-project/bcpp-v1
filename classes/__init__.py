@@ -1,7 +1,3 @@
 from consent_helper import ConsentHelper
-from base_consent_model_admin import BaseConsentModelAdmin, SubjectConsentAdminBase
-from base_model_with_consent_admin import BaseModelWithConsentAdmin
-from base_consent_update_model_admin import BaseConsentUpdateModelAdmin
-from base_consent_update_inline_admin import BaseConsentUpdateInlineAdmin
 from site_consent_controller import consents
 from consented_subject_identifier import ConsentedSubjectIdentifier

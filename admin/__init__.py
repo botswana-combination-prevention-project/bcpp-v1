@@ -1,3 +1,7 @@
+from base_consent_model_admin import BaseConsentModelAdmin, SubjectConsentAdminBase
+from base_model_with_consent_admin import BaseModelWithConsentAdmin
+from base_consent_update_model_admin import BaseConsentUpdateModelAdmin
+from base_consent_update_inline_admin import BaseConsentUpdateInlineAdmin
 from attached_model_admin import AttachedModelAdmin
 from consent_catalogue_admin import ConsentCatalogueAdmin
 from test_model_admin import *
