@@ -10,6 +10,7 @@ from bhp_base_model.validators import dob_not_future, MinConsentAge, MaxConsentA
 from bhp_common.choices import GENDER_UNDETERMINED
 from bhp_base_model.fields import IsDateEstimatedField
 from bhp_crypto.fields import EncryptedFirstnameField, EncryptedLastnameField
+from bhp_consent.exceptions import ConsentError
 
 
 class BaseSubject (BaseSyncUuidModel):
@@ -78,6 +79,8 @@ class BaseSubject (BaseSyncUuidModel):
         return self.subject_identifier
 
     def save(self, *args, **kwargs):
+        if not self.subject_identifier:
+            raise ConsentError("Subject identifier cannot be blank! It appears it was not provided or not generated")
         # for new instances, enforce unique subject_identifier if not null
         if not self.pk and self.subject_identifier:
             if self.__class__.objects.filter(subject_identifier=self.subject_identifier):
