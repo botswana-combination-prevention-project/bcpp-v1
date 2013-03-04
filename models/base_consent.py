@@ -132,6 +132,8 @@ class BaseConsent(ConsentBasics):
                     consent_attrname='subject_identifier',
                     registration_status='consented',
                     site_code=self.study_site.site_code)
+        if not self.subject_identifier:
+            raise ConsentError("Subject identifier cannot be blank! It appears it was not provided or not generated")
 
     def save(self, *args, **kwargs):
         # if editing, confirm that identifier fields are not changed
