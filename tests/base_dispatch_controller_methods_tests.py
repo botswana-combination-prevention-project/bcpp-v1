@@ -69,9 +69,9 @@ class BaseDispatchControllerMethodsTests(TestCase):
         # assert that user container model is flagged as a container model
         self.assertTrue(obj.is_dispatch_container_model())
         # assert that users container model is flagged as dispatched as a container (DispatchContainer)
-        self.assertTrue(obj._is_dispatched_to_producer_as_container())
+        self.assertTrue(obj._is_dispatched_as_container())
         # assert that users container model is NOT flagged as dispatched as an item (DipatchItem)
-        self.assertFalse(obj.is_dispatched_to_producer())
+        self.assertFalse(obj.is_dispatched_as_item())
         # assert that model instance, in some way, is dispatched.
         # TODO: are container models without items dispatched??
         #self.assertRaises(AlreadyDispatched, obj.save)

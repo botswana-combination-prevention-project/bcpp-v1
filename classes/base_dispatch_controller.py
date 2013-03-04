@@ -92,7 +92,7 @@ class BaseDispatchController(BaseDispatch):
             raise DispatchModelError('Dispatch model {0} must be a subclass of \'{1}\'.'.format(model_cls, base_model_class))
         self.dispatch_as_json(dispatch_container, [instance for instance in model_cls.objects.all()])
 
-    def dispatch_as_json(self, source_instances, dispatch_container, **kwargs):
+    def dispatch_as_json(self, source_instances, dispatch_container=None, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.
 
             Args:
