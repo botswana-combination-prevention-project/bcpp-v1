@@ -29,6 +29,8 @@ class TestSubjectConsent(BaseConsent):
         blank=True,
         )
 
+    objects = models.Manager()
+
     def get_user_provided_subject_identifier_attrname(self):
         """Returns the attribute name of the user provided subject_identifier."""
         return 'user_provided_subject_identifier'

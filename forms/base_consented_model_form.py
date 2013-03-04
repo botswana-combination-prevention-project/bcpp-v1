@@ -1,6 +1,5 @@
 import copy
 from django import forms
-#from django.db.models import get_model
 from bhp_base_form.classes import BaseModelForm
 from bhp_consent.models import AttachedModel
 
@@ -26,16 +25,11 @@ class BaseConsentedModelForm(BaseModelForm):
 
     def clean(self):
         """Checks if subject has a valid consent for this subject model instance and versioned fields."""
-        cleaned_data = copy.deepcopy(self.cleaned_data)
-        #check to remove m2m fields from cleaned data
-        field_names = [field.name for field in self._meta.model._meta.fields]
-        del_keys = [k for k in cleaned_data.iterkeys() if k not in field_names]
-        for k in del_keys:
-            del cleaned_data[k]
+        cleaned_data = self.cleaned_data
         # get the helper class
         consent_helper_cls = self._meta.model().get_consent_helper_cls()
         #check if consented to complete this form
-        consent_helper_cls(self._meta.model(**cleaned_data), forms.ValidationError).is_consented_for_subject_instance()
+        consent_helper_cls((self._meta.model, cleaned_data), forms.ValidationError).is_consented_for_subject_instance()
         # Validates fields under consent version control and other checks.
-        consent_helper_cls(self._meta.model(**cleaned_data), forms.ValidationError).validate_versioned_fields()
+        consent_helper_cls((self._meta.model, cleaned_data), forms.ValidationError).validate_versioned_fields()
         return super(BaseConsentedModelForm, self).clean()

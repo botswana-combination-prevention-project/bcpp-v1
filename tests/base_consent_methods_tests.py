@@ -1,17 +1,16 @@
 from datetime import datetime
 from django.test import TestCase
-from bhp_variables.models import StudySite, StudySpecific
+from bhp_variables.models import StudySpecific
 from bhp_registration.models import RegisteredSubject
 from bhp_base_model.models import TestForeignKey, TestManyToMany
 from bhp_consent.models import TestSubjectConsent, TestSubjectUuidModel, ConsentCatalogue
 from bhp_consent.exceptions import ConsentError
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
-from base_methods import BaseMethod
+from base_methods import BaseMethods
 
 
-
-class BaseConsentMethodsTests(TestCase, BaseMethod):
+class BaseConsentMethodsTests(TestCase, BaseMethods):
 
     def setUp(self):
         self.create_study_variables()
@@ -133,12 +132,11 @@ class BaseConsentMethodsTests(TestCase, BaseMethod):
 
     def test_subject_uuid_model(self):
         self.test_consent_catalogue()
-        test_m2m1 = TestManyToMany.objects.create(name='test_m2m1', short_name='test_m2m1')
         test_m2m2 = TestManyToMany.objects.create(name='test_m2m2', short_name='test_m2m2')
         TestManyToMany.objects.create(name='test_m2m3', short_name='test_m2m3')
         TestForeignKey.objects.create(name='test_fk', short_name='test_fk')
         registered_subject = RegisteredSubject.objects.create(subject_identifier="TEST_SUBJECT_UUID")
-        subject_consent = TestSubjectConsent.objects.create(
+        TestSubjectConsent.objects.create(
             registered_subject=registered_subject,
             first_name='TEST_SUBJECT_UUID',
             last_name='TEST_SUBJECT_UUIDER',

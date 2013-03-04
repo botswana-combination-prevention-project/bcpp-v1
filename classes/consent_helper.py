@@ -1,8 +1,9 @@
+import copy
 from datetime import datetime
 from django.db.models import get_model
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
-from django.db.models import get_model
+from bhp_base_model.models import BaseModel
 
 
 class ConsentHelper(object):
@@ -24,6 +25,7 @@ class ConsentHelper(object):
                                                            'version {2}. [{3}]'.format(field.name, start_datetime, consent_version, field.verbose_name[0:50]))
 
     """
+
     def __init__(self, subject_instance, exception_cls=None, **kwargs):
         self._report_datetime = None
         self._subject_identifier = None
@@ -48,7 +50,12 @@ class ConsentHelper(object):
 
         You can add to the model a method :func:`get_requires_consent` returning False, to bypass, or True to force.
 
+        Args:
+            subject_instance: a model instance or tuple of (model_cls, cleaned_data)
+
         .. seealso:: Results may not be as expected. See comment on :class:`base_consented_model_form.BaseConsentedModelForm` :func:`check_attached`."""
+        if isinstance(subject_instance, tuple):
+            subject_instance = self.unpack_subject_instance_tuple(subject_instance)
         RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
         if not isinstance(subject_instance, RegisteredSubject):
             AttachedModel = get_model('bhp_consent', 'AttachedModel')
@@ -58,6 +65,29 @@ class ConsentHelper(object):
 
     def get_subject_instance(self):
         return self._subject_instance
+
+    def unpack_subject_instance_tuple(self, tpl):
+        """Receives a tuple of model class and cleaned data to initialize an instance of the model_class.
+
+            Args:
+                tpl: tuple of (model_cls, cleaned_data).
+
+        ..note:: Removes the many to many fields before initializing the Model class."""
+        # unpack subject_instance
+        subject_model_cls, cleaned_data = tpl
+        # deep copy because we are manipulating cleaned data in order to initiate the model class
+        cleaned_data = copy.deepcopy(cleaned_data)
+        if not issubclass(subject_model_cls, BaseModel):
+            raise TypeError('The first item of the subject instance tuple, (model_cls, cleaned_data), must be a subclass of BaseModel.')
+        if not isinstance(cleaned_data, dict):
+            raise TypeError('The second item of the subject instance tuple, (model_cls, cleaned_data), must be a dictionary.')
+        # check to remove m2m fields from cleaned data, assuming field names listed in cleaned data and not in
+        # fields are ManyToMany fields
+        field_names = [field.name for field in subject_model_cls._meta.local_many_to_many]
+        del_keys = [k for k in cleaned_data.iterkeys() if k in field_names]
+        for k in del_keys:
+            del cleaned_data[k]
+        return subject_model_cls(**cleaned_data)
 
     def _set_report_datetime(self):
         """Sets the datetime field to use to compare with the start and end dates of consents listed in the consent catalogue.
