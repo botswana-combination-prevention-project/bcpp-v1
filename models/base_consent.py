@@ -109,9 +109,9 @@ class BaseConsent(ConsentBasics):
         except:
             registered_subject = None
 
-        subject_identifier = self.save_new_consent(self.subject_identifier)
+        self.subject_identifier = self.save_new_consent(self.subject_identifier)
 
-        if not subject_identifier:
+        if not self.subject_identifier:
             # test for user provided subject_identifier field method
             if self.get_user_provided_subject_identifier_attrname():
                 self.subject_identifier = self._get_user_provided_subject_identifier()
@@ -143,8 +143,6 @@ class BaseConsent(ConsentBasics):
         if not self.id:
             self._save_new_consent()
         # no matter what, make sure there is a subject_identifier
-        if not self.subject_identifier:
-            raise ConsentError("Subject identifier cannot be blank! It appears it was not provided or not generated")
         super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
         # so need to create appointments

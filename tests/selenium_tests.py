@@ -73,4 +73,6 @@ class SeleniumTests(LiveServerTestCase, BaseMethods):
         self.selenium.find_element_by_xpath('//a[@href="{0}/"]'.format(pk)).click()
         self.assertIsNotNone(TestSubjectUuidModel.objects.get(pk=pk).test_many_to_many.all())
         self.assertEqual([test_many_to_many.name for test_many_to_many in TestSubjectUuidModel.objects.get(pk=pk).test_many_to_many.all()], ['test_m2m2'])
+        # complete the consent
+        
         time.sleep(5)
