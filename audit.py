@@ -13,8 +13,10 @@ except ImportError:
     from audit_trail.dummy import BaseSyncUuidModel
 from bhp_base_model.classes import BaseModelAdmin
 from bhp_base_model.fields import MyUUIDField
-from bhp_crypto.fields import BaseEncryptedField
-
+try:
+    from bhp_crypto.fields import BaseEncryptedField
+except ImportError:
+    from audit_trail.dummy import BaseEncryptedField
 try:
     import settings_audit
 except ImportError:
