@@ -63,13 +63,16 @@ class BaseDispatchController(BaseDispatch):
         app = get_app(app_label)
         for model_cls in get_models(app):
             # TODO: this could be wrong visit_field_name?
-            visit_field_name = self.get_visit_model_cls(app_label, model_cls, index='name')
-            if getattr(model_cls, visit_field_name, None):
-                for field in model_cls._meta.fields:
-                    if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):
-                        field_cls = field.rel.to
-                        if field_cls not in list_models:
-                            list_models.append(field_cls)
+            try:
+                visit_field_name = self.get_visit_model_cls(app_label, model_cls, index='name')
+                if getattr(model_cls, visit_field_name, None):
+                    for field in model_cls._meta.fields:
+                        if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):
+                            field_cls = field.rel.to
+                            if field_cls not in list_models:
+                                list_models.append(field_cls)
+            except:
+                pass
         logger.info('Ready to dispatch foreign keys: {0}'.format(list_models))
         for model_cls in list_models:
             self.dispatch_model_as_json(model_cls.objects.using(self.get_using_source()).all(), app_label=app_label)
