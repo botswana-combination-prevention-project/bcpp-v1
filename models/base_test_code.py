@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from bhp_base_model.models import BaseModel
 from lab_common.choices import UNITS, ABS_CALC
-from lab_clinic_api.managers import TestCodeManager
+from lab_test_code.managers import TestCodeManager
 
 
 class BaseTestCode(BaseModel):
