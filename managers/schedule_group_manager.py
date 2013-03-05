@@ -1,8 +1,18 @@
 import re
+import logging
 from django.core.exceptions import FieldError
 from django.db import models
 from django.db.models import Q
 from bhp_dashboard_registered_subject.exceptions import DashboardError, DashboardFieldError
+
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class ScheduleGroupManager(models.Manager):
@@ -40,7 +50,6 @@ class ScheduleGroupManager(models.Manager):
             raise DashboardError('Can\'t find any membership forms! Have you configured any for category \'%s\'.' % membership_form_category)
         if not super(ScheduleGroupManager, self).filter(membership_form__category__iexact=membership_form_category).exists():
             raise DashboardError('Can\'t find any schedule groups! Have you configured any for category \'%s\'.' % membership_form_category)
-
         # a list of "keys" that link like membership forms together. If they share this
         # key it means that only one form should be KEYED per subject.
         # If form is KEYED for subject, there is no need to list the others as UNKEYED
