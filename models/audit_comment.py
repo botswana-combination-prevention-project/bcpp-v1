@@ -1,8 +1,5 @@
 from django.db import models
-try:
-    from bhp_sync.models import BaseSyncUuidModel as BaseModel
-except ImportError:
-    from bhp_base_model.models import BaseModel
+from bhp_sync.models import BaseSyncUuidModel as BaseModel
 from bhp_base_model.fields import MyUUIDField
 from audit_trail.choices import AUDITCODES
 
