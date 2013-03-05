@@ -1,10 +1,13 @@
 from django.db import models
-from bhp_sync.models import BaseSyncUuidModel
+try:
+    from bhp_sync.models import BaseSyncUuidModel as BaseModel
+except ImportError:
+    from bhp_base_model.models import BaseModel
 from bhp_base_model.fields import MyUUIDField
 from audit_trail.choices import AUDITCODES
 
 
-class AuditComment (BaseSyncUuidModel):
+class AuditComment (BaseModel):
 
     app_label = models.CharField(
         max_length=35,
