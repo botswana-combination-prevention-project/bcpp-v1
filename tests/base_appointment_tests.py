@@ -18,7 +18,6 @@ class BaseAppointmentTests(TestCase):
 
     def setup(self):
         self.visit_definition = VisitDefinition.objects.create(id='1', code='9999', title='Test')
-        subject_identifier = StudySpecific
         self.registered_subject = RegisteredSubject.objects.create(id='1', subject_identifier='062-7982139-3', subject_type='maternal')
         study_site = StudySite.objects.create(site_code='99', site_name='test site')
         self.appointment = Appointment.objects.create(
