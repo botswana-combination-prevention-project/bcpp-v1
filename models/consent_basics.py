@@ -6,7 +6,7 @@ from bhp_base_model.validators import eligible_if_yes
 
 class ConsentBasics(BaseSubject):
     """Adds questions to confirm the consent process was followed."""
-    
+
     consent_reviewed = models.CharField(
         verbose_name="I have reviewed the consent with the client",
         max_length=3,
@@ -17,7 +17,7 @@ class ConsentBasics(BaseSubject):
         default='Yes',
         help_text="If no, INELIGIBLE",
         )
-    study_questions= models.CharField(
+    study_questions = models.CharField(
         verbose_name="I have answered all questions the client had about the study",
         max_length=3,
         choices=YES_NO,
@@ -52,4 +52,3 @@ class ConsentBasics(BaseSubject):
 
     class Meta:
         abstract = True
-
