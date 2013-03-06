@@ -97,6 +97,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         dispatch_item = None
         if self.id:
             if self.is_dispatched:
+                DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
                 dispatch_item = DispatchItem.objects.using(using).get(
                             item_app_label=self._meta.app_label,
                             item_model_name=self._meta.object_name,
