@@ -93,13 +93,14 @@ class BaseConsent(ConsentBasics):
         """Override to return the attribute name of the user provided subject_identifier."""
         return None
 
-    def save_new_consent(self, subject_identifier=None):
+    def save_new_consent(self, using=None, subject_identifier=None):
         """ Users may override this to compliment the default behavior for new instances.
 
         Must return a subject_identifier or None."""
+
         return subject_identifier
 
-    def _save_new_consent(self):
+    def _save_new_consent(self, using=None, **kwargs):
         """ Creates or gets a subject identifier and updates registered subject.
 
         Also, calls user method :func:`save_new_consent`"""
@@ -109,7 +110,7 @@ class BaseConsent(ConsentBasics):
         except:
             registered_subject = None
 
-        self.subject_identifier = self.save_new_consent(self.subject_identifier)
+        self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
 
         if not self.subject_identifier:
             # test for user provided subject_identifier field method
@@ -117,7 +118,7 @@ class BaseConsent(ConsentBasics):
                 self.subject_identifier = self._get_user_provided_subject_identifier()
                 if self.subject_identifier and not registered_subject:
                     RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-                    RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code)
+                    RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code, using=using)
             # try to get from registered_subject
             if not self.subject_identifier:
                 if registered_subject:
@@ -131,7 +132,8 @@ class BaseConsent(ConsentBasics):
                     consent=self,
                     consent_attrname='subject_identifier',
                     registration_status='consented',
-                    site_code=self.study_site.site_code)
+                    site_code=self.study_site.site_code,
+                    using=using)
         if not self.subject_identifier:
             raise ConsentError("Subject identifier cannot be blank! It appears it was not provided or not generated")
 
@@ -143,7 +145,7 @@ class BaseConsent(ConsentBasics):
                     raise ConsentError('Identifier field {0} cannot be changed.'.format(self.get_user_provided_subject_identifier_attrname()))
         # if adding, call _save_new_consent()
         if not self.id:
-            self._save_new_consent()
+            self._save_new_consent(kwargs.get('using', None))
         # no matter what, make sure there is a subject_identifier
         super(BaseConsent, self).save(*args, **kwargs)
         # if has key to registered subject, might be a membership form
@@ -151,6 +153,9 @@ class BaseConsent(ConsentBasics):
         # TODO: is this required?? isn't this on a signal?
         if 'registered_subject' in dir(self):
             AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
+
+    def post_save(self, **kwargs):
+        pass
 
     def formatted_age_at_consent(self):
         return formatted_age(self.dob, self.consent_datetime)
