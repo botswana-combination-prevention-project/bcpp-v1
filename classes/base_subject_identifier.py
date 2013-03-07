@@ -65,6 +65,7 @@ class BaseSubjectIdentifier(object):
             (default: '{prefix}-{site}{device_id}{sequence}')
           """
         options = {}
+        using = kwargs.get('using', None)
         # set default options
         #add_check_digit = options.pop('add_check_digit', True)
         options.update(app_name=kwargs.get('app_name', 'bhp_identifier'))
@@ -83,7 +84,7 @@ class BaseSubjectIdentifier(object):
             IdentifierModel = get_model(options.pop('app_name'), options.pop('model_name'))
             # put a random uuid temporarily in the identifier field
             # to maintain unique constraint on identifier field.
-            identifier_model = IdentifierModel.objects.create(identifier=str(uuid.uuid4()), padding=options.pop('padding'))
+            identifier_model = IdentifierModel.objects.using(using).create(identifier=str(uuid.uuid4()), padding=options.pop('padding'))
             options.update(sequence=identifier_model.sequence)
         else:
             # the identifier is derived from an existing one. no need for

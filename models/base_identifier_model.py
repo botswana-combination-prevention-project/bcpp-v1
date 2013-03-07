@@ -31,7 +31,7 @@ class BaseIdentifierModel(BaseSyncUuidModel):
     def save(self, *args, **kwargs):
         if not 'DEVICE_ID' in dir(settings):
             raise ImproperlyConfigured('Settings attribute DEVICE_ID not found. Add DEVICE_ID =  to your settings.py where DEVICE_ID is a project wide unique integer.')
-        sequence = Sequence.objects.create(device_id=settings.DEVICE_ID)
+        sequence = Sequence.objects.using(kwargs.get('using', None)).create(device_id=settings.DEVICE_ID)
         self.device_id = settings.DEVICE_ID
         self.sequence_number = sequence.pk
         super(BaseIdentifierModel, self).save(*args, **kwargs)
