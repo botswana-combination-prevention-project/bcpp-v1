@@ -1,9 +1,10 @@
 import logging
+import copy
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_dispatch.exceptions import AlreadyDispatchedContainer, AlreadyDispatchedItem
+from bhp_dispatch.exceptions import AlreadyDispatchedContainer, AlreadyDispatchedItem, DispatchError
 #from bhp_dispatch.models import DispatchItem, DispatchContainer
 
 
@@ -60,12 +61,12 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         return False
 
     def dispatched_as_container_identifier_attr(self):
-        """Override to return the field attrname of the identifier used for the dispatch container."""
+        """Override to return the field attrname of the identifier used for the dispatch container.
+
+        Must be an field attname on the model used as a dispatch container, such as, Household."""
         raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
 
     def _is_dispatched_as_container(self, using=None):
-        if not using:
-            using = 'default'
         is_dispatched = False
         DispatchContainer = get_model('bhp_dispatch', 'DispatchContainer')
         if DispatchContainer:
@@ -75,30 +76,56 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                 return_datetime__isnull=True).exists()
         return is_dispatched
 
+    def is_dispatched_item_within_container(self, using=None):
+        """Returns True if the model class is dispatched within a dispatch container."""
+        is_dispatched = False
+        dispatch_container_model_cls, lookup_attrs = self.dispatch_item_container_reference()
+        if isinstance(dispatch_container_model_cls, (list, tuple)):
+            dispatch_container_model_cls = get_model(dispatch_container_model_cls[0], dispatch_container_model_cls[1])
+        if not isinstance(lookup_attrs, basestring):
+            raise TypeError('Method dispatch_item_container_reference must return a (model class/tuple, list)')
+        lookup_value = self
+        lookup_attrs = lookup_attrs.split('__')
+        lookup_attrs.append(dispatch_container_model_cls.dispatched_as_container_identifier_attr)
+        #lookup_attrs = list(set(lookup_attrs))
+        for attrname in lookup_attrs:
+            lookup_value = getattr(lookup_value, attrname)
+        options = {dispatch_container_model_cls.dispatched_as_container_identifier_attr: lookup_value}
+        if dispatch_container_model_cls.objects.using(using).filter(**options).exists():
+            is_dispatched = True
+        return is_dispatched
+
+    def dispatch_item_container_reference(self):
+        """Returns a tuple of (model_cls, attname)  to get the model instance used as a dispatch container.
+
+        User must override.
+
+        (app_label, model_name), dispatch container fieldattr, qstring to dispatch container.)"""
+        raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
+
     def is_dispatched_as_item(self, using=None):
         """Returns the models 'dispatched' status in model DispatchItem."""
-        if not using:
-            using = 'default'
         is_dispatched = False
+        if self.is_dispatchable_model():
+            if self.id:
+                if self.get_dispatched_item(using):
+                    is_dispatched = True
+            if not is_dispatched:
+                is_dispatched = self.is_dispatched_item_within_container(using)
+        return is_dispatched
+
+    def get_dispatched_item(self, using=None):
+        dispatch_item = None
         if self.id:
             if self.is_dispatchable_model():
                 DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
                 if DispatchItem:
-                    is_dispatched = DispatchItem.objects.using(using).filter(
-                        item_app_label=self._meta.app_label,
-                        item_model_name=self._meta.object_name,
-                        item_pk=self.pk,
-                        is_dispatched=True).exists()
-        return is_dispatched
-
-    def get_dispatched_item(self, using=None):
-        if not using:
-            using = 'default'
-        dispatch_item = None
-        if self.id:
-            if self.is_dispatched:
-                DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-                dispatch_item = DispatchItem.objects.using(using).get(
+                    if DispatchItem.objects.using(using).filter(
+                            item_app_label=self._meta.app_label,
+                            item_model_name=self._meta.object_name,
+                            item_pk=self.pk,
+                            is_dispatched=True).exists():
+                        dispatch_item = DispatchItem.objects.using(using).get(
                             item_app_label=self._meta.app_label,
                             item_model_name=self._meta.object_name,
                             item_pk=self.pk,
@@ -106,7 +133,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         return dispatch_item
 
     def save(self, *args, **kwargs):
-        using = kwargs.get('using', 'default')
+        using = kwargs.get('using', None)
         if self.id:
             if self.is_dispatchable_model():
                 if self.is_dispatch_container_model():

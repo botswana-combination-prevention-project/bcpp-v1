@@ -89,11 +89,20 @@ class BaseDispatchController(BaseDispatch):
                         scheduled_models.append(model_cls)
         return scheduled_models
 
-    def dispatch_model_as_json(self, dispatch_container, model_cls):
+    def dispatch_model_as_json(self, model_cls, dispatch_container=None):
+        """Serialize all instances of a remote model class, deserialize and save to local instances.
+
+           Args:
+                dispatch_container: instance of DispatchContainer. Note items may not
+                                    may not be dispatched without a container.
+                model_cls: a subclass of BaseSyncUuidModel"""
+
         base_model_class = BaseSyncUuidModel
         if not issubclass(model_cls, BaseSyncUuidModel):
             raise DispatchModelError('Dispatch model {0} must be a subclass of \'{1}\'.'.format(model_cls, base_model_class))
-        self.dispatch_as_json(dispatch_container, [instance for instance in model_cls.objects.all()])
+        if not dispatch_container:
+            dispatch_container = self.get_dispatch_container_instance()
+        self.dispatch_as_json([instance for instance in model_cls.objects.all()], dispatch_container)
 
     def dispatch_as_json(self, source_instances, dispatch_container=None, **kwargs):
         """Serialize a remote model instance, deserialize and save to local instances.

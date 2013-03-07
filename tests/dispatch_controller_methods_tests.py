@@ -8,7 +8,7 @@ from bhp_consent.models import BaseConsentedUuidModel
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.classes import Base, BaseDispatchController
-from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched
+from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched, AlreadyDispatchedItem
 from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer
 from base_controller_tests import BaseControllerTests
 
@@ -112,7 +112,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertEquals(OutgoingTransaction.objects.filter(is_consumed=False).count(), 6)
         # assert that RegisteredSubject instance is already dispatched
         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifiers[0])
-        self.assertRaises(AlreadyDispatched, registered_subject.save)
+        self.assertRaises(AlreadyDispatchedItem, registered_subject.save)
         # flag as dispatched
         DispatchItem.objects.all().update(is_dispatched=False)
         # assert deleting dispatch items does not create transactions
@@ -140,7 +140,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         registered_subject.registration_status = 'CONSENTED'
         registered_subject.save(using=self.using_destination)
         # assert transactions were created by modifying registered_subject
-        self.assertEquals(OutgoingTransaction.objects.filter(is_consumed=False).count(), 10)
+        self.assertEquals(OutgoingTransaction.objects.filter(is_consumed=False).count(), 9)
         RegisteredSubject.objects.all().delete()
         RegisteredSubject.objects.using(self.using_destination).all().delete()
         DispatchContainer.objects.all().delete()
@@ -173,7 +173,16 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         for membershipform_model in membershipform_models:
             self.assertTrue(hasattr(membershipform_model, 'registered_subject'))
 
-    def test_dispatch(self):
+    def test_dispatch_item_within_container(self):
+        self.create_producer(True)
+        self.create_test_item()
+        self.create_base_dispatch_controller()
+        self.base_dispatch_controller.dispatch_as_json(self.test_item)
+        self.assertTrue(self.test_item.is_dispatched)
+        self.assertTrue(self.test_item.is_dispatched_as_item())
+        self.assertTrue(self.test_item.is_dispatched_within_container())
+
+    def test_dispatch_item_and_container(self):
         self.create_producer(True)
         self.create_test_item()
         # create base controller instance
@@ -192,9 +201,9 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # requery for the container instance (Necessary??)
         obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier})
         #self.assertTrue(obj.is_dispatched)
-        self.assertTrue(obj.is_dispatched_to_producer())
+        self.assertTrue(obj.is_dispatched)
         # assert that you cannot dispatch it again
-        self.assertRaises(AlreadyDispatched, self.base_dispatch_controller.dispatch_as_json, obj)
+        self.assertRaises(AlreadyDispatchedItem, self.base_dispatch_controller.dispatch_as_json, obj)
         dispatch_item = DispatchItem.objects.get(item_pk=obj.pk)
         # flag is dispatched as False
         dispatch_item.is_dispatched = False
