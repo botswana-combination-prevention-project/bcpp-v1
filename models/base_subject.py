@@ -79,9 +79,10 @@ class BaseSubject (BaseSyncUuidModel):
         return self.subject_identifier
 
     def save(self, *args, **kwargs):
+        using = kwargs.get('using', None)
         # for new instances, enforce unique subject_identifier if not null
         if not self.pk and self.subject_identifier:
-            if self.__class__.objects.filter(subject_identifier=self.subject_identifier):
+            if self.__class__.objects.using(using).filter(subject_identifier=self.subject_identifier):
                 raise ValidationError('Attempt to insert duplicate value for'
                                       'subject_identifier {0} when saving {1}.'.format(self.subject_identifier, self))
         super(BaseSubject, self).save(*args, **kwargs)
