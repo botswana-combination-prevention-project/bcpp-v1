@@ -33,19 +33,21 @@ class RegisteredSubjectManager(models.Manager):
         It is the responsibility of the calling model (usually a consent) to help
         with instance.registered_subject.
         """
+        using = kwargs.get('using', None)
+        #print 'update_with' + using
         # attrname is one of the following "registered subject" unique field attributes
         valid_attrnames = ('subject_identifier', 'identity')
         registered_subject = None
         if attrname not in valid_attrnames:
             raise TypeError('Attribute must represent a unique field such as {0}. Got {1}.'.format(', '.join(valid_attrnames), attrname))
-        if getattr(instance, 'registered_subject', None):
+        try:
             # if the registered subject already exists and is part of 'instance', use it
             registered_subject = getattr(instance, 'registered_subject')
-        else:
+        except:
             # use attrname and its value from 'instance' to search for the registered_subject, if it exists
             value = getattr(instance, attrname)
-            if super(RegisteredSubjectManager, self).filter(**{attrname: value}):
-                registered_subject = super(RegisteredSubjectManager, self).get(**{attrname: value})
+            if super(RegisteredSubjectManager, self).using(using).filter(**{attrname: value}):
+                registered_subject = super(RegisteredSubjectManager, self).using(using).get(**{attrname: value})
         if registered_subject:
             # update an existing registered_subject
             if not registered_subject.subject_identifier:
@@ -65,7 +67,7 @@ class RegisteredSubjectManager(models.Manager):
             registered_subject.subject_type = instance.get_subject_type()
         else:
             # create a new registered subject
-            registered_subject = super(RegisteredSubjectManager, self).create(
+            registered_subject = super(RegisteredSubjectManager, self).using(using).create(
                 # relative_identifier = kwargs.get('relative_identifier', None),
                 # subject_identifier = kwargs.get('subject_identifier'),
                 subject_consent_id=None,
@@ -93,7 +95,7 @@ class RegisteredSubjectManager(models.Manager):
                 extra = True
                 setattr(registered_subject, attr, kwargs.get(attr))
         if extra:
-            registered_subject.save()
+            registered_subject.save(using=using)
 
 #    def register_partner(self, ** kwargs):
 #        """ Allocate partner identifiers. """
