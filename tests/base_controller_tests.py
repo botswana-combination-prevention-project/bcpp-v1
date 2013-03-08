@@ -1,6 +1,6 @@
 from django.test import TestCase
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
-from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer
+from bhp_dispatch.models import TestItem, TestContainer, DispatchItem, DispatchContainer
 from bhp_dispatch.classes import BaseDispatchController
 
 
@@ -9,6 +9,7 @@ class BaseControllerTests(TestCase):
     def setUp(self):
         self.base_dispatch_controller = None
         self.producer = None
+        self.test_container = None
         self.outgoing_transaction = None
         self.incoming_transaction = None
         self.using_source = 'default'
@@ -21,8 +22,13 @@ class BaseControllerTests(TestCase):
         DispatchContainer.objects.all().delete()
         DispatchItem.objects.all().delete()
 
+    def create_test_container(self):
+        self.test_container = TestContainer.objects.create(test_container_identifier=self.dispatch_container_identifier)
+
     def create_test_item(self):
-        self.test_item = TestItem.objects.create(test_item_identifier=self.dispatch_container_identifier)
+        if not self.test_container:
+            self.create_test_container()
+        self.test_item = TestItem.objects.create(test_item_identifier=self.dispatch_container_identifier, test_container=self.test_container)
 
     def create_producer(self, is_active=False):
         # add a in_active producer

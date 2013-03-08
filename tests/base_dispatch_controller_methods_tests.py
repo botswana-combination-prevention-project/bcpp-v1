@@ -24,7 +24,7 @@ class BaseDispatchControllerMethodsTests(TestCase):
         self.dispatch_container_identifier = dispatch_container_identifier or 'TEST_IDENTIFIER'
         self.dispatch_item_app_label = 'bhp_dispatch'  # usually something like 'mochudi_subject'
         # create an instance for the container before initiation the class
-        self.create_test_item()
+        #self.create_test_item()
         self.base_controller = BaseDispatch(
             'default',
             'dispatch_destination',

@@ -8,18 +8,20 @@ class TestItem(BaseDispatchSyncUuidModel):
 
     test_item_identifier = models.CharField(max_length=35, unique=True)
 
+    test_container = models.ForeignKey(TestContainer)
+
     comment = models.CharField(max_length=50, null=True)
 
     history = AuditTrail()
 
-    def dispatched_as_container_identifier_attr(self):
-        return 'test_item_identifier'
+#    def dispatched_as_container_identifier_attr(self):
+#        return 'test_item_identifier'
 
     def is_dispatch_container_model(self):
         return False
 
-    def is_dispatched_item_within_container(self, using=None):
-        return (TestContainer, 'test_container_identifier')
+    def dispatch_item_container_reference(self, using=None):
+        return (TestContainer, 'test_container__test_container_identifier')
 
     def include_for_dispatch(self):
         return True

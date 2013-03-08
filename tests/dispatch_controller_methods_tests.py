@@ -7,7 +7,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsentedUuidModel
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.classes import Base, BaseDispatchController
+from bhp_dispatch.classes import Base, BaseDispatchController, ReturnController
 from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched, AlreadyDispatchedItem
 from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer
 from base_controller_tests import BaseControllerTests
@@ -165,6 +165,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
 
     def test_get_membershipform_models(self):
         self.create_producer(True)
+        self.create_test_container()
         self.create_test_item()
         # create base controller instance
         self.create_base_dispatch_controller()
@@ -174,13 +175,47 @@ class DispatchControllerMethodsTests(BaseControllerTests):
             self.assertTrue(hasattr(membershipform_model, 'registered_subject'))
 
     def test_dispatch_item_within_container(self):
+        """Tests dispatching a test container and or a test item and verifies the model method is_dispatched behaves as expected."""
         self.create_producer(True)
+        # create a test container model e.g. Household
+        self.create_test_container()
+        # assert that it is not dispatched
+        self.assertFalse(self.test_container.is_dispatched)
+        # create a test item for the container
         self.create_test_item()
+        # assert it is not dispatched
+        self.assertFalse(self.test_item.is_dispatched)
+        # get a dispatch controller
         self.create_base_dispatch_controller()
-        self.base_dispatch_controller.dispatch_as_json(self.test_item)
+        # re-assert nothing is dispatched
+        self.assertFalse(self.test_container.is_dispatched)
+        self.assertFalse(self.test_item.is_dispatched)
+        # dispatch the test_container pnly
+        self.base_dispatch_controller.dispatch_as_json(self.test_container)
+        # assert it is dispatched
+        self.assertTrue(self.test_container.is_dispatched)
+        # assert that the test item is dispatched only because it's container is dispatched
         self.assertTrue(self.test_item.is_dispatched)
-        self.assertTrue(self.test_item.is_dispatched_as_item())
-        self.assertTrue(self.test_item.is_dispatched_within_container())
+        # get a return controller
+        return_controller = ReturnController(self.using_source, self.using_destination)
+        self.assertEqual(DispatchItem.objects.all().count(), 1)
+        # return the dispatched items
+        return_controller.return_dispatched_items()
+        # assert test_container is not dispatched
+        self.assertFalse(self.test_container.is_dispatched)
+        # assert that the test item is not dispatched because the container is no longer dispatched
+        self.assertFalse(self.test_item.is_dispatched)
+        # dispatch the item
+        self.base_dispatch_controller.dispatch_as_json(self.test_item)
+        # re-assert test_container is not dispatched
+        self.assertFalse(self.test_container.is_dispatched)
+        # assert the test item is dispatched (even though its container is not)
+        self.assertTrue(self.test_item.is_dispatched)
+        # return dispatched items
+        return_controller.return_dispatched_items()
+        # re-assert nothing is dispatched
+        self.assertFalse(self.test_container.is_dispatched)
+        self.assertFalse(self.test_item.is_dispatched)
 
     def test_dispatch_item_and_container(self):
         self.create_producer(True)
