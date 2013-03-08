@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from bhp_base_model.fields import OtherCharField
 from bhp_common.choices import YES_NO
@@ -74,5 +75,8 @@ class BaseBaseDeath(BaseRegisteredSubjectModel):
         null=True,
         )
 
+    def get_report_datetime(self):
+        return datetime(self.death_date.year, self.death_date.month, self.death_date.day)
+    
     class Meta:
         abstract = True
