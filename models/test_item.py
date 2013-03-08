@@ -14,9 +14,6 @@ class TestItem(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
-#    def dispatched_as_container_identifier_attr(self):
-#        return 'test_item_identifier'
-
     def is_dispatch_container_model(self):
         return False
 
