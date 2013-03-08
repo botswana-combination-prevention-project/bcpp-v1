@@ -123,6 +123,9 @@ class RegisteredSubject(BaseSubject):
     def is_serialized(self):
         return super(RegisteredSubject, self).is_serialized(True)
 
+    def dispatch_item_container_reference(self, using=None):
+        return None
+
     def __unicode__(self):
         if self.sid:
             return "{0} {1} ({2} {3})".format(self.subject_identifier,
