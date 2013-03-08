@@ -90,25 +90,26 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             considered dispatched because it's container is dispatched. The subject consent might not have a
             corresponding DispatchItem."""
         is_dispatched = False
-        dispatch_container_model_cls, lookup_attrs = self.dispatch_item_container_reference()
-        if isinstance(dispatch_container_model_cls, (list, tuple)):
-            dispatch_container_model_cls = get_model(dispatch_container_model_cls[0], dispatch_container_model_cls[1])
-        if not isinstance(lookup_attrs, basestring):
-            raise TypeError('Method dispatch_item_container_reference must return a (model class/tuple, list)')
-        lookup_attrs = lookup_attrs.split('__')
-        # last item in the list must be the container identifier
-        if not lookup_attrs[-1:] == [dispatch_container_model_cls().dispatched_as_container_identifier_attr()]:
-            raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_item_container_reference() '
-                                       'must return a lookup attr string that ends in the container '
-                                       'identifier field name.'.format(dispatch_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
-        lookup_attrs = list(set(lookup_attrs))
-        lookup_value = self
-        for attrname in lookup_attrs:
-            lookup_value = getattr(lookup_value, attrname)
-        container_attr = dispatch_container_model_cls().dispatched_as_container_identifier_attr()
-        options = {container_attr: lookup_value}
-        if dispatch_container_model_cls.objects.using(using).filter(**options).exists():
-            is_dispatched = dispatch_container_model_cls.objects.using(using).get(**options).is_dispatched
+        if self.dispatch_item_container_reference():
+            dispatch_container_model_cls, lookup_attrs = self.dispatch_item_container_reference()
+            if isinstance(dispatch_container_model_cls, (list, tuple)):
+                dispatch_container_model_cls = get_model(dispatch_container_model_cls[0], dispatch_container_model_cls[1])
+            if not isinstance(lookup_attrs, basestring):
+                raise TypeError('Method dispatch_item_container_reference must return a (model class/tuple, list)')
+            lookup_attrs = lookup_attrs.split('__')
+            # last item in the list must be the container identifier
+            if not lookup_attrs[-1:] == [dispatch_container_model_cls().dispatched_as_container_identifier_attr()]:
+                raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_item_container_reference() '
+                                           'must return a lookup attr string that ends in the container '
+                                           'identifier field name.'.format(dispatch_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
+            lookup_attrs = list(set(lookup_attrs))
+            lookup_value = self
+            for attrname in lookup_attrs:
+                lookup_value = getattr(lookup_value, attrname)
+            container_attr = dispatch_container_model_cls().dispatched_as_container_identifier_attr()
+            options = {container_attr: lookup_value}
+            if dispatch_container_model_cls.objects.using(using).filter(**options).exists():
+                is_dispatched = dispatch_container_model_cls.objects.using(using).get(**options).is_dispatched
         return is_dispatched
 
     def dispatch_item_container_reference(self):
