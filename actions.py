@@ -1,7 +1,11 @@
 import csv
 import datetime
 from django.http import HttpResponse
-from django.db.models.sql.constants import LOOKUP_SEP
+try:
+    from django.db.models.constants import LOOKUP_SEP
+except:
+    # django 1.5
+    from django.db.models.sql.constants import LOOKUP_SEP
 from django.db.models import ManyToManyField
 
 
