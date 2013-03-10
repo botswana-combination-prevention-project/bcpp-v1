@@ -15,8 +15,8 @@ class BaseControllerTests(TestCase):
         self.using_source = 'default'
         self.using_destination = 'dispatch_destination'
         self.dispatch_container_app_label = 'bhp_dispatch'
-        self.dispatch_container_model_name = 'testitem'
-        self.dispatch_container_identifier_attrname = 'test_item_identifier'
+        self.dispatch_container_model_name = 'testcontainer'
+        self.dispatch_container_identifier_attrname = 'test_container_identifier'
         self.dispatch_container_identifier = 'TEST_IDENTIFIER'
         self.dispatch_item_app_label = 'bhp_dispatch'  # usually something like 'mochudi_subject'
         DispatchContainer.objects.all().delete()
@@ -35,24 +35,28 @@ class BaseControllerTests(TestCase):
         self.producer = Producer.objects.create(name='test_producer', settings_key=self.using_destination, is_active=is_active)
 
     def create_sync_transactions(self):
-                # add outgoing transactions and check is properly detects pending transactions before dispatching
+        # add outgoing transactions and check is properly detects pending transactions before dispatching
         self.outgoing_transaction = OutgoingTransaction.objects.using(self.using_destination).create(
             tx='tx',
             tx_pk='tx_pk',
+            tx_name='test_model',
             producer=self.producer.name,
             is_consumed=False)
         # create an incoming transaction
         self.incoming_transaction = IncomingTransaction.objects.using(self.using_source).create(
             tx='tx',
             tx_pk='tx_pk',
+            tx_name='test_model',
             producer=self.producer.name,
             is_consumed=False)
 
-    def create_base_dispatch_controller(self):
+    def create_base_dispatch_controller(self, dispatch_container_model_name=None):
         # create base controller instance
+        if not dispatch_container_model_name:
+            dispatch_container_model_name = self.dispatch_container_model_name
         self.base_dispatch_controller = BaseDispatchController(self.using_source, self.using_destination,
                                                 self.dispatch_container_app_label,
-                                                self.dispatch_container_model_name,
+                                                dispatch_container_model_name,
                                                 self.dispatch_container_identifier_attrname,
                                                 self.dispatch_container_identifier,
                                                 self.dispatch_item_app_label)

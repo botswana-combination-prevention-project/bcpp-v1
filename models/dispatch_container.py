@@ -17,14 +17,14 @@ class DispatchContainer(BaseDispatch):
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        if self.is_dispatched == False and not self.return_datetime:
+        if not self.is_dispatched and not self.return_datetime:
             raise ValidationError('Field attribute \'return_datetime\' may not be None if \'is_dispatched\' is False.')
-        if self.is_dispatched == True and self.return_datetime:
+        if self.is_dispatched and self.return_datetime:
             raise ValidationError('Field attribute \'return_datetime\' must be None if \'is_dispatched\' is True.')
         super(DispatchContainer, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "{0} @ {1}".format(self.producer.name, self.created)
+        return "Dispatch Container {0} @ {1} ({2})".format(self.producer.name, self.created, self.is_dispatched)
 
     def to_items(self):
         DispatchItem = models.get_model('bhp_dispatch', 'DispatchItem')

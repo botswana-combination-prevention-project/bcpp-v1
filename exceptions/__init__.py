@@ -28,3 +28,11 @@ class DispatchContainerError(Exception):
 
 class AlreadyReturned(Exception):
     pass
+
+
+class BackupError(Exception):
+    pass
+
+
+class RestoreError(Exception):
+    pass

@@ -111,15 +111,20 @@ class BaseDispatch(Base):
     def _set_dispatch_container_instance(self):
         """Creates a dispatch container instance for this controller session."""
         user_dispatch_container_model = get_model(self.get_dispatch_container_app_label(), self.get_dispatch_container_model_name())
+        if not user_dispatch_container_model:
+            raise DispatchModelError('Method get_model returned None using app_label={0}, model_name={1}'.format(self.get_dispatch_container_app_label(), self.get_dispatch_container_model_name()))
+        if not user_dispatch_container_model().is_dispatch_container_model():
+            raise DispatchError('Model {0} cannot be used as a container. Model method is_dispatch_container_model() returned False.'.format(user_dispatch_container_model))
         if not user_dispatch_container_model.objects.filter(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()}):
             raise DispatchModelError('Cannot set container model instance. Container model {0} matching query does not exist for {1}=\'{2}\'.'.format(user_dispatch_container_model._meta.object_name, self.get_dispatch_container_identifier_attrname(), self.get_dispatch_container_identifier()))
         else:
-            obj = user_dispatch_container_model.objects.get(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()})
+            obj = user_dispatch_container_model.objects.using(self.get_using_source()).get(**{self.get_dispatch_container_identifier_attrname(): self.get_dispatch_container_identifier()})
         if not getattr(obj, self.get_dispatch_container_identifier_attrname()):
             raise DispatchError('Attribute {0} not found on model instance {1}.'.format(self.get_dispatch_container_identifier_attrname(), self.get_dispatch_container_model_name()))
-        self._dispatch_container = DispatchContainer.objects.create(
+        self._dispatch_container = DispatchContainer.objects.using(self.get_using_source()).create(
             producer=self.get_producer(),
             is_dispatched=True,
+            return_datetime=None,
             container_app_label=self.get_dispatch_container_app_label(),
             container_model_name=self.get_dispatch_container_model_name(),
             container_identifier_attrname=self.get_dispatch_container_identifier_attrname(),
@@ -185,7 +190,7 @@ class BaseDispatch(Base):
                     'item_model_name': instance._meta.object_name,
                     'item_identifier_attrname': self.get_dispatch_item_identifier_attrname(),
                     }
-                dispatch_item, created = DispatchItem.objects.get_or_create(
+                dispatch_item, created = DispatchItem.objects.using(self.get_using_source()).get_or_create(
                     dispatch_container=self.get_dispatch_container_instance(),
                     item_identifier=getattr(instance, self.get_dispatch_item_identifier_attrname()),
                     item_pk=instance.pk,

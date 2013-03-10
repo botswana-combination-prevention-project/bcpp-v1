@@ -1,8 +1,14 @@
 import logging
+import os
+import sqlite3
+import socket
+import subprocess
 from datetime import datetime
 from django.db.models import Model
+from django.conf import settings
 from bhp_common.utils import td_to_string
 from base_prepare_device import BasePrepareDevice
+from bhp_dispatch.exceptions import BackupError, RestoreError
 
 
 logger = logging.getLogger(__name__)
@@ -136,7 +142,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 18:
             self.timer()
             logger.info("18. Updating lab panel models from lab_panel...")
-            self.update_app_models('lab_panel')         
+            self.update_app_models('lab_panel')
         if not step > 19:
             self.timer()
             logger.info("19. Updating aliquot types from lab_clinic_api...")
@@ -144,7 +150,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 20:
             self.timer()
             logger.info("20. Updating test code groups from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'TestCodeGroup'))  
+            self.update_model(('lab_clinic_api', 'TestCodeGroup'))
         if not step > 21:
             self.timer()
             logger.info("21. Updating test codes from lab_clinic_api...")
@@ -164,7 +170,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 25:
             self.timer()
             logger.info("25. Updating lab entry from bhp_lab_entry...")
-            self.update_model(('bhp_lab_entry', 'LabEntry'))         
+            self.update_model(('bhp_lab_entry', 'LabEntry'))
         if not step > 26:
             self.timer()
             logger.info("26. Updating bhp_entry.models.entry...")
@@ -179,3 +185,111 @@ class PrepareDevice(BasePrepareDevice):
             self.post_prepare()
         logger.info("Done")
         self.timer(done=True)
+
+    def backup_database(self, **kwargs):
+        """Takes a backup of the netbook before preparing a netbook for dispatch"""
+        #Check if were on the server or netbook
+        fname = None
+        if not settings.DEVICE_ID == self.server_device_id:
+            raise TypeError('DB Snapshot must be done from the server.')
+        if self._get_db_engine() == 'mysql':
+            fname = self._backup_mysql_database()
+        if self._get_db_engine() == 'sqlite3':
+            fname = self._backup_sqlite3_database()
+        if not fname:
+            raise self.exception("DB Snapshot failed, unable to backup {0} database for {1}.".format(self._get_db_engine(), self.get_using_destination()))
+        return fname
+
+    def _backup_sqlite3_database(self):
+        db = "{0}.db".format(self.get_using_destination())
+        fd = self._get_backup_file_handle()
+        con = sqlite3.connect("{0}.db".format(db))
+        for row in con.execute('PRAGMA database_list;'):
+            command_list = ['sqlite3', row[2], '.dump']
+            if subprocess.Popen(command_list, stdout=fd).returncode:
+                raise BackupError('Unable to backup. Tried with {0}'.format(command_list))
+        return fd.name
+
+    def _backup_mysql_database(self):
+        db_user = settings.DATABASES[self.get_using_destination()]['USER']
+        db_pass = settings.DATABASES[self.get_using_destination()]['PASSWORD']
+        db = settings.DATABASES[self.get_using_destination()]['NAME']
+        fd = self._get_backup_file_handle()
+        command_list = ['mysqldump', '-u', db_user, '-p{0}'.format(db_pass), db]
+        if subprocess.Popen(command_list, stdout=fd).returncode:
+            raise BackupError('Unable to backup. Tried with {0}'.format(command_list))
+        return fd.name
+
+    def _restore_sqlite3_database(self):
+        db = "{0}.db".format(self.get_using_destination())
+        fd = open(self._get_last_backup_filename(), 'wb')
+        con = sqlite3.connect("{0}.db".format(db))
+        for row in con.execute('PRAGMA database_list;'):
+            command_list = ['sqlite3', fd.name, '.restore']
+            if subprocess.Popen(command_list, stdin=fd).returncode:
+                raise BackupError('Unable to restore. Tried with {0}'.format(command_list))
+        return fd.name
+
+    def _restore_mysql_database(self, destination_host=None):
+        db_user = settings.DATABASES[self.get_using_destination()]['USER']
+        db_pass = settings.DATABASES[self.get_using_destination()]['PASSWORD']
+        db = settings.DATABASES[self.get_using_destination()]['NAME']
+        if not destination_host:
+            destination_host = settings.DATABASES[self.get_using_destination()]['HOST']
+        fd = self._get_backup_file_handle()
+        command_list = ['mysql', '-h', destination_host, '-u', db_user, '-p{0}'.format(db_pass), db]
+        if subprocess.Popen(command_list, stdin=fd).returncode:
+            raise BackupError('Unable to restore. Tried with {0}'.format(command_list))
+        return fd.name
+
+    def _get_backup_file_handle(self):
+        return open(self._get_next_backup_filename(), 'wb')
+
+    def _get_next_backup_filename(self):
+        return os.path.join(self._get_backup_path(), '{0}-{1}.sql'.format(self.get_using_destination(), datetime.today().strftime('%Y%m%d%H%M%S%f')))
+
+    def _get_backup_path(self):
+        """Returns the full path to the backup folder."""
+        if not 'DB_SNAPSHOT_DIR' in dir(settings):
+            backup_path = os.path.join(settings.DIRNAME, 'db_snapshots')
+            if not os.path.exists(backup_path):
+                subprocess.call(["mkdir", "-p", backup_path])
+        else:
+            backup_path = settings.DB_SNAPSHOT_DIR
+            if not os.path.exists(backup_path):
+                subprocess.call(["mkdir", "-p", backup_path])
+        return backup_path
+
+    def _get_db_engine(self):
+        """Returns the database engine in use."""
+        engine = settings.DATABASES[self.get_using_destination()]['ENGINE'].split('.')[-1:][0]
+        if engine not in ['mysql', 'sqlite3']:
+            raise TypeError('Unknown db engine. Got {0}'.format(engine))
+        return engine
+
+    def _get_last_backup_filename(self):
+        """Returns the filename of the last backup for this destination."""
+        last_filename = None
+        # get list of files in backup path
+        filenames = os.listdir(self._get_backup_path())
+        if filenames:
+            # remove any not starting in "destination"
+            filenames = [filename for filename in filenames if filename.startswith(self.get_using_destination()) and filename.endswith('sql')]
+            # if any items left, sort and pick the last one
+            if filenames:
+                filenames.sort()
+                last_filename = os.path.join(self._get_backup_path(), filenames[-1:][0])
+        return last_filename
+
+    def restore_database(self, destination_host=None):
+        """Loads previous database snapshot from disk."""
+        fname = None
+        if not settings.DEVICE_ID == self.server_device_id:
+            raise TypeError('DB restore must be done from the server.')
+        if self._get_db_engine() == 'mysql':
+            fname = self._restore_mysql_database()
+        if self._get_db_engine() == 'sqlite3':
+            fname = self._restore_sqlite3_database()
+        if not fname:
+            raise RestoreError("Restore failed, unable to backup {0} database for {1}.".format(self._get_db_engine(), self.get_using_destination()))
+        return fname

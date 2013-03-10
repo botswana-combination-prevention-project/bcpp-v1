@@ -97,6 +97,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             if not isinstance(lookup_attrs, basestring):
                 raise TypeError('Method dispatch_item_container_reference must return a (model class/tuple, list)')
             lookup_attrs = lookup_attrs.split('__')
+            print lookup_attrs
             # last item in the list must be the container identifier
             if not lookup_attrs[-1:] == [dispatch_container_model_cls().dispatched_as_container_identifier_attr()]:
                 raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_item_container_reference() '
