@@ -57,6 +57,8 @@ class BaseDispatchController(BaseDispatch):
     def dispatch_foreign_key_instances(self):
         """Finds foreign_key model classes other than the visit model class and exports the instances."""
         list_models = []
+        
+        #TODO: should only work for list models so that it does not cascade into all data
         app_label = self.get_dispatch_item_app_label()
         if not app_label:
             raise TypeError('Parameter app_label cannot be None.')
@@ -77,12 +79,12 @@ class BaseDispatchController(BaseDispatch):
         for model_cls in list_models:
             self.dispatch_model_as_json(model_cls.objects.using(self.get_using_source()).all(), self.get_user_container_instance(), app_label=app_label)
 
-    def get_scheduled_models(self):
+    def get_scheduled_models(self, app_label):
         """Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models."""
-        app = get_app(self.get_dispatch_item_app_label())
+        app = get_app(app_label)
         scheduled_models = []
         for model_cls in get_models(app):
-            field_name, visit_model_cls = self.get_visit_model_cls(self.get_dispatch_item_app_label(), model_cls)
+            field_name, visit_model_cls = self.get_visit_model_cls(app_label, model_cls)
             if visit_model_cls:
                 if getattr(model_cls, field_name, None):
                     if not model_cls._meta.object_name.endswith('Audit'):
@@ -110,10 +112,10 @@ class BaseDispatchController(BaseDispatch):
 
     def dispatch_user_items_as_json(self, user_items, user_container=None):
         user_container = user_container or self.get_user_container_instance()
-        if not user_container:
-            raise DispatchError('Attribute user_container may not be None')
-        if isinstance(user_container, DispatchContainerRegister):
-            raise DispatchError('Attribute user_container cannot be an instance on DispatchContainerRegister')
+        #if not user_container:
+        #    raise DispatchError('Attribute user_container may not be None')
+        #if isinstance(user_container, DispatchContainerRegister):
+        #    raise DispatchError('Attribute user_container cannot be an instance on DispatchContainerRegister')
         self._dispatch_as_json(user_items)
         # register the user items with the dispatch item register
         for user_item in user_items:

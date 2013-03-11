@@ -73,12 +73,13 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
 
         For example: a household model instance may serve as a container for all household members and data."""
         is_dispatched = False
-        DispatchContainerRegister = get_model('bhp_dispatch', 'DispatchContainerRegister')
-        if DispatchContainerRegister:
-            is_dispatched = DispatchContainerRegister.objects.using(using).filter(
-                container_identifier=getattr(self, self.dispatched_as_container_identifier_attr()),
-                is_dispatched=True,
-                return_datetime__isnull=True).exists()
+        if self.is_dispatch_container_model():
+            DispatchContainerRegister = get_model('bhp_dispatch', 'DispatchContainerRegister')
+            if DispatchContainerRegister:
+                is_dispatched = DispatchContainerRegister.objects.using(using).filter(
+                    container_identifier=getattr(self, self.dispatched_as_container_identifier_attr()),
+                    is_dispatched=True,
+                    return_datetime__isnull=True).exists()
         return is_dispatched
 
     def is_dispatched_item_within_container(self, using=None):
@@ -106,12 +107,14 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                                            'identifier field name.'.format(dispatch_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
             lookup_attrs = list(set(lookup_attrs))
             lookup_value = self
+            print lookup_attrs
             for attrname in lookup_attrs:
+                print lookup_value
                 lookup_value = getattr(lookup_value, attrname)
             container_attr = dispatch_container_model_cls().dispatched_as_container_identifier_attr()
             options = {container_attr: lookup_value}
             if dispatch_container_model_cls.objects.using(using).filter(**options).exists():
-                is_dispatched = dispatch_container_model_cls.objects.using(using).get(**options).is_dispatched
+                is_dispatched = dispatch_container_model_cls.objects.using(using).get(**options).is_dispatched_as_container()
         return is_dispatched
 
     def dispatch_item_container_reference(self):

@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db.models import get_model
+from django.db.models.query import QuerySet
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.exceptions import DispatchContainerError, AlreadyReturned, DispatchError, DispatchItemError
 from bhp_dispatch.models import DispatchContainerRegister, DispatchItemRegister
@@ -26,8 +27,10 @@ class ReturnController(Base):
                 user_containers.append(user_container_cls.objects.get(**{dispatch_container_register.container_identifier_attrname: dispatch_container_register.container_identifier}))
         return user_containers
 
-    def get_dispatched_item_instances_for_container(self, dispatch_container_register, using=None):
-        """Returns a queryset of dispatched DispatchItem instances for this dispatch_container."""
+    def get_dispatch_item_instances_for_container(self, dispatch_container_register, using=None):
+        """Returns a queryset of dispatched DispatchItem instances for this dispatch_container_register."""
+        if not isinstance(dispatch_container_register, DispatchContainerRegister):
+            raise TypeError('Attribute dispatch_container_register must be an instance of DispatchContainerRegister. Got {0}'.format(dispatch_container_register))
         return DispatchItemRegister.objects.filter(dispatch_container_register=dispatch_container_register, is_dispatched=True, return_datetime__isnull=True)
 
     def return_items_for_user_container(self, user_container, using=None):
@@ -45,14 +48,31 @@ class ReturnController(Base):
             raise DispatchContainerError('Failed to get DispatchContainerRegister for user container {0}.'.format(user_container))
         # all tx's are consumed so flag as no longer dispatched
         # TODO: this does not return what i expect
-        if not DispatchItemRegister.objects.using(using).filter(dispatch_container_register=dispatch_container_register):
-            raise DispatchItemError('Expected to find items registered with {0}. User container is {1}'.format(dispatch_container_register, user_container))
-        DispatchItemRegister.objects.using(using).filter(
-            dispatch_container_register=dispatch_container_register,
-            is_dispatched=True,
-            return_datetime__isnull=True).update(
-                return_datetime=datetime.now(),
-                is_dispatched=False)
+        if DispatchItemRegister.objects.using(using).filter(dispatch_container_register=dispatch_container_register):
+            #raise DispatchItemError('Expected to find items registered with {0}. User container is {1}'.format(dispatch_container_register, user_container))
+            DispatchItemRegister.objects.using(using).filter(
+                dispatch_container_register=dispatch_container_register,
+                is_dispatched=True,
+                return_datetime__isnull=True).update(
+                    return_datetime=datetime.now(),
+                    is_dispatched=False)
+
+    def _return_items_for_queryset(self, queryset, using=None):
+        """Returns items in a queryset."""
+        dispatch_container_registers = []
+        for obj in queryset:
+            dispatch_item_register = DispatchItemRegister.objects.using(using).get(
+                item_app_label=obj._meta.app_label,
+                item_model_name=obj._meta.object_name,
+                item_pk=obj.pk,
+                is_dispatched=True,
+                return_datetime__isnull=True)
+            DispatchItemRegister.objects.filter(pk=dispatch_item_register.pk).update(
+                    return_datetime=datetime.now(),
+                    is_dispatched=False)
+            #if dispatch_item_register.dispatch_container_register:
+            #    dispatch_container_registers.append(dispatch_item_register.dispatch_container_register)
+        return dispatch_container_registers
 
     def get_dispatch_container_register(self, user_container, using=None):
         return DispatchContainerRegister.objects.using(using).get(
@@ -62,8 +82,25 @@ class ReturnController(Base):
             is_dispatched=True,
             return_datetime__isnull=True)
 
-    def return_container(self, user_container):
-        """Returns the user container after first checking transactions and dispatch items."""
+    def _return_by_queryset(self, queryset):
+        """Returns all in a queryset registered with DispatchItemRegister after first checking transactions and dispatch items.
+
+            If all items within the DispatchContainerRegister are returned, will return the container as well."""
+        # confirm no pending transaction on the producer
+        if self.has_outgoing_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. '
+                                          'Run bhp_sync first.'.format(self.get_producer_name()))
+        # confirm no pending transaction for this producer on the source
+        if self.has_incoming_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on '
+                                          'this server. Consume them first.'.format(self.get_producer_name()))
+        dispatch_container_registers = self._return_items_for_queryset(queryset)
+        for dispatch_container_register in dispatch_container_registers:
+            if not DispatchItemRegister.objects.filter(dispatch_container_register=dispatch_container_register, is_dispatched=True, return_datetime__isnull=True):
+                DispatchContainerRegister.objects.filter(pk=dispatch_container_register.pk).update(is_dispatched=False, return_datetime=datetime.today())
+
+    def _return_by_user_container(self, user_container):
+        """Returns the user container and the dispatch_container_register after first checking transactions and dispatch items."""
         if not user_container:
             raise DispatchContainerError('Attribute dispatch_container may not be None.')
         # confirm dispatch container has not already been returned
@@ -81,16 +118,18 @@ class ReturnController(Base):
         self.return_items_for_user_container(user_container)
         # confirm all dispatch items in the container are returned
         # TODO: does the dispatch container as a dispatch item cause a problem?
-        if self.get_dispatched_item_instances_for_container(user_container):
+        dispatch_container_register = self.get_dispatch_container_register(user_container)
+        if self.get_dispatch_item_instances_for_container(dispatch_container_register):
             raise DispatchContainerError('Dispatch container {0} has items that are still dispatched.'.format(user_container))
-        # TODO: de-register user container from dispatch container register
-        self.get_dispatch_container_register(user_container).update(is_dispatched=False, return_datetime=datetime.today())
-        return True
+        DispatchContainerRegister.objects.filter(pk=dispatch_container_register.pk).update(is_dispatched=False, return_datetime=datetime.today())
 
-    def return_dispatched_items(self):
+    def return_dispatched_items(self, queryset=None):
         """Loops thru dispatch container instances for this producer and returns them."""
-        for user_container in self.get_user_container_instances_for_producer():
-            if isinstance(user_container, DispatchContainerRegister):
-                raise TypeError('Expected the container model to be a user model. Got DispatchContainerRegister')
-            self.return_container(user_container)
+        if isinstance(queryset, QuerySet):
+            self._return_by_queryset(queryset)
+        else:
+            for user_container in self.get_user_container_instances_for_producer():
+                if isinstance(user_container, DispatchContainerRegister):
+                    raise TypeError('Expected the container model to be a user model. Got DispatchContainerRegister')
+                self._return_by_user_container(user_container)
         return True

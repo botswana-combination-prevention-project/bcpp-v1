@@ -2,6 +2,7 @@ import socket
 import logging
 from datetime import datetime
 from django.conf import settings
+from django.db.models.query import QuerySet
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Q, Count, Max
 from bhp_sync.helpers import TransactionHelper
@@ -161,6 +162,8 @@ class Base(object):
             retval = True
         if not retval:
             if models:
+                if isinstance(models, QuerySet):
+                    models = [model for model in models]
                 if not isinstance(models, list):
                     models = [models]
                 if TransactionHelper().has_incoming_for_model([model._meta.object_name for model in models], self.get_using_source()):

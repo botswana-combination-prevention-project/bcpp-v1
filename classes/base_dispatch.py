@@ -41,6 +41,7 @@ class BaseDispatch(Base):
         self._user_container_app_label = None
         self._user_container_identifier_attrname = None
         self._user_container_identifier = None
+        self._user_container_instance = None
         self._dispatch = None
         self._visit_models = {}
         self._set_user_container_app_label(user_container_app_label)
@@ -55,15 +56,17 @@ class BaseDispatch(Base):
         # confirm is a container model if user_container=None
         if not user_container and not instance.is_dispatch_container_model():
             raise DispatchError('Instance {0} is not a container model so attribute \'user_container\' cannot be None.'.format(instance))
+        if not user_container and instance.dispatch_item_container_reference():
+            raise DispatchError('Instance {0} may not be dispatched without a user container. Model method dispatch_item_container_reference() is not None'.format(instance))
         # confirm user container is registered with DispatchContainerRegister
         if user_container:
             if not user_container.is_dispatched_as_container():
-                raise DispatchError('Instance must be registered with a valid user container. Model {0} is not registered as a container.'.format(user_container))
+                raise DispatchError('Instance {0} must be registered with a valid user container. Model {1} is not dispatched as a user container.'.format(instance, user_container))
         return self._create_dispatch_item_register_instance(instance, user_container)
 
-    def _set_user_container_model_name(self, value):
-        if not value:
-            raise AttributeError('The model_name of the user\'s container model cannot be None. Set this in __init__() of the subclass.')
+    def _set_user_container_model_name(self, value=None):
+        #if not value:
+        #    raise AttributeError('The model_name of the user\'s container model cannot be None. Set this in __init__() of the subclass.')
         self._user_container_model_name = value
 
     def get_user_container_model_name(self):
@@ -72,9 +75,9 @@ class BaseDispatch(Base):
             self._set_user_container_model_name()
         return self._user_container_model_name
 
-    def _set_user_container_app_label(self, value):
-        if not value:
-            raise AttributeError('The app_label of the user\'s container model cannot be None. Set this in __init__() of the subclass.')
+    def _set_user_container_app_label(self, value=None):
+        #if not value:
+        #    raise AttributeError('The app_label of the user\'s container model cannot be None. Set this in __init__() of the subclass.')
         self._user_container_app_label = value
 
     def get_user_container_app_label(self):
@@ -114,8 +117,12 @@ class BaseDispatch(Base):
         return self._user_container_identifier
 
     def _set_user_container_instance(self):
-        user_container_cls = get_model(self.get_user_container_app_label, self.get_user_container_model_name)
-        self._user_container_instance = user_container_cls.objects.get(**{self.get_user_container_identifier_attrname(): self.get_user_container_identifier})
+        """Only sets if has app_label and model_name."""
+        if self.get_user_container_app_label() and self.get_user_container_model_name():
+            user_container_cls = get_model(self.get_user_container_app_label(), self.get_user_container_model_name())
+            if not user_container_cls:
+                raise TypeError('Unable to get the user container class with get_model() using {app_label:{0}, model_name:{1}}'.format(self.get_user_container_app_label(), self.get_user_container_model_name()))
+            self._user_container_instance = user_container_cls.objects.get(**{self.get_user_container_identifier_attrname(): self.get_user_container_identifier})
 
     def get_user_container_instance(self):
         if not self._user_container_instance:
@@ -126,7 +133,9 @@ class BaseDispatch(Base):
         return 'id'
 
     def _set_dispatch_container_register_instance(self):
-        """Creates a dispatch container instance for this controller session."""
+        """Creates a dispatch container instance for this controller session.
+
+        This is always created for each new instance."""
         # confirm user's app_label and model name get a valid container model
         user_container_model = get_model(self.get_user_container_app_label(), self.get_user_container_model_name())
         if not user_container_model:
@@ -207,7 +216,7 @@ class BaseDispatch(Base):
                 'dispatch_host': socket.gethostname(),
                 'dispatch_using': settings.DATABASES.get(self.get_using_source()).get('name'),
                 'item_app_label': instance._meta.app_label,
-                'item_model_name': instance._meta.object_name,
+                'item_model_name': instance._meta.object_name,  # not lower!
                 'item_identifier_attrname': self.get_user_item_identifier_attrname(),
                 }
             dispatch_item_register, created = DispatchItemRegister.objects.using(self.get_using_source()).get_or_create(
@@ -222,7 +231,7 @@ class BaseDispatch(Base):
                 dispatch_item_register.dispatch_host = socket.gethostname()
                 dispatch_item_register.dispatch_using = settings.DATABASES.get(self.get_using_source()).get('name')
                 dispatch_item_register.item_app_label = instance._meta.app_label
-                dispatch_item_register.item_model_name = instance._meta.object_name
+                dispatch_item_register.item_model_name = instance._meta.object_name  # not lower!
                 dispatch_item_register.item_identifier_attrname = self.get_user_item_identifier_attrname()
                 dispatch_item_register.save()
         except IntegrityError:

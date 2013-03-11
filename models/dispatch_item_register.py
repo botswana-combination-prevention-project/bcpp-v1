@@ -36,8 +36,6 @@ class DispatchItemRegister(BaseDispatch):
                 is_dispatched=True,
                 ).exclude(pk=self.pk)
             raise ValueError("Cannot dispatch. The item \'{0}\' is already dispatched to \'{1}\'.".format(dispatch_item.item_identifier, dispatch_item.dispatch_container_register.producer))
-        if not self.dispatch_container_register:
-            raise ValidationError('Attribute dispatch_container_register may not be None.')
         if self.is_dispatched and self.return_datetime:
             raise ValidationError('Attribute return_datetime must be None if is_dispatched=True.')
         if not self.is_dispatched and not self.return_datetime:
