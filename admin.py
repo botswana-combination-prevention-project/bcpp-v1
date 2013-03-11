@@ -1,15 +1,15 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseModelAdmin, BaseStackedInline
-from models import DispatchContainer, DispatchItem
+from models import DispatchContainerRegister, DispatchItemRegister
 from bhp_dispatch.actions import set_is_dispatched
 
 
-class DispatchItemInline(BaseStackedInline):
-    model = DispatchItem
+class DispatchItemRegisterInline(BaseStackedInline):
+    model = DispatchItemRegister
     extra = 0
 
 
-class DispatchContainerAdmin(BaseModelAdmin):
+class DispatchContainerRegisterAdmin(BaseModelAdmin):
     date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', ]
     list_display = (
@@ -30,11 +30,11 @@ class DispatchContainerAdmin(BaseModelAdmin):
         'return_datetime'
         )
     search_fields = ('id', )
-    inlines = [DispatchItemInline, ]
-admin.site.register(DispatchContainer, DispatchContainerAdmin)
+    inlines = [DispatchItemRegisterInline, ]
+admin.site.register(DispatchContainerRegister, DispatchContainerRegisterAdmin)
 
 
-class DispatchItemAdmin(BaseModelAdmin):
+class DispatchItemRegisterAdmin(BaseModelAdmin):
     date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', 'item_identifier']
     list_display = (
@@ -57,4 +57,4 @@ class DispatchItemAdmin(BaseModelAdmin):
     search_fields = ('dispatch_container__pk', 'item_identifier')
     actions = [set_is_dispatched, ]
 
-admin.site.register(DispatchItem, DispatchItemAdmin)
+admin.site.register(DispatchItemRegister, DispatchItemRegisterAdmin)

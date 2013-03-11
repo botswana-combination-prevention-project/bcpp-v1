@@ -2,18 +2,10 @@ import socket
 import logging
 from datetime import datetime
 from django.conf import settings
-from django.db.models import signals  # Signal, post_save
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Q, Count, Max
-from django.db.models.query import QuerySet
-from django.core.serializers.base import DeserializationError
-from django.core import serializers
-from django.db import IntegrityError
-from bhp_sync.models import BaseSyncUuidModel
-from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
-from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.exceptions import DispatchError, DispatchModelError
+from bhp_dispatch.exceptions import DispatchError
 
 logger = logging.getLogger(__name__)
 

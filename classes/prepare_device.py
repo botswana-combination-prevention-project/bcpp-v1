@@ -1,7 +1,6 @@
 import logging
 import os
 import sqlite3
-import socket
 import subprocess
 from datetime import datetime
 from django.db.models import Model

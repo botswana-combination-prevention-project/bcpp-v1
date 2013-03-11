@@ -1,6 +1,6 @@
 from django.test import TestCase
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
-from bhp_dispatch.models import TestItem, TestContainer, DispatchItem, DispatchContainer
+from bhp_dispatch.models import TestItem, TestContainer, DispatchItemRegister, DispatchContainerRegister
 from bhp_dispatch.classes import BaseDispatchController
 
 
@@ -19,8 +19,8 @@ class BaseControllerTests(TestCase):
         self.dispatch_container_identifier_attrname = 'test_container_identifier'
         self.dispatch_container_identifier = 'TEST_IDENTIFIER'
         self.dispatch_item_app_label = 'bhp_dispatch'  # usually something like 'mochudi_subject'
-        DispatchContainer.objects.all().delete()
-        DispatchItem.objects.all().delete()
+        DispatchContainerRegister.objects.all().delete()
+        DispatchItemRegister.objects.all().delete()
 
     def create_test_container(self):
         self.test_container = TestContainer.objects.create(test_container_identifier=self.dispatch_container_identifier)

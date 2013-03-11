@@ -26,6 +26,10 @@ class DispatchContainerError(Exception):
     pass
 
 
+class DispatchItemError(Exception):
+    pass
+
+
 class AlreadyReturned(Exception):
     pass
 

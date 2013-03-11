@@ -4,8 +4,8 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_dispatch.exceptions import AlreadyDispatchedContainer, AlreadyDispatchedItem, DispatchError
-#from bhp_dispatch.models import DispatchItem, DispatchContainer
+from bhp_dispatch.exceptions import AlreadyDispatchedContainer, AlreadyDispatchedItem
+#from bhp_dispatch.models import DispatchItemRegister, DispatchContainerRegister
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
     """Base model for all UUID models and adds dispatch methods and signals. """
 
     def is_dispatch_container_model(self):
-        """Flags a model as a container model that if dispatched will not appear in DispatchItems, but rather in DispatchContainer."""
+        """Flags a model as a container model that if dispatched will not appear in DispatchItems, but rather in DispatchContainerRegister."""
         return False
 
     def ignore_for_dispatch(self):
@@ -47,19 +47,20 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                 return False
         return True
 
-    @property
-    def is_dispatched(self):
-        """Returns True if the model is tracked/is_dispatched=True in the DispatchItem model.
-
-        ..note:: Unlike, :func:`_is_dispatched_to_producer_as_container`, this method does NOT consider
-            DispacthContainer. So if the instance is referred to in DispacthContainer but
-            not yet tracked in the DispatchItem model, the return value is False."""
-        is_dispatched = False
-        if self.is_dispatchable_model():
-            is_dispatched = self.is_dispatched_as_item()
-            if not isinstance(is_dispatched, bool):
-                raise TypeError('Expected a boolean as a return value from method is_dispatched_as_item(). Got {0}'.format(is_dispatched))
-        return is_dispatched
+#    def is_dispatched(self, using=None):
+#        """Returns True if the model is tracked/is_dispatched=True in the DispatchItemRegister model.
+#
+#        ..note:: Unlike, :func:`_is_dispatched_to_producer_as_container`, this method does NOT consider
+#            DispacthContainer. So if the instance is referred to in DispacthContainer but
+#            not yet tracked in the DispatchItemRegister model, the return value is False."""
+#        is_dispatched = False
+#        if self.is_dispatchable_model():
+#            is_dispatched = self.is_dispatched_as_item(using)
+#            if not isinstance(is_dispatched, bool):
+#                raise TypeError('Expected a boolean as a return value from method is_dispatched_as_item(). Got {0}'.format(is_dispatched))
+#            if not is_dispatched:
+#                is_dispatched = self.is_dispatched_as_container(using)
+#        return is_dispatched
 
     def dispatched_as_container_identifier_attr(self):
         """Override to return the field attrname of the identifier used for the dispatch container.
@@ -67,14 +68,14 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         Must be an field attname on the model used as a dispatch container, such as, household_identifier on model Household."""
         raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
 
-    def _is_dispatched_as_container(self, using=None):
+    def is_dispatched_as_container(self, using=None):
         """Determines if a model instance is dispatched as a container.
 
         For example: a household model instance may serve as a container for all household members and data."""
         is_dispatched = False
-        DispatchContainer = get_model('bhp_dispatch', 'DispatchContainer')
-        if DispatchContainer:
-            is_dispatched = DispatchContainer.objects.using(using).filter(
+        DispatchContainerRegister = get_model('bhp_dispatch', 'DispatchContainerRegister')
+        if DispatchContainerRegister:
+            is_dispatched = DispatchContainerRegister.objects.using(using).filter(
                 container_identifier=getattr(self, self.dispatched_as_container_identifier_attr()),
                 is_dispatched=True,
                 return_datetime__isnull=True).exists()
@@ -88,7 +89,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             :func:`dispatch_item_container_reference`, returned a lookup query string that points the subject consent to
             an instance of household that is itself dispatched. The household is the container. The subject consent is
             considered dispatched because it's container is dispatched. The subject consent might not have a
-            corresponding DispatchItem."""
+            corresponding DispatchItemRegister."""
         is_dispatched = False
         if self.dispatch_item_container_reference():
             dispatch_container_model_cls, lookup_attrs = self.dispatch_item_container_reference()
@@ -124,7 +125,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
 
     def is_dispatched_as_item(self, using=None):
-        """Returns the models 'dispatched' status in model DispatchItem."""
+        """Returns the models 'dispatched' status in model DispatchItemRegister."""
         is_dispatched = False
         if self.is_dispatchable_model():
             if self.id:
@@ -141,14 +142,14 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         dispatch_item = None
         if self.id:
             if self.is_dispatchable_model():
-                DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
-                if DispatchItem:
-                    if DispatchItem.objects.using(using).filter(
+                DispatchItemRegister = get_model('bhp_dispatch', 'DispatchItemRegister')
+                if DispatchItemRegister:
+                    if DispatchItemRegister.objects.using(using).filter(
                             item_app_label=self._meta.app_label,
                             item_model_name=self._meta.object_name,
                             item_pk=self.pk,
                             is_dispatched=True).exists():
-                        dispatch_item = DispatchItem.objects.using(using).get(
+                        dispatch_item = DispatchItemRegister.objects.using(using).get(
                             item_app_label=self._meta.app_label,
                             item_model_name=self._meta.object_name,
                             item_pk=self.pk,
@@ -160,7 +161,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         if self.id:
             if self.is_dispatchable_model():
                 if self.is_dispatch_container_model():
-                    if self._is_dispatched_as_container(using):
+                    if self.is_dispatched_as_container(using):
                         raise AlreadyDispatchedContainer('Model {0}-{1} is currently dispatched as a container for other dispatched items.'.format(self._meta.object_name, self.pk))
                 if self.is_dispatched_as_item(using):
                     raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(self._meta.object_name, self.pk))

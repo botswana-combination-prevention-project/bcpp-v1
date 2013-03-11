@@ -1,13 +1,8 @@
 import logging
-import socket
-from datetime import datetime
-from django.conf import settings
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from bhp_lab_tracker.models import HistoryModel
-from bhp_registration.models import RegisteredSubject
 from bhp_dispatch.classes import BaseDispatchController
-from bhp_dispatch.models import DispatchItem
 
 
 logger = logging.getLogger(__name__)
@@ -27,19 +22,19 @@ class DispatchController(BaseDispatchController):
 
     def __init__(self, using_source,
                  using_destination,
-                 dispatch_container_app_label,
-                 dispatch_container_model_name,
-                 dispatch_container_identifier_attrname,
-                 dispatch_container_identifier,
+                 user_container_app_label,
+                 user_container_model_name,
+                 user_container_identifier_attrname,
+                 user_container_identifier,
                  dispatch_item_app_label,
                  dispatch_url,
                  **kwargs):
         super(DispatchController, self).__init__(using_source,
             using_destination,
-            dispatch_container_app_label,
-            dispatch_container_model_name,
-            dispatch_container_identifier_attrname,
-            dispatch_container_identifier,
+            user_container_app_label,
+            user_container_model_name,
+            user_container_identifier_attrname,
+            user_container_identifier,
             dispatch_item_app_label,
             **kwargs)
         self._dispatch_app_label = None
@@ -208,7 +203,7 @@ class DispatchController(BaseDispatchController):
         ..note:: calls the user overridden :func:`dispatch_prep`."""
         # check source for the producer based on using_destination.
         if self.debug:
-            logger.info("Dispatching items for {0}".format(self.get_dispatch_container_identifier()))
+            logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
         self._dispatch_prep()
         #return dispatch_item
 

@@ -1,11 +1,11 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from base_dispatch import BaseDispatch
-from dispatch_container import DispatchContainer
+from dispatch_container_register import DispatchContainerRegister
 
 
-class DispatchItem(BaseDispatch):
-    dispatch_container = models.ForeignKey(DispatchContainer)
+class DispatchItemRegister(BaseDispatch):
+    dispatch_container_register = models.ForeignKey(DispatchContainerRegister)
     item_app_label = models.CharField(max_length=35, null=True)
     item_model_name = models.CharField(max_length=35, null=True)
     item_identifier_attrname = models.CharField(max_length=35, null=True)
@@ -35,19 +35,19 @@ class DispatchItem(BaseDispatch):
                 item_identifier=self.item_identifier,
                 is_dispatched=True,
                 ).exclude(pk=self.pk)
-            raise ValueError("Cannot dispatch. The item \'{0}\' is already dispatched to \'{1}\'.".format(dispatch_item.item_identifier, dispatch_item.dispatch_container.producer))
-        if not self.dispatch_container:
-            raise ValidationError('Attribute dispatch_container may not be None.')
+            raise ValueError("Cannot dispatch. The item \'{0}\' is already dispatched to \'{1}\'.".format(dispatch_item.item_identifier, dispatch_item.dispatch_container_register.producer))
+        if not self.dispatch_container_register:
+            raise ValidationError('Attribute dispatch_container_register may not be None.')
         if self.is_dispatched and self.return_datetime:
             raise ValidationError('Attribute return_datetime must be None if is_dispatched=True.')
         if not self.is_dispatched and not self.return_datetime:
             raise ValidationError('Attribute \'return_datetime\' may not be None if \'is_dispatched\'=False.')
 
-        super(DispatchItem, self).save(*args, **kwargs)
+        super(DispatchItemRegister, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "Dispatch Item {0} {1} -> {2} ({3})".format(self.item_model_name, self.item_identifier, self.producer.name, self.is_dispatched)
 
     class Meta:
         app_label = "bhp_dispatch"
-        unique_together = (('dispatch_container', 'item_pk', 'item_identifier', 'is_dispatched'), )
+        unique_together = (('dispatch_container_register', 'item_pk', 'item_identifier', 'is_dispatched'), )

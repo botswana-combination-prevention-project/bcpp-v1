@@ -1,7 +1,5 @@
 import logging
-import socket
 from uuid import uuid4
-from datetime import datetime
 from tastypie.models import ApiKey
 from django.db import IntegrityError
 from django.db.models import Model, get_model, get_models, get_app, Max, ForeignKey, OneToOneField
@@ -113,15 +111,15 @@ class BasePrepareDevice(Base):
 #                    self.reset_model_raw_sql(model_cls)
 #                else:
 #                    self.delete_depended_model_instances(model_cls)
-##                    self.reset_model_raw_sql(model_cls)
+# #                    self.reset_model_raw_sql(model_cls)
 #                    if "history" in dir(model_cls):
 #                        if model_cls.history.using(using).all().count() > 0:
 #                            self.delete_audit_instances(model_cls)
         for instance in model_cls.objects.using(using).all():
             print '    deleting {0}...'.format(instance)
             try:
-                #Delete all the audit logs for the model
-                #self.reset_model(model_cls)
+                # Delete all the audit logs for the model
+                # self.reset_model(model_cls)
                 if "history" in dir(model_cls):
                     if model_cls.history.using(using).all().count() > 0:
                         self.delete_audit_instances(model_cls)
@@ -140,7 +138,7 @@ class BasePrepareDevice(Base):
                         self.delete_depended_model_instances(model_cls)
                         instance.delete(using=using)
                 elif 'Cannot add or update a child row' in e.args[1]:
-                    if '_audit' in e.args[1]: 
+                    if '_audit' in e.args[1]:
                         raise
                     else:
                         raise
@@ -175,33 +173,33 @@ class BasePrepareDevice(Base):
                 if  isinstance(field, (ForeignKey, OneToOneField)):
                     if field.rel.to == fk_cls:
                         if model_cls not in _models:
-                            _models.append(model_cls) 
-        return _models                       
+                            _models.append(model_cls)
+        return _models
 
-    def delete_audit_instances(self, model_cls): 
+    def delete_audit_instances(self, model_cls):
         using = self.get_using_destination()
-        print "    deleting {0} {1} audit logs".format(model_cls.history.using(using).all().count(), model_cls._meta.object_name) 
+        print "    deleting {0} {1} audit logs".format(model_cls.history.using(using).all().count(), model_cls._meta.object_name)
         model_cls.history.using(using).all().delete()
 
-    def reset_model_raw_sql(self, model_cls): 
+    def reset_model_raw_sql(self, model_cls):
         from django.db import connections, transaction
         cursor = connections[self.get_using_destination()].cursor()
-        table_name=format(model_cls._meta.db_table)
+        table_name = format(model_cls._meta.db_table)
         raw_sql_query = "DELETE FROM `{0}`".format(table_name)
         cursor.execute(raw_sql_query)
         transaction.commit_unless_managed(using=self.get_using_destination())
         print " deleted"
-                        
-    def delete_audit_instances_raw_sql(self, model_cls): 
+
+    def delete_audit_instances_raw_sql(self, model_cls):
         from django.db import connections, transaction
         cursor = connections[self.get_using_destination()].cursor()
-        print "    deleting {0} audit logs".format(model_cls.history.using(self.get_using_destination()).all().count()) 
+        print "    deleting {0} audit logs".format(model_cls.history.using(self.get_using_destination()).all().count())
         audit_table_name = "{0}_audit".format(model_cls._meta.db_table)
         raw_sql_query = "DELETE FROM `{0}`".format(audit_table_name)
         cursor.execute(raw_sql_query)
         transaction.commit_unless_managed(using=self.get_using_destination())
-        print " deleted"   
-            
+        print " deleted"
+
     def reset_listed_models(self, models):
         for app_name, model_name in models:
             model_cls = get_model(app_name, model_name)

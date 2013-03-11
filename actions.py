@@ -1,3 +1,4 @@
+
 def set_is_dispatched(modeladmin, request, queryset, **kwargs):
     """Sets is dispatched to True"""
     for qs in queryset:
@@ -6,7 +7,6 @@ def set_is_dispatched(modeladmin, request, queryset, **kwargs):
             qs.return_datetime = None
             qs.save()
 set_is_dispatched.short_description = "Set is_dispatched to True."
-
 #def process_dispatch(modeladmin, request, queryset, **kwargs):
 #
 #    """Checkout all selected households to specified netbooks.

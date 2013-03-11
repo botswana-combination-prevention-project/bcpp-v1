@@ -9,7 +9,7 @@ from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.classes import Base, BaseDispatchController, ReturnController
 from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched, AlreadyDispatchedItem
-from bhp_dispatch.models import TestItem, DispatchItem, DispatchContainer, TestContainer
+from bhp_dispatch.models import TestItem, DispatchItemRegister, DispatchContainerRegister, TestContainer
 from base_controller_tests import BaseControllerTests
 
 
@@ -152,7 +152,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertEquals(OutgoingTransaction.objects.filter(is_consumed=False).count(), 9)
         RegisteredSubject.objects.all().delete()
         RegisteredSubject.objects.using(self.using_destination).all().delete()
-        #DispatchContainer.objects.all().delete()
+        #DispatchContainerRegister.objects.all().delete()
 
     def test_get_scheduled_models(self):
         self.create_producer(True)
@@ -207,7 +207,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertTrue(self.test_item.is_dispatched)
         # get a return controller
         return_controller = ReturnController(self.using_source, self.using_destination)
-        self.assertEqual(DispatchItem.objects.all().count(), 1)
+        self.assertEqual(DispatchItemRegister.objects.all().count(), 1)
         # return the dispatched items
         return_controller.return_dispatched_items()
         # assert test_container is not dispatched
@@ -240,8 +240,8 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.create_base_dispatch_controller()
         # get the DispatchContanier instance
         dispatch_container = self.base_dispatch_controller.get_dispatch_container_instance()
-        self.assertIsInstance(dispatch_container, DispatchContainer)
-        # get the model that is being used as a container using information from DispatchContainer
+        self.assertIsInstance(dispatch_container, DispatchContainerRegister)
+        # get the model that is being used as a container using information from DispatchContainerRegister
         obj_cls = get_model(
             self.base_dispatch_controller.get_dispatch_container_instance().container_app_label,
             self.base_dispatch_controller.get_dispatch_container_instance().container_model_name)
@@ -256,16 +256,16 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.base_dispatch_controller.dispatch_as_json(obj)
         # assert that the item was dispacthed to its destination
         self.assertIsInstance(obj.__class__.objects.using(self.base_dispatch_controller.get_using_destination()).get(pk=obj.pk), obj.__class__)
-        # assert that the disptched item was tracked in DispatchItem
-        self.assertEqual(DispatchItem.objects.all().count(), 1)
-        self.assertTrue(DispatchItem.objects.get(item_pk=obj.pk).is_dispatched)
+        # assert that the disptched item was tracked in DispatchItemRegister
+        self.assertEqual(DispatchItemRegister.objects.all().count(), 1)
+        self.assertTrue(DispatchItemRegister.objects.get(item_pk=obj.pk).is_dispatched)
         # requery for the container instance (Necessary??)
         obj = obj_cls.objects.get(**{dispatch_container.container_identifier_attrname: self.base_dispatch_controller.get_dispatch_container_instance().container_identifier})
         #self.assertTrue(obj.is_dispatched)
         self.assertTrue(obj.is_dispatched)
         # assert that you cannot dispatch it again
         self.assertRaises(AlreadyDispatchedItem, self.base_dispatch_controller.dispatch_as_json, obj)
-        dispatch_item = DispatchItem.objects.get(item_pk=obj.pk)
+        dispatch_item = DispatchItemRegister.objects.get(item_pk=obj.pk)
         # flag is dispatched as False
         dispatch_item.is_dispatched = False
         dispatch_item.return_datetime = datetime.today()
@@ -273,6 +273,6 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # dispatch again ...
         self.assertIsNone(self.base_dispatch_controller.dispatch_as_json(obj))
         # assert that a the existing dispatch item was edited (uses get_or_create)
-        self.assertEqual(DispatchItem.objects.all().count(), 1)
-        self.assertEqual(DispatchItem.objects.filter(is_dispatched=True, return_datetime__isnull=True).count(), 1)
-        #DispatchItem.objects.all().delete()
+        self.assertEqual(DispatchItemRegister.objects.all().count(), 1)
+        self.assertEqual(DispatchItemRegister.objects.filter(is_dispatched=True, return_datetime__isnull=True).count(), 1)
+        #DispatchItemRegister.objects.all().delete()
