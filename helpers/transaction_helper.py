@@ -9,6 +9,7 @@ class TransactionHelper(object):
         return IncomingTransaction.objects.using(using).filter(producer=producer, is_consumed=False).exists()
 
     def has_incoming_for_model(self, models, using=None):
+        """Checks if incoming transactions exist for the given model(s)."""
         if not models:
             return False
         if not using:
