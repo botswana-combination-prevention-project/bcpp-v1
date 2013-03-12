@@ -86,7 +86,7 @@ class BasePrepareDevice(Base):
         #models = []
         for model in get_models(get_app(app_name)):
             #models.append(model)
-            self.serialize_model_as_jason(model)
+            self.model_to_json(model)
 
     def update_list_models(self):
         list_models = []
@@ -96,7 +96,7 @@ class BasePrepareDevice(Base):
                 list_models.append(model)
         print '    found {0} list models'.format(len(list_models))
         for list_model in list_models:
-            self.serialize_model_as_jason(list_model)
+            self.model_to_json(list_model)
 
     def reset_model(self, model_cls):
         """Deletes all instances of the given model and its audit log entries 
@@ -221,7 +221,7 @@ class BasePrepareDevice(Base):
             model_cls = get_model(app,model)
         except:
             model_cls = model_or_app_model_tuple
-        self.serialize_model_as_jason(model_cls)
+        self.model_to_json(model_cls)
         
     def reset_app_models(self, app_name):
         print '    deleting for app {0}...'.format(app_name)
