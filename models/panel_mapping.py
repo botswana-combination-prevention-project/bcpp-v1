@@ -1,9 +1,9 @@
 from django.db import models
-from bhp_base_model.models import BaseUuidModel
+from lab_base_model.models import BaseLabUuidModel
 from lab_panel.models import Panel
 
 
-class PanelMapping(BaseUuidModel):
+class PanelMapping(BaseLabUuidModel):
 
     panel_text = models.CharField(
         max_length=50,
