@@ -76,12 +76,12 @@ class BasePrepareDevice(Base):
         self.update_model(User, [Model])
         print '    done with Auth.'
 
-    def update_app_models(self, app_name):
+    def update_app_models(self, app_name, additional_base_model_class=None):
         print '    updating for app {0}...'.format(app_name)
         #models = []
         for model in get_models(get_app(app_name)):
             #models.append(model)
-            self.model_to_json(model)
+            self.model_to_json(model, additional_base_model_class)
 
     def update_list_models(self):
         list_models = []
