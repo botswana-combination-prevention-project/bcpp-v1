@@ -212,7 +212,8 @@ class Base(object):
         return options
 
     def model_to_json(self, model_cls):
-        self._to_json([instance for instance in model_cls.objects.all()])
+        """Sends all instances of the model class to :func:`_to_json`."""
+        self._to_json(model_cls.objects.all())
 
     def _to_json(self, model_instances):
         """Serialize models on source and deserialize on destination.
