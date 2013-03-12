@@ -54,6 +54,7 @@ class Base(object):
         self._producer = None
         self.server_device_id = kwargs.get('server_device_id', '99')
         self.exception = kwargs.get('exception', DispatchError)
+        self.preparing_status = kwargs.get('preparing_netbook',None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
         if using_source == using_destination:
@@ -220,9 +221,10 @@ class Base(object):
             if not isinstance(model_instances, (list, QuerySet)):
                 model_instances = [model_instances]
             # confirm all model_instances are of the correct base class
-            for instance in model_instances:
-                if not isinstance(instance, base_model_class):
-                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
+            if not self.preparing_status:
+                for instance in model_instances:
+                    if not isinstance(instance, base_model_class):
+                        raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
             #serialize
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
             # deserialize on destination
