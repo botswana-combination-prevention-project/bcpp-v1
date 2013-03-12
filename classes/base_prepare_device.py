@@ -61,9 +61,7 @@ class BasePrepareDevice(Base):
 
     def update_content_type(self):
         ContentType.objects.using(self.get_using_destination()).all().delete()
-        self.update_model(ContentType, 
-                          #base_model_class=Model
-                          )
+        self.update_model(ContentType, [Model])
 
     def update_auth(self):
         UserProfile.objects.using(self.get_using_destination()).all().delete
@@ -71,14 +69,11 @@ class BasePrepareDevice(Base):
         User.objects.using(self.get_using_destination()).all().delete()
         Group.objects.using(self.get_using_destination()).all().delete()
         print '    update permissions'
-        self.update_model(Permission  #, base_model_class=Model, use_natural_keys=False
-                          )
+        self.update_model(Permission, [Model])
         print '    update groups'
-        self.update_model(Group#, base_model_class=Model, use_natural_keys=False
-                          )
+        self.update_model(Group, [Model])
         print '    update users'
-        self.update_model(User#, base_model_class=Model, use_natural_keys=False
-                          )
+        self.update_model(User, [Model])
         print '    done with Auth.'
 
     def update_app_models(self, app_name):
@@ -215,13 +210,13 @@ class BasePrepareDevice(Base):
             model_cls = get_model(app_name, model_name)
             self.reset_model(model_cls)
     
-    def update_model(self, model_or_app_model_tuple):
+    def update_model(self, model_or_app_model_tuple, additional_base_model_class=None):
         try:
             app, model = model_or_app_model_tuple
             model_cls = get_model(app, model)
         except:
             model_cls = model_or_app_model_tuple
-        self.model_to_json(model_cls)
+        self.model_to_json(model_cls, additional_base_model_class)
         
     def reset_app_models(self, app_name):
         print '    deleting for app {0}...'.format(app_name)
