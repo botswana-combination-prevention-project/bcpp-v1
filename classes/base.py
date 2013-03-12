@@ -54,13 +54,8 @@ class Base(object):
         self._producer = None
         self.server_device_id = kwargs.get('server_device_id', '99')
         self.exception = kwargs.get('exception', DispatchError)
-        self.preparing_status = kwargs.get('preparing_netbook', None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
-        #if not 'ALLOW_DISPATCH' in dir(settings):
-        #    raise self.exception('Settings attribute \'ALLOW_DISPATCH\' not found (ALLOW_DISPATCH=<TRUE/FALSE>). Please add to your settings.py.')
-        #if not 'DISPATCH_MODEL' in dir(settings):
-        #    raise self.exception('Settings attribute \'DISPATCH_MODEL\' not found where DISPATCH_MODEL=(app_label, model_name). Please add to your settings.py.')
         if using_source == using_destination:
             raise self.exception('Arguments \'<source>\' and \'<destination\'> cannot be the same. Got \'{0}\' and \'{1}\''.format(using_source, using_destination))
         self.set_using_source(using_source)
@@ -97,10 +92,6 @@ class Base(object):
             raise self.exception('Argument \'<using_destination\'> cannot be \'default\' if running on the server (check settings.DEVICE).')
         if self.is_valid_using(using_destination, 'destination'):
             self._using_destination = using_destination
-#        if self.get_using_source() == 'default':
-#            # when source is default (running on server), destination must be an active producer settings key
-#            if not using_destination in Producer.objects.using(self.get_using_source()).filter(is_active=True).values_list('settings_key'):
-#                raise self.exception("Destination {0} does not match any database settings keys of the active producers".format(using_destination))
 
     def get_using_destination(self):
         """Gets the ORM `using` parameter for "destination"."""
@@ -176,9 +167,6 @@ class Base(object):
                 if TransactionHelper().has_incoming_for_model([model._meta.object_name for model in models], self.get_using_source()):
                     retval = True
         return retval
-
-#    def update_model(self, model, **kwargs):
-#        self.dispatch_model_as_json(model, **kwargs)
 
     def get_recent(self, model_cls, destination_hostname=None):
         """Returns a queryset of the most recent instances from the model for all but the current host."""
