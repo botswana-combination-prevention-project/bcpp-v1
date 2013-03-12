@@ -3,10 +3,15 @@ import logging
 from datetime import datetime
 from django.conf import settings
 from django.db.models.query import QuerySet
+from django.db.models import signals
+from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Q, Count, Max
+from django.db import IntegrityError
+from bhp_sync.models import BaseSyncUuidModel
+from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
-from bhp_dispatch.exceptions import DispatchError
+from bhp_dispatch.exceptions import DispatchError, DispatchModelError, AlreadyDispatchedItem
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +53,7 @@ class Base(object):
         self._producer = None
         self.server_device_id = kwargs.get('server_device_id', '99')
         self.exception = kwargs.get('exception', DispatchError)
+        self.preparing_status = kwargs.get('preparing_netbook',None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
         #if not 'ALLOW_DISPATCH' in dir(settings):
@@ -170,8 +176,8 @@ class Base(object):
                     retval = True
         return retval
 
-    def update_model(self, model, **kwargs):
-        self.dispatch_model_as_json(model, **kwargs)
+#    def update_model(self, model, **kwargs):
+#        self.dispatch_model_as_json(model, **kwargs)
 
     def get_recent(self, model_cls, destination_hostname=None):
         """Returns a queryset of the most recent instances from the model for all but the current host."""
@@ -203,5 +209,56 @@ class Base(object):
                         dct.update({'hostname_modified': item.get('hostname_modified'), 'modified__gt': item.get('modified__max')})
                         options[n] = dct
         return options
-
+    
+    def serialize_model_as_jason(self, model_cls):
+        self.serialize_source_instances([instance for instance in model_cls.objects.all()])
+        
+    def serialize_source_instances(self, source_instances):
+        base_model_class = BaseSyncUuidModel
+        if source_instances:
+            # convert to list if not iterable
+            if not isinstance(source_instances, (list, QuerySet)):
+                source_instances = [source_instances]
+            # confirm all instances are of the correct base class only when not preparing netbook.
+            if not self.preparing_status:
+                for instance in source_instances:
+                    if not isinstance(instance, base_model_class):
+                        raise DispatchModelError('Dispatch model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
+            #serialize
+            json = serializers.serialize('json', source_instances, use_natural_keys=True)
+            # deserialize on destination
+            for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
+                if not self.preparing_status and d_obj.object.is_dispatched:
+                    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
+                try:
+                    # disconnect signal to avoid creating transactions on the source for data saved on destination
+                    signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                    #save
+                    d_obj.save(using=self.get_using_destination())
+                    # reconnect
+                    signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                except IntegrityError as e:
+                    logger.info(e)
+                    logger.info(e.message)
+                    if 'is not unique' in e.message:
+                        raise DispatchError('Model instance {0} is already on producer {1}.'.format(d_obj.object, self.get_producer_name()))
+                    if 'Duplicate' in e.message:
+                        pass
+                    elif 'Cannot add or update a child row' in e.message:
+                        # assume Integrity error was because of missing ForeignKey data
+                        self.dispatch_foreign_key_instances(self.get_dispatch_item_app_label())
+                        # try again
+                        # disconnect signal
+                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                        #save
+                        d_obj.save(using=self.get_using_destination())
+                        # reconnect
+                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                    else:
+                        raise
+                except:
+                    raise
+                if not self.preparing_status and not self.create_dispatched_item_instance(d_obj.object):
+                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
+                logger.info('dispatched {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
  
