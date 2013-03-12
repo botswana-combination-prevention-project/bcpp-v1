@@ -7,6 +7,7 @@ from django.db.models import Model
 from django.conf import settings
 from django.db.models import signals
 from bhp_common.utils import td_to_string
+from bhp_base_model.models import BaseModel
 from bhp_consent.models.signals import add_models_to_catalogue
 from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
@@ -86,8 +87,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 4:
             self.timer()
             logger.info("4. Updating api keys...")
-            self.update_model(('tastypie', 'apikey')#, base_model_class=Model
-                              )
+            self.update_model(('tastypie', 'apikey'), [Model])
         if not step > 5:
             self.timer()
             logger.info("5. Updating lists...")
@@ -121,7 +121,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 11:
             self.timer()
             logger.info("11. Updating subject identifiers...")
-            self.update_app_models('bhp_identifier')
+            self.update_app_models('bhp_identifier', [BaseModel])
         if not step > 12:
             self.timer()
             logger.info("12. Updating registered subjects...")
