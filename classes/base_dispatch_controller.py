@@ -6,7 +6,7 @@ from django.db.models import get_models, get_app, ForeignKey, OneToOneField, sig
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.exceptions import DispatchModelError, AlreadyDispatchedItem, DispatchError, DispatchContainerError
+from bhp_dispatch.exceptions import DispatchModelError, AlreadyDispatchedItem, AlreadyReturnedController, DispatchError, DispatchContainerError, AlreadyDispatchedContainer
 from bhp_dispatch.models import DispatchContainerRegister
 from base_dispatch import BaseDispatch
 
@@ -101,6 +101,8 @@ class BaseDispatchController(BaseDispatch):
         self.dispatch_user_items_as_json(model_cls.objects.all(), user_container)
 
     def dispatch_user_container_as_json(self, user_container):
+        if not self.get_dispatch_container_register_instance().is_dispatched:
+            raise AlreadyReturnedController('This controller has already returned it\'s items. To dispatch new items, create a new instance.')
         if not isinstance(user_container, BaseSyncUuidModel):
             raise DispatchContainerError('User container must be an instance of BaseSyncUuidModel')
         if not user_container.is_dispatch_container_model():
@@ -111,6 +113,8 @@ class BaseDispatchController(BaseDispatch):
         logger.info('dispatched {0} {1} to {2}.'.format(user_container._meta.object_name, user_container, self.get_using_destination()))
 
     def dispatch_user_items_as_json(self, user_items, user_container=None):
+        if not self.get_dispatch_container_register_instance().is_dispatched:
+            raise AlreadyReturnedController('This controller has already returned it\'s items. To dispatch new items, create a new instance.')
         user_container = user_container or self.get_user_container_instance()
         #if not user_container:
         #    raise DispatchError('Attribute user_container may not be None')

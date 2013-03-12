@@ -33,9 +33,12 @@ class ReturnController(Base):
             raise TypeError('Attribute dispatch_container_register must be an instance of DispatchContainerRegister. Got {0}'.format(dispatch_container_register))
         return DispatchItemRegister.objects.filter(dispatch_container_register=dispatch_container_register, is_dispatched=True, return_datetime__isnull=True)
 
-    def return_items_for_user_container(self, user_container, using=None):
-        """Returns items in a user container."""
-        #TODO: yes, this is inefficient. But can we check for just those items within this container efficiently?
+    def deregister_all_for_user_container(self, user_container, using=None):
+        """Returns items in a user container and the user container, as a DispatchItemRegister, itself.
+
+        This uses the user_container to find the DispatchContainerRegister and tries to de-register all
+        related instances in DispatchItemRegister. That should also include de-registering the user_container
+        from DispatchItemRegister."""
         if self.has_outgoing_transactions():
             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions on {1}. '
                                           'Run bhp_sync first.'.format(self.get_producer_name(), self.get_using_destination()))
@@ -48,14 +51,14 @@ class ReturnController(Base):
             raise DispatchContainerError('Failed to get DispatchContainerRegister for user container {0}.'.format(user_container))
         # all tx's are consumed so flag as no longer dispatched
         # TODO: this does not return what i expect
-        if DispatchItemRegister.objects.using(using).filter(dispatch_container_register=dispatch_container_register):
-            #raise DispatchItemError('Expected to find items registered with {0}. User container is {1}'.format(dispatch_container_register, user_container))
+        if DispatchItemRegister.objects.using(using).filter(dispatch_container_register__pk=dispatch_container_register.pk):
             DispatchItemRegister.objects.using(using).filter(
-                dispatch_container_register=dispatch_container_register,
+                dispatch_container_register__pk=dispatch_container_register.pk,
                 is_dispatched=True,
                 return_datetime__isnull=True).update(
                     return_datetime=datetime.now(),
                     is_dispatched=False)
+        return dispatch_container_register
 
     def _return_items_for_queryset(self, queryset, using=None):
         """Returns items in a queryset."""
@@ -114,13 +117,8 @@ class ReturnController(Base):
         if self.has_incoming_transactions():
             raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on '
                                           'this server. Consume them first.'.format(self.get_producer_name()))
-        # return all items for this user container
-        self.return_items_for_user_container(user_container)
-        # confirm all dispatch items in the container are returned
-        # TODO: does the dispatch container as a dispatch item cause a problem?
-        dispatch_container_register = self.get_dispatch_container_register(user_container)
-        if self.get_dispatch_item_instances_for_container(dispatch_container_register):
-            raise DispatchContainerError('Dispatch container {0} has items that are still dispatched.'.format(user_container))
+        # de-register all items for this user container (including the user container)
+        dispatch_container_register = self.deregister_all_for_user_container(user_container)
         DispatchContainerRegister.objects.filter(pk=dispatch_container_register.pk).update(is_dispatched=False, return_datetime=datetime.today())
 
     def return_dispatched_items(self, queryset=None):

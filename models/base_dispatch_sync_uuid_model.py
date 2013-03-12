@@ -82,42 +82,41 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                     return_datetime__isnull=True).exists()
         return is_dispatched
 
-    def is_dispatched_item_within_container(self, using=None):
-        """Returns True if the model class is dispatched within a dispatch container.
+    def is_dispatched_within_user_container(self, using=None):
+        """Returns True if the model class is dispatched within a user container.
 
         For example::
             a subject_consent would be considered dispatched if the method on subject_consent,
-            :func:`dispatch_item_container_reference`, returned a lookup query string that points the subject consent to
+            :func:`dispatch_container_lookup`, returned a lookup query string that points the subject consent to
             an instance of household that is itself dispatched. The household is the container. The subject consent is
             considered dispatched because it's container is dispatched. The subject consent might not have a
-            corresponding DispatchItemRegister."""
+            corresponding DispatchItemRegister. This might happen if the subject_consent is created on the producer and re-synced
+            with the source before the Household is returned."""
         is_dispatched = False
-        if self.dispatch_item_container_reference():
-            dispatch_container_model_cls, lookup_attrs = self.dispatch_item_container_reference()
-            if isinstance(dispatch_container_model_cls, (list, tuple)):
-                dispatch_container_model_cls = get_model(dispatch_container_model_cls[0], dispatch_container_model_cls[1])
+        if self.dispatch_container_lookup():
+            user_container_model_cls, lookup_attrs = self.dispatch_container_lookup()
+            if isinstance(user_container_model_cls, (list, tuple)):
+                user_container_model_cls = get_model(user_container_model_cls[0], user_container_model_cls[1])
             if not isinstance(lookup_attrs, basestring):
-                raise TypeError('Method dispatch_item_container_reference must return a (model class/tuple, list)')
+                raise TypeError('Method dispatch_container_lookup must return a (model class/tuple, list) that points to the user container')
             lookup_attrs = lookup_attrs.split('__')
-            print lookup_attrs
             # last item in the list must be the container identifier
-            if not lookup_attrs[-1:] == [dispatch_container_model_cls().dispatched_as_container_identifier_attr()]:
-                raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_item_container_reference() '
+            if not lookup_attrs[-1:] == [user_container_model_cls().dispatched_as_container_identifier_attr()]:
+                raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_container_lookup() '
                                            'must return a lookup attr string that ends in the container '
-                                           'identifier field name.'.format(dispatch_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
+                                           'identifier field name.'.format(user_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
             lookup_attrs = list(set(lookup_attrs))
             lookup_value = self
-            print lookup_attrs
+            # TODO: fails sometimes on getattr
             for attrname in lookup_attrs:
-                print lookup_value
                 lookup_value = getattr(lookup_value, attrname)
-            container_attr = dispatch_container_model_cls().dispatched_as_container_identifier_attr()
+            container_attr = user_container_model_cls().dispatched_as_container_identifier_attr()
             options = {container_attr: lookup_value}
-            if dispatch_container_model_cls.objects.using(using).filter(**options).exists():
-                is_dispatched = dispatch_container_model_cls.objects.using(using).get(**options).is_dispatched_as_container()
+            if user_container_model_cls.objects.using(using).filter(**options).exists():
+                is_dispatched = user_container_model_cls.objects.using(using).get(**options).is_dispatched_as_container()
         return is_dispatched
 
-    def dispatch_item_container_reference(self):
+    def dispatch_container_lookup(self):
         """Returns a tuple of (model_cls, attname)  to get the model instance used as a dispatch container.
 
         User must override.
@@ -136,9 +135,9 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                     is_dispatched = True
             if not self.is_dispatch_container_model():
                 if not is_dispatched:
-                    is_dispatched = self.is_dispatched_item_within_container(using)
+                    is_dispatched = self.is_dispatched_within_user_container(using)
                     if not isinstance(is_dispatched, bool):
-                        raise TypeError('Expected a boolean as a return value from method is_dispatched_item_within_container(). Got {0}'.format(is_dispatched))
+                        raise TypeError('Expected a boolean as a return value from method is_dispatched_within_user_container(). Got {0}'.format(is_dispatched))
         return is_dispatched
 
     def get_dispatched_item(self, using=None):

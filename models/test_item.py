@@ -17,7 +17,7 @@ class TestItem(BaseDispatchSyncUuidModel):
     def is_dispatch_container_model(self):
         return False
 
-    def dispatch_item_container_reference(self, using=None):
+    def dispatch_container_lookup(self, using=None):
         return (TestContainer, 'test_container__test_container_identifier')
 
     def include_for_dispatch(self):

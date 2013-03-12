@@ -8,7 +8,7 @@ from bhp_consent.models import BaseConsentedUuidModel
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.classes import Base, BaseDispatchController, ReturnController
-from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched, AlreadyDispatchedItem
+from bhp_dispatch.exceptions import DispatchError, AlreadyDispatched, AlreadyDispatchedItem, AlreadyDispatchedContainer, AlreadyReturnedController
 from bhp_dispatch.models import TestItem, DispatchItemRegister, DispatchContainerRegister, TestContainer
 from base_controller_tests import BaseControllerTests
 
@@ -203,28 +203,57 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertFalse(self.test_item.is_dispatched_as_item())
         # get a dispatch controller
         self.create_base_dispatch_controller()
+        self.assertEquals(DispatchContainerRegister.objects.all().count(), 1)
+        pk = DispatchContainerRegister.objects.all()[0].pk
+        obj_id = id(self.base_dispatch_controller)
+        # assert user container is dispatched as a container but not an item
+        self.assertTrue(self.test_container.is_dispatched_as_container())
+        self.assertFalse(self.test_container.is_dispatched_as_item())
+        # assert a new controller does not create a new DispatchContainerRegister for the same user container
+        self.create_base_dispatch_controller()
+        # ...still just one
+        self.assertEquals(DispatchContainerRegister.objects.all().count(), 1)
+        # assert this is still the same DispatchContainerRegister as before
+        self.assertEqual(pk, DispatchContainerRegister.objects.all()[0].pk)
+        # ... but from a new instance of the controller
+        self.assertNotEqual(obj_id, id(self.base_dispatch_controller))
         # dispatch the test_container pnly
         self.base_dispatch_controller.dispatch_user_container_as_json(self.test_container)
-        # assert it is dispatched
+        # assert it is now dispatched both as a container and item
         self.assertTrue(self.test_container.is_dispatched_as_container())
-        # assert that the test item is dispatched only because it's container is dispatched
+        self.assertTrue(self.test_container.is_dispatched_as_item())
+        # assert that the TestItem is now evaluated as dispatched only because it's container is dispatched
         self.assertTrue(self.test_item.is_dispatched_as_item())
+        self.assertFalse(self.test_item.is_dispatched_as_container())
+        # assert only one DispatchItemRegister exists
+        self.assertEqual(DispatchItemRegister.objects.all().count(), 1)
+        # ... and that it belongs to the user container (TestContainer)
+        self.assertEqual(DispatchItemRegister.objects.filter(item_pk=self.test_container.pk).count(), 1)
+        # assert that trying to dispatch the user container again fails
+        self.assertRaises(AlreadyDispatchedItem, self.base_dispatch_controller.dispatch_user_container_as_json, self.test_container)
         # get a return controller
         return_controller = ReturnController(self.using_source, self.using_destination)
-        self.assertEqual(DispatchItemRegister.objects.all().count(), 1)
         # return the dispatched items
         return_controller.return_dispatched_items()
-        # assert test_container is not dispatched
+        # assert that container is no longer dispatched
         self.assertFalse(self.test_container.is_dispatched_as_container())
-        # TODO: this should not fail
-        #self.assertFalse(self.test_container.is_dispatched_as_item())
-        # assert that the test item is not dispatched because the container is no longer dispatched
+        self.assertFalse(self.test_container.is_dispatched_as_item())
+        # assert that the DispatchContainerRegister is no longer dispatched
+        self.assertFalse(DispatchContainerRegister.objects.get(pk=pk).is_dispatched)
+        # assert that the test item is not dispatched (since the container is no longer dispatched)
         self.assertFalse(self.test_item.is_dispatched_as_item())
-        # dispatch the item
-        self.base_dispatch_controller.dispatch_user_items_as_json([self.test_item])
+        # assert that base_dispatch_controller can no longer be used for dispatch, since the DispatchContainerRegister is returned
+        self.assertRaises(AlreadyReturnedController, self.base_dispatch_controller.dispatch_user_items_as_json, [self.test_item])
+        # create a new controller
+        self.base_dispatch_controller = None
+        self.create_base_dispatch_controller()
+        # assert a new DispatchContainerRegister was created
+        self.assertEquals(DispatchContainerRegister.objects.all().count(), 2)
+        # dispatch the user container
+        self.base_dispatch_controller.dispatch_user_container_as_json(self.test_container)
         # re-assert test_container is not dispatched
         self.assertFalse(self.test_container.is_dispatched_as_container())
-        # assert the test item is dispatched (even though its container is not)
+        # assert the test item is dispatched
         self.assertTrue(self.test_item.is_dispatched_as_item())
         # return dispatched items
         return_controller.return_dispatched_items()

@@ -40,3 +40,7 @@ class BackupError(Exception):
 
 class RestoreError(Exception):
     pass
+
+
+class AlreadyReturnedController(Exception):
+    pass
