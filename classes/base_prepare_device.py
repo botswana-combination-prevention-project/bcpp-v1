@@ -8,6 +8,7 @@ from django.contrib.auth.models import User, Group, Permission
 from bhp_base_model.models import BaseListModel
 from bhp_userprofile.models import UserProfile
 from bhp_content_type_map.classes import ContentTypeMapHelper
+from base_dispatch_controller import BaseDispatchController
 from base import Base
 
 
@@ -22,8 +23,12 @@ nullhandler = logger.addHandler(NullHandler())
 
 class BasePrepareDevice(Base):
 
-    def __init__(self, using_source, using_destination, **kwargs):
-        super(BasePrepareDevice, self).__init__(using_source, using_destination, **kwargs)
+    def __init__(self, using_source, 
+                 using_destination, 
+                 **kwargs):
+        super(BasePrepareDevice, self).__init__(using_source, 
+                                                using_destination, 
+                                                **kwargs)
 
     def resize_content_type(self):
         """Resizes the destination content type table to have the same max id."""
@@ -56,7 +61,9 @@ class BasePrepareDevice(Base):
 
     def update_content_type(self):
         ContentType.objects.using(self.get_using_destination()).all().delete()
-        self.update_model(ContentType, base_model_class=Model)
+        self.update_model(ContentType, 
+                          #base_model_class=Model
+                          )
 
     def update_auth(self):
         UserProfile.objects.using(self.get_using_destination()).all().delete
@@ -64,19 +71,22 @@ class BasePrepareDevice(Base):
         User.objects.using(self.get_using_destination()).all().delete()
         Group.objects.using(self.get_using_destination()).all().delete()
         print '    update permissions'
-        self.update_model(Permission, base_model_class=Model, use_natural_keys=False)
+        self.update_model(Permission#, base_model_class=Model, use_natural_keys=False
+                          )
         print '    update groups'
-        self.update_model(Group, base_model_class=Model, use_natural_keys=False)
+        self.update_model(Group#, base_model_class=Model, use_natural_keys=False
+                          )
         print '    update users'
-        self.update_model(User, base_model_class=Model, use_natural_keys=False)
+        self.update_model(User#, base_model_class=Model, use_natural_keys=False
+                          )
         print '    done with Auth.'
 
     def update_app_models(self, app_name):
         print '    updating for app {0}...'.format(app_name)
-        models = []
+        #models = []
         for model in get_models(get_app(app_name)):
-            models.append(model)
-        self.dispatch_model_as_json(models)
+            #models.append(model)
+            self.serialize_model_as_jason(model)
 
     def update_list_models(self):
         list_models = []
@@ -86,7 +96,7 @@ class BasePrepareDevice(Base):
                 list_models.append(model)
         print '    found {0} list models'.format(len(list_models))
         for list_model in list_models:
-            self.dispatch_model_as_json(list_model)
+            self.serialize_model_as_jason(list_model)
 
     def reset_model(self, model_cls):
         """Deletes all instances of the given model and its audit log entries 
@@ -204,7 +214,15 @@ class BasePrepareDevice(Base):
         for app_name, model_name in models:
             model_cls = get_model(app_name, model_name)
             self.reset_model(model_cls)
-
+    
+    def update_model(self, model_or_app_model_tuple):
+        try:
+            app, model = model_or_app_model_tuple
+            model_cls = get_model(app,model)
+        except:
+            model_cls = model_or_app_model_tuple
+        self.serialize_model_as_jason(model_cls)
+        
     def reset_app_models(self, app_name):
         print '    deleting for app {0}...'.format(app_name)
         for model_cls in get_models(get_app(app_name)):
