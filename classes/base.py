@@ -213,6 +213,7 @@ class Base(object):
         Args:
             model_instances: a model instance, list of model instances, or QuerySet
             additional_base_model_class: add a single or list of additional Base classes that the model instances inherit from.
+                use sparingly.
 
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 

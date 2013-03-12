@@ -66,7 +66,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         """Override to return the field attrname of the identifier used for the dispatch container.
 
         Must be an field attname on the model used as a dispatch container, such as, household_identifier on model Household."""
-        raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
+        raise ImproperlyConfigured('Model {0} is not configured for dispatch.'.format(self._meta.object_name))
 
     def is_dispatched_as_container(self, using=None):
         """Determines if a model instance is dispatched as a container.
@@ -124,7 +124,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         ..note:: self must have a foreign key path to its container.
 
         (app_label, model_name), dispatch container fieldattr, qstring to dispatch container.)"""
-        raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
+        raise ImproperlyConfigured('Model {0} is not configured for dispatch.'.format(self._meta.object_name))
 
     def is_dispatched_as_item(self, using=None, user_container=None):
         """Returns the models 'dispatched' status in model DispatchItemRegister."""
