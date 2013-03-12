@@ -141,7 +141,7 @@ class BaseDispatch(Base):
         This is always gets or creates for each new instance."""
         if dispatch_container_register:
             # just requery
-            self._dispatch_container_register = DispatchContainerRegister.objects.using(self.get_using_source()).get(pk=dispatch_container_register.pk)
+            self._dispatch_container_register = DispatchContainerRegister.objects.using(self.get_using_source()).get(pk=str(dispatch_container_register.pk))
         else:
             # confirm user's app_label and model name get a valid container model
             user_container_model = get_model(self.get_user_container_app_label(), self.get_user_container_model_name())
@@ -164,6 +164,7 @@ class BaseDispatch(Base):
                 container_identifier_attrname=self.get_user_container_identifier_attrname(),
                 container_identifier=getattr(user_container, self.get_user_container_identifier_attrname()),
                 container_pk=user_container.pk)
+            #print self._dispatch_container_register, self._dispatch_container_register.pk ,created
             # force update the dispatch_items queryset
             self._dispatch_item_register_for_container = None
 

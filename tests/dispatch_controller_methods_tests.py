@@ -251,8 +251,8 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertEquals(DispatchContainerRegister.objects.all().count(), 2)
         # dispatch the user container
         self.base_dispatch_controller.dispatch_user_container_as_json(self.test_container)
-        # re-assert test_container is not dispatched
-        self.assertFalse(self.test_container.is_dispatched_as_container())
+        # assert test_container is dispatched
+        self.assertTrue(self.test_container.is_dispatched_as_container())
         # assert the test item is dispatched
         self.assertTrue(self.test_item.is_dispatched_as_item())
         # return dispatched items
@@ -260,6 +260,12 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # re-assert nothing is dispatched
         self.assertFalse(self.test_container.is_dispatched_as_container())
         self.assertFalse(self.test_item.is_dispatched_as_item())
+
+    def test_models(self):
+        self.create_test_container()
+        self.assertRegexpMatches(str(self.test_container.pk), r'[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+        self.create_test_item()
+        self.assertRegexpMatches(str(self.test_item.pk), r'[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
 
     def test_dispatch_item_and_container(self):
         TestContainer.objects.all().delete()
