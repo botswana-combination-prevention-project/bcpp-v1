@@ -211,7 +211,7 @@ class Base(object):
                         options[n] = dct
         return options
 
-    def model_to_jason(self, model_cls):
+    def model_to_json(self, model_cls):
         self._to_json([instance for instance in model_cls.objects.all()])
 
     def _to_json(self, model_instances):
