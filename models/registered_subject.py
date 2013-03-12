@@ -123,7 +123,7 @@ class RegisteredSubject(BaseSubject):
     def is_serialized(self):
         return super(RegisteredSubject, self).is_serialized(True)
 
-    def dispatch_item_container_reference(self, using=None):
+    def dispatch_container_lookup(self, using=None):
         return None
 
     def __unicode__(self):
