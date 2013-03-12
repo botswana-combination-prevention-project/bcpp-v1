@@ -1,11 +1,11 @@
 import re
 from django.db import models
-from bhp_base_model.models import BaseUuidModel
+from lab_base_model.models import BaseLabUuidModel
 from lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
 from lab_result_item.classes import ResultItemFlag
 
 
-class BaseResultItem(BaseUuidModel):
+class BaseResultItem(BaseLabUuidModel):
 
     """
 
