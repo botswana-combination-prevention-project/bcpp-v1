@@ -220,7 +220,7 @@ class BaseDispatch(Base):
         dispatch_item_register = None
         if instance._meta.app_label not in settings.DISPATCH_APP_LABELS and not instance.include_for_dispatch():
             raise ImproperlyConfigured('Model {0} is not configured for dispatch. See model method \'include_for_dispatch\'  or settings attribute DISPATCH_APP_LABELS.'.format(instance._meta.object_name))
-        if instance.is_dispatched_as_item():
+        if instance.is_dispatched_as_item(user_container=user_container):
             raise AlreadyDispatched('Model {0} instance {1} is already dispatched.'.format(instance._meta.object_name, instance))
         try:
             defaults = {

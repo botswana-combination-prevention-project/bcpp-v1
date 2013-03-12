@@ -224,15 +224,25 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertTrue(self.test_container.is_dispatched_as_item())
         # assert that the TestItem is now evaluated as dispatched only because it's container is dispatched
         self.assertTrue(self.test_item.is_dispatched_as_item())
+        # assert that is not dispatched if you do not consider the user_container (is dispatched within a container)
+        self.assertFalse(self.test_item.is_dispatched_as_item(user_container=self.test_container))
         self.assertFalse(self.test_item.is_dispatched_as_container())
         # assert only one DispatchItemRegister exists
         self.assertEqual(DispatchItemRegister.objects.all().count(), 1)
-        self.base_dispatch_controller.dispatch_user_items_as_json([self.test_item])
-
         # ... and that it belongs to the user container (TestContainer)
         self.assertEqual(DispatchItemRegister.objects.filter(item_pk=self.test_container.pk).count(), 1)
         # assert that trying to dispatch the user container again fails
         self.assertRaises(AlreadyDispatchedItem, self.base_dispatch_controller.dispatch_user_container_as_json, self.test_container)
+        # dispatch the TestItem within this user_container
+        self.base_dispatch_controller.dispatch_user_items_as_json([self.test_item])
+        # assert that is dispatched
+        self.assertTrue(self.test_item.is_dispatched_as_item())
+        # assert still returns that it is dispatched even when trying to skip the container test
+        self.assertTrue(self.test_item.is_dispatched_as_item(user_container=self.test_container))
+        # assert TestItem exists on destination
+        self.assertEquals(TestItem.objects.using(self.using_destination).filter(test_item_identifier=self.user_container_identifier).count(), 1)  # used same identifier on both models
+        # assert TestContainer exists on destination
+        self.assertEquals(TestContainer.objects.using(self.using_destination).filter(test_container_identifier=self.user_container_identifier).count(), 1)
         # get a return controller
         return_controller = ReturnController(self.using_source, self.using_destination)
         # return the dispatched items

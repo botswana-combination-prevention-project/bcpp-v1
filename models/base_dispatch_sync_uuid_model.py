@@ -126,7 +126,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         (app_label, model_name), dispatch container fieldattr, qstring to dispatch container.)"""
         raise ImproperlyConfigured('Method must be overridden on model {0}'.format(self._meta.object_name))
 
-    def is_dispatched_as_item(self, using=None):
+    def is_dispatched_as_item(self, using=None, user_container=None):
         """Returns the models 'dispatched' status in model DispatchItemRegister."""
         is_dispatched = False
         if self.is_dispatchable_model():
@@ -134,7 +134,9 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                 if self.get_dispatched_item(using):
                     is_dispatched = True
             if not self.is_dispatch_container_model():
-                if not is_dispatched:
+                # if item is not registered with DispatchItemRegister and we are not checking on behalf of
+                # a user_container ...
+                if not is_dispatched and not user_container:
                     is_dispatched = self.is_dispatched_within_user_container(using)
                     if not isinstance(is_dispatched, bool):
                         raise TypeError('Expected a boolean as a return value from method is_dispatched_within_user_container(). Got {0}'.format(is_dispatched))

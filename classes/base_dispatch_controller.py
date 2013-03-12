@@ -107,9 +107,6 @@ class BaseDispatchController(BaseDispatch):
             raise DispatchContainerError('User container must be an instance of BaseSyncUuidModel')
         if not user_container.is_dispatch_container_model():
             raise DispatchContainerError('Model {0} is not configured as a dispatch container model'.format(user_container))
-        # confirm not already dispatched as container
-        if user_container.is_dispatched_as_container():
-            raise AlreadyDispatchedContainer('Container is already dispatched. Got {0}.'.format(user_container))
         # confirm not already dispatched as item
         if user_container.is_dispatched_as_item():
             raise AlreadyDispatchedItem('Item is already dispatched. Got {0}.'.format(user_container))
@@ -123,8 +120,8 @@ class BaseDispatchController(BaseDispatch):
         if not self.get_dispatch_container_register_instance().is_dispatched:
             raise AlreadyReturnedController('This controller has already returned it\'s items. To dispatch new items, create a new instance.')
         user_container = user_container or self.get_user_container_instance()
-        # confirm no user_items are already dispatched
-        already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item()]
+        # confirm no user_items are already dispatched (but send with user_container to skip the "dispatched within container" check)
+        already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item(user_container=user_container)]
         if already_dispatched_items:
             raise AlreadyDispatchedItem('{0} models are already dispatched. Got {1}'.format(len(already_dispatched_items), already_dispatched_items))
         # dispatch
