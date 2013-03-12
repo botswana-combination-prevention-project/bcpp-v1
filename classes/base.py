@@ -8,7 +8,7 @@ from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Q, Count, Max
 from django.db import IntegrityError
-from lab_base_model.models import BaseLabUuidModel
+from lab_base_model.models import BaseLabUuidModel, BaseLabModel
 from bhp_base_model.models import BaseListModel
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.models import BaseListModel
@@ -218,7 +218,7 @@ class Base(object):
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 
         """
-        base_model_class = [BaseSyncUuidModel, BaseListModel, BaseLabUuidModel]
+        base_model_class = [BaseSyncUuidModel, BaseListModel, BaseLabUuidModel, BaseLabModel]
         if additional_base_model_class:
             if not isinstance(additional_base_model_class, (list, tuple)):
                 additional_base_model_class = [additional_base_model_class]
