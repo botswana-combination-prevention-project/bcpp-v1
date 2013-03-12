@@ -71,7 +71,7 @@ class BasePrepareDevice(Base):
         User.objects.using(self.get_using_destination()).all().delete()
         Group.objects.using(self.get_using_destination()).all().delete()
         print '    update permissions'
-        self.update_model(Permission#, base_model_class=Model, use_natural_keys=False
+        self.update_model(Permission  #, base_model_class=Model, use_natural_keys=False
                           )
         print '    update groups'
         self.update_model(Group#, base_model_class=Model, use_natural_keys=False
@@ -218,7 +218,7 @@ class BasePrepareDevice(Base):
     def update_model(self, model_or_app_model_tuple):
         try:
             app, model = model_or_app_model_tuple
-            model_cls = get_model(app,model)
+            model_cls = get_model(app, model)
         except:
             model_cls = model_or_app_model_tuple
         self.model_to_json(model_cls)

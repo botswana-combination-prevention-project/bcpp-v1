@@ -8,6 +8,8 @@ from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Q, Count, Max
 from django.db import IntegrityError
+from lab_base_model.models import BaseLabUuidModel
+from bhp_base_model.models import BaseListModel
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
@@ -204,13 +206,22 @@ class Base(object):
         """Sends all instances of the model class to :func:`_to_json`."""
         self._to_json(model_cls.objects.all())
 
-    def _to_json(self, model_instances):
+    def _to_json(self, model_instances, additional_base_model_class=None):
         """Serialize model instances on source to destination.
+
+        Args:
+            model_instances: a model instance, list of model instances, or QuerySet
+            additional_base_model_class: add a single or list of additional Base classes that the model instances inherit from.
 
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 
         """
-        base_model_class = BaseSyncUuidModel
+        base_model_class = [BaseSyncUuidModel, BaseListModel, BaseLabUuidModel]
+        if additional_base_model_class:
+            if not isinstance(additional_base_model_class, (list, tuple)):
+                additional_base_model_class = [additional_base_model_class]
+            base_model_class = base_model_class + additional_base_model_class
+        base_model_class = tuple(base_model_class)
         # check for pending transactions
         if self.has_outgoing_transactions():
             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))

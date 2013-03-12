@@ -64,20 +64,19 @@ class DispatchControllerMethodsTests(BaseControllerTests):
             self.create_producer(True)
         # add outgoing transactions and check is properly detects pending transactions before dispatching
         self.create_sync_transactions()
+        # create a user container
+        self.create_test_container()
+        self.assertIsInstance(self.test_container, TestContainer)
+        # create a dispatch controller
+        self.base_dispatch_controller = None
+        self.create_base_dispatch_controller()
         # create an instance for the user container model
         # ... try get_model with self attributes first
-        self.assertIsNotNone(get_model(self.dispatch_container_app_label, self.dispatch_container_model_name))
-        self.create_test_container()
-        # assert test_item instance created
-        self.assertIsInstance(self.test_container, TestContainer)
-        self.assertEqual(TestContainer.objects.filter(**{self.dispatch_container_identifier_attrname: self.dispatch_container_identifier}).count(), 1)
-        self.assertEqual(getattr(TestContainer.objects.get(**{self.dispatch_container_identifier_attrname: self.dispatch_container_identifier}), self.dispatch_container_identifier_attrname), self.dispatch_container_identifier)
+        self.assertIsNotNone(get_model(self.user_container_app_label, self.user_container_model_name))
+        self.assertEqual(TestContainer.objects.filter(**{self.user_container_identifier_attrname: self.user_container_identifier}).count(), 1)
+        self.assertEqual(getattr(TestContainer.objects.get(**{self.user_container_identifier_attrname: self.user_container_identifier}), self.user_container_identifier_attrname), self.user_container_identifier)
         # assert Trasactions created
-        #print [o.tx_name for o in OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=False)]
         self.assertEquals(OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=False).count(), 1)
-        self.base_dispatch_controller = None
-        # create base controller instance
-        self.create_base_dispatch_controller()
         # assert there ARE outgoing transactions on dispatch_destination
         self.assertTrue(self.base_dispatch_controller.has_outgoing_transactions())
         #print [o for o in OutgoingTransaction.objects.using('dispatch_destination').filter(is_consumed=False)]
@@ -87,12 +86,12 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # assert that Base().dispatch_model_as_json must have a model passed to it
         # self.assertRaises(DispatchModelError, base_dispatch_controller.dispatch_as_json, None)
         # assert that a dispatch_model_as_json fails due to pending transactions
-        self.assertRaises(PendingTransactionError, self.base_dispatch_controller.dispatch_user_items_as_json, RegisteredSubject)
+        self.assertRaises(PendingTransactionError, self.base_dispatch_controller.dispatch_user_items_as_json, RegisteredSubject.objects.all())
         # consume outgoing transaction
         OutgoingTransaction.objects.using(self.using_destination).all().update(is_consumed=True)
         self.assertFalse(self.base_dispatch_controller.has_outgoing_transactions())
         # assert that a dispatch_model_as_json still fails due to pending incoming transactions
-        self.assertRaises(PendingTransactionError, self.base_dispatch_controller.dispatch_user_items_as_json, RegisteredSubject)
+        self.assertRaises(PendingTransactionError, self.base_dispatch_controller.dispatch_user_items_as_json, RegisteredSubject.objects.all())
         # confirm no pending outgoing
         self.assertFalse(self.base_dispatch_controller.has_outgoing_transactions())
         # consume incoming transaction
