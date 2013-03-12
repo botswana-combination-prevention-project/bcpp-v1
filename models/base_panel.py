@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_base_model.models import BaseModel
+from lab_base_model.models import BaseLabModel
 
 
-class BasePanel(BaseModel):
+class BasePanel(BaseLabModel):
 
     name = models.CharField(
         verbose_name="Panel Name",
