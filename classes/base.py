@@ -216,7 +216,7 @@ class Base(object):
         self._to_json(model_cls.objects.all())
 
     def _to_json(self, model_instances):
-        """Serialize models on source and deserialize on destination.
+        """Serialize model instances on source to destination.
 
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 
