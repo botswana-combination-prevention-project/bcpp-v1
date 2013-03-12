@@ -37,7 +37,7 @@ class Order(BaseOrder):
 
     def natural_key(self):
         return self.order_identifier
-    
+
     def save(self, *args, **kwargs):
 
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
