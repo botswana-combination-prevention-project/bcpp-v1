@@ -54,7 +54,7 @@ class Base(object):
         self._producer = None
         self.server_device_id = kwargs.get('server_device_id', '99')
         self.exception = kwargs.get('exception', DispatchError)
-        self.preparing_status = kwargs.get('preparing_netbook',None)
+        self.preparing_status = kwargs.get('preparing_netbook', None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
         #if not 'ALLOW_DISPATCH' in dir(settings):
@@ -182,7 +182,7 @@ class Base(object):
 
     def get_recent(self, model_cls, destination_hostname=None):
         """Returns a queryset of the most recent instances from the model for all but the current host."""
-        instances = model_cls.objects.none()
+        source_instances = model_cls.objects.none()
         if not destination_hostname:
             destination_hostname = socket.gethostname()
         options = self.get_last_modified_options(model_cls)
