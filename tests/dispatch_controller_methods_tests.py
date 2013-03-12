@@ -227,6 +227,8 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertFalse(self.test_item.is_dispatched_as_container())
         # assert only one DispatchItemRegister exists
         self.assertEqual(DispatchItemRegister.objects.all().count(), 1)
+        self.base_dispatch_controller.dispatch_user_items_as_json([self.test_item])
+
         # ... and that it belongs to the user container (TestContainer)
         self.assertEqual(DispatchItemRegister.objects.filter(item_pk=self.test_container.pk).count(), 1)
         # assert that trying to dispatch the user container again fails

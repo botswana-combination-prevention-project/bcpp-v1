@@ -11,7 +11,8 @@ from django.db import IntegrityError
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
-from bhp_dispatch.exceptions import DispatchError, DispatchModelError, AlreadyDispatchedItem
+from bhp_dispatch.exceptions import DispatchError, DispatchModelError
+from bhp_sync.exceptions import PendingTransactionError
 
 logger = logging.getLogger(__name__)
 
@@ -181,7 +182,7 @@ class Base(object):
 
     def get_recent(self, model_cls, destination_hostname=None):
         """Returns a queryset of the most recent instances from the model for all but the current host."""
-        source_instances = model_cls.objects.none()
+        instances = model_cls.objects.none()
         if not destination_hostname:
             destination_hostname = socket.gethostname()
         options = self.get_last_modified_options(model_cls)
@@ -209,27 +210,36 @@ class Base(object):
                         dct.update({'hostname_modified': item.get('hostname_modified'), 'modified__gt': item.get('modified__max')})
                         options[n] = dct
         return options
-    
-    def serialize_model_as_jason(self, model_cls):
-        self.serialize_source_instances([instance for instance in model_cls.objects.all()])
-        
-    def serialize_source_instances(self, source_instances):
+
+    def model_to_jason(self, model_cls):
+        self._to_json([instance for instance in model_cls.objects.all()])
+
+    def _to_json(self, model_instances):
+        """Serialize models on source and deserialize on destination.
+
+        ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
+
+        """
         base_model_class = BaseSyncUuidModel
-        if source_instances:
+        # check for pending transactions
+        if self.has_outgoing_transactions():
+            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+        if self.has_incoming_transactions(model_instances):
+            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
+        if model_instances:
             # convert to list if not iterable
-            if not isinstance(source_instances, (list, QuerySet)):
-                source_instances = [source_instances]
-            # confirm all instances are of the correct base class only when not preparing netbook.
-            if not self.preparing_status:
-                for instance in source_instances:
-                    if not isinstance(instance, base_model_class):
-                        raise DispatchModelError('Dispatch model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
+            if not isinstance(model_instances, (list, QuerySet)):
+                model_instances = [model_instances]
+            # confirm all model_instances are of the correct base class
+            for instance in model_instances:
+                if not isinstance(instance, base_model_class):
+                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
             #serialize
-            json = serializers.serialize('json', source_instances, use_natural_keys=True)
+            json = serializers.serialize('json', model_instances, use_natural_keys=True)
             # deserialize on destination
             for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
-                if not self.preparing_status and d_obj.object.is_dispatched:
-                    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
+                #if d_obj.object.is_dispatched_as_item():
+                #    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
                 try:
                     # disconnect signal to avoid creating transactions on the source for data saved on destination
                     signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
@@ -258,7 +268,3 @@ class Base(object):
                         raise
                 except:
                     raise
-                if not self.preparing_status and not self.create_dispatched_item_instance(d_obj.object):
-                    raise DispatchError('Unable to create a dispatch item instance for {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
-                logger.info('dispatched {0} {1} to {2}.'.format(d_obj.object._meta.object_name, d_obj.object, self.get_using_destination()))
- 
