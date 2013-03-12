@@ -8,8 +8,8 @@ from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.exceptions import DispatchModelError, AlreadyDispatchedItem, AlreadyReturnedController, DispatchError, DispatchContainerError, AlreadyDispatchedContainer
 from bhp_dispatch.models import DispatchContainerRegister
+from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from base_dispatch import BaseDispatch
-
 
 logger = logging.getLogger(__name__)
 
@@ -117,10 +117,28 @@ class BaseDispatchController(BaseDispatch):
         logger.info('dispatched {0} {1} to {2}.'.format(user_container._meta.object_name, user_container, self.get_using_destination()))
 
     def dispatch_user_items_as_json(self, user_items, user_container=None):
+        # confirm controller is still active
         if not self.get_dispatch_container_register_instance().is_dispatched:
             raise AlreadyReturnedController('This controller has already returned it\'s items. To dispatch new items, create a new instance.')
+        # confirm instance type of user items
+        if not isinstance(user_items, (BaseDispatchSyncUuidModel, list, QuerySet)):
+            raise DispatchError('Attribute \'user_items\' must be an instance of (BaseDispatchSyncUuidModel, list, QuerySet).')
         user_container = user_container or self.get_user_container_instance()
+        # confirm container is not DispatchContainerRegister
+        if isinstance(user_container, DispatchContainerRegister):
+            raise DispatchError('User container may not be DispatchContainerRegister. Got {0}'.format(user_container))
         # confirm no user_items are already dispatched (but send with user_container to skip the "dispatched within container" check)
+        if not isinstance(user_items, (list, QuerySet)):
+            user_items = [user_items]
+        cls_list = [o.__class__ for o in user_items]
+        cls_list = list(set(cls_list))
+        # confirm user items are of the same class
+        if not len(cls_list) == 1:
+            raise DispatchError('User items must be of the same base model class. Got {0}'.format(cls_list))
+        # confirm user items and user container are NOT of the same class
+        if user_container:
+            if cls_list[0] == user_container.__class__:
+                raise DispatchError('User item and User container cannot be of the same class. Got {0}, {1}'.format(cls_list, user_container.__class__))
         already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item(user_container=user_container)]
         if already_dispatched_items:
             raise AlreadyDispatchedItem('{0} models are already dispatched. Got {1}'.format(len(already_dispatched_items), already_dispatched_items))

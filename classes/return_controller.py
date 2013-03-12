@@ -78,6 +78,14 @@ class ReturnController(Base):
         return dispatch_container_registers
 
     def get_dispatch_container_register(self, user_container, using=None):
+        if user_container:
+            if not DispatchContainerRegister.objects.using(using).filter(
+                    container_pk=user_container.pk,
+                    container_model_name=user_container._meta.object_name.lower(),
+                    container_app_label=user_container._meta.app_label,
+                    is_dispatched=True,
+                    return_datetime__isnull=True).exists():
+                raise DispatchContainerError('User container {0} is not registered as a "dispatched" dispatch container. Not found in DispatchContainerRegister'.format(user_container))
         return DispatchContainerRegister.objects.using(using).get(
             container_pk=user_container.pk,
             container_model_name=user_container._meta.object_name.lower(),
