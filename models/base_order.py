@@ -1,10 +1,10 @@
 from django.db import models
-from bhp_base_model.models import BaseUuidModel
+from lab_base_model.models import BaseLabUuidModel
 from bhp_base_model.validators import datetime_not_future
 from lab_order.choices import ORDER_STATUS
 
 
-class BaseOrder(BaseUuidModel):
+class BaseOrder(BaseLabUuidModel):
 
     order_identifier = models.CharField(
         verbose_name='Order number',
