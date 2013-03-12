@@ -5,7 +5,10 @@ import subprocess
 from datetime import datetime
 from django.db.models import Model
 from django.conf import settings
+from django.db.models import signals
 from bhp_common.utils import td_to_string
+from bhp_consent.models.signals import add_models_to_catalogue
+from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
 from bhp_dispatch.exceptions import BackupError, RestoreError
 
@@ -21,7 +24,9 @@ nullhandler = logger.addHandler(NullHandler())
 
 class PrepareDevice(BasePrepareDevice):
 
-    def __init__(self, using_source, using_destination, **kwargs):
+    def __init__(self, using_source,
+                  using_destination,
+                  **kwargs):
         """
         Args:
             using_source: settings database key for the source.
@@ -29,7 +34,9 @@ class PrepareDevice(BasePrepareDevice):
         Keywords:
             exception: exception class to use, e.g. CommandError if this is run as a management command. Default(TypeError)
         """
-        super(PrepareDevice, self).__init__(using_source, using_destination, **kwargs)
+        super(PrepareDevice, self).__init__(using_source, 
+                                            using_destination, 
+                                            **kwargs)
         self.started = None
         self.start_time = None
         self.end_time = None
@@ -79,7 +86,8 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 4:
             self.timer()
             logger.info("4. Updating api keys...")
-            self.update_model(('tastypie', 'apikey'), base_model_class=Model)
+            self.update_model(('tastypie', 'apikey')#, base_model_class=Model
+                              )
         if not step > 5:
             self.timer()
             logger.info("5. Updating lists...")
@@ -105,7 +113,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 9:
             self.timer()
             logger.info("9. Updating the Crypt table...")
-            self.update_model(('bhp_crypto', 'crypt'))
+            #self.update_model(('bhp_crypto', 'crypt'))
         if not step > 10:
             self.timer()
             logger.info("10. Updating the visit definitions...")
@@ -117,15 +125,17 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 12:
             self.timer()
             logger.info("12. Updating registered subjects...")
-            self.update_model(('bhp_registration', 'RegisteredSubject'))
+            #self.update_model(('bhp_registration', 'RegisteredSubject'))
         if not step > 13:
             self.timer()
-            logger.info("13. Updating bhp_consent Attached Models...")
-            self.update_model(('bhp_consent', 'AttachedModel'))
+            logger.info("13. Updating bhp_consent Consent Catalogues...")
+            signals.post_save.disconnect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
+            self.update_model(('bhp_consent', 'ConsentCatalogue'))
         if not step > 14:
             self.timer()
-            logger.info("14. Updating bhp_consent Consent Catalogues...")
-            self.update_model(('bhp_consent', 'ConsentCatalogue'))
+            logger.info("14. Updating bhp_consent Attached Models...")
+            self.update_model(('bhp_consent', 'AttachedModel'))
+            signals.post_save.connect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
         if not step > 15:
             self.timer()
             logger.info("15. Updating lab test code groups from lab_test_code...")
@@ -141,7 +151,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 18:
             self.timer()
             logger.info("18. Updating lab panel models from lab_panel...")
-            self.update_app_models('lab_panel')
+            self.update_app_models('lab_panel')         
         if not step > 19:
             self.timer()
             logger.info("19. Updating aliquot types from lab_clinic_api...")
@@ -149,7 +159,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 20:
             self.timer()
             logger.info("20. Updating test code groups from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'TestCodeGroup'))
+            self.update_model(('lab_clinic_api', 'TestCodeGroup'))  
         if not step > 21:
             self.timer()
             logger.info("21. Updating test codes from lab_clinic_api...")
@@ -169,7 +179,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 25:
             self.timer()
             logger.info("25. Updating lab entry from bhp_lab_entry...")
-            self.update_model(('bhp_lab_entry', 'LabEntry'))
+            self.update_model(('bhp_lab_entry', 'LabEntry'))         
         if not step > 26:
             self.timer()
             logger.info("26. Updating bhp_entry.models.entry...")
