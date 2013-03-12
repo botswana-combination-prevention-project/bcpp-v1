@@ -11,6 +11,7 @@ from django.db import IntegrityError
 from lab_base_model.models import BaseLabUuidModel
 from bhp_base_model.models import BaseListModel
 from bhp_sync.models import BaseSyncUuidModel
+from bhp_base_model.models import BaseListModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
 from bhp_dispatch.exceptions import DispatchError, DispatchModelError
@@ -202,9 +203,9 @@ class Base(object):
                         options[n] = dct
         return options
 
-    def model_to_json(self, model_cls):
+    def model_to_json(self, model_cls, additional_base_model_class=None):
         """Sends all instances of the model class to :func:`_to_json`."""
-        self._to_json(model_cls.objects.all())
+        self._to_json(model_cls.objects.all(), additional_base_model_class)
 
     def _to_json(self, model_instances, additional_base_model_class=None):
         """Serialize model instances on source to destination.
@@ -232,10 +233,9 @@ class Base(object):
             if not isinstance(model_instances, (list, QuerySet)):
                 model_instances = [model_instances]
             # confirm all model_instances are of the correct base class
-            if not self.preparing_status:
-                for instance in model_instances:
-                    if not isinstance(instance, base_model_class):
-                        raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
+            for instance in model_instances:
+                if not isinstance(instance, base_model_class):
+                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
             #serialize
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
             # deserialize on destination
