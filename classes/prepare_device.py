@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db.models import signals
 from bhp_common.utils import td_to_string
 from bhp_base_model.models import BaseModel
+from bhp_base_model.models import BaseUuidModel
 from bhp_consent.models.signals import add_models_to_catalogue
 from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
@@ -72,52 +73,52 @@ class PrepareDevice(BasePrepareDevice):
             raise self.exception("Destination has outgoing transactions. Please sync and try again.")
         step = int(kwargs.get('step', 0))
         logger.info('Starting at step {0}'.format(step))
-        if not step > 1:
-            self.timer()
-            logger.info("1. Running pre procedures")
-            self.pre_prepare()
-        if not step > 2:
-            self.timer()
-            logger.info("2. Updating content_type")
-            self.update_content_type()
-        if not step > 3:
-            self.timer()
-            logger.info("3. Updating auth...")
-            self.update_auth()
-        if not step > 4:
-            self.timer()
-            logger.info("4. Updating api keys...")
-            self.update_model(('tastypie', 'apikey'), [Model])
-        if not step > 5:
-            self.timer()
-            logger.info("5. Updating lists...")
-            self.update_list_models()
-        if not step > 6:
-            self.timer()
-            logger.info("6. Updating bhp variables...")
-            self.update_app_models('bhp_variables')
-        if not step > 7:
-            self.timer()
-            logger.info("7. Updating contenttypemap...")
-            logger.info('    ...update')
-            self.update_app_models('bhp_content_type_map')
-            logger.info('    ...resize')
-            self.resize_content_type()
-            self.update_app_models('bhp_content_type_map')
-            logger.info('    ...pop and sync')
-            self.sync_content_type_map()
-        if not step > 8:
-            self.timer()
-            logger.info("8. Updating appointment configuration...")
-            self.update_model(("bhp_appointment", "Configuration"))
-        if not step > 9:
-            self.timer()
-            logger.info("9. Updating the Crypt table...")
-            #self.update_model(('bhp_crypto', 'crypt'))
+#        if not step > 1:
+#            self.timer()
+#            logger.info("1. Running pre procedures")
+#            self.pre_prepare()
+#        if not step > 2:
+#            self.timer()
+#            logger.info("2. Updating content_type")
+#            self.update_content_type()
+#        if not step > 3:
+#            self.timer()
+#            logger.info("3. Updating auth...")
+#            self.update_auth()
+#        if not step > 4:
+#            self.timer()
+#            logger.info("4. Updating api keys...")
+#            self.update_model(('tastypie', 'apikey'), [Model])
+#        if not step > 5:
+#            self.timer()
+#            logger.info("5. Updating lists...")
+#            self.update_list_models()
+#        if not step > 6:
+#            self.timer()
+#            logger.info("6. Updating bhp variables...")
+#            self.update_app_models('bhp_variables', [BaseUuidModel])
+#        if not step > 7:
+#            self.timer()
+#            logger.info("7. Updating contenttypemap...")
+#            logger.info('    ...update')
+#            self.update_app_models('bhp_content_type_map', [BaseModel])
+#            logger.info('    ...resize')
+#            self.resize_content_type()
+#            self.update_app_models('bhp_content_type_map', [BaseModel])
+#            logger.info('    ...pop and sync')
+#            self.sync_content_type_map()
+#        if not step > 8:
+#            self.timer()
+#            logger.info("8. Updating appointment configuration...")
+#            self.update_model(("bhp_appointment", "Configuration"))
+#        if not step > 9:
+#            self.timer()
+#            logger.info("9. Updating the Crypt table...")
+#            #self.update_model(('bhp_crypto', 'crypt'))
         if not step > 10:
             self.timer()
             logger.info("10. Updating the visit definitions...")
-            self.update_app_models('bhp_visit')
+            self.update_app_models('bhp_visit', [BaseUuidModel])
         if not step > 11:
             self.timer()
             logger.info("11. Updating subject identifiers...")
