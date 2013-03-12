@@ -1,11 +1,11 @@
 from datetime import datetime
 from django.db import models
 from django.core.urlresolvers import reverse
-from bhp_base_model.models import BaseUuidModel
+from lab_base_model.models import BaseLabUuidModel
 from lab_clinic_api.choices import REVIEW_STATUS
 
 
-class Review(BaseUuidModel):
+class Review(BaseLabUuidModel):
 
     title = models.CharField(
         max_length=50,
