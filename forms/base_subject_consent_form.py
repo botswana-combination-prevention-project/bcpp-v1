@@ -38,8 +38,15 @@ class BaseSubjectConsentForm(BaseModelForm):
         except IndexError:
             raise TypeError("Please add your bhp_variables site specifics")
 
+        # Get date the subject was consented so that when we validate consent age
+        # we get the age of the subject at the time of the consent
+        if cleaned_data.get('consent_datetime', None):
+            consent_datetime = cleaned_data.get('consent_datetime').date()
+        else:
+            consent_datetime = date.now()
+  
         if cleaned_data.get('dob'):
-            rdelta = relativedelta(date.today(), cleaned_data.get('dob'))
+            rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
             # check if guardian name is required
             # guardian name is required if subject is a minor but the field may not be on the form
             # if the study does not have minors.
@@ -57,7 +64,7 @@ class BaseSubjectConsentForm(BaseModelForm):
         if hasattr(self._meta.model, 'ConsentAge'):
             instance = self._meta.model()
             consent_age_range = instance.ConsentAge()
-            rdelta = relativedelta(datetime.today(), cleaned_data.get('dob'))
+            rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
             if rdelta.years not in consent_age_range:
                 raise forms.ValidationError("Invalid Date of Birth. Age of consent must be between %sy and %sy inclusive. Got %sy" % (consent_age_range[0], consent_age_range[-1], rdelta.years,))
 
@@ -82,13 +89,13 @@ class BaseSubjectConsentForm(BaseModelForm):
             if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
                 raise forms.ValidationError('Identity mismatch. Identity number must match the confirmation field.')
         # consent cannot be submitted if answer is none to last four consent questions
-        if cleaned_data['consent_reviewed'] == None:
-            raise forms.ValidationError('If consent reviewed is None, patient cannot be enrolled')
-        if cleaned_data['study_questions'] == None:
-            raise forms.ValidationError('If unable to answer questions from client and/or None, patient cannot be enrolled')
-        if cleaned_data['assessment_score'] == None:
-            raise forms.ValidationError('Client assessment should atleast be a passing score. If None, patient cannot be enrolled')
-        if cleaned_data['consent_copy'] == None:
-            raise forms.ValidationError('If patient has not been given consent copy and/or None, patient cannot be enrolled')
+#        if cleaned_data['consent_reviewed'] == None:
+#            raise forms.ValidationError('If consent reviewed is None, patient cannot be enrolled')
+#        if cleaned_data['study_questions'] == None:
+#            raise forms.ValidationError('If unable to answer questions from client and/or None, patient cannot be enrolled')
+#        if cleaned_data['assessment_score'] == None:
+#            raise forms.ValidationError('Client assessment should atleast be a passing score. If None, patient cannot be enrolled')
+#        if cleaned_data['consent_copy'] == None:
+#            raise forms.ValidationError('If patient has not been given consent copy and/or None, patient cannot be enrolled')
         # Always return the full collection of cleaned data.
         return super(BaseSubjectConsentForm, self).clean()
