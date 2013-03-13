@@ -105,7 +105,6 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                 raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_container_lookup() '
                                            'must return a lookup attr string that ends in the container '
                                            'identifier field name.'.format(user_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
-            lookup_attrs = list(set(lookup_attrs))
             lookup_value = self
             # TODO: fails sometimes on getattr
             for attrname in lookup_attrs:
