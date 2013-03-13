@@ -7,4 +7,5 @@ from outgoing_transaction import OutgoingTransaction
 from transaction import Transaction
 from request_log import RequestLog
 from producer import Producer
+from test_item import TestItem
 from signals import *

@@ -9,7 +9,15 @@ from bhp_sync.exceptions import SerializationTransactionError
 class SerializeToTransaction(object):
 
     def __init__(self, *args, **kwargs):
+        self.using = None
+        self._set_using(kwargs.get('using', None))
         super(SerializeToTransaction, self).__init__(*args, **kwargs)
+
+    def _set_using(self, value):
+        self._using = value
+
+    def get_using(self):
+        return self._using
 
     def serialize(self, sender, instance, **kwargs):
 
@@ -40,8 +48,7 @@ class SerializeToTransaction(object):
         if not kwargs.get('using', None):
             raise SerializationTransactionError('Keyword argument \'using\' may not be None.')
         else:
-            using = kwargs.get('using')
-
+            self._set_using(kwargs.get('using', None))
         # watch out for this. The producer is the device that created
         # the "transaction" instance and not necessarily the one that created the model instance
         # so just using the hostname created or hostname modified would not necessarily work.
@@ -84,12 +91,10 @@ class SerializeToTransaction(object):
             pass
         except:
             raise
-        # save to Outgoing Transaction ONLY if the model is saved on this device.
-        if using == 'default':
-            OutgoingTransaction.objects.using(using).create(
-                tx_name=instance._meta.object_name,
-                tx_pk=instance.pk,
-                tx=json_tx,
-                timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
-                producer=str(transaction_producer),
-                action=action)
+        OutgoingTransaction.objects.using(self.get_using()).create(
+            tx_name=instance._meta.object_name,
+            tx_pk=instance.pk,
+            tx=json_tx,
+            timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
+            producer=str(transaction_producer),
+            action=action)

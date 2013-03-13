@@ -12,13 +12,9 @@ class TransactionHelper(object):
         """Checks if incoming transactions exist for the given model(s)."""
         if not models:
             return False
-        if not using:
-            using = 'default'
         if not isinstance(models, (list, tuple)):
             models = [models]
         return IncomingTransaction.objects.using(using).filter(tx_name__in=models, is_consumed=False).exists()
 
     def has_outgoing(self, using=None):
-        if not using:
-            using = 'default'
         return OutgoingTransaction.objects.using(using).filter(is_consumed=False).exists()
