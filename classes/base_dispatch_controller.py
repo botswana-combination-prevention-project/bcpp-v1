@@ -134,7 +134,7 @@ class BaseDispatchController(BaseDispatch):
                 cls_list = [o.__class__ for o in user_items]
                 cls_list = list(set(cls_list))
                 # confirm user items are of the same class
-                if not len(cls_list) == 1:
+                if not len(user_items) == 0 and not len(cls_list) == 1:
                     raise DispatchItemError('User items must be of the same base model class. Got {0}'.format(cls_list))
                 # confirm user items and user container are NOT of the same class
                 if user_container:
