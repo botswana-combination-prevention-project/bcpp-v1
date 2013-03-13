@@ -138,7 +138,7 @@ class BaseDispatchController(BaseDispatch):
                     raise DispatchItemError('User items must be of the same base model class. Got {0}'.format(cls_list))
                 # confirm user items and user container are NOT of the same class
                 if user_container:
-                    if cls_list[0] == user_container.__class__:
+                    if len(cls_list) > 0 and cls_list[0] == user_container.__class__:
                         raise DispatchContainerError('User item and User container cannot be of the same class. Got {0}, {1}'.format(cls_list, user_container.__class__))
                 already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item(user_container=user_container)]
                 if already_dispatched_items:
