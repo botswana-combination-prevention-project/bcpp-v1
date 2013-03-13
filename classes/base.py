@@ -14,7 +14,7 @@ from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.models import BaseListModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
-from bhp_dispatch.exceptions import DispatchError, DispatchModelError
+from bhp_dispatch.exceptions import DispatchError, DispatchModelError, DispatchControllerProducerError
 from bhp_sync.exceptions import PendingTransactionError
 
 logger = logging.getLogger(__name__)
@@ -128,7 +128,7 @@ class Base(object):
             if Producer.objects.using(self.get_using_source()).filter(settings_key=self.get_using_destination(), is_active=True).exists():
                 self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=self.get_using_destination(), is_active=True)
         if not self._producer:
-            raise DispatchError('Dispatcher cannot find producer {2} with settings key {0} '
+            raise DispatchControllerProducerError('Dispatcher cannot find producer \'{2}\' with settings key \'{0}\' '
                             'on the source {1}.'.format(self.get_using_destination(), self.get_using_source(), settings_key))
         # check the producers DATABASES key exists
         # TODO: what if producer is "me", e.g settings key is 'default'

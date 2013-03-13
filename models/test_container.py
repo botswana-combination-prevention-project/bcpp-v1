@@ -9,6 +9,8 @@ class TestContainer(BaseDispatchSyncUuidModel):
 
     comment = models.CharField(max_length=50, null=True)
 
+    objects = models.Manager()
+
     history = AuditTrail()
 
     def dispatched_as_container_identifier_attr(self, using=None):

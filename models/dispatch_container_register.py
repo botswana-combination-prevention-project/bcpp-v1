@@ -26,6 +26,9 @@ class DispatchContainerRegister(BaseDispatch):
     def __unicode__(self):
         return "Dispatch Container {0} @ {1} ({2})".format(self.producer.name, self.created, self.is_dispatched)
 
+    def is_ready(self):
+        return self.is_dispatched
+
     def to_items(self):
         DispatchItem = models.get_model('bhp_dispatch', 'DispatchItem')
         if DispatchItem.objects.filter(dispatch_container_register__pk=self.pk):

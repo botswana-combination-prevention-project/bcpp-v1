@@ -42,6 +42,7 @@ class BaseDispatch(Base):
         self._user_container_identifier_attrname = None
         self._user_container_identifier = None
         self._user_container_instance = None
+        self._user_container_cls = None
         self._dispatch = None
         self._dispatch_container_register = None
         self._visit_models = {}
@@ -49,7 +50,7 @@ class BaseDispatch(Base):
         self._set_user_container_model_name(user_container_model_name)
         self._set_user_container_identifier_attrname(user_container_identifier_attrname)
         self.set_user_container_identifier(user_container_identifier)
-        self._set_dispatch_container_register_instance()
+        self._set_container_register_instance()
         self.debug = kwargs.get('debug', False)
 
     def register_with_dispatch_item_register(self, instance, user_container=None):
@@ -63,7 +64,7 @@ class BaseDispatch(Base):
         if user_container:
             if not user_container.is_dispatched_as_container():
                 raise DispatchError('Instance {0} must be registered with a valid user container. Model {1} is not dispatched as a user container.'.format(instance, user_container))
-        return self._create_dispatch_item_register_instance(instance, user_container)
+        return self._register_item(instance, user_container)
 
     def _set_user_container_model_name(self, value=None):
         #if not value:
@@ -117,25 +118,27 @@ class BaseDispatch(Base):
             self.set_user_container_identifier()
         return self._user_container_identifier
 
-    def _set_user_container_instance(self):
-        """Only sets if has app_label and model_name.
+    def get_user_container_instance(self):
+        return self.get_user_container_cls().objects.get(**{self.get_user_container_identifier_attrname(): self.get_user_container_identifier()})
 
-        May be None if trying to dispatch without a container, such as RegisteredSubject."""
+    def _set_user_container_cls(self):
+        user_container_cls = None
         if self.get_user_container_app_label() and self.get_user_container_model_name():
             user_container_cls = get_model(self.get_user_container_app_label(), self.get_user_container_model_name())
             if not user_container_cls:
                 raise TypeError('Unable to get the user container class with get_model() using {app_label:{0}, model_name:{1}}'.format(self.get_user_container_app_label(), self.get_user_container_model_name()))
-            self._user_container_instance = user_container_cls.objects.get(**{self.get_user_container_identifier_attrname(): self.get_user_container_identifier})
+        self._user_container_cls = user_container_cls
 
-    def get_user_container_instance(self):
-        if not self._user_container_instance:
-            self._set_user_container_instance()
-        return self._user_container_instance
+    def get_user_container_cls(self):
+        """Gets the identifier for the user's container instance."""
+        if not self._user_container_cls:
+            self._set_user_container_cls()
+        return self._user_container_cls
 
     def get_user_item_identifier_attrname(self):
         return 'id'
 
-    def _set_dispatch_container_register_instance(self, dispatch_container_register=None):
+    def _set_container_register_instance(self, dispatch_container_register=None):
         """Creates a dispatch container instance for this controller session.
 
         This is always gets or creates for each new instance."""
@@ -146,7 +149,7 @@ class BaseDispatch(Base):
             # confirm user's app_label and model name get a valid container model
             user_container_model = get_model(self.get_user_container_app_label(), self.get_user_container_model_name())
             if not user_container_model:
-                raise DispatchModelError('Method get_model returned None using app_label={0}, model_name={1}'.format(self.get_user_container_app_label(), self.get_user_container_model_name()))
+                raise DispatchModelError('Method get_model returned None trying to get the user_container model class using app_label={0}, model_name={1}'.format(self.get_user_container_app_label(), self.get_user_container_model_name()))
             if not user_container_model().is_dispatch_container_model():
                 raise DispatchError('Model {0} cannot be used as a container. Model method is_dispatch_container_model() returned False.'.format(user_container_model))
             if not user_container_model.objects.filter(**{self.get_user_container_identifier_attrname(): self.get_user_container_identifier()}):
@@ -164,28 +167,18 @@ class BaseDispatch(Base):
                 container_identifier_attrname=self.get_user_container_identifier_attrname(),
                 container_identifier=getattr(user_container, self.get_user_container_identifier_attrname()),
                 container_pk=user_container.pk)
-            #print self._dispatch_container_register, self._dispatch_container_register.pk ,created
-            # force update the dispatch_items queryset
-            self._dispatch_item_register_for_container = None
 
-    def get_dispatch_container_register_instance(self):
+    def get_container_register_instance(self):
         """Gets the dispatch container instance for this controller sessions."""
         if not self._dispatch_container_register:
-            self._set_dispatch_container_register_instance()
+            self._set_container_register_instance()
         else:
             # requery (may be called after a return controller deregistered)
             pk = self._dispatch_container_register.pk
-            self._set_dispatch_container_register_instance(self._dispatch_container_register)
+            self._set_container_register_instance(self._dispatch_container_register)
             if not self._dispatch_container_register.pk == pk:
                 raise ValueError('DispatchContainerRegister pk has changed unexpectedly.')
         return self._dispatch_container_register
-
-    def set_dispatch_item_register_for_producer(self):
-        """Sets a queryset of dispatched DispatchItemRegister model instances for the current producer."""
-        self._dispatch_item_register_for_producer = DispatchItemRegister.objects.using(self.get_using_source()).filter(
-            producer=self.get_producer(),
-            is_dispatched=True,
-            return_datetime__isnull=True)
 
     def get_dispatch_item_register_for_producer(self):
         """Returns a queryset of dispatched DispatchItemRegister model instances for this producer."""
@@ -193,27 +186,20 @@ class BaseDispatch(Base):
             self.set_dispatch_item_register_for_producer()
         return self._dispatch_item_register_for_producer
 
-    def set_dispatch_item_register_for_container(self):
-        """Sets a queryset of dispatched DispatchItemRegister model instances for the current dispatch container register."""
-        self._dispatch_item_register_for_container = DispatchItemRegister.objects.using(self.get_using_source()).filter(
-            dispatch_container_register=self.get_dispatch_container_register_instance(),
-            is_dispatched=True,
-            return_datetime__isnull=True)
+    def get_registered_items(self, producer=None):
+        """Returns a queryset of dispatched DispatchItemRegister model instances for this dispatch_container_register or producer."""
+        if producer:
+            return DispatchItemRegister.objects.using(self.get_using_source()).filter(
+                producer=self.get_producer(),
+                is_dispatched=True,
+                return_datetime__isnull=True)
+        else:
+            return DispatchItemRegister.objects.using(self.get_using_source()).filter(
+                dispatch_container_register=self.get_container_register_instance(),
+                is_dispatched=True,
+                return_datetime__isnull=True)
 
-    def get_dispatch_item_register_for_container(self):
-        """Returns a queryset of dispatched DispatchItemRegister model instances for this container."""
-        if not self._dispatch_item_register_for_container:
-            self.set_dispatch_item_register_for_container()
-        return self._dispatch_item_register_for_container
-
-    def set_producer(self):
-        super(BaseDispatch, self).set_producer()
-        # producer has changed so update the list of
-        # dispatched Dispatch items instances for this producer
-        #TODO: probably remove this
-        self.set_dispatch_item_register_for_producer()
-
-    def _create_dispatch_item_register_instance(self, instance, user_container=None):
+    def _register_item(self, instance, user_container=None):
         """Creates an instance of DispatchItemRegister for an user model instance being dispatched.
 
         ...note: If an instance of dispatch item register already exists it will be reused (get_or_create)"""
@@ -233,7 +219,7 @@ class BaseDispatch(Base):
                 'item_identifier_attrname': self.get_user_item_identifier_attrname(),
                 }
             dispatch_item_register, created = DispatchItemRegister.objects.using(self.get_using_source()).get_or_create(
-                dispatch_container_register=self.get_dispatch_container_register_instance(),
+                dispatch_container_register=self.get_container_register_instance(),
                 item_identifier=getattr(instance, self.get_user_item_identifier_attrname()),
                 item_pk=instance.pk,
                 defaults=defaults)

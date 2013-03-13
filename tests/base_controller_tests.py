@@ -58,5 +58,4 @@ class BaseControllerTests(TestCase):
                                                 self.user_container_app_label,
                                                 user_container_model_name,
                                                 self.user_container_identifier_attrname,
-                                                self.user_container_identifier,
-                                                self.dispatch_item_app_label)
+                                                self.user_container_identifier)

@@ -113,7 +113,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             container_attr = user_container_model_cls().dispatched_as_container_identifier_attr()
             options = {container_attr: lookup_value}
             if user_container_model_cls.objects.using(using).filter(**options).exists():
-                is_dispatched = user_container_model_cls.objects.using(using).get(**options).is_dispatched_as_container()
+                is_dispatched = user_container_model_cls.objects.using(using).get(**options).is_dispatched_as_container(using)
         return is_dispatched
 
     def dispatch_container_lookup(self):

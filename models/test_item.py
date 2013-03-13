@@ -12,6 +12,8 @@ class TestItem(BaseDispatchSyncUuidModel):
 
     comment = models.CharField(max_length=50, null=True)
 
+    objects = models.Manager()
+
     history = AuditTrail()
 
     def is_dispatch_container_model(self):

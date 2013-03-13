@@ -9,7 +9,7 @@ from base import Base
 
 class ReturnController(Base):
 
-    def get_dispatch_container_cls(self):
+    def get_user_container_cls(self):
         dispatch_container_cls = None
         # get the DispatchContainer instance for user's container model app_label and model
         if DispatchContainerRegister.objects.filter(producer=self.get_producer(), is_dispatched=True, return_datetime__isnull=True).exists():
@@ -119,8 +119,8 @@ class ReturnController(Base):
             raise AlreadyReturned('The user container {0} is not dispatched.'.format(user_container))
         # confirm no pending transaction on the producer
         if self.has_outgoing_transactions():
-            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. '
-                                          'Run bhp_sync first.'.format(self.get_producer_name()))
+            raise PendingTransactionError('Producer \'{0}\' with settings_key \'{1}\' has pending outgoing transactions. '
+                                          'Run bhp_sync first.'.format(self.get_producer_name(), self.get_using_destination()))
         # confirm no pending transaction for this producer on the source
         if self.has_incoming_transactions():
             raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on '

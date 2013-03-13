@@ -26,7 +26,6 @@ class DispatchController(BaseDispatchController):
                  user_container_model_name,
                  user_container_identifier_attrname,
                  user_container_identifier,
-                 dispatch_item_app_label,
                  dispatch_url,
                  **kwargs):
         super(DispatchController, self).__init__(using_source,
@@ -35,37 +34,30 @@ class DispatchController(BaseDispatchController):
             user_container_model_name,
             user_container_identifier_attrname,
             user_container_identifier,
-            dispatch_item_app_label,
             **kwargs)
-        self._dispatch_app_label = None
-        self._dispatch_model_name = None
         self._dispatch_url = None
-        self._dispatch_admin_url = None
-        self._dispatch_model = None
-        self._dispatch_model_item_identifier_field = None
-        self._dispatch_admin_url = None
         self._set_dispatch_url(dispatch_url)
 
-    def set_dispatch_model(self):
-        """Sets the model class for the dispatching model."""
-        self._dispatch_model = get_model(self.get_dispatch_app_label(), self.get_dispatch_model_name())
-        self.set_dispatch_modeladmin_url()
+    def _dispatch_prep(self):
+        """Wrapper for user method :func:`dispatch_prep`."""
+        self.dispatch_prep()
 
-    def get_dispatch_model(self):
-        """Gets the model class for the dispatching model."""
-        if not self._dispatch_model:
-            self.set_dispatch_model()
-        return self._dispatch_model
+    def dispatch_prep(self, item_identifier):
+        """Returns a list of RegisteredSubject instances.
 
-    def set_dispatch_modeladmin_url(self):
-        """Sets the modeladmin url for the dispatching model."""
-        self._dispatch_modeladmin_url = '/admin/{0}/{1}/'.format(self.get_dispatch_app_label(), self.get_dispatch_model_name())
+        This is the main data query for dispatching and is to be overriden by the user
+        to access local app models."""
+        registered_subjects = []
+        return registered_subjects
 
-    def get_dispatch_modeladmin_url(self):
-        """Gets the modeladmin url for the dispatching model."""
-        if not self._dispatch_modeladmin_url:
-            self.set_dispatch_modeladmin_url()
-        return self._dispatch_modeladmin_url
+    def dispatch(self):
+        """Dispatches items to a device by creating a dispatch item instance.
+
+        ..note:: calls the user overridden :func:`dispatch_prep`."""
+        # check source for the producer based on using_destination.
+        if self.debug:
+            logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
+        self._dispatch_prep()
 
     def _set_dispatch_url(self, value=None):
         """Sets the dispatch url for the dispatching model."""
@@ -184,28 +176,6 @@ class DispatchController(BaseDispatchController):
             except FieldError:
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_as_json(instances)
-
-    def _dispatch_prep(self):
-        """Wrapper for user method :func:`dispatch_prep`."""
-        self.dispatch_prep()
-
-    def dispatch_prep(self, item_identifier):
-        """Returns a list of RegisteredSubject instances.
-
-        This is the main data query for dispatching and is to be overriden by the user
-        to access local app models."""
-        registered_subjects = []
-        return registered_subjects
-
-    def dispatch(self):
-        """Dispatches items to a device by creating a dispatch item instance.
-
-        ..note:: calls the user overridden :func:`dispatch_prep`."""
-        # check source for the producer based on using_destination.
-        if self.debug:
-            logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
-        self._dispatch_prep()
-        #return dispatch_item
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.

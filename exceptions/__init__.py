@@ -44,3 +44,12 @@ class RestoreError(Exception):
 
 class AlreadyReturnedController(Exception):
     pass
+
+
+class DispatchControllerNotReady(Exception):
+    pass
+
+
+class DispatchControllerProducerError(Exception):
+    pass
+
