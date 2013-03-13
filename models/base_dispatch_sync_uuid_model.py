@@ -117,13 +117,22 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         return is_dispatched
 
     def dispatch_container_lookup(self):
-        """Returns a tuple of (model_cls, attname)  to get the model instance used as a dispatch container.
+        """Returns a query string in the django format.
 
         User must override.
 
-        ..note:: self must have a foreign key path to its container.
+        For example:
+            with a relational structure like this::
+                self
+                    household_structure_member
+                        household_structure
+                            household.household_identifier
 
-        (app_label, model_name), dispatch container fieldattr, qstring to dispatch container.)"""
+            where 'household' is the user container with identifier attr 'household_identifier',
+            <self> would return something like this:
+                'household_structure_member__household_structure__household__household_identifier'
+
+        ..note:: self must have a foreign key path to its container."""
         raise ImproperlyConfigured('Model {0} is not configured for dispatch.'.format(self._meta.object_name))
 
     def is_dispatched_as_item(self, using=None, user_container=None):
