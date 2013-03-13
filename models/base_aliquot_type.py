@@ -1,10 +1,10 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from bhp_base_model.models import BaseModel
+from lab_base_model.models import BaseLabModel
 from lab_clinic_api.managers import AliquotTypeManager
 
 
-class BaseAliquotType(BaseModel):
+class BaseAliquotType(BaseLabModel):
 
     name = models.CharField(
         verbose_name='Description',
