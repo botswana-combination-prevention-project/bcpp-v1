@@ -12,6 +12,7 @@ class BaseListModel(BaseModel):
         max_length=250,
         unique=True,
         db_index=True,
+        null=True,
         help_text='(suggest 40 characters max.)',
         )
 
