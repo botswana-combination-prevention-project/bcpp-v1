@@ -1,9 +1,8 @@
 from django.db.models import get_model
-from bhp_sync.exceptions import PendingTransactionError
+from bhp_sync.exceptions import PendingTransactionError, ProducerError
 from bhp_sync.models import OutgoingTransaction
 from bhp_sync.classes import Consumer
-from bhp_dispatch.exceptions import (AlreadyDispatchedContainer, AlreadyDispatchedItem,
-                                    DispatchControllerProducerError, DispatchContainerError,
+from bhp_dispatch.exceptions import (AlreadyDispatchedContainer, AlreadyDispatchedItem, DispatchContainerError,
                                     DispatchModelError, DispatchControllerNotReady, DispatchItemError)
 from bhp_dispatch.models import TestItem, DispatchItemRegister, DispatchContainerRegister, TestContainer
 from bhp_dispatch.classes import ReturnController, BaseDispatchController
@@ -13,12 +12,14 @@ from base_controller_tests import BaseControllerTests
 class ReturnControllerMethodsTests(BaseControllerTests):
 
     def test_return_controller_p1(self):
-        TestItem.objects.using(self.using_destination).all().delete()
+        TestContainer.objects.all().delete()
+        TestContainer.objects.using(self.using_destination).all().delete()
         TestItem.objects.all().delete()
-        DispatchItemRegister.objects.all().delete()
-        DispatchItemRegister.objects.using(self.using_destination).all().delete()
+        TestItem.objects.using(self.using_destination).all().delete()
         DispatchContainerRegister.objects.all().delete()
-        DispatchContainerRegister.objects.using(self.using_destination).all().delete()
+        DispatchItemRegister.objects.all().delete()
+        OutgoingTransaction.objects.all().delete()
+        OutgoingTransaction.objects.using(self.using_destination).all().delete()
         self.create_producer(is_active=True)
         self.create_test_item()
         # assert not instances registered to DispatchItemRegister
@@ -75,7 +76,7 @@ class ReturnControllerMethodsTests(BaseControllerTests):
         DispatchItemRegister.objects.all().delete()
         self.create_test_container()
         # assert fails because can't find producer
-        self.assertRaises(DispatchControllerProducerError, self.create_base_dispatch_controller)
+        self.assertRaises(ProducerError, self.create_base_dispatch_controller)
         # create the producer
         self.create_producer(is_active=True)
         # ...try again

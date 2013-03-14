@@ -4,11 +4,12 @@ from django.conf import settings
 from django.db.models import get_model
 from bhp_registration.models import RegisteredSubject
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
-from bhp_sync.exceptions import PendingTransactionError
+from bhp_sync.exceptions import PendingTransactionError, ProducerError
 from bhp_sync.classes import Consumer
+from bhp_using.exceptions import UsingError, UsingSourceError, UsingDestinationError
 from bhp_dispatch.classes import BaseController, ReturnController, BaseDispatchController
 from bhp_dispatch.exceptions import (DispatchError, AlreadyDispatched, AlreadyDispatchedItem, DispatchControllerNotReady,
-                                     AlreadyReturnedController, DispatchControllerProducerError, DispatchItemError, AlreadyDispatchedContainer)
+                                     AlreadyReturnedController, DispatchItemError, AlreadyDispatchedContainer)
 from bhp_dispatch.models import TestList, TestItem, TestItemTwo, TestItemThree, TestItemM2M, DispatchItemRegister, DispatchContainerRegister, TestContainer
 from base_controller_tests import BaseControllerTests
 from bhp_dispatch.classes import registered_controllers
@@ -32,17 +33,17 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # Base tests
         self.assertTrue('DEVICE_ID' in dir(settings), 'Settings attribute DEVICE_ID not found')
         # raise source and destination cannot be the same
-        self.assertRaises(DispatchError, BaseController, self.using_source, self.using_source)
+        self.assertRaises(UsingError, BaseController, self.using_source, self.using_source)
         # source must be either server or default
-        self.assertRaises(DispatchError, BaseController, 'not_default', self.using_source)
+        self.assertRaises(UsingSourceError, BaseController, 'not_default', self.using_source)
         # no producer for destination
-        self.assertRaises(DispatchControllerProducerError, BaseController, self.using_source, self.using_destination)
+        self.assertRaises(ProducerError, BaseController, self.using_source, self.using_destination)
         if not self.producer:
             self.create_producer()
         self.assertIsInstance(self.producer, Producer)
         self.assertEqual(self.producer.settings_key, self.using_destination)
         # no active producer for destination
-        self.assertRaises(DispatchControllerProducerError, BaseController, self.using_source, self.using_destination)
+        self.assertRaises(ProducerError, BaseController, self.using_source, self.using_destination)
         # activate producer
         self.producer.is_active = True
         self.producer.save()
@@ -54,9 +55,9 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # DATABASE keys check works
         self.assertRaises(ImproperlyConfigured, BaseController(self.using_source, self.using_destination).is_valid_using, 'xdefault', 'source')
         # ...
-        self.assertRaises(DispatchError, BaseController, self.using_source, self.using_destination, server_device_id=None)
+        self.assertRaises(UsingSourceError, BaseController, self.using_source, self.using_destination, server_device_id=None)
         # id source is default, must be server = 99
-        self.assertRaises(DispatchError, BaseController, self.using_source, self.using_destination, server_device_id='22')
+        self.assertRaises(UsingSourceError, BaseController, self.using_source, self.using_destination, server_device_id='22')
         #TODO: improve use of DEVICE_ID and server_device_id
         Producer.objects.all().delete()
         base_controller = None

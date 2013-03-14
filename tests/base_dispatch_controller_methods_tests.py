@@ -2,10 +2,10 @@ from django.db import IntegrityError
 from django.db.models import get_model
 from django.test import TestCase
 from bhp_sync.models import Producer
+from bhp_sync.exceptions import ProducerError
 from bhp_dispatch.classes import BaseDispatch, ReturnController, BaseDispatchController
-from bhp_dispatch.exceptions import DispatchError, AlreadyDispatchedContainer, DispatchControllerProducerError, AlreadyRegisteredController
+from bhp_dispatch.exceptions import DispatchError, AlreadyDispatchedContainer, AlreadyRegisteredController
 from bhp_dispatch.models import DispatchContainerRegister, TestContainer, DispatchItemRegister
-
 
 class BaseDispatchControllerMethodsTests(TestCase):
 
@@ -157,10 +157,10 @@ class BaseDispatchControllerMethodsTests(TestCase):
         producer.is_active = False
         producer.save()
         # assert you cannot change the producer once set
-        self.assertRaises(DispatchControllerProducerError, base_controller.set_producer)
+        self.assertRaises(ProducerError, base_controller.set_producer)
         base_controller = None
         # create a new base_controller knowing there are NO active producers
-        self.assertRaises(DispatchControllerProducerError, BaseDispatchController,
+        self.assertRaises(ProducerError, BaseDispatchController,
             'default',
             'dispatch_destination',
             self.user_container_app_label,
@@ -170,7 +170,7 @@ class BaseDispatchControllerMethodsTests(TestCase):
         # create new active producer but not for this settings_key
         Producer.objects.create(name='test_producer_2', settings_key='default', is_active=True)
         # create a new base_controller knowing there are NO active producers for this settings_key
-        self.assertRaises(DispatchControllerProducerError, BaseDispatchController,
+        self.assertRaises(ProducerError, BaseDispatchController,
             'default',
             'dispatch_destination',
             self.user_container_app_label,
@@ -181,8 +181,8 @@ class BaseDispatchControllerMethodsTests(TestCase):
     def test_producer_p2(self):
         """Tries to create a new Controller without a producer, set the producer, change it, etc"""
         Producer.objects.all().delete()
-        # assert raises DispatchControllerProducerError becuase there is no producer
-        self.assertRaises(DispatchControllerProducerError, BaseDispatchController,
+        # assert raises ProducerError becuase there is no producer
+        self.assertRaises(ProducerError, BaseDispatchController,
             'default',
             'dispatch_destination',
             self.user_container_app_label,
@@ -191,8 +191,8 @@ class BaseDispatchControllerMethodsTests(TestCase):
             self.user_container_identifier)
         # create a producer, but not active
         Producer.objects.create(name='test_producer1', settings_key='dispatch_destination', is_active=False)
-        # assert raises DispatchControllerProducerError becuase there is no producer
-        self.assertRaises(DispatchControllerProducerError, BaseDispatchController,
+        # assert raises ProducerError becuase there is no producer
+        self.assertRaises(ProducerError, BaseDispatchController,
             'default',
             'dispatch_destination',
             self.user_container_app_label,
@@ -201,8 +201,8 @@ class BaseDispatchControllerMethodsTests(TestCase):
             self.user_container_identifier)
         # create a producer, but not with this settings key
         Producer.objects.create(name='test_producer2', settings_key='default', is_active=True)
-        # assert raises DispatchControllerProducerError becuase there is no producer
-        self.assertRaises(DispatchControllerProducerError, BaseDispatchController,
+        # assert raises ProducerError becuase there is no producer
+        self.assertRaises(ProducerError, BaseDispatchController,
             'default',
             'dispatch_destination',
             self.user_container_app_label,
@@ -223,7 +223,7 @@ class BaseDispatchControllerMethodsTests(TestCase):
         # assert the correct producer was selected
         self.assertEqual('test_producer1', base_controller.get_producer().name)
         # assert that producer, once set, cannot be changed
-        self.assertRaises(DispatchControllerProducerError, base_controller.set_producer)
+        self.assertRaises(ProducerError, base_controller.set_producer)
 
     def test_producer_p3(self):
         """Tests the dispatch_controller_register which does not allow two instances of BaseDispatchController to exist for the same settings_key."""

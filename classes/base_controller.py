@@ -4,17 +4,17 @@ from datetime import datetime
 from django.conf import settings
 from django.db.models.query import QuerySet
 from django.db.models import signals
-from django.db.models import ForeignKey, OneToOneField, ManyToManyField
+from django.db.models import ForeignKey, OneToOneField
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import get_model, Q, Count, Max
-from django.db import IntegrityError
+from django.db.models import Q, Count, Max
 from lab_base_model.models import BaseLabUuidModel, BaseLabModel
 from bhp_base_model.models import BaseListModel
+from bhp_sync.classes import BaseProducer
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
-from bhp_dispatch.exceptions import DispatchError, DispatchModelError, DispatchControllerProducerError
+from bhp_dispatch.exceptions import DispatchModelError
 from bhp_sync.exceptions import PendingTransactionError
 from controller_register import registered_controllers
 
@@ -28,7 +28,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class BaseController(object):
+class BaseController(BaseProducer):
 
     APP_NAME = 0
     MODEL_NAME = 1
@@ -66,98 +66,12 @@ class BaseController(object):
                                   :func:`ignore_for_dispatch` method on the model. See model base class :class:`BaseSyncUuidModel` in
                                   module :mod:`bhp_sync`. For example: DISPATCH_APP_LABELS = ['mochudi_household', 'mochudi_subject', 'mochudi_lab']
             """
-        self._using_source = None
-        self._using_destination = None
-        self._producer = None
-        self.server_device_id = kwargs.get('server_device_id', '99')
-        self.exception = kwargs.get('exception', DispatchError)
+        super(BaseController, self).__init__(using_source, using_destination, **kwargs)
         self.preparing_status = kwargs.get('preparing_netbook', None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
-        if using_source == using_destination:
-            raise self.exception('Arguments \'<source>\' and \'<destination\'> cannot be the same. Got \'{0}\' and \'{1}\''.format(using_source, using_destination))
-        self.set_using_source(using_source)
-        self.set_using_destination(using_destination)
         self.set_producer()
         return None
-
-    def set_using_source(self, using_source=None):
-        """Sets the ORM `using` parameter for data access on the "source"."""
-        if not using_source:
-            raise self.exception('Parameters \'using_source\' cannot be None')
-        if using_source not in ['server', 'default']:
-            raise self.exception('Argument \'<using_source\'> must be either \'default\' (if run from server) or \'server\' if not run from server.')
-        if settings.DEVICE_ID == self.server_device_id and using_source != 'default':
-            raise self.exception('Argument \'<using_source\'> must be \'default\' if running on the server (check settings.DEVICE).')
-        if settings.DEVICE_ID != self.server_device_id and using_source == 'default':
-            raise self.exception('Argument \'<using_source\'> must be \'server\' if running a device (check settings.DEVICE).')
-        if self.is_valid_using(using_source, 'source'):
-            self._using_source = using_source
-
-    def get_using_source(self):
-        """Gets the ORM `using` parameter for "source"."""
-        if not self._using_source:
-            self.set_using_source()
-        return self._using_source
-
-    def set_using_destination(self, using_destination=None):
-        """Sets the ORM `using` parameter for data access on the "destination"."""
-        if not using_destination:
-            raise self.exception('Parameters \'using_destination\' cannot be None')
-        if using_destination == 'server':
-            raise self.exception('Argument \'<using_destination\'> cannot be \'server\'.')
-        if settings.DEVICE_ID == self.server_device_id and using_destination == 'default':
-            raise self.exception('Argument \'<using_destination\'> cannot be \'default\' if running on the server (check settings.DEVICE).')
-        if self.is_valid_using(using_destination, 'destination'):
-            self._using_destination = using_destination
-
-    def get_using_destination(self):
-        """Gets the ORM `using` parameter for "destination"."""
-        if not self._using_destination:
-            self.set_using_destination()
-        return self._using_destination
-
-    def is_valid_using(self, using, label):
-        """Confirms an ORM `using` parameter is valid by checking :file:`settings.py`."""
-        if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == using]:
-            raise ImproperlyConfigured('Cannot find {1} key \'{0}\' in settings attribute DATABASES. Please add to settings.py.'.format(using, label))
-        return True
-
-    def set_producer(self):
-        """Sets the instance of the current producer based on the ORM `using` parameter for the destination.
-
-        .. note:: The producer must always exist on the source."""
-        Producer = get_model('bhp_sync', 'Producer')
-        if self._producer:
-            raise DispatchControllerProducerError('Producer may not be changed once set. Create a new DispatchController instead.')
-#        # try to determine producer from using_destination
-#        if self.get_using_destination() == 'default':
-#            # try to find the producer on the server with hostname + database name
-#            settings_key = '{0}-{1}'.format(socket.gethostname().lower(), settings.DATABASES.get('default').get('NAME'))
-#            if Producer.objects.using(self.get_using_source()).filter(settings_key=settings_key, is_active=True).exists():
-#                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=settings_key, is_active=True)
-#        else:
-        if Producer.objects.using(self.get_using_source()).filter(settings_key=self.get_using_destination(), is_active=True).exists():
-            self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=self.get_using_destination(), is_active=True)
-        if not self._producer:
-            raise DispatchControllerProducerError('Dispatcher cannot find a producer with settings key \'{0}\' '
-                                                  'on the source {1}.'.format(self.get_using_destination(), self.get_using_source()))
-        # check the producers DATABASES key exists
-        # TODO: what if producer is "me", e.g settings key is 'default'
-        if not self.get_using_destination() == 'default':
-            settings_key = self._producer.settings_key
-            if not [dbkey for dbkey in settings.DATABASES.iteritems() if dbkey[0] == settings_key]:
-                raise ImproperlyConfigured('Dispatcher expects settings attribute DATABASES to have a NAME '
-                                           'key to the \'producer\'. Got name=\'{0}\', settings_key=\'{1}\'.'.format(self._producer.name, self._producer.settings_key))
-
-    def get_producer(self):
-        """Returns an instance of the current producer."""
-        if not self._producer:
-            self.set_producer()
-        return self._producer
-
-    def get_producer_name(self):
-        return self.get_producer().name
 
     def has_pending_transactions(self, models):
         return self.has_incoming_transactions(models) or self.has_outgoing_transactions()
@@ -285,21 +199,30 @@ class BaseController(object):
                     # TODO: One, are many to many handled correctly??
                     #raise TypeError('_to_json cannot handle ManyToMany fields')
                     pk = getattr(d_obj.object, 'pk')
+                    # get class of this model
                     cls = d_obj.object.__class__
+                    # get instance of this model on source
                     inst = cls.objects.get(pk=pk)
+                    # get the name of the m2m attribute. Note, this is not a model field but a manager
                     m2m = m2m_rel_mgr.name
-                    # try something like test_item_m2m.m2m.all()
+                    # try something like test_item_m2m.m2m.all(), gets all() list_model instances for this m2m
                     m2m_qs = getattr(inst, m2m).all()
-                    # create list items on destination if they do not exist
+                    # create list_model instances on destination if they do not exist
                     dst_list_item_pks = []
                     for src_list_item in m2m_qs:
                         if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
+                            # no need to use callback, list models are not registered with dispatch
                             self._to_json(src_list_item, additional_base_model_class=BaseListModel)
+                            # record source pk for use later
+                            # TODO: confirm the pk on source is always the same on destination? what about natural keys?
                             dst_list_item_pks.append(src_list_item.pk)
+                    # get instance of this model on destination
                     inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
+                    # find the pk for each list model instance and add to the m2m "field"
                     for pk in dst_list_item_pks:
+                        # get the list_model instance on destination
                         item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
-                        # this is like instance.m2m.add(item)
+                        # add to m2m rel_manager on destination, this is like instance.m2m.add(item)
                         getattr(inst, m2m).add(item_inst)
 
                 # TODO: commented out below so we can see the errors in testing

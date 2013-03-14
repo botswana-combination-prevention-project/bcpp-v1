@@ -39,12 +39,17 @@ class BaseDispatchController(BaseDispatch):
         self._dispatch_list = []
 
     def get_allowed_base_models(self):
-        return [BaseSyncUuidModel]
+        """Ensure all model classes of instances registered as dispatch items/dispatched as json are of this base class only.
+
+            Called by :func:`_to_json`"""
+
+        return [BaseDispatchSyncUuidModel]
 
     def dispatch_foreign_key_instances(self, app_label):
         """Finds foreign_key model classes other than the visit model class and exports the instances."""
         list_models = []
-        #TODO: should only work for list models so that it does not cascade into all data
+        # TODO: should only work for list models so that it does not cascade into all data
+        # TODO: this will fail for any list models as get_allowed_base_models() only returns BaseDispatchSyncUuidModel
         if not app_label:
             raise TypeError('Parameter app_label cannot be None.')
         app = get_app(app_label)
