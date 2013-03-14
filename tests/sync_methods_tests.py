@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.utils import unittest
 from django.test import TestCase
 import datetime
 from django.contrib.contenttypes.models import ContentType
@@ -10,7 +9,7 @@ from bhp_consent.models import ConsentCatalogue
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 
 
-class SyncMethodsTests(unittest.TestCase):
+class SyncMethodsTests(TestCase):
 
     def setUp(self):
         self.producer_name = 'lab_api'
@@ -25,16 +24,18 @@ class SyncMethodsTests(unittest.TestCase):
             self.create_outgoing_transaction()
         self.create_producer(is_active=True)
         self.assertEqual(OutgoingTransaction.objects.using(self.using_destination).all().count(), 3)
-        self.get_consumer_instance().fetch_outgoing(self.producer_name)
+        consumer = Consumer()
+        consumer.fetch_outgoing(self.producer_name)
         self.assertEqual(OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=False).count(), 0)
         self.assertTrue(OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=True)[0].consumed_datetime.today())
         self.assertEqual(IncomingTransaction.objects.using(self.using_source).all().count(), 3)
 
     def test_get_producer(self):
-        # pdb.set_trace()
         self.create_producer()
         producers = Producer.objects.all()
         self.assertEqual(producers.count(), 1)
+        consumer = Consumer()
+        consumer.fetch_outgoing(self.producer_name)
         producer = self.get_consumer_instance().get_producer(self.producer_name)
         self.assertTrue(producer.name == self.producer_name)
 

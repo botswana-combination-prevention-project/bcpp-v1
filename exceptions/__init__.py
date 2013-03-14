@@ -10,3 +10,7 @@ class SerializationTransactionError(Exception):
 
 class TransactionConsumerError(Exception):
     pass
+
+
+class ProducerError(Exception):
+    pass
