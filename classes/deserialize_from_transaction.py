@@ -4,24 +4,23 @@ from django.core import serializers
 from django.db.models import ForeignKey
 from django.db.utils import IntegrityError
 from bhp_crypto.classes import FieldCryptor
+from base import Base
 from transaction_producer import TransactionProducer
 
 
-class DeserializeFromTransaction(object):
+class DeserializeFromTransaction(Base):
 
-    def __init__(self, *args, **kwargs):
-        super(DeserializeFromTransaction, self).__init__(*args, **kwargs)
-
-    def deserialize(self, incoming_transaction):
-
+    def deserialize(self, incoming_transaction, **kwargs):
+        # may bypass this check for for testing ...
+        check_hostname = kwargs.get('check_hostname', True)
         for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)):
-        # if you get an error deserializing a datetime, confirm dev version of json.py
+            # if you get an error deserializing a datetime, confirm dev version of json.py
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
                 # check if tx originanted from me
                 #print "created %s : modified %s" % (obj.object.hostname_created, obj.object.hostname_modified)
                 incoming_transaction.is_ignored = False
                 print '    {0}'.format(obj.object)
-                if obj.object.hostname_modified == socket.gethostname():
+                if obj.object.hostname_modified == socket.gethostname() and check_hostname:
                     #print "Ignoring my own transaction %s" % (incoming_transaction.tx_pk)
                     pass
                 else:
@@ -36,13 +35,13 @@ class DeserializeFromTransaction(object):
                     # and the next incoming_transaction to be consumed will be that same model instance with a different pk.
 
                     #  get_by_natural_key_with_dict is disabled, just save()
-                    #pdb.set_trace()
+
                     if 'DISABLEDget_by_natural_key_with_dict' in dir(obj.object.__class__.objects):
                     #if self.object_instace_of(obj,['RegisteredSubject']):
                         if obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()):
                             obj.object.pk = obj.object.__class__.objects.get_by_natural_key_with_dict(**obj.object.natural_key_as_dict()).pk
                             #UPDATE EXISTING RECORD.
-                            obj.save()
+                            obj.save(using=self.get_using())
                         else:
                             raise TypeError('Cannot determine natural key of Serialized object %s using \'get_by_natural_key_with_dict\' method.' % (obj.object.__class__,))
                     else:
@@ -57,9 +56,9 @@ class DeserializeFromTransaction(object):
                             try:
                                 # force insert even if it is an update
                                 # to trigger an integrity error if it is an update
-                                obj.save()
+                                obj.save(using=self.get_using())
                                 obj.object.deserialize_post()
-                                print '    OK on force insert'
+                                print '    OK on force insert on {0}'.format(self.get_using())
                                 is_success = True
                             except:
                                 # insert failed so unique contraints blocked the forced insert above
@@ -67,12 +66,12 @@ class DeserializeFromTransaction(object):
                                 print '    force insert failed'
                                 if 'deserialize_on_duplicate' in dir(obj.object):
                                     obj.object.deserialize_on_duplicate()
-                                    obj.save()
-                                    print '    OK update succeeded after deserialize_on_duplicate'
+                                    obj.save(using=self.get_using())
+                                    print '    OK update succeeded after deserialize_on_duplicate on {0}'.format(self.get_using())
                                     is_success = True
                                 else:
-                                    obj.save()
-                                    print '    OK update succeeded as is'
+                                    obj.save(using=self.get_using())
+                                    print '    OK update succeeded as is on {0}'.format(self.get_using())
                                     is_success = True
                         except IntegrityError as error:
                             # failed both insert and update, why?
@@ -84,7 +83,7 @@ class DeserializeFromTransaction(object):
                                     #for field in foreign_key_error:
                                     #    # it is OK to just set the fk to None
                                     #    setattr(obj.object, field.name, None)
-                                    print '    audit instance, ignoring...'
+                                    print '    audit instance, ignoring... on {0}'.format(self.get_using())
                                     incoming_transaction.is_ignored = True
                                 else:
                                     foreign_key_error = []
@@ -96,11 +95,11 @@ class DeserializeFromTransaction(object):
                                                 print '    unable to getattr {0}'.format(field.name)
                                                 foreign_key_error.append(field)
                                     for field in foreign_key_error:
-                                        print '    deserialize_get_missing_fk on model {0} for field {1}'.format(obj.object._meta.object_name, field.name)
+                                        print '    deserialize_get_missing_fk on model {0} for field {1} on {2}'.format(obj.object._meta.object_name, field.name, self.get_using())
                                         setattr(obj.object, field.name, obj.object.deserialize_get_missing_fk(field.name))
                                     try:
-                                        obj.save()
-                                        print '   OK saved after integrity error'
+                                        obj.save(using=self.get_using())
+                                        print '   OK saved after integrity error on {0}'.format(self.get_using())
                                         is_success = True
                                     except:
                                         incoming_transaction.is_ignored = True
@@ -110,7 +109,7 @@ class DeserializeFromTransaction(object):
                                 # locate the existing pk.
                                 # If pk found, overwrite the pk in the json with the existing pk.
                                 # Try to save again
-                                print '    duplicate'
+                                print '    duplicate on {0}'.format(self.get_using())
                                 if not obj.object._meta.unique_together:
                                     # if there is no other constraint on the model
                                     # then an integrity error does not really make sense.
@@ -138,10 +137,10 @@ class DeserializeFromTransaction(object):
                                                 # if you can develop criteria to decide,
                                                 # then use deserialize_on_duplicate to evaluate
                                                 print '    try save again'
-                                                obj.save()
+                                                obj.save(using=self.get_using())
                                                 is_success = True
                                                 # change all pk to the new pk for is_consumed=False.
-                                                print '    OK saved, now replace_pk_in_tx'
+                                                print '    OK saved, now replace_pk_in_tx on {0}'.format(self.get_using())
                                                 incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk)
                                                 print '    {0} is now {1}'.format(old_pk, new_pk)
                                             else:
@@ -153,7 +152,7 @@ class DeserializeFromTransaction(object):
                                             incoming_transaction.consumer = None
                                             incoming_transaction.is_error = True
                                             incoming_transaction.error = error
-                                            incoming_transaction.save()
+                                            incoming_transaction.save(using=self.get_using())
                                         except:
                                             print "        [a] Unexpected error:", sys.exc_info()[0]
                                             raise
@@ -166,4 +165,4 @@ class DeserializeFromTransaction(object):
                         if is_success:
                             incoming_transaction.is_consumed = True
                             incoming_transaction.consumer = str(TransactionProducer())
-                            incoming_transaction.save()
+                            incoming_transaction.save(using=self.get_using())

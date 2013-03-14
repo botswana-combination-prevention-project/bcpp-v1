@@ -4,20 +4,10 @@ from django.core import serializers
 from bhp_crypto.classes import FieldCryptor
 from transaction_producer import TransactionProducer
 from bhp_sync.exceptions import SerializationTransactionError
+from base import Base
 
 
-class SerializeToTransaction(object):
-
-    def __init__(self, *args, **kwargs):
-        self.using = None
-        self._set_using(kwargs.get('using', None))
-        super(SerializeToTransaction, self).__init__(*args, **kwargs)
-
-    def _set_using(self, value):
-        self._using = value
-
-    def get_using(self):
-        return self._using
+class SerializeToTransaction(Base):
 
     def serialize(self, sender, instance, **kwargs):
 
@@ -45,10 +35,10 @@ class SerializeToTransaction(object):
                         serialize_to_transaction = SerializeToTransaction()
                         serialize_to_transaction.serialize(sender, instance,**kwargs)
         """
-        if not kwargs.get('using', None):
-            raise SerializationTransactionError('Keyword argument \'using\' may not be None.')
-        else:
-            self._set_using(kwargs.get('using', None))
+#        if not kwargs.get('using', None):
+#            raise SerializationTransactionError('Keyword argument \'using\' may not be None.')
+#        else:
+#            self._set_using(kwargs.get('using', None))
         # watch out for this. The producer is the device that created
         # the "transaction" instance and not necessarily the one that created the model instance
         # so just using the hostname created or hostname modified would not necessarily work.

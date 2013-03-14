@@ -6,3 +6,7 @@ class PendingTransactionError(Exception):
 
 class SerializationTransactionError(Exception):
     pass
+
+
+class TransactionConsumerError(Exception):
+    pass
