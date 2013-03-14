@@ -1,6 +1,9 @@
 import logging
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
+from django.db.models import signals
+from mochudi_subject.models import mochudi_subject_on_post_save
+from bhp_visit_tracking.models import base_visit_tracking_on_post_save
 from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.classes import BaseDispatchController
 
@@ -84,7 +87,7 @@ class DispatchController(BaseDispatchController):
             self.set_visit_model_fkey(model_cls, visit_model_cls)
         return self._visit_model_fkey_name
 
-    def dispatch_lab_tracker_history(self, registered_subject, group_name=None):
+    def dispatch_lab_tracker_history(self, registered_subject, container, group_name=None):
         """Dispatches all lab tracker history models for this subject.
 
         ..seealso:: module :mod:`bhp_lab_tracker`.
@@ -95,17 +98,17 @@ class DispatchController(BaseDispatchController):
                 if group_name:
                     options.update({'group_name': group_name})
                 history_models = HistoryModel.objects.filter(**options)
-                self.dispatch_as_json(history_models)
+                self.dispatch_user_items_as_json(history_models, container)
 
-    def dispatch_appointments(self, registered_subject):
+    def dispatch_appointments(self, registered_subject, container):
         """Dispatches all appointments for this registered subject.
 
         ..seealso:: module :mod:`bhp_appointment`
         """
         Appointments = get_model('bhp_appointment', 'Appointment')
-        self.dispatch_as_json(Appointments.objects.filter(registered_subject=registered_subject))
+        self.dispatch_user_items_as_json(Appointments.objects.filter(registered_subject=registered_subject), container)
 
-    def dispatch_scheduled_instances(self, app_label, registered_subject, **kwargs):
+    def dispatch_scheduled_instances(self, app_label, registered_subject, container, **kwargs):
         """Sends scheduled instances to the producer for the given an instance of registered_subject.
 
         Keywords:
@@ -116,32 +119,33 @@ class DispatchController(BaseDispatchController):
            of :mod:`bhp_visit_tracking`'s :class:`BaseVisitTracking` base model.
            For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc
         """
-        self.dispatch_appointments(registered_subject)
+        self.dispatch_appointments(registered_subject, container)
         # Get all the models with reference to SubjectVisit
-        scheduled_models = self.get_scheduled_models()
+        scheduled_models = self.get_scheduled_models(app_label)
         # get the visit model class for this app
-        #for app_label, scheduled_model_classes in scheduled_models.iteritems():
         for scheduled_model_class in scheduled_models:
             visit_model_cls = self.get_visit_model_cls(app_label, scheduled_model_class, index='cls')
             # Fetch all all subject visits for the member and survey
             visits = visit_model_cls.objects.filter(appointment__registered_subject=registered_subject, **kwargs)
             visit_fld_name = None
             if visits:
+                signals.post_save.disconnect(mochudi_subject_on_post_save, weak=False, dispatch_uid='mochudi_subject_on_post_save')
+                signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
                 for visit in visits:
                     # export all appointments for this visit
-                    #self.dispatch_as_json(visit.appointment, app_label=app_label)
-                    self.dispatch_as_json(visit, app_label=app_label)
+                    if not visit.is_dispatched_as_item():
+                        self.dispatch_user_items_as_json(visit, container)
+                signals.post_save.connect(mochudi_subject_on_post_save, weak=False, dispatch_uid='mochudi_subject_on_post_save')
+                signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
             # fetch all scheduled_models for the visits and export
-            #for model_cls in scheduled_model_class:
-                #if not visit_fld_name:
                 for fld in scheduled_model_class._meta.fields:
                     if isinstance(fld, (ForeignKey, OneToOneField)):
                         if issubclass(fld.rel.to, visit_model_cls):
                             visit_fld_name = fld.name
                 scheduled_instances = scheduled_model_class.objects.filter(**{'{0}__in'.format(visit_fld_name): visits})
-                self.dispatch_as_json(scheduled_instances, app_label=app_label)
+                self.dispatch_user_items_as_json(scheduled_instances, container)
 
-    def dispatch_labs_requisitions(self, registered_subject):
+    def dispatch_labs_requisitions(self, registered_subject, container):
         """Dispatches all lab requisitions for this subject."""
         Lab_requisitions = get_model('mochudi_survey_lab', 'SubjectRequisition')
         labs = Lab_requisitions.objects.filter(
@@ -149,14 +153,14 @@ class DispatchController(BaseDispatchController):
                 )
         for lab in labs:
             if lab.subject_visit:
-                self.dispatch_as_json(lab.subject_visit)
-        self.dispatch_as_json(labs)
+                self.dispatch_user_items_as_json(lab.subject_visit, container)
+        self.dispatch_user_items_as_json(labs, container)
         AdditionalLabEntryBucket = get_model('bhp_lab_entry', 'AdditionalLabEntryBucket')
-        self.dispatch_as_json(AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk))
+        self.dispatch_user_items_as_json(AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk), container)
         ScheduledLabEntryBucket = get_model('bhp_lab_entry', 'ScheduledLabEntryBucket')
-        self.dispatch_as_json(ScheduledLabEntryBucket.objects.filter(registered_subject=registered_subject.pk))
+        self.dispatch_user_items_as_json(ScheduledLabEntryBucket.objects.filter(registered_subject=registered_subject.pk), container)
 
-    def dispatch_membership_forms(self, registered_subject, **kwargs):
+    def dispatch_membership_forms(self, registered_subject, container, **kwargs):
         """Gets all instances of visible membership forms for this registered_subject and dispatches.
 
         Keywords:
@@ -175,7 +179,7 @@ class DispatchController(BaseDispatchController):
                         **kwargs)
             except FieldError:
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
-            self.dispatch_as_json(instances)
+            self.dispatch_user_items_as_json(instances, container)
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
