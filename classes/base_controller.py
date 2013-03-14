@@ -167,7 +167,7 @@ class BaseController(BaseProducer):
             # confirm all model_instances are of the correct base class
             for instance in model_instances:
                 if not isinstance(instance, base_model_class):
-                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'. Got {1}'.format(instance, base_model_class, instance.__class__))
+                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'. Got {2}'.format(instance, base_model_class, instance.__class__))
             #serialize
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
             # deserialize on destination

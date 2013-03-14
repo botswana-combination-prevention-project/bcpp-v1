@@ -135,7 +135,7 @@ class DispatchController(BaseDispatchController):
                 signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
                 for visit in visits:
                     # export all appointments for this visit
-                    if not visit.is_dispatched_as_item(None,container):
+                    if not visit.is_dispatched_as_item(None, container):
                         self.dispatch_user_items_as_json(visit, container)
                 signals.post_save.connect(mochudi_subject_on_post_save, weak=False, dispatch_uid='mochudi_subject_on_post_save')
                 signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
