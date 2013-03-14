@@ -54,8 +54,11 @@ class BaseControllerTests(TestCase):
         # create base controller instance
         if not user_container_model_name:
             user_container_model_name = self.user_container_model_name
-        self.base_dispatch_controller = BaseDispatchController(self.using_source, self.using_destination,
-                                                self.user_container_app_label,
-                                                user_container_model_name,
-                                                self.user_container_identifier_attrname,
-                                                self.user_container_identifier)
+        self.base_dispatch_controller = None
+        self.base_dispatch_controller = BaseDispatchController(
+            self.using_source,
+            self.using_destination,
+            self.user_container_app_label,
+            user_container_model_name,
+            self.user_container_identifier_attrname,
+            self.user_container_identifier)

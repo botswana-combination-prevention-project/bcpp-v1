@@ -4,6 +4,7 @@ from datetime import datetime
 from django.conf import settings
 from django.db.models.query import QuerySet
 from django.db.models import signals
+from django.db.models import ForeignKey, OneToOneField, ManyToManyField
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Q, Count, Max
@@ -11,11 +12,12 @@ from django.db import IntegrityError
 from lab_base_model.models import BaseLabUuidModel, BaseLabModel
 from bhp_base_model.models import BaseListModel
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_base_model.models import BaseListModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_sync.helpers import TransactionHelper
 from bhp_dispatch.exceptions import DispatchError, DispatchModelError, DispatchControllerProducerError
 from bhp_sync.exceptions import PendingTransactionError
+from controller_register import registered_controllers
+
 
 logger = logging.getLogger(__name__)
 
@@ -26,10 +28,22 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class Base(object):
+class BaseController(object):
 
     APP_NAME = 0
     MODEL_NAME = 1
+
+    def __repr__(self):
+        return self._repr()
+
+    __str__ = __repr__
+
+    def __del__(self):
+        """Deregisters for this producer.settings_key."""
+        registered_controllers.deregister(self)
+
+    def _repr(self):
+        return '{0}for {1}'.format('BaseController', self.get_producer().settings_key)
 
     def __init__(self, using_source, using_destination, **kwargs):
         """Initializes and verifies arguments ``using_source`` and ``using_destination``.
@@ -57,7 +71,7 @@ class Base(object):
         self._producer = None
         self.server_device_id = kwargs.get('server_device_id', '99')
         self.exception = kwargs.get('exception', DispatchError)
-        self.preparing_status = kwargs.get('preparing_netbook',None)
+        self.preparing_status = kwargs.get('preparing_netbook', None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
         if using_source == using_destination:
@@ -110,26 +124,24 @@ class Base(object):
         return True
 
     def set_producer(self):
-        """Sets the instance of the current producer based on the ORM `using` parameter for the destination
-        and refreshes the list of dispatched Dispatch models.
+        """Sets the instance of the current producer based on the ORM `using` parameter for the destination.
 
-        .. note:: The producer must always exist on the source. If dispatching via the device, try to
-                  find a producer with the settings_key of the format ``DEVICE_HOSTNAME-DBNAME``
-                  where DBNAME is the NAME attribute of the ``default`` DATABASE on the device."""
+        .. note:: The producer must always exist on the source."""
         Producer = get_model('bhp_sync', 'Producer')
-        settings_key = None
-        # try to determine producer from using_destination
-        if self.get_using_destination() == 'default':
-            # try to find the producer on the server with hostname + database name
-            settings_key = '{0}-{1}'.format(socket.gethostname().lower(), settings.DATABASES.get('default').get('NAME'))
-            if Producer.objects.using(self.get_using_source()).filter(settings_key=settings_key, is_active=True).exists():
-                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=settings_key, is_active=True)
-        else:
-            if Producer.objects.using(self.get_using_source()).filter(settings_key=self.get_using_destination(), is_active=True).exists():
-                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=self.get_using_destination(), is_active=True)
+        if self._producer:
+            raise DispatchControllerProducerError('Producer may not be changed once set. Create a new DispatchController instead.')
+#        # try to determine producer from using_destination
+#        if self.get_using_destination() == 'default':
+#            # try to find the producer on the server with hostname + database name
+#            settings_key = '{0}-{1}'.format(socket.gethostname().lower(), settings.DATABASES.get('default').get('NAME'))
+#            if Producer.objects.using(self.get_using_source()).filter(settings_key=settings_key, is_active=True).exists():
+#                self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=settings_key, is_active=True)
+#        else:
+        if Producer.objects.using(self.get_using_source()).filter(settings_key=self.get_using_destination(), is_active=True).exists():
+            self._producer = Producer.objects.using(self.get_using_source()).get(settings_key=self.get_using_destination(), is_active=True)
         if not self._producer:
-            raise DispatchControllerProducerError('Dispatcher cannot find producer \'{2}\' with settings key \'{0}\' '
-                            'on the source {1}.'.format(self.get_using_destination(), self.get_using_source(), settings_key))
+            raise DispatchControllerProducerError('Dispatcher cannot find a producer with settings key \'{0}\' '
+                                                  'on the source {1}.'.format(self.get_using_destination(), self.get_using_source()))
         # check the producers DATABASES key exists
         # TODO: what if producer is "me", e.g settings key is 'default'
         if not self.get_using_destination() == 'default':
@@ -207,7 +219,10 @@ class Base(object):
         """Sends all instances of the model class to :func:`_to_json`."""
         self._to_json(model_cls.objects.all(), additional_base_model_class)
 
-    def _to_json(self, model_instances, additional_base_model_class=None):
+    def get_allowed_base_models(self):
+        return [BaseSyncUuidModel, BaseListModel, BaseLabUuidModel, BaseLabModel]
+
+    def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None):
         """Serialize model instances on source to destination.
 
         Args:
@@ -218,7 +233,9 @@ class Base(object):
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 
         """
-        base_model_class = [BaseSyncUuidModel, BaseListModel, BaseLabUuidModel, BaseLabModel]
+        if not to_json_callback:
+            to_json_callback = self._to_json
+        base_model_class = self.get_allowed_base_models()
         if additional_base_model_class:
             if not isinstance(additional_base_model_class, (list, tuple)):
                 additional_base_model_class = [additional_base_model_class]
@@ -236,38 +253,73 @@ class Base(object):
             # confirm all model_instances are of the correct base class
             for instance in model_instances:
                 if not isinstance(instance, base_model_class):
-                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'.'.format(instance, base_model_class))
+                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'. Got {1}'.format(instance, base_model_class, instance.__class__))
             #serialize
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
             # deserialize on destination
             for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
                 #if d_obj.object.is_dispatched_as_item():
                 #    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
-                try:
-                    # disconnect signal to avoid creating transactions on the source for data saved on destination
-                    signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                    #save
-                    d_obj.save(using=self.get_using_destination())
-                    # reconnect
-                    signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                except IntegrityError as e:
-                    logger.info(e)
-                    logger.info(e.message)
-                    if 'is not unique' in e.message:
-                        raise DispatchError('Model instance {0} is already on producer {1}.'.format(d_obj.object, self.get_producer_name()))
-                    if 'Duplicate' in e.message:
-                        pass
-                    elif 'Cannot add or update a child row' in e.message:
-                        # assume Integrity error was because of missing ForeignKey data
-                        self.dispatch_foreign_key_instances(self.get_dispatch_item_app_label())
-                        # try again
-                        # disconnect signal
-                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                        #save
-                        d_obj.save(using=self.get_using_destination())
-                        # reconnect
-                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                    else:
-                        raise
-                except:
-                    raise
+                #try:
+                # disconnect signal to avoid creating transactions on the source for data saved on destination
+                signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                #save
+                d_obj.save(using=self.get_using_destination())
+                # reconnect
+                signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                # check for foreign keys and, if found, send using the callback
+                # Ensures the sent instance is complete / stable
+                # TODO: any issue about natural keys?? this searched the destination on pk.
+                for field in d_obj.object._meta.fields:
+                    if isinstance(field, (ForeignKey, OneToOneField)):
+                        pk = getattr(d_obj.object, field.attname)
+                        cls = field.rel.to
+                        if not cls.objects.using(self.get_using_destination()).filter(pk=pk).exists():
+                            logger.info('    also sending fk {0} pk={1}'.format(cls, pk))
+                            # use callback to send required foreignkeys to json using the callback is the original method wrapper for _to_json.
+                            # for example, dispatch_user_items_as_json.
+                            to_json_callback(cls.objects.filter(pk=pk), user_container=user_container)
+                for m2m_rel_mgr in d_obj.object._meta.many_to_many:
+                    # TODO: One, are many to many handled correctly??
+                    #raise TypeError('_to_json cannot handle ManyToMany fields')
+                    pk = getattr(d_obj.object, 'pk')
+                    cls = d_obj.object.__class__
+                    _inst = cls.objects.get(pk=pk)
+                    m2m = m2m_rel_mgr.name
+                    # try something like test_item_m2m.m2m.all()
+                    m2m_qs = getattr(_inst, m2m).all()
+                    # create list items on destination if they do not exist
+                    dst_list_item_pks = []
+                    for src_list_item in m2m_qs:
+                        if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
+                            self._to_json(src_list_item, additional_base_model_class=BaseListModel)
+                            dst_list_item_pks.append(src_list_item.pk)
+                    _inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
+                    for pk in dst_list_item_pks:
+                        _item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
+                        getattr(_inst, m2m).add(_item_inst)
+
+                # TODO: commented out below so we can see the errors in testing
+                #       May need to uncomment before release
+
+#                except IntegrityError as e:
+#                    logger.info(e)
+#                    logger.info(e.message)
+#                    if 'is not unique' in e.message:
+#                        raise DispatchError('Model instance {0} is already on producer {1}.'.format(d_obj.object, self.get_producer_name()))
+#                    if 'Duplicate' in e.message:
+#                        pass
+#                    elif 'Cannot add or update a child row' in e.message:
+#                        # assume Integrity error was because of missing ForeignKey data
+#                        self.dispatch_foreign_key_instances(self.get_dispatch_item_app_label())
+#                        # try again
+#                        # disconnect signal
+#                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+#                        #save
+#                        d_obj.save(using=self.get_using_destination())
+#                        # reconnect
+#                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+#                    else:
+#                        raise
+#                except:
+#                    raise

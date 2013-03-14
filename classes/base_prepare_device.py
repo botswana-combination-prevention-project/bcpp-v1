@@ -8,8 +8,7 @@ from django.contrib.auth.models import User, Group, Permission
 from bhp_base_model.models import BaseListModel
 from bhp_userprofile.models import UserProfile
 from bhp_content_type_map.classes import ContentTypeMapHelper
-from base_dispatch_controller import BaseDispatchController
-from base import Base
+from base_controller import BaseController
 
 
 logger = logging.getLogger(__name__)
@@ -21,14 +20,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class BasePrepareDevice(Base):
-
-    def __init__(self, using_source, 
-                 using_destination, 
-                 **kwargs):
-        super(BasePrepareDevice, self).__init__(using_source, 
-                                                using_destination, 
-                                                **kwargs)
+class BasePrepareDevice(BaseController):
 
     def resize_content_type(self):
         """Resizes the destination content type table to have the same max id."""
@@ -94,9 +86,7 @@ class BasePrepareDevice(Base):
             self.model_to_json(list_model)
 
     def reset_model(self, model_cls):
-        """Deletes all instances of the given model and its audit log entries 
-        
-        """
+        """Deletes all instances of the given model and its audit log entries."""
         if not model_cls:
             raise TypeError('Please provide a model to delete.')
         using = self.get_using_destination()
@@ -159,7 +149,7 @@ class BasePrepareDevice(Base):
             self.reset_model(model)
 
     def get_depended_models(self, fk_cls):
-        """Returns a list of scheduled and visit models that depend 
+        """Returns a list of scheduled and visit models that depend
         (ForeignKey,OneToOneField) of the given model
         """
         _models = []
@@ -170,7 +160,7 @@ class BasePrepareDevice(Base):
         membershipform_models = self.helper.get_membershipform_models()
         scheduled_models = self.helper.get_scheduled_models()
         form_models = membershipform_models + scheduled_models
-        '''For each visit and membership model check if it has a field that is a 
+        '''For each visit and membership model check if it has a field that is a
         foreignkey or oneToone to the given model
          '''
         for model_cls in form_models:
@@ -209,7 +199,7 @@ class BasePrepareDevice(Base):
         for app_name, model_name in models:
             model_cls = get_model(app_name, model_name)
             self.reset_model(model_cls)
-    
+
     def update_model(self, model_or_app_model_tuple, additional_base_model_class=None):
         try:
             app, model = model_or_app_model_tuple
@@ -217,7 +207,7 @@ class BasePrepareDevice(Base):
         except:
             model_cls = model_or_app_model_tuple
         self.model_to_json(model_cls, additional_base_model_class)
-        
+
     def reset_app_models(self, app_name):
         print '    deleting for app {0}...'.format(app_name)
         for model_cls in get_models(get_app(app_name)):

@@ -53,3 +53,11 @@ class DispatchControllerNotReady(Exception):
 class DispatchControllerProducerError(Exception):
     pass
 
+
+class AlreadyRegisteredController(Exception):
+    pass
+
+
+class NotRegisteredController(Exception):
+    pass
+

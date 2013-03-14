@@ -2,12 +2,12 @@ from datetime import datetime
 from django.db.models import get_model
 from django.db.models.query import QuerySet
 from bhp_sync.exceptions import PendingTransactionError
-from bhp_dispatch.exceptions import DispatchContainerError, AlreadyReturned, DispatchError, DispatchItemError
+from bhp_dispatch.exceptions import DispatchContainerError, AlreadyReturned
 from bhp_dispatch.models import DispatchContainerRegister, DispatchItemRegister
-from base import Base
+from base_return import BaseReturn
 
 
-class ReturnController(Base):
+class ReturnController(BaseReturn):
 
     def get_user_container_cls(self):
         dispatch_container_cls = None

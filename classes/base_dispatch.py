@@ -7,7 +7,8 @@ from bhp_visit.models import MembershipForm
 from django.db import IntegrityError
 from bhp_dispatch.exceptions import DispatchModelError, DispatchError, AlreadyDispatched
 from bhp_dispatch.models import DispatchItemRegister, DispatchContainerRegister
-from base import Base
+from base_controller import BaseController
+from controller_register import registered_controllers
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class BaseDispatch(Base):
+class BaseDispatch(BaseController):
     """A user model is registered as dispatched by creating an instance in DispatchItemRegister searchable on its pk, app_label, model_name.
 
     Additionally::
@@ -37,6 +38,8 @@ class BaseDispatch(Base):
                  user_container_identifier,
                  **kwargs):
         super(BaseDispatch, self).__init__(using_source, using_destination, **kwargs)
+        # register .. don't want multiple instances for the same producer running
+        registered_controllers.register(self)
         self._dispatch_item_model_name = None
         self._user_container_app_label = None
         self._user_container_identifier_attrname = None
@@ -52,6 +55,9 @@ class BaseDispatch(Base):
         self.set_user_container_identifier(user_container_identifier)
         self._set_container_register_instance()
         self.debug = kwargs.get('debug', False)
+
+    def _repr(self):
+        return 'DispatchController[{0}]'.format(self.get_producer().settings_key)
 
     def register_with_dispatch_item_register(self, instance, user_container=None):
         """Registers a user model with DispatchItemRegister."""
