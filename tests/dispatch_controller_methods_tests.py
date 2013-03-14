@@ -6,7 +6,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_sync.classes import Consumer
-from bhp_dispatch.classes import BaseController, ReturnController
+from bhp_dispatch.classes import BaseController, ReturnController, BaseDispatchController
 from bhp_dispatch.exceptions import (DispatchError, AlreadyDispatched, AlreadyDispatchedItem, DispatchControllerNotReady,
                                      AlreadyReturnedController, DispatchControllerProducerError, DispatchItemError, AlreadyDispatchedContainer)
 from bhp_dispatch.models import TestList, TestItem, TestItemTwo, TestItemThree, TestItemM2M, DispatchItemRegister, DispatchContainerRegister, TestContainer
@@ -63,6 +63,19 @@ class DispatchControllerMethodsTests(BaseControllerTests):
 
     def test_dispatch_methods_p1(self):
         """Checks pending transactions."""
+        self.base_dispatch_controller = None
+        TestItemThree.objects.all().delete()
+        TestItemThree.objects.using(self.using_destination).all().delete()
+        TestItemTwo.objects.all().delete()
+        TestItemTwo.objects.using(self.using_destination).all().delete()
+        TestItem.objects.all().delete()
+        TestItem.objects.using(self.using_destination).all().delete()
+        OutgoingTransaction.objects.using(self.using_destination).all().delete()
+        OutgoingTransaction.objects.all().delete()
+        IncomingTransaction.objects.using(self.using_destination).all().delete()
+        IncomingTransaction.objects.all().delete()
+        TestContainer.objects.all().delete()
+        TestContainer.objects.using(self.using_destination).all().delete()
         if not self.producer:
             self.create_producer(True)
         # add outgoing transactions and check is properly detects pending transactions before dispatching
@@ -71,9 +84,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.create_test_container()
         self.assertIsInstance(self.test_container, TestContainer)
         # create a dispatch controller
-        print registered_controllers._register
         self.base_dispatch_controller = None
-        print registered_controllers._register
         self.create_base_dispatch_controller()
         # create an instance for the user container model
         # ... try get_model with self attributes first
@@ -110,10 +121,19 @@ class DispatchControllerMethodsTests(BaseControllerTests):
 
     def test_dispatch_methods_p2(self):
         """Tests dispatching three related models."""
+        self.base_dispatch_controller = None
+        TestItemThree.objects.all().delete()
+        TestItemThree.objects.using(self.using_destination).all().delete()
+        TestItemTwo.objects.all().delete()
+        TestItemTwo.objects.using(self.using_destination).all().delete()
+        TestItem.objects.all().delete()
+        TestItem.objects.using(self.using_destination).all().delete()
         OutgoingTransaction.objects.using(self.using_destination).all().delete()
         OutgoingTransaction.objects.all().delete()
         IncomingTransaction.objects.using(self.using_destination).all().delete()
         IncomingTransaction.objects.all().delete()
+        TestContainer.objects.all().delete()
+        TestContainer.objects.using(self.using_destination).all().delete()
         if not self.producer:
             self.create_producer(True)
         if not self.test_container:
@@ -164,10 +184,18 @@ class DispatchControllerMethodsTests(BaseControllerTests):
 
     def test_dispatch_methods_p4(self):
         self.base_dispatch_controller = None
+        TestItemThree.objects.all().delete()
+        TestItemThree.objects.using(self.using_destination).all().delete()
+        TestItemTwo.objects.all().delete()
+        TestItemTwo.objects.using(self.using_destination).all().delete()
+        TestItem.objects.all().delete()
+        TestItem.objects.using(self.using_destination).all().delete()
         OutgoingTransaction.objects.using(self.using_destination).all().delete()
         OutgoingTransaction.objects.all().delete()
         IncomingTransaction.objects.using(self.using_destination).all().delete()
         IncomingTransaction.objects.all().delete()
+        TestContainer.objects.all().delete()
+        TestContainer.objects.using(self.using_destination).all().delete()
         if not self.producer:
             self.create_producer(True)
         if not self.test_container:
@@ -206,6 +234,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # re-assert, after deleting source data, requery destination and confirm
         dst_test_item_m2m = TestItemM2M.objects.using(self.using_destination).get(test_item_identifier='TM2M')
         self.assertEquals(dst_test_item_m2m.m2m.all().count(), 3)
+        self.base_dispatch_controller = None
 
     def test_dispatch_methods_p5(self):
         self.base_dispatch_controller = None
@@ -231,7 +260,7 @@ class DispatchControllerMethodsTests(BaseControllerTests):
 
         self.create_base_dispatch_controller()
         self.base_dispatch_controller.dispatch_user_container_as_json(self.test_container)
-        self.assertEquals(OutgoingTransaction.objects.using(self.using_source).filter(is_consumed=False).count(), 1)
+        self.assertEquals(OutgoingTransaction.objects.using(self.using_source).filter(is_consumed=False).count(), 0)
         # create some items
         test_item = TestItem.objects.create(test_item_identifier='TI', test_container=self.test_container)
         test_item_t2a = TestItemTwo.objects.create(test_item_identifier='TI2A', test_item=test_item)
@@ -242,7 +271,9 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         test_item_t3d = TestItemThree.objects.create(test_item_identifier='TI3D', test_item_two=test_item_t2a)
         # assert that outgoing transactions were created (2 for each -- one for model, one for audit)
         #print [o.tx_name for o in OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=False)]
-        self.assertEquals(OutgoingTransaction.objects.using(self.using_source).filter(is_consumed=False).count(), 6)
+        self.assertEquals(OutgoingTransaction.objects.using(self.using_source).filter(is_consumed=False).count(), 14)
+        self.base_dispatch_controller = None
+
 #        #print [rs for rs in RegisteredSubject.objects.all().order_by('id')]
 #        rs_pks = [rs.pk for rs in RegisteredSubject.objects.all().order_by('id')]
 #        # assert controller not ready, container not dispatched
@@ -322,15 +353,22 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertTrue(self.test_container.is_dispatched_as_container())
         self.assertFalse(self.test_container.is_dispatched_as_item())
         # assert a new controller does not create a new DispatchContainerRegister for the same user container
-        self.create_base_dispatch_controller()
+        self.base_dispatch_controller = None
+        base_dispatch_controller = self.base_dispatch_controller = BaseDispatchController(
+            self.using_source,
+            self.using_destination,
+            self.user_container_app_label,
+            self.user_container_model_name,
+            self.user_container_identifier_attrname,
+            self.user_container_identifier)
         # ...still just one
         self.assertEquals(DispatchContainerRegister.objects.all().count(), 1)
         # assert this is still the same DispatchContainerRegister as before
         self.assertEqual(pk, DispatchContainerRegister.objects.all()[0].pk)
         # ... but from a new instance of the controller
-        self.assertNotEqual(obj_id, id(self.base_dispatch_controller))
+        #self.assertNotEqual(obj_id, id(base_dispatch_controller))
         # dispatch the test_container pnly
-        self.base_dispatch_controller.dispatch_user_container_as_json(self.test_container)
+        base_dispatch_controller.dispatch_user_container_as_json(self.test_container)
         # assert it is now dispatched both as a container and item
         self.assertTrue(self.test_container.is_dispatched_as_container())
         self.assertTrue(self.test_container.is_dispatched_as_item())
@@ -344,9 +382,9 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # ... and that it belongs to the user container (TestContainer)
         self.assertEqual(DispatchItemRegister.objects.filter(item_pk=self.test_container.pk).count(), 1)
         # assert that trying to dispatch the user container again fails
-        self.assertRaises(AlreadyDispatchedItem, self.base_dispatch_controller.dispatch_user_container_as_json, self.test_container)
+        self.assertRaises(AlreadyDispatchedContainer, base_dispatch_controller.dispatch_user_container_as_json, self.test_container)
         # dispatch the TestItem within this user_container
-        self.base_dispatch_controller.dispatch_user_items_as_json([self.test_item])
+        base_dispatch_controller.dispatch_user_items_as_json([self.test_item], self.test_container)
         # assert that is dispatched
         self.assertTrue(self.test_item.is_dispatched_as_item())
         # assert still returns that it is dispatched even when trying to skip the container test
@@ -367,9 +405,9 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         # assert that the test item is not dispatched (since the container is no longer dispatched)
         self.assertFalse(self.test_item.is_dispatched_as_item())
         # assert that base_dispatch_controller can no longer be used for dispatch, since the DispatchContainerRegister is returned
-        self.assertRaises(AlreadyReturnedController, self.base_dispatch_controller.dispatch_user_items_as_json, [self.test_item])
+        self.assertRaises(DispatchControllerNotReady, base_dispatch_controller.dispatch_user_items_as_json, [self.test_item], self.test_container)
         # create a new controller
-        self.base_dispatch_controller = None
+        base_dispatch_controller = None
         self.create_base_dispatch_controller()
         # assert a new DispatchContainerRegister was created
         self.assertEquals(DispatchContainerRegister.objects.all().count(), 2)
