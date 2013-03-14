@@ -171,6 +171,8 @@ class DispatchController(BaseDispatchController):
         """
 
         membership_forms = self.get_membershipform_models()
+        signals.post_save.disconnect(mochudi_subject_on_post_save, weak=False, dispatch_uid='mochudi_subject_on_post_save')
+        signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
         for membershipform_model in membership_forms:
             try:
                 if membershipform_model:
@@ -180,6 +182,8 @@ class DispatchController(BaseDispatchController):
             except FieldError:
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_user_items_as_json(instances, container)
+        signals.post_save.connect(mochudi_subject_on_post_save, weak=False, dispatch_uid='mochudi_subject_on_post_save')
+        signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
