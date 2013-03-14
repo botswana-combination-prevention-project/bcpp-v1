@@ -3,9 +3,11 @@ from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import FieldError
 from django.db.models import signals
 from mochudi_subject.models import mochudi_subject_on_post_save
-from bhp_visit_tracking.models import base_visit_tracking_on_post_save
+from bhp_visit_tracking.classes import VisitModelHelper
+from bhp_visit_tracking.models import BaseVisitTracking, base_visit_tracking_on_post_save
 from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.classes import BaseDispatchController
+from bhp_dispatch.exceptions import DispatchError
 
 
 logger = logging.getLogger(__name__)
@@ -147,14 +149,18 @@ class DispatchController(BaseDispatchController):
 
     def dispatch_labs_requisitions(self, registered_subject, container):
         """Dispatches all lab requisitions for this subject."""
-        Lab_requisitions = get_model('mochudi_survey_lab', 'SubjectRequisition')
-        labs = Lab_requisitions.objects.filter(
-                subject_visit__household_structure_member__registered_subject=registered_subject
-                )
-        for lab in labs:
-            if lab.subject_visit:
-                self.dispatch_user_items_as_json(lab.subject_visit, container)
-        self.dispatch_user_items_as_json(labs, container)
+        requisition_cls = get_model('mochudi_survey_lab', 'SubjectRequisition')
+        # get the visit field, e.g. subject_visit,. cannot assume it is subject_visit
+        visit_field_attname = VisitModelHelper.get_field(requisition_cls)
+        requisitions = requisition_cls.objects.filter(**{'{0}__household_structure_member__registered_subject'.format(visit_field_attname): registered_subject})
+        # dispatch the visit model instances
+        for requisition in requisitions:
+            visit_model_inst = getattr(requisition, visit_field_attname)
+            if not isinstance(visit_model_inst, BaseVisitTracking):
+                raise DispatchError('Expected a visit model instance from class {0}.'.format(requisition_cls))
+            self.dispatch_user_items_as_json(visit_model_inst, container)
+        # dispatch the requisitions
+        self.dispatch_user_items_as_json(requisitions, container)
         AdditionalLabEntryBucket = get_model('bhp_lab_entry', 'AdditionalLabEntryBucket')
         self.dispatch_user_items_as_json(AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk), container)
         ScheduledLabEntryBucket = get_model('bhp_lab_entry', 'ScheduledLabEntryBucket')
