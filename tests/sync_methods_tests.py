@@ -20,12 +20,12 @@ class SyncMethodsTests(unittest.TestCase):
         OutgoingTransaction.objects.using(self.using_destination).delete()
         IncomingTransaction.objects.using(self.using_source).delete()
 
-    def test_fetch_from_producer(self):
+    def test_fetch_outgoing(self):
         for i in range(1, 4):
             self.create_outgoing_transaction()
         self.create_producer(is_active=True)
         self.assertEqual(OutgoingTransaction.objects.using(self.using_destination).all().count(), 3)
-        self.get_consumer_instance().fetch_from_producer(self.producer_name)
+        self.get_consumer_instance().fetch_outgoing(self.producer_name)
         self.assertEqual(OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=False).count(), 0)
         self.assertTrue(OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=True)[0].consumed_datetime.today())
         self.assertEqual(IncomingTransaction.objects.using(self.using_source).all().count(), 3)
