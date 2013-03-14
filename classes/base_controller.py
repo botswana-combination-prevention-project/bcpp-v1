@@ -279,25 +279,28 @@ class BaseController(object):
                             # use callback to send required foreignkeys to json using the callback is the original method wrapper for _to_json.
                             # for example, dispatch_user_items_as_json.
                             to_json_callback(cls.objects.filter(pk=pk), user_container=user_container)
+                # check for M2M. If found, populate the list table, then add the list items
+                # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
                 for m2m_rel_mgr in d_obj.object._meta.many_to_many:
                     # TODO: One, are many to many handled correctly??
                     #raise TypeError('_to_json cannot handle ManyToMany fields')
                     pk = getattr(d_obj.object, 'pk')
                     cls = d_obj.object.__class__
-                    _inst = cls.objects.get(pk=pk)
+                    inst = cls.objects.get(pk=pk)
                     m2m = m2m_rel_mgr.name
                     # try something like test_item_m2m.m2m.all()
-                    m2m_qs = getattr(_inst, m2m).all()
+                    m2m_qs = getattr(inst, m2m).all()
                     # create list items on destination if they do not exist
                     dst_list_item_pks = []
                     for src_list_item in m2m_qs:
                         if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
                             self._to_json(src_list_item, additional_base_model_class=BaseListModel)
                             dst_list_item_pks.append(src_list_item.pk)
-                    _inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
+                    inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
                     for pk in dst_list_item_pks:
-                        _item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
-                        getattr(_inst, m2m).add(_item_inst)
+                        item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
+                        # this is like instance.m2m.add(item)
+                        getattr(inst, m2m).add(item_inst)
 
                 # TODO: commented out below so we can see the errors in testing
                 #       May need to uncomment before release
