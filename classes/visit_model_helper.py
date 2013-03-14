@@ -1,6 +1,7 @@
 from django.db.models import ForeignKey, OneToOneField
 from django.db.models import get_app, get_models
 from bhp_visit_tracking.models import BaseVisitTracking
+from bhp_visit_tracking.exceptions import VisitTrackingError
 
 
 class VisitModelHelper(object):
@@ -13,6 +14,15 @@ class VisitModelHelper(object):
     foreign key, needs to determine the visit field and get a queryset for the select/dropdown but its
     ModelAdmin class does not inheret from BaseVisitModelAdmin.
     """
+    @classmethod
+    def get_field(self, cls):
+        """Given a class, returns the field that is a subclass of BaseVisitTracking."""
+        lst = [f.to for f in [field.rel for field in cls._meta.fields if field.rel] if issubclass(f.to, BaseVisitTracking)]
+        if not lst:
+            raise VisitTrackingError('Unable to determine the visit field in class {0}.'.format(cls))
+        if not len(lst) == 1:
+            raise VisitTrackingError('Found more than one visit field in class {0}.'.format(cls))
+        return lst[0]
 
     def set_visit_queryset(self, **kwargs):
         """Returns a queryset of one visit model for the admin change form dropdown."""
