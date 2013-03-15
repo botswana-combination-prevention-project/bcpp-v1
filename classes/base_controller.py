@@ -17,7 +17,7 @@ from bhp_sync.classes import BaseProducer
 from bhp_sync.models.signals import serialize_on_save
 from bhp_lab_tracker.models.signals import tracker_on_post_save
 from bhp_sync.helpers import TransactionHelper
-from bhp_lab_tracker.models import HistoryModel
+#from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.exceptions import ControllerBaseModelError
 from bhp_sync.exceptions import PendingTransactionError
 from controller_register import registered_controllers
