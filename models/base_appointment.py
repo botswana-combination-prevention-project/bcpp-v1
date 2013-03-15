@@ -50,5 +50,8 @@ class BaseAppointment (BaseDispatchSyncUuidModel):
             retval = True
         return retval
 
+    def include_for_dispatch(self):
+        return True
+
     class Meta:
         abstract = True
