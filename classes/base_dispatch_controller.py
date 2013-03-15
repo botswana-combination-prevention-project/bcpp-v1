@@ -108,7 +108,9 @@ class BaseDispatchController(BaseDispatch):
                 user_container: instance of model used as the container. Note items may not
                                     may not be dispatched without a container.
                 model_cls: a subclass of BaseSyncUuidModel"""
-        self.dispatch_user_items_as_json(model_cls.objects.all(), user_container)
+        model_cls_instances = model_cls.objects.all()
+        if model_cls_instances:
+            self.dispatch_user_items_as_json(model_cls_instances, user_container)
 
     def is_ready(self,):
         """Confirm this controller can still be used to dispatch -- has not returned it's items."""
