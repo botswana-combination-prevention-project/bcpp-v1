@@ -247,35 +247,35 @@ class BaseDispatch(BaseController):
         """Returns a list of 'visible' membership form model classes."""
         return [membership_form.content_type_map.content_type.model_class() for membership_form in MembershipForm.objects.using(self.get_using_source()).filter(visible=True)]
 
-#    def set_visit_model_cls(self, app_label, model_cls):
-#        """Sets the visit_model_cls attribute with a dictionary of tuples (field name, class) by app.
-#        """
-#        from bhp_visit_tracking.models import BaseVisitTracking
-#        self._visit_models = {}
-#        if not model_cls:
-#            raise TypeError('Parameter model_cls cannot be None.')
-#        for field in model_cls._meta.fields:
-#            if isinstance(field, (ForeignKey, OneToOneField)):
-#                field_cls = field.rel.to
-#                if issubclass(field_cls, BaseVisitTracking):
-#                    # does this dict ever have more than one entry??
-#                    self._visit_models.update({app_label: (field.name, field_cls)})
-#
-#    def get_visit_model_cls(self, app_label, model_cls=None, **kwargs):
-#        """Returns a tuple of (field name, class) or just one of the tuple items.
-#
-#        Keywords:
-#            index: either 'name' or 'cls'. If specified, only returns the item in the tuple instead of the whole tuple.
-#        """
-#        if not self._visit_models.get(app_label):
-#            self.set_visit_model_cls(app_label, model_cls)
-#        # check for kwarg 'key' and set key to 0 or 1 (or None if not found)
-#        index = {'name': 0, 'cls': 1}.get(kwargs.get('index', None), None)
-#        if not self._visit_models.get(app_label):
-#            tpl = (None, None)
-#        else:
-#            tpl = self._visit_models.get(app_label)
-#        if index in [0, 1]:
-#            return tpl[index]
-#        else:
-#            return tpl
+    def set_visit_model_cls(self, app_label, model_cls):
+        """Sets the visit_model_cls attribute with a dictionary of tuples (field name, class) by app.
+        """
+        from bhp_visit_tracking.models import BaseVisitTracking
+        self._visit_models = {}
+        if not model_cls:
+            raise TypeError('Parameter model_cls cannot be None.')
+        for field in model_cls._meta.fields:
+            if isinstance(field, (ForeignKey, OneToOneField)):
+                field_cls = field.rel.to
+                if issubclass(field_cls, BaseVisitTracking):
+                    # does this dict ever have more than one entry??
+                    self._visit_models.update({app_label: (field.name, field_cls)})
+
+    def get_visit_model_cls(self, app_label, model_cls=None, **kwargs):
+        """Returns a tuple of (field name, class) or just one of the tuple items.
+
+        Keywords:
+            index: either 'name' or 'cls'. If specified, only returns the item in the tuple instead of the whole tuple.
+        """
+        if not self._visit_models.get(app_label):
+            self.set_visit_model_cls(app_label, model_cls)
+        # check for kwarg 'key' and set key to 0 or 1 (or None if not found)
+        index = {'name': 0, 'cls': 1}.get(kwargs.get('index', None), None)
+        if not self._visit_models.get(app_label):
+            tpl = (None, None)
+        else:
+            tpl = self._visit_models.get(app_label)
+        if index in [0, 1]:
+            return tpl[index]
+        else:
+            return tpl
