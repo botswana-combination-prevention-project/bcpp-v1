@@ -24,11 +24,14 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
     dispatch_url = ''
     user_container_model_name = ''
     user_container_admin_url = ''
+    ct = None
+    queryset = None
     if request.method == 'POST':
         form = DispatchForm(request.POST)
         if form.is_valid():
             producer = form.cleaned_data['producer']
-            user_container_ct = request.POST.get('ct')
+            ct = request.POST.get('ct')
+            user_container_ct = ct
             items = request.POST.get('items')
             pks = items.split(',')
             user_container_model_cls = ContentType.objects.get(pk=user_container_ct).model_class()
