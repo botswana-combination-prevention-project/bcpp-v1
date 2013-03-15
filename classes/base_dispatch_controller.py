@@ -2,6 +2,8 @@ import logging
 from django.db.models.query import QuerySet
 from django.db.models import get_models, get_app, ForeignKey, OneToOneField, get_model
 from bhp_sync.models import BaseSyncUuidModel
+from bhp_consent.models import BaseConsent
+from lab_requisition.models import BaseRequisition
 from bhp_dispatch.exceptions import (AlreadyDispatchedItem, AlreadyReturnedController, DispatchError,
                                      DispatchContainerError, AlreadyDispatchedContainer, DispatchControllerNotReady, DispatchItemError)
 from bhp_dispatch.models import DispatchContainerRegister
@@ -69,6 +71,24 @@ class BaseDispatchController(BaseDispatch):
         for model_cls in list_models:
             self.dispatch_model_as_json(model_cls.objects.using(self.get_using_source()).all(), self.get_user_container_instance(), app_label=app_label)
 
+    def get_consent_models(self, app_label):
+        """Returns a list of consent model classes for this app+label."""
+        return self._get_models_by_base(app_label, BaseConsent)
+
+    def get_requisition_models(self, app_label):
+        """Returns a list of consent model classes for this app+label."""
+        return self._get_models_by_base(app_label, BaseRequisition)
+
+    def _get_models_by_base(self, app_label, base_class):
+        """Returns a list of consent model classes for this app_label."""
+        app = get_app(app_label)
+        models = []
+        for model_cls in get_models(app):
+            if not model_cls._meta.object_name.endswith('Audit'):
+                if issubclass(model_cls, base_class):
+                    models.append(model_cls)
+        return models
+
     def get_scheduled_models(self, app_label):
         """Returns a list of model classes with a foreign key to the visit model for the given app, excluding audit models."""
         app = get_app(app_label)
@@ -121,6 +141,8 @@ class BaseDispatchController(BaseDispatch):
                 logger.info('dispatched {0} {1} to {2}.'.format(user_container._meta.object_name, user_container, self.get_using_destination()))
 
     def dispatch_user_items_as_json(self, user_items, user_container):
+        if not user_items:
+            raise DispatchItemError('Attribute \'user_items\' cannot be None.')
         if not user_container.is_dispatched_as_item():
             raise DispatchControllerNotReady('User container {0} has not yet been dispatched to {1}. Dispatch the user container (to json) before dispatching items (to json)'.format(user_container, self.get_using_destination()))
         if self.is_ready():
@@ -140,20 +162,25 @@ class BaseDispatchController(BaseDispatch):
                 # confirm user items are of the same class
                 if not len(user_items) == 0 and not len(cls_list) == 1:
                     raise DispatchItemError('User items must be of the same base model class. Got {0}'.format(cls_list))
-                # confirm user items and user container are NOT of the same class
-                if user_container:
-                    if len(cls_list) > 0 and cls_list[0] == user_container.__class__:
-                        raise DispatchContainerError('User item and User container cannot be of the same class. Got {0}, {1}'.format(cls_list, user_container.__class__))
-                already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item(using=self.get_using_destination(), user_container=user_container)]
-                if already_dispatched_items:
-                    raise AlreadyDispatchedItem('{0} models are already dispatched. Got {1}'.format(len(already_dispatched_items), already_dispatched_items))
-                # dispatch
-                self._dispatch_as_json(user_items, user_container=user_container, to_json_callback=self.dispatch_user_items_as_json)
-                # register the user items with the dispatch item register
-                for user_item in user_items:
-                    if not self.register_with_dispatch_item_register(user_item, user_container):
-                        raise DispatchError('Unable to create a dispatch item register instance for {0} {1} to {2}.'.format(user_item._meta.object_name, user_item.object, self.get_using_destination()))
-                    logger.info('dispatched {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
+                # confirm base class is correct
+#                print cls_list
+                if not issubclass(cls_list[0], self._get_allowed_base_models()):
+                    raise DispatchItemError('Model {0} is not a subclass of {1}'.format(cls_list[0], self._get_allowed_base_models()))
+                else:
+                    # confirm user items and user container are NOT of the same class
+                    if user_container:
+                        if len(cls_list) > 0 and cls_list[0] == user_container.__class__:
+                            raise DispatchContainerError('User item and User container cannot be of the same class. Got {0}, {1}'.format(cls_list, user_container.__class__))
+                    already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item(using=self.get_using_destination(), user_container=user_container)]
+                    if already_dispatched_items:
+                        raise AlreadyDispatchedItem('{0} models are already dispatched. Got {1}'.format(len(already_dispatched_items), already_dispatched_items))
+                    # dispatch
+                    self._dispatch_as_json(user_items, user_container=user_container, to_json_callback=self.dispatch_user_items_as_json)
+                    # register the user items with the dispatch item register
+                    for user_item in user_items:
+                        if not self.register_with_dispatch_item_register(user_item, user_container):
+                            raise DispatchError('Unable to create a dispatch item register instance for {0} {1} to {2}.'.format(user_item._meta.object_name, user_item.object, self.get_using_destination()))
+                        logger.info('  dispatched {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
 
     def _dispatch_as_json(self, model_instances, user_container=None, to_json_callback=None):
         """Passes on to _to_json along with a callback to consume foreignkeys."""

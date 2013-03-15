@@ -10,11 +10,15 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, Count, Max
 from lab_base_model.models import BaseLabUuidModel, BaseLabModel
 from bhp_base_model.models import BaseListModel
+from bhp_visit.models import VisitDefinition
+from bhp_variables.models import StudySite
+from bhp_visit_tracking.models.signals import base_visit_tracking_add_or_update_entry_buckets_on_post_save, base_visit_tracking_on_post_save
 from bhp_sync.classes import BaseProducer
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
+from bhp_lab_tracker.models.signals import tracker_on_post_save
 from bhp_sync.helpers import TransactionHelper
-from bhp_dispatch.exceptions import DispatchModelError
+from bhp_dispatch.exceptions import ControllerBaseModelError
 from bhp_sync.exceptions import PendingTransactionError
 from controller_register import registered_controllers
 
@@ -133,8 +137,81 @@ class BaseController(BaseProducer):
         """Sends all instances of the model class to :func:`_to_json`."""
         self._to_json(model_cls.objects.all(), additional_base_model_class)
 
+    def is_allowed_base_model_cls(self, cls, additional_base_model_class=None):
+        """Returns True or raises an exception if the class is a subclass of a base model class allowed for serialization."""
+        if not issubclass(cls, self._get_allowed_base_models(additional_base_model_class)):
+            raise ControllerBaseModelError('For dispatch, user model \'{0}\' must be a subclass of \'{1}\'. Got {2}'.format(cls, self._get_allowed_base_models()))
+        return True
+
+    def is_allowed_base_model_instance(self, inst, additional_base_model_class=None):
+        """Returns True or raises an exception if the class is an instance of a base model class allowed for serialization."""
+        if not isinstance(inst, self._get_allowed_base_models(additional_base_model_class)):
+            raise ControllerBaseModelError('For dispatch, user model \'{0}\' must be an instance of \'{1}\'. Got {2}'.format(inst, self._get_allowed_base_models(), inst.__class__))
+        return True
+
+    def _get_allowed_base_models(self, additional_base_model_class=None):
+        """Returns a tuple of base model classes that may be serialized to json."""
+        base_model_class = self.get_allowed_base_models()
+        if not isinstance(base_model_class, list):
+            raise TypeError('Expected list of base_model classes.')
+        if additional_base_model_class:
+            if not isinstance(additional_base_model_class, (list, tuple)):
+                additional_base_model_class = [additional_base_model_class]
+            base_model_class = base_model_class + additional_base_model_class
+        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite]
+        return tuple(base_model_class)
+
     def get_allowed_base_models(self):
-        return [BaseSyncUuidModel, BaseListModel, BaseLabUuidModel, BaseLabModel]
+        """Returns a list of base model classes that may be serialized to json.
+
+        Users may override
+
+        This is evaluated in method :func:`_to_json` before serializing an instance. """
+        return []
+
+    def _get_base_models_for_default_serialization(self):
+        base_model_class = self.get_base_models_for_default_serialization()
+        if not isinstance(base_model_class, list):
+            raise TypeError('Expected base_model classes as a list. Got{0}'.format(base_model_class))
+        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite]
+        return tuple(set(base_model_class))
+
+    def get_base_models_for_default_serialization(self):
+        """Returns a tuple of base models from which subclasses should use the
+        default method :func:`_to_json` and not a callback from the sender.
+
+        This is evaluated when serializing the foreign keys on an instance and
+        you need to know if you can use the callback to serialize the foreign key
+        or not."""
+        return []
+
+    def _disconnect_signals(self):
+        """Disconnects signals before saving the serialized object in _to_json."""
+        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+        signals.post_save.disconnect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
+        signals.post_save.disconnect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
+        signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
+        self.disconnect_signals()
+
+    def disconnect_signals(self):
+        """Disconnects signals before saving the serialized object in _to_json.
+
+        Users may override to add additional signals"""
+        pass
+
+    def _reconnect_signals(self):
+        """Reconnects signals after saving the serialized object in _to_json."""
+        signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
+        signals.post_save.connect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
+        signals.post_save.connect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
+        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+        self.reconnect_signals()
+
+    def reconnect_signals(self):
+        """Reconnects signals after saving the serialized object in _to_json.
+
+        Users may override to add additional signals"""
+        pass
 
     def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None):
         """Serialize model instances on source to destination.
@@ -147,14 +224,11 @@ class BaseController(BaseProducer):
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 
         """
-        if not to_json_callback:
+        # use default callback (_to_json) if not provided or no user_container
+        if not to_json_callback or not user_container:
+            # note: foreign keys on containers are not registered w/ dispatch
             to_json_callback = self._to_json
-        base_model_class = self.get_allowed_base_models()
-        if additional_base_model_class:
-            if not isinstance(additional_base_model_class, (list, tuple)):
-                additional_base_model_class = [additional_base_model_class]
-            base_model_class = base_model_class + additional_base_model_class
-        base_model_class = tuple(base_model_class)
+        #base_model_class = self._get_allowed_base_models(additional_base_model_class)
         # check for pending transactions
         if self.has_outgoing_transactions():
             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
@@ -166,8 +240,9 @@ class BaseController(BaseProducer):
                 model_instances = [model_instances]
             # confirm all model_instances are of the correct base class
             for instance in model_instances:
-                if not isinstance(instance, base_model_class):
-                    raise DispatchModelError('For dispatch, user model {0} must be an instance of \'{1}\'. Got {2}'.format(instance, base_model_class, instance.__class__))
+                if self.is_allowed_base_model_instance(instance, additional_base_model_class):
+                    # all are of the same class so jump out...
+                    break
             #serialize
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
             # deserialize on destination
@@ -176,11 +251,9 @@ class BaseController(BaseProducer):
                 #    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
                 #try:
                 # disconnect signal to avoid creating transactions on the source for data saved on destination
-                signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-                #save
+                self._disconnect_signals()
                 d_obj.save(using=self.get_using_destination())
-                # reconnect
-                signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+                self._reconnect_signals()
                 # check for foreign keys and, if found, send using the callback
                 # Ensures the sent instance is complete / stable
                 # TODO: any issue about natural keys?? this searched the destination on pk.
@@ -189,10 +262,17 @@ class BaseController(BaseProducer):
                         pk = getattr(d_obj.object, field.attname)
                         cls = field.rel.to
                         if not cls.objects.using(self.get_using_destination()).filter(pk=pk).exists():
-                            logger.info('    also sending fk {0} pk={1}'.format(cls, pk))
+                            #logger.info('    also sending fk {0} pk={1}'.format(cls, pk))
                             # use callback to send required foreignkeys to json using the callback is the original method wrapper for _to_json.
-                            # for example, dispatch_user_items_as_json.
-                            to_json_callback(cls.objects.filter(pk=pk), user_container=user_container)
+                            # for example, dispatch_user_items_as_json
+                            fk_inst = cls.objects.filter(pk=pk)
+                            if fk_inst:  # might be None
+                                if issubclass(cls, self._get_base_models_for_default_serialization()):
+                                    # use the default callback
+                                    self._to_json(fk_inst)
+                                else:
+                                    # use the senders callback
+                                    to_json_callback(fk_inst, user_container=user_container)
                 # check for M2M. If found, populate the list table, then add the list items
                 # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
                 for m2m_rel_mgr in d_obj.object._meta.many_to_many:

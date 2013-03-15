@@ -61,3 +61,7 @@ class AlreadyRegisteredController(Exception):
 class NotRegisteredController(Exception):
     pass
 
+
+class ControllerBaseModelError(Exception):
+    pass
+
