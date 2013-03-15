@@ -1,5 +1,8 @@
 from django.db import models
-from bhp_base_model.models import BaseUuidModel
+try:
+    from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.models import BaseUuidModel
 
 
 class BaseHistoryModel(BaseUuidModel):
@@ -13,6 +16,9 @@ class BaseHistoryModel(BaseUuidModel):
     source = models.CharField(max_length=50)
     source_identifier = models.CharField(max_length=50, null=True)
     history_datetime = models.DateTimeField(null=True)
+
+    def include_for_dispatch(self):
+        return True
 
     class Meta:
         abstract = True
