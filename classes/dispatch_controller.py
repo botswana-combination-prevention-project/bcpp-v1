@@ -88,7 +88,7 @@ class DispatchController(BaseDispatchController):
 #            self.set_visit_model_fkey(model_cls, visit_model_cls)
 #        return self._visit_model_fkey_name
 
-    def dispatch_lab_tracker_history(self, registered_subject, container, group_name=None):
+    def dispatch_lab_tracker_history(self, registered_subject, group_name=None):
         """Dispatches all lab tracker history models for this subject.
 
         ..seealso:: module :mod:`bhp_lab_tracker`.
@@ -100,7 +100,7 @@ class DispatchController(BaseDispatchController):
                     options.update({'group_name': group_name})
                 history_models = HistoryModel.objects.filter(**options)
                 if history_models:
-                    self.dispatch_user_items_as_json(history_models, container)
+                    self._to_json(history_models)
 
     def dispatch_appointments(self, registered_subject, container):
         """Dispatches all appointments for this registered subject.
