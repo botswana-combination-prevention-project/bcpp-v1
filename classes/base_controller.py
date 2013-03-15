@@ -12,6 +12,8 @@ from lab_base_model.models import BaseLabModel
 from bhp_base_model.models import BaseListModel
 from bhp_visit.models import VisitDefinition
 from bhp_variables.models import StudySite
+from bhp_lab_tracker.models import BaseHistoryModel
+from bhp_entry.models import BaseEntryBucket
 from bhp_visit_tracking.models.signals import base_visit_tracking_add_or_update_entry_buckets_on_post_save, base_visit_tracking_on_post_save
 from bhp_sync.classes import BaseProducer
 from bhp_sync.models.signals import serialize_on_save
@@ -158,7 +160,7 @@ class BaseController(BaseProducer):
             if not isinstance(additional_base_model_class, (list, tuple)):
                 additional_base_model_class = [additional_base_model_class]
             base_model_class = base_model_class + additional_base_model_class
-        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite]
+        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite, BaseHistoryModel, BaseEntryBucket]
         return tuple(base_model_class)
 
     def get_allowed_base_models(self):
@@ -174,7 +176,7 @@ class BaseController(BaseProducer):
         base_model_class = self.get_base_models_for_default_serialization()
         if not isinstance(base_model_class, list):
             raise TypeError('Expected base_model classes as a list. Got{0}'.format(base_model_class))
-        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite]
+        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite, BaseHistoryModel, BaseEntryBucket]
         return tuple(set(base_model_class))
 
     def get_base_models_for_default_serialization(self):
