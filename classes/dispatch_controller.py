@@ -183,7 +183,8 @@ class DispatchController(BaseDispatchController):
                         **kwargs)
             except FieldError:
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
-            self.dispatch_user_items_as_json(instances, container)
+            if instances:
+                self.dispatch_user_items_as_json(instances, container)
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
