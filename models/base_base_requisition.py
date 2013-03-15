@@ -1,7 +1,10 @@
 from datetime import datetime
 from django.db import models
 from django.conf import settings
-from bhp_sync.models import BaseSyncUuidModel
+try:
+    from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseUuidModel
+except ImportError:
+    from bhp_base_model.models import BaseUuidModel
 from bhp_base_model.fields import InitialsField
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
@@ -14,7 +17,7 @@ from lab_requisition.managers import BaseRequisitionManager
 from lab_requisition.classes import RequisitionLabel
 
 
-class BaseBaseRequisition (BaseSyncUuidModel):
+class BaseBaseRequisition (BaseUuidModel):
 
     """ ..todo:: TODO: does not include additional tests """
 
