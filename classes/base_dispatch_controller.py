@@ -40,12 +40,12 @@ class BaseDispatchController(BaseDispatch):
             **kwargs)
         self._dispatch_list = []
 
-    #def get_allowed_base_models(self):
-        #"""Ensure all model classes of instances registered as dispatch items/dispatched as json are of this base class only.
+    def get_allowed_base_models(self):
+        """Ensure all model classes of instances registered as dispatch items/dispatched as json are of this base class only.
 
-            #Called by :func:`_to_json`"""
+            Called by :func:`_to_json`"""
 
-        #return [BaseDispatchSyncUuidModel]
+        return [BaseDispatchSyncUuidModel]
 
 #    def dispatch_foreign_key_instances(self, app_label):
 #        """Finds foreign_key model classes other than the visit model class and exports the instances."""
@@ -141,8 +141,8 @@ class BaseDispatchController(BaseDispatch):
                 logger.info('dispatched {0} {1} to {2}.'.format(user_container._meta.object_name, user_container, self.get_using_destination()))
 
     def dispatch_user_items_as_json(self, user_items, user_container):
-        #if not user_items:
-            #raise DispatchItemError('Attribute \'user_items\' cannot be None.')
+        if not user_items:
+            raise DispatchItemError('Attribute \'user_items\' cannot be None.')
         if not user_container.is_dispatched_as_item():
             raise DispatchControllerNotReady('User container {0} has not yet been dispatched to {1}. Dispatch the user container (to json) before dispatching items (to json)'.format(user_container, self.get_using_destination()))
         if self.is_ready():
@@ -163,7 +163,7 @@ class BaseDispatchController(BaseDispatch):
                 if not len(user_items) == 0 and not len(cls_list) == 1:
                     raise DispatchItemError('User items must be of the same base model class. Got {0}'.format(cls_list))
                 # confirm base class is correct
-                if len(cls_list) > 0 and not issubclass(cls_list[0], self._get_allowed_base_models()):
+                if not issubclass(cls_list[0], self._get_allowed_base_models()):
                     raise DispatchItemError('Model {0} is not a subclass of {1}'.format(cls_list[0], self._get_allowed_base_models()))
                 else:
                     # confirm user items and user container are NOT of the same class
