@@ -15,8 +15,23 @@ class VisitModelHelper(object):
     ModelAdmin class does not inheret from BaseVisitModelAdmin.
     """
     @classmethod
-    def get_field(self, cls):
-        """Given a class, returns the field that is a subclass of BaseVisitTracking."""
+    def get_field_name(self, cls):
+        """Given a class, returns the field attname that is a subclass of BaseVisitTracking."""
+        #lst = [f.to for f in [field.rel for field in cls._meta.fields if field.rel] if issubclass(f.to, BaseVisitTracking)]
+        lst = []
+        for f in cls._meta.fields:
+            if f.rel:
+                if issubclass(f.rel.to, BaseVisitTracking):
+                    lst.append(f)
+        if not lst:
+            raise VisitTrackingError('Unable to determine the visit field in class {0}.'.format(cls))
+        if not len(lst) == 1:
+            raise VisitTrackingError('Found more than one visit field in class {0}.'.format(cls))
+        return lst[0].name
+
+    @classmethod
+    def get_field_cls(self, cls):
+        """Given a class, returns the model class that is a subclass of BaseVisitTracking."""
         lst = [f.to for f in [field.rel for field in cls._meta.fields if field.rel] if issubclass(f.to, BaseVisitTracking)]
         if not lst:
             raise VisitTrackingError('Unable to determine the visit field in class {0}.'.format(cls))
