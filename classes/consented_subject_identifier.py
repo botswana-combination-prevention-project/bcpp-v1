@@ -1,6 +1,6 @@
 from django.db.models import get_model
 from bhp_identifier.classes import SubjectIdentifier
-from bhp_registration.models import RegisteredSubject
+#from bhp_registration.models import RegisteredSubject
 
 
 class ConsentedSubjectIdentifier(SubjectIdentifier):
@@ -8,7 +8,7 @@ class ConsentedSubjectIdentifier(SubjectIdentifier):
     def get_identifier_post(self, new_identifier, **kwargs):
         """ Updates registered subject after a new subject identifier is created."""
         # the model, for creating a new instance
-        #RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+        RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
         # access registered subject manager method
         consent = kwargs.get('consent')
         attrname = kwargs.get('consent_attrname')
