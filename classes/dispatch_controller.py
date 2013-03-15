@@ -1,13 +1,12 @@
 import logging
-from django.db.models import ForeignKey, OneToOneField, get_model
+from django.db.models import get_model
 from django.core.exceptions import FieldError
 from django.db.models import signals
 from mochudi_subject.models import mochudi_subject_on_post_save
 from bhp_visit_tracking.classes import VisitModelHelper
-from bhp_visit_tracking.models import BaseVisitTracking, base_visit_tracking_on_post_save
+from bhp_visit_tracking.models import base_visit_tracking_on_post_save
 from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.classes import BaseDispatchController
-from bhp_dispatch.exceptions import DispatchError
 
 
 logger = logging.getLogger(__name__)
@@ -76,18 +75,18 @@ class DispatchController(BaseDispatchController):
             self._set_dispatch_url()
         return self._dispatch_url
 
-    def set_visit_model_fkey(self, model_cls, visit_model_cls):
-        """Subject forms will have a foreign key to a visit model instance. This sets that foreign key."""
-        for fld in model_cls.objects._meta.fields:
-            if isinstance(fld, (ForeignKey, OneToOneField)):
-                if isinstance(fld.rel.to, visit_model_cls):
-                    self._visit_model_fkey_name = fld.name
-
-    def get_visit_model_fkey(self, app_label, model_cls, visit_model_cls=None):
-        """Gets the foreign key to the subject visit model instance."""
-        if not self._visit_model_fkey_name:
-            self.set_visit_model_fkey(model_cls, visit_model_cls)
-        return self._visit_model_fkey_name
+#    def set_visit_model_fkey(self, model_cls, visit_model_cls):
+#        """Subject forms will have a foreign key to a visit model instance. This sets that foreign key."""
+#        for fld in model_cls.objects._meta.fields:
+#            if isinstance(fld, (ForeignKey, OneToOneField)):
+#                if isinstance(fld.rel.to, visit_model_cls):
+#                    self._visit_model_fkey_name = fld.name
+#
+#    def get_visit_model_fkey(self, app_label, model_cls, visit_model_cls=None):
+#        """Gets the foreign key to the subject visit model instance."""
+#        if not self._visit_model_fkey_name:
+#            self.set_visit_model_fkey(model_cls, visit_model_cls)
+#        return self._visit_model_fkey_name
 
     def dispatch_lab_tracker_history(self, registered_subject, container, group_name=None):
         """Dispatches all lab tracker history models for this subject.

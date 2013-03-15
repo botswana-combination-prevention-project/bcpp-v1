@@ -8,13 +8,12 @@ from django.db.models import ForeignKey, OneToOneField
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, Count, Max
-from lab_base_model.models import BaseLabUuidModel, BaseLabModel
+from lab_base_model.models import BaseLabModel
 from bhp_base_model.models import BaseListModel
 from bhp_visit.models import VisitDefinition
 from bhp_variables.models import StudySite
 from bhp_visit_tracking.models.signals import base_visit_tracking_add_or_update_entry_buckets_on_post_save, base_visit_tracking_on_post_save
 from bhp_sync.classes import BaseProducer
-from bhp_sync.models import BaseSyncUuidModel
 from bhp_sync.models.signals import serialize_on_save
 from bhp_lab_tracker.models.signals import tracker_on_post_save
 from bhp_sync.helpers import TransactionHelper
@@ -170,6 +169,7 @@ class BaseController(BaseProducer):
         return []
 
     def _get_base_models_for_default_serialization(self):
+        """Wraps :func:`get_allowed_base_models`."""
         base_model_class = self.get_base_models_for_default_serialization()
         if not isinstance(base_model_class, list):
             raise TypeError('Expected base_model classes as a list. Got{0}'.format(base_model_class))
@@ -228,7 +228,6 @@ class BaseController(BaseProducer):
         if not to_json_callback or not user_container:
             # note: foreign keys on containers are not registered w/ dispatch
             to_json_callback = self._to_json
-        #base_model_class = self._get_allowed_base_models(additional_base_model_class)
         # check for pending transactions
         if self.has_outgoing_transactions():
             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
@@ -247,9 +246,6 @@ class BaseController(BaseProducer):
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
             # deserialize on destination
             for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
-                #if d_obj.object.is_dispatched_as_item():
-                #    raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(d_obj.object._meta.object_name, d_obj.object.pk))
-                #try:
                 # disconnect signal to avoid creating transactions on the source for data saved on destination
                 self._disconnect_signals()
                 d_obj.save(using=self.get_using_destination())
@@ -276,8 +272,6 @@ class BaseController(BaseProducer):
                 # check for M2M. If found, populate the list table, then add the list items
                 # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
                 for m2m_rel_mgr in d_obj.object._meta.many_to_many:
-                    # TODO: One, are many to many handled correctly??
-                    #raise TypeError('_to_json cannot handle ManyToMany fields')
                     pk = getattr(d_obj.object, 'pk')
                     # get class of this model
                     cls = d_obj.object.__class__

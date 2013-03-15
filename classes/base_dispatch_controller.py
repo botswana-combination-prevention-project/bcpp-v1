@@ -1,6 +1,6 @@
 import logging
 from django.db.models.query import QuerySet
-from django.db.models import get_models, get_app, ForeignKey, OneToOneField, get_model
+from django.db.models import get_models, get_app, get_model
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_consent.models import BaseConsent
 from lab_requisition.models import BaseRequisition
@@ -47,29 +47,29 @@ class BaseDispatchController(BaseDispatch):
 
         return [BaseDispatchSyncUuidModel]
 
-    def dispatch_foreign_key_instances(self, app_label):
-        """Finds foreign_key model classes other than the visit model class and exports the instances."""
-        list_models = []
-        # TODO: should only work for list models so that it does not cascade into all data
-        # TODO: this will fail for any list models as get_allowed_base_models() only returns BaseDispatchSyncUuidModel
-        if not app_label:
-            raise TypeError('Parameter app_label cannot be None.')
-        app = get_app(app_label)
-        for model_cls in get_models(app):
-            # TODO: this could be wrong visit_field_name?
-            try:
-                visit_field_name = self.get_visit_model_cls(app_label, model_cls, index='name')
-                if getattr(model_cls, visit_field_name, None):
-                    for field in model_cls._meta.fields:
-                        if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):
-                            field_cls = field.rel.to
-                            if field_cls not in list_models:
-                                list_models.append(field_cls)
-            except:
-                pass
-        logger.info('Ready to dispatch foreign keys: {0}'.format(list_models))
-        for model_cls in list_models:
-            self.dispatch_model_as_json(model_cls.objects.using(self.get_using_source()).all(), self.get_user_container_instance(), app_label=app_label)
+#    def dispatch_foreign_key_instances(self, app_label):
+#        """Finds foreign_key model classes other than the visit model class and exports the instances."""
+#        list_models = []
+#        # TODO: should only work for list models so that it does not cascade into all data
+#        # TODO: this will fail for any list models as get_allowed_base_models() only returns BaseDispatchSyncUuidModel
+#        if not app_label:
+#            raise TypeError('Parameter app_label cannot be None.')
+#        app = get_app(app_label)
+#        for model_cls in get_models(app):
+#            # TODO: this could be wrong visit_field_name?
+#            try:
+#                visit_field_name = self.get_visit_model_cls(app_label, model_cls, index='name')
+#                if getattr(model_cls, visit_field_name, None):
+#                    for field in model_cls._meta.fields:
+#                        if not field.name == visit_field_name and isinstance(field, (ForeignKey, OneToOneField)):
+#                            field_cls = field.rel.to
+#                            if field_cls not in list_models:
+#                                list_models.append(field_cls)
+#            except:
+#                pass
+#        logger.info('Ready to dispatch foreign keys: {0}'.format(list_models))
+#        for model_cls in list_models:
+#            self.dispatch_model_as_json(model_cls.objects.using(self.get_using_source()).all(), self.get_user_container_instance(), app_label=app_label)
 
     def get_consent_models(self, app_label):
         """Returns a list of consent model classes for this app+label."""
@@ -163,7 +163,6 @@ class BaseDispatchController(BaseDispatch):
                 if not len(user_items) == 0 and not len(cls_list) == 1:
                     raise DispatchItemError('User items must be of the same base model class. Got {0}'.format(cls_list))
                 # confirm base class is correct
-#                print cls_list
                 if not issubclass(cls_list[0], self._get_allowed_base_models()):
                     raise DispatchItemError('Model {0} is not a subclass of {1}'.format(cls_list[0], self._get_allowed_base_models()))
                 else:
