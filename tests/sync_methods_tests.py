@@ -30,15 +30,6 @@ class SyncMethodsTests(TestCase):
         self.assertTrue(OutgoingTransaction.objects.using(self.using_destination).filter(is_consumed=True)[0].consumed_datetime.today())
         self.assertEqual(IncomingTransaction.objects.using(self.using_source).all().count(), 3)
 
-    def test_get_producer(self):
-        self.create_producer()
-        producers = Producer.objects.all()
-        self.assertEqual(producers.count(), 1)
-        consumer = Consumer()
-        consumer.fetch_outgoing(self.producer_name)
-        producer = self.get_consumer_instance().get_producer(self.producer_name)
-        self.assertTrue(producer.name == self.producer_name)
-
     def test_consume(self):
         pass
 
