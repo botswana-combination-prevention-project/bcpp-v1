@@ -250,79 +250,83 @@ class BaseController(BaseProducer):
             # deserialize on destination
             for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
                 # disconnect signal to avoid creating transactions on the source for data saved on destination
-                self._disconnect_signals()
-                d_obj.save(using=self.get_using_destination())
-                self._reconnect_signals()
+                try:
+                    self._disconnect_signals()
+                    d_obj.save(using=self.get_using_destination())
+                    self._reconnect_signals()
                 # check for foreign keys and, if found, send using the callback
                 # Ensures the sent instance is complete / stable
                 # TODO: any issue about natural keys?? this searched the destination on pk.
-                for field in d_obj.object._meta.fields:
-                    if isinstance(field, (ForeignKey, OneToOneField)):
-                        pk = getattr(d_obj.object, field.attname)
-                        cls = field.rel.to
-                        if not cls.objects.using(self.get_using_destination()).filter(pk=pk).exists():
-                            #logger.info('    also sending fk {0} pk={1}'.format(cls, pk))
-                            # use callback to send required foreignkeys to json using the callback is the original method wrapper for _to_json.
-                            # for example, dispatch_user_items_as_json
-                            fk_inst = cls.objects.filter(pk=pk)
-                            if fk_inst:  # might be None
-                                if issubclass(cls, self._get_base_models_for_default_serialization()):
-                                    # use the default callback
-                                    self._to_json(fk_inst)
-                                else:
-                                    # use the senders callback
-                                    to_json_callback(fk_inst, user_container=user_container)
-                # check for M2M. If found, populate the list table, then add the list items
-                # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
-                for m2m_rel_mgr in d_obj.object._meta.many_to_many:
-                    pk = getattr(d_obj.object, 'pk')
-                    # get class of this model
-                    cls = d_obj.object.__class__
-                    # get instance of this model on source
-                    inst = cls.objects.get(pk=pk)
-                    # get the name of the m2m attribute. Note, this is not a model field but a manager
-                    m2m = m2m_rel_mgr.name
-                    # try something like test_item_m2m.m2m.all(), gets all() list_model instances for this m2m
-                    m2m_qs = getattr(inst, m2m).all()
-                    # create list_model instances on destination if they do not exist
-                    dst_list_item_pks = []
-                    for src_list_item in m2m_qs:
-                        if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
-                            # no need to use callback, list models are not registered with dispatch
-                            self._to_json(src_list_item, additional_base_model_class=BaseListModel)
-                            # record source pk for use later
-                            # TODO: confirm the pk on source is always the same on destination? what about natural keys?
-                            dst_list_item_pks.append(src_list_item.pk)
-                    # get instance of this model on destination
-                    inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
-                    # find the pk for each list model instance and add to the m2m "field"
-                    for pk in dst_list_item_pks:
-                        # get the list_model instance on destination
-                        item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
-                        # add to m2m rel_manager on destination, this is like instance.m2m.add(item)
-                        getattr(inst, m2m).add(item_inst)
-
-                # TODO: commented out below so we can see the errors in testing
-                #       May need to uncomment before release
-
-#                except IntegrityError as e:
-#                    logger.info(e)
-#                    logger.info(e.message)
-#                    if 'is not unique' in e.message:
-#                        raise DispatchError('Model instance {0} is already on producer {1}.'.format(d_obj.object, self.get_producer_name()))
-#                    if 'Duplicate' in e.message:
-#                        pass
-#                    elif 'Cannot add or update a child row' in e.message:
-#                        # assume Integrity error was because of missing ForeignKey data
-#                        self.dispatch_foreign_key_instances(self.get_dispatch_item_app_label())
-#                        # try again
-#                        # disconnect signal
-#                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-#                        #save
-#                        d_obj.save(using=self.get_using_destination())
-#                        # reconnect
-#                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-#                    else:
-#                        raise
-#                except:
-#                    raise
+                except:
+                    pass
+                finally:
+                    for field in d_obj.object._meta.fields:
+                        if isinstance(field, (ForeignKey, OneToOneField)):
+                            pk = getattr(d_obj.object, field.attname)
+                            cls = field.rel.to
+                            if not cls.objects.using(self.get_using_destination()).filter(pk=pk).exists():
+                                #logger.info('    also sending fk {0} pk={1}'.format(cls, pk))
+                                # use callback to send required foreignkeys to json using the callback is the original method wrapper for _to_json.
+                                # for example, dispatch_user_items_as_json
+                                fk_inst = cls.objects.filter(pk=pk)
+                                if fk_inst:  # might be None
+                                    if issubclass(cls, self._get_base_models_for_default_serialization()):
+                                        # use the default callback
+                                        self._to_json(fk_inst)
+                                    else:
+                                        # use the senders callback
+                                        to_json_callback(fk_inst, user_container=user_container)
+                    # check for M2M. If found, populate the list table, then add the list items
+                    # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
+                    for m2m_rel_mgr in d_obj.object._meta.many_to_many:
+                        pk = getattr(d_obj.object, 'pk')
+                        # get class of this model
+                        cls = d_obj.object.__class__
+                        # get instance of this model on source
+                        inst = cls.objects.get(pk=pk)
+                        # get the name of the m2m attribute. Note, this is not a model field but a manager
+                        m2m = m2m_rel_mgr.name
+                        # try something like test_item_m2m.m2m.all(), gets all() list_model instances for this m2m
+                        m2m_qs = getattr(inst, m2m).all()
+                        # create list_model instances on destination if they do not exist
+                        dst_list_item_pks = []
+                        for src_list_item in m2m_qs:
+                            if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
+                                # no need to use callback, list models are not registered with dispatch
+                                self._to_json(src_list_item, additional_base_model_class=BaseListModel)
+                                # record source pk for use later
+                                # TODO: confirm the pk on source is always the same on destination? what about natural keys?
+                                dst_list_item_pks.append(src_list_item.pk)
+                        # get instance of this model on destination
+                        inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
+                        # find the pk for each list model instance and add to the m2m "field"
+                        for pk in dst_list_item_pks:
+                            # get the list_model instance on destination
+                            item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
+                            # add to m2m rel_manager on destination, this is like instance.m2m.add(item)
+                            getattr(inst, m2m).add(item_inst)
+    
+                    # TODO: commented out below so we can see the errors in testing
+                    #       May need to uncomment before release
+    
+    #                except IntegrityError as e:
+    #                    logger.info(e)
+    #                    logger.info(e.message)
+    #                    if 'is not unique' in e.message:
+    #                        raise DispatchError('Model instance {0} is already on producer {1}.'.format(d_obj.object, self.get_producer_name()))
+    #                    if 'Duplicate' in e.message:
+    #                        pass
+    #                    elif 'Cannot add or update a child row' in e.message:
+    #                        # assume Integrity error was because of missing ForeignKey data
+    #                        self.dispatch_foreign_key_instances(self.get_dispatch_item_app_label())
+    #                        # try again
+    #                        # disconnect signal
+    #                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+    #                        #save
+    #                        d_obj.save(using=self.get_using_destination())
+    #                        # reconnect
+    #                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+    #                    else:
+    #                        raise
+    #                except:
+    #                    raise
