@@ -156,6 +156,9 @@ class DispatchController(BaseDispatchController):
 
     def dispatch_consent_instances(self, app_label, registered_subject, container, **kwargs):
         consent_models = self.get_consent_models(app_label)
+        membershipform_models = self.get_membershipform_models()
+        # remove classes that are also membership forms
+        consent_models = [cls for cls in consent_models if cls not in membershipform_models]
         for consent_model in consent_models:
             consent_instances = consent_model.objects.filter(registered_subject=registered_subject)
             if consent_instances:
@@ -171,10 +174,8 @@ class DispatchController(BaseDispatchController):
             See app :mod:`bhp_visit` for an explanation of membership forms.
         """
 
-        membership_forms = self.get_membershipform_models()
-        signals.post_save.disconnect(mochudi_subject_on_post_save, weak=False, dispatch_uid='mochudi_subject_on_post_save')
-        signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
-        for membershipform_model in membership_forms:
+        membershipform_models = self.get_membershipform_models()
+        for membershipform_model in membershipform_models:
             try:
                 if membershipform_model:
                     instances = membershipform_model.objects.filter(
@@ -183,8 +184,6 @@ class DispatchController(BaseDispatchController):
             except FieldError:
                 instances = membershipform_model.objects.filter(registered_subject=registered_subject)
             self.dispatch_user_items_as_json(instances, container)
-        signals.post_save.connect(mochudi_subject_on_post_save, weak=False, dispatch_uid='mochudi_subject_on_post_save')
-        signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid='base_visit_tracking_on_post_save')
 
     def dispatch_from_view(self, queryset, **kwargs):
         """Confirms no items in queryset are dispatched then follows by trying to dispatch each one.
