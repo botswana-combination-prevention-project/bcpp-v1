@@ -1,12 +1,11 @@
 import logging
 from django.db.models import get_model
 from django.core.exceptions import FieldError
-from django.db.models import signals
-from mochudi_subject.models import mochudi_subject_on_post_save
+from django.db.models.query import QuerySet
 from bhp_visit_tracking.classes import VisitModelHelper
-from bhp_visit_tracking.models import base_visit_tracking_on_post_save
 from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.classes import BaseDispatchController
+from bhp_dispatch.exceptions import DispatchModelError
 
 
 logger = logging.getLogger(__name__)
@@ -88,6 +87,43 @@ class DispatchController(BaseDispatchController):
 #            self.set_visit_model_fkey(model_cls, visit_model_cls)
 #        return self._visit_model_fkey_name
 
+    def dispatch_misc_instances(self, models, registered_subject, user_container, query_hint=None):
+        """Sends any instance for dispatch as long as the class is configured for dispatch and has a relational path to registered subject.
+
+            Args:
+                models = a model class or list of model classes.
+                registered_subject = instance of RegisteredSubject used to filter model class.
+                user_container = the dispatch user container instance.
+                query_hint = a django stype query string to registered subject.
+
+            For example:
+                    dispatch_misc_instances(
+                        SubjectRcc,
+                        registered_subject,
+                        user_container,
+                        query_hint='household_structure_member__registered_subject')
+        """
+        hint = []
+        options = {}
+        if not isinstance(models, list):
+            models = [models]
+        if query_hint:
+            # convert the hint to an options dictionary for filter()
+            options.update({query_hint: registered_subject})
+            hint = query_hint.split('__')  # for error check
+        else:
+            hint.append('registered_subject')  # for error check
+            options = {'registered_subject': registered_subject}
+
+        for model_cls in models:
+            # confirm that at least the first element of hint exists on the class
+            if not hint[0] in dir(model_cls):
+                raise DispatchModelError('Miscellaneous model classes sent for dispatch must have relational path to \'registered_subject\'. Your hint was \'{0}\' for model class {1}'.format('__'.join(hint), model_cls))
+            # filter the class
+            instances = model_cls.objects.filter(**options)
+            if instances:
+                self.dispatch_user_items_as_json(instances, user_container)
+
     def dispatch_lab_tracker_history(self, registered_subject, group_name=None):
         """Dispatches all lab tracker history models for this subject.
 
@@ -102,7 +138,7 @@ class DispatchController(BaseDispatchController):
                 if history_models:
                     self._to_json(history_models)
 
-    def dispatch_appointments(self, registered_subject, container):
+    def dispatch_appointments(self, registered_subject, user_container):
         """Dispatches all appointments for this registered subject.
 
         ..seealso:: module :mod:`bhp_appointment`
@@ -110,9 +146,9 @@ class DispatchController(BaseDispatchController):
         Appointments = get_model('bhp_appointment', 'Appointment')
         appointments = Appointments.objects.filter(registered_subject=registered_subject)
         if appointments:
-            self.dispatch_user_items_as_json(appointments, container)
+            self.dispatch_user_items_as_json(appointments, user_container)
 
-    def dispatch_scheduled_instances(self, app_label, registered_subject, container, **kwargs):
+    def dispatch_scheduled_instances(self, app_label, registered_subject, user_container, **kwargs):
         """Sends scheduled instances to the producer for the given an instance of registered_subject.
 
         Keywords:
@@ -123,7 +159,7 @@ class DispatchController(BaseDispatchController):
            of :mod:`bhp_visit_tracking`'s :class:`BaseVisitTracking` base model.
            For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc
         """
-        self.dispatch_appointments(registered_subject, container)
+        self.dispatch_appointments(registered_subject, user_container)
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models(app_label)
         # get the visit model class for this app
@@ -131,7 +167,7 @@ class DispatchController(BaseDispatchController):
             visit_field_attname = VisitModelHelper.get_field_name(scheduled_model_class)
             scheduled_instances = scheduled_model_class.objects.filter(**{'{0}__appointment__registered_subject'.format(visit_field_attname): registered_subject})
             if scheduled_instances:
-                self.dispatch_user_items_as_json(scheduled_instances, container)
+                self.dispatch_user_items_as_json(scheduled_instances, user_container)
 
     def dispatch_requisitions(self, app_label, registered_subject, user_container):
         """Dispatches all lab requisitions for this subject."""
