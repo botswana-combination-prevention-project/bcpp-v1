@@ -141,9 +141,6 @@ class BaseVisitTracking (BaseConsentedUuidModel):
 #        if dirty:
 #            self.appointment.save()
 
-    def natural_key_as_dict(self):
-        return {'appointment': self.appointment, }
-
     def natural_key(self):
         return self.appointment.natural_key()
     natural_key.dependencies = ['bhp_appointment.appointment', ]
