@@ -6,7 +6,6 @@ from django.db import models
 class VisitDefinitionManager(models.Manager):
 
     def get_by_natural_key(self, code):
-        """Returns the natural key for serialization."""
         return self.get(code=code)
 
     def next_visit_definition(self, **kwargs):
