@@ -1,11 +1,14 @@
 import logging
 from django.db.models import get_model
 from django.core.exceptions import FieldError
+from django.db.models import get_models, get_app
 from django.db.models.query import QuerySet
 from bhp_visit_tracking.classes import VisitModelHelper
 from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.classes import BaseDispatchController
 from bhp_dispatch.exceptions import DispatchModelError
+from bhp_base_model.models import BaseListModel
+from lab_base_model.models import BaseLabListModel, BaseLabListUuidModel
 
 
 logger = logging.getLogger(__name__)
@@ -123,6 +126,19 @@ class DispatchController(BaseDispatchController):
             instances = model_cls.objects.filter(**options)
             if instances:
                 self.dispatch_user_items_as_json(instances, user_container)
+
+    def dispatch_list_models(self, app_name, base_cls=None):
+        if not base_cls:
+            base_cls = BaseListModel
+        if not app_name:
+            raise TypeError('Parameter app_name cannot be None.')
+        app = get_app(app_name)
+        for model_cls in get_models(app):
+            if issubclass(model_cls, base_cls):
+                self.model_to_json(model_cls)
+
+    def dispatch_lab_list_models(self):
+        self.dispatch_list_models('lab_clinic_api', (BaseLabListModel, BaseLabListUuidModel))
 
     def dispatch_lab_tracker_history(self, registered_subject, group_name=None):
         """Dispatches all lab tracker history models for this subject.

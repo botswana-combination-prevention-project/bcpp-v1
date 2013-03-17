@@ -2,13 +2,15 @@ import socket
 import logging
 from datetime import datetime
 from django.conf import settings
+from django.core.serializers.base import DeserializationError
+from django.db import IntegrityError
 from django.db.models.query import QuerySet
-from django.db.models import signals
+from django.db.models import signals, get_model
 from django.db.models import ForeignKey, OneToOneField
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, Count, Max
-from lab_base_model.models import BaseLabModel
+from lab_base_model.models import BaseLabListModel, BaseLabListUuidModel
 from bhp_base_model.models import BaseListModel
 from bhp_visit.models import VisitDefinition
 from bhp_variables.models import StudySite
@@ -73,6 +75,7 @@ class BaseController(BaseProducer):
                                   module :mod:`bhp_sync`. For example: DISPATCH_APP_LABELS = ['mochudi_household', 'mochudi_subject', 'mochudi_lab']
             """
         super(BaseController, self).__init__(using_source, using_destination, **kwargs)
+        self.fk_instances = []
         self.preparing_status = kwargs.get('preparing_netbook', None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
@@ -160,7 +163,7 @@ class BaseController(BaseProducer):
             if not isinstance(additional_base_model_class, (list, tuple)):
                 additional_base_model_class = [additional_base_model_class]
             base_model_class = base_model_class + additional_base_model_class
-        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite, BaseHistoryModel, BaseEntryBucket]
+        base_model_class = base_model_class + [BaseListModel, BaseLabListModel, BaseLabListUuidModel, VisitDefinition, StudySite, BaseHistoryModel, BaseEntryBucket]
         return tuple(base_model_class)
 
     def get_allowed_base_models(self):
@@ -176,7 +179,7 @@ class BaseController(BaseProducer):
         base_model_class = self.get_base_models_for_default_serialization()
         if not isinstance(base_model_class, list):
             raise TypeError('Expected base_model classes as a list. Got{0}'.format(base_model_class))
-        base_model_class = base_model_class + [BaseListModel, BaseLabModel, VisitDefinition, StudySite, BaseHistoryModel, BaseEntryBucket]
+        base_model_class = base_model_class + [BaseListModel, BaseLabListModel, BaseLabListUuidModel, VisitDefinition, StudySite, BaseHistoryModel, BaseEntryBucket]
         return tuple(set(base_model_class))
 
     def get_base_models_for_default_serialization(self):
@@ -188,12 +191,25 @@ class BaseController(BaseProducer):
         or not."""
         return []
 
-    def _disconnect_signals(self):
+    def get_fk_dependencies(self, instances):
+        """Updates the list of foreign key instances required for serialization of the provided instances."""
+        for obj in instances:
+            for field in obj._meta.fields:
+                if isinstance(field, (ForeignKey, OneToOneField)):
+                    pk = getattr(obj, field.attname)
+                    cls = field.rel.to
+                    if cls.objects.filter(pk=pk):
+                        this_fk = cls.objects.get(pk=pk)
+                        self.fk_instances.append(cls.objects.get(pk=pk))
+                        self.get_fk_dependencies([this_fk])
+
+    def _disconnect_signals(self, obj):
         """Disconnects signals before saving the serialized object in _to_json."""
         signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
         signals.post_save.disconnect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.disconnect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
         signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
+        self.disconnect_audit_trail_signals(obj)
         self.disconnect_signals()
 
     def disconnect_signals(self):
@@ -208,6 +224,7 @@ class BaseController(BaseProducer):
         signals.post_save.connect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
         signals.post_save.connect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+        self.reconnect_audit_trail_signals()
         self.reconnect_signals()
 
     def reconnect_signals(self):
@@ -215,6 +232,36 @@ class BaseController(BaseProducer):
 
         Users may override to add additional signals"""
         pass
+
+    def get_signal_by_dispatch_uid(self, dispatch_uid):
+        signal = None
+        for receiver_signal in signals.post_save.receivers:
+            if str(receiver_signal[0][0]) == dispatch_uid:
+                signal = receiver_signal
+                break
+        return signal
+
+    def set_audit_trail_signals_for_model(self, obj):
+        self.audit_signals = []
+        for dispatch_uid in ['audit_serialize_on_save_{0}audit'.format(obj._meta.object_name.lower()), 'audit_on_save_{0}audit'.format(obj._meta.object_name.lower())]:
+            audit_signal = self.get_signal_by_dispatch_uid(dispatch_uid)
+            if audit_signal:
+                self.audit_signals.append(audit_signal)
+
+    def get_audit_trail_signals_for_model(self):
+        if not self.audit_signals:
+            raise AttributeError('Attribute \'audit_signals\' cannot be None. Call set first.')
+        return self.audit_signals
+
+    def disconnect_audit_trail_signals(self, obj):
+        self.set_audit_trail_signals_for_model(obj)
+        for audit_signal in self.audit_signals:
+            signals.post_save.receivers.remove(audit_signal)
+
+    def reconnect_audit_trail_signals(self):
+        for audit_signal in self.audit_signals:
+            signals.post_save.receivers.append(audit_signal)
+        self.audit_signals = None
 
     def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None):
         """Serialize model instances on source to destination.
@@ -240,72 +287,81 @@ class BaseController(BaseProducer):
             # convert to list if not iterable
             if not isinstance(model_instances, (list, QuerySet)):
                 model_instances = [model_instances]
+            if isinstance(model_instances, QuerySet):
+                model_instances = [m for m in model_instances]
             # confirm all model_instances are of the correct base class
             for instance in model_instances:
                 if self.is_allowed_base_model_instance(instance, additional_base_model_class):
-                    # all are of the same class so jump out...
+                    # only need to check one as all are of the same class so jump out...
                     break
+            # add foreign key instances to the list of model instances to serialize
+            while True:
+                self.get_fk_dependencies(model_instances)
+                break
+            model_instances = self.fk_instances + model_instances
+            model_instances = list(set(model_instances))
             #serialize
+            print model_instances
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
-            # deserialize on destination
-            for d_obj in serializers.deserialize("json", json, use_natural_keys=True):
-                # disconnect signal to avoid creating transactions on the source for data saved on destination
-                try:
-                    self._disconnect_signals()
-                    d_obj.save(using=self.get_using_destination())
-                    self._reconnect_signals()
-                # check for foreign keys and, if found, send using the callback
-                # Ensures the sent instance is complete / stable
-                # TODO: any issue about natural keys?? this searched the destination on pk.
-                except:
-                    pass
-                finally:
-                    for field in d_obj.object._meta.fields:
-                        if isinstance(field, (ForeignKey, OneToOneField)):
-                            pk = getattr(d_obj.object, field.attname)
-                            cls = field.rel.to
-                            if not cls.objects.using(self.get_using_destination()).filter(pk=pk).exists():
-                                #logger.info('    also sending fk {0} pk={1}'.format(cls, pk))
-                                # use callback to send required foreignkeys to json using the callback is the original method wrapper for _to_json.
-                                # for example, dispatch_user_items_as_json
-                                fk_inst = cls.objects.filter(pk=pk)
-                                if fk_inst:  # might be None
-                                    if issubclass(cls, self._get_base_models_for_default_serialization()):
-                                        # use the default callback
-                                        self._to_json(fk_inst)
-                                    else:
-                                        # use the senders callback
-                                        to_json_callback(fk_inst, user_container=user_container)
-                    # check for M2M. If found, populate the list table, then add the list items
-                    # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
-                    for m2m_rel_mgr in d_obj.object._meta.many_to_many:
-                        pk = getattr(d_obj.object, 'pk')
-                        # get class of this model
-                        cls = d_obj.object.__class__
-                        # get instance of this model on source
-                        inst = cls.objects.get(pk=pk)
-                        # get the name of the m2m attribute. Note, this is not a model field but a manager
-                        m2m = m2m_rel_mgr.name
-                        # try something like test_item_m2m.m2m.all(), gets all() list_model instances for this m2m
-                        m2m_qs = getattr(inst, m2m).all()
-                        # create list_model instances on destination if they do not exist
-                        dst_list_item_pks = []
-                        for src_list_item in m2m_qs:
-                            if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
-                                # no need to use callback, list models are not registered with dispatch
-                                self._to_json(src_list_item, additional_base_model_class=BaseListModel)
-                                # record source pk for use later
-                                # TODO: confirm the pk on source is always the same on destination? what about natural keys?
-                                dst_list_item_pks.append(src_list_item.pk)
-                        # get instance of this model on destination
-                        inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
-                        # find the pk for each list model instance and add to the m2m "field"
-                        for pk in dst_list_item_pks:
-                            # get the list_model instance on destination
-                            item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
-                            # add to m2m rel_manager on destination, this is like instance.m2m.add(item)
-                            getattr(inst, m2m).add(item_inst)
-    
+            deserialized_objects = list(serializers.deserialize("json", json, use_natural_keys=True))
+            saved = []
+            tries = 0
+            while True:
+                tries += 1
+                for deserialized_object in deserialized_objects:
+                    try:
+                        if deserialized_object not in saved:
+                            self._disconnect_signals(deserialized_object.object)
+                            deserialized_object.object.save(using=self.get_using_destination())
+                            self._reconnect_signals()
+                            saved.append(deserialized_object)
+                    except IntegrityError as e:
+                        self._reconnect_signals()
+                        #print '{0} {1}'.format(e, deserialized_object.object.__class__)
+                        continue
+                if len(saved) == len(deserialized_objects):
+                    break
+                if tries > 20:
+                    raise DeserializationError('Unable to deserialize objects. Tries exceeded on {0}.'.format(deserialized_object.object.__class__))
+                #self.serialize_m2m(d_obj, user_container, to_json_callback)
+
+    def serialize_dependencies(self, d_obj, user_container, to_json_callback):
+        # check for foreign keys and, if found, send using the callback
+        # Ensures the sent instance is complete / stable
+        # TODO: any issue about natural keys?? this searched the destination on pk.
+        self.serialize_m2m(d_obj, user_container, to_json_callback)
+
+    def serialize_m2m(self, d_obj, user_container, to_json_callback):
+        # check for M2M. If found, populate the list table, then add the list items
+        # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
+        for m2m_rel_mgr in d_obj.object._meta.many_to_many:
+            pk = getattr(d_obj.object, 'pk')
+            # get class of this model
+            cls = d_obj.object.__class__
+            # get instance of this model on source
+            inst = cls.objects.get(pk=pk)
+            # get the name of the m2m attribute. Note, this is not a model field but a manager
+            m2m = m2m_rel_mgr.name
+            # try something like test_item_m2m.m2m.all(), gets all() list_model instances for this m2m
+            m2m_qs = getattr(inst, m2m).all()
+            # create list_model instances on destination if they do not exist
+            dst_list_item_pks = []
+            for src_list_item in m2m_qs:
+                if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
+                    # no need to use callback, list models are not registered with dispatch
+                    self._to_json(src_list_item, additional_base_model_class=BaseListModel)
+                    # record source pk for use later
+                    # TODO: confirm the pk on source is always the same on destination? what about natural keys?
+                    dst_list_item_pks.append(src_list_item.pk)
+            # get instance of this model on destination
+            inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
+            # find the pk for each list model instance and add to the m2m "field"
+            for pk in dst_list_item_pks:
+                # get the list_model instance on destination
+                item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
+                # add to m2m rel_manager on destination, this is like instance.m2m.add(item)
+                getattr(inst, m2m).add(item_inst)
+
                     # TODO: commented out below so we can see the errors in testing
                     #       May need to uncomment before release
     

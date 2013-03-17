@@ -120,6 +120,15 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
 
         User must override.
 
+        if the model has no path to the user_container, such as Appointment or RegisteredSubject, override like this::
+
+            def dispatch_container_lookup(self):
+                return None
+        if the model does have a relational path to the user_container, override like this::
+
+            def dispatch_container_lookup(self):
+                return 'django__style__path__to__container'
+
         For example:
             with a relational structure like this::
                 self
@@ -130,9 +139,8 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             where 'household' is the user container with identifier attr 'household_identifier',
             <self> would return something like this:
                 'household_structure_member__household_structure__household__household_identifier'
-
-        ..note:: self must have a foreign key path to its container."""
-        raise ImproperlyConfigured('Model {0} is not configured for dispatch.'.format(self._meta.object_name))
+        """
+        raise ImproperlyConfigured('Model {0} is not configured for dispatch. Missing method \'dispatch_container_lookup\''.format(self._meta.object_name))
 
     def is_dispatched_as_item(self, using=None, user_container=None):
         """Returns the models 'dispatched' status in model DispatchItemRegister."""
