@@ -1,8 +1,8 @@
 from django.db import models
-from lab_base_model.models import BaseLabModel
+from lab_base_model.models import BaseLabListModel
 
 
-class BasePanel(BaseLabModel):
+class BasePanel(BaseLabListModel):
 
     name = models.CharField(
         verbose_name="Panel Name",
@@ -19,9 +19,6 @@ class BasePanel(BaseLabModel):
 
     def __unicode__(self):
         return self.name
-
-#    def natural_key(self):
-#        return (self.name, )
 
     class Meta:
         abstract = True

@@ -1,9 +1,9 @@
 from django.db import models
-from lab_base_model.models import BaseLabModel
+from lab_base_model.models import BaseLabListModel
 from lab_clinic_api.managers import PanelGroupManager
 
 
-class PanelGroup (BaseLabModel):
+class PanelGroup (BaseLabListModel):
 
     name = models.CharField(
         verbose_name="Panel Group Name",
@@ -15,6 +15,9 @@ class PanelGroup (BaseLabModel):
 
     def __unicode__(self):
         return self.name
+
+    def natural_key(self):
+        return (self.name, )
 
     class Meta:
         app_label = 'lab_panel'

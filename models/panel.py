@@ -35,6 +35,10 @@ class Panel(BasePanel):
     def __unicode__(self):
         return self.name
 
+    def natural_key(self):
+        return (self.name, )
+    natural_key.dependencies = ['lab_panel.panel_group']
+
     class Meta:
         app_label = 'lab_panel'
         db_table = 'bhp_lab_core_panel'
