@@ -1,10 +1,10 @@
 import datetime
 from django.db import models
-from lab_base_model.models import BaseLabUuidModel
+from lab_base_model.models import BaseLabListUuidModel
 from lab_aliquot.choices import ALIQUOT_STATUS, SPECIMEN_MEASURE_UNITS, SPECIMEN_MEDIUM
 
 
-class BaseAliquot (BaseLabUuidModel):
+class BaseAliquot (BaseLabListUuidModel):
 
     aliquot_identifier = models.CharField(
         verbose_name='Aliquot Identifier',
