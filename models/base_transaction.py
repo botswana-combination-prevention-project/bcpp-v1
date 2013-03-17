@@ -22,7 +22,7 @@ class BaseTransaction(BaseUuidModel):
         )
 
     producer = models.CharField(
-        max_length=25,
+        max_length=50,
         default=str(transaction_producer),
         db_index=True,
         help_text='Producer instance',
