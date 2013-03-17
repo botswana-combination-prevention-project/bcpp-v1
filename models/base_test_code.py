@@ -1,11 +1,11 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from lab_base_model.models import BaseLabModel
+from lab_base_model.models import BaseLabListModel
 from lab_common.choices import UNITS, ABS_CALC
 from lab_test_code.managers import TestCodeManager
 
 
-class BaseTestCode(BaseLabModel):
+class BaseTestCode(BaseLabListModel):
 
     code = models.CharField(
         verbose_name="Test Code",

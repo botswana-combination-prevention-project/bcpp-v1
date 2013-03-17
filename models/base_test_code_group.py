@@ -1,8 +1,8 @@
 from django.db import models
-from lab_base_model.models import BaseLabModel
+from lab_base_model.models import BaseLabListModel
 
 
-class BaseTestCodeGroup(BaseLabModel):
+class BaseTestCodeGroup(BaseLabListModel):
 
     code = models.CharField(max_length=15, null=True)
 
