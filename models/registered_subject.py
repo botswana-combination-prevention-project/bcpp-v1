@@ -118,7 +118,8 @@ class RegisteredSubject(BaseSubject):
         return self
 
     def natural_key(self):
-        return (self.identity, self.first_name, self.dob, self.initials, self.registration_identifier, self.subject_identifier, )
+        return (self.identity, self.first_name, self.dob, self.initials, self.subject_identifier, )
+    natural_key.dependencies = ['bhp_variables.studysite']
 
     def is_serialized(self):
         return super(RegisteredSubject, self).is_serialized(True)
