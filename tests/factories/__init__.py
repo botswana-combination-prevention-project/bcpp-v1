@@ -1,0 +1,2 @@
+from base_consent_factory import BaseConsentFactory
+from consent_catalogue_factory import ConsentCatalogueFactory
