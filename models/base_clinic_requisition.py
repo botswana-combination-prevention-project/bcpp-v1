@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.serializers.base import SerializationError
 from bhp_visit_tracking.models import BaseVisitTracking
 from lab_requisition.models import BaseRequisition
 
@@ -19,6 +20,9 @@ class BaseClinicRequisition (BaseRequisition):
 
     def get_subject_identifier(self):
         return self.get_visit().appointment.registered_subject.subject_identifier
+
+    def natural_key(self):
+        raise SerializationError('Requisition subclass must override method \'natural key\'.')
 
     class Meta:
         abstract = True

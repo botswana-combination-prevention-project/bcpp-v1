@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.conf import settings
+from django.core.serializers.base import SerializationError
 try:
     from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseUuidModel
 except ImportError:
@@ -152,9 +153,6 @@ class BaseBaseRequisition (BaseUuidModel):
 
     objects = BaseRequisitionManager()
 
-    def natural_keys(self):
-        return (self.requisition_identifier, self.specimen_identifier)
-
     def __unicode__(self):
         return '%s' % (self.requisition_identifier)
 
@@ -174,6 +172,9 @@ class BaseBaseRequisition (BaseUuidModel):
 
     def barcode_value(self):
         return self.specimen_identifier
+
+    def natural_key(self):
+        raise SerializationError('Requisition subclass must override method \'natural key\'.')
 
     def save(self, *args, **kwargs):
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
