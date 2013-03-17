@@ -50,6 +50,9 @@ class BaseAppointment (BaseDispatchSyncUuidModel):
             retval = True
         return retval
 
+    def dispatch_container_lookup(self):
+        return None
+
     def include_for_dispatch(self):
         return True
 
