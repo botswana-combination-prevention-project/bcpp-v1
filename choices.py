@@ -3,11 +3,6 @@ BLANK_CHOICE_DASH = [('', '---------')]
 
 """ Try to keep this in alphabetical order """
 
-ABSENTEE_STATUS = (
-    ('ABSENT', 'Absent'),
-    ('NOT_ABSENT', 'No longer absent'),
-)
-
 ACU_EST = (
     ('Acute', 'Acute'),
     ('Established', 'Established'),
