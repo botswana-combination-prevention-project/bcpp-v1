@@ -4,7 +4,7 @@ from bhp_consent.models import BaseConsentedUuidModel
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
 from bhp_base_model.fields import OtherCharField
 from bhp_appointment.models import Appointment
-from bhp_visit_tracking.managers import VisitTrackingManager
+from bhp_visit_tracking.managers import BaseVisitTrackingManager
 
 
 class BaseVisitTracking (BaseConsentedUuidModel):
@@ -108,7 +108,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         )
     """
 
-    objects = VisitTrackingManager()
+    objects = BaseVisitTrackingManager()
 
     def post_save(self):
         pass

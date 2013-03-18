@@ -1,1 +1,1 @@
-from visit_tracking_manager import VisitTrackingManager
+from base_visit_tracking_manager import BaseVisitTrackingManager

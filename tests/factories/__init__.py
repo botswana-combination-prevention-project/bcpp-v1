@@ -1,1 +1,2 @@
 from base_visit_tracking_factory import BaseVisitTrackingFactory
+from test_subject_visit_factory import TestSubjectVisitFactory
