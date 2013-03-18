@@ -8,7 +8,9 @@ from django.conf import settings
 from django.db.models import signals
 from bhp_common.utils import td_to_string
 from bhp_base_model.models import BaseModel
+from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.models import BaseUuidModel
+from lab_base_model.models import BaseLabUuidModel
 from bhp_consent.models.signals import add_models_to_catalogue
 from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
@@ -110,7 +112,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 8:
             self.timer()
             logger.info("8. Updating appointment configuration...")
-            self.update_model(("bhp_appointment", "Configuration"))
+            self.update_model(("bhp_appointment", "Configuration"),[BaseSyncUuidModel])
         if not step > 9:
             self.timer()
             logger.info("9. Updating the Crypt table...")
@@ -126,16 +128,16 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 12:
             self.timer()
             logger.info("12. Updating registered subjects...")
-            #self.update_model(('bhp_registration', 'RegisteredSubject'))
+            self.update_model(('bhp_registration', 'RegisteredSubject'))
         if not step > 13:
             self.timer()
             logger.info("13. Updating bhp_consent Consent Catalogues...")
             signals.post_save.disconnect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
-            self.update_model(('bhp_consent', 'ConsentCatalogue'))
+            self.update_model(('bhp_consent', 'ConsentCatalogue'),[BaseSyncUuidModel])
         if not step > 14:
             self.timer()
             logger.info("14. Updating bhp_consent Attached Models...")
-            self.update_model(('bhp_consent', 'AttachedModel'))
+            self.update_model(('bhp_consent', 'AttachedModel'),[BaseSyncUuidModel])
             signals.post_save.connect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
         if not step > 15:
             self.timer()
@@ -172,7 +174,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 23:
             self.timer()
             logger.info("23. Updating review from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'Review'))
+            self.update_model(('lab_clinic_api', 'Review'),[BaseLabUuidModel])
         if not step > 24:
             self.timer()
             logger.info("24. Updating un-scheduled lab entry buckets from bhp_lab_entry...")
