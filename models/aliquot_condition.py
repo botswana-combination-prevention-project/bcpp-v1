@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_base_model.models import BaseListModel
+from base_aliquot_condition import BaseAliquotCondition
 
 
-class AliquotCondition(BaseListModel):
+class AliquotCondition(BaseAliquotCondition):
 
     objects = models.Manager()
 

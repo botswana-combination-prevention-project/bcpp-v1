@@ -1,10 +1,10 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from lab_base_model.models import BaseLabListModel
+from lab_base_model.models import BaseLabModel
 from lab_clinic_api.managers import AliquotTypeManager
 
 
-class BaseAliquotType(BaseLabListModel):
+class BaseAliquotType(BaseLabModel):
 
     name = models.CharField(
         verbose_name='Description',
@@ -31,7 +31,7 @@ class BaseAliquotType(BaseLabListModel):
     objects = AliquotTypeManager()
 
     def __unicode__(self):
-        return "{0} {0}: {0}".format(self.alpha_code, self.numeric_code, self.name.lower())
+        return "{0} {1}: {2}".format(self.alpha_code, self.numeric_code, self.name.lower())
 
     def natural_key(self):
         return (self.alpha_code, self.numeric_code)
