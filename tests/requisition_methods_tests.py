@@ -33,6 +33,3 @@ class RequisitionMethodsTest(TestCase):
         print lst
         self.assertEqual(len(lst), 10001)
         self.assertEqual(len(set(lst)), 10001, msg='list of identifiers is not unique')
-#
-#        
-#        self.assertEqual(identifier.get_identifier(), '19HMQBSQ')
