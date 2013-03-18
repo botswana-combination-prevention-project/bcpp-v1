@@ -1,9 +1,9 @@
 from django.db import models
-from lab_base_model.models import BaseLabListModel
+from lab_base_model.models import BaseLabModel
 from lab_clinic_api.managers import PanelGroupManager
 
 
-class PanelGroup (BaseLabListModel):
+class PanelGroup (BaseLabModel):
 
     name = models.CharField(
         verbose_name="Panel Group Name",
