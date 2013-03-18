@@ -301,7 +301,7 @@ class BaseController(BaseProducer):
             model_instances = self.fk_instances + model_instances
             model_instances = list(set(model_instances))
             #serialize
-            print model_instances
+            # print model_instances
             json = serializers.serialize('json', model_instances, use_natural_keys=True)
             deserialized_objects = list(serializers.deserialize("json", json, use_natural_keys=True))
             saved = []

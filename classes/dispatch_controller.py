@@ -175,7 +175,7 @@ class DispatchController(BaseDispatchController):
            of :mod:`bhp_visit_tracking`'s :class:`BaseVisitTracking` base model.
            For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc
         """
-        self.dispatch_appointments(registered_subject, user_container)
+        #self.dispatch_appointments(registered_subject, user_container)
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models(app_label)
         # get the visit model class for this app
