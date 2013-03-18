@@ -1,7 +1,7 @@
-from bhp_base_model.models import BaseModel
+from bhp_base_model.models import BaseListModel
 
 
-class BaseLabListModel(BaseModel):
+class BaseLabListModel(BaseListModel):
 
     class Meta:
         abstract = True
