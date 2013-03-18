@@ -26,6 +26,7 @@ class BaseBaseRequisition (BaseUuidModel):
     requisition_identifier = models.CharField(
         verbose_name='Requisition Id',
         max_length=25,
+        unique=True,
         )
 
     requisition_datetime = models.DateTimeField(
@@ -175,7 +176,7 @@ class BaseBaseRequisition (BaseUuidModel):
         return self.specimen_identifier
 
     def natural_key(self):
-        raise SerializationError('Requisition subclass must override method \'natural key\'.')
+        return (self.requisition_identifier, )
 
     def save(self, *args, **kwargs):
         if not kwargs.get('suppress_autocreate_on_deserialize', False):
