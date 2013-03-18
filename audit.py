@@ -95,7 +95,7 @@ class AuditTrail(object):
             ## Uncomment this line for pre r8223 Django builds
             #dispatcher.connect(_audit, signal=models.signals.post_save, sender=cls, weak=False)
             ## Comment this line for pre r8223 Django builds
-            models.signals.post_save.connect(_audit, sender=cls, weak=False)
+            models.signals.post_save.connect(_audit, sender=cls, weak=False, dispatch_uid='audit_on_save_{0}'.format(model._meta.object_name.lower()))
 
             #begin: erikvw added for serialization
             def _serialize_on_save(sender, instance, **kwargs):
@@ -105,8 +105,13 @@ class AuditTrail(object):
                     if issubclass(model, BaseSyncUuidModel):
                         serialize_to_transaction = SerializeToTransaction()
                         serialize_to_transaction.serialize(sender, instance, **kwargs)
-            models.signals.post_save.connect(_serialize_on_save, sender=model,
-                                             weak=False, dispatch_uid='audit_serialize_on_save')
+#            connected = False
+#            for sig in models.signals.post_save.receivers:
+#                if sig[0][0] == 'audit_serialize_on_save':
+#                    connected = True
+#                    break
+#            if not connected:
+            models.signals.post_save.connect(_serialize_on_save, sender=model, weak=False, dispatch_uid='audit_serialize_on_save_{0}'.format(model._meta.object_name.lower()))
             # end: erikvw added for serialization
 
             if self.opts['audit_deletes']:
