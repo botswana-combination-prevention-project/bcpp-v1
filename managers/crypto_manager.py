@@ -17,3 +17,6 @@ class CryptoManager(models.Manager):
 
     def get_query_set(self):
         return CryptoQuerySet(self.model)
+
+    def get_by_natural_key(self, hash_value, algorithm, mode):
+        return self.get(hash=hash_value, algorithm=algorithm, mode=mode)

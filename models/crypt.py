@@ -33,6 +33,9 @@ class Crypt (BaseSyncUuidModel):
 
     objects = models.Manager()
 
+    def natural_key(self):
+        return (self.hash, self.algorithm, self.mode, )
+
     class Meta:
         app_label = 'bhp_crypto'
         verbose_name = 'Crypt'
