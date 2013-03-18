@@ -19,7 +19,7 @@ class Panel(BasePanel):
     objects = models.Manager()
 
     def __unicode__(self):
-        return self.edc_name
+        return self.edc_name or self.name
 
     def save(self, *args, **kwargs):
         if not self.edc_name:
