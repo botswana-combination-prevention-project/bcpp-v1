@@ -63,9 +63,9 @@
 {% block show_column %}
     {% if appointment_visit_report %}
         {% if appointment.visit_definition.code == visit_code and appointment.visit_instance == visit_instance %}
-            <td><A href="{% url 'dashboard_url' dashboard_type=dashboard_type subject_identifier=subject_identifier %}">show appointments</A></td>
+            <td><A href="{% url dashboard_url dashboard_type=dashboard_type subject_identifier=subject_identifier %}">show appointments</A></td>
         {% else %}
-            <td><A href="{% url 'dashboard_visit_url' dashboard_type=dashboard_type subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">show entry forms</A></td>                    
+            <td><A href="{% url dashboard_visit_url dashboard_type=dashboard_type subject_identifier=subject_identifier visit_code=appointment.visit_definition.code visit_instance=appointment.visit_instance %}">show entry forms</A></td>                    
         {% endif %}
     {% else %}
         {% if appointment.appt_status == 'cancelled' %}
