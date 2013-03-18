@@ -1,10 +1,10 @@
 import factory
 from datetime import datetime
 from bhp_variables.tests.factories import StudySiteFactory
-from bhp_base_model.tests.factories import BaseUuidModelFactory
+from base_consent_basics_factory import BaseConsentBasicsFactory
 
 
-class BaseConsentFactory(BaseUuidModelFactory):
+class BaseConsentFactory(BaseConsentBasicsFactory):
     ABSTRACT_FACTORY = True
 
     study_site = factory.SubFactory(StudySiteFactory)
