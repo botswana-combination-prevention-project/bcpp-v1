@@ -76,6 +76,7 @@ class BaseDispatch(BaseController):
         #if not value:
         #    raise AttributeError('The model_name of the user\'s container model cannot be None. Set this in __init__() of the subclass.')
         self._user_container_model_name = value
+        self._session_container = {'serialized': [], 'dispatched': [], 'fk_dependencies': []}
 
     def get_user_container_model_name(self):
         """Gets the model name for the user\'s container model."""
@@ -212,35 +213,40 @@ class BaseDispatch(BaseController):
         dispatch_item_register = None
         if instance._meta.app_label not in settings.DISPATCH_APP_LABELS and not instance.include_for_dispatch():
             raise ImproperlyConfigured('Model {0} is not configured for dispatch. See model method \'include_for_dispatch\'  or settings attribute DISPATCH_APP_LABELS.'.format(instance._meta.object_name))
-        if instance.is_dispatched_as_item(user_container=user_container):
+        
+        if instance.is_dispatched_as_item(user_container=user_container) and not self.in_session_container(instance, 'dispatched'):
             raise AlreadyDispatched('Model {0} instance {1} is already dispatched.'.format(instance._meta.object_name, instance))
-        try:
-            defaults = {
-                'is_dispatched': True,
-                'producer': self.get_producer(),
-                'dispatch_host': socket.gethostname(),
-                'dispatch_using': settings.DATABASES.get(self.get_using_source()).get('NAME'),
-                'item_app_label': instance._meta.app_label,
-                'item_model_name': instance._meta.object_name,  # not lower!
-                'item_identifier_attrname': self.get_user_item_identifier_attrname(),
-                }
-            dispatch_item_register, created = DispatchItemRegister.objects.using(self.get_using_source()).get_or_create(
-                dispatch_container_register=self.get_container_register_instance(),
-                item_identifier=getattr(instance, self.get_user_item_identifier_attrname()),
-                item_pk=instance.pk,
-                defaults=defaults)
-            if not created:
-                dispatch_item_register.is_dispatched = True
-                dispatch_item_register.return_datetime = None
-                dispatch_item_register.producer = self.get_producer()
-                dispatch_item_register.dispatch_host = socket.gethostname()
-                dispatch_item_register.dispatch_using = settings.DATABASES.get(self.get_using_source()).get('name')
-                dispatch_item_register.item_app_label = instance._meta.app_label
-                dispatch_item_register.item_model_name = instance._meta.object_name  # not lower!
-                dispatch_item_register.item_identifier_attrname = self.get_user_item_identifier_attrname()
-                dispatch_item_register.save()
-        except IntegrityError:
-            raise ImproperlyConfigured('Attempting to dispatch a model that is not \"dispatchable\". Expected instance.is_dispatched=True for Model{0}. Please check that this model has method \'include_for_dispatch()\' or model\'s app_label is included in settings.DISPATCH_APP_LABELS'.format(instance._meta.object_name))
+        if self.in_session_container(instance, 'dispatched'):
+            dispatch_item_register = True
+        else:
+            try:
+                defaults = {
+                    'is_dispatched': True,
+                    'producer': self.get_producer(),
+                    'dispatch_host': socket.gethostname(),
+                    'dispatch_using': settings.DATABASES.get(self.get_using_source()).get('NAME'),
+                    'item_app_label': instance._meta.app_label,
+                    'item_model_name': instance._meta.object_name,  # not lower!
+                    'item_identifier_attrname': self.get_user_item_identifier_attrname(),
+                    }
+                dispatch_item_register, created = DispatchItemRegister.objects.using(self.get_using_source()).get_or_create(
+                    dispatch_container_register=self.get_container_register_instance(),
+                    item_identifier=getattr(instance, self.get_user_item_identifier_attrname()),
+                    item_pk=instance.pk,
+                    defaults=defaults)
+                if not created:
+                    dispatch_item_register.is_dispatched = True
+                    dispatch_item_register.return_datetime = None
+                    dispatch_item_register.producer = self.get_producer()
+                    dispatch_item_register.dispatch_host = socket.gethostname()
+                    dispatch_item_register.dispatch_using = settings.DATABASES.get(self.get_using_source()).get('name')
+                    dispatch_item_register.item_app_label = instance._meta.app_label
+                    dispatch_item_register.item_model_name = instance._meta.object_name  # not lower!
+                    dispatch_item_register.item_identifier_attrname = self.get_user_item_identifier_attrname()
+                    dispatch_item_register.save()
+                self._add_to_session_container(instance, 'dispatched')
+            except IntegrityError:
+                raise ImproperlyConfigured('Attempting to dispatch a model that is not \"dispatchable\". Expected instance.is_dispatched=True for Model{0}. Please check that this model has method \'include_for_dispatch()\' or model\'s app_label is included in settings.DISPATCH_APP_LABELS'.format(instance._meta.object_name))
         return dispatch_item_register
 
     def get_membershipform_models(self):

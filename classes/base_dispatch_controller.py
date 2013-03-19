@@ -180,7 +180,7 @@ class BaseDispatchController(BaseDispatch):
                     # register the user items with the dispatch item register
                     for user_item in user_items:
                         if not self.register_with_dispatch_item_register(user_item, user_container):
-                            raise DispatchError('Unable to create a dispatch item register instance for {0} {1} to {2}.'.format(user_item._meta.object_name, user_item.object, self.get_using_destination()))
+                            raise DispatchError('Unable to create a dispatch item register instance for {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
                         logger.info('  dispatched user item {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
 
     def _dispatch_as_json(self, model_instances, user_container=None, to_json_callback=None):

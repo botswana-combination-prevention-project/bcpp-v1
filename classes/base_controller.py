@@ -80,6 +80,7 @@ class BaseController(BaseProducer):
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
         self.set_producer()
+        self._session_container = {}
         return None
 
     def has_pending_transactions(self, models):
@@ -198,10 +199,12 @@ class BaseController(BaseProducer):
                 if isinstance(field, (ForeignKey, OneToOneField)):
                     pk = getattr(obj, field.attname)
                     cls = field.rel.to
-                    if cls.objects.filter(pk=pk):
-                        this_fk = cls.objects.get(pk=pk)
-                        self.fk_instances.append(cls.objects.get(pk=pk))
-                        self.get_fk_dependencies([this_fk])
+                    if (cls, pk) not in self.get_session_container('fk_dependencies'):
+                        if cls.objects.filter(pk=pk):
+                            this_fk = cls.objects.get(pk=pk)
+                            self.fk_instances.append(cls.objects.get(pk=pk))
+                            self.get_fk_dependencies([this_fk])
+                        self._add_to_session_container((cls, pk), 'fk_dependencies')
 
     def _disconnect_signals(self, obj):
         """Disconnects signals before saving the serialized object in _to_json."""
@@ -263,6 +266,18 @@ class BaseController(BaseProducer):
             signals.post_save.receivers.append(audit_signal)
         self.audit_signals = None
 
+    def _add_to_session_container(self, instance, key):
+        if instance not in self._session_container[key]:
+            self._session_container[key].append(instance)
+
+    def get_session_container(self, key):
+        return self._session_container[key]
+
+    def in_session_container(self, instance, key):
+        if instance in self.get_session_container(key):
+            return True
+        return False
+
     def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None):
         """Serialize model instances on source to destination.
 
@@ -300,30 +315,33 @@ class BaseController(BaseProducer):
                 break
             model_instances = self.fk_instances + model_instances
             model_instances = list(set(model_instances))
+            # skip instances that have already been dispatched during this session
+            model_instances = [inst for inst in model_instances if inst not in self.get_session_container('serialized')]
             #serialize
-            # print model_instances
-            json = serializers.serialize('json', model_instances, use_natural_keys=True)
-            deserialized_objects = list(serializers.deserialize("json", json, use_natural_keys=True))
-            saved = []
-            tries = 0
-            while True:
-                tries += 1
-                for deserialized_object in deserialized_objects:
-                    try:
-                        if deserialized_object not in saved:
-                            self._disconnect_signals(deserialized_object.object)
-                            deserialized_object.object.save(using=self.get_using_destination())
+            if model_instances:
+                json = serializers.serialize('json', model_instances, use_natural_keys=True)
+                deserialized_objects = list(serializers.deserialize("json", json, use_natural_keys=True))
+                saved = []
+                tries = 0
+                while True:
+                    tries += 1
+                    for deserialized_object in deserialized_objects:
+                        try:
+                            if deserialized_object not in saved:
+                                self._disconnect_signals(deserialized_object.object)
+                                deserialized_object.object.save(using=self.get_using_destination())
+                                self._reconnect_signals()
+                                saved.append(deserialized_object)
+                                self._add_to_session_container(instance, 'serialized')
+                        except IntegrityError as e:
                             self._reconnect_signals()
-                            saved.append(deserialized_object)
-                    except IntegrityError as e:
-                        self._reconnect_signals()
-                        #print '{0} {1}'.format(e, deserialized_object.object.__class__)
-                        continue
-                if len(saved) == len(deserialized_objects):
-                    break
-                if tries > 20:
-                    raise DeserializationError('Unable to deserialize objects. Tries exceeded on {0}.'.format(deserialized_object.object.__class__))
-                #self.serialize_m2m(d_obj, user_container, to_json_callback)
+                            #print '{0} {1}'.format(e, deserialized_object.object.__class__)
+                            continue
+                    if len(saved) == len(deserialized_objects):
+                        break
+                    if tries > 20:
+                        raise DeserializationError('Unable to deserialize objects. Tries exceeded on {0}.'.format(deserialized_object.object.__class__))
+                    #self.serialize_m2m(d_obj, user_container, to_json_callback)
 
     def serialize_dependencies(self, d_obj, user_container, to_json_callback):
         # check for foreign keys and, if found, send using the callback
