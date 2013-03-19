@@ -4,9 +4,10 @@ from bhp_registration.tests.factories import RegisteredSubjectFactory
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_variables.tests.factories import StudySiteFactory
 from bhp_appointment.models import Appointment
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 
 
-class AppointmentFactory(factory.DjangoModelFactory):
+class AppointmentFactory(BaseUuidModelFactory):
     FACTORY_FOR = Appointment
 
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)
