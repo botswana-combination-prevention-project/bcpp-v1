@@ -3,6 +3,7 @@ from bhp_base_model.fields import IdentityTypeField
 from bhp_crypto.fields import EncryptedIdentityField
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsent
+from bhp_consent.managers import BaseConsentManager
 
 
 class TestSubjectConsent(BaseConsent):
@@ -29,7 +30,7 @@ class TestSubjectConsent(BaseConsent):
         blank=True,
         )
 
-    objects = models.Manager()
+    objects = BaseConsentManager()
 
     def get_user_provided_subject_identifier_attrname(self):
         """Returns the attribute name of the user provided subject_identifier."""
@@ -37,9 +38,6 @@ class TestSubjectConsent(BaseConsent):
 
     def get_subject_type(self):
         return 'subject'
-
-    def __unicode__(self):
-        return unicode(self.subject_identifier)
 
     class Meta:
         app_label = 'bhp_consent'

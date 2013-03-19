@@ -82,23 +82,7 @@ class BaseConsent(ConsentBasics):
     objects = BaseConsentManager()
 
     def __unicode__(self):
-        return "{0} {1} {2}".format(self.subject_identifier, mask_encrypted(self.first_name), self.initials)
-
-    def natural_key(self):
-        return (self.identity, )
-
-    def _get_user_provided_subject_identifier(self):
-        """Return a user provided subject_identifier.
-
-        Do not override."""
-        if self.get_user_provided_subject_identifier_attrname() in dir(self):
-            return getattr(self, self.get_user_provided_subject_identifier_attrname())
-        else:
-            return None
-
-    def get_user_provided_subject_identifier_attrname(self):
-        """Override to return the attribute name of the user provided subject_identifier."""
-        return None
+        return "{0} {1} {2}".format(self.mask_unset_subject_identifier(), mask_encrypted(self.first_name), self.initials)
 
     def save_new_consent(self, using=None, subject_identifier=None):
         """ Users may override this to compliment the default behavior for new instances.
@@ -116,26 +100,27 @@ class BaseConsent(ConsentBasics):
             registered_subject = getattr(self, 'registered_subject')
         except:
             registered_subject = None
-
         self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
-
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        if not self.subject_identifier or re_pk.match(str(self.subject_identifier)):
+        dummy = self.subject_identifier
+        if re_pk.match(self.subject_identifier):
             # test for user provided subject_identifier field method
             if self.get_user_provided_subject_identifier_attrname():
                 self.subject_identifier = self._get_user_provided_subject_identifier()
                 if self.subject_identifier and not registered_subject:
                     RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
                     RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code, using=using)
+                if not self.subject_identifier:
+                    self.subject_identifier = dummy
             # try to get from registered_subject
-            if not self.subject_identifier:
+            if re_pk.match(self.subject_identifier):
                 if registered_subject:
                     if registered_subject.subject_identifier:
                         # check for  registered subject key and if it already has
                         # a subject_identifier (e.g for subjects re-consenting)
                         self.subject_identifier = self.registered_subject.subject_identifier
             # create a subject identifier, if not already done
-            if not self.subject_identifier:
+            if re_pk.match(self.subject_identifier):
                 self.subject_identifier = consented_subject_identifier.get_identifier(
                     consent=self,
                     consent_attrname='subject_identifier',
@@ -143,14 +128,12 @@ class BaseConsent(ConsentBasics):
                     site_code=self.study_site.site_code,
                     using=using)
         if not self.subject_identifier:
-            raise ConsentError("Subject identifier cannot be blank! It appears it was not provided or not generated")
+            self.subject_identifier = dummy
+        if re_pk.match(self.subject_identifier):
+            raise ConsentError("Subject identifier not set after saving new consent! Got {0}".format(self.subject_identifier))
 
     def save(self, *args, **kwargs):
-        # if editing, confirm that identifier fields are not changed
-        if self.id:
-            if self.get_user_provided_subject_identifier_attrname():
-                if not self.subject_identifier == getattr(self, self.get_user_provided_subject_identifier_attrname()):
-                    raise ConsentError('Identifier field {0} cannot be changed.'.format(self.get_user_provided_subject_identifier_attrname()))
+        self.insert_dummy_identifier()
         # if adding, call _save_new_consent()
         if not self.id:
             self._save_new_consent(kwargs.get('using', None))
