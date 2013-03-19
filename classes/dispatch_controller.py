@@ -48,7 +48,7 @@ class DispatchController(BaseDispatchController):
         """Wrapper for user method :func:`dispatch_prep`."""
         self.dispatch_prep()
 
-    def dispatch_prep(self, item_identifier):
+    def dispatch_prep(self):
         """Returns a list of RegisteredSubject instances.
 
         This is the main data query for dispatching and is to be overriden by the user

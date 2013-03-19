@@ -1,7 +1,10 @@
 from django.test import TestCase
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
 from bhp_dispatch.models import TestItem, TestContainer, DispatchItemRegister, DispatchContainerRegister
-from bhp_dispatch.classes import BaseDispatchController
+from bhp_dispatch.classes import BaseDispatchController, DispatchController
+from bhp_sync.tests.factories import ProducerFactory
+from bhp_dispatch.exceptions import AlreadyRegisteredController, AlreadyDispatchedContainer
+from factories import TestItemFactory, TestContainerFactory
 
 
 class BaseControllerTests(TestCase):
@@ -21,6 +24,56 @@ class BaseControllerTests(TestCase):
         self.dispatch_item_app_label = 'bhp_dispatch'  # usually something like 'mochudi_subject'
         DispatchContainerRegister.objects.all().delete()
         DispatchItemRegister.objects.all().delete()
+
+    def test_session_container(self):
+
+        class TestController(DispatchController):
+            def dispatch_prep(self):
+                self.dispatch_user_container_as_json(None)
+                self.dispatch_user_items_as_json(TestItem.objects.all())
+
+        producer = ProducerFactory(name=self.using_destination, settings_key=self.using_destination)
+        test_container = TestContainerFactory()
+        TestItemFactory(test_container=test_container)
+        TestItemFactory(test_container=test_container)
+        TestItemFactory(test_container=test_container)
+
+        dispatch_controller = TestController(
+            self.using_source,
+            self.using_destination,
+            self.user_container_app_label,
+            'testcontainer',
+            'test_container_identifier',
+            test_container.test_container_identifier, 'http://')
+        self.assertEqual(len(dispatch_controller.get_session_container('dispatched')), 0)
+        dispatch_controller.dispatch()
+        self.assertEqual(DispatchContainerRegister.objects.all().count(), 1)
+        self.assertEqual(TestItem.objects.using(self.using_destination).all().count(), 3)
+        self.assertEqual(DispatchItemRegister.objects.all().count(), 4)
+        
+        TestItemFactory(test_container=test_container)
+        TestItemFactory(test_container=test_container)
+
+        # reload controller
+        self.assertRaises(AlreadyRegisteredController, TestController,
+            self.using_source,
+            self.using_destination,
+            self.user_container_app_label,
+            'testcontainer',
+            'test_container_identifier',
+            test_container.test_container_identifier, 'http://')
+        dispatch_controller = TestController(
+            self.using_source,
+            self.using_destination,
+            self.user_container_app_label,
+            'testcontainer',
+            'test_container_identifier',
+            test_container.test_container_identifier, 'http://', retry=True)
+        self.assertEqual(len(dispatch_controller.get_session_container('dispatched')), 4)
+        self.assertEqual(len(dispatch_controller.get_session_container('serialized')), 4)
+        #print dispatch_controller.get_session_container('dispatched')
+        #print dispatch_controller.get_session_container('serialized')
+        dispatch_controller.dispatch()
 
     def create_test_container(self):
         self.test_container = TestContainer.objects.create(test_container_identifier=self.user_container_identifier)

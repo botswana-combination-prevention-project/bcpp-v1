@@ -65,3 +65,6 @@ class NotRegisteredController(Exception):
 class ControllerBaseModelError(Exception):
     pass
 
+
+class DispatchControllerError(Exception):
+    pass

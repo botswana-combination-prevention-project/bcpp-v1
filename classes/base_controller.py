@@ -1,5 +1,6 @@
 import socket
 import logging
+import copy
 from datetime import datetime
 from django.conf import settings
 from django.core.serializers.base import DeserializationError
@@ -82,6 +83,17 @@ class BaseController(BaseProducer):
         self.set_producer()
         self._session_container = {}
         return None
+
+    def set_controller_state(self, value):
+        self._controller_state = value
+        if self._controller_state == 'retry':
+            # preload session_container dispatched items
+            self.preload_session_container()
+
+    def get_controller_state(self):
+        if not self._controller_state:
+            self.set_controller_state('ready')
+        return self._controller_state
 
     def has_pending_transactions(self, models):
         return self.has_incoming_transactions(models) or self.has_outgoing_transactions()
@@ -192,10 +204,13 @@ class BaseController(BaseProducer):
         or not."""
         return []
 
-    def get_fk_dependencies(self, instances, fk_to_skip=[]):
+    def get_fk_dependencies(self, instances, fk_to_skip=None):
         """Updates the list of foreign key instances required for serialization of the provided instances."""
-        if not isinstance(fk_to_skip, list):
-            raise TypeError('Expected a list in \'get_fk_dependencies\'')
+        if fk_to_skip:
+            if not isinstance(fk_to_skip, list):
+                raise TypeError('Expected a list in \'get_fk_dependencies\'')
+        else:
+            fk_to_skip = []
         for obj in instances:
             for field in obj._meta.fields:
                 if isinstance(field, (ForeignKey, OneToOneField)) and field.attname not in fk_to_skip:
@@ -206,7 +221,7 @@ class BaseController(BaseProducer):
                             this_fk = cls.objects.get(pk=pk)
                             self.fk_instances.append(cls.objects.get(pk=pk))
                             self.get_fk_dependencies([this_fk])
-                        self._add_to_session_container((cls, pk), 'fk_dependencies')
+                        self.add_to_session_container((cls, pk), 'fk_dependencies')
 
     def _disconnect_signals(self, obj):
         """Disconnects signals before saving the serialized object in _to_json."""
@@ -268,7 +283,7 @@ class BaseController(BaseProducer):
             signals.post_save.receivers.append(audit_signal)
         self.audit_signals = None
 
-    def _add_to_session_container(self, instance, key):
+    def add_to_session_container(self, instance, key):
         if instance not in self._session_container[key]:
             self._session_container[key].append(instance)
 
@@ -280,7 +295,13 @@ class BaseController(BaseProducer):
             return True
         return False
 
-    def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None,fk_to_skip=[]):
+    def session_container_ready(self):
+        for key in self._session_container:
+            if self.get_session_container(key):
+                return False
+        return True
+
+    def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None, fk_to_skip=None):
         """Serialize model instances on source to destination.
 
         Args:
@@ -318,7 +339,9 @@ class BaseController(BaseProducer):
             model_instances = self.fk_instances + model_instances
             model_instances = list(set(model_instances))
             # skip instances that have already been dispatched during this session
+            #original = copy.deepcopy(model_instances)
             model_instances = [inst for inst in model_instances if inst not in self.get_session_container('serialized')]
+            #print ' ... skipping {0}'.format(list(set(model_instances) - set(original)))
             #serialize
             if model_instances:
                 json = serializers.serialize('json', model_instances, use_natural_keys=True)
@@ -334,7 +357,7 @@ class BaseController(BaseProducer):
                                 deserialized_object.object.save(using=self.get_using_destination())
                                 self._reconnect_signals()
                                 saved.append(deserialized_object)
-                                self._add_to_session_container(instance, 'serialized')
+                                self.add_to_session_container(instance, 'serialized')
                         except IntegrityError as e:
                             self._reconnect_signals()
                             #print '{0} {1}'.format(e, deserialized_object.object.__class__)
@@ -342,7 +365,7 @@ class BaseController(BaseProducer):
                     if len(saved) == len(deserialized_objects):
                         break
                     if tries > 20:
-                        raise DeserializationError('Unable to deserialize objects. Tries exceeded on {0}.'.format(deserialized_object.object.__class__))
+                        raise DeserializationError('Unable to deserialize objects. Tries exceeded on {0}. Got {1}'.format(deserialized_object.object.__class__, e))
                     #self.serialize_m2m(d_obj, user_container, to_json_callback)
 
     def serialize_dependencies(self, d_obj, user_container, to_json_callback):

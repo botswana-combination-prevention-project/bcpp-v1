@@ -5,7 +5,7 @@ from django.db.models import get_model, ForeignKey, OneToOneField
 from django.core.exceptions import ImproperlyConfigured
 from bhp_visit.models import MembershipForm
 from django.db import IntegrityError
-from bhp_dispatch.exceptions import DispatchModelError, DispatchError, AlreadyDispatched
+from bhp_dispatch.exceptions import DispatchModelError, DispatchError, AlreadyDispatched, DispatchControllerError
 from bhp_dispatch.models import DispatchItemRegister, DispatchContainerRegister
 from base_controller import BaseController
 from controller_register import registered_controllers
@@ -38,8 +38,6 @@ class BaseDispatch(BaseController):
                  user_container_identifier,
                  **kwargs):
         super(BaseDispatch, self).__init__(using_source, using_destination, **kwargs)
-        # register .. don't want multiple instances for the same producer running
-        registered_controllers.register(self)
         self._dispatch_item_model_name = None
         self._user_container_app_label = None
         self._user_container_identifier_attrname = None
@@ -49,15 +47,35 @@ class BaseDispatch(BaseController):
         self._dispatch = None
         self._dispatch_container_register = None
         self._visit_models = {}
+        # register .. don't want multiple instances for the same producer running
+        registered_controllers.register(self, retry=kwargs.get('retry', False))
         self._set_user_container_app_label(user_container_app_label)
         self._set_user_container_model_name(user_container_model_name)
         self._set_user_container_identifier_attrname(user_container_identifier_attrname)
         self.set_user_container_identifier(user_container_identifier)
         self._set_container_register_instance()
+        if kwargs.get('retry', False):
+            self.set_controller_state('retry')
         self.debug = kwargs.get('debug', False)
 
     def _repr(self):
         return 'DispatchController[{0}]'.format(self.get_producer().settings_key)
+
+    def preload_session_container(self):
+        """Loads the session container for items that are currently dispatched when retrying the dispatch for this user_container."""
+        user_container = self.get_user_container_instance()
+        # confirm user_container is dispatched
+        if not user_container.is_dispatched_as_container():
+            DispatchControllerError('Attempt to preload a container that has not been dispatched. Got {0}'.format(user_container))
+        # add the container
+        self.add_to_session_container(user_container, 'dispatched')
+        self.add_to_session_container(user_container, 'serialized')
+        # get list of dispatched items for this container and add to session container
+        for dispatch_register_item in self.get_registered_items():
+            item_cls = get_model(dispatch_register_item.item_app_label, dispatch_register_item.item_model_name)
+            instance = item_cls.objects.get(pk=dispatch_register_item.item_pk)
+            self.add_to_session_container(instance, 'dispatched')
+            self.add_to_session_container(instance, 'serialized')
 
     def register_with_dispatch_item_register(self, instance, user_container=None):
         """Registers a user model with DispatchItemRegister."""
@@ -244,7 +262,7 @@ class BaseDispatch(BaseController):
                     dispatch_item_register.item_model_name = instance._meta.object_name  # not lower!
                     dispatch_item_register.item_identifier_attrname = self.get_user_item_identifier_attrname()
                     dispatch_item_register.save()
-                self._add_to_session_container(instance, 'dispatched')
+                self.add_to_session_container(instance, 'dispatched')
             except IntegrityError:
                 raise ImproperlyConfigured('Attempting to dispatch a model that is not \"dispatchable\". Expected instance.is_dispatched=True for Model{0}. Please check that this model has method \'include_for_dispatch()\' or model\'s app_label is included in settings.DISPATCH_APP_LABELS'.format(instance._meta.object_name))
         return dispatch_item_register
