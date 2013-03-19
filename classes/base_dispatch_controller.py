@@ -142,7 +142,7 @@ class BaseDispatchController(BaseDispatch):
                     raise DispatchError('Unable to create a dispatch item register for user container {0} {1} to {2}.'.format(user_container._meta.object_name, user_container.object, self.get_using_destination()))
                 logger.info('dispatched {0} {1} to {2}.'.format(user_container._meta.object_name, user_container, self.get_using_destination()))
 
-    def dispatch_user_items_as_json(self, user_items, user_container):
+    def dispatch_user_items_as_json(self, user_items, user_container, fk_to_skip=[]):
         if not user_items:
             raise DispatchItemError('Attribute \'user_items\' cannot be None.')
         if not user_container.is_dispatched_as_item():
@@ -176,13 +176,13 @@ class BaseDispatchController(BaseDispatch):
                     if already_dispatched_items:
                         raise AlreadyDispatchedItem('{0} models are already dispatched. Got {1}'.format(len(already_dispatched_items), already_dispatched_items))
                     # dispatch
-                    self._dispatch_as_json(user_items, user_container=user_container, to_json_callback=self.dispatch_user_items_as_json)
+                    self._dispatch_as_json(user_items, user_container=user_container, to_json_callback=self.dispatch_user_items_as_json,fk_to_skip=fk_to_skip)
                     # register the user items with the dispatch item register
                     for user_item in user_items:
                         if not self.register_with_dispatch_item_register(user_item, user_container):
                             raise DispatchError('Unable to create a dispatch item register instance for {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
                         logger.info('  dispatched user item {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
 
-    def _dispatch_as_json(self, model_instances, user_container=None, to_json_callback=None):
+    def _dispatch_as_json(self, model_instances, user_container=None, to_json_callback=None, fk_to_skip=[]):
         """Passes on to _to_json along with a callback to consume foreignkeys."""
-        self._to_json(model_instances, to_json_callback=to_json_callback, user_container=user_container)
+        self._to_json(model_instances, to_json_callback=to_json_callback, user_container=user_container,fk_to_skip=fk_to_skip)

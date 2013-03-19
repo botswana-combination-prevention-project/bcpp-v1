@@ -192,11 +192,13 @@ class BaseController(BaseProducer):
         or not."""
         return []
 
-    def get_fk_dependencies(self, instances):
+    def get_fk_dependencies(self, instances, fk_to_skip=[]):
         """Updates the list of foreign key instances required for serialization of the provided instances."""
+        if not isinstance(fk_to_skip, list):
+            raise TypeError('Expected a list in \'get_fk_dependencies\'')
         for obj in instances:
             for field in obj._meta.fields:
-                if isinstance(field, (ForeignKey, OneToOneField)):
+                if isinstance(field, (ForeignKey, OneToOneField)) and field.attname not in fk_to_skip:
                     pk = getattr(obj, field.attname)
                     cls = field.rel.to
                     if (cls, pk) not in self.get_session_container('fk_dependencies'):
@@ -278,7 +280,7 @@ class BaseController(BaseProducer):
             return True
         return False
 
-    def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None):
+    def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None,fk_to_skip=[]):
         """Serialize model instances on source to destination.
 
         Args:
@@ -311,7 +313,7 @@ class BaseController(BaseProducer):
                     break
             # add foreign key instances to the list of model instances to serialize
             while True:
-                self.get_fk_dependencies(model_instances)
+                self.get_fk_dependencies(model_instances,fk_to_skip)
                 break
             model_instances = self.fk_instances + model_instances
             model_instances = list(set(model_instances))
