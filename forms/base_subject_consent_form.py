@@ -43,7 +43,7 @@ class BaseSubjectConsentForm(BaseModelForm):
         if cleaned_data.get('consent_datetime', None):
             consent_datetime = cleaned_data.get('consent_datetime').date()
         else:
-            consent_datetime = date.now()
+            consent_datetime = date.today()
   
         if cleaned_data.get('dob'):
             rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
