@@ -8,4 +8,11 @@ class BaseUuidModelFactory(BaseFactory):
 
     @classmethod
     def _setup_next_sequence(cls):
-        return starting_seq_num
+        try:
+            return 1 + cls._associated_class._default_manager.count()
+        except IndexError:
+            return 1
+#     @classmethod
+#     def _setup_next_sequence(cls):
+#         starting_seq_num += 1
+#         return starting_seq_num
