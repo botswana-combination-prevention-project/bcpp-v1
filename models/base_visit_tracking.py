@@ -142,7 +142,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
 #            self.appointment.save()
 
     def natural_key(self):
-        return self.appointment.natural_key()
+        return (self.report_datetime, ) + self.appointment.natural_key()
     natural_key.dependencies = ['bhp_appointment.appointment', ]
 
     def get_subject_identifier(self):
