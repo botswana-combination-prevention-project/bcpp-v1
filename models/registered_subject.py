@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -117,8 +118,12 @@ class RegisteredSubject(BaseSubject):
     def get_registered_subject(self):
         return self
 
+#     def natural_key(self):
+#         return (self.identity, self.first_name, self.dob, self.initials, self.subject_identifier, )
+#     natural_key.dependencies = ['bhp_variables.studysite']
+
     def natural_key(self):
-        return (self.identity, self.first_name, self.dob, self.initials, self.subject_identifier, )
+        return (self.subject_identifier, )
     natural_key.dependencies = ['bhp_variables.studysite']
 
     def is_serialized(self):
@@ -129,12 +134,12 @@ class RegisteredSubject(BaseSubject):
 
     def __unicode__(self):
         if self.sid:
-            return "{0} {1} ({2} {3})".format(self.subject_identifier,
+            return "{0} {1} ({2} {3})".format(self.mask_unset_subject_identifier(),
                                               self.subject_type,
                                               mask_encrypted(self.first_name),
                                               self.sid)
         else:
-            return "{0} {1} ({2})".format(self.subject_identifier,
+            return "{0} {1} ({2})".format(self.mask_unset_subject_identifier(),
                                           self.subject_type,
                                           mask_encrypted(self.first_name))
 
