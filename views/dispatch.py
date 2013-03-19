@@ -7,8 +7,8 @@ from bhp_dispatch.classes import DispatchController
 from bhp_dispatch.exceptions import DispatchAttributeError
 
 
-@login_required
-@csrf_protect
+#@login_required
+#@csrf_protect
 def dispatch(request, dispatch_controller_cls, **kwargs):
     """Receives a list of user container identifiers and user selects the producer to dispatch to.
 
@@ -42,7 +42,7 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
                 if not producer.settings_key:
                     raise DispatchAttributeError('Producer attribute settings_key may not be None.')
                 for user_container in user_containers:
-                    dispatch_controller = dispatch_controller_cls('default', producer.settings_key, user_container)
+                    dispatch_controller = dispatch_controller_cls('default', producer.settings_key, user_container, **kwargs)
                     dispatch_controller.dispatch()
                 dispatch_url = dispatch_controller.get_dispatch_url()
     else:
