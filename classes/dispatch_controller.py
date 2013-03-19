@@ -199,15 +199,15 @@ class DispatchController(BaseDispatchController):
             if requisitions:
                 self.dispatch_user_items_as_json(requisitions, user_container)
 
-    def dispatch_entry_buckets(self, registered_subject, user_container):
+    def dispatch_entry_buckets(self, registered_subject):
         AdditionalLabEntryBucket = get_model('bhp_lab_entry', 'AdditionalLabEntryBucket')
         additional_lab_entry_bucket = AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk)
         if additional_lab_entry_bucket:
-            self.dispatch_user_items_as_json(additional_lab_entry_bucket, user_container)
+            self._to_json(additional_lab_entry_bucket)
         ScheduledLabEntryBucket = get_model('bhp_lab_entry', 'ScheduledLabEntryBucket')
         scheduled_lab_entry_bucket = ScheduledLabEntryBucket.objects.filter(registered_subject=registered_subject.pk)
         if scheduled_lab_entry_bucket:
-            self.dispatch_user_items_as_json(ScheduledLabEntryBucket.objects.filter(registered_subject=registered_subject.pk), user_container)
+            self._to_json(scheduled_lab_entry_bucket)
 
     def dispatch_consent_instances(self, app_label, registered_subject, container, **kwargs):
         consent_models = self.get_consent_models(app_label)
