@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
@@ -118,7 +119,8 @@ class BaseConsent(ConsentBasics):
 
         self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
 
-        if not self.subject_identifier:
+        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+        if not self.subject_identifier or re_pk.match(str(self.subject_identifier)):
             # test for user provided subject_identifier field method
             if self.get_user_provided_subject_identifier_attrname():
                 self.subject_identifier = self._get_user_provided_subject_identifier()
