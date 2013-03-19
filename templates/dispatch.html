@@ -14,7 +14,7 @@
 
 <table>
 <tr><TD><H4>Items selected for dispatch</H4></TD></TR>
-<tr><TD colspan=2>Dispatch by <A href="{{ user_container.get_absolute_url }}">{{ user_container._meta.verbose_name }}</A></TD></td></TR>
+<tr><TD colspan=2>Dispatch by <A href="{{ user_container.get_absolute_url }}">{{ user_container_model_name }}</A></TD></td></TR>
     {% for qs in queryset %}
         <tr><TD><A href="{{ dispatch_url }}{{ qs }}/">{{ qs }}</A></TD><td>{% if qs|is_dispatched %}<A href="/admin/bhp_dispatch/dispatchitem/?q={{ qs }}">dispatched</A>{% endif %}</td></TR>
     {% endfor %}

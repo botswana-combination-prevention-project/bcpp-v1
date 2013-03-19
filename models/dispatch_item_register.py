@@ -9,7 +9,7 @@ class DispatchItemRegister(BaseDispatch):
     item_app_label = models.CharField(max_length=35, null=True)
     item_model_name = models.CharField(max_length=35, null=True)
     item_identifier_attrname = models.CharField(max_length=35, null=True)
-    item_identifier = models.CharField(max_length=35, null=True)
+    item_identifier = models.CharField(max_length=40, null=True)
     item_pk = models.CharField(max_length=50, null=True)
     dispatch_host = models.CharField(max_length=35, null=True)
     dispatch_using = models.CharField(max_length=35, null=True)
