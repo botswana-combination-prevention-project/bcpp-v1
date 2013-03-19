@@ -6,11 +6,11 @@ from dispatch_container_register import DispatchContainerRegister
 
 class DispatchItemRegister(BaseDispatch):
     dispatch_container_register = models.ForeignKey(DispatchContainerRegister)
-    item_app_label = models.CharField(max_length=35, null=True)
-    item_model_name = models.CharField(max_length=35, null=True)
-    item_identifier_attrname = models.CharField(max_length=35, null=True)
-    item_identifier = models.CharField(max_length=40, null=True)
-    item_pk = models.CharField(max_length=50, null=True)
+    item_app_label = models.CharField(max_length=35)
+    item_model_name = models.CharField(max_length=35)
+    item_identifier_attrname = models.CharField(max_length=35)
+    item_identifier = models.CharField(max_length=40)
+    item_pk = models.CharField(max_length=50)
     dispatch_host = models.CharField(max_length=35, null=True)
     dispatch_using = models.CharField(max_length=35, null=True)
     registered_subjects = models.TextField(

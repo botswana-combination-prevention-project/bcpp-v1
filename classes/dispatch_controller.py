@@ -1,7 +1,7 @@
 import logging
 from django.db.models import get_model
 from django.core.exceptions import FieldError
-from django.db.models import get_models, get_app
+from django.db.models import get_models, get_app, signals
 from django.db.models.query import QuerySet
 from bhp_visit_tracking.classes import VisitModelHelper
 from bhp_lab_tracker.models import HistoryModel
