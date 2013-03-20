@@ -191,7 +191,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 27:
             self.timer()
             logger.info("27. Updating api keys...")
-            #self.update_api_keys()
+            self.update_api_keys()
         if not step > 28:
             self.timer()
             logger.info("28. Running post procedures...")
