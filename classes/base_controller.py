@@ -75,13 +75,14 @@ class BaseController(BaseProducer):
                                   :func:`ignore_for_dispatch` method on the model. See model base class :class:`BaseSyncUuidModel` in
                                   module :mod:`bhp_sync`. For example: DISPATCH_APP_LABELS = ['mochudi_household', 'mochudi_subject', 'mochudi_lab']
             """
+        self._session_container = {}
+        self.initialize_session_container()
         super(BaseController, self).__init__(using_source, using_destination, **kwargs)
         self.fk_instances = []
         self.preparing_status = kwargs.get('preparing_netbook', None)
         if not 'DISPATCH_APP_LABELS' in dir(settings):
             raise ImproperlyConfigured('Attribute DISPATCH_APP_LABELS not found. Add to settings. e.g. DISPATCH_APP_LABELS = [\'mochudi_household\', \'mochudi_subject\', \'mochudi_lab\']')
         self.set_producer()
-        self._session_container = {}
         return None
 
     def set_controller_state(self, value):
@@ -383,6 +384,7 @@ class BaseController(BaseProducer):
                                 self._disconnect_signals(deserialized_object.object)
                                 deserialized_object.object.save(using=self.get_using_destination())
                                 self._reconnect_signals()
+                                self.serialize_m2m(deserialized_object)
                                 saved.append(deserialized_object)
                                 self.add_to_session_container(instance, 'serialized')
                                 self.update_session_container_class_counter(instance)
@@ -402,7 +404,7 @@ class BaseController(BaseProducer):
         # TODO: any issue about natural keys?? this searched the destination on pk.
         self.serialize_m2m(d_obj, user_container, to_json_callback)
 
-    def serialize_m2m(self, d_obj, user_container, to_json_callback):
+    def serialize_m2m(self, d_obj):
         # check for M2M. If found, populate the list table, then add the list items
         # to the m2m field. See https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_many/
         for m2m_rel_mgr in d_obj.object._meta.many_to_many:

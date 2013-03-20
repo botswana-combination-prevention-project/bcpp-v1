@@ -15,6 +15,7 @@ from bhp_consent.models.signals import add_models_to_catalogue
 from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
 from bhp_dispatch.exceptions import BackupError, RestoreError
+from bhp_registration.models import RegisteredSubject
 
 
 logger = logging.getLogger(__name__)
@@ -128,7 +129,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 12:
             self.timer()
             logger.info("12. Updating registered subjects...")
-            self.update_model(('bhp_registration', 'RegisteredSubject'))
+            self.update_model(('bhp_registration', 'RegisteredSubject'), RegisteredSubject)
         if not step > 13:
             self.timer()
             logger.info("13. Updating bhp_consent Consent Catalogues...")
@@ -174,7 +175,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 23:
             self.timer()
             logger.info("23. Updating review from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'Review'),[BaseLabUuidModel])
+            self.update_model(('lab_clinic_api', 'Review'), [BaseLabUuidModel])
         if not step > 24:
             self.timer()
             logger.info("24. Updating un-scheduled lab entry buckets from bhp_lab_entry...")
@@ -182,7 +183,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 25:
             self.timer()
             logger.info("25. Updating lab entry from bhp_lab_entry...")
-            self.update_model(('bhp_lab_entry', 'LabEntry'), [BaseUuidModel])         
+            self.update_model(('bhp_lab_entry', 'LabEntry'), [BaseUuidModel])
         if not step > 26:
             self.timer()
             logger.info("26. Updating bhp_entry.models.entry...")
@@ -190,7 +191,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 27:
             self.timer()
             logger.info("27. Updating api keys...")
-            self.update_api_keys()
+            #self.update_api_keys()
         if not step > 28:
             self.timer()
             logger.info("28. Running post procedures...")

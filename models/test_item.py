@@ -1,6 +1,6 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bhp_base_model.models import BaseListModel
+from bhp_base_model.models import BaseListModel, TestManyToMany
 from base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
 from test_container import TestContainer
 
@@ -15,6 +15,8 @@ class TestItem(BaseDispatchSyncUuidModel):
     test_item_identifier = models.CharField(max_length=35, unique=True)
 
     test_container = models.ForeignKey(TestContainer)
+
+    test_many_to_many = models.ManyToManyField(TestManyToMany)
 
     comment = models.CharField(max_length=50, null=True)
 

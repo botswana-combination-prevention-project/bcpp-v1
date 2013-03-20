@@ -1,5 +1,4 @@
 import factory
-from datetime import datetime
 from bhp_dispatch.models import TestItem
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from test_container_factory import TestContainerFactory
@@ -10,4 +9,3 @@ class TestItemFactory(BaseUuidModelFactory):
 
     test_item_identifier = factory.Sequence(lambda n: 'ITEM_ID{0}'.format(n))
     test_container = factory.SubFactory(TestContainerFactory)
-    comment = 'test comment'

@@ -4,6 +4,7 @@ from bhp_dispatch.models import TestItem, TestContainer, DispatchItemRegister, D
 from bhp_dispatch.classes import BaseDispatchController, DispatchController
 from bhp_sync.tests.factories import ProducerFactory
 from bhp_dispatch.exceptions import AlreadyRegisteredController, AlreadyDispatchedContainer
+from bhp_base_model.tests.factories import TestManyToManyFactory
 from factories import TestItemFactory, TestContainerFactory
 
 
@@ -25,7 +26,55 @@ class BaseControllerTests(TestCase):
         DispatchContainerRegister.objects.all().delete()
         DispatchItemRegister.objects.all().delete()
 
-    def test_session_container(self):
+    def test_p1(self):
+
+        class TestController(DispatchController):
+            def dispatch_prep(self):
+                self.dispatch_user_container_as_json(None)
+                self.dispatch_user_items_as_json(TestItem.objects.all())
+
+        producer = ProducerFactory(name=self.using_destination, settings_key=self.using_destination)
+        l1 = TestManyToManyFactory()
+        l2 = TestManyToManyFactory()
+        l3 = TestManyToManyFactory()
+        l4 = TestManyToManyFactory()
+        l5 = TestManyToManyFactory()
+        l6 = TestManyToManyFactory()
+        l7 = TestManyToManyFactory()
+        l8 = TestManyToManyFactory()
+        l9 = TestManyToManyFactory()
+        test_container = TestContainerFactory()
+        t1 = TestItemFactory(test_container=test_container)
+        t2 = TestItemFactory(test_container=test_container)
+        t3 = TestItemFactory(test_container=test_container)
+        t1.test_many_to_many.add(l1)
+        t1.test_many_to_many.add(l2)
+        t2.test_many_to_many.add(l3)
+        t2.test_many_to_many.add(l4)
+        t3.test_many_to_many.add(l5)
+        t3.test_many_to_many.add(l6)
+        t3.test_many_to_many.add(l7)
+        t3.test_many_to_many.add(l8)
+        t3.test_many_to_many.add(l9)
+        t3.test_many_to_many.add(l1)
+        self.assertEqual(DispatchContainerRegister.objects.all().count(), 0)
+        dispatch_controller = TestController(
+            self.using_source,
+            self.using_destination,
+            self.user_container_app_label,
+            'testcontainer',
+            'test_container_identifier',
+            test_container.test_container_identifier, 'http://')
+        self.assertEqual(DispatchContainerRegister.objects.all().count(), 1)
+        self.assertEqual(len(dispatch_controller.get_session_container('dispatched')), 0)
+        self.assertEqual(DispatchItemRegister.objects.filter(item_model_name='TestContainer').count(), 0)
+        dispatch_controller.dispatch()
+        for test_item in TestItem.objects.using(self.using_destination).all():
+            print test_item
+            self.assertGreater(test_item.test_many_to_many.all().count(), 0)
+            print test_item.test_many_to_many.all()
+
+    def test_p2(self):
 
         class TestController(DispatchController):
             def dispatch_prep(self):
@@ -37,7 +86,7 @@ class BaseControllerTests(TestCase):
         TestItemFactory(test_container=test_container)
         TestItemFactory(test_container=test_container)
         TestItemFactory(test_container=test_container)
-
+        self.assertEqual(DispatchContainerRegister.objects.all().count(), 0)
         dispatch_controller = TestController(
             self.using_source,
             self.using_destination,
@@ -45,9 +94,12 @@ class BaseControllerTests(TestCase):
             'testcontainer',
             'test_container_identifier',
             test_container.test_container_identifier, 'http://')
+        self.assertEqual(DispatchContainerRegister.objects.all().count(), 1)
         self.assertEqual(len(dispatch_controller.get_session_container('dispatched')), 0)
+        self.assertEqual(DispatchItemRegister.objects.filter(item_model_name='TestContainer').count(), 0)
         dispatch_controller.dispatch()
         self.assertEqual(DispatchContainerRegister.objects.all().count(), 1)
+        self.assertEqual(DispatchItemRegister.objects.filter(item_model_name='TestContainer').count(), 1)
         self.assertEqual(TestItem.objects.using(self.using_destination).all().count(), 3)
         self.assertEqual(DispatchItemRegister.objects.all().count(), 4)
         self.assertEqual(dispatch_controller.get_session_container_class_counter_count(TestItem), 3)
