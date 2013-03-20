@@ -83,9 +83,7 @@ class BaseSubject (BaseSyncUuidModel):
         using = kwargs.get('using', None)
         self.insert_dummy_identifier()
         self._check_if_duplicate_subject_identifier(using)
-        if self.id:
-            if not self.__class__.objects.get(pk=self.id).subject_identifier == self.subject_identifier:
-                raise IdentifierError('Subject Identifier cannot be changed.')
+        self.check_if_may_change_subject_identifier(using)
         # if editing, confirm that identifier fields are not changed
         if self.id:
             if self.get_user_provided_subject_identifier_attrname():
@@ -126,6 +124,11 @@ class BaseSubject (BaseSyncUuidModel):
 
     def include_for_dispatch(self):
         return True
+
+    def check_if_may_change_subject_identifier(self, using):
+        if self.id:
+            if not self.__class__.objects.get(pk=self.id).subject_identifier == self.subject_identifier:
+                raise IdentifierError('Subject Identifier cannot be changed. Got {0} != {1}'.format(self.__class__.objects.get(pk=self.id).subject_identifier, self.subject_identifier))
 
     def _check_if_duplicate_subject_identifier(self, using):
         """Checks if the subject identifier is in use, for new and existing instances."""
