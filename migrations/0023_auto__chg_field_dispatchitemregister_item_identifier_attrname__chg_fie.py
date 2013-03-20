@@ -10,19 +10,19 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'DispatchItemRegister.item_identifier_attrname'
-        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_identifier_attrname', self.gf('django.db.models.fields.CharField')(default='q', max_length=35))
+        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_identifier_attrname', self.gf('django.db.models.fields.CharField')(default='q', max_length=100))
 
         # Changing field 'DispatchItemRegister.item_app_label'
-        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_app_label', self.gf('django.db.models.fields.CharField')(default='q', max_length=35))
+        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_app_label', self.gf('django.db.models.fields.CharField')(default='q', max_length=150))
 
         # Changing field 'DispatchItemRegister.item_model_name'
-        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_model_name', self.gf('django.db.models.fields.CharField')(default='q', max_length=35))
+        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_model_name', self.gf('django.db.models.fields.CharField')(default='q', max_length=200))
 
         # Changing field 'DispatchItemRegister.item_pk'
-        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_pk', self.gf('django.db.models.fields.CharField')(default='q', max_length=50))
+        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_pk', self.gf('django.db.models.fields.CharField')(default='q', max_length=100))
 
         # Changing field 'DispatchItemRegister.item_identifier'
-        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_identifier', self.gf('django.db.models.fields.CharField')(default='q', max_length=40))
+        db.alter_column(u'bhp_dispatch_dispatchitemregister', 'item_identifier', self.gf('django.db.models.fields.CharField')(default='q', max_length=200))
 
     def backwards(self, orm):
 

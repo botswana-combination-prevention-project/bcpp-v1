@@ -10,21 +10,21 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'DispatchContainerRegister.container_model_name'
-        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_model_name', self.gf('django.db.models.fields.CharField')(default='q', max_length=35))
+        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_model_name', self.gf('django.db.models.fields.CharField')(default='q', max_length=40))
 
         # Changing field 'DispatchContainerRegister.container_app_label'
-        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_app_label', self.gf('django.db.models.fields.CharField')(default='q', max_length=35))
+        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_app_label', self.gf('django.db.models.fields.CharField')(default='q', max_length=60))
 
         # Changing field 'DispatchContainerRegister.container_identifier_attrname'
-        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_identifier_attrname', self.gf('django.db.models.fields.CharField')(default='q', max_length=35))
+        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_identifier_attrname', self.gf('django.db.models.fields.CharField')(default='q', max_length=100))
 
         # Changing field 'DispatchContainerRegister.container_pk'
-        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_pk', self.gf('django.db.models.fields.CharField')(default='q', max_length=50))
+        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_pk', self.gf('django.db.models.fields.CharField')(default='q', max_length=100))
 
         # Changing field 'DispatchContainerRegister.container_identifier'
-        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_identifier', self.gf('django.db.models.fields.CharField')(default='q', max_length=35))
+        db.alter_column(u'bhp_dispatch_dispatchcontainerregister', 'container_identifier', self.gf('django.db.models.fields.CharField')(default='q', max_length=120))
         # Adding unique constraint on 'DispatchContainerRegister', fields ['container_model_name', 'container_app_label', 'container_pk']
-        db.create_unique(u'bhp_dispatch_dispatchcontainerregister', ['container_model_name', 'container_app_label', 'container_pk'])
+        #db.create_unique(u'bhp_dispatch_dispatchcontainerregister', ['container_model_name', 'container_app_label', 'container_pk'])
 
 
     def backwards(self, orm):

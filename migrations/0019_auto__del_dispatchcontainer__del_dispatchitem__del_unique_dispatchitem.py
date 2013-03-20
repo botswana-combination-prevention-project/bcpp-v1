@@ -9,15 +9,15 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'DispatchItem', fields ['dispatch_container', 'item_pk', 'item_identifier', 'is_dispatched']
-        db.delete_unique(u'bhp_dispatch_dispatchitem', ['dispatch_container_id', 'item_pk', 'item_identifier', 'is_dispatched'])
+        #db.delete_unique(u'bhp_dispatch_dispatchitem', ['dispatch_container_id', 'item_pk', 'item_identifier', 'is_dispatched'])
 
-        db.rename_table(u'bhp_dispatch_dispatchcontainer', u'bhp_dispatch_dispatchcontainerregister')
-        db.rename_table(u'bhp_dispatch_dispatchcontainer_audit', u'bhp_dispatch_dispatchcontainerregister_audit')
+        #db.rename_table(u'bhp_dispatch_dispatchcontainer', u'bhp_dispatch_dispatchcontainerregister')
+        #db.rename_table(u'bhp_dispatch_dispatchcontainer_audit', u'bhp_dispatch_dispatchcontainerregister_audit')
 
-        db.rename_table(u'bhp_dispatch_dispatchitem', u'bhp_dispatch_dispatchitemregister')
-        db.rename_table(u'bhp_dispatch_dispatchitem_audit', u'bhp_dispatch_dispatchitemregister_audit')
-        db.rename_column(u'bhp_dispatch_dispatchitem', 'dispatch_container_id', 'dispatch_container_register_id')
-        db.rename_column(u'bhp_dispatch_dispatchitem_audit', 'dispatch_container_id', 'dispatch_container_register_id')
+        #db.rename_table(u'bhp_dispatch_dispatchitem', u'bhp_dispatch_dispatchitemregister')
+        #db.rename_table(u'bhp_dispatch_dispatchitem_audit', u'bhp_dispatch_dispatchitemregister_audit')
+        db.rename_column(u'bhp_dispatch_dispatchitemregister', 'dispatch_container_id', 'dispatch_container_register_id')
+        #db.rename_column(u'bhp_dispatch_dispatchitem_audit', 'dispatch_container_id', 'dispatch_container_register_id')
 
         # Adding unique constraint on 'DispatchItemRegister', fields ['dispatch_container_register', 'item_pk', 'item_identifier', 'is_dispatched']
         db.create_unique(u'bhp_dispatch_dispatchitemregister', ['dispatch_container_register_id', 'item_pk', 'item_identifier', 'is_dispatched'])
