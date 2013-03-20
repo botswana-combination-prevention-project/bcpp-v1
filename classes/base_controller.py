@@ -75,6 +75,7 @@ class BaseController(BaseProducer):
                                   :func:`ignore_for_dispatch` method on the model. See model base class :class:`BaseSyncUuidModel` in
                                   module :mod:`bhp_sync`. For example: DISPATCH_APP_LABELS = ['mochudi_household', 'mochudi_subject', 'mochudi_lab']
             """
+        self._controller_state = None
         self._session_container = {}
         self.initialize_session_container()
         super(BaseController, self).__init__(using_source, using_destination, **kwargs)
