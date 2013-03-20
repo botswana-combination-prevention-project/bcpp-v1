@@ -118,9 +118,9 @@ class RegisteredSubject(BaseSubject):
     def get_registered_subject(self):
         return self
 
-#     def natural_key(self):
-#         return (self.identity, self.first_name, self.dob, self.initials, self.subject_identifier, )
-#     natural_key.dependencies = ['bhp_variables.studysite']
+    def check_if_may_change_subject_identifier(self, using):
+        """Allows a consent to change the subject identifier."""
+        pass
 
     def natural_key(self):
         return (self.subject_identifier, )

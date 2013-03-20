@@ -1,11 +1,10 @@
 import re
 from django.test import TestCase
 from django.conf import settings
-from bhp_registration.tests.factories import RegisteredSubjectFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import TestSubjectConsent
-from bhp_consent.tests.factories import TestSubjectConsentFactory
 from bhp_identifier.exceptions import IdentifierError
+from factories import RegisteredSubjectFactory
 
 
 class ModelTests(TestCase):
@@ -19,6 +18,8 @@ class ModelTests(TestCase):
 
     def test_p2(self):
         """Tests natural key."""
+        from bhp_consent.tests.factories import TestSubjectConsentFactory
+
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         for cls_tpl in [(RegisteredSubject, RegisteredSubjectFactory), (TestSubjectConsent, TestSubjectConsentFactory)]:
             cls, cls_factory = cls_tpl
@@ -34,9 +35,20 @@ class ModelTests(TestCase):
             rs = cls_factory()
             old_identifier = rs.subject_identifier
             rs.subject_identifier = 'TEST_IDENTIFIER'
-            self.assertRaises(IdentifierError, rs.save)
-            rs = cls.objects.get(pk=rs.pk)
-            self.assertEqual(old_identifier, rs.subject_identifier)
+            if issubclass(cls, RegisteredSubject):
+                # should not raise an error if identifier is changed as this is what the consent model will do
+                # on save.
+                # see model method check_if_may_change_subject_identifier(self, using)
+                self.assertIsNone(rs.save())
+                rs = cls.objects.get(pk=rs.pk)
+                self.assertNotEqual(old_identifier, rs.subject_identifier)
+                # put the identifier back for tests below (should not be allowed to do this if consented???)
+                rs.subject_identifier = old_identifier
+                rs.save()
+            else:
+                self.assertRaises(IdentifierError, rs.save)
+                rs = cls.objects.get(pk=rs.pk)
+                self.assertEqual(old_identifier, rs.subject_identifier)
             if rs.get_user_provided_subject_identifier_attrname():
                 print 'test {0} uses user provided subject identifier'.format(cls._meta.object_name)
                 rs = cls_factory(**{rs.get_user_provided_subject_identifier_attrname(): 'TEST_IDENTIFIER'})
