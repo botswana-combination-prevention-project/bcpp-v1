@@ -7,7 +7,7 @@ from django.core.serializers.base import DeserializationError
 from django.db import IntegrityError
 from django.db.models.query import QuerySet
 from django.db.models import signals, get_model
-from django.db.models import ForeignKey, OneToOneField
+from django.db.models import ForeignKey, OneToOneField, get_app, get_models
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, Count, Max
@@ -287,6 +287,24 @@ class BaseController(BaseProducer):
         if instance not in self._session_container[key]:
             self._session_container[key].append(instance)
 
+    def load_session_container_class_counter(self, app_label):
+        _models = []
+        if not app_label:
+            raise TypeError('Parameter \'app_label\' cannot be None.')
+        app = get_app(app_label)
+        for model_cls in get_models(app):
+            self._session_container['class_counter'].update({model_cls._meta.object_name, 0})
+
+    def initialize_session_container(self):
+        self._session_container = {'serialized': [], 'dispatched': [], 'fk_dependencies': [], 'class_counter': {}}
+
+#     def reset_session_container(self):
+#         self._session_container['serialized'] = []
+#         self._session_container['dispatched'] = []
+#         self._session_container['fk_dependencies'] = []
+#         for cls_name, counter in self._session_container['class_counter']:
+#             self._session_container['class_counter'][cls_name] = 0
+
     def get_session_container(self, key):
         return self._session_container[key]
 
@@ -300,6 +318,15 @@ class BaseController(BaseProducer):
             if self.get_session_container(key):
                 return False
         return True
+
+    def update_session_container_class_counter(self, instance):
+        cnt = self._session_container['class_counter'].get(instance._meta.object_name, 0)
+        self._session_container['class_counter'].update({instance._meta.object_name: cnt + 1})
+
+    def get_session_container_class_counter_count(self, instance):
+        if self._session_container['class_counter'].get(instance._meta.object_name, None) == None:
+            self._session_container['class_counter'].update({instance._meta.object_name, 0})
+        return self._session_container['class_counter'].get(instance._meta.object_name)
 
     def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None, fk_to_skip=None):
         """Serialize model instances on source to destination.
@@ -358,6 +385,7 @@ class BaseController(BaseProducer):
                                 self._reconnect_signals()
                                 saved.append(deserialized_object)
                                 self.add_to_session_container(instance, 'serialized')
+                                self.update_session_container_class_counter(instance)
                         except IntegrityError as e:
                             self._reconnect_signals()
                             #print '{0} {1}'.format(e, deserialized_object.object.__class__)

@@ -50,7 +50,8 @@ class BaseControllerTests(TestCase):
         self.assertEqual(DispatchContainerRegister.objects.all().count(), 1)
         self.assertEqual(TestItem.objects.using(self.using_destination).all().count(), 3)
         self.assertEqual(DispatchItemRegister.objects.all().count(), 4)
-        
+        self.assertEqual(dispatch_controller.get_session_container_class_counter_count(TestItem), 3)
+
         TestItemFactory(test_container=test_container)
         TestItemFactory(test_container=test_container)
 
@@ -74,6 +75,8 @@ class BaseControllerTests(TestCase):
         #print dispatch_controller.get_session_container('dispatched')
         #print dispatch_controller.get_session_container('serialized')
         dispatch_controller.dispatch()
+        # assert counts on session container
+        self.assertEqual(dispatch_controller.get_session_container_class_counter_count(TestItem), 2)
 
     def create_test_container(self):
         self.test_container = TestContainer.objects.create(test_container_identifier=self.user_container_identifier)

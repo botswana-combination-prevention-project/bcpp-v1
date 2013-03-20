@@ -94,7 +94,7 @@ class BaseDispatch(BaseController):
         #if not value:
         #    raise AttributeError('The model_name of the user\'s container model cannot be None. Set this in __init__() of the subclass.')
         self._user_container_model_name = value
-        self._session_container = {'serialized': [], 'dispatched': [], 'fk_dependencies': []}
+        self.initialize_session_container()
 
     def get_user_container_model_name(self):
         """Gets the model name for the user\'s container model."""
