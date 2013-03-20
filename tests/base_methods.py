@@ -4,7 +4,8 @@ from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_consent.models import ConsentCatalogue, TestSubjectConsent
 from bhp_variables.tests.factories import StudySiteFactory, StudySpecificFactory
-from bhp_consent.tests.factories import ConsentCatalogueFactory
+from factories import ConsentCatalogueFactory
+
 
 class BaseMethods(object):
 

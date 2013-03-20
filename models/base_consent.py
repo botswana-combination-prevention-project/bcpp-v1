@@ -127,6 +127,7 @@ class BaseConsent(ConsentBasics):
                     registration_status='consented',
                     site_code=self.study_site.site_code,
                     using=using)
+                self.registered_subject.subject_identifier = self.subject_identifier
         if not self.subject_identifier:
             self.subject_identifier = dummy
         if re_pk.match(self.subject_identifier):
