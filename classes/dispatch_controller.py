@@ -6,7 +6,7 @@ from django.db.models.query import QuerySet
 from bhp_visit_tracking.classes import VisitModelHelper
 from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.classes import BaseDispatchController
-from bhp_dispatch.exceptions import DispatchModelError
+from bhp_dispatch.exceptions import DispatchModelError, DispatchError
 from bhp_base_model.models import BaseListModel
 from lab_base_model.models import BaseLabListModel, BaseLabListUuidModel
 
@@ -63,6 +63,12 @@ class DispatchController(BaseDispatchController):
         # check source for the producer based on using_destination.
         if self.debug:
             logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
+        user_container = self.get_user_container_instance()
+        if not user_container.is_dispatched_as_item():
+            # start by dispatching the container as a item
+            self._dispatch_as_json(user_container, user_container=user_container)
+            if not self.register_with_dispatch_item_register(user_container, user_container):
+                raise DispatchError('User container failed to dispatch as a item.')
         self._dispatch_prep()
 
     def _set_dispatch_url(self, value=None):

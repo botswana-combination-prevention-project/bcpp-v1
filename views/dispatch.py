@@ -29,6 +29,7 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
     if request.method == 'POST':
         form = DispatchForm(request.POST)
         if form.is_valid():
+            dispatch_url = ''
             producer = form.cleaned_data['producer']
             ct = request.POST.get('ct')
             user_container_ct = ct
@@ -44,7 +45,8 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
                 for user_container in user_containers:
                     dispatch_controller = dispatch_controller_cls('default', producer.settings_key, user_container, **kwargs)
                     dispatch_controller.dispatch()
-                dispatch_url = dispatch_controller.get_dispatch_url()
+                if dispatch_controller:
+                    dispatch_url = dispatch_controller.get_dispatch_url()
     else:
         ct = request.GET.get('ct')
         items = request.GET.get('items')

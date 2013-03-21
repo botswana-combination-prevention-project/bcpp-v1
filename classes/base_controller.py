@@ -19,7 +19,7 @@ from bhp_lab_tracker.models import BaseHistoryModel
 from bhp_entry.models import BaseEntryBucket
 from bhp_visit_tracking.models.signals import base_visit_tracking_add_or_update_entry_buckets_on_post_save, base_visit_tracking_on_post_save
 from bhp_sync.classes import BaseProducer
-from bhp_sync.models.signals import serialize_on_save
+from bhp_sync.models.signals import serialize_on_save, serialize_m2m_on_save
 from bhp_lab_tracker.models.signals import tracker_on_post_save
 from bhp_sync.helpers import TransactionHelper
 #from bhp_lab_tracker.models import HistoryModel
@@ -76,6 +76,7 @@ class BaseController(BaseProducer):
                                   module :mod:`bhp_sync`. For example: DISPATCH_APP_LABELS = ['mochudi_household', 'mochudi_subject', 'mochudi_lab']
             """
         self._controller_state = None
+        self._model_pk_container = {}
         self._session_container = {}
         self.initialize_session_container()
         super(BaseController, self).__init__(using_source, using_destination, **kwargs)
@@ -166,7 +167,7 @@ class BaseController(BaseProducer):
     def is_allowed_base_model_instance(self, inst, additional_base_model_class=None):
         """Returns True or raises an exception if the class is an instance of a base model class allowed for serialization."""
         if not isinstance(inst, self._get_allowed_base_models(additional_base_model_class)):
-            raise ControllerBaseModelError('For dispatch, user model \'{0}\' must be an instance of \'{1}\'. Got {2}'.format(inst, self._get_allowed_base_models(), inst.__class__))
+            raise ControllerBaseModelError('For dispatch, user model \'{0}\' must be an instance of \'{1}\'. Got {2}'.format(inst._meta.object_name, self._get_allowed_base_models(), inst.__class__))
         return True
 
     def _get_allowed_base_models(self, additional_base_model_class=None):
@@ -207,7 +208,13 @@ class BaseController(BaseProducer):
         return []
 
     def get_fk_dependencies(self, instances, fk_to_skip=None):
-        """Updates the list of foreign key instances required for serialization of the provided instances."""
+        """Updates the list of foreign key instances required for serialization of the provided instances.
+
+            Args:
+                instances: an iterable of model instances
+                fk_to_skip: the field attname of a foreignkey that is assumed to be on the
+                            destination device and may be skipped. To be used carefully.
+        """
         if fk_to_skip:
             if not isinstance(fk_to_skip, list):
                 raise TypeError('Expected a list in \'get_fk_dependencies\'')
@@ -219,14 +226,32 @@ class BaseController(BaseProducer):
                     pk = getattr(obj, field.attname)
                     cls = field.rel.to
                     if (cls, pk) not in self.get_session_container('fk_dependencies'):
-                        if cls.objects.filter(pk=pk):
+                        if cls.objects.filter(pk=pk).exists():
                             this_fk = cls.objects.get(pk=pk)
-                            self.fk_instances.append(cls.objects.get(pk=pk))
+                            self.fk_instances.append(this_fk)
                             self.get_fk_dependencies([this_fk])
                         self.add_to_session_container((cls, pk), 'fk_dependencies')
 
+#     def add_to_model_pk_container(self, cls_name, pk):
+#         if pk not in self.get_model_pk_container(self, cls_name):
+#             self.get_model_pk_container(self, cls_name).append(pk)
+# 
+#     def set_model_pk_container(self, cls_name=None):
+#         if not cls_name:
+#             self._model_pk_container = {}
+#         else:
+#             self._model_pk_container[cls_name] = []
+# 
+#     def get_model_pk_container(self, cls_name):
+#         if not self._model_pk_container:
+#             self.set_model_pk_container()
+#         if not cls_name in self._model_pk_container:
+#             self.set_model_pk_container(cls_name)
+#         return self._model_pk_container[cls_name]
+
     def _disconnect_signals(self, obj):
         """Disconnects signals before saving the serialized object in _to_json."""
+        signals.post_save.disconnect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")
         signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
         signals.post_save.disconnect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.disconnect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
@@ -246,6 +271,7 @@ class BaseController(BaseProducer):
         signals.post_save.connect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
         signals.post_save.connect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
+        signals.post_save.connect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")
         self.reconnect_audit_trail_signals()
         self.reconnect_signals()
 
@@ -330,7 +356,7 @@ class BaseController(BaseProducer):
             self._session_container['class_counter'].update({instance._meta.object_name, 0})
         return self._session_container['class_counter'].get(instance._meta.object_name)
 
-    def _to_json(self, model_instances, additional_base_model_class=None, to_json_callback=None, user_container=None, fk_to_skip=None):
+    def _to_json(self, model_instances, additional_base_model_class=None, user_container=None, fk_to_skip=None):
         """Serialize model instances on source to destination.
 
         Args:
@@ -341,15 +367,11 @@ class BaseController(BaseProducer):
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 
         """
-        # use default callback (_to_json) if not provided or no user_container
-        if not to_json_callback or not user_container:
-            # note: foreign keys on containers are not registered w/ dispatch
-            to_json_callback = self._to_json
-        # check for pending transactions
-        if self.has_outgoing_transactions():
-            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+         # check for pending transactions
+#         if self.has_outgoing_transactions():
+#             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
         if self.has_incoming_transactions(model_instances):
-            raise PendingTransactionError('Producer \'{0}\' has pending incoming transactions on this server. Consume them first.'.format(self.get_producer_name()))
+            raise PendingTransactionError('One or more listed models have pending incoming transactions on \'{0}\'. Consume them first. Got \'{1}\'.'.format(self.get_using_source(), list(set(model_instances))))
         if model_instances:
             # convert to list if not iterable
             if not isinstance(model_instances, (list, QuerySet)):
@@ -363,7 +385,7 @@ class BaseController(BaseProducer):
                     break
             # add foreign key instances to the list of model instances to serialize
             while True:
-                self.get_fk_dependencies(model_instances,fk_to_skip)
+                self.get_fk_dependencies(model_instances, fk_to_skip)
                 break
             model_instances = self.fk_instances + model_instances
             model_instances = list(set(model_instances))
@@ -373,7 +395,7 @@ class BaseController(BaseProducer):
             #print ' ... skipping {0}'.format(list(set(model_instances) - set(original)))
             #serialize
             if model_instances:
-                json = serializers.serialize('json', model_instances, use_natural_keys=True)
+                json = serializers.serialize('json', model_instances, ensure_ascii=False, use_natural_keys=True)
                 deserialized_objects = list(serializers.deserialize("json", json, use_natural_keys=True))
                 saved = []
                 tries = 0

@@ -206,6 +206,7 @@ class BasePrepareDevice(BaseController):
             model_cls = get_model(app, model)
         except:
             model_cls = model_or_app_model_tuple
+        #additional_base_model_class = model_cls
         self.model_to_json(model_cls, additional_base_model_class)
 
     def reset_app_models(self, app_name):

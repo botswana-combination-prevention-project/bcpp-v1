@@ -47,21 +47,6 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                 return False
         return True
 
-#    def is_dispatched(self, using=None):
-#        """Returns True if the model is tracked/is_dispatched=True in the DispatchItemRegister model.
-#
-#        ..note:: Unlike, :func:`_is_dispatched_to_producer_as_container`, this method does NOT consider
-#            DispacthContainer. So if the instance is referred to in DispacthContainer but
-#            not yet tracked in the DispatchItemRegister model, the return value is False."""
-#        is_dispatched = False
-#        if self.is_dispatchable_model():
-#            is_dispatched = self.is_dispatched_as_item(using)
-#            if not isinstance(is_dispatched, bool):
-#                raise TypeError('Expected a boolean as a return value from method is_dispatched_as_item(). Got {0}'.format(is_dispatched))
-#            if not is_dispatched:
-#                is_dispatched = self.is_dispatched_as_container(using)
-#        return is_dispatched
-
     def dispatched_as_container_identifier_attr(self):
         """Override to return the field attrname of the identifier used for the dispatch container.
 

@@ -16,6 +16,7 @@ from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
 from bhp_dispatch.exceptions import BackupError, RestoreError
 from bhp_registration.models import RegisteredSubject
+from lab_base_model.models import BaseLabListModel, BaseLabModel
 
 
 logger = logging.getLogger(__name__)
@@ -133,21 +134,21 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 13:
             self.timer()
             logger.info("13. Updating bhp_consent Consent Catalogues...")
-            signals.post_save.disconnect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
-            self.update_model(('bhp_consent', 'ConsentCatalogue'),[BaseSyncUuidModel])
-        if not step > 14:
-            self.timer()
-            logger.info("14. Updating bhp_consent Attached Models...")
-            self.update_model(('bhp_consent', 'AttachedModel'),[BaseSyncUuidModel])
-            signals.post_save.connect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
+            #signals.post_save.disconnect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
+            self.update_model(('bhp_consent', 'ConsentCatalogue'), [BaseSyncUuidModel])
+#         if not step > 14:
+#             self.timer()
+#             logger.info("14. Updating bhp_consent Attached Models...")
+#             self.update_model(('bhp_consent', 'AttachedModel'), [BaseSyncUuidModel])
+#             #signals.post_save.connect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
         if not step > 15:
             self.timer()
             logger.info("15. Updating lab test code groups from lab_test_code...")
-            self.update_model(('lab_test_code', 'TestCodeGroup'))
+            self.update_model(('lab_test_code', 'TestCodeGroup'), [BaseLabListModel, BaseLabModel])
         if not step > 16:
             self.timer()
             logger.info("16. Updating lab test codes from lab_test_code...")
-            self.update_model(('lab_test_code', 'TestCode'))
+            self.update_model(('lab_test_code', 'TestCode'), [BaseLabListModel, BaseLabModel])
         if not step > 17:
             self.timer()
             logger.info("17. Updating lab aliquot types from lab_aliquot_list...")
@@ -155,23 +156,23 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 18:
             self.timer()
             logger.info("18. Updating lab panel models from lab_panel...")
-            self.update_app_models('lab_panel', [BaseModel])         
+            self.update_app_models('lab_panel', [BaseModel])
         if not step > 19:
             self.timer()
             logger.info("19. Updating aliquot types from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'AliquotType'))
+            self.update_model(('lab_clinic_api', 'AliquotType'), [BaseLabListModel, BaseLabModel])
         if not step > 20:
             self.timer()
             logger.info("20. Updating test code groups from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'TestCodeGroup'))  
+            self.update_model(('lab_clinic_api', 'TestCodeGroup'), [BaseLabListModel, BaseLabModel])
         if not step > 21:
             self.timer()
             logger.info("21. Updating test codes from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'TestCode'))
+            self.update_model(('lab_clinic_api', 'TestCode'), [BaseLabListModel, BaseLabModel])
         if not step > 22:
             self.timer()
             logger.info("22. Updating panel from lab_clinic_api...")
-            self.update_model(('lab_clinic_api', 'Panel'))
+            self.update_model(('lab_clinic_api', 'Panel'), [BaseLabListModel, BaseLabModel])
         if not step > 23:
             self.timer()
             logger.info("23. Updating review from lab_clinic_api...")

@@ -134,6 +134,9 @@ class BaseDispatchController(BaseDispatch):
         return True
 
     def dispatch_user_container_as_json(self, user_container):
+        """Dispatch the user container as a "container".
+
+        ..note:: This happens before the user container is dispatched as an item and before any others are dispatched as items."""
         if not user_container:
             user_container = self.get_user_container_instance()
         if self.is_ready():
@@ -143,7 +146,7 @@ class BaseDispatchController(BaseDispatch):
                     if not self.get_controller_state() == 'retry':
                         raise AlreadyDispatchedContainer('Container is already dispatched as an item. Got {0}.'.format(user_container))
                 else:
-                    self._dispatch_as_json([user_container], to_json_callback=self.dispatch_user_container_as_json)
+                    self._dispatch_as_json([user_container])
                 if not self.register_with_dispatch_item_register(user_container):
                     raise DispatchError('Unable to create a dispatch item register for user container {0} {1} to {2}.'.format(user_container._meta.object_name, user_container.object, self.get_using_destination()))
                 logger.info('dispatched {0} {1} to {2}.'.format(user_container._meta.object_name, user_container, self.get_using_destination()))
@@ -153,7 +156,7 @@ class BaseDispatchController(BaseDispatch):
             raise DispatchItemError('Attribute \'user_items\' cannot be None.')
         user_container = user_container or self.get_user_container_instance()
         if not user_container.is_dispatched_as_item():
-            raise DispatchControllerNotReady('User container {0} has not yet been dispatched to {1}. Dispatch the user container (to json) before dispatching items (to json)'.format(user_container, self.get_using_destination()))
+            raise DispatchControllerNotReady('User container {0} has not yet been dispatched as an item to {1}. Dispatch the user container as an item (to json) before dispatching other items (to json)'.format(user_container, self.get_using_destination()))
         if self.is_ready():
             if self.verify_user_container(user_container):
                 # confirm instance type of user items
@@ -182,13 +185,13 @@ class BaseDispatchController(BaseDispatch):
                     if already_dispatched_items:
                         raise AlreadyDispatchedItem('{0} models are already dispatched. Got {1}'.format(len(already_dispatched_items), already_dispatched_items))
                     # dispatch
-                    self._dispatch_as_json(user_items, user_container=user_container, to_json_callback=self.dispatch_user_items_as_json, fk_to_skip=fk_to_skip)
+                    self._dispatch_as_json(user_items, user_container=user_container, fk_to_skip=fk_to_skip)
                     # register the user items with the dispatch item register
                     for user_item in user_items:
                         if not self.register_with_dispatch_item_register(user_item, user_container):
                             raise DispatchError('Unable to create a dispatch item register instance for {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
                         logger.info('  dispatched user item {0} {1} to {2}.'.format(user_item._meta.object_name, user_item, self.get_using_destination()))
 
-    def _dispatch_as_json(self, model_instances, user_container=None, to_json_callback=None, fk_to_skip=None):
+    def _dispatch_as_json(self, model_instances, user_container=None, fk_to_skip=None):
         """Passes on to _to_json along with a callback to consume foreignkeys."""
-        self._to_json(model_instances, to_json_callback=to_json_callback, user_container=user_container, fk_to_skip=fk_to_skip)
+        self._to_json(model_instances, user_container=user_container, fk_to_skip=fk_to_skip)
