@@ -116,13 +116,14 @@ class Appointment(BaseAppointment):
         super(Appointment, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "%s for %s.%s" % (self.registered_subject, self.visit_definition.code, self.visit_instance)
+        return "{0} for {1}.{2}".format (self.registered_subject, self.visit_definition.code, self.visit_instance)
 
     def dashboard(self):
         ret = None
         if self.registered_subject:
             if self.registered_subject.subject_identifier:
-                url = reverse('dashboard_url', kwargs={'dashboard_type': self.registered_subject.subject_type.lower(),
+                url = reverse('dashboard_url', 
+                              kwargs={'dashboard_type': self.registered_subject.subject_type.lower(),
                                                        'subject_identifier': self.registered_subject.subject_identifier,
                                                        'appointment': self.pk})
                 ret = """<a href="{url}" />dashboard</a>""".format(url=url)
