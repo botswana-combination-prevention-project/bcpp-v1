@@ -441,6 +441,7 @@ class BaseController(BaseProducer):
             # try something like test_item_m2m.m2m.all(), gets all() list_model instances for this m2m
             m2m_qs = getattr(inst, m2m).all()
             # create list_model instances on destination if they do not exist
+            #dst_list_item_natural_keys = []  # list of tuples returned by natural key on list item
             dst_list_item_pks = []
             for src_list_item in m2m_qs:
                 if not src_list_item.__class__.objects.using(self.get_using_destination()).filter(pk=src_list_item.pk).exists():
@@ -448,19 +449,21 @@ class BaseController(BaseProducer):
                     self._to_json(src_list_item, additional_base_model_class=BaseListModel)
                     # record source pk for use later
                     # TODO: confirm the pk on source is always the same on destination? what about natural keys?
-                    dst_list_item_pks.append(src_list_item.pk)
+                #dst_list_item_natural_keys.append(src_list_item.natural_key())
+                dst_list_item_pks.append(src_list_item.pk)
             # get instance of this model on destination
-            inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
+            dest_inst = cls.objects.using(self.get_using_destination()).get(pk=pk)
             # find the pk for each list model instance and add to the m2m "field"
+            #for values_tpl in dst_list_item_natural_keys:
             for pk in dst_list_item_pks:
                 # get the list_model instance on destination
                 item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
                 # add to m2m rel_manager on destination, this is like instance.m2m.add(item)
-                getattr(inst, m2m).add(item_inst)
+                getattr(dest_inst, m2m).add(item_inst)
 
                     # TODO: commented out below so we can see the errors in testing
                     #       May need to uncomment before release
-    
+
     #                except IntegrityError as e:
     #                    logger.info(e)
     #                    logger.info(e.message)
