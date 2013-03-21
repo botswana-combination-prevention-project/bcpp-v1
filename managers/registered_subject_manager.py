@@ -1,21 +1,8 @@
 from datetime import datetime
-from django.db import models
-#from bhp_identifier.classes import Partner
+from bhp_subject.managers import BaseSubjectManager
 
 
-class RegisteredSubjectManager(models.Manager):
-
-#     def get_by_natural_key(self, identity, first_name, dob, initials, subject_identifier):
-#         return self.get(
-#             identity=identity,
-#             first_name=first_name,
-#             dob=dob,
-#             initials=initials,
-#             subject_identifier=subject_identifier)
-
-    def get_by_natural_key(self, subject_identifier):
-        return self.get(subject_identifier=subject_identifier)
-
+class RegisteredSubjectManager(BaseSubjectManager):
 
     def update_with(self, instance, attrname='subject_identifier', **kwargs):
         """ Use an instance, usually a consent, to update registered subject.
