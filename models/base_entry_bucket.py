@@ -1,4 +1,7 @@
 from django.db import models
+#try:
+    #from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseUuidModel
+#except ImportError:
 from bhp_base_model.models import BaseUuidModel
 from bhp_registration.models import RegisteredSubject
 from bhp_entry.choices import ENTRY_STATUS
@@ -33,6 +36,9 @@ class BaseEntryBucket(BaseUuidModel):
     fill_datetime = models.DateTimeField(
         null=True,
         blank=True)
+
+    def include_for_dispatch(self):
+        return True
 
     class Meta:
         abstract = True
