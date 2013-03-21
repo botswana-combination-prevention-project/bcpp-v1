@@ -130,17 +130,17 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 12:
             self.timer()
             logger.info("12. Updating registered subjects...")
-            self.update_model(('bhp_registration', 'RegisteredSubject'), RegisteredSubject)
+            #self.update_model(('bhp_registration', 'RegisteredSubject'), [RegisteredSubject])
         if not step > 13:
             self.timer()
             logger.info("13. Updating bhp_consent Consent Catalogues...")
-            #signals.post_save.disconnect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
+            signals.post_save.disconnect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
             self.update_model(('bhp_consent', 'ConsentCatalogue'), [BaseSyncUuidModel])
-#         if not step > 14:
-#             self.timer()
-#             logger.info("14. Updating bhp_consent Attached Models...")
-#             self.update_model(('bhp_consent', 'AttachedModel'), [BaseSyncUuidModel])
-#             #signals.post_save.connect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
+        if not step > 14:
+            self.timer()
+            logger.info("14. Updating bhp_consent Attached Models...")
+            self.update_model(('bhp_consent', 'AttachedModel'), [BaseSyncUuidModel])
+            signals.post_save.connect(add_models_to_catalogue, weak=False, dispatch_uid="add_models_to_catalogue")
         if not step > 15:
             self.timer()
             logger.info("15. Updating lab test code groups from lab_test_code...")
