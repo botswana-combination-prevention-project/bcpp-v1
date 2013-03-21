@@ -63,7 +63,7 @@ class Appointment(BaseAppointment):
     history = AuditTrail()
 
     def natural_key(self):
-        return (self.visit_instance, ) + self.visit_definition.natural_key() + self.registered_subject.natural_key()
+        return (self.visit_instance, self.appt_status,) + self.visit_definition.natural_key() + self.registered_subject.natural_key()
     natural_key.dependencies = ['bhp_registration.registeredsubject', 'bhp_visit.visitdefinition']
 
     def validate_appt_datetime(self, exception_cls=None):
