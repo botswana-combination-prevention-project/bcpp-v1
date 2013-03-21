@@ -40,7 +40,7 @@ class DispatchItemRegisterAdmin(BaseModelAdmin):
     list_display = (
         'dispatch_container_register',
         'producer',
-        'item_identifier',
+        'item_model_name',
         'created',
         'is_dispatched',
         'dispatch_datetime',
@@ -48,7 +48,7 @@ class DispatchItemRegisterAdmin(BaseModelAdmin):
         )
     list_filter = (
         'producer',
-        'item_identifier',
+        'item_model_name',
         'created',
         'is_dispatched',
         'dispatch_datetime',
