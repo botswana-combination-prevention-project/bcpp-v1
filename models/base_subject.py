@@ -25,6 +25,16 @@ class BaseSubject (BaseSyncUuidModel):
         unique=True,
         )
 
+    # a signal changes subject identifier which messes up bhp_sync
+    # this field is always available and is unique
+    subject_identifier_as_pk = models.CharField(
+        verbose_name="Subject Identifier as pk",
+        max_length=36,
+        db_index=True,
+        unique=True,
+        editable=False,
+        )
+
     # may not be available when instance created (e.g. infants prior to birth report)
     first_name = EncryptedFirstnameField(
         null=True,
@@ -100,7 +110,7 @@ class BaseSubject (BaseSyncUuidModel):
         return "{0} {1}".format(self.mask_unset_subject_identifier(), self.subject_type)
 
     def natural_key(self):
-        return (self.subject_identifier, )
+        return (self.subject_identifier_as_pk, )
 
     def mask_unset_subject_identifier(self):
         subject_identifier = self.subject_identifier
@@ -149,8 +159,11 @@ class BaseSubject (BaseSyncUuidModel):
     def insert_dummy_identifier(self):
         """Inserts a random uuid as a dummy identifier."""
         # set to uuid if new and not specified
-        if not self.id and not self.subject_identifier:
-            self.subject_identifier = str(uuid4())
+        if not self.id:
+            subject_identifier_as_pk = str(uuid4())
+            self.subject_identifier_as_pk = subject_identifier_as_pk  # this will never change
+            if not self.subject_identifier:
+                self.subject_identifier = subject_identifier_as_pk  # this will be changed when allocated a subject_identifier on consent
         # never allow subject_identifier as None
         if not self.subject_identifier:
             raise ConsentError('Subject Identifier may not be left blank.')
