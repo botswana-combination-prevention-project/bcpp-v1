@@ -4,7 +4,7 @@ from django.db.models import get_model
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from bhp_base_model.models import BaseModel
-from bhp_consent.exceptions import ConsentError
+from bhp_consent.exceptions import ConsentError, ConsentDoesNotExist
 
 
 class ConsentHelper(object):
@@ -189,7 +189,7 @@ class ConsentHelper(object):
                 # TODO: look up in consent_update_model_cls ??
                 #retval = True
         if not consent_models:
-            raise ConsentError(('Cannot determine the instance of consent {0} to cover data entry for model {1} '
+            raise ConsentDoesNotExist(('Cannot determine the instance of consent {0} to cover data entry for model {1} '
                                'instance {2} given the consenting identifier={3}, report_datetime={4}').format(self._get_consent_models(),
                                                                                           self.get_subject_instance()._meta.object_name,
                                                                                           self.get_subject_instance(),
