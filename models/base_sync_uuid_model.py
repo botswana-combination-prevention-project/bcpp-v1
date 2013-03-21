@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from django.conf import settings
 from django.core import serializers
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from bhp_sync.classes import TransactionProducer
 from bhp_base_model.models import BaseUuidModel
@@ -41,8 +42,7 @@ class BaseSyncUuidModel(BaseUuidModel):
 
     def deserialize_get_missing_fk(self, attrname):
         """Override to return a foreignkey object for 'attrname', if possible, using criteria in self, otherwise return None"""
-        logger.info('method deserialize_get_missing_fk is not defined, raising TypeError()')
-        raise TypeError()
+        raise ImproperlyConfigured('Method deserialize_get_missing_fk() must be overridden on model class {0}'.format(self._meta.object_name))
 
     def delete(self, *args, **kwargs):
         """Creates a delete transaction on delete"""

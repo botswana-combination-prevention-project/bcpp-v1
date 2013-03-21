@@ -6,6 +6,7 @@ from bhp_lab_tracker.classes import lab_tracker
 
 lab_tracker.autodiscover()
 
+
 class Command(BaseCommand):
 
     args = ('--consume --list-locked --unlock --copy_from_server')
@@ -54,7 +55,7 @@ class Command(BaseCommand):
             args = [None]
         sync_lock = SyncLock(db)
         if options['consume']:
-            self.consume(lock_name)
+            self.consume(lock_name, db)
         elif options['copy_from_server']:
             self.copy_from_server()
         elif options['list-locked']:
@@ -69,13 +70,14 @@ class Command(BaseCommand):
         else:
             raise CommandError('Unknown option, Try --help for a list of valid options')
 
-    def consume(self, lock_name):
+    def consume(self, lock_name, db):
         consumer = Consumer()
-        consumer.consume(lock_name)
+        consumer.consume(lock_name, db)
 
     def copy_from_server(self):
-        consumer = Consumer()
-        consumer.copy_incoming_from_server()
+        raise CommandError('Option not available')
+        #consumer = Consumer()
+        #consumer.copy_incoming_from_server()
 
     def unlock(self, sync_lock, lock_name):
         if lock_name:

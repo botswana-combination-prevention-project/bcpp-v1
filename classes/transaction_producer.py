@@ -20,9 +20,8 @@ class TransactionProducer(object):
         if kwargs.get('hostname'):
             self.value = kwargs.get('hostname')
         else:
+            # add on the DB name so that if on the same host still get a unique name
             self.value = '%s-%s' % (socket.gethostname().lower(), settings.DATABASES['default']['NAME'].lower())
-        #if len(self.value) > 25:
-        #    raise ValueError('Transaction Producer name cannot exceed 25 characters.(hostname + settings.DATABASES[\'default\'][\'NAME\'])')
 
     def __get__(self, instance, owner):
         return self.value
@@ -30,9 +29,9 @@ class TransactionProducer(object):
     def __str__(self):
         return self.value
 
-    def has_outgoing_transactions(self, **kwargs):
+    def has_outgoing_transactions(self, using, **kwargs):
         retval = False
-        using = kwargs.get('using', 'default')
+        #using = kwargs.get('using', 'default')
         producer_name = kwargs.get('producer_name', self.value)
         OutgoingTransaction = get_model('bhp_sync', 'outgoingtransaction')
         Producer = get_model('bhp_sync', 'producer')
