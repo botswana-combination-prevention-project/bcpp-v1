@@ -21,6 +21,9 @@ class AttachedModel(BaseSyncUuidModel):
 
     objects = models.Manager()
 
+    def natural_key(self):
+        return self.consent_catalogue.natural_key() + self.content_type_map.natural_key()
+
     def __unicode__(self):
         return self.content_type_map.model
 

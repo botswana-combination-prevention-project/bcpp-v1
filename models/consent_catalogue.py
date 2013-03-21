@@ -43,6 +43,10 @@ class ConsentCatalogue(BaseSyncUuidModel):
 
     objects = models.Manager()
 
+    def natural_key(self):
+        return (self.name, self.version) + self.content_type_map.natural_key()
+    natural_key.dependencies = ['bhp_content_type_map.contenttypemap']
+
     def __unicode__(self):
         return '{0} v{1}'.format(self.name, self.version)
 
