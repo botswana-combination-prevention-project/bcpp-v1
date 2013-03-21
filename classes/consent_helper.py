@@ -4,6 +4,7 @@ from django.db.models import get_model
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from bhp_base_model.models import BaseModel
+from bhp_consent.exceptions import ConsentError
 
 
 class ConsentHelper(object):
@@ -177,6 +178,8 @@ class ConsentHelper(object):
             consent_subject_identifier = self.get_subject_instance().get_consenting_subject_identifier()
         else:
             consent_subject_identifier = self._get_subject_identifier()
+        if not consent_subject_identifier:
+            raise ConsentError('Cannot determine the subject_identifier of the consent covering data entry for model {0}'.format(self.get_subject_instance()._meta.object_name))
         for consent_model in self._get_consent_models():
             if consent_model.objects.filter(subject_identifier=consent_subject_identifier):
                 # confirm what version covers either from consent model or consent_update_model_cls
@@ -185,6 +188,13 @@ class ConsentHelper(object):
                 # look for an updated consent attached to this model
                 # TODO: look up in consent_update_model_cls ??
                 #retval = True
+        if not consent_models:
+            raise ConsentError(('Cannot determine the instance of consent {0} to cover data entry for model {1} '
+                               'instance {2} given the consenting identifier={3}, report_datetime={4}').format(self._get_consent_models(),
+                                                                                          self.get_subject_instance()._meta.object_name,
+                                                                                          self.get_subject_instance(),
+                                                                                          consent_subject_identifier,
+                                                                                          self.get_subject_instance().get_report_datetime()))
         return consent_models
 
     def clean_versioned_field(self, field_value, field, start_datetime, consent_version):
