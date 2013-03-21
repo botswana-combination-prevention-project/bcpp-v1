@@ -3,3 +3,4 @@ from base_uuid_model_factory import BaseUuidModelFactory
 from base_model_factory import BaseModelFactory
 from test_many_to_many_factory import TestManyToManyFactory
 from test_foreign_key_factory import TestForeignKeyFactory
+from test_model_factory import TestModelFactory
