@@ -418,8 +418,7 @@ class BaseController(BaseProducer):
                     if len(saved) == len(deserialized_objects):
                         break
                     if tries > 20:
-                        raise DeserializationError('Unable to deserialize objects. Tries exceeded on {0}. Got {1}'.format(deserialized_object.object.__class__, e))
-                    #self.serialize_m2m(d_obj, user_container, to_json_callback)
+                        raise DeserializationError('Unable to deserialize object. Tries exceeded on {0}. Got {1}'.format(deserialized_object.object.__class__, e))
 
     def serialize_dependencies(self, d_obj, user_container, to_json_callback):
         # check for foreign keys and, if found, send using the callback

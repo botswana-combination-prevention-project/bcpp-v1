@@ -24,6 +24,8 @@
     <div class="fieldWrapper">
         {{ form.producer.errors }}
         <label for="id_producer">Producer:</label> {{ form.producer }}
+        {{ form.survey.errors }}
+        <label for="id_survey">Survey:</label> {{ form.survey }}
         <input type="submit" value="Dispatch" />
         <input type="hidden" name="ct" id="ct"  value="{{ ct }}">
         <input type="hidden" name="items" id="items" value="{{ items }}">

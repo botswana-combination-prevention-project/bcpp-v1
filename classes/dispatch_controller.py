@@ -44,32 +44,56 @@ class DispatchController(BaseDispatchController):
         self._dispatch_url = None
         self._set_dispatch_url(dispatch_url)
 
-    def _dispatch_prep(self):
-        """Wrapper for user method :func:`dispatch_prep`."""
-        self.dispatch_prep()
+    def dispatch(self, **kwargs):
+        """Dispatches items to a device by creating a dispatch item instance.
 
-    def dispatch_prep(self):
+        ..note:: calls the user overridden method :func:`pre_dispatch`, :func:`dispatch_prep` and :func:`post_dispatch`."""
+        user_container = self.get_user_container_instance()
+        if not user_container.is_dispatched_as_item():
+            self._pre_dispatch(user_container, **kwargs)
+            # check source for the producer based on using_destination.
+            if self.debug:
+                logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
+            # start by dispatching the container as a item
+            self._dispatch_as_json(user_container, user_container=user_container)
+            if not self.register_with_dispatch_item_register(user_container, user_container):
+                raise DispatchError('User container failed to dispatch as a item.')
+            self._dispatch_prep(**kwargs)
+            self._post_dispatch(user_container, **kwargs)
+
+    def _pre_dispatch(self, user_container, **kwargs):
+        """Calls user's pre_dispatch and registers the user_container."""
+        self.pre_dispatch(user_container, **kwargs)
+        # register container
+        self._set_container_register_instance()
+
+    def pre_dispatch(self, user_container, **kwargs):
+        """Runs something before the container is registered.
+
+        May be overridden"""
+        pass
+
+    def _post_dispatch(self, user_container, **kwargs):
+        """Calls user's pre_dispatch after dispatch is complete."""
+        self.post_dispatch(user_container, **kwargs)
+
+    def post_dispatch(self, user_container, **kwargs):
+        """Runs something before the container is registered.
+
+        May be overridden"""
+        pass
+
+    def _dispatch_prep(self, **kwargs):
+        """Wrapper for user method :func:`dispatch_prep`."""
+        self.dispatch_prep(**kwargs)
+
+    def dispatch_prep(self, **kwargs):
         """Returns a list of RegisteredSubject instances.
 
         This is the main data query for dispatching and is to be overriden by the user
         to access local app models."""
         registered_subjects = []
         return registered_subjects
-
-    def dispatch(self):
-        """Dispatches items to a device by creating a dispatch item instance.
-
-        ..note:: calls the user overridden :func:`dispatch_prep`."""
-        # check source for the producer based on using_destination.
-        if self.debug:
-            logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
-        user_container = self.get_user_container_instance()
-        if not user_container.is_dispatched_as_item():
-            # start by dispatching the container as a item
-            self._dispatch_as_json(user_container, user_container=user_container)
-            if not self.register_with_dispatch_item_register(user_container, user_container):
-                raise DispatchError('User container failed to dispatch as a item.')
-        self._dispatch_prep()
 
     def _set_dispatch_url(self, value=None):
         """Sets the dispatch url for the dispatching model."""

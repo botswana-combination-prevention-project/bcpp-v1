@@ -9,7 +9,7 @@ from bhp_dispatch.exceptions import DispatchAttributeError
 
 #@login_required
 #@csrf_protect
-def dispatch(request, dispatch_controller_cls, **kwargs):
+def dispatch(request, dispatch_controller_cls, dispatch_form_cls=None, **kwargs):
     """Receives a list of user container identifiers and user selects the producer to dispatch to.
 
         Args:
@@ -17,6 +17,8 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
     """
     if not issubclass(dispatch_controller_cls, DispatchController):
         raise AttributeError('Parameter \'dispatch_controller_cls\' must be a subclass of DispatchController.')
+    if not dispatch_form_cls:
+        dispatch_form_cls = DispatchForm
     msg = request.GET.get('msg', '')
     producer = request.GET.get('producer', None)
     has_outgoing_transactions = False
@@ -27,12 +29,13 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
     ct = None
     queryset = None
     if request.method == 'POST':
-        form = DispatchForm(request.POST)
+        form = dispatch_form_cls(request.POST)
         if form.is_valid():
             dispatch_url = ''
-            producer = form.cleaned_data['producer']
+            producer = form.cleaned_data.get('producer')
             ct = request.POST.get('ct')
             user_container_ct = ct
+            survey = form.cleaned_data.get('survey', None)
             items = request.POST.get('items')
             pks = items.split(',')
             user_container_model_cls = ContentType.objects.get(pk=user_container_ct).model_class()
@@ -44,7 +47,7 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
                     raise DispatchAttributeError('Producer attribute settings_key may not be None.')
                 for user_container in user_containers:
                     dispatch_controller = dispatch_controller_cls('default', producer.settings_key, user_container, **kwargs)
-                    dispatch_controller.dispatch()
+                    dispatch_controller.dispatch(survey=survey)
                 if dispatch_controller:
                     dispatch_url = dispatch_controller.get_dispatch_url()
     else:
@@ -55,7 +58,7 @@ def dispatch(request, dispatch_controller_cls, **kwargs):
             pks = items.split(',')
         model_cls = ContentType.objects.get(pk=ct).model_class()
         queryset = model_cls.objects.filter(pk__in=pks)
-        form = DispatchForm()
+        form = dispatch_form_cls()
 
     return render(request, 'dispatch.html', {
         'form': form,

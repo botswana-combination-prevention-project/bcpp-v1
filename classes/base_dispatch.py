@@ -53,7 +53,7 @@ class BaseDispatch(BaseController):
         self._set_user_container_model_name(user_container_model_name)
         self._set_user_container_identifier_attrname(user_container_identifier_attrname)
         self.set_user_container_identifier(user_container_identifier)
-        self._set_container_register_instance()
+
         if kwargs.get('retry', False):
             self.set_controller_state('retry')
         self.debug = kwargs.get('debug', False)
