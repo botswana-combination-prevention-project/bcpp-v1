@@ -5,6 +5,7 @@ from django.db.models import get_model
 
 from cryptor import Cryptor
 from hasher import Hasher
+from last_secret import last_secret
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,6 @@ class FieldCryptor(object):
     """ Subclass to be used with models that expect to stored just the hash and for this class to handle the secret. """
 
     def __init__(self, algorithm, mode):
-
         self.algorithm = algorithm
         self.mode = mode
         self.cryptor = Cryptor(algorithm=algorithm, mode=mode)
@@ -88,14 +88,18 @@ class FieldCryptor(object):
         hashed_value = None
         if hash_secret:
             # get and update or create the crypt model with this hash, cipher pair
+            Crypt = get_model('bhp_crypto', 'crypt')
             hashed_value = self.get_hash(hash_secret)
             secret = self._get_secret_from_hash_secret(hash_secret, hashed_value)
-            Crypt = get_model('bhp_crypto', 'crypt')
-            if Crypt.objects.filter(hash=hashed_value):
+            found = last_secret.get(hashed_value) is not None
+            if not found:
+                found = Crypt.objects.filter(hash=hashed_value).exists()
+            if found:
                 if secret:
-                    crypt = Crypt.objects.get(hash=hashed_value)
-                    crypt.secret = secret
-                    crypt.save()
+                    Crypt.objects.filter(hash=hashed_value).update(secret=secret)
+#                     crypt = Crypt.objects.get(hash=hashed_value)
+#                     crypt.secret = secret
+#                     crypt.save()
             else:
                 if secret:
                     Crypt.objects.create(hash=hashed_value,
@@ -157,10 +161,13 @@ class FieldCryptor(object):
         """ Looks up a secret for hashed+value in the Crypt model.
 
         If not found, returns None"""
-        Crypt = get_model('bhp_crypto', 'crypt')
-        if Crypt.objects.filter(hash=hashed_value):
-            crypt = Crypt.objects.get(hash=hashed_value)
-            ret_val = crypt.secret
-        else:
-            ret_val = None
-        return ret_val
+        secret = last_secret.get(hashed_value)
+        if not secret:
+            Crypt = get_model('bhp_crypto', 'crypt')
+            if Crypt.objects.filter(hash=hashed_value).exists():
+                crypt = Crypt.objects.values('secret').get(hash=hashed_value)
+                secret = crypt.get('secret')
+                last_secret.set(hashed_value, secret)
+            else:
+                secret = None
+        return secret
