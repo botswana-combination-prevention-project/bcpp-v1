@@ -19,7 +19,7 @@ class BaseSubject (BaseSyncUuidModel):
 
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
-        max_length=36,
+        max_length=50,
         blank=True,
         db_index=True,
         unique=True,
@@ -29,9 +29,10 @@ class BaseSubject (BaseSyncUuidModel):
     # this field is always available and is unique
     subject_identifier_as_pk = models.CharField(
         verbose_name="Subject Identifier as pk",
-        max_length=36,
+        max_length=50,
+        null=True,
         db_index=True,
-        unique=True,
+        #unique=True,
         editable=False,
         )
 
