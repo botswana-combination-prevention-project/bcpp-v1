@@ -12,6 +12,7 @@ from django.conf import settings
 from django.db.models import get_model
 from django.contrib import messages
 from django.shortcuts import render_to_response
+from django.shortcuts import redirect
 from django.template import RequestContext
 from bhp_sync.models import Producer, RequestLog, IncomingTransaction, OutgoingTransaction
 from bhp_sync.classes import TransactionProducer
@@ -124,6 +125,8 @@ def consume_transactions(request, **kwargs):
                                         response = f.read()
                                         f.close()
                                         producer.sync_status = 'OK'
+                                        producer.sync_datetime = datetime.today()
+
                     # removed: syncing should no longer change the dispatch status
 #                    if 'ALLOW_DISPATCH' in dir(settings) and settings.ALLOW_DISPATCH:
 #                        DispatchItem = get_model('bhp_dispatch', 'DispatchItem')
@@ -136,6 +139,4 @@ def consume_transactions(request, **kwargs):
 #                                item.save()
 
                     producer.save()
-        return render_to_response('consume_transactions.html', {
-            'producer': producer,
-        }, context_instance=RequestContext(request))
+        return redirect('/bhp_sync/consumed/{0}/'.format(producer.name))

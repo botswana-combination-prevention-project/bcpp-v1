@@ -36,7 +36,7 @@ class DeserializeFromTransaction(object):
                             # to trigger an integrity error if it is an update
                             obj.save(using=using)
                             obj.object.deserialize_post()
-                            print '    OK on force insert on {0}'.format(using)
+                            print '    OK - normal save on {0}'.format(using)
                             is_success = True
                         except:
                             # insert failed so unique contraints blocked the forced insert above

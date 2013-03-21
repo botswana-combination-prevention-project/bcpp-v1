@@ -16,28 +16,25 @@ nullhandler = logger.addHandler(NullHandler())
 
 class Consumer(object):
 
-    def __init__(self, using=None):
-        pass
-
-    def consume(self, using_source=None, lock_name=None, **kwargs):
+    def consume(self, using=None, lock_name=None, **kwargs):
         """Consumes ALL incoming transactions on \'using\' in order by ('producer', 'timestamp')."""
-        if not using_source:
-            using_source = None
+        if not using:
+            using = None
         IncomingTransaction = get_model('bhp_sync', 'IncomingTransaction')
         check_hostname = kwargs.get('check_hostname', True)
-        deserialize_from_transaction = DeserializeFromTransaction(using=self.get_using())
-        tot = IncomingTransaction.objects.using(self.get_using()).filter(is_consumed=False).count()
-        for n, incoming_transaction in enumerate(IncomingTransaction.objects.using(using_source).filter(is_consumed=False, is_ignored=False).order_by('producer', 'timestamp')):
+        deserialize_from_transaction = DeserializeFromTransaction()
+        tot = IncomingTransaction.objects.using(using).filter(is_consumed=False).count()
+        for n, incoming_transaction in enumerate(IncomingTransaction.objects.using(using).filter(is_consumed=False, is_ignored=False).order_by('producer', 'timestamp')):
             action = ''
             print '{0} / {1} {2} {3}'.format(n + 1, tot, incoming_transaction.producer, incoming_transaction.tx_name)
             print '    {0}'.format(incoming_transaction.tx_pk)
-            try:
-                deserialize_from_transaction.deserialize(incoming_transaction, using_source, check_hostname=check_hostname)
-                action = 'saved'
-            except:
-                print "    Unexpected error on consume:", sys.exc_info()[0]
-                action = 'exception'
-                raise TransactionConsumerError('Unexpected error when consuming incoming transactions.')
+            #try:
+            deserialize_from_transaction.deserialize(incoming_transaction, using, check_hostname=check_hostname)
+            action = 'saved'
+#             except:
+#                 print "    Unexpected error on consume:", sys.exc_info()[0]
+#                 action = 'exception'
+#                 raise TransactionConsumerError('Unexpected error when consuming incoming transactions.')
             print '    {0}'.format(action)
 
     def fetch_outgoing(self, using_source, using_destination=None):

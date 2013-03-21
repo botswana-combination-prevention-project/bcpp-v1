@@ -56,8 +56,8 @@ class Command(BaseCommand):
         sync_lock = SyncLock(db)
         if options['consume']:
             self.consume(lock_name, db)
-        elif options['copy_from_server']:
-            self.copy_from_server()
+        #elif options['copy_from_server']:
+        #    self.copy_from_server()
         elif options['list-locked']:
             for lock_name in args:
                 self.list_locked(sync_lock, lock_name)
@@ -72,7 +72,7 @@ class Command(BaseCommand):
 
     def consume(self, lock_name, db):
         consumer = Consumer()
-        consumer.consume(lock_name, db)
+        consumer.consume(lock_name=lock_name, using=db)
 
     def copy_from_server(self):
         raise CommandError('Option not available')

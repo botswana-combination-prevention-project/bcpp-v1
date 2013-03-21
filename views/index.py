@@ -7,8 +7,10 @@ from bhp_sync.models import Producer
 
 @login_required
 def index(request, **kwargs):
+    selected_producer = kwargs.get('selected_producer', None)
     producers = Producer.objects.filter(is_active=True)
     return render_to_response('sync.html', {
         'producers': producers,
-        'hostname': socket.gethostname()
+        'hostname': socket.gethostname(),
+        'selected_producer': selected_producer
     }, context_instance=RequestContext(request))
