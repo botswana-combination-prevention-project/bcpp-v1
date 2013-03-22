@@ -33,12 +33,12 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
         if obj:  # In edit mode
             return (
                 'subject_identifier',
-                #'first_name',
+                'subject_identifier_as_pk',
                 #'last_name',
                 'study_site',
                 'consent_datetime',) + self.readonly_fields
         else:
-            return ('subject_identifier',) + self.readonly_fields
+            return ('subject_identifier', 'subject_identifier_as_pk',) + self.readonly_fields
 
     fields = [
         'subject_identifier',
