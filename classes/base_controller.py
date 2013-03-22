@@ -79,6 +79,7 @@ class BaseController(BaseProducer):
         self._model_pk_container = {}
         self._session_container = {}
         self.initialize_session_container()
+        self.audit_signals = []
         super(BaseController, self).__init__(using_source, using_destination, **kwargs)
         self.fk_instances = []
         self.preparing_status = kwargs.get('preparing_netbook', None)
@@ -290,7 +291,7 @@ class BaseController(BaseProducer):
         return signal
 
     def set_audit_trail_signals_for_model(self, obj):
-        self.audit_signals = []
+#        self.audit_signals = []
         for dispatch_uid in ['audit_serialize_on_save_{0}audit'.format(obj._meta.object_name.lower()), 'audit_on_save_{0}audit'.format(obj._meta.object_name.lower())]:
             audit_signal = self.get_signal_by_dispatch_uid(dispatch_uid)
             if audit_signal:
