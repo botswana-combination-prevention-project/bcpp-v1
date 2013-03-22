@@ -15,7 +15,7 @@ class SerializeToTransaction(object):
 
             Call this using the post_save and m2m_changed signal.
         """
-        if not kwargs.get('raw', False):  # raw=True if you are saving a json object
+        if not kwargs.get('raw', False):  # raw=True if you are saving a json object, maybe??
             using = kwargs.get('using', None)
             action = 'U'
             if kwargs.get('created'):

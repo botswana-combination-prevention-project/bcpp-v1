@@ -39,9 +39,9 @@ class BaseProducer(BaseUsing):
                 raise ImproperlyConfigured('Dispatcher expects settings attribute DATABASES to have a NAME '
                                            'key to the \'producer\'. Got name=\'{0}\', settings_key=\'{1}\'.'.format(self._producer.name, self._producer.settings_key))
 
-        # check for pending transactions
-        if self.has_outgoing_transactions():
-            raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+#         # check for pending transactions
+#         if self.has_outgoing_transactions():
+#             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
 
     def get_producer(self):
         """Returns an instance of the current producer."""
