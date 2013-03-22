@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages
 from bhp_dispatch.forms import DispatchForm
 from bhp_dispatch.classes import DispatchController
 from bhp_dispatch.exceptions import DispatchAttributeError
@@ -19,7 +20,7 @@ def dispatch(request, dispatch_controller_cls, dispatch_form_cls=None, **kwargs)
         raise AttributeError('Parameter \'dispatch_controller_cls\' must be a subclass of DispatchController.')
     if not dispatch_form_cls:
         dispatch_form_cls = DispatchForm
-    msg = request.GET.get('msg', '')
+    msg = None
     producer = request.GET.get('producer', None)
     has_outgoing_transactions = False
     user_container = ''
@@ -47,7 +48,7 @@ def dispatch(request, dispatch_controller_cls, dispatch_form_cls=None, **kwargs)
                     raise DispatchAttributeError('Producer attribute settings_key may not be None.')
                 for user_container in user_containers:
                     dispatch_controller = dispatch_controller_cls('default', producer.settings_key, user_container, **kwargs)
-                    dispatch_controller.dispatch(survey=survey)
+                    msg = dispatch_controller.dispatch(survey=survey)
                 if dispatch_controller:
                     dispatch_url = dispatch_controller.get_dispatch_url()
     else:
@@ -59,14 +60,13 @@ def dispatch(request, dispatch_controller_cls, dispatch_form_cls=None, **kwargs)
         model_cls = ContentType.objects.get(pk=ct).model_class()
         queryset = model_cls.objects.filter(pk__in=pks)
         form = dispatch_form_cls()
-
+    messages.add_message(request, messages.INFO, msg)
     return render(request, 'dispatch.html', {
         'form': form,
         'ct': ct,
         'items': items,
         'queryset': queryset,
         'producer': producer,
-        'msg': msg,
         'has_outgoing_transactions': has_outgoing_transactions,
         'dispatch_url': dispatch_url,
         'user_container_model_name': user_container_model_name,

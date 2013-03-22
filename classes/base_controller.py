@@ -388,10 +388,11 @@ class BaseController(BaseProducer):
                 self.get_fk_dependencies(model_instances, fk_to_skip)
                 break
             model_instances = self.fk_instances + model_instances
-            model_instances = list(set(model_instances))
+            #model_instances = list(set(model_instances))
             # skip instances that have already been dispatched during this session
             #original = copy.deepcopy(model_instances)
-            model_instances = [inst for inst in model_instances if inst not in self.get_session_container('serialized')]
+            # TODO: this is knocking out need instances for deserialization
+            # model_instances = [inst for inst in model_instances if inst not in self.get_session_container('serialized')]
             #print ' ... skipping {0}'.format(list(set(model_instances) - set(original)))
             #serialize
             if model_instances:

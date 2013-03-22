@@ -49,7 +49,9 @@ class DispatchController(BaseDispatchController):
 
         ..note:: calls the user overridden method :func:`pre_dispatch`, :func:`dispatch_prep` and :func:`post_dispatch`."""
         user_container = self.get_user_container_instance()
-        if not user_container.is_dispatched_as_item():
+        if user_container.is_dispatched_as_item():
+            msg = '{0} is already dispatched. Got {1}.'.format(user_container._meta.object_name, self.get_user_container_identifier())
+        else:
             self._pre_dispatch(user_container, **kwargs)
             # check source for the producer based on using_destination.
             if self.debug:
@@ -60,6 +62,8 @@ class DispatchController(BaseDispatchController):
                 raise DispatchError('User container failed to dispatch as a item.')
             self._dispatch_prep(**kwargs)
             self._post_dispatch(user_container, **kwargs)
+            msg = 'Successfully dispatched {0} {1}'.format(user_container._meta.object_name, self.get_user_container_identifier())
+        return msg
 
     def _pre_dispatch(self, user_container, **kwargs):
         """Calls user's pre_dispatch and registers the user_container."""
