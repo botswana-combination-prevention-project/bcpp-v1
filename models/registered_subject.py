@@ -111,9 +111,9 @@ class RegisteredSubject(BaseSubject):
 
     salt = SaltField()
 
-    objects = RegisteredSubjectManager()
-
     history = AuditTrail()
+
+    objects = RegisteredSubjectManager()
 
     def get_registered_subject(self):
         return self
