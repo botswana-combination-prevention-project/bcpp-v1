@@ -123,7 +123,7 @@ class RegisteredSubject(BaseSubject):
         pass
 
     def natural_key(self):
-        return (self.subject_identifier, )
+        return (self.subject_identifier_as_pk, )
     natural_key.dependencies = ['bhp_variables.studysite']
 
     def is_serialized(self):
