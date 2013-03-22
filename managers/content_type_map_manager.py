@@ -1,15 +1,14 @@
 from django.db import models
 #from django.db.models import F, get_model
-#from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.models import ContentType
 from bhp_content_type_map.classes import ContentTypeMapHelper
 
 
 class ContentTypeMapManager(models.Manager):
 
     def get_by_natural_key(self, app_label, model):
-        return self.get(
-            app_label=app_label,
-            model=model)
+        content_type = ContentType.objects.get_by_natural_key(app_label, model)
+        return self.get(content_type=content_type)
 
     def sync(self):
         """Syncs content type map foreignkey with django's ContentType id.

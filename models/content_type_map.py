@@ -33,7 +33,7 @@ class ContentTypeMap(BaseModel):
     objects = ContentTypeMapManager()
 
     def natural_key(self):
-        return (self.app_label, self.model, )
+        return self.content_type.natural_key()
 
     def model_class(self):
         if not self.content_type.name == self.name:
