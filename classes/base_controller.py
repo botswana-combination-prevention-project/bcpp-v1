@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.serializers.base import DeserializationError
 from django.db import IntegrityError
 from django.db.models.query import QuerySet
-from django.db.models import signals, get_model
+from django.db.models import signals
 from django.db.models import ForeignKey, OneToOneField, get_app, get_models
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
@@ -385,6 +385,7 @@ class BaseController(BaseProducer):
                     # only need to check one as all are of the same class so jump out...
                     break
             # add foreign key instances to the list of model instances to serialize
+            self.fk_instances = []
             while True:
                 self.get_fk_dependencies(model_instances, fk_to_skip)
                 break
@@ -397,7 +398,7 @@ class BaseController(BaseProducer):
             #print ' ... skipping {0}'.format(list(set(model_instances) - set(original)))
             #serialize
             if model_instances:
-                json = serializers.serialize('json', model_instances, ensure_ascii=False, use_natural_keys=True)
+                json = serializers.serialize('json', model_instances, ensure_ascii=False, use_natural_keys=True, indent=2)
                 deserialized_objects = list(serializers.deserialize("json", json, use_natural_keys=True))
                 saved = []
                 tries = 0

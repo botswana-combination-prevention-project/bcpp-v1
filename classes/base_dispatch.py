@@ -48,7 +48,7 @@ class BaseDispatch(BaseController):
         self._dispatch_container_register = None
         self._visit_models = {}
         # register .. don't want multiple instances for the same producer running
-        registered_controllers.register(self, retry=kwargs.get('retry', False))
+        #registered_controllers.register(self, retry=kwargs.get('retry', False))
         self._set_user_container_app_label(user_container_app_label)
         self._set_user_container_model_name(user_container_model_name)
         self._set_user_container_identifier_attrname(user_container_identifier_attrname)

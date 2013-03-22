@@ -7,8 +7,10 @@ from bhp_visit_tracking.classes import VisitModelHelper
 from bhp_lab_tracker.models import HistoryModel
 from bhp_dispatch.classes import BaseDispatchController
 from bhp_dispatch.exceptions import DispatchModelError, DispatchError
+from bhp_sync.exceptions import PendingTransactionError
 from bhp_base_model.models import BaseListModel
 from lab_base_model.models import BaseLabListModel, BaseLabListUuidModel
+from controller_register import registered_controllers
 
 
 logger = logging.getLogger(__name__)
@@ -48,21 +50,26 @@ class DispatchController(BaseDispatchController):
         """Dispatches items to a device by creating a dispatch item instance.
 
         ..note:: calls the user overridden method :func:`pre_dispatch`, :func:`dispatch_prep` and :func:`post_dispatch`."""
-        user_container = self.get_user_container_instance()
-        if user_container.is_dispatched_as_item():
-            msg = '{0} is already dispatched. Got {1}.'.format(user_container._meta.object_name, self.get_user_container_identifier())
+        # check for pending transactions
+        if self.has_outgoing_transactions():
+            msg = 'Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name())
         else:
-            self._pre_dispatch(user_container, **kwargs)
-            # check source for the producer based on using_destination.
-            if self.debug:
-                logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
-            # start by dispatching the container as a item
-            self._dispatch_as_json(user_container, user_container=user_container)
-            if not self.register_with_dispatch_item_register(user_container, user_container):
-                raise DispatchError('User container failed to dispatch as a item.')
-            self._dispatch_prep(**kwargs)
-            self._post_dispatch(user_container, **kwargs)
-            msg = 'Successfully dispatched {0} {1}'.format(user_container._meta.object_name, self.get_user_container_identifier())
+            user_container = self.get_user_container_instance() # move to pre_dispatch
+            if user_container.is_dispatched_as_item(): # move to pre_dispatch
+                msg = '{0} is already dispatched. Got {1}.'.format(user_container._meta.object_name, self.get_user_container_identifier())  # move to pre_dispatch
+                registered_controllers.deregister(self)
+            else:
+                self._pre_dispatch(user_container, **kwargs)
+                # check source for the producer based on using_destination.
+                if self.debug:
+                    logger.info("Dispatching items for {0}".format(self.get_user_container_identifier()))
+                # start by dispatching the container as a item
+                self._dispatch_as_json(user_container, user_container=user_container)
+                if not self.register_with_dispatch_item_register(user_container, user_container):
+                    raise DispatchError('User container failed to dispatch as a item.')
+                self._dispatch_prep(**kwargs)
+                self._post_dispatch(user_container, **kwargs)
+                msg = 'Successfully dispatched {0} {1}'.format(user_container._meta.object_name, self.get_user_container_identifier())
         return msg
 
     def _pre_dispatch(self, user_container, **kwargs):
