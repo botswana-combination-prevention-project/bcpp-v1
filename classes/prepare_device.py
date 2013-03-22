@@ -3,6 +3,7 @@ import os
 import sqlite3
 import subprocess
 from datetime import datetime
+from tastypie.models import ApiKey
 from django.db.models import Model
 from django.conf import settings
 from django.db.models import signals
@@ -11,7 +12,6 @@ from bhp_base_model.models import BaseModel
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.models import BaseUuidModel
 from lab_base_model.models import BaseLabUuidModel
-from bhp_consent.models.signals import add_models_to_catalogue
 from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
 from bhp_dispatch.exceptions import BackupError, RestoreError
@@ -40,9 +40,7 @@ class PrepareDevice(BasePrepareDevice):
         Keywords:
             exception: exception class to use, e.g. CommandError if this is run as a management command. Default(TypeError)
         """
-        super(PrepareDevice, self).__init__(using_source, 
-                                            using_destination, 
-                                            **kwargs)
+        super(PrepareDevice, self).__init__(using_source, using_destination, **kwargs)
         self.started = None
         self.start_time = None
         self.end_time = None
@@ -92,7 +90,7 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 4:
             self.timer()
             logger.info("4. Updating api keys...")
-            self.update_model(('tastypie', 'apikey'), [Model])
+            self.update_model(ApiKey, [Model])
         if not step > 5:
             self.timer()
             logger.info("5. Updating lists...")
@@ -114,11 +112,12 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 8:
             self.timer()
             logger.info("8. Updating appointment configuration...")
-            self.update_model(("bhp_appointment", "Configuration"),[BaseSyncUuidModel])
+            self.update_model(("bhp_appointment", "Configuration"), [BaseSyncUuidModel])
         if not step > 9:
             self.timer()
             logger.info("9. Updating the Crypt table...")
             #self.update_model(('bhp_crypto', 'crypt'))
+            logger.info('   Warning, skipping. use mysqldump for the Crypt table, bhp_crypto_crypt')
         if not step > 10:
             self.timer()
             logger.info("10. Updating the visit definitions...")
@@ -130,7 +129,8 @@ class PrepareDevice(BasePrepareDevice):
         if not step > 12:
             self.timer()
             logger.info("12. Updating registered subjects...")
-            self.update_model(('bhp_registration', 'RegisteredSubject'), [RegisteredSubject])
+            #self.update_model(('bhp_registration', 'RegisteredSubject'), [RegisteredSubject])
+            logger.info('   Warning, skipping. use mysqldump for the RegisteredSubject table, bhp_registration_registeredsubject')
         if not step > 13:
             self.timer()
             logger.info("13. Updating bhp_consent Consent Catalogues...")

@@ -14,17 +14,16 @@ from django.db.models import Q, Count, Max
 from lab_base_model.models import BaseLabListModel, BaseLabListUuidModel
 from bhp_base_model.models import BaseListModel
 from bhp_visit.models import VisitDefinition
+from bhp_visit_tracking.models.signals import base_visit_tracking_add_or_update_entry_buckets_on_post_save, base_visit_tracking_on_post_save
 from bhp_variables.models import StudySite
 from bhp_lab_tracker.models import BaseHistoryModel
+from bhp_lab_tracker.models.signals import tracker_on_post_save
 from bhp_entry.models import BaseEntryBucket
-from bhp_visit_tracking.models.signals import base_visit_tracking_add_or_update_entry_buckets_on_post_save, base_visit_tracking_on_post_save
 from bhp_sync.classes import BaseProducer
 from bhp_sync.models.signals import serialize_on_save, serialize_m2m_on_save
-from bhp_lab_tracker.models.signals import tracker_on_post_save
 from bhp_sync.helpers import TransactionHelper
-#from bhp_lab_tracker.models import HistoryModel
-from bhp_dispatch.exceptions import ControllerBaseModelError
 from bhp_sync.exceptions import PendingTransactionError
+from bhp_dispatch.exceptions import ControllerBaseModelError
 from controller_register import registered_controllers
 
 
@@ -233,23 +232,6 @@ class BaseController(BaseProducer):
                             self.get_fk_dependencies([this_fk])
                         self.add_to_session_container((cls, pk), 'fk_dependencies')
 
-#     def add_to_model_pk_container(self, cls_name, pk):
-#         if pk not in self.get_model_pk_container(self, cls_name):
-#             self.get_model_pk_container(self, cls_name).append(pk)
-# 
-#     def set_model_pk_container(self, cls_name=None):
-#         if not cls_name:
-#             self._model_pk_container = {}
-#         else:
-#             self._model_pk_container[cls_name] = []
-# 
-#     def get_model_pk_container(self, cls_name):
-#         if not self._model_pk_container:
-#             self.set_model_pk_container()
-#         if not cls_name in self._model_pk_container:
-#             self.set_model_pk_container(cls_name)
-#         return self._model_pk_container[cls_name]
-
     def _disconnect_signals(self, obj):
         """Disconnects signals before saving the serialized object in _to_json."""
         signals.post_save.disconnect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")
@@ -368,9 +350,7 @@ class BaseController(BaseProducer):
         ..warning:: This method assumes you have confirmed that the model_instances are "already dispatched" or not.
 
         """
-         # check for pending transactions
-#         if self.has_outgoing_transactions():
-#             raise PendingTransactionError('Producer \'{0}\' has pending outgoing transactions. Run bhp_sync first.'.format(self.get_producer_name()))
+        # check for pending transactions
         if self.has_incoming_transactions(model_instances):
             raise PendingTransactionError('One or more listed models have pending incoming transactions on \'{0}\'. Consume them first. Got \'{1}\'.'.format(self.get_using_source(), list(set(model_instances))))
         if model_instances:
@@ -384,22 +364,22 @@ class BaseController(BaseProducer):
                 if self.is_allowed_base_model_instance(instance, additional_base_model_class):
                     # only need to check one as all are of the same class so jump out...
                     break
-            # add foreign key instances to the list of model instances to serialize
-            self.fk_instances = []
+            self.fk_instances = []  # clear from previous
             while True:
+                # add foreign key instances to the list of model instances to serialize
                 self.get_fk_dependencies(model_instances, fk_to_skip)
                 break
             model_instances = self.fk_instances + model_instances
             #model_instances = list(set(model_instances))
             # skip instances that have already been dispatched during this session
-            #original = copy.deepcopy(model_instances)
             # TODO: this is knocking out need instances for deserialization
-            # model_instances = [inst for inst in model_instances if inst not in self.get_session_container('serialized')]
-            #print ' ... skipping {0}'.format(list(set(model_instances) - set(original)))
+            #model_instances = [inst for inst in model_instances if inst not in self.get_session_container('serialized')]
             #serialize
             if model_instances:
-                json = serializers.serialize('json', model_instances, ensure_ascii=False, use_natural_keys=True, indent=2)
-                deserialized_objects = list(serializers.deserialize("json", json, use_natural_keys=True))
+                # serialize all
+                json_obj = serializers.serialize('json', model_instances, ensure_ascii=False, use_natural_keys=True, indent=2)
+                # deserialize all
+                deserialized_objects = list(serializers.deserialize("json", json_obj, use_natural_keys=True))
                 saved = []
                 tries = 0
                 while True:
@@ -408,6 +388,7 @@ class BaseController(BaseProducer):
                         try:
                             if deserialized_object not in saved:
                                 self._disconnect_signals(deserialized_object.object)
+                                # save deserialized_object to destination
                                 deserialized_object.object.save(using=self.get_using_destination())
                                 self._reconnect_signals()
                                 self.serialize_m2m(deserialized_object)
@@ -416,7 +397,6 @@ class BaseController(BaseProducer):
                                 self.update_session_container_class_counter(instance)
                         except IntegrityError as e:
                             self._reconnect_signals()
-                            #print '{0} {1}'.format(e, deserialized_object.object.__class__)
                             continue
                     if len(saved) == len(deserialized_objects):
                         break
@@ -450,7 +430,6 @@ class BaseController(BaseProducer):
                     # no need to use callback, list models are not registered with dispatch
                     self._to_json(src_list_item, additional_base_model_class=BaseListModel)
                     # record source pk for use later
-                    # TODO: confirm the pk on source is always the same on destination? what about natural keys?
                 #dst_list_item_natural_keys.append(src_list_item.natural_key())
                 dst_list_item_pks.append(src_list_item.pk)
             # get instance of this model on destination
@@ -461,29 +440,4 @@ class BaseController(BaseProducer):
                 # get the list_model instance on destination
                 item_inst = src_list_item.__class__.objects.using(self.get_using_destination()).get(pk=pk)
                 # add to m2m rel_manager on destination, this is like instance.m2m.add(item)
-                getattr(dest_inst, m2m).add(item_inst)
-
-                    # TODO: commented out below so we can see the errors in testing
-                    #       May need to uncomment before release
-
-    #                except IntegrityError as e:
-    #                    logger.info(e)
-    #                    logger.info(e.message)
-    #                    if 'is not unique' in e.message:
-    #                        raise DispatchError('Model instance {0} is already on producer {1}.'.format(d_obj.object, self.get_producer_name()))
-    #                    if 'Duplicate' in e.message:
-    #                        pass
-    #                    elif 'Cannot add or update a child row' in e.message:
-    #                        # assume Integrity error was because of missing ForeignKey data
-    #                        self.dispatch_foreign_key_instances(self.get_dispatch_item_app_label())
-    #                        # try again
-    #                        # disconnect signal
-    #                        signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-    #                        #save
-    #                        d_obj.save(using=self.get_using_destination())
-    #                        # reconnect
-    #                        signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-    #                    else:
-    #                        raise
-    #                except:
-    #                    raise
+                getattr(dest_inst, m2m).add(item_inst)  # calls the signal
