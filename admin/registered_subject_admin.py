@@ -25,6 +25,7 @@ class RegisteredSubjectAdmin (BaseCryptorModelAdmin):
 
     readonly_fields = (
         'subject_identifier',
+        'subject_identifier_as_pk',
         )
     search_fields = ('subject_identifier', 'first_name', 'initials', 'sid', 'identity', 'id', 'registration_identifier')
     list_filter = ('subject_type', 'registration_status', 'registration_datetime', 'gender',
