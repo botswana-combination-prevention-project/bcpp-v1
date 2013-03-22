@@ -1,6 +1,7 @@
 import logging
 import sys
 from django.db.models import get_model
+from django.core.serializers.base import DeserializationError
 from bhp_sync.classes import DeserializeFromTransaction
 from bhp_sync.exceptions import TransactionConsumerError
 
@@ -28,14 +29,14 @@ class Consumer(object):
             action = ''
             print '{0} / {1} {2} {3}'.format(n + 1, tot, incoming_transaction.producer, incoming_transaction.tx_name)
             print '    {0}'.format(incoming_transaction.tx_pk)
-            #try:
-            deserialize_from_transaction.deserialize(incoming_transaction, using, check_hostname=check_hostname)
-            action = 'saved'
-#             except:
-#                 print "    Unexpected error on consume:", sys.exc_info()[0]
-#                 action = 'exception'
-#                 raise TransactionConsumerError('Unexpected error when consuming incoming transactions.')
-            print '    {0}'.format(action)
+            action = 'failed'
+            try:
+                if deserialize_from_transaction.deserialize(incoming_transaction, using, check_hostname=check_hostname):
+                    action = 'saved'
+                print '    {0}'.format(action)
+            except DeserializationError as e:
+                print '    {0} {1}'.format(action, e)
+                pass  #raise DeserializationError(e)
 
     def fetch_outgoing(self, using_source, using_destination=None):
         """Fetches all OutgoingTransactions not consumed from a source and saves them locally (default).

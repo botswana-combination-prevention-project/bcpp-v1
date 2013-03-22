@@ -18,10 +18,11 @@ class DeserializeFromTransaction(object):
                 # check if tx originanted from me
                 #print "created %s : modified %s" % (obj.object.hostname_created, obj.object.hostname_modified)
                 incoming_transaction.is_ignored = False
-                print '    {0}'.format(obj.object)
+                print '    {0}'.format(obj.object._meta.object_name)
                 if obj.object.hostname_modified == socket.gethostname() and check_hostname:
                     # ignore your own transactions
-                    pass
+                    print '    skipping - not consuming my own transactions'.format(using)
+                    is_success = False
                 else:
                     is_success = False
                     try:
@@ -45,11 +46,11 @@ class DeserializeFromTransaction(object):
                             if 'deserialize_on_duplicate' in dir(obj.object):
                                 obj.object.deserialize_on_duplicate()
                                 obj.save(using=using)
-                                print '    OK update succeeded after deserialize_on_duplicate on {0}'.format(using)
+                                print '    OK update succeeded after deserialize_on_duplicate on using={0}'.format(using)
                                 is_success = True
                             else:
                                 obj.save(using=using)
-                                print '    OK update succeeded as is on {0}'.format(using)
+                                print '    OK update succeeded as is on using={0}'.format(using)
                                 is_success = True
                     except IntegrityError as error:
                         # failed both insert and update, why?
@@ -61,7 +62,7 @@ class DeserializeFromTransaction(object):
                                 #for field in foreign_key_error:
                                 #    # it is OK to just set the fk to None
                                 #    setattr(obj.object, field.name, None)
-                                print '    audit instance, ignoring... on {0}'.format(using)
+                                print '    audit instance, ignoring... on using={0}'.format(using)
                                 incoming_transaction.is_ignored = True
                             else:
                                 foreign_key_error = []
@@ -73,11 +74,11 @@ class DeserializeFromTransaction(object):
                                             print '    unable to getattr {0}'.format(field.name)
                                             foreign_key_error.append(field)
                                 for field in foreign_key_error:
-                                    print '    deserialize_get_missing_fk on model {0} for field {1} on {2}'.format(obj.object._meta.object_name, field.name, using)
+                                    print '    deserialize_get_missing_fk on model {0} for field {1} on using={2}'.format(obj.object._meta.object_name, field.name, using)
                                     setattr(obj.object, field.name, obj.object.deserialize_get_missing_fk(field.name))
                                 try:
                                     obj.save(using=using)
-                                    print '   OK saved after integrity error on {0}'.format(using)
+                                    print '   OK saved after integrity error on using={0}'.format(using)
                                     is_success = True
                                 except:
                                     incoming_transaction.is_ignored = True
@@ -118,7 +119,7 @@ class DeserializeFromTransaction(object):
                                             obj.save(using=using)
                                             is_success = True
                                             # change all pk to the new pk for is_consumed=False.
-                                            print '    OK saved, now replace_pk_in_tx on {0}'.format(using)
+                                            print '    OK saved, now replace_pk_in_tx on using={0}'.format(using)
                                             incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk)
                                             print '    {0} is now {1}'.format(old_pk, new_pk)
                                         else:
@@ -144,3 +145,4 @@ class DeserializeFromTransaction(object):
                         incoming_transaction.is_consumed = True
                         incoming_transaction.consumer = str(TransactionProducer())
                         incoming_transaction.save(using=using)
+        return is_success
