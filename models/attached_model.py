@@ -3,6 +3,7 @@ from audit_trail.audit import AuditTrail
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_content_type_map.models import ContentTypeMap
 from consent_catalogue import ConsentCatalogue
+from bhp_consent.managers import AttachedModelManager
 
 
 class AttachedModel(BaseSyncUuidModel):
@@ -19,7 +20,7 @@ class AttachedModel(BaseSyncUuidModel):
 
     history = AuditTrail()
 
-    objects = models.Manager()
+    objects = AttachedModelManager()
 
     def natural_key(self):
         return self.consent_catalogue.natural_key() + self.content_type_map.natural_key()

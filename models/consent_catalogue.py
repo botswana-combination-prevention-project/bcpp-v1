@@ -4,6 +4,7 @@ from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.validators import datetime_not_before_study_start
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_consent.choices import CONSENT_TYPES
+from bhp_consent.managers import ConsentCatalogueManager
 
 
 class ConsentCatalogue(BaseSyncUuidModel):
@@ -41,7 +42,7 @@ class ConsentCatalogue(BaseSyncUuidModel):
 
     history = AuditTrail()
 
-    objects = models.Manager()
+    objects = ConsentCatalogueManager()
 
     def natural_key(self):
         return (self.name, self.version)

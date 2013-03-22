@@ -13,7 +13,6 @@ from bhp_common.utils import formatted_age
 from bhp_consent.exceptions import ConsentError
 from bhp_consent.classes import ConsentedSubjectIdentifier
 from consent_basics import ConsentBasics
-from bhp_consent.managers import BaseConsentManager
 
 
 class BaseConsent(ConsentBasics):
@@ -78,8 +77,6 @@ class BaseConsent(ConsentBasics):
     is_verified = models.BooleanField(default=False, editable=False)
 
     is_verified_datetime = models.DateTimeField(null=True)
-
-    objects = BaseConsentManager()
 
     def __unicode__(self):
         return "{0} {1} {2}".format(self.mask_unset_subject_identifier(), mask_encrypted(self.first_name), self.initials)
