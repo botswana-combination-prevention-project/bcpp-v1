@@ -5,14 +5,8 @@ from bhp_visit.models import VisitDefinition
 
 class EntryBucketManager(models.Manager):
 
-    def get_by_natural_key(self, visit_definition, app_label, model):
+    def get_by_natural_key(self, visit_definition_code, app_label, model):
         """Returns the instance using the natural key."""
-        visit_definition = VisitDefinition.objects.get(code=visit_definition)
-        content_map_type = ContentTypeMap.objects.get(
-            app_label=app_label,
-            model=model
-            )
-        return self.get(
-            content_map_type=content_map_type,
-            visit_definition=visit_definition
-            )
+        visit_definition = VisitDefinition.objects.get_by_natural_key(code=visit_definition_code)
+        content_map_type = ContentTypeMap.objects.get_by_natural_key(app_label=app_label, model=model)
+        return self.get(content_map_type=content_map_type, visit_definition=visit_definition)
