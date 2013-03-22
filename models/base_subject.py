@@ -13,6 +13,7 @@ from bhp_base_model.fields import IsDateEstimatedField
 from bhp_crypto.fields import EncryptedFirstnameField, EncryptedLastnameField
 from bhp_consent.exceptions import ConsentError
 from bhp_identifier.exceptions import IdentifierError
+from bhp_subject.managers import BaseSubjectManager
 
 
 class BaseSubject (BaseSyncUuidModel):
@@ -85,6 +86,8 @@ class BaseSubject (BaseSyncUuidModel):
         default='undetermined',
         null=True,
         )
+
+    objects = BaseSubjectManager()
 
     def get_subject_identifier(self):
         return self.subject_identifier
