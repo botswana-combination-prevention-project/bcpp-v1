@@ -6,11 +6,8 @@ class MembershipFormManager(models.Manager):
 
     def get_by_natural_key(self, app_label, model):
         """Returns the natural key for serialization."""
-        return self.get(
-            content_type_map=ContentTypeMap.objects.get_by_natural_key(
-                app_label, model
-                )
-            )
+        content_type_map = ContentTypeMap.objects.get_by_natural_key(app_label, model)
+        return self.get(content_type_map=content_type_map)
 
     def codes_for_category(self, membership_form_category):
         """ Lists visit codes for this membership form category."""
