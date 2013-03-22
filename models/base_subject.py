@@ -33,7 +33,6 @@ class BaseSubject (BaseSyncUuidModel):
         null=True,
         db_index=True,
         #unique=True,
-        editable=False,
         )
 
     # may not be available when instance created (e.g. infants prior to birth report)
