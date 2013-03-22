@@ -310,7 +310,7 @@ class BaseController(BaseProducer):
     def reconnect_audit_trail_signals(self):
         for audit_signal in self.audit_signals:
             signals.post_save.receivers.append(audit_signal)
-        self.audit_signals = None
+        self.audit_signals = []
 
     def add_to_session_container(self, instance, key):
         if instance not in self._session_container[key]:
