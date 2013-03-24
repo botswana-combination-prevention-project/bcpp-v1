@@ -8,4 +8,4 @@ class MembershipFormFactory(BaseUuidModelFactory):
     FACTORY_FOR = MembershipForm
 
     content_type_map = '1'
-    category = 'subject_vist'
+    category = 'subject'

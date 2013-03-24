@@ -23,7 +23,7 @@ class ScheduleGroupManager(models.Manager):
 
     def get_membership_forms_for(self, registered_subject, membership_form_category, **kwargs):
 
-        """ Returns dict of keyed and unkeyed schedule group membership forms for agiven registered_subject
+        """ Returns dict of keyed and unkeyed schedule group membership forms for a given registered_subject
 
         Specify the registered_subject and the membership_form_category. Include forms
         of the specified membership_form__category AND those that have no category (null) or blank.
