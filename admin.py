@@ -39,6 +39,7 @@ class DispatchItemRegisterAdmin(BaseModelAdmin):
     date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', 'item_identifier']
     list_display = (
+        'dispatch_container_register',
         'producer',
         'item_model_name',
         'created',
