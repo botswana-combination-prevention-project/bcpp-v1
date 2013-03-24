@@ -31,12 +31,12 @@ class BaseConsentedUuidModel(BaseSyncUuidModel):
         """Users may override to return False to bypass consent checks for this model instance."""
         return True
 
-    def save(self, *args, **kwargs):
-        if self.get_requires_consent():
-            if not self.is_consented_for_instance():
-                raise TypeError('Data may not be collected. Model {0} is not covered by a valid consent for this subject.'.format(self._meta.object_name))
-            self.validate_versioned_fields()
-        super(BaseConsentedUuidModel, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         if self.get_requires_consent():
+#             if not self.is_consented_for_instance():
+#                 raise TypeError('Data may not be collected. Model {0} is not covered by a valid consent for this subject.'.format(self._meta.object_name))
+#             self.validate_versioned_fields()
+#         super(BaseConsentedUuidModel, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True

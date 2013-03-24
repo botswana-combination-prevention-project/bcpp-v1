@@ -1,9 +1,19 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.db.models import get_app, get_models
 from django.dispatch import receiver
 from consent_catalogue import ConsentCatalogue
 from attached_model import AttachedModel
 from bhp_content_type_map.models import ContentTypeMap
+from bhp_consent.models import BaseConsentedUuidModel
+
+
+@receiver(pre_save, weak=False, dispatch_uid='is_consented_instance_on_pre_save')
+def is_consented_instance_on_pre_save(sender, instance, **kwargs):
+    if isinstance(instance, BaseConsentedUuidModel):
+        if instance.get_requires_consent():
+            if not instance.is_consented_for_instance():
+                raise TypeError('Data may not be collected. Model {0} is not covered by a valid consent for this subject.'.format(instance._meta.object_name))
+            instance.validate_versioned_fields()
 
 
 @receiver(post_save, weak=False, dispatch_uid='add_models_to_catalogue')
