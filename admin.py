@@ -24,12 +24,13 @@ class DispatchContainerRegisterAdmin(BaseModelAdmin):
         )
     list_filter = (
         'producer',
+        'container_identifier',
         'created',
         'is_dispatched',
         'dispatch_datetime',
         'return_datetime'
         )
-    search_fields = ('id', )
+    search_fields = ('id', 'container_identifier', )
     inlines = [DispatchItemRegisterInline, ]
 admin.site.register(DispatchContainerRegister, DispatchContainerRegisterAdmin)
 
@@ -38,7 +39,6 @@ class DispatchItemRegisterAdmin(BaseModelAdmin):
     date_hierarchy = 'dispatch_datetime'
     ordering = ['-created', 'item_identifier']
     list_display = (
-        'dispatch_container_register',
         'producer',
         'item_model_name',
         'created',
@@ -47,6 +47,7 @@ class DispatchItemRegisterAdmin(BaseModelAdmin):
         'return_datetime'
         )
     list_filter = (
+        'dispatch_container_register',
         'producer',
         'item_model_name',
         'created',
@@ -54,7 +55,7 @@ class DispatchItemRegisterAdmin(BaseModelAdmin):
         'dispatch_datetime',
         'return_datetime'
         )
-    search_fields = ('dispatch_container__pk', 'item_identifier')
+    search_fields = ('dispatch_container__container_identifier', 'item_identifier')
     actions = [set_is_dispatched, ]
 
 admin.site.register(DispatchItemRegister, DispatchItemRegisterAdmin)
