@@ -24,7 +24,7 @@ class DispatchContainerRegister(BaseDispatch):
         super(DispatchContainerRegister, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "Dispatch Container {0} {1}".format(self.container_identifier, self.producer.name)
+        return self.container_identifier
 
     def is_ready(self):
         return self.is_dispatched
