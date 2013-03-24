@@ -16,6 +16,9 @@ class LabEntry(BaseLabEntry):
 
     objects = models.Manager()
 
+    def natural_key(self):
+        return self.visit_definition.natural_key() + self.panel.natural_key()
+
     def form_title(self):
         self.content_type_map.content_type.model_class()._meta.verbose_name
 

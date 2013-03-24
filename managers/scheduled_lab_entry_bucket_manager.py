@@ -10,6 +10,13 @@ from bhp_lab_entry.models import LabEntry
 
 class ScheduledLabEntryBucketManager(BaseEntryBucketManager):
 
+    def get_by_natural_key(self, visit_definition_code, name, visit_instance, appt_status, visit_definition_code1, subject_identifier_as_pk):
+        Appointment = models.get_model('bhp_appointment', 'Appointment')
+        LabEntry = models.get_model('bhp_lab_entry', 'LabEntry')
+        appointment = Appointment.objects.get_by_natural_key(visit_instance, appt_status, visit_definition_code1, subject_identifier_as_pk)
+        lab_entry = LabEntry.objects.get_by_natural_key(visit_definition_code, name)
+        return self.get(appointment=appointment, lab_entry=lab_entry)
+
     def get_scheduled_labs_for(self, **kwargs):
 
         """Return a queryset of ScheduledLabEntryBucket objects for the given subject and appointment.

@@ -22,6 +22,9 @@ class AdditionalLabEntryBucket(BaseEntryBucket):
 
     objects = AdditionalLabEntryBucketManager()
 
+    def natural_key(self):
+        return self.lab_entry.natural_key() + self.appointment.natural_key()
+
     def get_absolute_url(self):
         return reverse('admin:bhp_lab_entry_additionallabentrybucket_change', args=(self.id,))
 

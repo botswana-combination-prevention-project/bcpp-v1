@@ -16,6 +16,9 @@ class ScheduledLabEntryBucket(BaseEntryBucket):
 
     objects = ScheduledLabEntryBucketManager()
 
+    def natural_key(self):
+        return self.lab_entry.natural_key() + self.appointment.natural_key()
+
     def deserialize_on_duplicate(self):
         return False
 
