@@ -23,6 +23,7 @@ from bhp_sync.classes import BaseProducer
 from bhp_sync.models.signals import serialize_on_save, serialize_m2m_on_save
 from bhp_sync.helpers import TransactionHelper
 from bhp_sync.exceptions import PendingTransactionError
+from bhp_consent.models.signals import is_consented_instance_on_pre_save
 from bhp_dispatch.exceptions import ControllerBaseModelError
 from controller_register import registered_controllers
 
@@ -234,11 +235,12 @@ class BaseController(BaseProducer):
 
     def _disconnect_signals(self, obj):
         """Disconnects signals before saving the serialized object in _to_json."""
-        signals.post_save.disconnect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")
+        signals.m2m_changed.disconnect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")
         signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
         signals.post_save.disconnect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.disconnect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
         signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
+        signals.pre_save.disconnect(is_consented_instance_on_pre_save, weak=False, dispatch_uid="is_consented_instance_on_pre_save")
         self.disconnect_audit_trail_signals(obj)
         self.disconnect_signals()
 
@@ -250,11 +252,12 @@ class BaseController(BaseProducer):
 
     def _reconnect_signals(self):
         """Reconnects signals after saving the serialized object in _to_json."""
+        signals.pre_save.connect(is_consented_instance_on_pre_save, weak=False, dispatch_uid="is_consented_instance_on_pre_save")
         signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
         signals.post_save.connect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
         signals.post_save.connect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
-        signals.post_save.connect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")
+        signals.m2m_changed.connect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")
         self.reconnect_audit_trail_signals()
         self.reconnect_signals()
 
@@ -390,8 +393,8 @@ class BaseController(BaseProducer):
                                 self._disconnect_signals(deserialized_object.object)
                                 # save deserialized_object to destination
                                 deserialized_object.object.save(using=self.get_using_destination())
-                                self._reconnect_signals()
                                 self.serialize_m2m(deserialized_object)
+                                self._reconnect_signals()
                                 saved.append(deserialized_object)
                                 self.add_to_session_container(instance, 'serialized')
                                 self.update_session_container_class_counter(instance)

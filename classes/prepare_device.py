@@ -15,7 +15,6 @@ from lab_base_model.models import BaseLabUuidModel
 from bhp_consent.models.signals import add_models_to_catalogue
 from base_prepare_device import BasePrepareDevice
 from bhp_dispatch.exceptions import BackupError, RestoreError
-from bhp_registration.models import RegisteredSubject
 from lab_base_model.models import BaseLabListModel, BaseLabModel
 
 

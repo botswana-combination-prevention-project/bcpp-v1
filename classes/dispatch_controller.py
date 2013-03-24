@@ -216,16 +216,17 @@ class DispatchController(BaseDispatchController):
            of :mod:`bhp_visit_tracking`'s :class:`BaseVisitTracking` base model.
            For example, to maternal_visit, infant_visit, subject_visit, patient_visit, etc
         """
-        
+
         # TODO: this and dispatch_requisitions() are duplications of the same function.
-        
         self.dispatch_appointments(registered_subject, user_container)
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models(app_label)
         # get the visit model class for this app
         for scheduled_model_class in scheduled_models:
             visit_field_attname = VisitModelHelper.get_field_name(scheduled_model_class)
-            scheduled_instances = scheduled_model_class.objects.filter(**{'{0}__appointment__registered_subject'.format(visit_field_attname): registered_subject})
+            options = kwargs.get('options', {})
+            options.update({'{0}__appointment__registered_subject'.format(visit_field_attname): registered_subject})
+            scheduled_instances = scheduled_model_class.objects.filter(**options)
             if scheduled_instances:
                 self.dispatch_user_items_as_json(scheduled_instances, user_container)
 
@@ -241,14 +242,15 @@ class DispatchController(BaseDispatchController):
                 self.dispatch_user_items_as_json(requisitions, user_container)
 
     def dispatch_entry_buckets(self, registered_subject):
-        AdditionalLabEntryBucket = get_model('bhp_lab_entry', 'AdditionalLabEntryBucket')
-        additional_lab_entry_bucket = AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk)
-        if additional_lab_entry_bucket:
-            self._to_json(additional_lab_entry_bucket)
-        ScheduledLabEntryBucket = get_model('bhp_lab_entry', 'ScheduledLabEntryBucket')
-        scheduled_lab_entry_bucket = ScheduledLabEntryBucket.objects.filter(registered_subject=registered_subject.pk)
-        if scheduled_lab_entry_bucket:
-            self._to_json(scheduled_lab_entry_bucket)
+        pass
+#         AdditionalLabEntryBucket = get_model('bhp_lab_entry', 'AdditionalLabEntryBucket')
+#         additional_lab_entry_bucket = AdditionalLabEntryBucket.objects.filter(registered_subject=registered_subject.pk)
+#         if additional_lab_entry_bucket:
+#             self._to_json(additional_lab_entry_bucket)
+#         ScheduledLabEntryBucket = get_model('bhp_lab_entry', 'ScheduledLabEntryBucket')
+#         scheduled_lab_entry_bucket = ScheduledLabEntryBucket.objects.filter(registered_subject=registered_subject.pk)
+#         if scheduled_lab_entry_bucket:
+#             self._to_json(scheduled_lab_entry_bucket)
 
     def dispatch_consent_instances(self, app_label, registered_subject, container, **kwargs):
         consent_models = self.get_consent_models(app_label)
