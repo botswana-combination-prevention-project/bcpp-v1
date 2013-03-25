@@ -24,6 +24,37 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'user_created',
             'user_modified',
             'hostname_created']
+        self.fields = [
+            'subject_identifier',
+            'first_name',
+            'last_name',
+            'initials',
+            'consent_datetime',
+            'study_site',
+            'gender',
+            'dob',
+            'is_dob_estimated',
+            'identity',
+            'identity_type',
+            'confirm_identity',
+            'is_incarcerated',
+            'may_store_samples',
+            'comment',
+            'consent_reviewed',
+            'study_questions',
+            'assessment_score',
+            'consent_copy']
+        self.radio_fields = {
+            "gender": admin.VERTICAL,
+            "study_site": admin.VERTICAL,
+            "is_dob_estimated": admin.VERTICAL,
+            "identity_type": admin.VERTICAL,
+            "is_incarcerated": admin.VERTICAL,
+            "may_store_samples": admin.VERTICAL,
+            "consent_reviewed": admin.VERTICAL,
+            "study_questions": admin.VERTICAL,
+            "assessment_score": admin.VERTICAL,
+            "consent_copy": admin.VERTICAL}
 
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj=None):
@@ -40,37 +71,8 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
         else:
             return ('subject_identifier', 'subject_identifier_as_pk',) + self.readonly_fields
 
-    fields = [
-        'subject_identifier',
-        'first_name',
-        'last_name',
-        'initials',
-        'consent_datetime',
-        'study_site',
-        'gender',
-        'dob',
-        'is_dob_estimated',
-        'identity',
-        'identity_type',
-        'confirm_identity',
-        'is_incarcerated',
-        'may_store_samples',
-        'comment',
-        'consent_reviewed',
-        'study_questions',
-        'assessment_score',
-        'consent_copy']
-    radio_fields = {
-        "gender": admin.VERTICAL,
-        "study_site": admin.VERTICAL,
-        "is_dob_estimated": admin.VERTICAL,
-        "identity_type": admin.VERTICAL,
-        "is_incarcerated": admin.VERTICAL,
-        "may_store_samples": admin.VERTICAL,
-        "consent_reviewed": admin.VERTICAL,
-        "study_questions": admin.VERTICAL,
-        "assessment_score": admin.VERTICAL,
-        "consent_copy": admin.VERTICAL}
+    
+
 
 
 class SubjectConsentAdminBase(BaseConsentModelAdmin):
