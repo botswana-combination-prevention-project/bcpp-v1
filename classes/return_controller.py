@@ -17,11 +17,17 @@ class ReturnController(BaseReturn):
             dispatch_container_cls = get_model(dispatch_container_register.app_label, dispatch_container_register.model_name)
         return dispatch_container_cls
 
-    def get_user_container_instances_for_producer(self, using=None):
+    def get_user_container_instances_for_producer(self, using=None, **kwargs):
         """Returns a queryset of dispatched user container instances for this producer."""
         # get the DispatchContainer instance for user's container model app_label and model
         user_containers = []
-        for dispatch_container_register in DispatchContainerRegister.objects.filter(producer=self.get_producer(), is_dispatched=True):
+        if kwargs.get('selected_container_identifiers', None):
+            dispatch_container_registers = DispatchContainerRegister.objects.filter(container_identifier__in=kwargs.get('selected_container_identifiers', None),
+                                                                                    producer=self.get_producer(), 
+                                                                                    is_dispatched=True)
+        else:
+            dispatch_container_registers = DispatchContainerRegister.objects.filter(producer=self.get_producer(), is_dispatched=True)
+        for dispatch_container_register in dispatch_container_registers:
             user_container_cls = get_model(dispatch_container_register.container_app_label, dispatch_container_register.container_model_name)
             if user_container_cls:
                 user_containers.append(user_container_cls.objects.get(**{dispatch_container_register.container_identifier_attrname: dispatch_container_register.container_identifier}))
@@ -129,6 +135,18 @@ class ReturnController(BaseReturn):
         dispatch_container_register = self.deregister_all_for_user_container(user_container)
         DispatchContainerRegister.objects.filter(pk=dispatch_container_register.pk).update(is_dispatched=False, return_datetime=datetime.today())
 
+    def return_selected_items(self, dispatched_container_list):
+        if not dispatched_container_list:
+            raise TypeError('dispatched container list cannot be None')
+        #if not isinstance(dispatched_container_list, []):
+            #raise TypeError('dispatched_container_list argument has to be a List. Got \'{0}\.'.format(dispatched_container_list._meta.module_name))
+        #user_containers = container_model.objects.filter()
+        for user_container in self.get_user_container_instances_for_producer(selected_container_identifiers=dispatched_container_list):
+            if isinstance(user_container, DispatchContainerRegister):
+                raise TypeError('Expected the container model to be a user model. Got DispatchContainerRegister')
+            self._return_by_user_container(user_container)
+            self._lock_container_in_producer(user_container)
+    
     def return_dispatched_items(self, queryset=None):
         """Loops thru dispatch container instances for this producer and returns them."""
         if isinstance(queryset, QuerySet):
@@ -139,3 +157,5 @@ class ReturnController(BaseReturn):
                     raise TypeError('Expected the container model to be a user model. Got DispatchContainerRegister')
                 self._return_by_user_container(user_container)
         return True
+    
+    
