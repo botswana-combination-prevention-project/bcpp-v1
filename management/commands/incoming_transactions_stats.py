@@ -24,8 +24,11 @@ class Command(BaseCommand):
         return IncomingTransaction.objects.values('tx_name').filter(is_consumed=False,is_ignored=False).annotate(tx_count=Count('tx_name'))
         
     def print_stats (self, stats):
-        print "Total:\t:Transaction name"
+        print "\nPrint a summary of unconsumed incoming transactions\n"
+        print "\nTotal:\t:Transaction name\n"
+        print " __________________________"
 
         for stat in stats:
             print "{0}\t:{1}".format(stat['tx_count'],stat['tx_name'])
+        print "\t -------------------\t"
 
