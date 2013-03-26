@@ -20,7 +20,11 @@ class Command(BaseCommand):
         
 
     def prepare_stats(self):
-        return IncomingTransaction.objects.values('tx_name').filter(is_consumed=False,is_ignored=False).annotate(tx_count=Count('tx_name'))
+        return IncomingTransaction.objects.values('tx_name').filter(
+            is_consumed=False,is_ignored=False
+            ).annotate(
+                tx_count=Count('tx_name')
+                ).order_by('tx_name')
         
     def print_stats (self, stats):
         tot = stats.count()    
