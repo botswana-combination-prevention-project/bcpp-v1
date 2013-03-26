@@ -24,8 +24,8 @@ class Command(BaseCommand):
         
     def print_stats (self, stats):
         tot = stats.count()    
-        print "\nA summary of unconsumed incoming transactions\n"  
-        print "\nA {0} Incoming transactions\n".format(tot)
+        print "\nA summary of unconsumed incoming transactions"  
+        print "\n{0} Incoming transactions\n".format(tot)
         if stats:
             print "Total:\t:Transaction name"
             print "__________________________"
