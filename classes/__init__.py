@@ -6,3 +6,4 @@ from base_prepare_device import BasePrepareDevice
 from prepare_device import PrepareDevice
 from return_controller import ReturnController
 from controller_register import registered_controllers
+from signal_manager import SignalManager

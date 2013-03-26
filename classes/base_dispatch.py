@@ -8,7 +8,6 @@ from django.db import IntegrityError
 from bhp_dispatch.exceptions import DispatchModelError, DispatchError, AlreadyDispatched, DispatchControllerError
 from bhp_dispatch.models import DispatchItemRegister, DispatchContainerRegister
 from base_controller import BaseController
-from controller_register import registered_controllers
 
 logger = logging.getLogger(__name__)
 
