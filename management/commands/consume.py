@@ -47,6 +47,12 @@ class Command(BaseCommand):
             help=('Copy unconsumed incoming transactions from server to your local installation.')),
         )
 
+    def get_consumer(self):
+        """Returns the consumer class instances.
+
+        Users should override to provide an app specific consumer."""
+        return Consumer()
+
     def handle(self, *args, **options):
         db = 'default'
         settings.APP_NAME
@@ -71,7 +77,7 @@ class Command(BaseCommand):
             raise CommandError('Unknown option, Try --help for a list of valid options')
 
     def consume(self, lock_name, db):
-        consumer = Consumer()
+        consumer = self.get_consumer()
         consumer.consume(lock_name=lock_name, using=db)
 
     def copy_from_server(self):

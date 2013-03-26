@@ -28,15 +28,32 @@ class Consumer(object):
         for n, incoming_transaction in enumerate(IncomingTransaction.objects.using(using).filter(is_consumed=False, is_ignored=False).order_by('producer', 'timestamp')):
             action = ''
             print '{0} / {1} {2} {3}'.format(n + 1, tot, incoming_transaction.producer, incoming_transaction.tx_name)
-            print '    {0}'.format(incoming_transaction.tx_pk)
+            print '    tx_pk=\'{0}\''.format(incoming_transaction.tx_pk)
             action = 'failed'
             try:
+                self._disconnect_signals(incoming_transaction.tx_name.lower())
                 if deserialize_from_transaction.deserialize(incoming_transaction, using, check_hostname=check_hostname):
                     action = 'saved'
+                self._reconnect_signals()
                 print '    {0}'.format(action)
             except DeserializationError as e:
+                self._reconnect_signals()
                 print '    {0} {1}'.format(action, e)
-                pass  #raise DeserializationError(e)
+                pass  # raise DeserializationError(e)
+
+    def _disconnect_signals(self, obj):
+        self.disconnect_signals(obj)
+
+    def disconnect_signals(self):
+        """Disconnects app specific signals if overriden."""
+        pass
+
+    def _reconnect_signals(self):
+        self.reconnect_signals()
+
+    def reconnect_signals(self):
+        """Reconnects app specific signals if overriden."""
+        pass
 
     def fetch_outgoing(self, using_source, using_destination=None):
         """Fetches all OutgoingTransactions not consumed from a source and saves them locally (default).
