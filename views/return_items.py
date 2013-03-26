@@ -12,7 +12,10 @@ from bhp_dispatch.classes import ReturnController
 def return_items(request, **kwargs):
     """ Return items from the producer to the source."""
     producer = Producer.objects.get(name__iexact=kwargs.get('producer', None))
-    if producer:
+    container_model = request.GET.getlist('container_model')
+    if producer and request.GET.getlist(container_model[0],None):
+        ReturnController('default', producer.name).return_selected_items(request.GET.getlist(container_model[0]))
+    elif producer:
         ReturnController('default', producer.name).return_dispatched_items()
     return render_to_response(
         'checkin_households.html', {'producer': producer, },
