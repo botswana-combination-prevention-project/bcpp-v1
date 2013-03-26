@@ -17,7 +17,7 @@ class Command(BaseCommand):
         if not args:
             args = [None]
         stats = self.prepare_stats()
-        self.prepare_stats(stats)
+        self.print_stats(stats)
         
 
     def prepare_stats(self):
