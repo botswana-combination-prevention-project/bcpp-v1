@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 ).order_by('tx_name')
         
     def print_stats (self, stats):
-        tot = stats.count()    
+        tot = IncomingTransaction.objects.filter(is_consumed=False,is_ignored=False).count()    
         print "\nA summary of unconsumed incoming transactions"  
         print "\n{0} Incoming transactions\n".format(tot)
         if stats:
