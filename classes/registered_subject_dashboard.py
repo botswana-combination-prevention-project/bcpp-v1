@@ -78,6 +78,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def create(self, **kwargs):
         super(RegisteredSubjectDashboard, self).create(**kwargs)
+        subject_hiv_result = False
         if not self.appointment_row_template:
             self.appointment_row_template = 'appointment_row.html'
             self.context.add(appointment_row_template=self.appointment_row_template)
@@ -101,7 +102,8 @@ class RegisteredSubjectDashboard(Dashboard):
                 registered_subject=self.registered_subject,
                 subject_identifier=self.get_subject_identifier(),
                 subject_type=self.get_subject_type(),
-                subject_hiv_status=self.get_subject_hiv_status(),
+                subject_hiv_history=lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier),
+                subject_hiv_status=lab_tracker.get_current_value('HIV', self.registered_subject.subject_identifier),
                 )
         visit_code = kwargs.pop('visit_code', self.visit_code)
         visit_instance = kwargs.pop("visit_instance", self.visit_instance)
