@@ -231,7 +231,7 @@ class BaseController(BaseProducer):
 
     def _disconnect_signals(self, obj):
         """Disconnects signals before saving the serialized object in _to_json."""
-        self.signal_manager.disconnect()
+        self.signal_manager.disconnect(obj)
         self.disconnect_signals()
 
     def disconnect_signals(self):
