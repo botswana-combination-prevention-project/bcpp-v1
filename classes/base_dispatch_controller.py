@@ -6,7 +6,7 @@ from bhp_consent.models import BaseConsent
 from lab_requisition.models import BaseRequisition
 from bhp_dispatch.exceptions import (AlreadyDispatchedItem, AlreadyReturnedController, DispatchError,
                                      DispatchContainerError, AlreadyDispatchedContainer, DispatchControllerNotReady, DispatchItemError)
-from bhp_dispatch.models import DispatchContainerRegister
+from bhp_dispatch.models import DispatchContainerRegister, DispatchItemRegister
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from base_dispatch import BaseDispatch
 
@@ -181,7 +181,12 @@ class BaseDispatchController(BaseDispatch):
                     if user_container:
                         if len(cls_list) > 0 and cls_list[0] == user_container.__class__:
                             raise DispatchContainerError('User item and User container cannot be of the same class. Got {0}, {1}'.format(cls_list, user_container.__class__))
-                    already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item(using=self.get_using_destination(), user_container=user_container)]
+                    # confirm all items are of dispatchable models
+                    not_dispatchable = [item for item in user_items if not item.is_dispatchable_model()]
+                    if not_dispatchable:
+                        raise DispatchItemError('All instances must be configured for dispatch. Found {0} that are not. Got {1}'.format(len(not_dispatchable), not_dispatchable))
+                    #already_dispatched_items = DispatchItemRegister.objects.filter(item_pk__in=[item.pk for item in user_items])
+                    already_dispatched_items = [user_instance for user_instance in user_items if user_instance.is_dispatched_as_item(using=self.get_using_source(), user_container=user_container)]
                     if already_dispatched_items:
                         raise AlreadyDispatchedItem('{0} models are already dispatched. Got {1}'.format(len(already_dispatched_items), already_dispatched_items))
                     # dispatch

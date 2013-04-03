@@ -158,6 +158,6 @@ class ReturnController(BaseReturn):
                 if isinstance(user_container, DispatchContainerRegister):
                     raise TypeError('Expected the container model to be a user model. Got DispatchContainerRegister')
                 self._return_by_user_container(user_container)
-        return 'All containers have been returned from producer \'{1}\''.format(self.get_producer_name())
+        return 'All containers have been returned from producer \'{0}\''.format(self.get_producer_name())
     
     

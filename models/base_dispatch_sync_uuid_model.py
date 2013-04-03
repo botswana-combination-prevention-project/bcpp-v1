@@ -70,6 +70,10 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
     def is_dispatched_within_user_container(self, using=None):
         """Returns True if the model class is dispatched within a user container.
 
+        ..note:: an item is considered dispatched if it's container is dispatched. It usually
+                 is also registered as a dispatched item, but as described below, this may
+                 not always be true.
+
         For example::
             a subject_consent would be considered dispatched if the method on subject_consent,
             :func:`dispatch_container_lookup`, returned a lookup query string that points the subject consent to
@@ -97,6 +101,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             container_attr = user_container_model_cls().dispatched_as_container_identifier_attr()
             options = {container_attr: lookup_value}
             if user_container_model_cls.objects.using(using).filter(**options).exists():
+                # found user container instance, is it dispatched?
                 is_dispatched = user_container_model_cls.objects.using(using).get(**options).is_dispatched_as_container(using)
         return is_dispatched
 
@@ -134,13 +139,14 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             if self.id:
                 if self.get_dispatched_item(using):
                     is_dispatched = True
-            if not self.is_dispatch_container_model():
-                # if item is not registered with DispatchItemRegister and we are not checking on behalf of
-                # a user_container ...
-                if not is_dispatched and not user_container:
-                    is_dispatched = self.is_dispatched_within_user_container(using)
-                    if not isinstance(is_dispatched, bool):
-                        raise TypeError('Expected a boolean as a return value from method is_dispatched_within_user_container(). Got {0}'.format(is_dispatched))
+            if not is_dispatched:
+                if not self.is_dispatch_container_model():
+                    # if item is not registered with DispatchItemRegister AND we are not checking on behalf of
+                    # a user_container ...
+                    if not is_dispatched and not user_container:
+                        is_dispatched = self.is_dispatched_within_user_container(using)
+                        if not isinstance(is_dispatched, bool):
+                            raise TypeError('Expected a boolean as a return value from method is_dispatched_within_user_container(). Got {0}'.format(is_dispatched))
         return is_dispatched
 
     def get_dispatched_item(self, using=None):

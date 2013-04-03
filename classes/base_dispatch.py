@@ -165,7 +165,7 @@ class BaseDispatch(BaseController):
     def _set_container_register_instance(self, dispatch_container_register=None):
         """Creates a dispatch container instance for this controller session.
 
-        This is always gets or creates for each new instance."""
+        This gets or creates for each instance."""
         if dispatch_container_register:
             # just requery
             self._dispatch_container_register = DispatchContainerRegister.objects.using(self.get_using_source()).get(pk=str(dispatch_container_register.pk))
@@ -182,15 +182,20 @@ class BaseDispatch(BaseController):
             user_container = user_container_model.objects.using(self.get_using_source()).get(**{self.get_user_container_identifier_attrname(): self.get_user_container_identifier()})
             if not getattr(user_container, self.get_user_container_identifier_attrname()):
                 raise DispatchError('Could not get user\'s container instance. Attribute {0} not found on model instance {1}.'.format(self.get_user_container_identifier_attrname(), self.get_user_container_model_name()))
+            defaults = {'is_dispatched': True,
+                        'return_datetime': None,
+                        'container_identifier_attrname': self.get_user_container_identifier_attrname(),
+                        'producer': self.get_producer(),
+                        'container_identifier': getattr(user_container, self.get_user_container_identifier_attrname())}
             self._dispatch_container_register, created = DispatchContainerRegister.objects.using(self.get_using_source()).get_or_create(
-                producer=self.get_producer(),
-                is_dispatched=True,
-                return_datetime=None,
                 container_app_label=self.get_user_container_app_label(),
                 container_model_name=self.get_user_container_model_name(),
-                container_identifier_attrname=self.get_user_container_identifier_attrname(),
-                container_identifier=getattr(user_container, self.get_user_container_identifier_attrname()),
-                container_pk=user_container.pk)
+                container_pk=user_container.pk,
+                defaults=defaults)
+            if not created:
+                for attrname, value in defaults.iteritems():
+                    setattr(self._dispatch_container_register, attrname, value)
+                self._dispatch_container_register.save(using=self.get_using_source())
 
     def get_container_register_instance(self):
         """Gets the dispatch container instance for this controller sessions."""

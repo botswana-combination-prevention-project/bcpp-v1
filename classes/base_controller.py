@@ -286,7 +286,7 @@ class BaseController(BaseProducer):
 
     def get_session_container_class_counter_count(self, instance):
         if self._session_container['class_counter'].get(instance._meta.object_name, None) == None:
-            self._session_container['class_counter'].update({instance._meta.object_name, 0})
+            self._session_container['class_counter'].update({instance._meta.object_name: 0})
         return self._session_container['class_counter'].get(instance._meta.object_name)
 
     def _to_json(self, model_instances, additional_base_model_class=None, user_container=None, fk_to_skip=None):

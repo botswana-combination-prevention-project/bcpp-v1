@@ -13,6 +13,9 @@ class TestContainer(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
+    def __unicode__(self):
+        return self.test_container_identifier
+
     def dispatched_as_container_identifier_attr(self, using=None):
         return 'test_container_identifier'
 
