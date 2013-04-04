@@ -132,21 +132,38 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
         """
         raise ImproperlyConfigured('Model {0} is not configured for dispatch. Missing method \'dispatch_container_lookup\''.format(self._meta.object_name))
 
+    def _bypass_for_edit(self):
+        if self.bypass_for_edit_dispatched_as_item():
+            if not self.id:
+                raise AlreadyDispatchedItem('Model {0}-{1}, although dispatched, may only be conditionally edited. New instances are not allowed.'.format(self._meta.object_name, self.pk))
+            return True
+        return False
+
+    def bypass_for_edit_dispatched_as_item(self):
+        """Users may override to allow a model to be edited even thoug it is dispatched.
+
+        .. warning:: avoid using this. it only allows edits. you are responsible to
+                  ensure your actions will not lead to data conflicts. so it is best to also
+                  limit which fields may be edited.
+        """
+        return False
+
     def is_dispatched_as_item(self, using=None, user_container=None):
         """Returns the models 'dispatched' status in model DispatchItemRegister."""
         is_dispatched = False
         if self.is_dispatchable_model():
-            if self.id:
-                if self.get_dispatched_item(using):
-                    is_dispatched = True
-            if not is_dispatched:
-                if not self.is_dispatch_container_model():
-                    # if item is not registered with DispatchItemRegister AND we are not checking on behalf of
-                    # a user_container ...
-                    if not is_dispatched and not user_container:
-                        is_dispatched = self.is_dispatched_within_user_container(using)
-                        if not isinstance(is_dispatched, bool):
-                            raise TypeError('Expected a boolean as a return value from method is_dispatched_within_user_container(). Got {0}'.format(is_dispatched))
+            if not self._bypass_for_edit():
+                if self.id:
+                    if self.get_dispatched_item(using):
+                        is_dispatched = True
+                if not is_dispatched:
+                    if not self.is_dispatch_container_model():
+                        # if item is not registered with DispatchItemRegister AND we are not checking on behalf of
+                        # a user_container ...
+                        if not is_dispatched and not user_container:
+                            is_dispatched = self.is_dispatched_within_user_container(using)
+                            if not isinstance(is_dispatched, bool):
+                                raise TypeError('Expected a boolean as a return value from method is_dispatched_within_user_container(). Got {0}'.format(is_dispatched))
         return is_dispatched
 
     def get_dispatched_item(self, using=None):

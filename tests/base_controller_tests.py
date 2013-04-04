@@ -1,11 +1,11 @@
 from django.test import TestCase
 from bhp_sync.models import Producer, OutgoingTransaction, IncomingTransaction
-from bhp_dispatch.models import TestItem, TestContainer, DispatchItemRegister, DispatchContainerRegister
+from bhp_dispatch.models import TestItem, TestContainer, DispatchItemRegister, DispatchContainerRegister, TestItemBypassForEdit
 from bhp_dispatch.classes import BaseDispatchController, DispatchController, ReturnController
 from bhp_sync.tests.factories import ProducerFactory
-from bhp_dispatch.exceptions import AlreadyRegisteredController, AlreadyDispatchedContainer
+from bhp_dispatch.exceptions import AlreadyRegisteredController, AlreadyDispatchedContainer, AlreadyDispatchedItem
 from bhp_base_model.tests.factories import TestManyToManyFactory
-from factories import TestItemFactory, TestContainerFactory
+from factories import TestItemFactory, TestContainerFactory, TestItemBypassForEditFactory
 
 
 class BaseControllerTests(TestCase):
@@ -222,6 +222,51 @@ class BaseControllerTests(TestCase):
         self.assertEquals(DispatchItemRegister.objects.all().count(), 6)
         print "try to save test container, raise an AlreadyDispatchedContainer"
         self.assertRaises(AlreadyDispatchedContainer, test_container.save)
+
+    def test_p4(self):
+        """Test P4. test bypass_for_edit_dispatched_as_item"""
+        class TestController(DispatchController):
+
+            def dispatch_prep(self):
+                self.dispatch_user_items_as_json(TestItemBypassForEdit.objects.all())
+
+        print "TEST P4"
+        print "clear all tables"
+        DispatchContainerRegister.objects.all().delete()
+        DispatchItemRegister.objects.all().delete()
+        print "create new container and items"
+        producer = ProducerFactory(name=self.using_destination, settings_key=self.using_destination)
+        test_container = TestContainerFactory()
+        print "create 3 TestItemBypassForEdit items for this container"
+        test_item1 = TestItemBypassForEditFactory(test_container=test_container)
+        print test_item1
+        TestItemBypassForEditFactory(test_container=test_container)
+        TestItemBypassForEditFactory(test_container=test_container)
+        print "assert nothing in DispatchContainerRegister"
+        self.assertEqual(DispatchContainerRegister.objects.all().count(), 0)
+        print "instantiate a new dispatch controller with container {0}".format(test_container)
+        dispatch_controller = TestController(
+            self.using_source,
+            self.using_destination,
+            self.user_container_app_label,
+            'testcontainer',
+            'test_container_identifier',
+            test_container.test_container_identifier, 'http://')
+        print "assert nothing is in session container, yet ..."
+        self.assertEqual(len(dispatch_controller.get_session_container('dispatched')), 0)
+        self.assertEqual(len(dispatch_controller.get_session_container('serialized')), 0)
+        print "call dispatch"
+        dispatch_controller.dispatch(debug=True)
+        print 'assert can edit TestItemBypassForEdit because method bypass_for_edit_dispatched_as_item() is overridden if nothing changed'
+        test_item1.save()
+        print 'assert can edit field f1 , f2 in TestItemBypassForEdit eventhough method bypass_for_edit_dispatched_as_item() is overridden'
+        test_item1.f1 = 'erik'
+        test_item1.f2 = 'erik'
+        test_item1.save()
+        print 'assert cannot edit field f3 , f4 in TestItemBypassForEdit eventhough method bypass_for_edit_dispatched_as_item() is overridden'
+        test_item1.f3 = 'erik'
+        test_item1.f4 = 'erik'
+        self.assertRaises(AlreadyDispatchedItem, test_item1.save)
 
     def create_test_container(self):
         self.test_container = TestContainer.objects.create(test_container_identifier=self.user_container_identifier)

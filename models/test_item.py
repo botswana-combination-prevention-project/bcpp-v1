@@ -124,3 +124,50 @@ class TestItemM2M(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bhp_dispatch'
+
+
+class TestItemBypassForEdit(BaseDispatchSyncUuidModel):
+
+    test_item_identifier = models.CharField(max_length=35, unique=True)
+
+    test_container = models.ForeignKey(TestContainer)
+
+    test_many_to_many = models.ManyToManyField(TestManyToMany)
+
+    f1 = models.CharField(max_length=35)
+    f2 = models.CharField(max_length=35)
+    f3 = models.CharField(max_length=35)
+    f4 = models.CharField(max_length=35)
+
+    comment = models.CharField(max_length=50, null=True)
+
+    objects = models.Manager()
+
+    history = AuditTrail()
+
+    def __unicode__(self):
+        return self.test_item_identifier
+
+    def bypass_for_edit_dispatched_as_item(self):
+        # requery myself
+        obj = self.__class__.objects.get(pk=self.pk)
+        #dont allow values in these fields to change if dispatched (means only f1, f2 can change)
+        may_not_change = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['f1', 'f2']]
+        for k, v in may_not_change:
+            if k[0] != '_':
+                if getattr(self, k) != v:
+                    print 'cannot bypass, failed on field {0}'.format(k)
+                    return False
+        return True
+
+    def is_dispatch_container_model(self):
+        return False
+
+    def dispatch_container_lookup(self, using=None):
+        return (TestContainer, 'test_container__test_container_identifier')
+
+    def include_for_dispatch(self):
+        return True
+
+    class Meta:
+        app_label = 'bhp_dispatch'
