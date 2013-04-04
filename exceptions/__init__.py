@@ -18,3 +18,7 @@ class IdentifierDecodingError(Exception):
 
 class IndentifierFormatError(Exception):
     pass
+
+
+class IndentifierFormatKeyError(Exception):
+    pass

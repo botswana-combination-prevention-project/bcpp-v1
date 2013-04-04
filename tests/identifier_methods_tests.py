@@ -47,22 +47,25 @@ class IdentifierMethodsTests(TestCase):
         yy = '13'
         IdentifierTracker.objects.all().delete()
         identifier = Identifier(identifier_type='subject', site_code=site_code, month=mm, year=yy)
-        self.assertEqual(identifier.create(), '5YSHU')
-        self.assertEqual(IdentifierTracker.objects.all()[0].identifier, '5YSHU')
-        self.assertEqual(identifier.decode('5YSHU', 'base36'), 10021314)
-        self.assertEqual(identifier.create(), '5YSI5')
-        self.assertEqual(IdentifierTracker.objects.get(identifier='5YSI5').identifier, '5YSI5')
+        self.assertEqual(identifier.create(), '5Z7XC')
+        self.assertEqual(IdentifierTracker.objects.all()[0].identifier, '5Z7XC')
+        self.assertEqual(identifier.decode('5Z7XC', 'base36'), 10041312)
+        self.assertEqual(identifier.create(), '5Z7XN')
+        self.assertEqual(IdentifierTracker.objects.get(identifier='5Z7XN').identifier, '5Z7XN')
         identifier = Identifier(identifier_type='subject', site_code='20', protocol_code=protocol_code, month=mm, year=yy)
-        self.assertEqual(identifier.create(), '97FWN0H')
-        self.assertEqual(IdentifierTracker.objects.get(identifier='97FWN0H').identifier, '97FWN0H')
-        self.assertEqual(identifier.decode('97FWN0H', 'base36'), 20041021313)
-        self.assertEqual(identifier.create(), '97FWN0S')
-        self.assertEqual(IdentifierTracker.objects.get(identifier='97FWN0S').identifier, '97FWN0S')
-        self.assertEqual(identifier.decode('97FWN0S', 'base36'), 20041021324)
+        self.assertEqual(identifier.create(), '97FX2FZ')
+        self.assertEqual(IdentifierTracker.objects.get(identifier='97FX2FZ').identifier, '97FX2FZ')
+        self.assertEqual(identifier.decode('97FX2FZ', 'base36'), 20041041311)
+        self.assertEqual(identifier.create(), '97FX2GA')
+        self.assertEqual(IdentifierTracker.objects.get(identifier='97FX2GA').identifier, '97FX2GA')
+        self.assertEqual(identifier.decode('97FX2GA', 'base36'), 20041041322)
+        print "assert raises error if root segment has a checkdigit that is invalid"
+        self.assertRaises(CheckDigitError, identifier.create, root_segment='20041021313', has_check_digit=True)
         # assert that creating with a root segment encodes
-        self.assertEqual(identifier.create(root_segment='200410213'), '97FWN13')
+        self.assertEqual(identifier.create(root_segment='20041021313', has_check_digit=False), '')
+
         # ...and decodes
-        self.assertEqual(identifier.decode('97FWN13', 'base36'), 20041021335)
+        self.assertEqual(identifier.decode('PKO6NXBK', 'base36', has_check_digit=False), 2004102131312)
 
     def test_identifier_string(self):
         site_code = '10'
