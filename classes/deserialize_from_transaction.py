@@ -120,7 +120,7 @@ class DeserializeFromTransaction(object):
                                             is_success = True
                                             # change all pk to the new pk for is_consumed=False.
                                             print '    OK saved, now replace_pk_in_tx on using={0}'.format(using)
-                                            incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk)
+                                            incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk, using)
                                             print '    {0} is now {1}'.format(old_pk, new_pk)
                                         else:
                                             print '    no deserialize_on_duplicate method'
