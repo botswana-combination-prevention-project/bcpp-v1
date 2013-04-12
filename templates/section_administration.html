@@ -1,0 +1,42 @@
+{% extends "section.html"%}
+{% block section_title%}{% endblock%}
+
+{% block section_links %}
+
+    <table>
+    <tr>
+    <td>
+        <form method="GET" action="/admin/">
+        {% csrf_token %}
+        <input type="submit" value="Site Admin" class="default" name="admin" />
+        </form>
+    </td>
+
+
+    </tr>
+    </table> 
+
+{% endblock %}
+
+{% block other_section_links %}
+
+<H5>Other Links</H5>
+<ol type=1>
+<li><A href="/admin/auth/user/">User Management</A>
+<li><A href="/admin/auth/group/">Group Management</A>
+<li><A href="/admin/bhp_variables/studyspecific/">Study Specific Variables</A>
+<li><A href="/admin/">Site Forms Administration</A>
+</ol>
+
+<H5>Lab</H5>
+<ol type=1>
+<li><A href="/admin/bcpp_lab/">Requisitions and Packing Lists</A>
+<li><A href="/admin/lab_clinic_api/">Results</A>
+
+</ol>
+
+
+</div>
+{% endblock%}
+
+

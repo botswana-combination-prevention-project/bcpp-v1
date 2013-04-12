@@ -1,0 +1,59 @@
+{% extends "base_site_bcpp.html" %}
+
+{% block content %}
+{% block section_buttons %}
+<table>
+<tr>
+
+<td>
+    <form method="POST" action="/bcpp/{% if selected == "subject" %}.{% else %}subject/search/subjectconsent/{% endif %}">
+    {% csrf_token %}
+    <input type="submit" value="Subject" class="{% if selected == "subject" %}{% else %}default{% endif %}" name="section" />
+    </form>
+</td>
+
+<td>
+    <form method="POST" action="/bcpp/{% if selected == "statistics" %}.{% else %}statistics/{% endif %}">
+    {% csrf_token %}
+    <input type="submit" value="Statistics" class="{% if selected == "statistics" %}{% else %}default{% endif %}" name="section" />
+    </form>
+</td>
+<td>
+    <form method="POST" action="/bcpp/{% if selected == "specimens" %}.{% else %}specimens/{% endif %}">
+    {% csrf_token %}
+    <input type="submit" value="Specimens" class="{% if selected == "specimens" %}{% else %}default{% endif %}" name="section" />
+    </form>
+</td>
+
+<td>
+    <form method="POST" action="/bcpp/{% if selected == "audit_trail" %}.{% else %}audit_trail/{% endif %}">
+    {% csrf_token %}
+    <input type="submit" value="Audit" class="{% if selected == "audit_trail" %}{% else %}default{% endif %}" name="section" />
+    </form>
+</td>
+<td>
+    <form method="POST" action="/bcpp/{% if selected == "administration" %}.{% else %}administration/{% endif %}">
+    {% csrf_token %}
+    <input type="submit" value="Administration" class="{% if selected == "administration" %}{% else %}default{% endif %}" name="section" />
+    </form>
+</td>
+</table>
+
+{% endblock section_buttons %}
+
+{% block warnings %}{% endblock %}
+{% block section_title %}{% endblock %}
+
+{% block section_links %}{% endblock%}
+
+{% block search_form %}{% endblock%}
+{% block search_form_results %}{% endblock%}
+{% block top_search_name %}{% endblock%}
+
+{% block other_section_links %}{% endblock%}
+
+{% block single_search_result %}{% endblock%}
+
+
+
+{% endblock %}

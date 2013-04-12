@@ -1,0 +1,68 @@
+{% extends "section.html"%}
+{% block section_title%}{% endblock%}
+
+{% block section_links %}
+
+    <table border=1 >
+    <tr>
+    <td>
+        <table >
+        <thead><th colspan="2">Subject Consents</th></thead>
+        <tbody>
+        <tr>
+        <td>
+        <form method="GET" action="{% url admin:bcpp_subject_subjectconsent_add %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="section_search_url_name">
+        <input type="hidden" name="section_name" value="{{ section_name }}">
+        <input type="hidden" name="search_name" value="{{ search_name }}">                
+        <input type="submit" value="Add Subject Consent"  />
+        </form>
+    </td>
+        </tbody>
+        </table>
+    </td>    
+
+    <td>
+    {% if search_name %}
+    <table bgcolor="LightYellow">
+    <thead><th colspan="4">Search Subject Consents by:</th></thead>
+    <tr>
+        <td>
+        <form method="GET" action="{% url section_search_by_url_name section_name=section_name search_name=search_name search_by='word' %}">
+        <input type="submit" value="word" class="default" />
+        </form>
+        </td>
+        <td>
+        <form method="GET" action="{% url section_search_by_url_name section_name=section_name search_name=search_name search_by='week' %}">
+        <input type="submit" value="week" class="default" />
+        </form>
+        </td>
+        <td>
+        <form method="GET" action="{% url section_search_by_url_name section_name=section_name search_name=search_name search_by='date' %}">
+        <input type="submit" value="date" class="default" />
+        </form>
+        </td>
+    </tr>
+    </table>
+    {% endif %}
+    </td></tr>
+    </table>
+
+
+{% endblock %}
+
+{% block top_search_name %}
+
+    {% if search_result.object_list %}
+        <h3>Most recent (top) {{ search_result.object_list.count }} {{search_name|capfirst}}{{ search_result.object_list|pluralize }}</h3>
+        <i><small>Showing top {{ search_result.object_list.count }} result{{ search_result.object_list|pluralize }} only. Use search to see more.</small></i>
+        {% include top_result_include_file %}
+    
+    {% endif %}
+
+{% endblock%}
+
+{% block other_section_links %}
+</div>
+{% endblock%}
