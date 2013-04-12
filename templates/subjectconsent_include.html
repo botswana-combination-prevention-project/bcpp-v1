@@ -1,0 +1,28 @@
+  {% load common_tags %}{% load crypto_tags %}
+  <div class="results">
+      <table  cellspacing="0" id="result_list" border=1>
+    	<thead>
+			<tr>
+    	<th>Dashboard</th>
+    	<th>Identifier</th>
+    	<th>First Name</th>
+    	<th>Initials</th>
+    	<th>Dob</th>    	    	    	
+    	<th>Consented</th>
+    	<th>User Created</th>
+    	<th>Date Modified</th>    	    	
+    	</thead>	
+        {% for consent in search_result.object_list %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+            <td><A href="{% url dashboard_url dashboard_type='subject' subject_identifier=consent.subject_identifier %}">dashboard</A></td>
+            <td><A href="{{ consent.get_absolute_url }}?next=section_search_url_name&section_name={{ section_name }}&search_name={{ search_name }}">{{ consent.subject_identifier|escape}}</A></td>
+          	<td>{{ consent.first_name|encrypted }}</td>
+          	<td>{{ consent.initials }}</td>          	
+            <td>{{ consent.dob|date:'Y-m-d' }}</td>                      	            
+            <td>{{ consent.consent_datetime|date:'Y-m-d H:i' }}</td>                      	            
+            <td>{{ consent.user_created }}</td>
+          	<td>{{ consent.modified|date:"Y-m-d" }}</td>         	  
+            </tr>
+        {% endfor %}
+    </table>    
+    </div>
