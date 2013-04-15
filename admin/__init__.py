@@ -1,2 +1,3 @@
 from main import *
 from subject_consent_admin import SubjectConsentAdmin
+from registered_subject_model_admin import RegisteredSubjectModelAdmin
