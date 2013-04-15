@@ -14,7 +14,7 @@ def return_items(request, **kwargs):
     msg = None
     producer = Producer.objects.get(name__iexact=kwargs.get('producer', None))
     container_model = request.GET.getlist('container_model')
-    if producer and request.GET.getlist(container_model[0],None):
+    if len(container_model) > 0 and producer and request.GET.getlist(container_model[0],None):
         msg = ReturnController('default', producer.name).return_selected_items(request.GET.getlist(container_model[0]))
     elif producer:
         msg = ReturnController('default', producer.name).return_dispatched_items()
