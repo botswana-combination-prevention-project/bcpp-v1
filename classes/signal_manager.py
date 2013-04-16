@@ -11,6 +11,18 @@ class SignalManager(object):
 
     def __init__(self):
         self.audit_signals = []
+        # populate a reference variable -- not used anywhere but should include all non-audit signals
+        # that are referred to in disconnect/connect
+        self.signal_register = [
+            'serialize_m2m_on_save',
+            'serialize_on_save',
+            'tracker_on_post_save',
+            'base_visit_tracking_add_or_update_entry_buckets_on_post_save',
+            'base_visit_tracking_on_post_save',
+            'base_subject_get_or_create_registered_subject_on_post_save',
+            'is_consented_instance_on_pre_save',
+            ]
+        self.signal_register.sort()
 
     def disconnect(self, obj):
         signals.m2m_changed.disconnect(serialize_m2m_on_save, weak=False, dispatch_uid="serialize_m2m_on_save")

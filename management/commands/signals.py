@@ -2,6 +2,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db.models import signals
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,3 +42,14 @@ class Command(BaseCommand):
             m2m_changed = list(set(m2m_changed))
             m2m_changed.sort()
             print '  {0}\n  {1}'.format(m2m_changed[0], '\n  '.join(m2m_changed[1:]))
+        from bhp_dispatch.classes import SignalManager
+        print 'Signals disconnected by bhp_dispatch (from SignalManager)...'
+        print '  all audit_serialize_on_save_xxx signals'
+        print '  all audit_on_save_xxx signals'
+        msg_list = []
+        for signal in SignalManager().signal_register:
+            if not signal in post_save + post_delete + pre_save + m2m_changed:
+                msg_list.append('  ** warning: signal {0} does not exist.'.format(signal))
+        print '  {0}\n  {1}'.format(SignalManager().signal_register[0], '\n  '.join(SignalManager().signal_register[1:]))
+        print '\n'.join(msg_list)
+        print 'Done.'
