@@ -7,6 +7,8 @@ class RegisteredSubjectManager(BaseSubjectManager):
     def update_with(self, instance, attrname='subject_identifier', **kwargs):
         """ Use an instance, usually a consent, to update registered subject.
 
+        ..note:: IS NO LONGER USED FOR CONSENTS, see bhp_base_subject.models.base_subject.post_save_get_or_create_registered_subject().
+
         Assume all required fields attributes are included in the instance.
         Additional fields may be passed as kwargs.
 
@@ -80,18 +82,3 @@ class RegisteredSubjectManager(BaseSubjectManager):
                 setattr(registered_subject, attr, kwargs.get(attr))
         if extra:
             registered_subject.save(using=using)
-
-#    def register_partner(self, ** kwargs):
-#        """ Allocate partner identifiers. """
-#        index_identifier = kwargs.get('index_identifier')
-#        first_name = kwargs.get('partner_first_name')
-#        initials = kwargs.get('partner_initials')
-#        site = kwargs.get('study_site')
-#        user = kwargs.get('user')
-#        partner = Partner()
-#        subject_identifier = partner.get_identifier(user,
-#                               index_identifier=index_identifier,
-#                               first_name=first_name,
-#                               initials=initials,
-#                               site=site,)
-#        return subject_identifier

@@ -21,12 +21,12 @@ class ModelTests(TestCase):
         from bhp_consent.tests.factories import TestSubjectConsentFactory
 
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        for cls_tpl in [(RegisteredSubject, RegisteredSubjectFactory), (TestSubjectConsent, TestSubjectConsentFactory)]:
+        for index, cls_tpl in enumerate([(RegisteredSubject, RegisteredSubjectFactory), (TestSubjectConsent, TestSubjectConsentFactory)]):
             cls, cls_factory = cls_tpl
             print 'using {0}'.format(cls._meta.object_name)
             print 'test {0} natural key'.format(cls._meta.object_name)
             rs = cls_factory()
-            rs2 = cls.objects.get_by_natural_key(rs.subject_identifier)
+            rs2 = cls.objects.get_by_natural_key(rs.subject_identifier_as_pk)
             self.assertEqual(rs, rs2)
             args = rs.natural_key()
             rs3 = cls.objects.get_by_natural_key(*args)
@@ -34,7 +34,7 @@ class ModelTests(TestCase):
             print 'test {0} does not change subject identifier on save of exisiting instance'.format(cls._meta.object_name)
             rs = cls_factory()
             old_identifier = rs.subject_identifier
-            rs.subject_identifier = 'TEST_IDENTIFIER'
+            rs.subject_identifier = 'TEST_IDENTIFIER{0}'.format(index)
             if issubclass(cls, RegisteredSubject):
                 # should not raise an error if identifier is changed as this is what the consent model will do
                 # on save.
@@ -51,14 +51,14 @@ class ModelTests(TestCase):
                 self.assertEqual(old_identifier, rs.subject_identifier)
             if rs.get_user_provided_subject_identifier_attrname():
                 print 'test {0} uses user provided subject identifier'.format(cls._meta.object_name)
-                rs = cls_factory(**{rs.get_user_provided_subject_identifier_attrname(): 'TEST_IDENTIFIER'})
+                rs = cls_factory(**{rs.get_user_provided_subject_identifier_attrname(): 'TEST_IDENTIFIER_USER{0}'.format(index)})
                 rs = cls.objects.get(pk=rs.pk)
-                self.assertEqual(rs.subject_identifier, 'TEST_IDENTIFIER')
+                self.assertEqual(rs.subject_identifier, 'TEST_IDENTIFIER_USER{0}'.format(index))
             else:
-                rs = cls_factory(subject_identifier='TEST_IDENTIFIER')
+                rs = cls_factory(subject_identifier='TEST_IDENTIFIER_USER{0}'.format(index))
             print 'test {0} raises error if duplicate subject_identifier'.format(cls._meta.object_name)
-            rs = cls.objects.get(subject_identifier='TEST_IDENTIFIER')
-            self.assertRaises(IdentifierError, cls_factory, subject_identifier='TEST_IDENTIFIER')
+            rs = cls.objects.get(subject_identifier='TEST_IDENTIFIER_USER{0}'.format(index))
+            self.assertRaises(IdentifierError, cls_factory, subject_identifier='TEST_IDENTIFIER_USER{0}'.format(index))
             print 'test {0} assigns uuid or study identifier if blank subject_identifier'.format(cls._meta.object_name)
             rs = cls_factory(subject_identifier=None)
             self.assertIsNotNone(rs.subject_identifier)
@@ -72,4 +72,3 @@ class ModelTests(TestCase):
                 self.assertTrue('identifier not set' in unicode(rs))
             else:
                 self.assertFalse('identifier not set' in unicode(rs))
-
