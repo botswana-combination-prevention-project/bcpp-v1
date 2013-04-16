@@ -1,8 +1,5 @@
 from datetime import datetime
-from django import forms
-from bhp_appointment.choices import APPT_STATUS
-from bhp_appointment.models import Appointment
-from bhp_visit.models import VisitDefinition
+from bhp_visit.tests.factories import VisitDefinitionFactory
 from base_appointment_tests import BaseAppointmentTests
 from bhp_appointment.forms import AppointmentForm
 
@@ -17,7 +14,7 @@ class AppointmentFormTests(BaseAppointmentTests):
         # confirm visit_instance is 0 for first appointment
         self.assertEqual(self.appointment.visit_instance, '0')
         #self.assertFormError(response, appointment_form, 'appt_datetime', appointment_form.errors, msg_prefix='')
-        visit_definition = VisitDefinition.objects.create(id='2', code='9998', title='Test 9998')
+        visit_definition = VisitDefinitionFactory(id='2', code='9998', title='Test 9998')
 
         appointment_form = AppointmentForm(data={'registered_subject': self.appointment.registered_subject,
                                                  'visit_definition': visit_definition,
