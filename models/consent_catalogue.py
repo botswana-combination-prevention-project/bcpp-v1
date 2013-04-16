@@ -60,5 +60,3 @@ class ConsentCatalogue(BaseSyncUuidModel):
         app_label = 'bhp_consent'
         unique_together = (('name', 'version'),)
         ordering = ['name', 'version', ]
-
-

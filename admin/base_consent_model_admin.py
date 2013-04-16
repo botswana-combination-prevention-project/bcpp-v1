@@ -70,10 +70,3 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
                 'consent_datetime',) + self.readonly_fields
         else:
             return ('subject_identifier', 'subject_identifier_as_pk',) + self.readonly_fields
-
-    
-
-
-
-class SubjectConsentAdminBase(BaseConsentModelAdmin):
-    pass

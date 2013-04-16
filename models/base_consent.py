@@ -56,6 +56,24 @@ class BaseConsent(ConsentBasics):
         help_text="( if 'YES' STOP patient cannot be consented )",
         )
 
+    is_literate = models.CharField(
+        verbose_name="Is the participant literate?",
+        max_length=3,
+        choices=YES_NO,
+        default='Yes',
+        help_text="( if 'No' provide witness\'s name)",
+        )
+
+    witness_name = EncryptedLastnameField(
+        verbose_name=_("Witness\'s Last and first name (illiterates only)"),
+        validators=[
+            RegexValidator('^[A-Z]{1,50}\,[A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+            ],
+        blank=True,
+        null=True,
+        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+        )
+
     comment = EncryptedTextField("Comment",
         max_length=250,
         blank=True,
@@ -104,9 +122,10 @@ class BaseConsent(ConsentBasics):
             # test for user provided subject_identifier field method
             if self.get_user_provided_subject_identifier_attrname():
                 self.subject_identifier = self._get_user_provided_subject_identifier()
-                if self.subject_identifier and not registered_subject:
-                    RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-                    RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code, using=using)
+                # moved to a signal on bhp_base_subject
+                #if self.subject_identifier and not registered_subject:
+                #    RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+                #    RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code, using=using)
                 if not self.subject_identifier:
                     self.subject_identifier = dummy
             # try to get from registered_subject
@@ -124,13 +143,16 @@ class BaseConsent(ConsentBasics):
                     registration_status='consented',
                     site_code=self.study_site.site_code,
                     using=using)
-                self.registered_subject.subject_identifier = self.subject_identifier
+                #self.registered_subject.subject_identifier = self.subject_identifier
         if not self.subject_identifier:
             self.subject_identifier = dummy
         if re_pk.match(self.subject_identifier):
             raise ConsentError("Subject identifier not set after saving new consent! Got {0}".format(self.subject_identifier))
 
     def save(self, *args, **kwargs):
+        if self.confirm_identity:
+            if self.identity != self.confirm_identity:
+                raise ValueError('Attribute \'identity\' must match attribute \'confirm_identity\'. Catch this error on the form')
         self.insert_dummy_identifier()
         # if adding, call _save_new_consent()
         if not self.id:
@@ -140,11 +162,11 @@ class BaseConsent(ConsentBasics):
         # if has key to registered subject, might be a membership form
         # so need to create appointments
         # TODO: is this required?? isn't this on a signal?
-        if 'registered_subject' in dir(self):
-            AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
+        #if 'registered_subject' in dir(self):
+        #    AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
 
-    def post_save(self, **kwargs):
-        pass
+#     def post_save(self, **kwargs):
+#         pass
 
     def formatted_age_at_consent(self):
         return formatted_age(self.dob, self.consent_datetime)

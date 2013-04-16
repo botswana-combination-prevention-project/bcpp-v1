@@ -5,7 +5,10 @@ from bhp_registration.models import RegisteredSubject
 
 # is this used??
 
+
 class BaseModelWithConsentAdmin(BaseCryptorModelAdmin):
+    """ NOT USED """
+
     """ For models with a key to consent"""
     def save_model(self, request, obj, form, change):
         from bhp_appointment.models import Appointment
@@ -15,6 +18,7 @@ class BaseModelWithConsentAdmin(BaseCryptorModelAdmin):
             rs = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
             obj.registered_subject = rs
             #if model is in a member of a schedule group, create appointments
+            raise TypeError('appointments may not be created via admin. See bhp_appointment_helper')
             Appointment.objects.create_appointments(
                 registered_subject=obj.registered_subject,
                 base_appt_datetime=datetime.today(),
@@ -29,7 +33,7 @@ class BaseModelWithConsentAdmin(BaseCryptorModelAdmin):
         if request.GET.get('subject_identifier'):
             if db_field.name == consent_fk_name:
                 kwargs["queryset"] = self.consent_model.objects.filter(subject_identifier=request.GET.get('subject_identifier'))
-        return super(BaseKeyToConsentModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(BaseModelWithConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj=None):
@@ -41,5 +45,5 @@ class BaseModelWithConsentAdmin(BaseCryptorModelAdmin):
         return self.readonly_fields
 
 
-class BaseKeyToConsentModelAdmin(BaseModelWithConsentAdmin):
-    pass
+# class BaseKeyToConsentModelAdmin(BaseModelWithConsentAdmin):
+#     pass
