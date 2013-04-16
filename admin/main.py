@@ -1,8 +1,9 @@
 from django.contrib import admin
+from bhp_base_model.classes import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -201,3 +202,165 @@ class ThirdPartnerAdmin(SubjectVisitModelAdmin):
         "intercourse_type": admin.VERTICAL,
         }
 admin.site.register(ThirdPartner, ThirdPartnerAdmin)
+
+
+# QualityOfLife
+class QualityOfLifeAdmin(SubjectVisitModelAdmin):
+
+    form = QualityOfLifeForm
+    fields = (
+        "subject_visit",
+        "mobility",
+        "self_care",
+        "activities",
+        "pain",
+        "anxiety",
+        "health_today",
+        )
+    radio_fields = {
+        "mobility": admin.VERTICAL,
+        "self_care": admin.VERTICAL,
+        "activities": admin.VERTICAL,
+        "pain": admin.VERTICAL,
+        "anxiety": admin.VERTICAL,
+        }
+admin.site.register(QualityOfLife, QualityOfLifeAdmin)
+
+
+# ResourceUtilization
+class ResourceUtilizationAdmin(SubjectVisitModelAdmin):
+
+    form = ResourceUtilizationForm
+    fields = (
+        "subject_visit",
+        "out_patient",
+        "hospitalized",
+        "money_spent",
+        "medical_cover",
+        )
+    radio_fields = {
+        "out_patient": admin.VERTICAL,
+        "medical_cover": admin.VERTICAL,
+        }
+admin.site.register(ResourceUtilization, ResourceUtilizationAdmin)
+
+
+# OutpatientCare
+class OutpatientCareAdmin(SubjectVisitModelAdmin):
+
+    form = OutpatientCareForm
+    fields = (
+        "subject_visit",
+        "govt_health_care",
+        "dept_care",
+        "prvt_care",
+        "trad_care",
+        "care_visits",
+        "facility_visited",
+        "specific_clinic",
+        "care_reason",
+        "care_reason_other",
+        "outpatient_expense",
+        "travel_time",
+        "transport_expense",
+        "cost_cover",
+        "waiting_hours",       
+        )
+    radio_fields = {
+        "govt_health_care": admin.VERTICAL,
+        "dept_care": admin.VERTICAL,
+        "prvt_care": admin.VERTICAL,
+        "trad_care": admin.VERTICAL,
+        "facility_visited": admin.VERTICAL,
+        "care_reason": admin.VERTICAL,
+        "travel_time": admin.VERTICAL,
+        "cost_cover": admin.VERTICAL,
+        "waiting_hours": admin.VERTICAL,  
+        }
+admin.site.register(OutpatientCare, OutpatientCareAdmin)
+
+
+#HospitalAdmission
+class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
+
+    form = HospitalAdmissionForm
+    fields = (
+        "subject_visit",
+        "admission_nights",
+        "reason_hospitalized",
+        "facility_hospitalized",
+        "nights_hospitalized",
+        "healthcare_expense",
+        "travel_hours",
+        "total_expenses",
+        "hospitalization_costs",     
+        )
+    radio_fields = {
+        "reason_hospitalized": admin.VERTICAL,
+        "travel_hours": admin.VERTICAL,
+        "hospitalization_costs": admin.VERTICAL,   
+        }
+admin.site.register(HospitalAdmission, HospitalAdmissionAdmin)
+
+
+# HivHealthCareCosts
+class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
+
+    form = HivHealthCareCostsForm
+    fields = (
+        "subject_visit",
+        "hiv_medical_care",
+        "reason_no_care",
+        "place_care_received",
+        "care_regularity",
+        "doctor_visits",
+        )
+    radio_fields = {
+        "hiv_medical_care": admin.VERTICAL,
+        "reason_no_care": admin.VERTICAL,
+        "place_care_received": admin.VERTICAL,
+        "care_regularity": admin.VERTICAL,
+        "doctor_visits": admin.VERTICAL,
+        }
+admin.site.register(HivHealthCareCosts, HivHealthCareCostsAdmin)
+
+
+# Grant
+class GrantInlineAdmin(BaseTabularInline):
+    model = Grant
+
+
+# LabourMarketWages
+class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
+
+    form = LabourMarketWagesForm
+    inlines = [GrantInlineAdmin, ]
+    fields = (
+        "subject_visit",
+        "employed",
+        "occupation",
+        "occupation_other",
+        "job_description_change",
+        "days_worked",
+        "monthly_income",
+        "salary_payment",
+        "household_income",
+        "other_occupation",
+        "other_occupation_other",
+        "govt_grant",
+        "nights_out",
+        "weeks_out",
+        "days_not_worked",
+        "days_inactivite",
+        )
+    radio_fields = {
+        "employed": admin.VERTICAL,
+        "occupation": admin.VERTICAL,
+        "monthly_income": admin.VERTICAL,
+        "salary_payment": admin.VERTICAL,
+        "household_income": admin.VERTICAL,
+        "other_occupation": admin.VERTICAL,
+        "govt_grant": admin.VERTICAL,
+        "weeks_out": admin.VERTICAL,
+        }
+admin.site.register(LabourMarketWages, LabourMarketWagesAdmin)
