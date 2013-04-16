@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_base_model.models import BaseUuidModel
@@ -27,6 +28,14 @@ class MembershipForm(BaseUuidModel):
         )
 
     objects = MembershipFormManager()
+
+    def save(self, *args, **kwargs):
+        # get the model class
+        cls = self.content_type_map.model_class()
+        # inspect for registered subject attribute
+        if not 'registered_subject' in dir(cls):
+            raise ValidationError('Membership forms must have a key to model RegisteredSubject. Got {0}'.format(cls))
+        super(MembershipForm, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.content_type_map.natural_key()
