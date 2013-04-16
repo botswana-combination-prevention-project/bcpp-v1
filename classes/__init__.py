@@ -1,1 +1,0 @@
-from base_appointment_model_admin import BaseAppointmentModelAdmin
