@@ -63,7 +63,7 @@ class BaseIdentifier(object):
             options.update({k: v})
         return options
 
-    def _get_post_identifier(self, identifier, **kwargs):
+    def _get_identifier_post(self, identifier, **kwargs):
         """Must return the identifier."""
         identifier = self.get_identifier_post(identifier, **kwargs)
         return identifier
@@ -129,7 +129,7 @@ class BaseIdentifier(object):
         if add_check_digit:
             new_identifier = self.add_check_digit(new_identifier)
         # call custom post method
-        new_identifier = self._get_post_identifier(new_identifier, **kwargs)
+        new_identifier = self._get_identifier_post(new_identifier, **kwargs)
         if not new_identifier:
             raise IdentifierError('Identifier cannot be None. Confirm overridden methods return the correct value. See BaseSubjectIdentifier')
         # update the identifier model
