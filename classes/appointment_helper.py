@@ -1,4 +1,5 @@
 import inspect
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
 #from bhp_visit.classes import VisitDefinitionHelper
@@ -7,7 +8,7 @@ from appointment_date_helper import AppointmentDateHelper
 
 class AppointmentHelper(object):
 
-    def create_all(self, registered_subject, model_name, base_appt_datetime=None, dashboard_type=None):
+    def create_all(self, registered_subject, model_name, base_appt_datetime=None, dashboard_type=None, source=None):
         """Creates appointments for a registered subject based on a list of visit definitions if given model_name is a member of a schedule group.
 
             Args:
@@ -23,6 +24,8 @@ class AppointmentHelper(object):
         # base_appt_datetime must come from the membership_form model and not from the appt_datetime
         # of the first appointment as the user may change this.
         # base_appt_datetime = kwargs.get("base_appt_datetime")
+        if source != 'BaseAppointmentMixin':
+            raise ImproperlyConfigured('AppointmentHelper.create_all() may only be called from BaseAppointmentMixin.')
         if ScheduleGroup.objects.filter(membership_form__content_type_map__model=model_name):
             # get list of visits for scheduled group containing this model
             # get schedule_group
