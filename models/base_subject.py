@@ -1,6 +1,7 @@
 import re
 from uuid import uuid4
 from django.db import models
+from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 try:
@@ -91,6 +92,53 @@ class BaseSubject (BaseSyncUuidModel):
 
     def get_subject_identifier(self):
         return self.subject_identifier
+
+    def post_save_get_or_create_registered_subject(self, **kwargs):
+        """Creates or \'gets and updates\' the registered subject instance for this subject.
+
+        Called by a post save signal.
+
+        ..note:: RegisteredSubject also inherits fom BaseSubject. This method does nothing if \'self\' is an
+                 instance of RegisteredSubject.
+        """
+        using = kwargs.get('using', None)
+        RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+        if not isinstance(self, RegisteredSubject):
+            if 'registered_subject' in dir(self):
+                self.registered_subject.subject_identifier = self.subject_identifier
+                self.registered_subject.subject_identifier_as_pk = self.subject_identifier_as_pk
+                self.registered_subject.dob = self.dob
+                self.registered_subject.is_dob_estimated = self.is_dob_estimated
+                self.registered_subject.gender = self.gender
+                self.registered_subject.initials = self.initials
+                self.registered_subject.identity = self.identity
+                self.registered_subject.first_name = self.first_name
+                self.registered_subject.last_name = self.last_name
+                if self.last_name:
+                    self.registered_subject.registration_status = 'consented'
+                self.registered_subject.subject_type = self.subject_type
+                self.registered_subject.save(using=using)
+            else:
+                defaults = {
+                    'subject_identifier': self.subject_identifier,
+                    'subject_identifier_as_pk': self.subject_identifier_as_pk,
+                    'dob': self.dob,
+                    'is_dob_estimated': self.is_dob_estimated,
+                    'gender': self.gender,
+                    'initials': self.initials,
+                    'identity': self.identity,
+                    'identity_type': self.identity_type,
+                    'first_name': self.first_name,
+                    'last_name': self.last_name,
+                    'subject_type': self.subject_type}
+                if self.last_name:
+                    defaults.update({'registration_status': 'consented'})
+                registered_subject, created = RegisteredSubject.objects.using(using).get_or_create(subject_identifier=self.subject_identifier, identity=self.identity, defaults=defaults)
+                if not created:
+                    for k in registered_subject.__dict__.iterkeys():
+                        if k in defaults:
+                            setattr(registered_subject, k, defaults.get(k))
+                    registered_subject.save(using=using)
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using', None)
