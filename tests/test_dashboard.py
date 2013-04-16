@@ -1,0 +1,14 @@
+from lab_requisition.models import TestRequisition
+from bhp_visit_tracking.models import TestSubjectVisit
+from bhp_lab_tracker.classes import lab_tracker
+from bhp_content_type_map.models import ContentTypeMap
+from bhp_registration.tests.factories import RegisteredSubjectFactory
+from django.contrib.contenttypes.models import ContentType
+from bhp_content_type_map.tests.factories import ContentTypeMapFactory
+from bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
+from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
+
+
+lab_tracker.autodiscover()
+
+

@@ -65,16 +65,16 @@ class RegisteredSubjectDashboard(Dashboard):
         self.include_after_exclusion_model_keyed = []
         self.scheduled_entry_bucket_rules = []
 
-    def _prepare_dispatch_subject(self):
-        if self.registered_subject:
-            try:
-                from bhp_dispatch.helpers import is_dispatched_registered_subject
-                self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
-                self.context.add(
-                    is_dispatched=self.is_dispatched,
-                    dispatch_producer=self.dispatch_producer)
-            except:
-                pass
+#     def _prepare_dispatch_subject(self):
+#         if self.registered_subject:
+#             try:
+#                 from bhp_dispatch.helpers import is_dispatched_registered_subject
+#                 self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
+#                 self.context.add(
+#                     is_dispatched=self.is_dispatched,
+#                     dispatch_producer=self.dispatch_producer)
+#             except:
+#                 pass
 
     def create(self, **kwargs):
         super(RegisteredSubjectDashboard, self).create(**kwargs)
@@ -119,6 +119,8 @@ class RegisteredSubjectDashboard(Dashboard):
             extra_url_context=self.extra_url_context
             )
         if not self.requisition_model:
+            self.requisition_model = kwargs.get('requisition_model', None)
+        if not self.requisition_model:
             raise AttributeError('RegisteredSubjectDashboard.create() requires attribute '
                                  '\'requisition_model\'. Got none.')
         if not visit_model:
@@ -141,7 +143,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._prepare_scheduled_entry_bucket(visit_code)
         self._prepare_scheduled_lab_bucket(visit_code)
         self._prepare_additional_lab_bucket(visit_code)
-        self._prepare_dispatch_subject()
+        #self._prepare_dispatch_subject()
         self.render_summary_links()
 
     def _add_or_update_entry_buckets(self, visit_model_instance):
@@ -256,9 +258,9 @@ class RegisteredSubjectDashboard(Dashboard):
             # or filter appointments for the current membership category
             # schedule_group__membership_form
             codes = MembershipForm.objects.codes_for_category(membership_form_category=self._get_membership_form_category())
-            appointments = Appointment.objects.filter(registered_subject=self.registered_subject,
-                                                      visit_definition__code__in=codes,
-                                                      ).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
+            appointments = Appointment.objects.filter(
+                registered_subject=self.registered_subject,
+                visit_definition__code__in=codes).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
         self.context.add(appointments=appointments)
 
     def _set_current_visit(self, visit_model, appointment=None):
@@ -288,7 +290,6 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def _prepare_additional_entry_bucket(self):
         # get additional crfs
-        
         additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.registered_subject)
         self.context.add(additional_entry_bucket=additional_entry_bucket)
         return additional_entry_bucket
@@ -337,7 +338,8 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def _get_membership_form_category(self):
         if not self._membership_form_category:
-            self._set_membership_form_category()
+            raise AttributeError('Attribute \'_membership_form_category\' cannot be None')
+            #self._set_membership_form_category()
         return self._membership_form_category
 
     def _prepare_membership_forms(self, membership_form_category=None):
@@ -345,7 +347,9 @@ class RegisteredSubjectDashboard(Dashboard):
         # add membership forms for this registered_subject and subject_type
         # these are the KEYED, UNKEYED schedule group membership forms
         self._set_membership_form_category(membership_form_category)
-        membership_forms = ScheduleGroup.objects.get_membership_forms_for(self.registered_subject, self._get_membership_form_category(),
+        membership_forms = ScheduleGroup.objects.get_membership_forms_for(
+            self.registered_subject,
+            self._get_membership_form_category(),
             exclude_others_if_keyed_model_name=self.exclude_others_if_keyed_model_name,
             include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed)
         self.context.add(
