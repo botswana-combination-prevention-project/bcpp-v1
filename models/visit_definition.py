@@ -20,6 +20,8 @@ class VisitDefinition(BaseWindowPeriodItem):
         max_length=35,
         db_index=True)
     schedule_group = models.ManyToManyField(ScheduleGroup,
+        null=True,
+        blank=True,
         help_text="Visit definition may be used in more than one schedule_group")
     instruction = models.TextField(
         verbose_name="Instructions",
