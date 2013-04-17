@@ -16,3 +16,6 @@ from outpatient_care import OutpatientCare
 from hospital_admission import HospitalAdmission
 from hiv_health_care_costs import HivHealthCareCosts
 from labour_market_wages import LabourMarketWages, Grant
+
+#CS001
+from baseline_household_survey import BaselineHouseholdSurvey
