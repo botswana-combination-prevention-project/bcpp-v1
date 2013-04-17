@@ -23,72 +23,55 @@ class AppointmentHelper(object):
         """
         # base_appt_datetime must come from the membership_form model and not from the appt_datetime
         # of the first appointment as the user may change this.
-        # base_appt_datetime = kwargs.get("base_appt_datetime")
-        if source != 'BaseAppointmentMixin':
+        appointments = []
+        if source != 'BaseAppointmentMixin':  # just a temporary check to ensure this is called by the signal
             raise ImproperlyConfigured('AppointmentHelper.create_all() may only be called from BaseAppointmentMixin.')
         if ScheduleGroup.objects.filter(membership_form__content_type_map__model=model_name):
-            # get list of visits for scheduled group containing this model
-            # get schedule_group
             schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model=model_name)
-            # get membership_form model class of this schedule_group for this registered_subject
-            membership_form_model = get_model(app_label=schedule_group.membership_form.content_type_map.app_label, model_name=model_name)
-            if membership_form_model.objects.filter(registered_subject=registered_subject):
-                # in some cases, send the base_appt_datetime, such as when
-                # the visit_datetime is a next appt datetime.
-                # But ideally, it is better to get this from
-                # get_registration_datetime() on the model.
+            membership_form_model = schedule_group.membership_form.content_type_map.model_class()
+            if membership_form_model.objects.filter(registered_subject=registered_subject).exists():
+                # found an existing membership form ...
+                # need base_appt_datetime. if not passed, such as when the visit_datetime is a
+                # next appt datetime, get from get_registration_datetime() on this model.
                 if not base_appt_datetime:
-                    # determine base_appt_datetime using the membership_form instance
-                    # for an existing membership form
+                    # determine base_appt_datetime using this membership_form instance
                     membership_form = membership_form_model.objects.get(registered_subject=registered_subject)
                     base_appt_datetime = membership_form.get_registration_datetime()
             else:
-                # we may be calling this method as a new membership form is being inserted
-                # once the instance is saved, the created attribute will = datetime.today()
-                #base_appt_datetime = datetime.today()
-
-                # i have decided that it is safer for the model_instance to return the
-                # base_appt_datetime instead of assuming datetime.today(),
-                # thus, the model save() method must have been called already.
-                # ...see BaseRegisteredSubjectModel.save()
-                # so if you get here throw an error.
-                raise AttributeError("%s method %s cannot determine the registration model_instance. "
-                                     "This is needed to call get_registration_datetime()." % (self, inspect.stack()[0][3],))
+                # not found, which is supposed to be impossible -- this is called in post_save signal.
+                raise ImproperlyConfigured("Cannot get the membership_form_model instance. Expected to find an instance of model {0} belonging to schedule group {1}.".format(membership_form_model, schedule_group))
             visit_definitions = VisitDefinition.objects.filter(schedule_group=schedule_group)
             appointment_date_helper = AppointmentDateHelper()
             Appointment = get_model('bhp_appointment', 'appointment')
+            if not visit_definitions:
+                raise ImproperlyConfigured('No visit_definitions found for membership form class {0} in schedule group {1}. Expected at least one visit definition to be associated with schedule group {1}.'.format(membership_form_model, schedule_group))
             for visit_definition in visit_definitions:
-                # calculate the appointment date
+                # calculate the appointment date for new appointments
                 if visit_definition.time_point == 0:
-                    #appt_datetime = self.best_appointment_datetime(appt_datetime=base_appt_datetime)
                     appt_datetime = appointment_date_helper.get_best_datetime(base_appt_datetime, registered_subject.study_site)
                 else:
                     appt_datetime = appointment_date_helper.get_relative_datetime(base_appt_datetime, visit_definition)
-                # if appt exists, update appt_datetime
-                if Appointment.objects.filter(
-                            registered_subject=registered_subject,
-                            visit_definition=visit_definition,
-                            visit_instance='0'):
-                    appt = Appointment.objects.get(
-                                registered_subject=registered_subject,
-                                visit_definition=visit_definition,
-                                visit_instance='0')
-                    if appt.best_appt_datetime != appt_datetime:
-                        # the calculated appointment date does not match the best_appt_datetime
+                # get or create an appointment for this visit definition
+                defaults = {
+                    'appt_datetime': appt_datetime,
+                    'timepoint_datetime': appt_datetime,
+                    'dashboard_type': dashboard_type}
+                appointment, created = Appointment.objects.get_or_create(
+                    registered_subject=registered_subject,
+                    visit_definition=visit_definition,
+                    visit_instance='0',
+                    defaults=defaults)
+                if not created:
+                    td = appointment.best_appt_datetime - appt_datetime
+                    if abs(td.total_seconds()) > 59:
+                        # the calculated appointment date does not match the best_appt_datetime (not within 59 seconds)
                         # which means you changed the date on the membership form and now
                         # need to correct the best_appt_datetime
-                        appt.appt_datetime = appt_datetime  # TODO: are you sure you want to change this date?"
-                        appt.best_appt_datetime = appt_datetime
-                        appt.save()
-                # else create a new appointment
-                else:
-                    Appointment.objects.create(
-                        registered_subject=registered_subject,
-                        visit_definition=visit_definition,
-                        visit_instance='0',
-                        appt_datetime=appt_datetime,
-                        timepoint_datetime=appt_datetime,
-                        dashboard_type=dashboard_type)
+                        appointment.appt_datetime = appt_datetime
+                        appointment.best_appt_datetime = appt_datetime
+                        appointment.save()
+                appointments.append(appointment)
+        return appointments
 
     def delete_for_instance(self, model_instance):
         """ Delete appointments for this registered_subject for this model_instance but only if visit report not yet submitted """
