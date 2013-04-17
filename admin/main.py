@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -364,3 +364,37 @@ class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
         "weeks_out": admin.VERTICAL,
         }
 admin.site.register(LabourMarketWages, LabourMarketWagesAdmin)
+
+
+# BaselineHouseholdSurvey
+class BaselineHouseholdSurveyAdmin(SubjectVisitModelAdmin):
+
+    form = BaselineHouseholdSurveyForm
+    fields = (
+        "subject_visit",
+        "flooring_type",
+        "flooring_type_other",
+        "living_rooms",
+        "water_source",
+        "water_source_other",
+        "energy_source",
+        "toilet_facility",
+        "electrical_appliances",
+        "transport_mode",
+        "goats_owned",
+        "sheep_owned",
+        "cattle_owned",
+        "smaller_meals",
+        )
+    radio_fields = {
+        "flooring_type": admin.VERTICAL,
+        "water_source": admin.VERTICAL,
+        "energy_source": admin.VERTICAL,
+        "toilet_facility": admin.VERTICAL,
+        "smaller_meals": admin.VERTICAL,
+        }
+    filter_horizontal = (
+        "electrical_appliances",
+        "transport_mode",
+        )
+admin.site.register(BaselineHouseholdSurvey, BaselineHouseholdSurveyAdmin)
