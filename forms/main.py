@@ -1,6 +1,6 @@
 from django import forms
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant 
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey 
 
 
 # SubjectLocator
@@ -100,3 +100,10 @@ class GrantForm (BaseSubjectModelForm):
 
     class Meta:
         model = Grant
+
+
+# BaselineHouseholdSurvey
+class BaselineHouseholdSurveyForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = BaselineHouseholdSurvey
