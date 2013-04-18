@@ -1,6 +1,6 @@
 from django import forms
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey 
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist 
 
 
 # SubjectLocator
@@ -107,3 +107,17 @@ class BaselineHouseholdSurveyForm (BaseSubjectModelForm):
 
     class Meta:
         model = BaselineHouseholdSurvey
+
+
+# CeaEnrollmentChecklist
+class CeaEnrolmentChecklistForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = CeaEnrolmentChecklist
+
+
+#CsEnrolmentChecklist
+class CsEnrolmentChecklistForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = CsEnrolmentChecklist
