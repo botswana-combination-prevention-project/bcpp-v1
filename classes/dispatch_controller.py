@@ -232,12 +232,12 @@ class DispatchController(BaseDispatchController):
             if scheduled_instances:
                 self.dispatch_user_items_as_json(scheduled_instances, user_container)
 
-    def dispatch_requisitions(self, app_label, registered_subject, user_container):
+    def dispatch_requisitions(self, app_label, registered_subject, user_container, multiple_visit_field_attname=False):
         """Dispatches all lab requisitions for this subject."""
         visit_field_attname = None
         requisition_models = self.get_requisition_models(app_label)
         for requisition_cls in requisition_models:
-            if not visit_field_attname:
+            if not visit_field_attname or multiple_visit_field_attname:
                 visit_field_attname = VisitModelHelper.get_field_name(requisition_cls)
             requisitions = requisition_cls.objects.filter(**{'{0}__appointment__registered_subject'.format(visit_field_attname): registered_subject})
             if requisitions:
