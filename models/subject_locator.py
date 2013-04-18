@@ -70,7 +70,7 @@ class SubjectLocator(BaseLocator):
         null=True,
         )
 
-    history = AuditTrail(show_in_admin=True)
+    history = AuditTrail()
 
     objects = models.Manager()
 
@@ -95,4 +95,4 @@ class SubjectLocator(BaseLocator):
 
     class Meta:
         verbose_name = 'Subject Locator'
-        app_label = 'cancer_subject'
+        app_label = 'bcpp_subject'
