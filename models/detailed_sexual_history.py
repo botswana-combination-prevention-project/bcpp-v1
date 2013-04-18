@@ -116,6 +116,6 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         help_text=("Remember: Vaginal sex is when a man puts his penis in the vagina of a woman."
                    " Anal sex is when a man puts his penis in the rectum of a man or a woman."),
         )
-
+    
     class Meta:
         abstract = True
