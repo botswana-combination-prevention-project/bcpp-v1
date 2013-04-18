@@ -10,6 +10,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
     form = SubjectConsentForm
     fields = (
         "subject_identifier",
+#         "registered_subject",
         "first_name",
         "last_name",
         "initials",
@@ -24,6 +25,8 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         "confirm_identity",
         "may_store_samples",
         "is_incarcerated",
+        "is_literate",
+        "witness_name",
         "comment",
         "consent_reviewed",
         "study_questions",
@@ -36,6 +39,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         "gender": admin.VERTICAL,
         "is_dob_estimated": admin.VERTICAL,
         "is_incarcerated": admin.VERTICAL, 
+        "is_literate": admin.VERTICAL,
         "consent_reviewed": admin.VERTICAL,
         "study_questions": admin.VERTICAL,
         "assessment_score": admin.VERTICAL,
