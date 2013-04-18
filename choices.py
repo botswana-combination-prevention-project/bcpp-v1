@@ -317,29 +317,29 @@ SMALLER_MEALS = (
     ('Don\'t want to answer', 'Don\t want to answer'),
 )
 
-# 
-# = (
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-# )
-# 
-# 
-# = (
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-# )
-# 
-# 
+ 
+ENROLMENT_REASON = (
+    ('CD4 < 50', 'Most recent (within past 3 months) CD4 < 50'),
+    ('CD4 50-100', 'Most recent (within past 3 months) CD4 50-100'),
+    ('AIDS opportunistic infection/condition', 'Current AIDS opportunistic infection/condition'),
+)
+ 
+ 
+OPPORTUNISTIC_ILLNESSES = (
+    ('Tuberculosis', 'Tuberculosis'),
+    ('Wasting', 'Wasting'),
+    ('Cryptococcosis', 'Cryptococcosis'),
+    ('severe bacterial pneumonia', 'Recurrent severe bacterial pneumonia'),
+    ('Esophageal candidiasis', 'Esophageal candidiasis'),
+    ('Pneumocystis pneumonia', 'Pneumocystis pneumonia'),
+    ('Kaposi\'s sarcoma', 'Kaposi\'s sarcoma'),
+    ('Cervical cancer', 'Cervical cancer'),
+    ('Non-Hodgkin\'s lymphoma', 'Non-Hodgkin\'s lymphoma'),
+    ('Other, record', 'Other, record'),
+    ('No current AIDS opportunistic illness', 'No current AIDS opportunistic illness'),
+)
+ 
+ 
 # = (
 #     ('', ''),
 #     ('', ''),
