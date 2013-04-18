@@ -2,10 +2,11 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_botswana.models import BaseBwConsent
+# from base_subject_consent import BaseSubjectConsent
 
 
 class SubjectConsent(BaseBwConsent):
-
+    
     history = AuditTrail()
     
     objects = models.Manager()
