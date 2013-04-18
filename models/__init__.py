@@ -19,3 +19,8 @@ from labour_market_wages import LabourMarketWages, Grant
 
 #CS001
 from baseline_household_survey import BaselineHouseholdSurvey
+
+#CE003
+from cea_enrolment_checklist import CeaEnrolmentChecklist
+#CS008
+from cs_enrolment_checklist import CsEnrolmentChecklist
