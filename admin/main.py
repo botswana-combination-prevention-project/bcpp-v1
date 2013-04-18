@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -398,3 +398,53 @@ class BaselineHouseholdSurveyAdmin(SubjectVisitModelAdmin):
         "transport_mode",
         )
 admin.site.register(BaselineHouseholdSurvey, BaselineHouseholdSurveyAdmin)
+
+
+# CeaEnrolmentChecklist
+class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
+
+    form = CeaEnrolmentChecklistForm
+    fields = (
+        "registered_subject",
+#         "registration_datetime",
+        "mental_capacity",
+        "incarceration",
+        "citizen",
+        "community_resident",
+        "enrolment_reason",
+        "cd4_date",
+        "cd4_count",
+        "opportunistic_illness",
+        "diagnosis_date",
+        "date_signed",)
+    radio_fields = {
+        "mental_capacity": admin.VERTICAL, 
+        "incarceration": admin.VERTICAL,
+        "citizen": admin.VERTICAL,
+        "community_resident": admin.VERTICAL,
+        "enrolment_reason": admin.VERTICAL,
+        "opportunistic_illness": admin.VERTICAL,}
+admin.site.register(CeaEnrolmentChecklist, CeaEnrolmentChecklistAdmin)
+
+
+#CsEnrolmentChecklist
+class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
+
+    form = CsEnrolmentChecklistForm
+    fields = (
+        "registered_subject",         
+        "registration_datetime",
+        "census_number",
+        "mental_capacity",
+        "incarceration",
+        "citizen",
+        "community_resident",
+        "date_minor_signed",
+        "date_guardian_signed",
+        "date_consent_signed",)
+    radio_fields = {
+        "mental_capacity": admin.VERTICAL, 
+        "incarceration": admin.VERTICAL,
+        "citizen": admin.VERTICAL,
+        "community_resident": admin.VERTICAL,}
+admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
