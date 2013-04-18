@@ -90,10 +90,10 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                 raise TypeError('Method dispatch_container_lookup must return a (model class/tuple, list) that points to the user container')
             lookup_attrs = lookup_attrs.split('__')
             # last item in the list must be the container identifier
-            if not lookup_attrs[-1:] == [user_container_model_cls().dispatched_as_container_identifier_attr()]:
-                raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_container_lookup() '
-                                           'must return a lookup attr string that ends in the container '
-                                           'identifier field name.'.format(user_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
+#            if not lookup_attrs[-1:] == [user_container_model_cls().dispatched_as_container_identifier_attr()]:
+#                raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_container_lookup() '
+#                                           'must return a lookup attr string that ends in the container '
+#                                           'identifier field name.'.format(user_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
             lookup_value = self
             # TODO: fails sometimes on getattr
             for attrname in lookup_attrs:
