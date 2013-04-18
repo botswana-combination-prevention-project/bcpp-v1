@@ -68,7 +68,8 @@ class SignalManager(object):
         elif isinstance(obj, basestring):
             object_name = obj
         else:
-            raise TypeError('Expected a model class or a string of the name of the model class. Got {0}'.format(obj))
+            object_name = obj._meta.object_name.lower()
+            #raise TypeError('Expected a model class or a string of the name of the model class. Got {0}'.format(obj))
         for dispatch_uid in ['audit_serialize_on_save_{0}audit'.format(object_name), 'audit_on_save_{0}audit'.format(object_name)]:
             audit_signal = self.get_signal_by_dispatch_uid(dispatch_uid)
             if audit_signal:
