@@ -28,8 +28,8 @@ def dashboard(request, **kwargs):
             registered_subject=registered_subject,
             visit_code=kwargs.get('visit_code'),
             visit_instance=kwargs.get("visit_instance"))
-#        dashboard.context.add(
-#            subject_consent=subject_consent)
+        dashboard.context.add(
+            subject_consent=subject_consent)
     else:
         raise ValueError('Unknown dashboard_type, must be \'subject\'. Got %s' % kwargs.get('dashboard_type'))
     return render_to_response(
