@@ -14,3 +14,4 @@ class ThirdPartner (DetailedSexualHistory):
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = "CS003: Third Partner"
+        verbose_name_plural = "CS003: Third Partner"

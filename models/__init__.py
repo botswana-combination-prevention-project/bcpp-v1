@@ -24,3 +24,17 @@ from baseline_household_survey import BaselineHouseholdSurvey
 from cea_enrolment_checklist import CeaEnrolmentChecklist
 #CS008
 from cs_enrolment_checklist import CsEnrolmentChecklist
+
+
+#CS002
+from residency_mobility import ResidencyMobility
+from demographics import Demographics
+from community_engagement import CommunityEngagement
+from education import Education
+from hiv_testing_history import HivTestingHistory
+from hiv_test_review import HivTestReview
+from hiv_testing_supplemental import HivTestingSupplemental
+from sexual_behaviour import SexualBehaviour
+from months_recent_partner import MonthsRecentPartner
+from months_second_partner import MonthsSecondPartner
+from months_third_partner import MonthsThirdPartner
