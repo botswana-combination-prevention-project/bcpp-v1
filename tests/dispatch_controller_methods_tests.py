@@ -432,10 +432,10 @@ class DispatchControllerMethodsTests(BaseControllerTests):
         self.assertRegexpMatches(str(self.test_item.pk), r'[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
 
     def test_dispatch_item_and_container(self):
-        TestContainer.objects.all().delete()
-        TestContainer.objects.using(self.using_destination).all().delete()
         TestItem.objects.all().delete()
         TestItem.objects.using(self.using_destination).all().delete()
+        TestContainer.objects.all().delete()
+        TestContainer.objects.using(self.using_destination).all().delete()
         if not self.producer:
             self.create_producer(True)
         self.create_test_item()

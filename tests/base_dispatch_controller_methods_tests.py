@@ -6,6 +6,8 @@ from bhp_sync.exceptions import ProducerError
 from bhp_dispatch.classes import BaseDispatch, ReturnController, BaseDispatchController
 from bhp_dispatch.exceptions import DispatchError, AlreadyDispatchedContainer, AlreadyRegisteredController
 from bhp_dispatch.models import DispatchContainerRegister, TestContainer, DispatchItemRegister
+from bhp_dispatch.tests.factories import TestContainerFactory
+
 
 class BaseDispatchControllerMethodsTests(TestCase):
 
@@ -27,26 +29,27 @@ class BaseDispatchControllerMethodsTests(TestCase):
     def create_test_container(self):
         self.test_container = TestContainer.objects.create(test_container_identifier=self.user_container_identifier)
 
-    def test_container_p1(self):
-        """Tests for exception if attempting to use a container as an item."""
-        self.base_controller = None
-        # assert that you cannot use TestItem as a container model
-        self.assertRaises(DispatchError, BaseDispatch,
-            'default',
-            'dispatch_destination',
-            self.user_container_app_label,
-            'testitem',
-            'id',
-            '0')
+#     def test_container_p1(self):
+#         """Tests for exception if attempting to use a container as an item."""
+#         self.base_controller = None
+#         # assert that you cannot use TestItem as a container model
+#         self.assertRaises(DispatchError, BaseDispatch,
+#             'default',
+#             'dispatch_destination',
+#             self.user_container_app_label,
+#             'testitem',
+#             'id',
+#             '0')
 
     def test_container_p2(self):
+        test_container = TestContainerFactory()
         base_controller = BaseDispatch(
             'default',
             'dispatch_destination',
-            self.user_container_app_label,
-            self.user_container_model_name,
-            self.user_container_identifier_attrname,
-            self.user_container_identifier)
+            test_container._meta.app_label,
+            test_container._meta.object_name,
+            'test_container_identifier',
+            test_container.test_container_identifier)
         #assert a dispatch container instance exists
         self.assertIsInstance(base_controller.get_container_register_instance(), DispatchContainerRegister)
         # assert there is only one
