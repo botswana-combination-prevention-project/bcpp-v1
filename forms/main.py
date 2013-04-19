@@ -1,6 +1,6 @@
 from django import forms
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist 
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner 
 
 
 # SubjectLocator
@@ -121,3 +121,95 @@ class CsEnrolmentChecklistForm (BaseSubjectModelForm):
 
     class Meta:
         model = CsEnrolmentChecklist
+
+
+#ResidencyMobility
+class ResidencyMobilityForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = ResidencyMobility
+
+
+#Demographics
+class DemographicsForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = Demographics
+
+
+#CommunityEngagement
+class CommunityEngagementForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = CommunityEngagement
+
+
+#Education
+class EducationForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = Education
+
+
+#HivTestingHistory
+class HivTestingHistoryForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = HivTestingHistory
+
+
+#HivTestReview
+class HivTestReviewForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = HivTestReview
+
+
+#HivTestingSupplemental
+class HivTestingSupplementalForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = HivTestingSupplemental
+
+
+#SexualBehaviour
+class SexualBehaviourForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = SexualBehaviour
+        
+
+#MonthsRecentPartner
+class MonthsRecentPartnerForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = MonthsRecentPartner
+
+
+# MonthsSecondPartner
+class MonthsSecondPartnerForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = MonthsSecondPartner
+
+
+# MonthsThirdPartner
+class MonthsThirdPartnerForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = MonthsThirdPartner
