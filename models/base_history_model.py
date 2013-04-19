@@ -17,8 +17,8 @@ class BaseHistoryModel(BaseUuidModel):
     source_identifier = models.CharField(max_length=50, null=True)
     history_datetime = models.DateTimeField(null=True)
 
-#    def include_for_dispatch(self):
-#        return True
+    def __unicode__(self):
+        return '{0}-{1}-{2}-{3}-{4}'.format(self.subject_identifier, self.test_code, self.value, self.value_datetime, self.pk)
 
     class Meta:
         abstract = True

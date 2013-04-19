@@ -1,4 +1,5 @@
 import copy
+from datetime import datetime
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.utils.importlib import import_module
@@ -81,6 +82,26 @@ class SiteLabTracker(object):
             if lab_tracker_cls().get_group_name() == group_name:
                 return lab_tracker_cls
         return None
+
+    def get_history_as_qs(self, group_name, subject_identifier, reference_datetime=None):
+        self.confirm_autodiscovered()
+        retval = ''
+        if not reference_datetime:
+            reference_datetime = datetime.today()
+        for lab_tracker_cls in self._registry:
+            if lab_tracker_cls().get_group_name() == group_name:
+                retval = lab_tracker_cls().get_history(group_name, subject_identifier, reference_datetime)
+        return retval
+
+    def get_history_as_list(self, group_name, subject_identifier, reference_datetime=None):
+        self.confirm_autodiscovered()
+        retval = ''
+        if not reference_datetime:
+            reference_datetime = datetime.today()
+        for lab_tracker_cls in self._registry:
+            if lab_tracker_cls().get_group_name() == group_name:
+                retval = lab_tracker_cls().get_history_as_list(subject_identifier, reference_datetime)
+        return retval
 
     def get_history_as_string(self, group_name, subject_identifier, mapped=True):
         self.confirm_autodiscovered()
