@@ -1,6 +1,6 @@
 from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
 # from bhp_registration.models import RegisteredSubject
-from models import SubjectVisit, ResourceUtilization
+from models import SubjectVisit, ResourceUtilization, HivTestingHistory, SexualBehaviour
 
 
 class ResourceUtilizationRuleGroup(RuleGroup):
@@ -24,3 +24,43 @@ class ResourceUtilizationRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = ResourceUtilization
 rule_groups.register(ResourceUtilizationRuleGroup)
+
+
+class HivTestingHistoryRuleGroup(RuleGroup):
+
+    hivtestrecord = ScheduledDataRule(
+        logic=Logic(
+            predicate=('hivtestrecord', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivtestreview'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivTestingHistory
+rule_groups.register(HivTestingHistoryRuleGroup)
+
+
+class SexualBehaviourRuleGroup(RuleGroup):
+    
+    eversex_two = ScheduledDataRule(
+        logic=Logic(
+            predicate=('eversex', 'equals', 'No'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+    
+    eversex = ScheduledDataRule(
+        logic=Logic(
+            predicate=('eversex', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['monthsrecentpartner'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = SexualBehaviour
+rule_groups.register(SexualBehaviourRuleGroup)
+
