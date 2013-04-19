@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -448,3 +448,561 @@ class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "citizen": admin.VERTICAL,
         "community_resident": admin.VERTICAL,}
 admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
+
+
+
+#ResidentSurvey WIKI
+'''
+copy the following to your ModelAdmin class in admin.py
+class CS002Admin (MyModelAdmin):
+    fields = (
+        'smoke',
+        'lowestCD4',
+        'smoke',
+        'everrecommendedarv',
+        'evertakearv',
+        'whynoarv',
+        'onarv',
+        'whynoarv',
+        'adherence4day',
+        'adherence4wk',
+        'circumcised',
+        'circumcised',
+        'healthbenefitsSMC',
+        'reasoncirc',
+        'futurecirc',
+        'whynohivtest',
+        'whynohivtest',
+        'whynohivtest',
+        'futurereasonsSMC',
+        'awarefree',
+        'awarefree',
+        'whencirc',
+        'wherecirc',
+        'whycirc',
+        'numberchildren',
+        'morechildren',
+        'wherecirc',
+        'familyplanning',
+        'currentpregnant',
+        'ancreg',
+        'anclastpregnancy',
+        'hivlastpregnancy',
+        'pregARV',
+        'heartattack',
+        'heartattackrecord',
+        'dxheartattack',
+        'cancer',
+        'cancerrecord',
+        'dxcancer',
+        'sti',
+        'tb',
+        'tbrecord',
+        'dxTB',
+        'alcohol',
+        'smoke',
+        'anticipatestigma',
+        'enactedshamestigma',
+        'salivastigma',
+        'teacherstigma',
+        'teacherstigma',
+        'testcommunitystigma',
+        'gossipcommunitystigma',
+        'respectcommunitystigma',
+        'enactedverbalstigma',
+        'enactedphyicalstigma',
+        'enactedfamilystigma',
+        'fearstigma',
+        'internalize1stigma',
+        'internalized2stigma',
+        'friendstigma',
+        'familystigma',
+        'enactedtalkstigma',
+        'enactedrespectstigma',
+        'enactedjobstigma',
+        'whereaccess',
+        'whereaccess',
+        'overallaccess',
+        'emergencyaccess',
+        'expensiveaccess',
+        'convenientaccess',
+        'wheneverlaccess',
+        'mobiltyqol',
+        'selfcareqol',
+        'activitiesqol',
+        'painqol',
+        'anxietyqol',
+        'healthqol',
+        'anyvisit3mo',
+        'pcvisit3mo',
+        'hospvisit3mo',
+        'privatevisit3mo',
+        'tradvisit3mo',
+        'totalvisit3mo',
+        'recentvisit',
+        'clinic3mo',
+        'revisit3mo',
+        'costvisit3mo',
+        'timetoclinic3mo',
+        'transportcosts3mo',
+        'otherpaymentcosts3mo',
+        'waitcosts',
+        'hosp3mo',
+        'nightshosp3mo',
+        'rehospmo',
+        'hospital3mo',
+        'recenthospnights3mo',
+        'costhosp3mo',
+        'timetohosp3mo',
+        'transporthosp3mo',
+        'otherpaymenthosp3mo',
+        'medicines3mo',
+        'otherpaymentmeds3mo',
+        'hivcarecosts',
+        'hivnocarecosts',
+        'hivcarelocationcosts',
+        'hivcaretimescosts',
+        'hivaccompanycosts',
+        'employedcosts',
+        'occupationcosts',
+        'workchangecosts',
+        'workdayscosts',
+        'workincomecosts',
+        'workpaidcosts',
+        'householdincomecosts',
+        'nonworkactivitiescosts',
+        'workpaidcosts',
+        'workpaidcosts',
+        'nightsawaycosts',
+        'weeksawaycosts',
+        'dayslostcosts',
+        'dayslostadlcosts',
+    )
+    radio_fields = {
+        "smoke":admin.VERTICAL,
+        "lowestCD4":admin.VERTICAL,
+        "smoke":admin.VERTICAL,
+        "everrecommendedarv":admin.VERTICAL,
+        "evertakearv":admin.VERTICAL,
+        "whynoarv":admin.VERTICAL,
+        "onarv":admin.VERTICAL,
+        "whynoarv":admin.VERTICAL,
+        "adherence4day":admin.VERTICAL,
+        "adherence4wk":admin.VERTICAL,
+        "circumcised":admin.VERTICAL,
+        "circumcised":admin.VERTICAL,
+        "healthbenefitsSMC":admin.VERTICAL,
+        "reasoncirc":admin.VERTICAL,
+        "futurecirc":admin.VERTICAL,
+        "whynohivtest":admin.VERTICAL,
+        "whynohivtest":admin.VERTICAL,
+        "whynohivtest":admin.VERTICAL,
+        "futurereasonsSMC":admin.VERTICAL,
+        "awarefree":admin.VERTICAL,
+        "awarefree":admin.VERTICAL,
+        "wherecirc":admin.VERTICAL,
+        "whycirc":admin.VERTICAL,
+        "morechildren":admin.VERTICAL,
+        "wherecirc":admin.VERTICAL,
+        "familyplanning":admin.VERTICAL,
+        "currentpregnant":admin.VERTICAL,
+        "ancreg":admin.VERTICAL,
+        "anclastpregnancy":admin.VERTICAL,
+        "hivlastpregnancy":admin.VERTICAL,
+        "pregARV":admin.VERTICAL,
+        "heartattack":admin.VERTICAL,
+        "heartattackrecord":admin.VERTICAL,
+        "dxheartattack":admin.VERTICAL,
+        "cancer":admin.VERTICAL,
+        "cancerrecord":admin.VERTICAL,
+        "dxcancer":admin.VERTICAL,
+        "sti":admin.VERTICAL,
+        "tb":admin.VERTICAL,
+        "tbrecord":admin.VERTICAL,
+        "dxTB":admin.VERTICAL,
+        "alcohol":admin.VERTICAL,
+        "smoke":admin.VERTICAL,
+        "anticipatestigma":admin.VERTICAL,
+        "enactedshamestigma":admin.VERTICAL,
+        "salivastigma":admin.VERTICAL,
+        "teacherstigma":admin.VERTICAL,
+        "teacherstigma":admin.VERTICAL,
+        "testcommunitystigma":admin.VERTICAL,
+        "gossipcommunitystigma":admin.VERTICAL,
+        "respectcommunitystigma":admin.VERTICAL,
+        "enactedverbalstigma":admin.VERTICAL,
+        "enactedphyicalstigma":admin.VERTICAL,
+        "enactedfamilystigma":admin.VERTICAL,
+        "fearstigma":admin.VERTICAL,
+        "internalize1stigma":admin.VERTICAL,
+        "internalized2stigma":admin.VERTICAL,
+        "friendstigma":admin.VERTICAL,
+        "familystigma":admin.VERTICAL,
+        "enactedtalkstigma":admin.VERTICAL,
+        "enactedrespectstigma":admin.VERTICAL,
+        "enactedjobstigma":admin.VERTICAL,
+        "whereaccess":admin.VERTICAL,
+        "whereaccess":admin.VERTICAL,
+        "overallaccess":admin.VERTICAL,
+        "emergencyaccess":admin.VERTICAL,
+        "expensiveaccess":admin.VERTICAL,
+        "convenientaccess":admin.VERTICAL,
+        "wheneverlaccess":admin.VERTICAL,
+        "mobiltyqol":admin.VERTICAL,
+        "selfcareqol":admin.VERTICAL,
+        "activitiesqol":admin.VERTICAL,
+        "painqol":admin.VERTICAL,
+        "anxietyqol":admin.VERTICAL,
+        "anyvisit3mo":admin.VERTICAL,
+        "pcvisit3mo":admin.VERTICAL,
+        "hospvisit3mo":admin.VERTICAL,
+        "privatevisit3mo":admin.VERTICAL,
+        "tradvisit3mo":admin.VERTICAL,
+        "recentvisit":admin.VERTICAL,
+        "revisit3mo":admin.VERTICAL,
+        "timetoclinic3mo":admin.VERTICAL,
+        "otherpaymentcosts3mo":admin.VERTICAL,
+        "waitcosts":admin.VERTICAL,
+        "rehospmo":admin.VERTICAL,
+        "timetohosp3mo":admin.VERTICAL,
+        "otherpaymenthosp3mo":admin.VERTICAL,
+        "otherpaymentmeds3mo":admin.VERTICAL,
+        "hivcarecosts":admin.VERTICAL,
+        "hivnocarecosts":admin.VERTICAL,
+        "hivcarelocationcosts":admin.VERTICAL,
+        "hivcaretimescosts":admin.VERTICAL,
+        "hivaccompanycosts":admin.VERTICAL,
+        "employedcosts":admin.VERTICAL,
+        "occupationcosts":admin.VERTICAL,
+        "workincomecosts":admin.VERTICAL,
+        "workpaidcosts":admin.VERTICAL,
+        "householdincomecosts":admin.VERTICAL,
+        "nonworkactivitiescosts":admin.VERTICAL,
+        "workpaidcosts":admin.VERTICAL,
+        "workpaidcosts":admin.VERTICAL,
+        "weeksawaycosts":admin.VERTICAL,
+    }
+admin.site.register(CS002, CS002Admin)
+'''
+
+# ResidencyMobility
+class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
+ 
+    form = ResidencyMobilityForm
+    fields = (
+        "subject_visit",
+        'lengthresidence',
+        'forteennights',
+        'intendresidency',
+        'nightsaway',
+        'cattlepostlands',
+        'reasonaway',)
+    radio_fields = {
+        "lengthresidence":admin.VERTICAL,
+        "forteennights":admin.VERTICAL,
+        "intendresidency":admin.VERTICAL,
+        "nightsaway":admin.VERTICAL,
+        "cattlepostlands":admin.VERTICAL,
+        "reasonaway":admin.VERTICAL,}
+admin.site.register(ResidencyMobility, ResidencyMobilityAdmin)
+
+
+#Demographics
+class DemographicsAdmin(SubjectVisitModelAdmin):
+ 
+    form = DemographicsForm
+    fields = (
+        "subject_visit",
+        'religion',
+        'ethnic',
+        'maritalstatus',
+        'numwives',
+        'livewith',)
+    radio_fields = {
+        "religion":admin.VERTICAL,
+        "ethnic":admin.VERTICAL,
+        "maritalstatus":admin.VERTICAL,}
+    filter_horizontal = ('livewith',)
+admin.site.register(Demographics, DemographicsAdmin)
+
+
+# CommunityEngagement
+class CommunityEngagementAdmin(SubjectVisitModelAdmin):
+ 
+    form = CommunityEngagementForm
+    fields = (
+        "subject_visit",
+        'communityengagement',
+        'voteengagement',
+        'problemsengagement',
+        'solveengagement',)
+    radio_fields = {
+        "communityengagement":admin.VERTICAL,
+        "voteengagement":admin.VERTICAL,
+        "solveengagement":admin.VERTICAL,}
+    filter_horizontal = ('problemsengagement',)
+admin.site.register(CommunityEngagement, CommunityEngagementAdmin)
+
+
+# Education
+class EducationAdmin(SubjectVisitModelAdmin):
+ 
+    form = EducationForm
+    fields = (
+        "subject_visit",
+        'education',
+        'employment',
+        'moneyforwork',
+        'seekingwork',)
+    radio_fields = {
+        "education":admin.VERTICAL,
+        "employment":admin.VERTICAL,
+        "moneyforwork":admin.VERTICAL,
+        "seekingwork":admin.VERTICAL,}
+admin.site.register(Education, EducationAdmin)
+
+
+# HivTestingHistory
+class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
+ 
+    form = HivTestingHistoryForm
+    fields = (
+        "subject_visit",
+        'HHhivtest',
+        'whynohivtest',
+        'everhivtest',
+        'hivtestrecord',)
+    radio_fields = {
+        "HHhivtest":admin.VERTICAL,
+        "whynohivtest":admin.VERTICAL,
+        "everhivtest":admin.VERTICAL,
+        "hivtestrecord":admin.VERTICAL,}
+admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)
+
+
+#HivTestReview 
+class HivTestReviewAdmin(SubjectVisitModelAdmin):
+ 
+    form = HivTestReviewForm
+    fields = (
+        "subject_visit",
+        "hivtestdate",
+        'recordedhivresult',
+        'whenhivtest',
+        'verbalhivresult',)
+    radio_fields = {
+        "recordedhivresult":admin.VERTICAL,
+        "whenhivtest":admin.VERTICAL,
+        "verbalhivresult":admin.VERTICAL,}
+admin.site.register(HivTestReview, HivTestReviewAdmin)
+
+
+# HivTestingSupplemental 
+class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
+ 
+    form = HivTestingSupplementalForm
+    fields = (
+        "subject_visit",
+        'numhivtests',
+        'wherehivtest',
+        'whyhivtest',
+        'whynohivtest',
+        'hiv_pills',
+        'arvshivtest',
+        'prefer_hivtest',
+        'hivtest_time',
+        'hivtest_week',
+        'hivtest_year',)
+    radio_fields = {
+        "wherehivtest":admin.VERTICAL,
+        "whyhivtest":admin.VERTICAL,
+        "whynohivtest":admin.VERTICAL,
+        "hiv_pills":admin.VERTICAL,
+        "prefer_hivtest":admin.VERTICAL,
+        "whynohivtest":admin.VERTICAL,
+        "hivtest_time":admin.VERTICAL,
+        "hivtest_week":admin.VERTICAL,
+        "hivtest_year":admin.VERTICAL,}
+admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
+
+
+#SexualBehaviour
+class SexualBehaviourAdmin(SubjectVisitModelAdmin):
+ 
+    form = SexualBehaviourForm
+    fields = (
+        "subject_visit",
+        'eversex',
+        'lastyearpartners',
+        'moresex',
+        'firstsex',
+        'condom',
+        'alcohol_sex',
+        'lastsex',
+        'lastsex_calc',)
+    radio_fields = {
+        "eversex":admin.VERTICAL,
+        "moresex":admin.VERTICAL,
+        "condom":admin.VERTICAL,
+        "alcohol_sex":admin.VERTICAL,
+        "lastsex":admin.VERTICAL,}
+admin.site.register(SexualBehaviour, SexualBehaviourAdmin)
+
+
+# MonthsRecentPartner 
+class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
+ 
+    form = MonthsRecentPartnerForm
+    fields = (
+        "subject_visit",
+        'firstpartnerlive',
+        'thirdlastsex',
+        'firstfirstsex',
+        'firstsexcurrent',
+        'firstrelationship',
+        'firstexchange',
+        'concurrent',
+        'goods_exchange',
+        'firstsexfreq',
+        'firstpartnerhiv',
+        'firsthaart',
+        'firstdisclose',
+        'firstcondomfreq',
+        'firstpartnercp',)
+    radio_fields = {
+        "firstpartnerlive":admin.VERTICAL,
+        "thirdlastsex":admin.VERTICAL,
+        "firstfirstsex":admin.VERTICAL,
+        "firstsexcurrent":admin.VERTICAL,
+        "firstrelationship":admin.VERTICAL,
+        "concurrent":admin.VERTICAL,
+        "goods_exchange":admin.VERTICAL,
+        "firstpartnerhiv":admin.VERTICAL,
+        "firsthaart":admin.VERTICAL,
+        "firstdisclose":admin.VERTICAL,
+        "firstcondomfreq":admin.VERTICAL,
+        "firstpartnercp":admin.VERTICAL,}
+admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
+
+
+# MonthsSecondPartner
+class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
+ 
+    form = MonthsSecondPartnerForm
+    fields = (
+        "subject_visit",
+        'firstpartnerlive',
+        'thirdlastsex',
+        'firstsexcurrent',
+        'firstrelationship',
+        'firstexchange',
+        'concurrent',
+        'goods_exchange',
+        'firstsexfreq',
+        'firstpartnerhiv',
+        'firsthaart',
+        'firstdisclose',
+        'firstcondomfreq',
+        'firstpartnercp',)
+    radio_fields = {
+        "firstpartnerlive":admin.VERTICAL,
+        "thirdlastsex":admin.VERTICAL,
+        "firstsexcurrent":admin.VERTICAL,
+        "firstrelationship":admin.VERTICAL,
+        "concurrent":admin.VERTICAL,
+        "goods_exchange":admin.VERTICAL,
+        "firstpartnerhiv":admin.VERTICAL,
+        "firsthaart":admin.VERTICAL,
+        "firstdisclose":admin.VERTICAL,
+        "firstcondomfreq":admin.VERTICAL,
+        "firstpartnercp":admin.VERTICAL,}
+admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
+
+
+#MonthsThirdPartner
+class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
+ 
+    form = MonthsThirdPartnerForm
+    fields = (
+        "subject_visit",
+        'firstpartnerlive',
+        'thirdlastsex',
+        'firstsexcurrent',
+        'firstrelationship',
+        'firstexchange',
+        'concurrent',
+        'goods_exchange',
+        'firstsexfreq',
+        'firstpartnerhiv',
+        'firsthaart',
+        'firstdisclose',
+        'firstcondomfreq',
+        'firstpartnercp',)
+    radio_fields = {
+        "firstpartnerlive":admin.VERTICAL,
+        "thirdlastsex":admin.VERTICAL,
+        "firstsexcurrent":admin.VERTICAL,
+        "firstrelationship":admin.VERTICAL,
+        "concurrent":admin.VERTICAL,
+        "goods_exchange":admin.VERTICAL,
+        "firstpartnerhiv":admin.VERTICAL,
+        "firsthaart":admin.VERTICAL,
+        "firstdisclose":admin.VERTICAL,
+        "firstcondomfreq":admin.VERTICAL,
+        "firstpartnercp":admin.VERTICAL,}
+admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)
+
+
+#
+# class Admin(SubjectVisitModelAdmin):
+# 
+#     form = Form
+#     fields = (
+#         "subject_visit",)
+#     radio_fields = {
+#         "":admin.VERTICAL,}
+# admin.site.register(, Admin)
+
+
+#
+# class Admin(SubjectVisitModelAdmin):
+# 
+#     form = Form
+#     fields = (
+#         "subject_visit",)
+#     radio_fields = {
+#         "":admin.VERTICAL,}
+# admin.site.register(, Admin)
+
+
+#
+# class Admin(SubjectVisitModelAdmin):
+# 
+#     form = Form
+#     fields = (
+#         "subject_visit",)
+#     radio_fields = {
+#         "":admin.VERTICAL,}
+# admin.site.register(, Admin)
+
+
+#
+# class Admin(SubjectVisitModelAdmin):
+# 
+#     form = Form
+#     fields = (
+#         "subject_visit",)
+#     radio_fields = {
+#         "":admin.VERTICAL,}
+# admin.site.register(, Admin)
+
+
+#
+# class Admin(SubjectVisitModelAdmin):
+# 
+#     form = Form
+#     fields = (
+#         "subject_visit",)
+#     radio_fields = {
+#         "":admin.VERTICAL,}
+# admin.site.register(, Admin)
