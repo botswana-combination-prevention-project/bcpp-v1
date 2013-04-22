@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm, HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -456,30 +456,6 @@ admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
 copy the following to your ModelAdmin class in admin.py
 class CS002Admin (MyModelAdmin):
     fields = (
-        'smoke',
-        'lowestCD4',
-        'smoke',
-        'everrecommendedarv',
-        'evertakearv',
-        'whynoarv',
-        'onarv',
-        'whynoarv',
-        'adherence4day',
-        'adherence4wk',
-        'circumcised',
-        'circumcised',
-        'healthbenefitsSMC',
-        'reasoncirc',
-        'futurecirc',
-        'whynohivtest',
-        'whynohivtest',
-        'whynohivtest',
-        'futurereasonsSMC',
-        'awarefree',
-        'awarefree',
-        'whencirc',
-        'wherecirc',
-        'whycirc',
         'numberchildren',
         'morechildren',
         'wherecirc',
@@ -498,7 +474,7 @@ class CS002Admin (MyModelAdmin):
         'sti',
         'tb',
         'tbrecord',
-        'dxTB',
+        'dxTB',        'circumcised',
         'alcohol',
         'smoke',
         'anticipatestigma',
@@ -579,29 +555,6 @@ class CS002Admin (MyModelAdmin):
         'dayslostadlcosts',
     )
     radio_fields = {
-        "smoke":admin.VERTICAL,
-        "lowestCD4":admin.VERTICAL,
-        "smoke":admin.VERTICAL,
-        "everrecommendedarv":admin.VERTICAL,
-        "evertakearv":admin.VERTICAL,
-        "whynoarv":admin.VERTICAL,
-        "onarv":admin.VERTICAL,
-        "whynoarv":admin.VERTICAL,
-        "adherence4day":admin.VERTICAL,
-        "adherence4wk":admin.VERTICAL,
-        "circumcised":admin.VERTICAL,
-        "circumcised":admin.VERTICAL,
-        "healthbenefitsSMC":admin.VERTICAL,
-        "reasoncirc":admin.VERTICAL,
-        "futurecirc":admin.VERTICAL,
-        "whynohivtest":admin.VERTICAL,
-        "whynohivtest":admin.VERTICAL,
-        "whynohivtest":admin.VERTICAL,
-        "futurereasonsSMC":admin.VERTICAL,
-        "awarefree":admin.VERTICAL,
-        "awarefree":admin.VERTICAL,
-        "wherecirc":admin.VERTICAL,
-        "whycirc":admin.VERTICAL,
         "morechildren":admin.VERTICAL,
         "wherecirc":admin.VERTICAL,
         "familyplanning":admin.VERTICAL,
@@ -953,56 +906,104 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",)
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-# admin.site.register(, Admin)
+#HivCareAdherence
+class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
+ 
+    form = HivCareAdherenceForm
+    fields = (
+        "subject_visit",
+        "firstpositive",
+        "medical_care",
+        'everrecommendedarv',
+        'evertakearv',
+        'whynoarv',
+        'onarv',
+        'arv_stop',
+        'adherence4day',
+        'adherence4wk',)
+    radio_fields = {
+        "medical_care":admin.VERTICAL,
+        "everrecommendedarv":admin.VERTICAL,
+        "evertakearv":admin.VERTICAL,
+        "whynoarv":admin.VERTICAL,
+        "onarv":admin.VERTICAL,
+        "arv_stop":admin.VERTICAL,
+        "adherence4day":admin.VERTICAL,
+        "adherence4wk":admin.VERTICAL,}
+admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
+ 
+ 
+#HivMedicalCare
+class HivMedicalCareAdmin(SubjectVisitModelAdmin):
+ 
+    form = HivMedicalCareForm
+    fields = (
+        "subject_visit",
+        "firsthivcarepositive",
+        "lasthivcarepositive",
+        'lowestCD4',
+        'no_medical_care',)
+    radio_fields = {
+        "lowestCD4":admin.VERTICAL,
+        "no_medical_care":admin.VERTICAL,}
+admin.site.register(HivMedicalCare, HivMedicalCareAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",)
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-# admin.site.register(, Admin)
+#Circumcision
+class CircumcisionAdmin(SubjectVisitModelAdmin):
+ 
+    form = CircumcisionForm
+    fields = (
+        "subject_visit",
+        'circumcised',)
+    radio_fields = {
+         'circumcised':admin.VERTICAL,}
+admin.site.register(Circumcision, CircumcisionAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",)
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-# admin.site.register(, Admin)
+#Circumcised
+class CircumcisedAdmin(SubjectVisitModelAdmin):
+ 
+    form = CircumcisedForm
+    fields = (
+        "subject_visit",
+        "circumcised",
+        "healthbenefitsSMC",
+        'whencirc',
+        'wherecirc',
+        'whycirc',)
+    radio_fields = {
+        "wherecirc": admin.VERTICAL,
+        "whycirc": admin.VERTICAL,}
+    filter_horizontal = ("healthbenefitsSMC",)
+admin.site.register(Circumcised, CircumcisedAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",)
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-# admin.site.register(, Admin)
+#Uncircumcised
+class UncircumcisedAdmin(SubjectVisitModelAdmin):
 
-
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",)
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-# admin.site.register(, Admin)
+    form = UncircumcisedForm
+    fields = (
+        "subject_visit",
+        "circumcised",
+        "healthbenefitsSMC",
+        'reasoncirc',
+        'futurecirc',
+        'circumcision_day',
+        'circumcision_week',
+        'circumcision_year',
+        'futurereasonsSMC',
+        'service_facilities',
+        'awarefree',
+    )
+    radio_fields = {
+        "reasoncirc":admin.VERTICAL,
+        "futurecirc":admin.VERTICAL,
+        "circumcision_day":admin.VERTICAL,
+        "circumcision_week":admin.VERTICAL,
+        "circumcision_year":admin.VERTICAL,
+        "futurereasonsSMC":admin.VERTICAL,
+        "service_facilities":admin.VERTICAL,
+        "awarefree":admin.VERTICAL,}
+    filter_horizontal = ("healthbenefitsSMC",)
+admin.site.register(Uncircumcised, UncircumcisedAdmin)
