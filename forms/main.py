@@ -1,6 +1,6 @@
 from django import forms
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner 
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised 
 
 
 # SubjectLocator
@@ -213,3 +213,66 @@ class MonthsThirdPartnerForm (BaseSubjectModelForm):
 
     class Meta:
         model = MonthsThirdPartner
+
+
+
+#HivCareAdherence
+class HivCareAdherenceForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = HivCareAdherence
+        
+
+#HivMedicalCare
+class HivMedicalCareForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = HivMedicalCare
+        
+
+#Circumcision
+class CircumcisionForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = Circumcision
+        
+
+#Circumcised
+class CircumcisedForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = Circumcised
+
+
+#Uncircumcised
+class UncircumcisedForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = Uncircumcised
+
+
