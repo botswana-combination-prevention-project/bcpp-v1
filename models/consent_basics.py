@@ -14,7 +14,7 @@ class ConsentBasics(BaseSubject):
         validators=[eligible_if_yes, ],
         null=True,
         blank=True,
-        default='Yes',
+        default='No',
         help_text="If no, INELIGIBLE",
         )
     study_questions = models.CharField(
@@ -24,7 +24,7 @@ class ConsentBasics(BaseSubject):
         validators=[eligible_if_yes, ],
         null=True,
         blank=True,
-        default='Yes',
+        default='No',
         help_text="If no, INELIGIBLE",
         )
     assessment_score = models.CharField(
@@ -35,7 +35,7 @@ class ConsentBasics(BaseSubject):
         validators=[eligible_if_yes, ],
         null=True,
         blank=True,
-        default='Yes',
+        default='No',
         help_text="If no, INELIGIBLE",
         )
     consent_copy = models.CharField(
@@ -46,7 +46,7 @@ class ConsentBasics(BaseSubject):
         validators=[eligible_if_yes, ],
         null=True,
         blank=True,
-        default='Yes',
+        default='No',
         help_text="If no, INELIGIBLE",
         )
 
