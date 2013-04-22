@@ -43,3 +43,6 @@ from hiv_medical_care import HivMedicalCare
 from circumcision import Circumcision
 from circumcised import Circumcised
 from uncircumcised import Uncircumcised
+from reproductive_health import ReproductiveHealth
+from medical_diagnoses import MedicalDiagnoses
+from substance_use import SubstanceUse
