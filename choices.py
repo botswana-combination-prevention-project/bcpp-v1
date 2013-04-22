@@ -238,21 +238,21 @@ WHYNOHIVTEST_CHOICE = (
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
-WHYNOHIVTEST_CHOICE = (
+CIRCUMCISION_DAY = (
         ('Yes, specify:','Yes, specify:'),
         ('No, any time of day is fine','No, any time of day is fine'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
-WHYNOHIVTEST_CHOICE = (
+CIRCUMCISION_WEEK = (
         ('Yes, specify:','Yes, specify:'),
         ('No, any day of the week is fine','No, any day of the week is fine'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
-WHYNOHIVTEST_CHOICE = (
+CIRCUMCISION_MONTH = (
         ('Yes, specify:','Yes, specify:'),
         ('No, any month is fine','No, any month is fine'),
         ('I am not sure','I am not sure'),
@@ -408,7 +408,7 @@ LOWESTCD4_CHOICE = (
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
-SMOKE_CHOICE = (
+NO_MEDICAL_CARE = (
         ('Did not feel sick','Did not feel sick'),
         ('Did not know I should get HIV care','Did not know I should get HIV care'),
         ('Did not have time due to work responsibilities','Did not have time due to work responsibilities'),
