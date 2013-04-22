@@ -7,3 +7,4 @@ class LiveWith (BaseListModel):
     class Meta:
         app_label = "bcpp_list"
         verbose_name = "Living With"
+        verbose_name_plural = "Living With"
