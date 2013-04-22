@@ -159,3 +159,19 @@ class NoCircumcisionRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = Circumcision
 rule_groups.register(NoCircumcisionRuleGroup)
+
+
+class FemaleReproductiveRuleGroup(RuleGroup):
+
+    gender = ScheduledDataRule(
+        logic=Logic(
+            predicate=('gender', 'equals', 'm'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['reproductivehealth'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = RegisteredSubject
+rule_groups.register(FemaleReproductiveRuleGroup)
