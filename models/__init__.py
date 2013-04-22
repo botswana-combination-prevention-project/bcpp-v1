@@ -38,3 +38,8 @@ from sexual_behaviour import SexualBehaviour
 from months_recent_partner import MonthsRecentPartner
 from months_second_partner import MonthsSecondPartner
 from months_third_partner import MonthsThirdPartner
+from hiv_care_adherence import HivCareAdherence
+from hiv_medical_care import HivMedicalCare
+from circumcision import Circumcision
+from circumcised import Circumcised
+from uncircumcised import Uncircumcised
