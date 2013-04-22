@@ -1,6 +1,6 @@
 from django import forms
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised 
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse 
 
 
 # SubjectLocator
@@ -276,3 +276,37 @@ class UncircumcisedForm (BaseSubjectModelForm):
         model = Uncircumcised
 
 
+#ReproductiveHealth
+class ReproductiveHealthForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = ReproductiveHealth
+
+
+#MedicalDiagnoses
+class MedicalDiagnosesForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = MedicalDiagnoses
+
+
+#SubstanceUse
+class SubstanceUseForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = SubstanceUse
