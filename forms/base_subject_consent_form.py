@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django import forms
@@ -13,6 +14,9 @@ class BaseSubjectConsentForm(BaseModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
+        
+        if not cleaned_data.get("gender", None):
+            raise forms.ValidationError('Please specify the gender')
 
         # check omang if identity_type is omang
         # encrypted fields may cause problems if existing values
@@ -44,17 +48,21 @@ class BaseSubjectConsentForm(BaseModelForm):
             consent_datetime = cleaned_data.get('consent_datetime').date()
         else:
             consent_datetime = date.today()
-  
-        if cleaned_data.get('dob'):
+
+        if cleaned_data.get('dob', None):
             rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
+            if rdelta.years < obj.minimum_age_of_consent:
+                raise forms.ValidationError(u'Subject\'s age is %s. Subject is not eligible for consent.' % (formatted_age(cleaned_data.get('dob'), date.today())))
             # check if guardian name is required
             # guardian name is required if subject is a minor but the field may not be on the form
             # if the study does not have minors.
             if rdelta.years < obj.age_at_adult_lower_bound:
                 if "guardian_name" not in cleaned_data.keys():
                     raise forms.ValidationError('Subject is a minor. "guardian_name" is required but missing from the form. Please add this field to the form.')
-                elif "guardian_name" in cleaned_data.keys() and cleaned_data.get("guardian_name", None) == '':
-                    raise forms.ValidationError(u'Subject\'s age is %s. Subject is a minor. Guardian\'s name is required.' % (formatted_age(cleaned_data.get('dob'), date.today())))
+                elif not cleaned_data.get("guardian_name", None):
+                    raise forms.ValidationError(u'Subject\'s age is %s. Subject is a minor. Guardian\'s name is required here and with signature on the paper document.' % (formatted_age(cleaned_data.get('dob'), date.today())))
+                #elif not re.match(r'\w+\,\ \w+', cleaned_data.get("guardian_name", '')):
+                #    raise forms.ValidationError('Invalid format for guardian name. Expected format \'FIRSTNAME, LASTNAME\'.')
                 else:
                     pass
             if rdelta.years >= obj.age_at_adult_lower_bound and "guardian_name" in cleaned_data.keys():
@@ -89,17 +97,18 @@ class BaseSubjectConsentForm(BaseModelForm):
             if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
                 raise forms.ValidationError('Identity mismatch. Identity number must match the confirmation field.')
         # consent cannot be submitted if answer is none to last four consent questions
-        if cleaned_data['consent_reviewed'] == None:
-            raise forms.ValidationError('If consent reviewed is None, patient cannot be enrolled')
-        if cleaned_data['study_questions'] == None:
+        if not cleaned_data.get('consent_reviewed', None) or cleaned_data.get('consent_reviewed', None) == 'No':
+            raise forms.ValidationError('If consent reviewed is No, patient cannot be enrolled')
+        if not cleaned_data.get('study_questions', None) or cleaned_data.get('study_questions', None) == 'No':
             raise forms.ValidationError('If unable to answer questions from client and/or None, patient cannot be enrolled')
-        if cleaned_data['assessment_score'] == None:
-            raise forms.ValidationError('Client assessment should atleast be a passing score. If None, patient cannot be enrolled')
-        if cleaned_data['consent_copy'] == None:
+        if not cleaned_data.get('assessment_score', None) or cleaned_data.get('assessment_score', None) == 'No':
+            raise forms.ValidationError('Client assessment should at least be a passing score. If No, patient cannot be enrolled')
+        if not cleaned_data.get('consent_copy', None) or cleaned_data.get('consent_copy', None) == 'No':
             raise forms.ValidationError('If patient has not been given consent copy and/or None, patient cannot be enrolled')
-        if cleaned_data.get('is_literate') == 'No' and not cleaned_data.get('witness_name', None):
-            raise forms.ValidationError('You wrote subject is illiterate. Please provide the name of a witness.')
+
+        if cleaned_data.get('is_literate', None) == 'No' and not cleaned_data.get('witness_name', None):
+            raise forms.ValidationError('You wrote subject is illiterate. Please provide the name of a witness here and with signature on the paper document.')
         if cleaned_data.get('is_literate') == 'Yes' and cleaned_data.get('witness_name', None):
-            raise forms.ValidationError('You wrote subject is literate. The name of a witness is not required.')
+            raise forms.ValidationError('You wrote subject is literate. The name of a witness is NOT required.')
         # Always return the full collection of cleaned data.
         return super(BaseSubjectConsentForm, self).clean()

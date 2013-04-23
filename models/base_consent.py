@@ -33,11 +33,11 @@ class BaseConsent(ConsentBasics):
     guardian_name = EncryptedLastnameField(
         verbose_name=_("Guardian\'s Last and first name (minors only)"),
         validators=[
-            RegexValidator('^[A-Z]{1,50}\,[A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
             ],
         blank=True,
         null=True,
-        help_text=_('Required only if subject is a minor. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+        help_text=_('Required only if subject is a minor. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
         )
 
     may_store_samples = models.CharField(
@@ -61,13 +61,13 @@ class BaseConsent(ConsentBasics):
         max_length=3,
         choices=YES_NO,
         default='Yes',
-        help_text="( if 'No' provide witness\'s name)",
+        help_text="( if 'No' provide witness\'s name here and with signature on the paper document.)",
         )
 
     witness_name = EncryptedLastnameField(
         verbose_name=_("Witness\'s Last and first name (illiterates only)"),
         validators=[
-            RegexValidator('^[A-Z]{1,50}\,[A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+            RegexValidator('^[A-Z]{1,50}\,\ [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
             ],
         blank=True,
         null=True,
@@ -110,7 +110,7 @@ class BaseConsent(ConsentBasics):
         """ Creates or gets a subject identifier and updates registered subject.
 
         Also, calls user method :func:`save_new_consent`"""
-        consented_subject_identifier = ConsentedSubjectIdentifier()
+        consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.study_site.site_code)
         try:
             registered_subject = getattr(self, 'registered_subject')
         except:
@@ -138,10 +138,9 @@ class BaseConsent(ConsentBasics):
             # create a subject identifier, if not already done
             if re_pk.match(self.subject_identifier):
                 self.subject_identifier = consented_subject_identifier.get_identifier(
-                    consent=self,
-                    consent_attrname='subject_identifier',
-                    registration_status='consented',
-                    site_code=self.study_site.site_code,
+                    #consent=self,
+                    #consent_attrname='subject_identifier',
+                    #registration_status='consented',
                     using=using)
                 #self.registered_subject.subject_identifier = self.subject_identifier
         if not self.subject_identifier:
