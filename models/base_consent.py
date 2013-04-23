@@ -138,8 +138,8 @@ class BaseConsent(ConsentBasics):
             # create a subject identifier, if not already done
             if re_pk.match(self.subject_identifier):
                 self.subject_identifier = consented_subject_identifier.get_identifier(
-                    #consent=self,
-                    #consent_attrname='subject_identifier',
+                    consent=self,
+                    consent_attrname='subject_identifier',
                     #registration_status='consented',
                     using=using)
                 #self.registered_subject.subject_identifier = self.subject_identifier
