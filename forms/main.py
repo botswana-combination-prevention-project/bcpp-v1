@@ -1,5 +1,5 @@
 from bhp_base_form.classes import BaseModelForm
-from bcpp_list.models import ElectricalAppliances, TransportMode, LiveWith, NeighbourhoodProblems, CicumcisionBenefits, FamilyPlanning
+from bcpp_list.models import ElectricalAppliances, TransportMode, LiveWith, NeighbourhoodProblems, CicumcisionBenefits, FamilyPlanning, MedicalCareAccess
 
 
 # ElectricalAppliances
@@ -73,3 +73,15 @@ class FamilyPlanningForm (BaseModelForm):
 
     class Meta:
         model = FamilyPlanning
+
+
+#MedicalCareAccess
+class MedicalCareAccessForm (BaseModelForm):
+
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+        return cleaned_data
+
+    class Meta:
+        model = MedicalCareAccess
