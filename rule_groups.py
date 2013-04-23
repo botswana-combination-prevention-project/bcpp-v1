@@ -1,6 +1,6 @@
 from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
 from bhp_registration.models import RegisteredSubject
-from models import SubjectVisit, ResourceUtilization, HivTestingHistory, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, HivCareAdherence, Circumcision
+from models import SubjectVisit, ResourceUtilization, HivTestingHistory, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, HivCareAdherence, Circumcision, HivTestReview
 
 
 class ResourceUtilizationRuleGroup(RuleGroup):
@@ -175,3 +175,42 @@ class FemaleReproductiveRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = RegisteredSubject
 rule_groups.register(FemaleReproductiveRuleGroup)
+
+
+class StigmaPositiveARuleGroup(RuleGroup):
+    
+    HHhivtest = ScheduledDataRule(
+        logic=Logic(
+            predicate=('HHhivtest', 'equals', 'Positive'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['positiveparticipant'])
+    
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivTestingHistory
+rule_groups.register(StigmaPositiveARuleGroup)
+
+
+class StigmaPositiveBRuleGroup(RuleGroup):
+    
+    recordedhivresult = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recordedhivresult', 'equals', 'HIV-Negative'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['positiveparticipant'])
+    
+    verbalhivresult = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbalhivresult', 'equals', 'HIV-Negative'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['positiveparticipant'])
+    
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivTestReview
+rule_groups.register(StigmaPositiveBRuleGroup)
