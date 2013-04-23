@@ -46,3 +46,7 @@ from uncircumcised import Uncircumcised
 from reproductive_health import ReproductiveHealth
 from medical_diagnoses import MedicalDiagnoses
 from substance_use import SubstanceUse
+from stigma import Stigma
+from stigma_opinion import StigmaOpinion
+from positive_participant import PositiveParticipant
+from access_to_care import AccessToCare
