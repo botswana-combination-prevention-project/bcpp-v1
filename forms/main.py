@@ -1,6 +1,6 @@
 from django import forms
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse 
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare 
 
 
 # SubjectLocator
@@ -310,3 +310,51 @@ class SubstanceUseForm (BaseSubjectModelForm):
 
     class Meta:
         model = SubstanceUse
+
+
+#Stigma
+class StigmaForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = Stigma
+
+
+#StigmaOpinion
+class StigmaOpinionForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = StigmaOpinion
+
+
+#PositiveParticipant
+class PositiveParticipantForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = PositiveParticipant
+
+
+#AccessToCare
+class AccessToCareForm (BaseSubjectModelForm):
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+
+        return cleaned_data
+
+    class Meta:
+        model = AccessToCare
