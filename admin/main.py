@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm, HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm, HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm, AccessToCareForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -456,32 +456,6 @@ admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
 copy the following to your ModelAdmin class in admin.py
 class CS002Admin (MyModelAdmin):
     fields = (  
-        'anticipatestigma',
-        'enactedshamestigma',
-        'salivastigma',
-        'teacherstigma',
-        'teacherstigma',
-        'testcommunitystigma',
-        'gossipcommunitystigma',
-        'respectcommunitystigma',
-        'enactedverbalstigma',
-        'enactedphyicalstigma',
-        'enactedfamilystigma',
-        'fearstigma',
-        'internalize1stigma',
-        'internalized2stigma',
-        'friendstigma',
-        'familystigma',
-        'enactedtalkstigma',
-        'enactedrespectstigma',
-        'enactedjobstigma',
-        'whereaccess',
-        'whereaccess',
-        'overallaccess',
-        'emergencyaccess',
-        'expensiveaccess',
-        'convenientaccess',
-        'wheneverlaccess',
         'mobiltyqol',
         'selfcareqol',
         'activitiesqol',
@@ -534,32 +508,6 @@ class CS002Admin (MyModelAdmin):
         'dayslostadlcosts',
     )
     radio_fields = {
-        "anticipatestigma":admin.VERTICAL,
-        "enactedshamestigma":admin.VERTICAL,
-        "salivastigma":admin.VERTICAL,
-        "teacherstigma":admin.VERTICAL,
-        "teacherstigma":admin.VERTICAL,
-        "testcommunitystigma":admin.VERTICAL,
-        "gossipcommunitystigma":admin.VERTICAL,
-        "respectcommunitystigma":admin.VERTICAL,
-        "enactedverbalstigma":admin.VERTICAL,
-        "enactedphyicalstigma":admin.VERTICAL,
-        "enactedfamilystigma":admin.VERTICAL,
-        "fearstigma":admin.VERTICAL,
-        "internalize1stigma":admin.VERTICAL,
-        "internalized2stigma":admin.VERTICAL,
-        "friendstigma":admin.VERTICAL,
-        "familystigma":admin.VERTICAL,
-        "enactedtalkstigma":admin.VERTICAL,
-        "enactedrespectstigma":admin.VERTICAL,
-        "enactedjobstigma":admin.VERTICAL,
-        "whereaccess":admin.VERTICAL,
-        "whereaccess":admin.VERTICAL,
-        "overallaccess":admin.VERTICAL,
-        "emergencyaccess":admin.VERTICAL,
-        "expensiveaccess":admin.VERTICAL,
-        "convenientaccess":admin.VERTICAL,
-        "wheneverlaccess":admin.VERTICAL,
         "mobiltyqol":admin.VERTICAL,
         "selfcareqol":admin.VERTICAL,
         "activitiesqol":admin.VERTICAL,
@@ -1042,53 +990,93 @@ class SubstanceUseAdmin(SubjectVisitModelAdmin):
 admin.site.register(SubstanceUse, SubstanceUseAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",
-#     )
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-#     filter_horizontal = ("",)
-# admin.site.register(, Admin)
+#Stigma
+class StigmaAdmin(SubjectVisitModelAdmin):
+ 
+    form = StigmaForm
+    fields = (
+        "subject_visit",
+        'anticipatestigma',
+        'enactedshamestigma',
+        'salivastigma',
+        'teacherstigma',
+        'childrenstigma',)
+    radio_fields = {
+        "anticipatestigma":admin.VERTICAL,
+        "enactedshamestigma":admin.VERTICAL,
+        "salivastigma":admin.VERTICAL,
+        "teacherstigma":admin.VERTICAL,
+        "childrenstigma":admin.VERTICAL,}
+admin.site.register(Stigma, StigmaAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",
-#     )
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-#     filter_horizontal = ("",)
-# admin.site.register(, Admin)
+#StigmaOpinion
+class StigmaOpinionAdmin(SubjectVisitModelAdmin):
+ 
+    form = StigmaOpinionForm
+    fields = (
+        "subject_visit",
+        'testcommunitystigma',
+        'gossipcommunitystigma',
+        'respectcommunitystigma',
+        'enactedverbalstigma',
+        'enactedphyicalstigma',
+        'enactedfamilystigma',
+        'fearstigma',)
+    radio_fields = {
+        "testcommunitystigma":admin.VERTICAL,
+        "gossipcommunitystigma":admin.VERTICAL,
+        "respectcommunitystigma":admin.VERTICAL,
+        "enactedverbalstigma":admin.VERTICAL,
+        "enactedphyicalstigma":admin.VERTICAL,
+        "enactedfamilystigma":admin.VERTICAL,
+        "fearstigma":admin.VERTICAL,}
+admin.site.register(StigmaOpinion, StigmaOpinionAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",
-#     )
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-#     filter_horizontal = ("",)
-# admin.site.register(, Admin)
+#PositiveParticipant
+class PositiveParticipantAdmin(SubjectVisitModelAdmin):
+ 
+    form = PositiveParticipantForm
+    fields = (
+        "subject_visit",
+        'internalize1stigma',
+        'internalized2stigma',
+        'friendstigma',
+        'familystigma',
+        'enactedtalkstigma',
+        'enactedrespectstigma',
+        'enactedjobstigma',)
+    radio_fields = {
+        "internalize1stigma":admin.VERTICAL,
+        "internalized2stigma":admin.VERTICAL,
+        "friendstigma":admin.VERTICAL,
+        "familystigma":admin.VERTICAL,
+        "enactedtalkstigma":admin.VERTICAL,
+        "enactedrespectstigma":admin.VERTICAL,
+        "enactedjobstigma":admin.VERTICAL,}
+admin.site.register(PositiveParticipant, PositiveParticipantAdmin)
 
 
-#
-# class Admin(SubjectVisitModelAdmin):
-# 
-#     form = Form
-#     fields = (
-#         "subject_visit",
-#     )
-#     radio_fields = {
-#         "":admin.VERTICAL,}
-#     filter_horizontal = ("",)
-# admin.site.register(, Admin)
+#AccessToCare
+class AccessToCareAdmin(SubjectVisitModelAdmin):
+ 
+    form = AccessToCareForm
+    fields = (
+        "subject_visit",
+        'often_medicalcare',
+        'whereaccess',
+        'overallaccess',
+        'emergencyaccess',
+        'expensiveaccess',
+        'convenientaccess',
+        'wheneverlaccess',)
+    radio_fields = {
+        "often_medicalcare":admin.VERTICAL,
+        "overallaccess":admin.VERTICAL,
+        "emergencyaccess":admin.VERTICAL,
+        "expensiveaccess":admin.VERTICAL,
+        "convenientaccess":admin.VERTICAL,
+        "wheneverlaccess":admin.VERTICAL,}
+    filter_horizontal = ('whereaccess',)
+admin.site.register(AccessToCare, AccessToCareAdmin)
