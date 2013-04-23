@@ -67,7 +67,7 @@ class BaseConsent(ConsentBasics):
     witness_name = EncryptedLastnameField(
         verbose_name=_("Witness\'s Last and first name (illiterates only)"),
         validators=[
-            RegexValidator('^[A-Z]{1,50}\,\ [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+            RegexValidator('^[A-Z]{1,50}\,[A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
             ],
         blank=True,
         null=True,
