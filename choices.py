@@ -170,8 +170,8 @@ WHYNOHIVTEST_CHOICE = (
     )
 
 RECORDEDHIVRESULT_CHOICE = (
-        ('HIV-Negative (Non-reactive)','HIV-Negative (Non-reactive)'),
-        ('HIV-Positive (Reactive)','HIV-Positive (Reactive)'),
+        ('HIV-Negative','HIV-Negative (Non-reactive)'),
+        ('HIV-Positive','HIV-Positive (Reactive)'),
         ('Indeterminate','Indeterminate'),
         ('No result recorded','No result recorded'),
     )
@@ -185,8 +185,8 @@ WHENHIVTEST_CHOICE = (
     )
     
 VERBALHIVRESULT_CHOICE = (
-        ('HIV-Negative (Non-reactive)','HIV-Negative (Non-reactive)'),
-        ('HIV-Positive (Reactive)','HIV-Positive (Reactive)'),
+        ('HIV-Negative','HIV-Negative (Non-reactive)'),
+        ('HIV-Positive','HIV-Positive (Reactive)'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
