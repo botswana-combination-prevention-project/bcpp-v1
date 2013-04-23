@@ -29,8 +29,6 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'first_name',
             'last_name',
             'initials',
-            'is_literate',
-            'witness_name',
             'consent_datetime',
             'study_site',
             'gender',
@@ -48,7 +46,6 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'consent_copy']
         self.radio_fields = {
             "gender": admin.VERTICAL,
-            "is_literate": admin.VERTICAL,
             "study_site": admin.VERTICAL,
             "is_dob_estimated": admin.VERTICAL,
             "identity_type": admin.VERTICAL,
