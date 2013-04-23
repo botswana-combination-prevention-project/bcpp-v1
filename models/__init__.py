@@ -4,3 +4,4 @@ from live_with import LiveWith
 from neighbourhood_problems import NeighbourhoodProblems
 from circumcision_benefits import CicumcisionBenefits
 from family_planning import FamilyPlanning
+from medical_care_access import MedicalCareAccess
