@@ -6,7 +6,7 @@ from base_identifier import BaseIdentifier
 class BaseSubjectIdentifier(BaseIdentifier):
     """ Base class for all identifiers."""
 
-    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None):
+    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None, using=None):
         if 'PROJECT_IDENTIFIER_PREFIX' not in dir(settings):
             raise ImproperlyConfigured('Missing settings attribute PROJECT_IDENTIFIER_PREFIX. Please add. For example, PROJECT_IDENTIFIER_PREFIX = \'041\' for project BHP041.')
         app_name = app_name or 'bhp_identifier'
@@ -21,4 +21,5 @@ class BaseSubjectIdentifier(BaseIdentifier):
                                                     site_code=site_code,
                                                     padding=padding,
                                                     modulus=modulus,
-                                                    identifier_prefix=identifier_prefix)
+                                                    identifier_prefix=identifier_prefix,
+                                                    using=using)

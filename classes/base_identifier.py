@@ -11,7 +11,7 @@ from check_digit import CheckDigit
 class BaseIdentifier(object):
     """ Base class for all identifiers."""
 
-    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None):
+    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None, using=None):
         self.identifier_format = None
         self.app_name = None
         self.model_name = None
@@ -19,6 +19,7 @@ class BaseIdentifier(object):
         self.modulus = None
         self.identifier_prefix = None
         self.site_code = None
+        self.using = using
         if 'PROJECT_IDENTIFIER_PREFIX' not in dir(settings):
             raise ImproperlyConfigured('Missing settings attribute PROJECT_IDENTIFIER_PREFIX. Please add. For example, PROJECT_IDENTIFIER_PREFIX = \'041\' for project BHP041.')
         if 'PROJECT_IDENTIFIER_MODULUS' not in dir(settings):
@@ -103,7 +104,6 @@ class BaseIdentifier(object):
           * identifier_format: template for the identifier with keywords referring to the above keys.
             (default: '{identifier_prefix}-{site_code}{device_id}{sequence}')
           """
-        using = kwargs.get('using', None)
         # update the format options dictionary
         options = self._get_identifier_prep(**kwargs)
         # check if this identifier is to be derived from an existing identifier
@@ -111,7 +111,7 @@ class BaseIdentifier(object):
             IdentifierModel = get_model(self.app_name, self.model_name)
             # put a random uuid temporarily in the identifier field
             # to maintain unique constraint on identifier field.
-            self.identifier_model = IdentifierModel.objects.using(using).create(identifier=str(uuid.uuid4()), padding=self.padding)
+            self.identifier_model = IdentifierModel.objects.using(self.using).create(identifier=str(uuid.uuid4()), padding=self.padding)
             options.update(sequence=self.identifier_model.sequence)
         else:
             # the identifier is derived from an existing one. no need for
@@ -135,5 +135,5 @@ class BaseIdentifier(object):
         # update the identifier model
         if self.identifier_model:
             self.identifier_model.identifier = new_identifier
-            self.identifier_model.save(using=using)
+            self.identifier_model.save(using=self.using)
         return new_identifier
