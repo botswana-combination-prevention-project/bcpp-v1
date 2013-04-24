@@ -1,9 +1,9 @@
-from django.co]ntrib import admin
+from django.contrib import admin
 from bhp_crypto.admin import BaseCryptorModelAdmin
 from bhp_consent.actions import flag_as_verified_against_paper, unflag_as_verified_against_paper
 
 
-class BaseCo`=nsentModelAdmin(BaseCryptorModelAdmin):
+class BaseConsentModelAdmin(BaseCryptorModelAdmin):
     """Serves as the ModelAdmin for all consent models."""
     def __init__(self, *args, **kwargs):
 
@@ -19,7 +19,7 @@ class BaseCo`=nsentModelAdmin(BaseCryptorModelAdmin):
             'may_store_samples',
             'study_site',
             'is_literate',
-            'is_minor',
+#            'is_minor',
             'consent_datetime',
             'created',
             'modified',
@@ -33,13 +33,12 @@ class BaseCo`=nsentModelAdmin(BaseCryptorModelAdmin):
             'initials',
             'is_literate',
             'witness_name',
-            'is_minor',
-            'guardian_name','[oiii_'
-            
+#            'is_minor',         
             'consent_datetime',
             'study_site',
             'gender',
             'dob',
+            'guardian_name',
             'is_dob_estimated',
             'identity',
             'identity_type',
