@@ -52,15 +52,15 @@ class BaseConsent(ConsentBasics):
         max_length=3,
         choices=YES_NO,
         validators=[eligible_if_no, ],
-        default='No',
+        default='-',
         help_text="( if 'YES' STOP patient cannot be consented )",
         )
 
     is_literate = models.CharField(
-        verbose_name="Is the participant literate?",
+        verbose_name="Is the participant LITERATE?",
         max_length=3,
         choices=YES_NO,
-        default='Yes',
+        default='-',
         help_text="( if 'No' provide witness\'s name here and with signature on the paper document.)",
         )
 
@@ -71,7 +71,7 @@ class BaseConsent(ConsentBasics):
             ],
         blank=True,
         null=True,
-        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
         )
 
     comment = EncryptedTextField("Comment",
@@ -107,10 +107,12 @@ class BaseConsent(ConsentBasics):
         return subject_identifier
 
     def _save_new_consent(self, using=None, **kwargs):
-        """ Creates or gets a subject identifier and updates registered subject.
+        """ Creates or gets a subject identifier.
+
+        ..note:: registered subject is updated/created on bhp_subject signal.
 
         Also, calls user method :func:`save_new_consent`"""
-        consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.study_site.site_code)
+        consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.study_site.site_code, using=using)
         try:
             registered_subject = getattr(self, 'registered_subject')
         except:
@@ -138,8 +140,8 @@ class BaseConsent(ConsentBasics):
             # create a subject identifier, if not already done
             if re_pk.match(self.subject_identifier):
                 self.subject_identifier = consented_subject_identifier.get_identifier(
-                    consent=self,
-                    consent_attrname='subject_identifier',
+                    #consent=self,
+                    #consent_attrname='subject_identifier',
                     #registration_status='consented',
                     using=using)
                 #self.registered_subject.subject_identifier = self.subject_identifier

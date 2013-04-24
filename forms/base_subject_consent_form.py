@@ -101,8 +101,9 @@ class BaseSubjectConsentForm(BaseModelForm):
             raise forms.ValidationError('If consent reviewed is No, patient cannot be enrolled')
         if not cleaned_data.get('study_questions', None) or cleaned_data.get('study_questions', None) == 'No':
             raise forms.ValidationError('If unable to answer questions from client and/or None, patient cannot be enrolled')
-        if not cleaned_data.get('assessment_score', None) or cleaned_data.get('assessment_score', None) == 'No':
-            raise forms.ValidationError('Client assessment should at least be a passing score. If No, patient cannot be enrolled')
+        if 'assessment_score' in cleaned_data:
+            if not cleaned_data.get('assessment_score', None) or cleaned_data.get('assessment_score', None) == 'No':
+                raise forms.ValidationError('Client assessment should at least be a passing score. If No, patient cannot be enrolled')
         if not cleaned_data.get('consent_copy', None) or cleaned_data.get('consent_copy', None) == 'No':
             raise forms.ValidationError('If patient has not been given consent copy and/or None, patient cannot be enrolled')
 

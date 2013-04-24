@@ -1,9 +1,9 @@
-from django.contrib import admin
+from django.co]ntrib import admin
 from bhp_crypto.admin import BaseCryptorModelAdmin
 from bhp_consent.actions import flag_as_verified_against_paper, unflag_as_verified_against_paper
 
 
-class BaseConsentModelAdmin(BaseCryptorModelAdmin):
+class BaseCo`=nsentModelAdmin(BaseCryptorModelAdmin):
     """Serves as the ModelAdmin for all consent models."""
     def __init__(self, *args, **kwargs):
 
@@ -18,6 +18,8 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'is_verified',
             'may_store_samples',
             'study_site',
+            'is_literate',
+            'is_minor',
             'consent_datetime',
             'created',
             'modified',
@@ -29,6 +31,11 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'first_name',
             'last_name',
             'initials',
+            'is_literate',
+            'witness_name',
+            'is_minor',
+            'guardian_name','[oiii_'
+            
             'consent_datetime',
             'study_site',
             'gender',
@@ -54,7 +61,8 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             "consent_reviewed": admin.VERTICAL,
             "study_questions": admin.VERTICAL,
             "assessment_score": admin.VERTICAL,
-            "consent_copy": admin.VERTICAL}
+            "consent_copy": admin.VERTICAL,
+            "is_literate": admin.VERTICAL}
 
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj=None):
