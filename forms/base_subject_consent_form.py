@@ -14,7 +14,7 @@ class BaseSubjectConsentForm(BaseModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-        
+
         if not cleaned_data.get("gender", None):
             raise forms.ValidationError('Please specify the gender')
 
