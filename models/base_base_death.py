@@ -4,6 +4,7 @@ from bhp_base_model.fields import OtherCharField
 from bhp_common.choices import YES_NO
 from bhp_base_model.validators import date_not_before_study_start, date_not_future
 from bhp_registration.models import BaseRegisteredSubjectModel
+from bhp_adverse.managers import DeathManager
 from death_list import DeathCauseInfo, DeathCauseCategory, DeathReasonHospitalized
 
 
@@ -74,6 +75,11 @@ class BaseBaseDeath(BaseRegisteredSubjectModel):
         blank=True,
         null=True,
         )
+
+    objects = DeathManager()
+
+    def natural_key(self):
+        return (self.death_date, ) + self.registered_subject.natural_key()
 
     def get_report_datetime(self):
         return datetime(self.death_date.year, self.death_date.month, self.death_date.day)

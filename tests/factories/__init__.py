@@ -1,0 +1,1 @@
+from base_death_factory import BaseDeathFactory
