@@ -50,3 +50,9 @@ from stigma import Stigma
 from stigma_opinion import StigmaOpinion
 from positive_participant import PositiveParticipant
 from access_to_care import AccessToCare
+
+
+from subject_refusal import SubjectRefusal
+from subject_absentee import *
+from subject_absentee_entry import SubjectAbsenteeEntry
+from subject_moved import SubjectMoved
