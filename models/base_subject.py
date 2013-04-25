@@ -107,6 +107,7 @@ class BaseSubject (BaseSyncUuidModel):
             if 'registered_subject' in dir(self):
                 self.registered_subject.subject_identifier = self.subject_identifier
                 self.registered_subject.subject_identifier_as_pk = self.subject_identifier_as_pk
+                self.registered_subject.study_site = self.study_site
                 self.registered_subject.dob = self.dob
                 self.registered_subject.is_dob_estimated = self.is_dob_estimated
                 self.registered_subject.gender = self.gender
@@ -122,6 +123,7 @@ class BaseSubject (BaseSyncUuidModel):
                 defaults = {
                     'subject_identifier': self.subject_identifier,
                     'subject_identifier_as_pk': self.subject_identifier_as_pk,
+                    'study_site': self.study_site,
                     'dob': self.dob,
                     'is_dob_estimated': self.is_dob_estimated,
                     'gender': self.gender,
