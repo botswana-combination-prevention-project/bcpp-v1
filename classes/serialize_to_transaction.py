@@ -39,7 +39,7 @@ class SerializeToTransaction(object):
                 pass
             except:
                 raise
-            OutgoingTransaction.objects.using(using).create(
+            return OutgoingTransaction.objects.using(using).create(
                 tx_name=instance._meta.object_name,
                 tx_pk=instance.pk,
                 tx=json_tx,
