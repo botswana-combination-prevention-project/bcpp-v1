@@ -155,7 +155,7 @@ HHHIVTEST_CHOICE = (
         ('Test could not be performed (e.g. supply outage, technical problem)','Test could not be performed (e.g. supply outage, technical problem)'),
     )
 
-WHYNOHIVTEST_CHOICE = (
+WHYNOHIVTESTING_CHOICE = (
         ('I already knew I am HIV positive','I already knew I am HIV positive'),
         ('I was not asked to test','I was not asked to test'),
         ('I didn\'t believe I was at risk of getting HIV','I didn\'t believe I was at risk of getting HIV'),
@@ -208,22 +208,6 @@ WHYHIVTEST_CHOICE = (
         ('I was at a health facility where the doctor/nurse recommended I get tested for HIV during the same visit','I was at a health facility where the doctor/nurse recommended I get tested for HIV during the same visit'),
         ('I read information on a brochure/flier that it is important for me to get tested for HIV','I read information on a brochure/flier that it is important for me to get tested for HIV'),
         ('Other','Other'),
-        ('I am not sure','I am not sure'),
-        ('Don\'t want to answer','Don\'t want to answer'),
-    )
-
-WHYNOHIVTEST_CHOICE = (
-        ('I already knew I am HIV positive','I already knew I am HIV positive'),
-        ('I was not asked to test','I was not asked to test'),
-        ('I didn\'t believe I was at risk of getting HIV','I didn\'t believe I was at risk of getting HIV'),
-        ('I am afraid to find out the result','I am afraid to find out the result'),
-        ('I am afraid of what others would think of me','I am afraid of what others would think of me'),
-        ('My sexual partner did not want me to get an HIV test','My sexual partner did not want me to get an HIV test'),
-        ('Family/friends did not want me to get an HIV test','Family/friends did not want me to get an HIV test'),
-        ('I didn\'t have time due to work','I didn\'t have time due to work'),
-        ('I didn\'t have time due to family obligations','I didn\'t have time due to family obligations'),
-        ('My sexual partner did not want me to get an HIV test','My sexual partner did not want me to get an HIV test'),
-        ('Family/friends did not want me to get an HIV test','Family/friends did not want me to get an HIV test'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
@@ -872,6 +856,17 @@ NONWORKACTIVITIESCOSTS_CHOICE = (
         ('Retired/old age','Retired/old age'),
         ('Pregnant or recently pregnant','Pregnant or recently pregnant'),
         ('Sick or injured','Sick or injured'),
+        ('Other, specify:','Other, specify:'),
+        ('Don\'t want to answer','Don\'t want to answer'),
+    )
+
+
+WHYNOPARTICIPATE_CHOICE = (
+        ('I don\'t have time','I don\'t have time'),
+        ('I don\'t want to answer the questions','I don\'t want to answer the questions'),
+        ('I don\'t want to have the blood drawn','I don\'t want to have the blood drawn'),
+        ('I am afraid my information will not be private','I am afraid my information will not be private'),
+        ('I am not sure','I am not sure'),
         ('Other, specify:','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
