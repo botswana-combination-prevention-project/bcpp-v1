@@ -339,7 +339,53 @@ OPPORTUNISTIC_ILLNESSES = (
     ('No current AIDS opportunistic illness', 'No current AIDS opportunistic illness'),
 )
  
- 
+
+NEXT_APPOINTMENT_SOURCE = (
+    ('subject', 'Subject'), 
+    ('household member', 'household member'), 
+    ('hbc', 'HBC'), 
+    ('other', 'Other')
+)
+
+
+ABSENTEE_STATUS = (
+    ('ABSENT', 'Absent'),
+    ('NOT_ABSENT', 'No longer absent'),
+)
+
+
+MOVED_REASON = (
+    ('TRANSFER', 'Job Transfer'),
+    ('MARRIAGE', 'Marriage'),
+    ('INDEPENDENT', 'Independence'),
+    ('OTHER', 'Other'),
+)
+
+PLACE_SUBJECT_MOVED = (
+    ('IN_MOCHUDI', 'Within Mochudi'),
+    ('OUT_MOCHUDI', 'Outside Mochudi'),
+    ('IN_WARD', 'Within the Survey Ward'),
+)
+
+
+ABSENTEE_REASON = (
+    (u'goes to school in mochudi and comes home daily', u'Schools in Mochudi, home daily'),
+    (u'goes to school outside mochudi and comes home daily', u'Schools outside Mochudi, home daily'),
+    (u'goes to school outside mochudi and comes home irregularly ', u'Schools outside Mochudi, home irregularly '),
+    (u'goes to school outside mochudi and comes home monthly ', u'Schools outside Mochudi, home monthly '),
+    (u'goes to school outside mochudi and comes home on weekends ', u'Schools outside Mochudi, home on weekends '),
+    (u'gone visiting (relatives,holidays,weddings,funerals)', u'Gone visiting'),
+    (u'stays at lands or cattlepost ', u'Stays at Lands/Cattlepost '),
+    (u'stepped out(shops, errands etc) ', u'Stepped out (shops, errands, ) '),
+    (u'works in mochudi and comes home daily', u'Works in Mochudi, home daily'),
+    (u'works outside mochudi and comes home daily', u'Works outside Mochudi, home daily'),
+    (u'works outside mochudi and comes home irregularly ', u'Works outside Mochudi, home irregularly '),
+    (u'works outside mochudi and comes home monthly ', u'Works outside Mochudi, home monthly '),
+    (u'works outside mochudi and comes home on weekends ', u'Works outside Mochudi, home on weekends '),
+    (u'OTHER', u'Other...'),
+)
+
+
 # = (
 #     ('', ''),
 #     ('', ''),
