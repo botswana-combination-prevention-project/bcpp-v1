@@ -85,3 +85,13 @@ class MedicalCareAccessForm (BaseModelForm):
 
     class Meta:
         model = MedicalCareAccess
+
+
+#HouseholdSurveyCode
+#HouseholdSurveyReason
+#HouseholdSurveySource
+#SurveyGroup
+#HouseholdStructureRelation
+#HouseholdSurveyStatus
+#SubjectAbsenteeReason
+#SubjectMovedReason
