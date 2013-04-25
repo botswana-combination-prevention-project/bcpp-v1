@@ -4,6 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from bhp_base_model.fields import OtherCharField
 from bhp_registration.models import BaseRegisteredSubjectModel
 from bhp_crypto.utils import mask_encrypted
+from bhp_off_study.managers import OffStudyManager
 
 
 class BaseOffStudy(BaseRegisteredSubjectModel):
@@ -27,6 +28,11 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
         blank=True,
         null=True,
         )
+
+    objects = OffStudyManager()
+
+    def natural_key(self):
+        return (self.offstudy_date, ) + self.registered_subject.natural_key()
 
     def get_report_datetime(self):
         return datetime(self.offstudy_date.year, self.offstudy_date.month, self.offstudy_date.day)
