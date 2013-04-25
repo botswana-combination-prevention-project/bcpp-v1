@@ -88,6 +88,8 @@ class ConsentHelper(object):
         del_keys = [k for k in cleaned_data.iterkeys() if k in field_names]
         for k in del_keys:
             del cleaned_data[k]
+        if 'DELETE' in cleaned_data:
+            del cleaned_data['DELETE']
         return subject_model_cls(**cleaned_data)
 
     def _set_report_datetime(self):

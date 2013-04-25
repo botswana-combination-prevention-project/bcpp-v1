@@ -9,14 +9,14 @@ from bhp_registration.models import RegisteredSubject
 
 class ModelTests(TestCase):
 
-    def test_p1(self):
-        for cls, cls_factory in [(ConsentCatalogue, ConsentCatalogueFactory)]:
-            print 'using {0}'.format(cls._meta.object_name)
-            print 'test {0} natural key'.format(cls._meta.object_name)
-            rs1 = cls_factory()
-            args = rs1.natural_key()
-            rs2 = cls.objects.get_by_natural_key(*args)
-            self.assertEqual(rs1, rs2)
+#     def test_p1(self):
+#         for cls, cls_factory in [(ConsentCatalogue, ConsentCatalogueFactory)]:
+#             print 'using {0}'.format(cls._meta.object_name)
+#             print 'test {0} natural key'.format(cls._meta.object_name)
+#             rs1 = cls_factory()
+#             args = rs1.natural_key()
+#             rs2 = cls.objects.get_by_natural_key(*args)
+#             self.assertEqual(rs1, rs2)
 
     def test_p2(self):
         """TEST registered subject is create when consent is created"""
