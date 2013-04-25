@@ -5,3 +5,15 @@ from neighbourhood_problems import NeighbourhoodProblems
 from circumcision_benefits import CicumcisionBenefits
 from family_planning import FamilyPlanning
 from medical_care_access import MedicalCareAccess
+
+
+from bcpp_wards import BcppWards
+from household_survey_code import HouseholdSurveyCode
+from household_survey_reason import HouseholdSurveyReason
+from household_survey_source import HouseholdSurveySource
+from survey_group import SurveyGroup
+from household_structure_relation import HouseholdStructureRelation
+from household_survey_status import HouseholdSurveyStatus
+
+from subject_absentee_reason import SubjectAbsenteeReason
+from subject_moved_reason import SubjectMovedReason
