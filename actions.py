@@ -47,3 +47,19 @@ def reset_incomingtransaction_error_status(modeladmin, request, queryset):
         qs.error = None
         qs.save()
 reset_incomingtransaction_error_status.short_description = "Reset transaction error status (is_error=False)"
+
+def set_incomingtransaction_as_ignore_status(modeladmin, request, queryset):
+    """ set incoming transaction to ignore = true """
+    for qs in queryset:
+        qs.is_ignored = True
+        qs.error = None
+        qs.save()
+set_incomingtransaction_as_ignore_status.short_description = "Set transaction ignore status (is_ignored=True)"
+
+def reset_incomingtransaction_ignore_status(modeladmin, request, queryset):
+    """ set incoming transaction to ignore = false """
+    for qs in queryset:
+        qs.is_ignored = False
+        qs.error = None
+        qs.save()
+reset_incomingtransaction_ignore_status.short_description = "Reset transaction ignore status (is_ignored=False)"
