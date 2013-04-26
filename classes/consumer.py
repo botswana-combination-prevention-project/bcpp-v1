@@ -54,6 +54,7 @@ class Consumer(object):
         pass
 
     def _reconnect_signals(self):
+        self.signal_manager.reconnect()
         self.reconnect_signals()
 
     def reconnect_signals(self):
