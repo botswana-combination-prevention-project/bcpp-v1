@@ -30,6 +30,14 @@ def reset_transaction_as_consumed(modeladmin, request, queryset):
         qs.save()
 reset_transaction_as_consumed.short_description = "Set transactions as consumed (is_consumed=True)"
 
+def reset_transaction_as_ignored_and_consumed(modeladmin, request, queryset):
+    """ reset transaction by setting is_ignored = True and is_consumed = True"""
+    for qs in queryset:
+        qs.is_consumed = True
+        qs.is_ignored = True
+        qs.save()
+reset_transaction_as_consumed.short_description = "Set transactions as ignored and consumed (is_ignored=True, is_consumed=True)"
+
 
 def reset_producer_status(modeladmin, request, queryset):
     """ reset producer status to '-' """
