@@ -16,6 +16,10 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class Consumer(object):
+    
+    def __init__(self):
+        from bhp_dispatch.classes import SignalManager
+        self.signal_manager = SignalManager()
 
     def consume(self, using=None, lock_name=None, **kwargs):
         """Consumes ALL incoming transactions on \'using\' in order by ('producer', 'timestamp')."""
@@ -42,6 +46,7 @@ class Consumer(object):
                 pass  # raise DeserializationError(e)
 
     def _disconnect_signals(self, obj):
+        self.signal_manager.disconnect(obj)
         self.disconnect_signals()
 
     def disconnect_signals(self):
