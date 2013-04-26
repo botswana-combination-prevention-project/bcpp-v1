@@ -42,7 +42,7 @@ class Consumer(object):
                 pass  # raise DeserializationError(e)
 
     def _disconnect_signals(self, obj):
-        self.disconnect_signals(obj)
+        self.disconnect_signals()
 
     def disconnect_signals(self):
         """Disconnects app specific signals if overriden."""
