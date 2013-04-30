@@ -106,7 +106,7 @@ class BaseSubject (BaseSyncUuidModel):
         if not isinstance(self, RegisteredSubject):
             if 'registered_subject' in dir(self):
                 self.registered_subject.subject_identifier = self.subject_identifier
-                self.registered_subject.subject_identifier_as_pk = self.subject_identifier_as_pk
+#                self.registered_subject.subject_identifier_as_pk = self.subject_identifier_as_pk
                 self.registered_subject.study_site = self.study_site
                 self.registered_subject.dob = self.dob
                 self.registered_subject.is_dob_estimated = self.is_dob_estimated
@@ -122,7 +122,7 @@ class BaseSubject (BaseSyncUuidModel):
             else:
                 defaults = {
                     'subject_identifier': self.subject_identifier,
-                    'subject_identifier_as_pk': self.subject_identifier_as_pk,
+#                    'subject_identifier_as_pk': self.subject_identifier_as_pk,
                     'study_site': self.study_site,
                     'dob': self.dob,
                     'is_dob_estimated': self.is_dob_estimated,
