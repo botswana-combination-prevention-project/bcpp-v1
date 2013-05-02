@@ -264,7 +264,7 @@ LOGIN_REDIRECT_URL = '/{app_name}/'.format(app_name=APP_NAME)
 LOGOUT_URL = '/{app_name}/logout/'.format(app_name=APP_NAME)
 SHORT_DATE_FORMAT = 'Y-m-d'
 SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
-LAB_LOCK_NAME = 'BHP041C'
+LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 SESSION_COOKIE_AGE = 3000
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
