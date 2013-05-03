@@ -23,6 +23,9 @@ class Order(BaseOrder):
         help_text="non-user helper field to simplify search and filter")
     objects = OrderManager()
 
+    def protocol(self):
+        return self.aliquot.receive.protocol
+
     def save(self, *args, **kwargs):
         self.subject_identifier = self.aliquot.receive.patient.subject_identifier
         self.receive_identifier = self.aliquot.receive_identifier
