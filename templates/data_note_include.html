@@ -1,0 +1,18 @@
+{% load crypto_tags %}{% load admin_urls %}
+<tr>
+   <tr>
+    <td><A href="{{data_note_add_url}}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Add Data Note ]</A></td>
+       {% for data_note in data_notes %}
+           <td>
+           {% if visit_code and visit_instance %}
+               <A href="{{ data_note.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">[ Edit ]</A>
+           {% else %}
+               <A href="{{ data_note.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Edit ]</A>
+           {% endif %}
+           <BR> <B>{{data_note.subject }}</B>    
+           <BR> {{data_note.comment|encrypted }} 
+           <BR><i><small>Updated on {{ data_note.modified|date:"SHORT_DATE_FORMAT" }}   
+                by {{ data_note.user_modified }}</small></i>       
+           </td>  
+        {% endfor %}
+   </tr>
