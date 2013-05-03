@@ -412,6 +412,45 @@ class RegisteredSubjectDashboard(Dashboard):
                                            'appointment': self._appointment,
                                            'locator_add_url': locator_add_url})
 
+    def render_data_note(self, data_note_cls, template=None, **kwargs):
+        """Renders to string the data note for the current registered subject or that passed as a keyword.
+
+            Keywords:
+                registered_subject: if locator information for the current registered subject is collected
+                    on another. For example, with mother/infant pairs.
+        """
+        source_registered_subject = kwargs.get('registered_subject', self.registered_subject)
+        if isinstance(data_note_cls, models.Model) or data_note_cls is None:
+            raise TypeError('Expected first parameter to be a Data Note model class. Got an instance. Please correct in local dashboard view.')
+        if data_note_cls is None:
+            raise TypeError('Expected first parameter to be a Data Note model class. Got None. Please correct in local dashboard view.')
+        visit_code = None
+        visit_instance = None
+        data_note_add_url = reverse('admin:' + data_note_cls._meta.app_label + '_' + data_note_cls._meta.module_name + '_add')
+        if not template:
+            template = 'data_note_include.html'
+        data_notes = data_note_cls.objects.filter(registered_subject=source_registered_subject)
+        data_note_instances = []
+        if data_notes:
+            for data_note in data_notes:
+                for field in data_note._meta.fields:
+                    if isinstance(field, (TextField, EncryptedTextField)):
+                        value = getattr(data_note, field.name)
+                        if value:
+                            setattr(data_note, field.name, '<BR>'.join(wrap(value, 25)))
+                if self._appointment:
+                    visit_code = self._appointment.visit_definition.code
+                    visit_instance = self._appointment.visit_instance
+                data_note_instances.append(data_note)
+        return render_to_string(template, {'data_notes': data_note_instances,
+                                           'registered_subject': self.registered_subject,
+                                           'subject_identifier': self.get_subject_identifier(),
+                                           'dashboard_type': self.dashboard_type,
+                                           'visit_code': visit_code,
+                                           'visit_instance': visit_instance,
+                                           'appointment': self._appointment,
+                                           'data_note_add_url': data_note_add_url})
+
     def get_urlpatterns(self, view, regex, **kwargs):
 
         """ Generates dashboard urls.
