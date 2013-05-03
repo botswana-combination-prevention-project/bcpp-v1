@@ -3,25 +3,29 @@ from dateutil.relativedelta import relativedelta
 from django.test import TestCase
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_registration.models import RegisteredSubject
-from bhp_appointment.models import Appointment, Configuration
+from bhp_registration.tests.factories import RegisteredSubjectFactory
+from bhp_appointment.models import Appointment
+from bhp_appointment.tests.factories import ConfigurationFactory, AppointmentFactory
 from bhp_visit.models import VisitDefinition
+from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_visit_tracking.models import TestSubjectVisit
-from bhp_consent.models import TestSubjectConsent, ConsentCatalogue, AttachedModel
-from bhp_variables.models import StudySite
+from bhp_consent.models import TestSubjectConsent, AttachedModel
+from bhp_consent.tests.factories import TestSubjectConsentFactory
+from bhp_consent.tests.factories import ConsentCatalogueFactory
+from bhp_variables.tests.factories import StudySiteFactory
 from bhp_off_study.models import TestOffStudy
 
 
 class OffStudyMethodsTests(TestCase):
 
     def setUp(self):
-        study_site = StudySite.objects.create(site_code='10', site_name='TESTSITE')
-        Configuration.objects.create()
+        study_site = StudySiteFactory(site_code='10', site_name='TESTSITE')
+        ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
         content_type_map = ContentTypeMap.objects.get(model__iexact=TestSubjectConsent._meta.object_name)
-        consent_catalogue = ConsentCatalogue.objects.create(
+        consent_catalogue = ConsentCatalogueFactory(
             name='test',
             content_type_map=content_type_map,
             consent_type='study',
@@ -35,9 +39,9 @@ class OffStudyMethodsTests(TestCase):
         # assert OffStudy model is in AttachedModel
         self.assertTrue(AttachedModel.objects.get(content_type_map=ContentTypeMap.objects.get(model__iexact=TestSubjectVisit._meta.object_name)))
         # create a subject
-        self.registered_subject = RegisteredSubject.objects.create()
+        self.registered_subject = RegisteredSubjectFactory()
         # consent the subject
-        self.subject_consent = TestSubjectConsent.objects.create(
+        self.subject_consent = TestSubjectConsentFactory(
             first_name='TEST',
             last_name='TESTER',
             initials='TT',
@@ -53,14 +57,14 @@ class OffStudyMethodsTests(TestCase):
             may_store_samples='Yes',
             )
         # create some visit definitions
-        VisitDefinition.objects.create(code='1000')
-        VisitDefinition.objects.create(code='1300')
-        VisitDefinition.objects.create(code='1600')
-        VisitDefinition.objects.create(code='1800')
+        VisitDefinitionFactory(code='1000')
+        VisitDefinitionFactory(code='1300')
+        VisitDefinitionFactory(code='1600')
+        VisitDefinitionFactory(code='1800')
 
     def create_appointments(self, now, appts):
         for visit_code, dte in appts.iteritems():
-            appointment = Appointment.objects.create(registered_subject=self.registered_subject, appt_datetime=dte, visit_definition=VisitDefinition.objects.get(code=visit_code))
+            appointment = AppointmentFactory(registered_subject=self.registered_subject, appt_datetime=dte, visit_definition=VisitDefinition.objects.get(code=visit_code))
             # appt_datetime may be change by get_best_apptdatetime, so update dict
             appts.update({visit_code: appointment.appt_datetime})
         return appts
