@@ -1,6 +1,7 @@
 from datetime import date
 from django.db import models
 from bhp_crypto.fields import EncryptedTextField
+from bhp_registration.models import RegisteredSubject
 from bhp_base_model.models import BaseModel
 
 
@@ -8,6 +9,7 @@ class DataNote(BaseModel):
     """ Tracks notes on missing or required data.
 
     Note can be displayed on the dashboard"""
+    registered_subject = models.ForeignKey(RegisteredSubject)
     subject = models.CharField(max_length=50)
     comment_date = models.DateField(default=date.today())
     comment = EncryptedTextField(max_length=500)
