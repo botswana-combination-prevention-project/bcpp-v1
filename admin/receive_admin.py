@@ -32,5 +32,5 @@ class ReceiveAdmin(AutocompleteAdmin, BaseModelAdmin):
     search_fields = ('receive_identifier', 'patient__subject_identifier', 'protocol')
     list_filter = ('drawn_datetime', 'receive_datetime', 'protocol')
     list_per_page = 15
-
+    date_hierarchy = 'drawn_datetime'
 admin.site.register(Receive, ReceiveAdmin)
