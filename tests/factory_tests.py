@@ -1,17 +1,20 @@
 from django.test import TestCase
 from django.contrib.contenttypes.models import ContentType
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_content_type_map.tests.factories import ContentTypeMapFactory
 from factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
 from bhp_visit.models import MembershipForm, ScheduleGroup, VisitDefinition
+from bhp_content_type_map.classes import ContentTypeMapHelper
 
 
 class FactoryTests(TestCase):
 
     def test_p1(self):
+        content_type_map_helper = ContentTypeMapHelper()
+        content_type_map_helper.populate()
+        content_type_map_helper.sync()
         content_type = ContentType.objects.get(app_label='bhp_consent', model='testsubjectconsent')
         self.assertIsInstance(content_type, ContentType)
-        content_type_map = ContentTypeMapFactory(content_type=content_type)
+        content_type_map = ContentTypeMap.objects.get(content_type=content_type)
         self.assertIsInstance(content_type_map, ContentTypeMap)
         membership_form = MembershipFormFactory(content_type_map=content_type_map)
         self.assertIsInstance(membership_form, MembershipForm)
