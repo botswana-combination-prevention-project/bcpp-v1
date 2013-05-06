@@ -131,7 +131,17 @@ class RegisteredSubject(BaseSubject):
 
     def dispatch_container_lookup(self, using=None):
         return None
-
+    def bypass_for_edit_dispatched_as_item(self):
+        # requery myself
+        obj = self.__class__.objects.get(pk=self.pk)
+        #dont allow values in these fields to change if dispatched
+        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['registration_status', 'modified']]
+        for k, v in may_not_change_these_fields:
+            if k[0] != '_':
+                if getattr(self, k) != v:
+                    return False
+        return True
+    
     def __unicode__(self):
         if self.sid:
             return "{0} {1} ({2} {3})".format(self.mask_unset_subject_identifier(),
