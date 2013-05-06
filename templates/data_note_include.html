@@ -1,15 +1,14 @@
 {% load crypto_tags %}{% load admin_urls %}
-<tr>
-   <tr>
-    <td><A href="{{data_note_add_url}}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Add Data Note ]</A></td>
+   <A href="{{data_note_add_url}}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">Add Data Note</A>&nbsp;|&nbsp;<A href="/admin/bhp_data_manager/datanote/?&q={{ registered_subject.pk }}">See all for subject</A>
+    <tr class="{% cycle 'row1' 'row2' %}">
        {% for data_note in data_notes %}
-           <td>
+           <td style="width:10px;text-align:left;">
+           <span {% if data_note.status == 'Open' %} style="background-color:RED;"{% endif %}>&nbsp;</span>&nbsp{{ forloop.counter }}.&nbsp;
            {% if visit_code and visit_instance %}
-               <A href="{{ data_note.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">[ Edit ]</A>
+               <A href="{{ data_note.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">{{data_note.subject }}</A>
            {% else %}
-               <A href="{{ data_note.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Edit ]</A>
+               <A href="{{ data_note.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">{{data_note.subject }}</A>
            {% endif %}
-           <BR> <B>{{data_note.subject }}</B>    
            <BR> {{data_note.comment|encrypted }} 
            <BR><i><small>Updated on {{ data_note.modified|date:"SHORT_DATE_FORMAT" }}   
                 by {{ data_note.user_modified }}</small></i>       
