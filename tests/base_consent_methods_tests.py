@@ -94,6 +94,7 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         TestSubjectConsent.objects.all().delete()
         TestSubjectConsentNoRS.objects.all().delete()
         RegisteredSubject.objects.all().delete()
+
         print 'create registered subject, assert subject identifier and subject_identifier_as_pk set to dummy pk'
         registered_subject = RegisteredSubjectFactory()
         StudySite.objects.all().delete()
@@ -127,9 +128,9 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         subject_consent = TestSubjectConsentNoRSFactory(study_site=study_site)
         print subject_consent.subject_identifier
         print 'assert subject_identifier was created and a registered subject was created for this consent'
+        self.assertEqual(RegisteredSubject.objects.all().count(), 4)
         self.assertEqual(RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier).subject_identifier, subject_consent.subject_identifier)
-        print 'assert subject_identifier_pk is same on registered subject and this consent'
-        self.assertEqual(RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier).subject_identifier_as_pk, subject_consent.subject_identifier_as_pk)
+        subject_identifier_as_pk = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier).subject_identifier_as_pk
 
         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier, identity=subject_consent.identity)
         print 'assert registered_subject fields were updated from BaseSubject fields in subject_consent'
@@ -141,7 +142,8 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         self.assertEqual(registered_subject.initials, subject_consent.initials)
         self.assertEqual(registered_subject.dob, subject_consent.dob)
         self.assertEqual(registered_subject.is_dob_estimated, subject_consent.is_dob_estimated)
-        self.assertEqual(registered_subject.subject_identifier_as_pk, subject_consent.subject_identifier_as_pk)
+        print 'confirm subject_identifier_as_pk on RS has not changed since RS was created'
+        self.assertEqual(registered_subject.subject_identifier_as_pk, subject_identifier_as_pk)
         self.assertEqual(RegisteredSubject.objects.all().count(), 4)
         print 'ok'
 
