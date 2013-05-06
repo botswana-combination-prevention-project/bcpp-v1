@@ -2,6 +2,7 @@ from textwrap import wrap
 from datetime import datetime
 from django.db import models
 from django.db.models import TextField
+#from django.core.exceptions import NoReverseMatch
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
@@ -177,13 +178,13 @@ class RegisteredSubjectDashboard(Dashboard):
         model_name = visit_model._meta.module_name
         app_label = visit_model._meta.app_label
         self.context.add(visit_model_app_label=app_label)
-        try:
+        #try:
             # if this fails, confirm the model has been registered with admin!
-            url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
-        except:
+        url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
+        #except NoReverseMatch:
             # model must be registered in admin
-            raise ValueError('NoReverseMatch: Reverse for \'{0}_{1}_add\'. Check model is '
-                                 'registered in admin'.format(app_label, model_name))
+        #    raise ValueError('NoReverseMatch: Reverse for \'{0}_{1}_add\'. Check model is '
+        #                         'registered in admin'.format(app_label, model_name))
         self.context.add(visit_model_name=model_name)
         return url
 

@@ -15,11 +15,14 @@ from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
 from bhp_lab_tracker.classes import lab_tracker
 from lab_requisition.models import TestRequisition
 from bhp_visit_tracking.models import TestSubjectVisit
+from bhp_content_type_map.classes import ContentTypeMapHelper
 
 
 class DashboardTests(TestCase):
 
     def test_p1(self):
+        ContentTypeMapHelper().populate()
+        ContentTypeMapHelper().sync()
         registered_subject = RegisteredSubjectFactory()
         visit_model = TestSubjectVisit
         requisition_model = TestRequisition
