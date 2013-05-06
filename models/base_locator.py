@@ -6,6 +6,7 @@ from bhp_common.choices import YES_NO, YES_NO_DOESNT_WORK
 from bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
 from bhp_crypto.fields import EncryptedCharField, EncryptedTextField
 from bhp_registration.models import RegisteredSubject
+from bhp_locator.managers import BaseLocatorManager
 
 
 class BaseLocator(BaseConsentedUuidModel):
@@ -143,6 +144,11 @@ class BaseLocator(BaseConsentedUuidModel):
         blank=True,
         null=True,
         )
+
+    objects = BaseLocatorManager()
+
+    def natural_key(self):
+        return (self.report_datetime, ) + self.registered_subject.natural_key()
 
     class Meta:
         abstract = True
