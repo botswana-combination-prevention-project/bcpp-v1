@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import get_app, get_models
 from bhp_appointment_helper.models import BaseAppointmentHelperModel
+from bhp_registration.managers import RegisteredSubjectManager
 from registered_subject import RegisteredSubject
 
 
@@ -20,6 +21,11 @@ class BaseRegisteredSubjectModel (BaseAppointmentHelperModel):
 
     """
     registered_subject = models.OneToOneField(RegisteredSubject)
+
+    objects = RegisteredSubjectManager()
+
+    def natural_key(self):
+        return self.registered_subject.natural_key()
 
     def get_subject_identifier(self):
         """Returns the subject_identifier."""
