@@ -1,4 +1,5 @@
 from django.db.models.signals import Signal, post_save
+from bhp_registration.models import RegisteredSubject
 
 
 class BaseAppointmentMixin(object):
@@ -35,5 +36,9 @@ class BaseAppointmentMixin(object):
         .. seealso:: :class:`appointment_helper.AppointmentHelper`. """
         self.pre_prepare_appointments()
         from bhp_appointment_helper.classes import AppointmentHelper
-        AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower(), source='BaseAppointmentMixin')
+        if 'registered_subject' in dir(self):
+            registered_subject = self.registered_subject
+        else:
+            registered_subject = RegisteredSubject.objects.get(subject_identifier=self.subject_identifier)
+        AppointmentHelper().create_all(registered_subject, self.__class__.__name__.lower(), source='BaseAppointmentMixin')
         self.post_prepare_appointments()
