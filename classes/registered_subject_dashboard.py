@@ -430,7 +430,7 @@ class RegisteredSubjectDashboard(Dashboard):
         data_note_add_url = reverse('admin:' + data_note_cls._meta.app_label + '_' + data_note_cls._meta.module_name + '_add')
         if not template:
             template = 'data_note_include.html'
-        data_notes = data_note_cls.objects.filter(registered_subject=source_registered_subject)
+        data_notes = data_note_cls.objects.filter(registered_subject=source_registered_subject, display_on_dashboard=True, status='Open')
         data_note_instances = []
         if data_notes:
             for data_note in data_notes:
