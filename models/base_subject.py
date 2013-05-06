@@ -18,6 +18,11 @@ from bhp_subject.managers import BaseSubjectManager
 
 
 class BaseSubject (BaseSyncUuidModel):
+    """Base for consent and registered subject models.
+
+    .. note:: the field subject_identifier_as_pk is in both models but the values are independent; that
+              is, consent.subject_identifier_as_pk != registered_subject.subject_identifier_as_pk.
+    """
 
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
@@ -105,8 +110,8 @@ class BaseSubject (BaseSyncUuidModel):
         RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
         if not isinstance(self, RegisteredSubject):
             if 'registered_subject' in dir(self):
+                # subject_identifier_as_pk should never be changed once set!!
                 self.registered_subject.subject_identifier = self.subject_identifier
-#                self.registered_subject.subject_identifier_as_pk = self.subject_identifier_as_pk
                 self.registered_subject.study_site = self.study_site
                 self.registered_subject.dob = self.dob
                 self.registered_subject.is_dob_estimated = self.is_dob_estimated
@@ -120,9 +125,9 @@ class BaseSubject (BaseSyncUuidModel):
                 self.registered_subject.subject_type = self.subject_type
                 self.registered_subject.save(using=using)
             else:
+                # subject_identifier_as_pk should never be changed once set!!
                 defaults = {
                     'subject_identifier': self.subject_identifier,
-#                    'subject_identifier_as_pk': self.subject_identifier_as_pk,
                     'study_site': self.study_site,
                     'dob': self.dob,
                     'is_dob_estimated': self.is_dob_estimated,
@@ -210,7 +215,10 @@ class BaseSubject (BaseSyncUuidModel):
         pass
 
     def insert_dummy_identifier(self):
-        """Inserts a random uuid as a dummy identifier."""
+        """Inserts a random uuid as a dummy identifier for a new instance.
+
+        Model uses subject_identifier_as_pk as a natural key for serialization/deserialization. Value must not change once set."""
+
         # set to uuid if new and not specified
         if not self.id:
             subject_identifier_as_pk = str(uuid4())
@@ -220,6 +228,9 @@ class BaseSubject (BaseSyncUuidModel):
         # never allow subject_identifier as None
         if not self.subject_identifier:
             raise ConsentError('Subject Identifier may not be left blank.')
+        # never allow subject_identifier_as_pk as None
+        if not self.subject_identifier_as_pk:
+            raise ConsentError('Attribute subject_dentifier_as_pk may not be left blank. Expected to be set to a uuid already.')
 
     class Meta:
         abstract = True
