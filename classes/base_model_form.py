@@ -11,6 +11,19 @@ class BaseModelForm(forms.ModelForm):
 
         super(BaseModelForm, self).__init__(*args, **kwargs)
         self.logic = LogicCheck(self._meta.model)
+        if 'get_visit' in dir(self.instance):
+            if self.instance.get_visit():
+                try:
+                    attr = self.instance.get_visit()._meta.object_name.lower()
+                    self.fields[attr].queryset = self.instance.get_visit().__class__.objects.filter(pk=self.instance.subject_visit.pk)
+                except KeyError:
+                    pass
+        if 'registered_subject' in dir(self.instance):
+            try:
+                if self.instance.registered_subject:
+                    self.fields['registered_subject'].queryset = self.instance.registered_subject.__class__.objects.filter(pk=self.instance.registered_subject.pk)
+            except:
+                pass
 
     def get_subject_identifier(self, cleaned_data):
         subject_identifier = None
