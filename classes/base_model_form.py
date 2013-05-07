@@ -8,9 +8,9 @@ from logic_check import LogicCheck
 class BaseModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-
         super(BaseModelForm, self).__init__(*args, **kwargs)
         self.logic = LogicCheck(self._meta.model)
+        # if in admin edit mode, populate visit model's queryset
         if 'get_visit' in dir(self.instance):
             if self.instance.get_visit():
                 try:
@@ -18,6 +18,7 @@ class BaseModelForm(forms.ModelForm):
                     self.fields[attr].queryset = self.instance.get_visit().__class__.objects.filter(pk=self.instance.subject_visit.pk)
                 except KeyError:
                     pass
+        # if in admin edit mode, populate registered_subject's queryset
         if 'registered_subject' in dir(self.instance):
             try:
                 if self.instance.registered_subject:
@@ -41,8 +42,6 @@ class BaseModelForm(forms.ModelForm):
                         visit = cleaned_data.get(attrname, None)
                         if visit:
                             subject_identifier = visit.get_subject_identifier()
-        #if not subject_identifier:
-        #    raise forms.ValidationError('Cannot determine subject_identifier for dispatch (bhp_dispatch).')
         return subject_identifier
 
     def clean(self):
@@ -53,11 +52,6 @@ class BaseModelForm(forms.ModelForm):
             if 'is_dispatched' in dir(self._meta.model()):
                 if self._meta.model().is_dispatched:
                     raise forms.ValidationError('Cannot update. Form is currently dispatched')
-#        if 'subject_identifier' in cleaned_data:
-#            #subject_identifier = cleaned_data.get('subject_identifier', None)
-#            if 'is_dispatched' in dir(self._meta.model()):
-#                if self._meta.model().is_dispatched():
-#                    raise forms.ValidationError('Subject is currently dispatched.')
         # encrypted fields may have their own validation code to run.
         # See the custom field objects in bhp_crypto.
         try:
