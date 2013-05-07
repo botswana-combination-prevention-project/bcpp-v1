@@ -9,9 +9,9 @@ from base_scheduled_entry import BaseScheduledEntry
 
 class ScheduledEntry(BaseScheduledEntry):
 
-    # these reasons are required, may also get a list of reasons from model but 
+    # these reasons are required, may also get a list of reasons from model but
     # still must at least use these words
-    required_visit_model_reasons = ['missed', 'death', 'lost']
+    required_visit_model_reasons = ['missed', 'death', 'lost', 'scheduled', 'unscheduled']
 
     def set_bucket_model_cls(self):
         self._bucket_model_cls = ScheduledEntryBucket
@@ -53,27 +53,27 @@ class ScheduledEntry(BaseScheduledEntry):
                 pass
         self._bucket_model_instance = bucket_model_instance
 
-    def confirm_reason_field(self, visit_model_instance):
-        """Confirms visit model has a reason attribute and the current value uses required values correctly.
+    def check_visit_model_reason_field(self, visit_model_instance):
+        """Confirms visit model has a reason attribute and the choices tuple uses required values correctly.
 
-        Called before visit model instance is set.
+        Called before visit model instance is set for this class.
 
-        You can override the default list of required reasons by adding the method 'get_required_reasons'
-        to the visit model."""
+        You can override the default list of required reasons by overriding the method 'get_visit_reason_choices'
+        on the visit model."""
 
-        if 'get_required_reasons' in dir(visit_model_instance):
-            required_reasons = visit_model_instance.get_required_reasons()
+        if 'get_visit_reason_choices' in dir(visit_model_instance):
+            required_reasons = [tpl[0].lower() for tpl in visit_model_instance.get_visit_reason_choices()]
             # check that required reasons use the required key words
             found = []
             for word in self.required_visit_model_reasons:
                 for reason in required_reasons:
-                    if word in reason:
+                    if word.lower() in reason.lower():
                         found.append(word)
                         break
             if found != self.required_visit_model_reasons:
-                raise ImproperlyConfigured('Visit model method \'get_required_reasons\' must return a list of choices using each of the required words {0}. Got {1}.'.format(self.required_visit_model_reasons, required_reasons))
+                raise ImproperlyConfigured('Visit model method \'get_visit_reason_choices\' must return a list of choices using each of the required words {0}. Got {1}.'.format(self.required_visit_model_reasons, required_reasons))
         else:
-            required_reasons = copy.deepcopy(self.required_visit_model_reasons)
+            required_reasons = self.required_visit_model_reasons
         for f in visit_model_instance.__class__._meta.fields:
             if f.name == 'reason':
                 field = f
@@ -88,13 +88,15 @@ class ScheduledEntry(BaseScheduledEntry):
         """ Loops thru the list of entries configured for the visit_definition of this visit_model_instance
         and Adds entries to or updates existing entries in the bucket.
 
+        If reason for visit (visit tracking form) is not scheduled, deletes and/or does not create NEW.
+
         This just determines KEYED or NEW, bucket rules will reassess later.
         """
         self.set_visit_model_instance(visit_model_instance)
         self.set_filter_model_instance(self.get_visit_model_instance())
         registered_subject = visit_model_instance.appointment.registered_subject
-        if 'get_required_reasons' in dir(visit_model_instance):
-            required_reasons = visit_model_instance.get_required_reasons()
+        if 'get_visit_reason_choices' in dir(visit_model_instance):
+            required_reasons = [tpl[0].lower() for tpl in visit_model_instance.get_visit_reason_choices()]
         else:
             required_reasons = self.required_visit_model_reasons
         # scheduled entries are only added if visit instance is 0
@@ -115,6 +117,7 @@ class ScheduledEntry(BaseScheduledEntry):
                            'report_datetime': report_datetime,
                            'entry_status': entry_status}
                 if self.get_visit_model_instance().reason.lower() in required_reasons:
+                    # is missed, lost or death, so delete NEW forms
                     self.get_bucket_model_cls().objects.filter(
                             registered_subject=registered_subject,
                             appointment=self.get_visit_model_instance().appointment,
@@ -122,6 +125,7 @@ class ScheduledEntry(BaseScheduledEntry):
                             entry_status='NEW'
                             ).delete()
                 else:
+                    # is a scheduled/unscheduled visit, so get_or_create forms for entry
                     bucket_instance, created = self.get_bucket_model_cls().objects.get_or_create(
                             registered_subject=registered_subject,
                             appointment=self.get_visit_model_instance().appointment,
