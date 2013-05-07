@@ -1,4 +1,6 @@
+import copy
 from datetime import datetime
+from django.core.exceptions import ImproperlyConfigured
 from bhp_entry.models import Entry
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_entry.models import ScheduledEntryBucket
@@ -6,6 +8,11 @@ from base_scheduled_entry import BaseScheduledEntry
 
 
 class ScheduledEntry(BaseScheduledEntry):
+
+    # these reasons are required, may also get a list of reasons from model but 
+    # still must at least use these words
+    required_visit_model_reasons = ['missed', 'death', 'lost']
+
     def set_bucket_model_cls(self):
         self._bucket_model_cls = ScheduledEntryBucket
 
@@ -46,6 +53,37 @@ class ScheduledEntry(BaseScheduledEntry):
                 pass
         self._bucket_model_instance = bucket_model_instance
 
+    def confirm_reason_field(self, visit_model_instance):
+        """Confirms visit model has a reason attribute and the current value uses required values correctly.
+
+        Called before visit model instance is set.
+
+        You can override the default list of required reasons by adding the method 'get_required_reasons'
+        to the visit model."""
+
+        if 'get_required_reasons' in dir(visit_model_instance):
+            required_reasons = visit_model_instance.get_required_reasons()
+            # check that required reasons use the required key words
+            found = []
+            for word in self.required_visit_model_reasons:
+                for reason in required_reasons:
+                    if word in reason:
+                        found.append(word)
+                        break
+            if found != self.required_visit_model_reasons:
+                raise ImproperlyConfigured('Visit model method \'get_required_reasons\' must return a list of choices using each of the required words {0}. Got {1}.'.format(self.required_visit_model_reasons, required_reasons))
+        else:
+            required_reasons = copy.deepcopy(self.required_visit_model_reasons)
+        for f in visit_model_instance.__class__._meta.fields:
+            if f.name == 'reason':
+                field = f
+                break
+        if not field:
+            raise ImproperlyConfigured('Visit model requires field \'reason\'.')
+        for word in required_reasons:
+            if word in visit_model_instance.reason.lower() and visit_model_instance.reason.lower() != word:
+                raise ImproperlyConfigured('Visit model attribute \'reason\' value \'{1}\' is invalid. Must be \'{0}\'. The words {2} are reserved, as is, for the reason choices tuple. Check your visit model\'s field or form field definition.'.format(word, visit_model_instance.reason.lower(), required_reasons))
+
     def add_or_update_for_visit(self, visit_model_instance):
         """ Loops thru the list of entries configured for the visit_definition of this visit_model_instance
         and Adds entries to or updates existing entries in the bucket.
@@ -55,6 +93,10 @@ class ScheduledEntry(BaseScheduledEntry):
         self.set_visit_model_instance(visit_model_instance)
         self.set_filter_model_instance(self.get_visit_model_instance())
         registered_subject = visit_model_instance.appointment.registered_subject
+        if 'get_required_reasons' in dir(visit_model_instance):
+            required_reasons = visit_model_instance.get_required_reasons()
+        else:
+            required_reasons = self.required_visit_model_reasons
         # scheduled entries are only added if visit instance is 0
         if self.get_visit_model_instance().appointment.visit_instance == '0':
             filled_datetime = datetime.today()
@@ -72,15 +114,23 @@ class ScheduledEntry(BaseScheduledEntry):
                            'due_datetime': due_datetime,
                            'report_datetime': report_datetime,
                            'entry_status': entry_status}
-                bucket_instance, created = self.get_bucket_model_cls().objects.get_or_create(
-                        registered_subject=registered_subject,
-                        appointment=self.get_visit_model_instance().appointment,
-                        entry=entry,
-                        defaults=options)
-                if not created and bucket_instance.entry_status != entry_status:
-                    bucket_instance.report_datetime = report_datetime
-                    bucket_instance.entry_status = entry_status
-                    bucket_instance.save()
+                if self.get_visit_model_instance().reason.lower() in required_reasons:
+                    self.get_bucket_model_cls().objects.filter(
+                            registered_subject=registered_subject,
+                            appointment=self.get_visit_model_instance().appointment,
+                            entry=entry,
+                            entry_status='NEW'
+                            ).delete()
+                else:
+                    bucket_instance, created = self.get_bucket_model_cls().objects.get_or_create(
+                            registered_subject=registered_subject,
+                            appointment=self.get_visit_model_instance().appointment,
+                            entry=entry,
+                            defaults=options)
+                    if not created and bucket_instance.entry_status != entry_status:
+                        bucket_instance.report_datetime = report_datetime
+                        bucket_instance.entry_status = entry_status
+                        bucket_instance.save()
 
     def update_status_from_instance(self, action, target_model_instance, filter_model_cls, comment=None):
         "Sets up then calls update bucket using a user model instance."""

@@ -28,9 +28,14 @@ class BaseEntry(object):
     def set_visit_model_instance(self, visit_model_instance=None):
         if not isinstance(visit_model_instance, BaseVisitTracking):
             raise TypeError('Parameter \'visit_model_instance\' must be an instance of BaseVisitTracking. Got {0}'.format(visit_model_instance))
+        self.confirm_reason_field(visit_model_instance)
         self._visit_model_instance = visit_model_instance
         if not self._visit_model_instance:
             raise AttributeError('Attribute _visit_model_instance cannot be None')
+
+    def confirm_reason_field(self):
+        """Confirms visit model has a reason attribute and the current value uses required values correctly."""
+        pass
 
     def get_visit_model_instance(self):
         if not self._visit_model_instance:
