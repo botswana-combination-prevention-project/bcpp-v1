@@ -12,7 +12,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, Count, Max
 from lab_base_model.models import BaseLabListModel, BaseLabListUuidModel
 from bhp_base_model.models import BaseListModel
-from bhp_visit.models import VisitDefinition
+from bhp_visit.models import VisitDefinition, ScheduleGroup
 from bhp_variables.models import StudySite
 from bhp_lab_tracker.models import BaseHistoryModel
 from bhp_entry.models import BaseEntryBucket
@@ -176,7 +176,7 @@ class BaseController(BaseProducer):
             if not isinstance(additional_base_model_class, (list, tuple)):
                 additional_base_model_class = [additional_base_model_class]
             base_model_class = base_model_class + additional_base_model_class
-        base_model_class = base_model_class + [BaseListModel, BaseLabListModel, BaseLabListUuidModel, VisitDefinition, StudySite, BaseHistoryModel, BaseEntryBucket]
+        base_model_class = base_model_class + [BaseListModel, BaseLabListModel, BaseLabListUuidModel, VisitDefinition, ScheduleGroup, StudySite, BaseHistoryModel, BaseEntryBucket]
         return tuple(base_model_class)
 
     def get_allowed_base_models(self):
