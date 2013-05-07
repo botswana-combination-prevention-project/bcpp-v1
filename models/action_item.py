@@ -20,7 +20,7 @@ class ActionItem(BaseModel):
     rt = models.IntegerField(default=0, verbose_name='RT Ref.')
     action_priority = models.CharField(
         max_length=35,
-        choices=(('normal', 'Normal'), ('Medium', 'medium'), ('high', 'High')),
+        choices=(('normal', 'Normal'), ('Medium', 'Medium'), ('high', 'High')),
         default='Normal')
     action_group = models.CharField(
         max_length=35,

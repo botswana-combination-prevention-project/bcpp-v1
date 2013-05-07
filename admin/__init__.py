@@ -1,2 +1,2 @@
 from comment_admin import CommentAdmin
-from data_note_admin import DataNoteAdmin
+from action_item_admin import ActionItemAdmin
