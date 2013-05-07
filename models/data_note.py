@@ -1,12 +1,13 @@
 from datetime import date, timedelta
 from django.db import models
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from bhp_crypto.fields import EncryptedTextField
 from bhp_registration.models import RegisteredSubject
 from bhp_base_model.models import BaseModel
 
 
-class DataNote(BaseModel):
+class ActionItem(BaseModel):
     """ Tracks notes on missing or required data.
 
     Note can be displayed on the dashboard"""
@@ -17,6 +18,14 @@ class DataNote(BaseModel):
     comment = EncryptedTextField(max_length=500)
     display_on_dashboard = models.BooleanField(default=True)
     rt = models.IntegerField(default=0, verbose_name='RT Ref.')
+    action_priority = models.CharField(
+        max_length=35,
+        choices=(('normal', 'Normal'), ('Medium', 'medium'), ('high', 'High')),
+        default='Normal')
+    action_group = models.CharField(
+        max_length=35,
+        choices=[],
+        default='data management')
     status = models.CharField(
         max_length=35,
         choices=(('Open', 'Open'), ('Stalled', 'Stalled'), ('Resolved', 'Resolved')),

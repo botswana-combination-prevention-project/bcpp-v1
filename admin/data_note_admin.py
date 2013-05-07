@@ -1,16 +1,16 @@
 from django.contrib import admin
-from bhp_data_manager.models import DataNote
+from bhp_data_manager.models import ActionItem
 from bhp_registration.models import RegisteredSubject
-from bhp_data_manager.forms import DataNoteForm
+from bhp_data_manager.forms import ActionItemForm
 from base_admin import BaseAdmin
 
 
-class DataNoteAdmin(BaseAdmin):
+class ActionItemAdmin(BaseAdmin):
 
-    form = DataNoteForm
+    form = ActionItemForm
 
     def __init__(self, *args, **kwargs):
-        super(DataNoteAdmin, self).__init__(*args, **kwargs)
+        super(ActionItemAdmin, self).__init__(*args, **kwargs)
         self.search_fields.insert(0, 'registered_subject__pk')
         self.search_fields.insert(0, 'registered_subject__subject_identifier')
         self.list_display.insert(1, 'dashboard')
@@ -19,6 +19,6 @@ class DataNoteAdmin(BaseAdmin):
         if db_field.name == "registered_subject":
             if request.GET.get('registered_subject'):
                 kwargs["queryset"] = RegisteredSubject.objects.filter(pk=request.GET.get('registered_subject'))
-        return super(DataNoteAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(ActionItemAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(DataNote, DataNoteAdmin)
+admin.site.register(ActionItem, ActionItemAdmin)
