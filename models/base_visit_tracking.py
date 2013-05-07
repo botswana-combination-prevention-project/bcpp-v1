@@ -5,6 +5,7 @@ from bhp_base_model.validators import datetime_not_before_study_start, datetime_
 from bhp_base_model.fields import OtherCharField
 from bhp_appointment.models import Appointment
 from bhp_visit_tracking.managers import BaseVisitTrackingManager
+from bhp_visit_tracking.choices import VISIT_REASON
 
 
 class BaseVisitTracking (BaseConsentedUuidModel):
@@ -22,7 +23,6 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     Admin should change the status after ADD.
 
     """
-
     appointment = models.OneToOneField(Appointment)
 
     report_datetime = models.DateTimeField(
@@ -38,8 +38,8 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         verbose_name="What is the reason for this visit?",
         max_length=25,
         # this is commented out and handled in the ModelForm class, see comment just below...
-        #choices=VISIT_REASON,
-        help_text="",
+        #choices=,
+        help_text="<Override the field class for this model field attribute in ModelForm>",
         )
 
     """
@@ -109,6 +109,15 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     """
 
     objects = BaseVisitTrackingManager()
+
+    def get_visit_reason_choices(self):
+        """Returns a tuple for the reason ChoiceField set in ModelForm.
+
+        Users may override.
+
+        This is also called by the ScheduledEntry class when deciding to delete or create
+        NEW forms for entry on the dashboard."""
+        return VISIT_REASON
 
     def post_save(self):
         pass
