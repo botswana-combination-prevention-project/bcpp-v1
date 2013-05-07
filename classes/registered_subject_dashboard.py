@@ -401,39 +401,57 @@ class RegisteredSubjectDashboard(Dashboard):
                                            'appointment': self._appointment,
                                            'locator_add_url': locator_add_url})
 
-    def render_data_note(self, data_note_cls, template=None, **kwargs):
-        """Renders to string the data note for the current registered subject or that passed as a keyword."""
+    def render_action_item(self, action_item_cls, template=None, **kwargs):
+        """Renders to string the action_items for the current registered subject or that passed as a keyword.
+
+        Call from your local dashboard class. For example::
+
+            from bhp_data_manager.models import ActionItem
+
+            class SubjectDashboard(RegisteredSubjectDashboard):
+
+                def create(self, **kwargs):
+                    ...
+                    self.context.add(
+                        ...
+                        rendered_action_items=self.render_action_item(ActionItem),
+                        ...
+                        )
+        """
         source_registered_subject = kwargs.get('registered_subject', self.registered_subject)
-        if isinstance(data_note_cls, models.Model) or data_note_cls is None:
-            raise TypeError('Expected first parameter to be a Data Note model class. Got an instance. Please correct in local dashboard view.')
-        if data_note_cls is None:
-            raise TypeError('Expected first parameter to be a Data Note model class. Got None. Please correct in local dashboard view.')
+        if isinstance(action_item_cls, models.Model) or action_item_cls is None:
+            raise TypeError('Expected first parameter to be a Action Item model class. Got an instance. Please correct in local dashboard view.')
+        if action_item_cls is None:
+            raise TypeError('Expected first parameter to be a Action Item model class. Got None. Please correct in local dashboard view.')
         visit_code = None
         visit_instance = None
-        data_note_add_url = reverse('admin:' + data_note_cls._meta.app_label + '_' + data_note_cls._meta.module_name + '_add')
+        action_item_add_url = reverse('admin:' + action_item_cls._meta.app_label + '_' + action_item_cls._meta.module_name + '_add')
         if not template:
-            template = 'data_note_include.html'
-        data_notes = data_note_cls.objects.filter(registered_subject=source_registered_subject, display_on_dashboard=True, status='Open')
-        data_note_instances = []
-        if data_notes:
-            for data_note in data_notes:
-                for field in data_note._meta.fields:
+            template = 'action_item_include.html'
+        action_items = action_item_cls.objects.filter(registered_subject=source_registered_subject, display_on_dashboard=True, status='Open')
+        action_item_instances = []
+        if action_items:
+            for action_item in action_items:
+                for field in action_item._meta.fields:
                     if isinstance(field, (TextField, EncryptedTextField)):
-                        value = getattr(data_note, field.name)
+                        value = getattr(action_item, field.name)
                         if value:
-                            setattr(data_note, field.name, '<BR>'.join(wrap(value, 25)))
+                            setattr(action_item, field.name, '<BR>'.join(wrap(value, 25)))
                 if self._appointment:
                     visit_code = self._appointment.visit_definition.code
                     visit_instance = self._appointment.visit_instance
-                data_note_instances.append(data_note)
-        return render_to_string(template, {'data_notes': data_note_instances,
+                action_item_instances.append(action_item)
+        if action_item_instances:
+            self.context.add(action_item_message='Action items exist for this subject. Please review and resolve if possible.')
+
+        return render_to_string(template, {'action_items': action_item_instances,
                                            'registered_subject': self.registered_subject,
                                            'subject_identifier': self.get_subject_identifier(),
                                            'dashboard_type': self.dashboard_type,
                                            'visit_code': visit_code,
                                            'visit_instance': visit_instance,
                                            'appointment': self._appointment,
-                                           'data_note_add_url': data_note_add_url})
+                                           'action_item_add_url': action_item_add_url})
 
     def get_urlpatterns(self, view, regex, **kwargs):
 

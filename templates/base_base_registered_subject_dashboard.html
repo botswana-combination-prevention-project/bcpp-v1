@@ -49,8 +49,11 @@
                         {% block visit_messages %}
                             {% for message in visit_messages %}
                                 <PRE>{{ message|wordwrap:80 }}<BR></PRE>
-                            {% endfor %}    
-                        {% endblock visit_messages %}                    
+                            {% endfor %}
+                            {% if action_item_message %}
+                                <PRE>{{ action_item_message|wordwrap:80 }}<BR></PRE>
+                            {% endif %}    
+                        {% endblock visit_messages %} 
                    </td>
                 </tr>
                 {% endif %}
@@ -140,8 +143,8 @@
                 {% endblock %}
                 <tr name="bottom right" >
                     <td>
-                        <H3>Data Issues</H3>
-                        {% block data_notes %}{{ rendered_data_notes }}{% endblock data_notes %}                                                
+                        <H3>Action Items</H3>
+                        {% block action_items %}{{ rendered_action_items }}{% endblock action_items %}                                                
                     </td>
                 </tr>
 
