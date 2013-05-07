@@ -136,17 +136,18 @@
                 </tr>                
                 {% block lab_plots %}{% endblock %}
                 {% block packing_lists %}{% endblock%}
-                {% block lab_results %}
-                <tr name="middle right"><td style="font-size: 10px;line-height: 10px; padding:0;">           
-                    <span name="x_results" id="x_results">{{ local_results }}</span>
-                </td></tr>
-                {% endblock %}
-                <tr name="bottom right" >
+                 <tr name="bottom right" >
                     <td>
                         <H3>Action Items</H3>
                         {% block action_items %}{{ rendered_action_items }}{% endblock action_items %}                                                
                     </td>
                 </tr>
+                {% block lab_results %}
+                <tr name="middle right"><td style="font-size: 10px;line-height: 10px; padding:0;">           
+                    <span name="x_results" id="x_results">{{ local_results }}</span>
+                </td></tr>
+                {% endblock %}
+                
 
             </table>
         </td>    
