@@ -19,8 +19,8 @@ class ActionItemAdmin(BaseAdmin):
         # save_model expects bhp_data_manager specific user groups
 
     def save_model(self, request, obj, form, change):
-        # check action_group
-        data_manager.check()
+        # check for bhp_data_manager user groups
+        data_manager.check_groups()
         user = request.user
         if not user.is_superuser:
             user_groups = [group.name for group in Group.objects.filter(user__username=request.user)]
