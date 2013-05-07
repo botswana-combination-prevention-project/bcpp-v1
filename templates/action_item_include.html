@@ -2,8 +2,7 @@
    <A href="{{action_item_add_url}}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">Add Action Item</A>&nbsp;|&nbsp;<A href="/admin/bhp_data_manager/actionitem/?&q={{ registered_subject.pk }}">See all for subject</A>
     <tr class="{% cycle 'row1' 'row2' %}">
        {% for action_item in action_items %}
-           <td style="width:10px;text-align:left;">
-           <span {% if action_item.status == 'Open' %} style="background-color:RED;"{% endif %}>&nbsp;</span>&nbsp{{ forloop.counter }}.&nbsp;
+           <td style="width:10px;text-align:left;"><span {% if action_item.status == 'open' %} style="background-color:RED;"{% endif %}>&nbsp;</span>{{ forloop.counter }}.&nbsp;
            {% if visit_code and visit_instance %}
                <A href="{{ action_item.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">{{action_item.subject }}</A>
            {% else %}

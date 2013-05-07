@@ -30,9 +30,8 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('bhp_data_manager', ['ActionItem'])
 
-
         # Changing field 'Comment.comment'
-        db.alter_column('bhp_data_manager_comment', 'comment', self.gf('django.db.models.fields.CharField')(max_length=500))
+        db.alter_column('bhp_data_manager_comment', 'comment', self.gf('django.db.models.fields.CharField')(max_length=1000))
         # Adding index on 'Comment', fields ['user_modified']
         db.create_index('bhp_data_manager_comment', ['user_modified'])
 
