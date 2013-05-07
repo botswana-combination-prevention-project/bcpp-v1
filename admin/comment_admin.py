@@ -1,8 +1,8 @@
 from django.contrib import admin
 from bhp_data_manager.models import Comment
-from base_comment_admin import BaseCommentAdmin
+from base_admin import BaseAdmin
 
 
-class CommentAdmin(BaseCommentAdmin):
+class CommentAdmin(BaseAdmin):
         pass
 admin.site.register(Comment, CommentAdmin)
