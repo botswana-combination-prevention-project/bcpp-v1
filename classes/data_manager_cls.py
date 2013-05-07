@@ -12,7 +12,7 @@ class DataManagerCls(object):
 
             from bhp_data_manager.classes import data_manager
             data_manager.prepare()
-"""
+        """
 
         if not Group.objects.filter(name='data_manager').exists():
             Group.objects.create(name='data_manager')
