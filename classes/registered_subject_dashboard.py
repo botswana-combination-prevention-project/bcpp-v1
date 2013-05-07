@@ -66,20 +66,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self.include_after_exclusion_model_keyed = []
         self.scheduled_entry_bucket_rules = []
 
-#     def _prepare_dispatch_subject(self):
-#         if self.registered_subject:
-#             try:
-#                 from bhp_dispatch.helpers import is_dispatched_registered_subject
-#                 self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
-#                 self.context.add(
-#                     is_dispatched=self.is_dispatched,
-#                     dispatch_producer=self.dispatch_producer)
-#             except:
-#                 pass
-
     def create(self, **kwargs):
         super(RegisteredSubjectDashboard, self).create(**kwargs)
-        subject_hiv_result = False
         if not self.appointment_row_template:
             self.appointment_row_template = 'appointment_row.html'
             self.context.add(appointment_row_template=self.appointment_row_template)
@@ -414,12 +402,7 @@ class RegisteredSubjectDashboard(Dashboard):
                                            'locator_add_url': locator_add_url})
 
     def render_data_note(self, data_note_cls, template=None, **kwargs):
-        """Renders to string the data note for the current registered subject or that passed as a keyword.
-
-            Keywords:
-                registered_subject: if locator information for the current registered subject is collected
-                    on another. For example, with mother/infant pairs.
-        """
+        """Renders to string the data note for the current registered subject or that passed as a keyword."""
         source_registered_subject = kwargs.get('registered_subject', self.registered_subject)
         if isinstance(data_note_cls, models.Model) or data_note_cls is None:
             raise TypeError('Expected first parameter to be a Data Note model class. Got an instance. Please correct in local dashboard view.')
