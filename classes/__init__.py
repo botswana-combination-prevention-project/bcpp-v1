@@ -1,1 +1,2 @@
 from subject_dashboard import SubjectDashboard
+from household_dashboard import HouseholdDashboard
