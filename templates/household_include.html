@@ -1,0 +1,70 @@
+{% load crypto_tags %}
+{% load dispatch_tags %}
+<div class="results">
+    <table  cellspacing="0" id="result_list">
+	<thead>
+	<th>Household_id</th>
+	<th>Dashboard</th>
+	<th>Unlock</th>
+	<th>CSO</th>
+	<th>Village</th>
+	<th>Ward</th>
+	<th>Gps</th>
+	<th>Created</th>
+	<th>Modified</th>    	    	
+	<th>User Created</th>
+	<th>User Modified</th>
+	<th>Host</th> 
+	<th>Map</th>    	    	    		    	    	    	
+	</thead>	
+    {% for household in search_results.object_list %}
+        <!-- obj is a Household object -->
+
+        <tr class="{% cycle 'row1' 'row2' %}">
+        <td>{% if household|is_dispatched %}
+        		<div class="warning">{{household.household_identifier}}</div>
+        	{% else %}
+        		<A href="/admin{{ household.get_absolute_url }}?next=dashboard_url&dashboard_type=household&household_identifier={{household.household_identifier}}">{{ household }}</A>
+        	{% endif %}
+        	</td>
+     	  <td>
+     	  {% if household|is_dispatched %}
+     	  	<div class="warning">Locked</div>
+     	  {% else %}
+     	  	<A name="dashboard-{{household.household_identifier}}" href="{% url dashboard_url dashboard_type='household' household_identifier=household.household_identifier %}">dashboard</A>
+     	  {% endif %}
+     	  </td>
+     	  <td>
+     	  {% if household|is_dispatched %}
+     	  	<A href="/bcpp_household/return/{{ household.household_identifier }}/">Unlock</A>
+     	  {% endif %}
+     	  </td>         
+     	  <td>{{ household.cso_number|encrypted }}</td>
+     	  <td>{{ household.village|encrypted}}</td>
+     	  <td>{{ household.ward|encrypted }}</td>     	  
+    	  <td><A href="map/{{ household.household_identifier }}/{{ household.gps_lon}}/{{ household.gps_lat}}">{{ household.gps_lon|encrypted}} {{ household.gps_lat|encrypted}}</A></td>
+    	  <td>{{ household.created|date:"Y-m-d H:i" }}</td>
+      	  <td>{{ household.modified|date:"Y-m-d H:i" }}</td>
+     	  <td>{{ household.user_created }}</td>
+       	  <td>{{ household.user_modified }}</td>
+       	  <td>{{ household.hostname_created }}</td>     
+       	  <td>
+       	        {% if household.uploaded_map %}
+    				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">view saved map</a>
+                {% else %}
+                	<form action="/bcpp_map/subject_map/" method="post">
+					   	{% csrf_token %}
+					   	<input type="hidden" value="{{ household.lat }}" id="lat" name="lat">
+					   	<input type="hidden" value="{{ household.lon }}" id="lon" name="lon">
+					   	<input type="hidden" value="{{ household.household_identifier }}" id="identifier" name="identifier">
+						<p><input type="submit" value="view google map"></p>
+					</form>	
+				{% endif %}
+       	  
+       	  </td>    	  
+        </tr>
+        
+    {% endfor %}
+    <tr><td colspan="11">{{ search_results.object_list.count }} household structure{{ search_results.object_list|pluralize }} found.</td></tr>    
+</table>
+</div>

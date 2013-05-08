@@ -1,0 +1,36 @@
+<table  cellspacing="0" id="result_list" border=1>
+
+    <thead>
+    <th>Household</th>    
+    <th>Ward</th>
+    <th>Code</th>
+    <th>Structure</th>    
+    <th>Date</th>
+    <th>Status</th>
+    <th>Contact</th>
+    <th>Tel</th>
+    <th>Comment</th>
+    <th>User</th>
+    <th>Modified</th>
+    </thead>                        
+           
+    {% for report in search_results.object_list %}
+
+
+        <tr class="{% cycle 'row2' 'row2' %}">
+            <td><A href="/admin{{report.household_survey.household.get_absolute_url}}">{{ report.household_survey.household }}</A></td>
+            <td>{{ report.household_survey.household.ward }}</td>            
+            <td><A href="/admin{{ report.household_survey.get_absolute_url }} ">{{ report.household_survey.survey_code  }}</A></td>            
+            <td><A href="{{ report.household_survey.household.householdstructure.get_absolute_url}}">Structure</A></td>            
+            <td>{{ report.survey_date|date:"Y-m-d"  }}</td>
+            <td>{{ report.household_survey_status  }}</td>            
+            <td>{{ report.household_survey.contact_name  }}</td>
+            <td>{{ report.household_survey.contact_tel  }}</td>
+            <td>{{ report.comment  }}</td>
+            <td>{{ report.user_created  }}</td>                                    
+            <td>{{ report.modified|date:"Y-m-d"  }}</td>
+        </tr>
+ 
+    {% endfor %} <!-- for hs in hh.householdsurvey_set.all -->
+
+</table>

@@ -1,0 +1,38 @@
+{% load crypto_tags %}
+<table  cellspacing="0" id="result_list" border=1>
+
+    <thead>
+    <th>Household</th> 
+    <th>Village</th>   
+    <th>Ward</th>
+    <th>Code</th>
+    <th>Structure</th>    
+    <th>Date</th>
+    <th>Contact</th>
+    <th>Tel</th>
+    <th>Comment</th>
+    <th>Host</th>
+    <th>User</th>
+    <th>Modified</th>
+    </thead>                        
+           
+    {% for survey in search_results.object_list %}
+
+        <tr class="{% cycle 'row2' 'row2' %}">
+            <td><A href="/admin{{survey.household.get_absolute_url}}">{{ survey.household }}</A></td>
+            <td>{{ survey.household.village|encrypted }}</td> 
+            <td>{{ survey.household.ward|encrypted }}</td>            
+            <td><A href="/admin{{survey.get_absolute_url}}">{{ survey.survey_code  }}</A></td>            
+            <td><A href="{{survey.household.householdstructure.get_absolute_url}}">Structure</A></td>            
+            <td>{{ survey.created|date:"d M Y"  }}</td>
+            <td>{{ survey.contact_name  }}</td>
+            <td>{{ survey.contact_tel  }}</td>
+            <td>{{ survey.comment  }}</td>
+            <td>{{ survey.hostname_created  }}</td>                                    
+            <td>{{ survey.user_created  }}</td>                                    
+            <td>{{ survey.modified|date:"d M Y H:i"  }}</td>
+        </tr>
+ 
+    {% endfor %} <!-- for hs in hh.householdsurvey_set.all -->
+
+</table>

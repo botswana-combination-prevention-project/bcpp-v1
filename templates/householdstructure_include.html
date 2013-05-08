@@ -1,0 +1,37 @@
+<div class="results">
+    <table  cellspacing="0" id="result_list">
+        <thead>
+        <th>Household Identifier</th>        
+        <th>Dashboard</th>
+        <th>CSO</th>   
+        <th>Village</th>                     
+        <th>Ward</th>
+        
+        <th>Members</th>
+        <th>Date Created</th>
+        <th>Date Modified</th>    	    	
+        <th>User Created</th>
+        <th>Hostname</th>    	    	
+        </thead>
+        <tbody>	
+        {% for household_structure in search_results.object_list %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+            <td>{{ household_structure.household.household_identifier }} </td>
+            <td><A name="dashboard-{{household_structure.household.household_identifier}}" href="{% url dashboard_url dashboard_type='household' household_identifier=household_structure.household.household_identifier survey=household_structure.survey.survey_slug %}">{{ household_structure.survey.survey_name }}</A></td>            
+            <td>{{ household_structure.household.cso_number }}</td>
+            <td>{{ household_structure.household.village }}</td> 
+            <td>{{ household_structure.household.ward }}</td>                                            
+            <td>{% for member in household_structure.householdstructuremember_set.all %}
+                    {% if member.first_name in first_names %}<font style="background:lightyellow;">{% endif %}{{member.first_name}} {% if member.first_name in first_names %}</font>{% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ household_structure.created|date:"Y-m-d" }}</td>
+            <td>{{ household_structure.modified|date:"Y-m-d" }}</td>
+            <td>{{ household_structure.user_created|escape }}</td>
+            <td>{{ household_structure.hostname_created|escape }}</td>
+            </tr>
+        {% endfor %}
+        <tr><td colspan="8">{{ search_results.object_list.count }} household structure{{ search_results.object_list|pluralize }} found.</td></tr>
+        </tbody>        
+    </table>
+</div>
