@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_base_model.classes import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HouseholdComposition, Respondent
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm, HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm, AccessToCareForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm, HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm, AccessToCareForm, HouseholdCompositionForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -1080,3 +1080,23 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "wheneverlaccess":admin.VERTICAL,}
     filter_horizontal = ('whereaccess',)
 admin.site.register(AccessToCare, AccessToCareAdmin)
+
+
+#Respondent 
+class RespondentInlineAdmin(BaseTabularInline):
+    model = Respondent
+
+#HouseholdComposition
+class HouseholdCompositionAdmin (SubjectVisitModelAdmin):
+    
+    form = HouseholdCompositionForm
+    inlines = [RespondentInlineAdmin, ]
+    fields = (
+        'housecode',
+        'physical_add',
+        'coordinates',
+        'contact',
+        'phone_number',)
+    radio_fields = {
+        "contact":admin.VERTICAL,}
+admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)
