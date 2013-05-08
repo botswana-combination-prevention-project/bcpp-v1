@@ -386,12 +386,13 @@ ABSENTEE_REASON = (
 )
 
 
-# = (
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-# )
+RELATION = (
+    ('spouse', 'spouse'),
+    ('parent', 'parent'),
+    ('sibling', 'sibling'),
+    ('child', 'child'),
+    ('aunt/uncle', 'aunt/uncle'),
+    ('cousin', 'cousin'),
+    ('partner', 'partner/boyfriend/girlfriend'),
+    ('OTHER', 'Other, specify'),
+)
