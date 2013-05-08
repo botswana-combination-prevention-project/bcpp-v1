@@ -1,28 +1,46 @@
-  {% load common_tags %}{% load crypto_tags %}
-  <div class="results">
-      <table  cellspacing="0" id="result_list" border=1>
-    	<thead>
-			<tr>
-    	<th>Dashboard</th>
-    	<th>Identifier</th>
-    	<th>First Name</th>
-    	<th>Initials</th>
-    	<th>Dob</th>    	    	    	
-    	<th>Consented</th>
-    	<th>User Created</th>
-    	<th>Date Modified</th>    	    	
-    	</thead>	
-        {% for consent in search_result.object_list %}
-            <tr class="{% cycle 'row1' 'row2' %}">
-            <td><A href="{% url dashboard_url dashboard_type='subject' subject_identifier=consent.subject_identifier %}">dashboard</A></td>
-            <td><A href="{{ consent.get_absolute_url }}?next=section_search_url_name&section_name={{ section_name }}&search_name={{ search_name }}">{{ consent.subject_identifier|escape}}</A></td>
-          	<td>{{ consent.first_name|encrypted }}</td>
-          	<td>{{ consent.initials }}</td>          	
-            <td>{{ consent.dob|date:'Y-m-d' }}</td>                      	            
-            <td>{{ consent.consent_datetime|date:'Y-m-d H:i' }}</td>                      	            
-            <td>{{ consent.user_created }}</td>
-          	<td>{{ consent.modified|date:"Y-m-d" }}</td>         	  
+<div class="results">
+      <table cellspacing="0" id="result_list">
+        <thead><tr>
+        <th>Household Structure</th>
+        <th>Subject Consent</th>
+        <th>First Name</th>
+        <th>Last Name</th>        
+        <th>Initials</th>
+        <th>Gender</th>
+        <th>Dob</th>        
+        <th>Age</th>
+        <th>Consent Date</th>
+        <th>HIV Result</th>
+        <th>ART Status</th>
+        <th>User Created</th>
+    	<th>Date Created</th>
+    	<th>Host</th>    	
+        
+        </thead>
+        <tbody>
+      {% for subjectconsent in search_results.object_list %}
+        
+            <tr class="{% cycle 'row2' 'row1' %}">
+            <td><a href="{{ subjectconsent.household_structure_member.household_structure.get_absolute_url }}">{{subjectconsent.household_structure_member.household_structure }}</a></td>                        
+            <td><A href="{% url dashboard_url dashboard_type='subject' subject_identifier=subjectconsent.subject_identifier %}">dashboard</A></td>            
+            <td><a href="/admin{{ subjectconsent.get_absolute_url }}">{{ subjectconsent.subject_identifier }}</A></td>
+            <td>{{subjectconsent.|encrypted}}</td>
+            <td>{{subjectconsent.last_name|encrypted}}</td>            
+            <td>{{subjectconsent.initials}}</td>
+            <td>{{subjectconsent.gender}}</td>
+            <td>{{subjectconsent.dob|date:"Y-m-d"}}</td>
+            <td>{{subjectconsent.household_structure_member.age_in_years}}</td>            
+            <td>{{subjectconsent.consent_datetime|date:"d M Y H:i"}}</td>
+            {% if subjectconsent.subjecthivresult %}
+                <td><a href="/admin{{ subjectconsent.subjecthivresult.get_absolute_url }}">{{subjectconsent.subjecthivresult.subject_hiv_result_option.result_word}}</A></td>
+            {% else %}                 
+                <td><div class="warning">?????</div></td>
+            {% endif %}    
+              	
             </tr>
-        {% endfor %}
-    </table>    
-    </div>
+
+      {% endfor %}
+      <tr><td colspan="9">{{ search_results.object_list.count }} subject consent{{ search_results.object_list|pluralize }} found.</td></tr>                  
+      </tbody>
+      </table>
+      </div>
