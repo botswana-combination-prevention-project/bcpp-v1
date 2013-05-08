@@ -67,7 +67,7 @@ class BaseConsent(ConsentBasics):
     witness_name = EncryptedLastnameField(
         verbose_name=_("Witness\'s Last and first name (illiterates only)"),
         validators=[
-            RegexValidator('^[A-Z]{1,50}\,[A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME,FIRSTNAME\'. All uppercase separated by a comma'),
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
             ],
         blank=True,
         null=True,
@@ -183,7 +183,7 @@ class BaseConsent(ConsentBasics):
         # requery myself
         obj = self.__class__.objects.get(pk=self.pk)
         #dont allow values in these fields to change if dispatched
-        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['is_verified_datetime', 'is_verified']]
+        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['is_verified_datetime', 'is_verified', 'identity']]
         for k, v in may_not_change_these_fields:
             if k[0] != '_':
                 if getattr(self, k) != v:
