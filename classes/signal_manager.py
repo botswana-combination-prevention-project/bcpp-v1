@@ -5,6 +5,8 @@ from bhp_visit_tracking.models.signals import base_visit_tracking_add_or_update_
 from bhp_lab_tracker.models.signals import tracker_on_post_save
 from bhp_consent.models.signals import is_consented_instance_on_pre_save
 from bhp_subject.models.signals import base_subject_get_or_create_registered_subject_on_post_save
+from bhp_appointment.models import pre_appointment_contact_on_post_save, pre_appointment_contact_on_post_delete
+from bhp_appointment_helper.models import prepare_appointments_on_post_save
 
 
 class SignalManager(object):
@@ -21,6 +23,9 @@ class SignalManager(object):
             'base_visit_tracking_on_post_save',
             'base_subject_get_or_create_registered_subject_on_post_save',
             'is_consented_instance_on_pre_save',
+            'prepare_appointments_on_post_save',
+            'pre_appointment_contact_on_post_save',
+            'pre_appointment_contact_on_post_delete'
             ]
         self.signal_register.sort()
 
@@ -32,9 +37,15 @@ class SignalManager(object):
         signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
         signals.pre_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
         signals.pre_save.disconnect(is_consented_instance_on_pre_save, weak=False, dispatch_uid="is_consented_instance_on_pre_save")
+        signals.post_save.disconnect(pre_appointment_contact_on_post_delete, weak=False, dispatch_uid="pre_appointment_contact_on_post_delete")
+        signals.post_save.disconnect(pre_appointment_contact_on_post_save, weak=False, dispatch_uid="pre_appointment_contact_on_post_save")
+        signals.post_save.disconnect(prepare_appointments_on_post_save, weak=False, dispatch_uid="prepare_appointments_on_post_save")
         self.disconnect_audit_trail_signals(obj)
 
     def reconnect(self):
+        signals.post_save.connect(prepare_appointments_on_post_save, weak=False, dispatch_uid="prepare_appointments_on_post_save")
+        signals.post_save.connect(pre_appointment_contact_on_post_save, weak=False, dispatch_uid="pre_appointment_contact_on_post_save")
+        signals.post_save.connect(pre_appointment_contact_on_post_delete, weak=False, dispatch_uid="pre_appointment_contact_on_post_delete")
         signals.pre_save.connect(is_consented_instance_on_pre_save, weak=False, dispatch_uid="is_consented_instance_on_pre_save")
         signals.pre_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
         signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
