@@ -1,30 +1,28 @@
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from bhp_variables.models import StudySpecific
 
 
 def MinConsentAge(value):
-    now = date.today()
     try:
         ss = StudySpecific.objects.all()[0]
     except IndexError as e:
         raise IndexError('{0}. Have you filled in the required information in bhp_variables.StudySpecific?'.format(e))
 
     min_consent_age_years = ss.minimum_age_of_consent
-    min_consent_age_days = 365 * min_consent_age_years
-    age_in_days = timedelta(days=min_consent_age_days)
-    if value > now - age_in_days:
-        raise ValidationError(u'Participant must be %syrs or older. Date of birth suggests otherwise. You entered %s ' % (min_consent_age_years, value))
-
+    rdelta = relativedelta(date.today(), value)
+    if rdelta.years < min_consent_age_years:
+        raise ValidationError(u'Participant must be {0}yrs or older. Date of birth suggests otherwise. You entered {1} that suggests that the person is {2}yrs'.format(min_consent_age_years, value, rdelta.years))    
+    
 
 def MaxConsentAge(value):
-    now = date.today()
     try:
         ss = StudySpecific.objects.all()[0]
     except IndexError as e:
         raise IndexError('{0}. Have you filled in the required information in bhp_variables.StudySpecific?'.format(e))
+
     max_consent_age_years = ss.maximum_age_of_consent
-    max_consent_age_days = 365 * max_consent_age_years
-    age_in_days = timedelta(days=max_consent_age_days)
-    if value < now - age_in_days:
-        raise ValidationError(u'Participant must be no older than %syrs. Date of birth suggests otherwise. You entered %s ' % (max_consent_age_years, value))
+    rdelta = relativedelta(date.today(), value)
+    if rdelta.years > max_consent_age_years:
+        raise ValidationError(u'Participant must be no older than {0}yrs. Date of birth suggests otherwise. You entered {1} that suggests that the person is {2}yrs'.format(max_consent_age_years, value, rdelta.years))
