@@ -1,24 +1,60 @@
 {% extends "section.html"%}
-{% block section_title%}{% endblock%}
-
 {% block section_links %}
 
-    <table>
+<table>
+    <thead><th colspan="2">HBC's and Netbooks</th></thead>
+    <tbody>
     <tr>
     <td>
-        <form method="GET" action="/admin/">
+        <form method="POST" action="/admin/bhp_hbc/homebasedcounselor/">
         {% csrf_token %}
-        <input type="submit" value="Site Admin" class="default" name="admin" />
+        <input type="submit" value="Home-Based Counselor" class="{% if search_name == "homebasedcounselor" %}{% else %}default{% endif %}" />
         </form>
     </td>
-
-
+    <td>
+        <form method="POST" action="/admin/bhp_hbc/homebasedcounselorteam/">
+        {% csrf_token %}
+        <input type="submit" value="Home-Based Counselor Team" class="{% if search_name == "homebasedcounselorteam" %}{% else %}default{% endif %}" />
+        </form>
+    </td>
+    <td>
+        <form method="POST" action="/admin/bhp_netbook/netbook/">
+        {% csrf_token %}
+        <input type="submit" value="Netbook" class="{% if search_name == "netbook" %}{% else %}default{% endif %}" />
+        </form>
+    </td>
+    <td >
+        <form method="POST" action="/admin/bhp_issuetracker/issuetracker/">
+        {% csrf_token %}
+        <input type="submit" value="Issue Tracker" class="{% if search_name == "issuetracker" %}{% else %}default{% endif %}" />
+        </form>
+    </td>    
     </tr>
-    </table> 
-
+    </tbody>
+</table>
 {% endblock %}
 
+{% block top_search_name %}
+
+    {% if search_results.object_list %}
+        <h3>{{search_name|capfirst}}{{ search_results.object_list|pluralize }}</h3>
+        {% include top_result_include_file %}
+    
+    {% endif %}
+
+{% endblock%}
+
+
 {% block other_section_links %}
+
+<H5>Netbooks</H5>
+<ol type=1>
+<li><A name="dispatch-to-producer" href="/admin/bcpp_household/">Dispatch data to netbook</A>
+<li><A href="/bhp_sync/">Return data from netbooks to Community Server</A>
+<li><A href="/bcpp_map/">Dispatch data to netbooks by Map</A>
+<li><A href="/bcpp_map/map_section/">Divide ward in sections</A>
+<li><A href="/bcpp_map/gps_point_update/">Update household GPS Coordinates</A>
+</ol>
 
 <H5>Other Links</H5>
 <ol type=1>
@@ -28,6 +64,12 @@
 <li><A href="/admin/">Site Forms Administration</A>
 </ol>
 
+<H5>Survey Management</H5>
+<ol type=1>
+<li><A href="/admin/bcpp_household/">Section Bcpp Household</A>
+</ol>
+
+
 <H5>Lab</H5>
 <ol type=1>
 <li><A href="/admin/bcpp_lab/">Requisitions and Packing Lists</A>
@@ -36,7 +78,11 @@
 </ol>
 
 
-</div>
-{% endblock%}
+<H4>Possible error messages</H4>
+
+{% for key, message in warning_messages.iteritems %}
+    <font color=red>{{ key }} error:</font> {{ message }}
+{% endfor %}
 
 
+{% endblock %}
