@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 from django.db import models
-from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from bhp_crypto.fields import EncryptedTextField
 from bhp_registration.models import RegisteredSubject
@@ -24,7 +23,7 @@ class ActionItem(BaseModel):
         default='Normal')
     action_group = models.CharField(
         max_length=35,
-        choices=[(item.get('name'), ' '.join(item.get('name').split('_'))) for item in Group.objects.values('name').all()] + [('no group', '<no group>')],
+        #choices=[(item.get('name'), ' '.join(item.get('name').split('_'))) for item in Group.objects.values('name').all()] + [('no group', '<no group>')],
         default='no group',
         help_text='You can only select a group to which you belong. Choices are based on Groups defined in Auth.')
     status = models.CharField(
