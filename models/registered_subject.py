@@ -135,7 +135,7 @@ class RegisteredSubject(BaseSubject):
         # requery myself
         obj = self.__class__.objects.get(pk=self.pk)
         #dont allow values in these fields to change if dispatched
-        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['study_site_id','registration_status', 'modified', 'identity']]
+        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['study_site_id','registration_status', 'modified']]
         for k, v in may_not_change_these_fields:
             if k[0] != '_':
                 if getattr(self, k) != v:
