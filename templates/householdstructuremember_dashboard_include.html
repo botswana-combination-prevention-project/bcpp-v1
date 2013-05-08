@@ -1,0 +1,101 @@
+{% load common_tags %}{% load dashboard_tags %}
+{% load crypto_tags %}
+{% load dispatch_tags %}
+<table border=1 width=100%>
+<thead>
+<th>First name</th>
+<th>Initials</th>
+<th>Sex</th>
+<th>Age</th>
+<th>Eligibile<sup>2</sup></th>
+<th>Participation</th> 
+<th>Dashboard</th>
+<th>Relation</th>   
+<th>Residency</th>           
+<th>Present<sup>1</sup></th>
+<th>Lives here?</th>                 
+</thead>
+<tbody>
+
+{% for household_structure_member in household_structure_members %}
+    <tr {% if household_structure_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
+    
+    <td>{{ forloop.counter }}.&nbsp;
+    {% if not household_structure_member.member_status == 'CONSENTED' %}
+    	{% if household_structure_member.household_structure.household.household_identifier|is_dispatched %}
+    		{{ household_structure_member.first_name|encrypted }}
+    	{% else %}
+        	<A href="/admin{{ household_structure_member.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_structure_member.first_name|encrypted }}</A>
+        {% endif %}
+    {% else %}            
+        {{ household_structure_member.first_name|encrypted }}        
+    {% endif %} 
+    {% if not household_structure_member.present == 'Yes' and not household_structure_member.present == 'No'%}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
+    </td>
+        
+    <td>{{ household_structure_member.initials }}</td>
+    <td>{{ household_structure_member.gender }}</td>
+    <td>{{ household_structure_member.age_in_years }}</td>
+    <td>{{ household_structure_member.is_eligible_label }}&nbsp;{% if not household_structure_member.member_status%}{{ household_structure_member.hiv_status }}{% endif %}</td>                                
+    
+    {% comment%} particpation {% endcomment %}
+    <td>
+        {% if household_structure_member.is_eligible and not household_structure_member.is_consented %}
+            <form name="participation-{{household_structure_member.pk}}" action="/bcpp_survey/dashboard/participation/" method="post">
+                {% csrf_token %}
+                <table>
+                    <tr>            
+                        {{ household_structure_member.participation_form.as_table }}
+                    </tr>
+                </table>
+            </form>
+        {% else %}
+            {% if household_structure_member.member_status != 'NOT_REPORTED' %}
+                {{ household_structure_member.member_status }}
+            {% endif %}
+        {% endif %}
+    </td>
+    {% comment%} dashboard {% endcomment %}
+    {% if not household_structure_member.is_eligible %}
+        <td></td>
+    {% else %}
+        {% if household_structure_member.present == 'Yes' or household_structure_member.present == 'No'%}        
+            {% if household_structure_member.member_status == 'CONSENTED' %}
+            	{% if household_structure_member.household_structure.household.household_identifier|is_dispatched %}
+            		subject dashboard/{{household_structure_member.get_hiv_history}}
+            	{% else %}
+             		<td><A name="consented-{{household_structure_member.pk}}" href="{% url dashboard_url dashboard_type='subject' household_structure_member=household_structure_member.pk survey=household_structure.survey.survey_slug %}">subject dashboard/{{household_structure_member.get_hiv_history}}</a></td>
+            	{% endif %}
+            
+            {% elif household_structure_member.member_status != 'CONSENTED' and household_structure_member.member_status in household_member_actions %}
+               <td>
+               {% if household_structure_member.member_status == 'ABSENT' %}
+               Absentee log (attempts to contact)
+                    <A name="absent-{{household_structure_member.pk}}" href="{{ household_structure_member.absentee_form_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}"><ol>{% for label in household_structure_member.absentee_form_label%}<li>{{ label }}{% endfor %}</ol></A>
+               {% elif household_structure_member.member_status == 'REFUSED' %}
+                    <A name="refused-{{household_structure_member.pk}}" href="{{ household_structure_member.refused_form_url }}?household_structure_member={{household_structure_member.pk}}&registered_subject={{ household_structure_member.registered_subject.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_structure_member.refused_form_label }}</A>
+               {% elif household_structure_member.member_status == 'MOVED' %}
+                    <A name="moved-{{household_structure_member.pk}}" href="{{ household_structure_member.moved_form_url }}?household_structure_member={{household_structure_member.pk}}&registered_subject={{ household_structure_member.registered_subject.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_structure_member.moved_form_label }}</A>
+
+               {% endif %}
+               </td>
+            {% else %}
+                <td>
+                    <A href="{% url dashboard_url dashboard_type='subject' household_structure_member=household_structure_member.pk survey=household_structure.survey.survey_slug %}">dashboard</A>
+                </td>
+            {% endif %}                
+        {% else %}
+            <td>&nbsp;</td>                        
+        {% endif %}
+    {% endif %}
+    <td>{{ household_structure_member.relation }}</td>
+    <td>{{ household_structure_member.resident }}</td>
+    <td>{{ household_structure_member.present }}</td>                                                                                        
+    <td>{{ household_structure_member.lives_in_household }}</td>
+                                                                                                
+     
+    </tr>
+{% endfor %}
+
+</tbody>
+</table>    

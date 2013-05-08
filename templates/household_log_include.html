@@ -1,0 +1,33 @@
+{% load common_tags %}{% load dashboard_tags %}
+{% load crypto_tags %}
+{% load dispatch_tags %}
+{% if household_log %}
+<H4> Household Log</H4>
+{% if household_log_entries %}
+<table border=1 width=100%>
+<thead>
+<th>Date</th>
+<th>HBC</th>
+<th>Next Appt</th>
+<th>Appt Source</th>    
+<th>Comment</th> 
+<th>Updated</th>               
+          
+</thead>
+<tbody>
+{% for household_log_entry in household_log_entries %}
+    <tr class="{% cycle 'row1' 'row2' %}">
+    <td>{{ forloop.counter }}.&nbsp;<A href="{{ household_log.get_absolute_url }}?household={{household_log.household.pk}}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_log.household.household_identifier }}&survey={{ household_log.survey.survey_slug}}"> {{ household_log_entry.report_datetime|date:"Y-m-d" }}</A></td>
+    <td>{{ household_log_entry.hbc }}</td>
+    <td>{{ household_log_entry.next_appt_datetime|date:"Y-m-d" }}</td>
+    <td>{{ household_log_entry.next_appt_datetime_source }}</td>
+    <td>{{ household_log_entry.comment }}</td>
+    <td>{{ household_log_entry.modified|date:"Y-m-d" }}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>    
+{% endif %}
+<p>&nbsp;&nbsp;&nbsp;<A href="{{ household_log.get_absolute_url }}?household={{household_log.household.pk}}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_log.household.household_identifier }}&survey={{ household_log.survey.survey_slug}}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
+
+{% endif %}

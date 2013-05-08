@@ -1,22 +1,127 @@
-{% extends "base_registered_subject_dashboard.html"%}
-{% load common_tags %}{% load dashboard_tags %}
+{% extends "base_registered_subject_dashboard.html"%}{% load crypto_tags %}
+{% load common_tags %}{% load dashboard_tags %}{% load bcpp_dashboard_tags %}
 {% load crypto_tags %}
 
 {% block clinic_dashboard_marquee %}
 <table>
 <tr style="background:lightyellow;">
-<td><B>Name:</B> {{registered_subject.first_name|encrypted }} ({{ registered_subject.initials }})</td> 
-<td><B>Gender:</B> {{registered_subject.gender|gender }}</td> 
-<td><B>Identifier:</B> {{subject_consent.subject_identifier }}</td>
-</tr>
-<tr style="background:lightyellow;">
-<td><B>{{subject_consent.identity_type|capfirst }}:</B> {{subject_consent.identity|encrypted}}</td>      
-<td><B>Born:</B> {{subject_consent.dob|date:"Y-m-d" }}</td> 
-<td><B>Age:</B> {{subject_consent.dob|age }}</td>
-<td><B>Consented:</B> {{subject_consent.consent_datetime|date:"Y-m-d H:i" }}</td>
-</tr>
-<tr style="background:lightyellow;">
-<td><B>Contact:</B> {% if subject_locator.may_follow_up == 'Yes' %}{{ subject_locator.subject_cell }} {% else %} May not call {% endif%}</td>      
+<td><B>Name:</B> {{ household_structure_member.first_name|encrypted }} ({{ household_structure_member.initials }})</td> 
+<td><B>Gender:</B> {{ household_structure_member.gender|gender }}</td>
+<td><B>Age at Survey:</B> {{ household_structure_member.age_in_years }}</td>  
+{% if subject_consent %}
+    {% if not subject_consent.first_name == household_structure_member.first_name %}
+        <td><div style="background:red;color:white;">Name mismatch: {{ subject_consent.first_name|encrypted }} <> {{household_structure_member.first_name|encrypted}}</div></td>  
+    {% endif %}
+{% else %}    
+    <td></td>  
+{% endif %}
 </tr>
 </table>
+<table>
+<tr style="background:lightyellow;">
+{% if subject_consent %}
+    <td><B>Survey Consent:</B> {{subject_consent.survey.survey_name }}</td>
+    <td><B>Identifier:</B> {{subject_consent.subject_identifier }}</td>
+    <td><B>{{subject_consent.identity_type|capfirst }}:</B> {{subject_consent.identity|encrypted }}</td>      
+    <td><B>Born:</B> {{subject_consent.dob|date:"Y-m-d" }}</td> 
+    <td><B>Age:</B> {{subject_consent.dob|age }}</td>
+    <td><B>Date:</B> {{subject_consent.consent_datetime|date:"Y-m-d H:i" }}</td>
+{% endif %}
+</tr>
+</table>
+{% if subject_hiv_result %}
+<table>
+<tr style="background:lightyellow;">
+    <td><B>Result: </B>{{ subject_hiv_result.subject_hiv_result_option }}</td>
+    <td><B>Finger-prick: </B>{{ subject_hiv_result.sample_datetime_drawn|date:"Y-m-d H:i"  }}</td>    
+    <td><B>Release: </B>{{ subject_hiv_result.result_release_location }}</td>        
+</tr>
+</table>
+{% endif %}
+
 {% endblock %}
+
+{% block membership_forms %}
+	{% if household_structure_member.is_dispatched %}
+         Forms locked! because this {{ household_structure_member.first_name|encrypted }} is in household that is currently dispatched to a netbook.
+    {% else %}
+	    {% for keyed_model_name, keyed_model in keyed_membership_forms.iteritems %}
+	        <A href="{{ keyed_model.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&registered_subject={{ registered_subject.pk }}&household_structure_member={{ household_structure_member.pk }}">{{ keyed_model_name }} (Complete)</A> |
+	    {% endfor %}   
+	
+	    {% for unkeyed_membership_form in unkeyed_membership_forms %}
+	        <A href="{{ unkeyed_membership_form|admin_url_from_contenttype }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&registered_subject={{ registered_subject.pk }}&household_structure_member={{ household_structure_member.pk }}">{{ unkeyed_membership_form }} (New)</A> |
+	    {% endfor %}  
+	{% endif %}
+{% endblock %}
+
+
+
+{% block household_structure_members %}
+    {% if not household %}    
+        <H4>Household</H4>
+        Household unknown
+    {% else %}    
+        <tr name="top right"><td>
+        <B>Household <A title="go to household" href="{% url dashboard_url dashboard_type='household' household_identifier=household.household_identifier survey=survey.survey_slug %}">{{ household.household_identifier }}</A></B>
+        <table>
+            <tr><td>{{ survey.survey_name }}</td><td colspan="2">CSO {{ household.cso_number|encrypted }}</td></tr>
+
+        {% if household_structure_members %}
+            {% for hsm in household_structure_members %}
+                <tr {% if hsm.first_name == household_structure_member.first_name%}style="background:lightyellow;"{% else %}class="row1"{% endif %}>
+                <td>
+                {% if hsm.is_eligible and not hsm.present == '-' %}
+                    {{ forloop.counter }}.&nbsp;<A href="{% url dashboard_url dashboard_type='subject' household_structure_member=hsm.pk survey=survey.survey_slug %}">{% if hsm.first_name == household_structure_member.first_name%}<B>{% endif %}{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}&nbsp;{{ hsm.hiv_status }}</A>{% if hsm.first_name == household_structure_member.first_name%}</B>{% endif %}
+                {% else%}                
+                    {{ forloop.counter }}.&nbsp;{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}            
+                {% endif %}
+                {% if hsm.present == '-' %}
+                    <span style="color:red;font-size:9px;vertical-align:super">Update!</span>
+                {% endif %}                    
+                </td>            
+                <td>{{ hsm.household_structure_relation }}</td>
+                <td>
+                {% if hsm.member_status %}
+                    {{ hsm.member_status }}
+                {% else %}    
+                    {{ hsm.is_eligible_label }}            
+                {% endif %}
+                </td>
+                </tr>
+            {% endfor %}
+        {% else %}    
+            <tr><td colspan="3">no members</td></tr>
+        {% endif %}
+        </table>        
+
+        </td></tr>
+    {% endif %}
+{% endblock household_structure_members %}    
+
+{% block appointments %}
+    {% if scheduled_entry_bucket %} <I>(Hint: to see all appointments, click 'show appointments' in the Action column below)</I>{% endif%}
+    <table>
+    <thead>
+    <th>Visit</th>
+    <th>Description</th>
+    <th>Appt. Date</th>
+    <th>Appt. Status</th>
+    <th>Visit Report</th>
+    <th>Visit Reason</th>      
+    <th>Action</th>                                    
+    </thead>
+    <tbody>
+    {% if not appointments%}
+        <tr class="{% cycle 'row1' 'row2' %}"><td colspan="8"><i>No appointments scheduled</i></td></tr>
+    {% else %}
+        {% for appointment in appointments %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+            {% bcpp_survey_appointment_row appointment %}
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+    </table>
+{% endblock appointments %}
+

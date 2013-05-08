@@ -1,0 +1,12 @@
+{% extends 'audit_trail.html' %}
+
+{% block back_to_dashboard %}
+{% if back_url_name = 'dashboard_url' and audit_subject_identifier %}
+Back to <A href="{% url dashboard_url dashboard_type='subject' household_structure_member=household_structure_member survey=survey %}">dashboard for {{audit_subject_identifier }} </A>
+{% endif %}
+
+{% if back_url_name = 'dashboard_visit_url' and audit_subject_identifier %}
+Back to <A href="{% url dashboard_visit_url dashboard_type='subject' visit_code=visit_code visit_instance=visit_instance household_structure_member=household_structure_member survey=survey %}">dashboard for {{audit_subject_identifier }} </A>
+{% endif %}
+{% endblock %}
+

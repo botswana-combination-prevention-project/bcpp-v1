@@ -1,0 +1,158 @@
+{% extends "dashboard_base.html"%}
+{% load common_tags %}{% load dashboard_tags %}
+{% load crypto_tags %}
+{% load dispatch_tags %}
+
+{% block breadcrumbs %}
+
+    {% load tags %}
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        {% if survey %}
+        &rsaquo; <a href="/survey/{{ survey.survey_slug }}/">Households</a>
+        {% else %}
+        &rsaquo; <a href="/survey/">Households</a>        
+        {% endif %}            
+        &rsaquo; 
+        {% if household|is_dispatched %}
+        	{{ dashboard_identifier }}
+        {% else %}
+        <A name="edit-household" href="{% url dashboard_url dashboard_type=dashboard_type household_identifier=household.household_identifier %}">{{ dashboard_identifier }}</A>
+        {% endif %}
+        &rsaquo; Dashboard            
+        {% if survey %}
+            &rsaquo; Survey {{ survey.survey_slug|capfirst }}
+        {% endif %}    
+        
+        
+    </div>
+    
+{% endblock %}
+
+
+{% block dashboard_main %}
+	{% if household.household_identifier|is_dispatched %}
+	<div align="center"><h1>This household is currently <font color="red">dispatched</font> to a netbook. Please do not make any changes to it or it's members.</h1></div>
+	{% endif %}
+    {% block dashboard_marquee %}
+    
+        {% if not survey %}
+            <table>
+            <tr style="background:lightyellow;">
+            <td><b>Household:&nbsp;</b>{{ household.household_identifier }}</td>
+            <td><b>Ward:</b> {{ household.ward|encrypted }}</td>
+            {% if household.cso_number %}<td><b>CSO:</b> {{ household.cso_number|encrypted}} </td>{% endif %}
+            </tr>
+            </table>
+
+            <table>
+            {% for survey in surveys %}
+                <tr><td><A href="{% url dashboard_url dashboard_type=dashboard_type household_identifier=household.household_identifier survey=survey.survey_slug %}">{{survey.survey_name}}</A></td></tr>                             
+            {% endfor %}
+            </table>
+            
+
+        {% else %}
+            <table>
+            <tr style="background:lightyellow;">
+            <td><b>Household:&nbsp;</b>
+	            {% if household|is_dispatched %}
+	            	{{ household.household_identifier }}
+	            {% else %}
+	            	<A title="change household description" href="/admin{{ household.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}">{{ household.household_identifier }}</A>
+	            {% endif %}
+            </td>
+            <td><b>Ward:</b> {{ household.ward|encrypted }}</td>
+            {% if household.cso_number %}<td><b>CSO:</b> {{ household.cso_number|encrypted }}</td>{% endif %}
+            {% if household_structure %}
+                <td><b>Members:&nbsp;</b>
+                {% if household|is_dispatched %}
+                	{{current_member_count}}/{{ household_structure.member_count }}
+                {% else %}
+                	<A title="change number of members" {% if allow_edit_members %} href="{{ household_structure.get_absolute_url }}?household={{ household_structure.household.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}&survey={{household_structure.survey.survey_slug}}" {% endif %}>{{current_member_count}}/{{ household_structure.member_count }}</A>
+                {% endif %}
+                </td>
+            {% endif %}
+            <td><B>{{ survey.survey_name }}</B></td>
+            {% for household_structure_member in household_structure_members %}
+                 <td
+                {% if not household_structure_member.present == 'Yes' and not household_structure_member.present == 'No'%}
+                    style="background-color:red">?
+                {% else %}                     
+                    style="background-color:lightyellow">*
+                {% endif %}    
+                </td>                
+            {% endfor %}    
+            
+                <td>
+                {% if household.uploaded_map %}
+    				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">view saved map</a>
+                {% else %}
+    				<a href="/bcpp_map/subject_map/?lon={{ household_structure.household.lon }}&lat={{ household_structure.household.lat }}&identifier={{ household_structure.household.household_identifier }}">view google map</a>
+    			{% endif %}
+    			</td>
+            </tr>
+            </table>
+            <table>
+            <tr>
+                {% if not household|is_dispatched %}
+	                {% if household_structure %}
+	                    {% if allow_edit_members %}
+	                        <td><A href="{{ household_structure.get_absolute_url }}?household={{ household_structure.household.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}&survey={{household_structure.survey.survey_slug}}">change number of members</A></td>
+	                        {% if household_structure.member_count > current_member_count %}
+	                        <td>|&nbsp;<A href="/admin/bcpp_household/householdstructuremember/add/?household_structure={{ household_structure.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&survey={{household_structure.survey.survey_slug}}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></td>
+	                        {% endif %}
+	                    {% endif %}                        
+	                {% else %}
+	                    {% if allow_edit_members %}
+	                        <td><A name="add-householdstructure-{{survey.survey_name}}" href="/admin/bcpp_household/householdstructure/add/?household={{household.pk}}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}&survey={{ survey.pk}}">add household structure for {{survey.survey_name}}</A></td>        
+	                    {% endif %}                        
+	                {% endif %}
+	             {% endif %}
+            </tr>        
+            </table>
+        {% endif %}        
+    {% endblock %}
+
+    {% if survey %}
+        
+        {% if household_structure %}
+            {% include "householdstructuremember_dashboard_include.html" %}
+            {% if allow_edit_members %}
+                {% if household_structure.member_count > current_member_count %}
+                    <p>&nbsp;<A name="add-another-householdstructuremember" href="/admin/bcpp_household/householdstructuremember/add/?household_structure={{ household_structure.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&survey={{household_structure.survey.survey_slug}}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></p>
+                {% endif %}
+            {% endif %}
+            <ol>
+            <li>Present on day of survey visit
+            <li>Must be between 16 and 64 years old. 16 and 17 year olds are minors to be accompanied by a guardian during the consent process.
+            </ol>
+            
+            <table>
+            <tr style="background:lightyellow;">
+            <td><b>Comment:</b> {{ household.comment|wordwrap:80 }}</td>
+            </tr>
+            </table> 
+              
+        {% endif%}
+    {% endif%}
+
+       {% include "household_log_include.html" %}
+
+       {% include "householdstructuremember_contacts_include.html" %}
+    
+            <H4>Surveys</H4>    
+            <table>
+            {% for s in surveys %}
+                {% if s == survey %}
+                    <tr><td>{{s.survey_name}}</td><td><span style="color:green"><small>selected</small></span></td><td>{{ s.datetime_start}}</td><td>{{ s.datetime_end}}</td></tr>
+                {% else %}
+                    <tr><td><A href="{% url dashboard_url dashboard_type=dashboard_type household_identifier=household.household_identifier survey=s.survey_slug %}">{{s.survey_name}}</A></td><td></td></tr>                             
+                {% endif %}
+            {% endfor %}
+            </table>
+       
+
+{% endblock dashboard_main %}
+
+
