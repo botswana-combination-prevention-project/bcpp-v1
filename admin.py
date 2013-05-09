@@ -1,5 +1,5 @@
 from datetime import datetime
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from lab_packing.classes import BasePackingListModelAdmin
 from lab_packing.forms import *
 from lab_packing.models import *
