@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
+from django.core.exceptions import ImproperlyConfigured
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_common.choices import YES_NO
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
@@ -8,6 +9,8 @@ from bhp_base_model.validators import datetime_not_future, datetime_not_before_s
 from bhp_variables.models import StudySite
 from bhp_consent.classes import ConsentHelper
 from consent_catalogue import ConsentCatalogue
+from bhp_consent.managers import BaseConsentUpdateManager
+from base_consent import BaseConsent
 
 
 class BaseConsentUpdate(BaseSyncUuidModel):
@@ -63,6 +66,19 @@ class BaseConsentUpdate(BaseSyncUuidModel):
         )
 
     consent_version = models.IntegerField(null=True)
+
+    objects = BaseConsentUpdateManager()
+
+    def natural_key(self):
+        return self.get_consent() + (self.consent_version, ) + self.get_consent_field().natural_key()
+
+    def get_consent(self):
+        for field in self._meta.fields:
+            if field.rel:
+                if 'to' in dir(field.rel):
+                    if issubclass(field.rel.to, BaseConsent):
+                        return (field.name, field.rel.to)
+        raise ImproperlyConfigured('Method \'get_consent\' must be return a tuple of (attrname, model_cls) for the model attribute that is a subclass of BaseConsent. Does this model have a foreign key to a consent?')
 
     def get_report_datetime(self):
         return self.consent_datetime

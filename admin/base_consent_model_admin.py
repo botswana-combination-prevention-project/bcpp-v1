@@ -48,6 +48,7 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'study_questions',
             'assessment_score',
             'consent_copy']
+
         self.radio_fields = {
             "gender": admin.VERTICAL,
             "study_site": admin.VERTICAL,
@@ -63,14 +64,11 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
 
     #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj=None):
-
         super(BaseConsentModelAdmin, self).get_readonly_fields(request, obj)
-
         if obj:  # In edit mode
             return (
                 'subject_identifier',
                 'subject_identifier_as_pk',
-                #'last_name',
                 'study_site',
                 'consent_datetime',) + self.readonly_fields
         else:
