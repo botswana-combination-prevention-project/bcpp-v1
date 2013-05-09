@@ -1,2 +1,1 @@
 from logic_check import LogicCheck
-from base_model_form import BaseModelForm
