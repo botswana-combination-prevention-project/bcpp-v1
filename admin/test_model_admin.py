@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_registration.admin import BaseRegisteredSubjectModelAdmin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_model.admin import BaseModelAdmin
 from bhp_base_model.models import TestModel, TestManyToMany, TestForeignKey
 
 

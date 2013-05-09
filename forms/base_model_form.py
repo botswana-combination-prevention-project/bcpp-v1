@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 from django.db.models import OneToOneField, ForeignKey
 from bhp_visit_tracking.models import BaseVisitTracking
-from logic_check import LogicCheck
+from bhp_base_form.classes import LogicCheck
 
 
 class BaseModelForm(forms.ModelForm):
