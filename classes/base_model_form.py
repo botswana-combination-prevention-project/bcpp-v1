@@ -23,6 +23,8 @@ class BaseModelForm(forms.ModelForm):
             try:
                 if self.instance.registered_subject:
                     self.fields['registered_subject'].queryset = self.instance.registered_subject.__class__.objects.filter(pk=self.instance.registered_subject.pk)
+                else:
+                    self.fields['registered_subject'].queryset = self.instance.registered_subject.__class__.objects.none()
             except:
                 pass
 
