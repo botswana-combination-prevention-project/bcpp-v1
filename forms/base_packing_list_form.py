@@ -54,4 +54,3 @@ class BasePackingListItemForm (BaseModelForm):
     def clean(self):
 
         return  super(BasePackingListItemForm, self).clean()
-
