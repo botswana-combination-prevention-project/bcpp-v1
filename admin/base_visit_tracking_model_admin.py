@@ -21,7 +21,7 @@ class BaseVisitTrackingModelAdmin(BaseModelAdmin):
             raise ValueError("The model for %s requires a foreign key to visit model %s. None found. Either correct the model or change the ModelAdmin class." % (self, self.visit_model))
         else:
             self.visit_model_foreign_key = self.visit_model_foreign_key[0].name
-        self.search_fields = ['id', self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier', ]
+        self.search_fields = ['id', self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier', self.visit_model_foreign_key + '__pk']
         self.list_display = [self.visit_model_foreign_key,
                              'created', 'modified', 'user_created', 'user_modified', ]
         self.list_filter = [
