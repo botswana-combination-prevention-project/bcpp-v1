@@ -122,12 +122,20 @@
                 {% block locator %}{{ locator }}{% endblock locator %}                                                
                 {% block household_structure_members %}{% endblock household_structure_members %}                                                
                 {% block clinic_plots %}{% endblock %}
-                
+               
                 {% block summaries %}
-                <tr name="middle right" ><td>                
-                <span name="x_summaries" id="x_summaries">{{ summary_links }}</span>
-                </td></tr>
-                {% endblock %}
+                {% if summary_links %}
+                    <tr name="middle right" ><td>                
+                    <span name="x_summaries" id="x_summaries">{{ summary_links }}</span>
+                    </td></tr>
+                {% endif %}
+                {% endblock summaries %}
+                <tr name="bottom right" >
+                    <td>
+                        <H4>Action Items</H4>
+                        {% block action_items %}{{ rendered_action_items }}{% endblock action_items %}                                                
+                    </td>
+                </tr>
                 <tr name="middle right" >
                 <td style="line-height: 10px; padding:0;"><table><tr>
                 <td style="font-size: 10px;line-height: 10px; padding:0;"><H4>Laboratory</H4></td>
@@ -136,12 +144,6 @@
                 </tr>                
                 {% block lab_plots %}{% endblock %}
                 {% block packing_lists %}{% endblock%}
-                 <tr name="bottom right" >
-                    <td>
-                        <H3>Action Items</H3>
-                        {% block action_items %}{{ rendered_action_items }}{% endblock action_items %}                                                
-                    </td>
-                </tr>
                 {% block lab_results %}
                 <tr name="middle right"><td style="font-size: 10px;line-height: 10px; padding:0;">           
                     <span name="x_results" id="x_results">{{ local_results }}</span>

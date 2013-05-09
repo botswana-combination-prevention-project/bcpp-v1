@@ -19,6 +19,7 @@ from lab_clinic_api.classes import EdcLab
 from bhp_entry.classes import ScheduledEntry, AdditionalEntry
 from bhp_locator.models import BaseLocator
 from bhp_lab_tracker.classes import lab_tracker
+from bhp_data_manager.models import ActionItem
 
 
 class RegisteredSubjectDescriptor(object):
@@ -100,8 +101,6 @@ class RegisteredSubjectDashboard(Dashboard):
         if self.extra_url_context == {}:
             self.extra_url_context = ''
         self.context.add(
-            #is_dispatched=self.is_dispatched,
-            #dispatch_producer=self.dispatch_producer,
             visit_model=visit_model,
             visit_instance=visit_instance,
             visit_code=visit_code,
@@ -134,6 +133,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._prepare_additional_lab_bucket(visit_code)
         #self._prepare_dispatch_subject()
         self.render_summary_links()
+        self.render_action_item()
 
     def _add_or_update_entry_buckets(self, visit_model_instance):
         """ Adds missing bucket entries and flags added and existing entries as keyed or not keyed (only)."""
@@ -401,28 +401,12 @@ class RegisteredSubjectDashboard(Dashboard):
                                            'appointment': self._appointment,
                                            'locator_add_url': locator_add_url})
 
-    def render_action_item(self, action_item_cls, template=None, **kwargs):
-        """Renders to string the action_items for the current registered subject or that passed as a keyword.
-
-        Call from your local dashboard class. For example::
-
-            from bhp_data_manager.models import ActionItem
-
-            class SubjectDashboard(RegisteredSubjectDashboard):
-
-                def create(self, **kwargs):
-                    ...
-                    self.context.add(
-                        ...
-                        rendered_action_items=self.render_action_item(ActionItem),
-                        ...
-                        )
-        """
+    def render_action_item(self, action_item_cls=None, template=None, **kwargs):
+        """Renders to string the action_items for the current registered subject."""
         source_registered_subject = kwargs.get('registered_subject', self.registered_subject)
-        if isinstance(action_item_cls, models.Model) or action_item_cls is None:
+        action_item_cls = action_item_cls or ActionItem
+        if isinstance(action_item_cls, models.Model):
             raise TypeError('Expected first parameter to be a Action Item model class. Got an instance. Please correct in local dashboard view.')
-        if action_item_cls is None:
-            raise TypeError('Expected first parameter to be a Action Item model class. Got None. Please correct in local dashboard view.')
         visit_code = None
         visit_instance = None
         action_item_add_url = reverse('admin:' + action_item_cls._meta.app_label + '_' + action_item_cls._meta.module_name + '_add')
@@ -443,8 +427,10 @@ class RegisteredSubjectDashboard(Dashboard):
                 action_item_instances.append(action_item)
         if action_item_instances:
             self.context.add(action_item_message='Action items exist for this subject. Please review and resolve if possible.')
+        else:
+            self.context.add(action_item_message=None)
 
-        return render_to_string(template, {'action_items': action_item_instances,
+        rendered_action_items = render_to_string(template, {'action_items': action_item_instances,
                                            'registered_subject': self.registered_subject,
                                            'subject_identifier': self.get_subject_identifier(),
                                            'dashboard_type': self.dashboard_type,
@@ -452,6 +438,8 @@ class RegisteredSubjectDashboard(Dashboard):
                                            'visit_instance': visit_instance,
                                            'appointment': self._appointment,
                                            'action_item_add_url': action_item_add_url})
+        self.context.add(rendered_action_items=rendered_action_items)
+        return rendered_action_items
 
     def get_urlpatterns(self, view, regex, **kwargs):
 
