@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from models import LisImportError, LisLockModel, LisImportHistoryModel
 from actions import clear_stale_error_messages
 
