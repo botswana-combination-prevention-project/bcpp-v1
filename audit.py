@@ -7,7 +7,6 @@ import copy
 import re
 from bhp_sync.classes import SerializeToTransaction
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_base_model.classes import BaseModelAdmin
 from bhp_base_model.fields import MyUUIDField
 from bhp_crypto.fields import BaseEncryptedField
 try:
@@ -41,7 +40,7 @@ class AuditTrail(object):
                 # clsAdmin = type(cls_admin_name, (admin.ModelAdmin,),{})
                 # admin.site.register(cls, clsAdmin)
                 # Otherwise, register class with default ModelAdmin
-                admin.site.register(model, BaseModelAdmin)
+                admin.site.register(model, admin.ModelAdmin)
             descriptor = AuditTrailDescriptor(model._default_manager, sender._meta.pk.attname)
             setattr(sender, name, descriptor)
 
@@ -129,7 +128,6 @@ class AuditTrail(object):
                 #dispatcher.connect(_audit_delete, signal=models.signals.pre_delete, sender=cls, weak=False)
                 ## Comment this line for pre r8223 Django builds
                 models.signals.pre_delete.connect(_audit_delete, sender=cls, weak=False)
-                
                 # begin: erikvw added for serialization
                 # models.signals.pre_delete.connect(_serialize, sender=model, weak=False, dispatch_uid='audit_serialize_on_delete')
                 # end: erikvw added for serialization
