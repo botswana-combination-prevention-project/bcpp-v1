@@ -1,11 +1,11 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from lab_result.models import Result
 from lab_patient.models import Patient
 from lab_patient.forms import PatientForm
 
 
-class PatientAdmin(MyModelAdmin):
+class PatientAdmin(BaseModelAdmin):
 
     form = PatientForm
 
