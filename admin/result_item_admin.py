@@ -1,8 +1,7 @@
 from datetime import datetime
 from django.contrib import admin
 from autocomplete.admin import AutocompleteAdmin
-from bhp_base_model.classes import BaseModelAdmin
-#from lab_result.models import Result
+from bhp_base_admin.admin import BaseModelAdmin
 from lab_result_item.models import ResultItem
 
 
@@ -16,15 +15,6 @@ class ResultItemAdmin(AutocompleteAdmin, BaseModelAdmin):
         save = super(ResultItemAdmin, self).save_model(request, obj, form, change)
         return save
 
-#     def change_view(self, request, object_id, extra_context=None):
-# 
-#         result = super(ResultItemAdmin, self).change_view(request, object_id, extra_context)
-#         oResult = Result.objects.get(resultitem__pk=object_id)
-#         if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
-#             result['Location'] = oResult.get_document_url()
-#         return result
-
-    #override to disallow subject to be changed
     def get_readonly_fields(self, request, obj=None):
         if obj:  # In edit mode
             return ('result',) + self.readonly_fields
