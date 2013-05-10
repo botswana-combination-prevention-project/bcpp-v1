@@ -1,5 +1,5 @@
 from django import forms
-from bhp_base_form.classes import BaseModelForm
+from bhp_base_form.forms import BaseModelForm
 from bhp_appointment.models import Appointment
 from bhp_appointment_helper.models import  BaseAppointmentMixin
 
