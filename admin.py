@@ -1,12 +1,12 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 from forms import ScheduledEntryBucketForm
 from bhp_entry.models import Entry, ScheduledEntryBucket, AdditionalEntryBucket
 
 
-class EntryAdmin(MyModelAdmin):
+class EntryAdmin(BaseModelAdmin):
 
     search_fields = ('visit_definition__code', 'content_type_map__model', 'id')
     list_display = ('content_type_map', 'visit_definition', 'entry_order', 'required', 'entry_category')
@@ -14,7 +14,7 @@ class EntryAdmin(MyModelAdmin):
 admin.site.register(Entry, EntryAdmin)
 
 
-class ScheduledEntryBucketAdmin(MyModelAdmin):
+class ScheduledEntryBucketAdmin(BaseModelAdmin):
 
     form = ScheduledEntryBucketForm
     search_fields = ('registered_subject__subject_identifier', 'entry__visit_definition__code', 'entry__content_type_map__model', 'id')
@@ -42,7 +42,7 @@ class ScheduledEntryBucketAdmin(MyModelAdmin):
 admin.site.register(ScheduledEntryBucket, ScheduledEntryBucketAdmin)
 
 
-class AdditionalEntryBucketAdmin(MyModelAdmin):
+class AdditionalEntryBucketAdmin(BaseModelAdmin):
     list_display = ('registered_subject', 'content_type_map', 'entry_status', 'fill_datetime', 'due_datetime', 'close_datetime', 'rule_name')
     list_filter = ('entry_status', 'fill_datetime', 'rule_name')
     search_fields = ('registered_subject__subject_identifier', 'content_type_map__model', 'id', 'rule_name')
@@ -55,7 +55,7 @@ class AdditionalEntryBucketAdmin(MyModelAdmin):
 admin.site.register(AdditionalEntryBucket, AdditionalEntryBucketAdmin)
 
 
-class EntryInline (admin.TabularInline):
+class EntryInline (BaseTabularInline):
     model = Entry
     extra = 0
     fields = (
