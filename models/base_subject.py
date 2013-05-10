@@ -98,6 +98,11 @@ class BaseSubject (BaseSyncUuidModel):
     def get_subject_identifier(self):
         return self.subject_identifier
 
+    def is_registered_subject(self):
+        if self._meta.object_name == 'RegisteredSubject':
+            return True
+        return False
+
     def post_save_get_or_create_registered_subject(self, **kwargs):
         """Creates or \'gets and updates\' the registered subject instance for this subject.
 
@@ -107,8 +112,7 @@ class BaseSubject (BaseSyncUuidModel):
                  instance of RegisteredSubject.
         """
         using = kwargs.get('using', None)
-        RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-        if not isinstance(self, RegisteredSubject):
+        if not self.is_registered_subject():
             if 'registered_subject' in dir(self):
                 # subject_identifier_as_pk should never be changed once set!!
                 self.registered_subject.subject_identifier = self.subject_identifier
@@ -122,7 +126,7 @@ class BaseSubject (BaseSyncUuidModel):
                 self.registered_subject.last_name = self.last_name
                 if self.last_name:
                     self.registered_subject.registration_status = 'consented'
-                self.registered_subject.subject_type = self.subject_type
+                self.registered_subject.subject_type = self.get_subject_type()
                 self.registered_subject.save(using=using)
             else:
                 # subject_identifier_as_pk should never be changed once set!!
@@ -137,9 +141,11 @@ class BaseSubject (BaseSyncUuidModel):
                     'identity_type': self.identity_type,
                     'first_name': self.first_name,
                     'last_name': self.last_name,
-                    'subject_type': self.subject_type}
+                    'subject_type': self.get_subject_type(),
+                    }
                 if self.last_name:
                     defaults.update({'registration_status': 'consented'})
+                RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
                 registered_subject, created = RegisteredSubject.objects.using(using).get_or_create(subject_identifier=self.subject_identifier, identity=self.identity, defaults=defaults)
                 if not created:
                     for k in registered_subject.__dict__.iterkeys():
@@ -147,8 +153,18 @@ class BaseSubject (BaseSyncUuidModel):
                             setattr(registered_subject, k, defaults.get(k))
                     registered_subject.save(using=using)
 
+    def get_subject_type(self):
+        """Returns a subject type.
+        Usually overridden.
+
+        ..note:: this is important for the link between dashboard and membership form category."""
+
+        return 'subject'
+
     def save(self, *args, **kwargs):
         using = kwargs.get('using', None)
+        if not self.is_registered_subject():
+            self.subject_type = self.get_subject_type()
         self.insert_dummy_identifier()
         self._check_if_duplicate_subject_identifier(using)
         self.check_if_may_change_subject_identifier(using)
@@ -230,7 +246,7 @@ class BaseSubject (BaseSyncUuidModel):
             raise ConsentError('Subject Identifier may not be left blank.')
         # never allow subject_identifier_as_pk as None
         if not self.subject_identifier_as_pk:
-            raise ConsentError('Attribute subject_dentifier_as_pk may not be left blank. Expected to be set to a uuid already.')
+            raise ConsentError('Attribute subject_identifier_as_pk on model {0} may not be left blank. Expected to be set to a uuid already.'.format(self._meta.object_name))
 
     class Meta:
         abstract = True
