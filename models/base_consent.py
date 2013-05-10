@@ -1,6 +1,6 @@
 import re
 from django.db import models
-from django.db.models import get_model
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from bhp_crypto.fields import EncryptedLastnameField, EncryptedTextField
@@ -8,14 +8,14 @@ from bhp_crypto.utils import mask_encrypted
 from bhp_base_model.validators import datetime_not_future, datetime_not_before_study_start, eligible_if_no
 from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
-from bhp_appointment_helper.classes import AppointmentHelper
 from bhp_common.utils import formatted_age
+from bhp_base_model.validators import eligible_if_yes
+from bhp_subject.models import BaseSubject
 from bhp_consent.exceptions import ConsentError
 from bhp_consent.classes import ConsentedSubjectIdentifier
-from consent_basics import ConsentBasics
 
 
-class BaseConsent(ConsentBasics):
+class BaseConsent(BaseSubject):
 
     """ Consent models should be subclasses of this """
 
@@ -92,6 +92,49 @@ class BaseConsent(ConsentBasics):
         help_text='Version of subject\'s most recent consent.'
         )
 
+    consent_reviewed = models.CharField(
+        verbose_name="I have reviewed the consent with the client",
+        max_length=3,
+        choices=YES_NO,
+        validators=[eligible_if_yes, ],
+        null=True,
+        blank=True,
+        #default='Yes',
+        help_text="If no, INELIGIBLE",
+        )
+    study_questions = models.CharField(
+        verbose_name="I have answered all questions the client had about the study",
+        max_length=3,
+        choices=YES_NO,
+        validators=[eligible_if_yes, ],
+        null=True,
+        blank=True,
+        #default='Yes',
+        help_text="If no, INELIGIBLE",
+        )
+    assessment_score = models.CharField(
+        verbose_name=("The client has completed the assessment of understanding with a"
+                      " passing score"),
+        max_length=3,
+        choices=YES_NO,
+        validators=[eligible_if_yes, ],
+        null=True,
+        blank=True,
+        #default='Yes',
+        help_text="If no, INELIGIBLE",
+        )
+    consent_copy = models.CharField(
+        verbose_name=("I have provided the client with a copy of their signed informed"
+                      " consent"),
+        max_length=3,
+        choices=YES_NO,
+        validators=[eligible_if_yes, ],
+        null=True,
+        blank=True,
+        #default='Yes',
+        help_text="If no, INELIGIBLE",
+        )
+
     is_verified = models.BooleanField(default=False, editable=False)
 
     is_verified_datetime = models.DateTimeField(null=True)
@@ -112,7 +155,6 @@ class BaseConsent(ConsentBasics):
         ..note:: registered subject is updated/created on bhp_subject signal.
 
         Also, calls user method :func:`save_new_consent`"""
-        consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.study_site.site_code, using=using)
         try:
             registered_subject = getattr(self, 'registered_subject')
         except:
@@ -120,17 +162,14 @@ class BaseConsent(ConsentBasics):
         self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         dummy = self.subject_identifier
+        # recall, if subject_identifier is not set, subject_identifier will be a uuid.
         if re_pk.match(self.subject_identifier):
             # test for user provided subject_identifier field method
             if self.get_user_provided_subject_identifier_attrname():
                 self.subject_identifier = self._get_user_provided_subject_identifier()
-                # moved to a signal on bhp_base_subject
-                #if self.subject_identifier and not registered_subject:
-                #    RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-                #    RegisteredSubject.objects.update_with(self, 'subject_identifier', registration_status='consented', site_code=self.study_site.site_code, using=using)
                 if not self.subject_identifier:
                     self.subject_identifier = dummy
-            # try to get from registered_subject
+            # try to get from registered_subject (was created using signal in bhp_subject)
             if re_pk.match(self.subject_identifier):
                 if registered_subject:
                     if registered_subject.subject_identifier:
@@ -139,12 +178,8 @@ class BaseConsent(ConsentBasics):
                         self.subject_identifier = self.registered_subject.subject_identifier
             # create a subject identifier, if not already done
             if re_pk.match(self.subject_identifier):
-                self.subject_identifier = consented_subject_identifier.get_identifier(
-                    #consent=self,
-                    #consent_attrname='subject_identifier',
-                    #registration_status='consented',
-                    using=using)
-                #self.registered_subject.subject_identifier = self.subject_identifier
+                consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.study_site.site_code, using=using)
+                self.subject_identifier = consented_subject_identifier.get_identifier(using=using)
         if not self.subject_identifier:
             self.subject_identifier = dummy
         if re_pk.match(self.subject_identifier):
@@ -158,16 +193,7 @@ class BaseConsent(ConsentBasics):
         # if adding, call _save_new_consent()
         if not self.id:
             self._save_new_consent(kwargs.get('using', None))
-        # no matter what, make sure there is a subject_identifier
         super(BaseConsent, self).save(*args, **kwargs)
-        # if has key to registered subject, might be a membership form
-        # so need to create appointments
-        # TODO: is this required?? isn't this on a signal?
-        #if 'registered_subject' in dir(self):
-        #    AppointmentHelper().create_all(self.registered_subject, self.__class__.__name__.lower())
-
-#     def post_save(self, **kwargs):
-#         pass
 
     def formatted_age_at_consent(self):
         return formatted_age(self.dob, self.consent_datetime)
@@ -179,6 +205,9 @@ class BaseConsent(ConsentBasics):
     def get_report_datetime(self):
         return self.consent_datetime
 
+    def get_subject_type(self):
+        raise ImproperlyConfigured('Method must be overridden to return a subject_type. e.g. \'subject\', \'maternal\', \'infant\', etc')
+
     def bypass_for_edit_dispatched_as_item(self):
         # requery myself
         obj = self.__class__.objects.get(pk=self.pk)
@@ -189,5 +218,6 @@ class BaseConsent(ConsentBasics):
                 if getattr(self, k) != v:
                     return False
         return True
+
     class Meta:
         abstract = True
