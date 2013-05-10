@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import Group
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
-from bhp_base_form.classes import BaseModelForm
+from bhp_base_form.forms import BaseModelForm
 from bhp_data_manager.models import ActionItem
 
 
