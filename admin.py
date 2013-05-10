@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib import messages
 
-from bhp_common.models import MyModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from lab_barcode.models import ZplTemplate, LabelPrinter, Client, TestLabel
 from forms import ZplTemplateForm, LabelPrinterForm
 from lab_barcode.exceptions import PrinterException
@@ -9,7 +9,7 @@ from actions import print_test_label
 from classes import ModelLabel
 
 
-class ZplTemplateAdmin(MyModelAdmin):
+class ZplTemplateAdmin(BaseModelAdmin):
 
     form = ZplTemplateForm
 
@@ -27,7 +27,7 @@ class ZplTemplateAdmin(MyModelAdmin):
 admin.site.register(ZplTemplate, ZplTemplateAdmin)
 
 
-class ClientAdmin(MyModelAdmin):
+class ClientAdmin(BaseModelAdmin):
 
     list_display = (
         "name",
@@ -44,7 +44,7 @@ class ClientInline(admin.TabularInline):
     extras = 3
 
 
-class LabelPrinterAdmin(MyModelAdmin):
+class LabelPrinterAdmin(BaseModelAdmin):
 
     form = LabelPrinterForm
 
@@ -62,7 +62,7 @@ class LabelPrinterAdmin(MyModelAdmin):
 admin.site.register(LabelPrinter, LabelPrinterAdmin)
 
 
-class TestLabelAdmin(MyModelAdmin):
+class TestLabelAdmin(BaseModelAdmin):
 
     list_display = ('identifier', 'user_created', 'created')
     actions = [print_test_label, ]

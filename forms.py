@@ -1,5 +1,5 @@
 from django import forms
-from bhp_base_form.classes import BaseModelForm
+from bhp_base_form.forms import BaseModelForm
 from lab_barcode.models import ZplTemplate, LabelPrinter
 
 
