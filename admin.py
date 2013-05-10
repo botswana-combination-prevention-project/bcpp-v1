@@ -1,12 +1,12 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 from forms import ScheduledLabEntryBucketForm
 from bhp_lab_entry.models import LabEntry, LabEntryUnscheduled, ScheduledLabEntryBucket, AdditionalLabEntryBucket
 
 
-class LabEntryAdmin(MyModelAdmin):
+class LabEntryAdmin(BaseModelAdmin):
 
     search_fields = ('visit_definition__code', 'panel__name', 'lab_clinic_api_panel')
 
@@ -17,7 +17,7 @@ class LabEntryAdmin(MyModelAdmin):
 admin.site.register(LabEntry, LabEntryAdmin)
 
 
-class LabEntryUnscheduledAdmin(MyModelAdmin):
+class LabEntryUnscheduledAdmin(BaseModelAdmin):
 
     search_fields = ('panel__name',)
 
@@ -28,12 +28,12 @@ class LabEntryUnscheduledAdmin(MyModelAdmin):
 admin.site.register(LabEntryUnscheduled, LabEntryUnscheduledAdmin)
 
 
-class AdditionalLabEntryBucketAdmin(MyModelAdmin):
+class AdditionalLabEntryBucketAdmin(BaseModelAdmin):
     pass
 admin.site.register(AdditionalLabEntryBucket, AdditionalLabEntryBucketAdmin)
 
 
-class ScheduledLabEntryBucketAdmin(MyModelAdmin):
+class ScheduledLabEntryBucketAdmin(BaseModelAdmin):
 
     form = ScheduledLabEntryBucketForm
 
@@ -67,7 +67,7 @@ class ScheduledLabEntryBucketAdmin(MyModelAdmin):
 admin.site.register(ScheduledLabEntryBucket, ScheduledLabEntryBucketAdmin)
 
 
-class LabEntryInline (admin.TabularInline):
+class LabEntryInline (BaseTabularInline):
     model = LabEntry
     extra = 0
     fields = (
