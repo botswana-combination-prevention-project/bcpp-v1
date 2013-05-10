@@ -1,39 +1,22 @@
 from django.contrib import admin
-from datetime import date, timedelta, datetime
-from bhp_common.models import MyModelAdmin, MyStackedInline, MyTabularInline
-from models import *
-from forms import *
+from bhp_base_admin.admin import BaseModelAdmin
+from models import Link
+from forms import LinkForm
 
 
-# Link
-class LinkAdmin(MyModelAdmin): 
-
+class LinkAdmin(BaseModelAdmin):
     form = LinkForm
-
     fields = (
         "label",
         "app_label",
         "dashboard_type",
         "ajax_method",
-        "is_active"
-    )
-
-    list_display = (        
+        "is_active")
+    list_display = (
         "label",
         "app_label",
-        "dashboard_type",        
+        "dashboard_type",
         "ajax_method",
-        "is_active",
-    )
-
-    radio_fields = {
-        
-    }
-
-    filter_horizontal = (
-        
-    )
-
-    """"""
+        "is_active")
 
 admin.site.register(Link, LinkAdmin)
