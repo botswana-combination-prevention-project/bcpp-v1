@@ -1,28 +1,33 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
+from bhp_base_admin.admin import BaseModelAdmin
 from bhp_research_protocol.models import Protocol, PrincipalInvestigator, SiteLeader, FundingSource, Site, Location
 
-class PrincipalInvestigatorAdmin(MyModelAdmin):
-    pass  
+
+class PrincipalInvestigatorAdmin(BaseModelAdmin):
+    pass
 admin.site.register(PrincipalInvestigator, PrincipalInvestigatorAdmin)
 
-class  SiteLeaderAdmin(MyModelAdmin):
-    pass  
-admin.site.register( SiteLeader,  SiteLeaderAdmin)
 
-class  ProtocolAdmin(MyModelAdmin):
-    list_display = ('protocol_identifier', 'research_title')  
-admin.site.register( Protocol,  ProtocolAdmin)
+class  SiteLeaderAdmin(BaseModelAdmin):
+    pass
+admin.site.register(SiteLeader, SiteLeaderAdmin)
 
-class  FundingSourceAdmin(MyModelAdmin):
-    pass  
-admin.site.register( FundingSource,  FundingSourceAdmin)
 
-class  SiteAdmin(MyModelAdmin):
-    list_display = ('site_identifier', 'location', )
-admin.site.register( Site,  SiteAdmin)
+class  ProtocolAdmin(BaseModelAdmin):
+    list_display = ('protocol_identifier', 'research_title')
+admin.site.register(Protocol, ProtocolAdmin)
 
-class  LocationAdmin(MyModelAdmin):
-    pass  
-admin.site.register( Location,  LocationAdmin)
 
+class  FundingSourceAdmin(BaseModelAdmin):
+    pass
+admin.site.register(FundingSource, FundingSourceAdmin)
+
+
+class  SiteAdmin(BaseModelAdmin):
+    list_display = ('site_identifier', 'location',)
+admin.site.register(Site, SiteAdmin)
+
+
+class  LocationAdmin(BaseModelAdmin):
+    pass
+admin.site.register(Location, LocationAdmin)
