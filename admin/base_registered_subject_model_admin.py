@@ -81,14 +81,14 @@ class BaseRegisteredSubjectModelAdmin (BaseCryptorModelAdmin):
         if db_field.name == "appointment":
             if request.GET.get('appointment'):
                 kwargs["queryset"] = Appointment.objects.filter(id__exact=request.GET.get('appointment'))
-            else:
-                kwargs["queryset"] = Appointment.objects.none()
+            #else:
+            #    kwargs["queryset"] = Appointment.objects.none()
 
         if db_field.name == "registered_subject":
             if request.GET.get('registered_subject'):
                 kwargs["queryset"] = RegisteredSubject.objects.filter(pk=request.GET.get('registered_subject'))
-            else:
-                kwargs["queryset"] = RegisteredSubject.objects.none()
+            #else:
+            #    kwargs["queryset"] = RegisteredSubject.objects.none()
 
         return super(BaseRegisteredSubjectModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
