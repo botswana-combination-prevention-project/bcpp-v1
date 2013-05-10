@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.serializers.base import SerializationError
-from lab_test_code.models import TestCode
+from lab_clinic_api.models import TestCode
 from base_base_requisition import BaseBaseRequisition
 
 

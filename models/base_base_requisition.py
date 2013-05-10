@@ -1,7 +1,6 @@
 from datetime import datetime
 from django.db import models
 from django.conf import settings
-from django.core.serializers.base import SerializationError
 try:
     from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseUuidModel
 except ImportError:
@@ -11,9 +10,8 @@ from bhp_common.choices import YES_NO
 from bhp_variables.models import StudySite
 from bhp_device.classes import Device
 from bhp_string.classes import BaseString
-# TODO: this panel should be from lab_clinic api
-from lab_panel.models import Panel
-from lab_aliquot_list.models import AliquotType
+from lab_clinic_api.models import Panel
+from lab_clinic_api.models import AliquotType
 from lab_requisition.choices import PRIORITY, REASON_NOT_DRAWN, ITEM_TYPE
 from lab_requisition.managers import BaseRequisitionManager
 from lab_requisition.classes import RequisitionLabel
