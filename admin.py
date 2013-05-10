@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from models import DxCode, WcsDxAdult, WcsDxPed
 
 
