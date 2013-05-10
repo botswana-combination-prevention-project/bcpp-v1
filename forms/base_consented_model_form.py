@@ -1,12 +1,13 @@
-import copy
 from django import forms
-from bhp_base_form.classes import BaseModelForm
+from bhp_base_form.forms import BaseModelForm
 from bhp_consent.models import AttachedModel
 
 
 class BaseConsentedModelForm(BaseModelForm):
 
-    """Base Form for all models that confirm a valid subject consent to be available before allowing data collection."""
+    """Base Form for all models that confirm a valid subject consent to be available before allowing data collection.
+
+    That is the "model" must be backed by a consent."""
 
     def __init__(self, *args, **kwargs):
         self.check_attached()

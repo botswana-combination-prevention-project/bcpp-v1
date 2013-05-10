@@ -1,11 +1,10 @@
-import re
-from datetime import date, datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
 from django import forms
 from bhp_variables.models import StudySpecific
 from bhp_variables.choices import GENDER_OF_CONSENT
 from bhp_common.utils import formatted_age
-from bhp_base_form.classes import BaseModelForm
+from bhp_base_form.forms import BaseModelForm
 from bhp_crypto.fields import BaseEncryptedField
 
 

@@ -1,8 +1,8 @@
 from django import forms
-#from bhp_consent.classes import ConsentHelper
+from bhp_base_form.forms import BaseModelForm
 
 
-class BaseConsentUpdateForm (forms.ModelForm):
+class BaseConsentUpdateForm (BaseModelForm):
     def clean(self, consent_instance_field_name, consent_instance=None):
         cleaned_data = self.cleaned_data
         consent_version = cleaned_data.get('consent_version', None)

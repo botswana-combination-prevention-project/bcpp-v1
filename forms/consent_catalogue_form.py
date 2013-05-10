@@ -1,7 +1,7 @@
-from django import forms
+from bhp_base_form.forms import BaseModelForm
 
 
-class ConsentCatalogueForm (forms.ModelForm):
+class ConsentCatalogueForm (BaseModelForm):
 
     def clean(self, consent_instance=None):
         cleaned_data = self.cleaned_data

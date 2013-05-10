@@ -1,5 +1,4 @@
-from bhp_base_model.classes import BaseModelAdmin
-#from bhp_consent.models import ConsentCatalogue
+from bhp_base_admin.admin import BaseModelAdmin
 
 
 class BaseConsentUpdateModelAdmin(BaseModelAdmin):

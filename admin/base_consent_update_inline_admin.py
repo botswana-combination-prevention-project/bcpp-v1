@@ -1,5 +1,4 @@
-from bhp_base_model.classes import BaseTabularInline
-#from bhp_consent.models import ConsentCatalogue
+from bhp_base_admin.admin import BaseTabularInline
 
 
 class BaseConsentUpdateInlineAdmin(BaseTabularInline):
