@@ -1,16 +1,8 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin, MyStackedInline
+from bhp_base_admin.admin import BaseModelAdmin
 from lab_account.models import Account
 
-class AccountAdmin(MyModelAdmin):
 
-    """
-    filter_horizontal= (
-        'principal_investigator',
-        'site_leader',
-    ) 
-    """
+class AccountAdmin(BaseModelAdmin):
     list_per_page = 15
-    
 admin.site.register(Account, AccountAdmin)
-
