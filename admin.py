@@ -1,9 +1,9 @@
 from django.contrib import admin
-from bhp_common.models import MyModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from models import Appendix40
 
 
-class Appendix40Admin(MyModelAdmin):
+class Appendix40Admin(BaseModelAdmin):
 
     list_display = ('code', 'short_description')
     
