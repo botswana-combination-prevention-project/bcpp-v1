@@ -7,4 +7,14 @@ class SubjectIdentifier(BaseSubjectIdentifier):
         identifier_format = '{identifier_prefix}-{site_code}{device_id}{sequence}'
         app_name = 'bhp_identifier'
         model_name = 'subjectidentifier'
-        super(SubjectIdentifier, self).__init__(identifier_format, app_name, model_name, site_code, padding, modulus, identifier_prefix, using)
+        is_derived = False
+        super(SubjectIdentifier, self).__init__(
+            identifier_format=identifier_format,
+            app_name=app_name,
+            model_name=model_name,
+            site_code=site_code,
+            padding=padding,
+            modulus=modulus,
+            identifier_prefix=identifier_prefix,
+            is_derived=is_derived,
+            using=using)

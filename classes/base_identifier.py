@@ -11,7 +11,7 @@ from check_digit import CheckDigit
 class BaseIdentifier(object):
     """ Base class for all identifiers."""
 
-    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None, using=None):
+    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None, is_derived=False, add_check_digit=None, using=None):
         self.identifier_format = None
         self.app_name = None
         self.model_name = None
@@ -19,7 +19,9 @@ class BaseIdentifier(object):
         self.modulus = None
         self.identifier_prefix = None
         self.site_code = None
+        self.add_check_digit = add_check_digit or True
         self.using = using
+        self.is_derived = is_derived
         if 'PROJECT_IDENTIFIER_PREFIX' not in dir(settings):
             raise ImproperlyConfigured('Missing settings attribute PROJECT_IDENTIFIER_PREFIX. Please add. For example, PROJECT_IDENTIFIER_PREFIX = \'041\' for project BHP041.')
         if 'PROJECT_IDENTIFIER_MODULUS' not in dir(settings):
@@ -69,65 +71,46 @@ class BaseIdentifier(object):
         identifier = self.get_identifier_post(identifier, **kwargs)
         return identifier
 
-    def add_check_digit(self, base_new_identifier):
+    def get_check_digit(self, base_new_identifier):
         """Adds a check digit base on the integers in the identifier."""
         check_digit = CheckDigit()
         return "{base}-{check_digit}".format(
             base=base_new_identifier,
             check_digit=check_digit.calculate(int(re.search('\d+', base_new_identifier.replace('-', '')).group(0)), self.modulus))
 
-    def get_identifier(self, add_check_digit=True, is_derived=False, **kwargs):
+    def get_identifier(self, add_check_digit=None, **kwargs):
         """ Returns a formatted identifier based on the identifier format and the dictionary
         of options.
-
-        Calls self._get_identifier_prep()
 
         Arguments:
           add_check_digit: if true adds a check digit calculated using the numbers in the
             identifier. Letters are stripped out if they exist. (default: True)
-          is_derived: identifier is derived from an existing identifier so get a sequence
-            from the identifier_model. For example, an infant identifier is derived from the
-            maternal identifier. (default: False)
-
-        Keyword Arguments:
-          * app_name: app_label for model_name below. (default: 'bhp_identifier')
-            model_name: lower case of model.object_name to use to track subject identifiers
-            as they are created. id of this model is the sequence integer.
-            (default: 'subject_identifier')
-          * site_code: site code. (default: '')
-          * seed: not used
-          * padding: integer to calculate right justified padding on the sequence segement
-            of the identifier. (default: 4)
-          * modulus: used to calculate the check digit. (default: 7)
-          * identifier_prefix: prefix for identifier such as the protocol number (e.g 041, 056 etc).
-            (default: (default: settings.PROJECT_IDENTIFIER_PREFIX)
-          * identifier_format: template for the identifier with keywords referring to the above keys.
-            (default: '{identifier_prefix}-{site_code}{device_id}{sequence}')
           """
+        if self.add_check_digit == None:
+            raise AttributeError('Instance attribute add_check_digit has not been set. Options are True/False')
+        if add_check_digit:
+            self.add_check_digit = add_check_digit
         # update the format options dictionary
-        options = self._get_identifier_prep(**kwargs)
-        # check if this identifier is to be derived from an existing identifier
-        if not is_derived:
-            IdentifierModel = get_model(self.app_name, self.model_name)
-            # put a random uuid temporarily in the identifier field
-            # to maintain unique constraint on identifier field.
-            self.identifier_model = IdentifierModel.objects.using(self.using).create(identifier=str(uuid.uuid4()), padding=self.padding)
-            options.update(sequence=self.identifier_model.sequence)
-        else:
-            # the identifier is derived from an existing one. no need for
-            # a sequence, therefore no need for the identifier_model
-            self.identifier_model = None
-            options.update(sequence='')
+        format_options = self._get_identifier_prep(**kwargs)
+        if self.is_derived == None:
+            raise AttributeError('Instance attribute is_derived has not been set. Options are True/False')
+        IdentifierModel = get_model(self.app_name, self.model_name)
+        self.identifier_model = IdentifierModel.objects.using(self.using).create(identifier=str(uuid.uuid4()), padding=self.padding, is_derived=self.is_derived)
+        format_options.update(sequence=self.identifier_model.formatted_sequence)
+        if self.is_derived:
+            # if derived, does not use a sequence number -- that is the sequence is in the base identifier,
+            # for example a maternal identifier used as a base for an infant identifier
+            format_options.update(sequence='')
         # apply options to format to create a formatted identifier
         try:
-            new_identifier = self.identifier_format.format(**options)
+            new_identifier = self.identifier_format.format(**format_options)
         except KeyError:
             raise IndentifierFormatError('Missing key/pair for identifier format. '
                 'Got format {0} with dictionary {1}. Either correct the identifier '
-                'format or provide a value for each place holder in the identifier format.'.format(self.identifier_format, options))
+                'format or provide a value for each place holder in the identifier format.'.format(self.identifier_format, format_options))
         # check if adding a check digit
-        if add_check_digit:
-            new_identifier = self.add_check_digit(new_identifier)
+        if self.add_check_digit:
+            new_identifier = self.get_check_digit(new_identifier)
         # call custom post method
         new_identifier = self._get_identifier_post(new_identifier, **kwargs)
         if not new_identifier:
