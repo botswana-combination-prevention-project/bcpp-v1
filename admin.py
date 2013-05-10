@@ -1,7 +1,6 @@
 from django.contrib import admin
 from bhp_export_data.actions import export_as_csv_action
-from bhp_base_model.classes import BaseModelAdmin
-#from lab_requisition.filters import OrderHasRequisitionListFilter
+from bhp_base_admin.admin import BaseModelAdmin
 from forms import ResultForm, ResultItemForm
 from models import Receive, Aliquot, Result, ResultItem, Review, Order, Panel, TestCode
 from models import AliquotType, TestCodeGroup, AliquotCondition
