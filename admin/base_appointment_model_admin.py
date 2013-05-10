@@ -1,7 +1,7 @@
 #from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 
 
 class BaseAppointmentModelAdmin(BaseModelAdmin):

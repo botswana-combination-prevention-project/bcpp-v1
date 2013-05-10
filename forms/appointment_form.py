@@ -2,7 +2,7 @@ from datetime import date
 from django import forms
 from django.core.exceptions import ValidationError
 from bhp_entry.models import ScheduledEntryBucket
-from bhp_base_form.classes import BaseModelForm
+from bhp_base_form.forms import BaseModelForm
 from bhp_appointment.models import Appointment
 
 
