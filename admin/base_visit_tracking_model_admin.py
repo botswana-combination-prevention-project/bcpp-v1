@@ -1,6 +1,6 @@
 from django.db.models import ForeignKey
 from django.core.urlresolvers import reverse
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from bhp_export_data.actions import export_as_csv_action
 from bhp_visit_tracking.classes import VisitModelHelper
 
