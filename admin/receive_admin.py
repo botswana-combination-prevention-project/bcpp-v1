@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from autocomplete.views import AutocompleteSettings
 from autocomplete.admin import AutocompleteAdmin
 from lab_receive.models import Receive
