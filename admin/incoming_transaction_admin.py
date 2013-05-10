@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from bhp_sync.models import IncomingTransaction
 from bhp_sync.actions import reset_transaction_as_not_consumed, reset_transaction_as_consumed, reset_incomingtransaction_error_status, reset_incomingtransaction_ignore_status, set_incomingtransaction_as_ignore_status
 

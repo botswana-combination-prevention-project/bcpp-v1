@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from bhp_sync.models import Producer
 from bhp_sync.actions import reset_producer_status
 
