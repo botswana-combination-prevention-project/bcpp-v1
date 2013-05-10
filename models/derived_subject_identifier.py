@@ -12,6 +12,8 @@ class DerivedSubjectIdentifier(BaseModel):
     base_identifier = models.CharField(
         max_length=25)
 
+    padding = models.IntegerField(null=True)
+
     def __unicode__(self):
         return self.subject_identifier
 
