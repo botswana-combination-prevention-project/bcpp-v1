@@ -47,9 +47,9 @@ class ScheduleGroupManager(models.Manager):
 
         #  membership form 'category' should appear in the category field of membership_form.
         if not MembershipForm.objects.filter(category__iexact=membership_form_category).exists():
-            raise DashboardError('Can\'t find any membership forms! Have you configured any for category \'%s\'.' % membership_form_category)
+            raise DashboardError('Can\'t find any membership forms! Have you configured any for category \'{0}\'.'.format(membership_form_category))
         if not super(ScheduleGroupManager, self).filter(membership_form__category__iexact=membership_form_category).exists():
-            raise DashboardError('Can\'t find any schedule groups! Have you configured any for category \'%s\'.' % membership_form_category)
+            raise DashboardError('Can\'t find any schedule groups! Have you configured any for category \'{0}\'.'.format(membership_form_category))
         # a list of "keys" that link like membership forms together. If they share this
         # key it means that only one form should be KEYED per subject.
         # If form is KEYED for subject, there is no need to list the others as UNKEYED
