@@ -1,5 +1,6 @@
 from django.contrib import messages
 from bhp_sync.classes import SerializeToTransaction
+from bhp_crypto.classes import FieldCryptor
 
 
 def serialize(modeladmin, request, queryset):
@@ -71,3 +72,12 @@ def reset_incomingtransaction_ignore_status(modeladmin, request, queryset):
         qs.error = None
         qs.save()
 reset_incomingtransaction_ignore_status.short_description = "Reset transaction ignore status (is_ignored=False)"
+
+def decrypt_incomingtransaction(modeladmin, request, queryset):
+    """ decrypt the incoming transaction """
+    cryptor = FieldCryptor('aes', 'local')
+    for qs in queryset:
+        tx = cryptor.decrypt(qs.tx)
+        qs.tx = tx
+        qs.save()
+decrypt_incomingtransaction.short_description = "Decrypt the incoming transaction"
