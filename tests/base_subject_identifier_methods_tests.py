@@ -23,7 +23,7 @@ class BaseSubjectIdentifierMethodsTests(TestCase):
 
         print ' ...this is the sequence table (sequence_number, source first identifier, device_id'
         for obj in Sequence.objects.all():
-            print obj.id, obj.model, obj.device_id
+            print obj.id, obj.device_id
 
         print 'assert raises error if format has fewer keys that the values dictionary'
         subject_identifier = BaseSubjectIdentifier(identifier_format='{prefix}')

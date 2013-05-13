@@ -19,7 +19,10 @@ class BaseIdentifier(object):
         self.modulus = None
         self.identifier_prefix = None
         self.site_code = None
-        self.add_check_digit = add_check_digit or True
+        if add_check_digit == None:
+            self.add_check_digit = True
+        else:
+            self.add_check_digit = add_check_digit
         self.using = using
         self.is_derived = is_derived
         if 'PROJECT_IDENTIFIER_PREFIX' not in dir(settings):
@@ -73,10 +76,13 @@ class BaseIdentifier(object):
 
     def get_check_digit(self, base_new_identifier):
         """Adds a check digit base on the integers in the identifier."""
-        check_digit = CheckDigit()
-        return "{base}-{check_digit}".format(
-            base=base_new_identifier,
-            check_digit=check_digit.calculate(int(re.search('\d+', base_new_identifier.replace('-', '')).group(0)), self.modulus))
+        if not self.add_check_digit:
+            return base_new_identifier
+        else:
+            check_digit = CheckDigit()
+            return "{base}-{check_digit}".format(
+                base=base_new_identifier,
+                check_digit=check_digit.calculate(int(re.search('\d+', base_new_identifier.replace('-', '')).group(0)), self.modulus))
 
     def get_identifier(self, add_check_digit=None, **kwargs):
         """ Returns a formatted identifier based on the identifier format and the dictionary

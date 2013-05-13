@@ -23,7 +23,7 @@ class BaseIdentifierModel(BaseSyncUuidModel):
             if self.is_derived == True:
                 self.sequence_number = 0
             else:
-                sequence = Sequence.objects.using(kwargs.get('using', None)).create(device_id=settings.DEVICE_ID, model=self.identifier)
+                sequence = Sequence.objects.using(kwargs.get('using', None)).create(device_id=settings.DEVICE_ID)
                 self.sequence_number = sequence.pk
         if self.identifier == None:
             raise AttributeError('IdentifierModel attribute \'identifier\' cannot be None. Set as a unique uuid or a unique formatted identifier.')

@@ -5,9 +5,6 @@ from bhp_base_model.models import BaseModel
 class Sequence(BaseModel):
 
     device_id = models.IntegerField(default=99)
-
-    model = models.CharField(max_length=50)
-
     objects = models.Manager()
 
     def __unicode(self):
