@@ -133,19 +133,19 @@ class DispatchController(BaseDispatchController):
 #            self.set_visit_model_fkey(model_cls, visit_model_cls)
 #        return self._visit_model_fkey_name
 
-    def dispatch_misc_instances(self, models, registered_subject, user_container, query_hint=None):
+    def dispatch_misc_instances(self, models, household_structure_member, user_container, query_hint=None):
         """Sends any instance for dispatch as long as the class is configured for dispatch and has a relational path to registered subject.
 
             Args:
                 models = a model class or list of model classes.
-                registered_subject = instance of RegisteredSubject used to filter model class.
+                household_structure_member = instance of household_structure_member used to filter model class.
                 user_container = the dispatch user container instance.
                 query_hint = a django stype query string to registered subject.
 
             For example:
                     dispatch_misc_instances(
                         SubjectRcc,
-                        registered_subject,
+                        household_structure_member,
                         user_container,
                         query_hint='household_structure_member__registered_subject')
         """
@@ -155,16 +155,16 @@ class DispatchController(BaseDispatchController):
             models = [models]
         if query_hint:
             # convert the hint to an options dictionary for filter()
-            options.update({query_hint: registered_subject})
+            options.update({query_hint: household_structure_member})
             hint = query_hint.split('__')  # for error check
         else:
-            hint.append('registered_subject')  # for error check
-            options = {'registered_subject': registered_subject}
+            hint.append('household_structure_member')  # for error check
+            options = {'household_structure_member': household_structure_member}
 
         for model_cls in models:
             # confirm that at least the first element of hint exists on the class
             if not hint[0] in dir(model_cls):
-                raise DispatchModelError('Miscellaneous model classes sent for dispatch must have relational path to \'registered_subject\'. Your hint was \'{0}\' for model class {1}'.format('__'.join(hint), model_cls))
+                raise DispatchModelError('Miscellaneous model classes sent for dispatch must have relational path to \'household_structure_member\'. Your hint was \'{0}\' for model class {1}'.format('__'.join(hint), model_cls))
             # filter the class
             instances = model_cls.objects.filter(**options)
             if instances:
@@ -197,17 +197,20 @@ class DispatchController(BaseDispatchController):
                 if history_models:
                     self._to_json(history_models)
 
-    def dispatch_appointments(self, registered_subject, user_container):
+    def dispatch_appointments(self, household_structure_member, user_container):
         """Dispatches all appointments for this registered subject.
 
         ..seealso:: module :mod:`bhp_appointment`
         """
         Appointments = get_model('bhp_appointment', 'Appointment')
-        appointments = Appointments.objects.filter(registered_subject=registered_subject)
+        #appointments = Appointments.objects.filter(registered_subject=registered_subject)
+        appointments = Appointments.objects.filter(registered_subject=household_structure_member.registered_subject, 
+                                                   appt_datetime__range=(household_structure_member.survey.datetime_start,
+                                                                         household_structure_member.survey.datetime_end))
         if appointments:
             self.dispatch_user_items_as_json(appointments, user_container)
 
-    def dispatch_scheduled_instances(self, app_label, registered_subject, user_container, **kwargs):
+    def dispatch_scheduled_instances(self, app_label, household_structure_member, user_container, **kwargs):
         """Sends scheduled instances to the producer for the given an instance of registered_subject.
 
         Keywords:
@@ -220,26 +223,27 @@ class DispatchController(BaseDispatchController):
         """
 
         # TODO: this and dispatch_requisitions() are duplications of the same function.
-        self.dispatch_appointments(registered_subject, user_container)
+        self.dispatch_appointments(household_structure_member, user_container)
         # Get all the models with reference to SubjectVisit
         scheduled_models = self.get_scheduled_models(app_label)
         # get the visit model class for this app
         for scheduled_model_class in scheduled_models:
             visit_field_attname = VisitModelHelper.get_field_name(scheduled_model_class)
             options = kwargs.get('options', {})
-            options.update({'{0}__appointment__registered_subject'.format(visit_field_attname): registered_subject})
+            #options.update({'{0}__appointment__registered_subject'.format(visit_field_attname): registered_subject})
+            options.update({'{0}__household_structure_member'.format(visit_field_attname): household_structure_member})
             scheduled_instances = scheduled_model_class.objects.filter(**options)
             if scheduled_instances:
                 self.dispatch_user_items_as_json(scheduled_instances, user_container)
 
-    def dispatch_requisitions(self, app_label, registered_subject, user_container, multiple_visit_field_attname=False):
+    def dispatch_requisitions(self, app_label, household_structure_member, user_container, multiple_visit_field_attname=False):
         """Dispatches all lab requisitions for this subject."""
         visit_field_attname = None
         requisition_models = self.get_requisition_models(app_label)
         for requisition_cls in requisition_models:
             if not visit_field_attname or multiple_visit_field_attname:
                 visit_field_attname = VisitModelHelper.get_field_name(requisition_cls)
-            requisitions = requisition_cls.objects.filter(**{'{0}__appointment__registered_subject'.format(visit_field_attname): registered_subject})
+            requisitions = requisition_cls.objects.filter(**{'{0}__household_structure_member'.format(visit_field_attname): household_structure_member})
             if requisitions:
                 self.dispatch_user_items_as_json(requisitions, user_container)
 
@@ -254,17 +258,17 @@ class DispatchController(BaseDispatchController):
 #         if scheduled_lab_entry_bucket:
 #             self._to_json(scheduled_lab_entry_bucket)
 
-    def dispatch_consent_instances(self, app_label, registered_subject, container, **kwargs):
+    def dispatch_consent_instances(self, app_label, household_structure_member, container, **kwargs):
         consent_models = self.get_consent_models(app_label)
         membershipform_models = self.get_membershipform_models()
         # remove classes that are also membership forms
         consent_models = [cls for cls in consent_models if cls not in membershipform_models]
         for consent_model in consent_models:
-            consent_instances = consent_model.objects.filter(registered_subject=registered_subject)
+            consent_instances = consent_model.objects.filter(household_structure_member=household_structure_member)
             if consent_instances:
                 self.dispatch_user_items_as_json(consent_instances, container)
 
-    def dispatch_membership_forms(self, registered_subject, container, **kwargs):
+    def dispatch_membership_forms(self, household_structure_member, container, **kwargs):
         """Gets all instances of visible membership forms for this registered_subject and dispatches.
 
         Keywords:
@@ -279,10 +283,10 @@ class DispatchController(BaseDispatchController):
             try:
                 if membershipform_model:
                     instances = membershipform_model.objects.filter(
-                        registered_subject=registered_subject,
+                        household_structure_member=household_structure_member,
                         **kwargs)
             except FieldError:
-                instances = membershipform_model.objects.filter(registered_subject=registered_subject)
+                instances = membershipform_model.objects.filter(household_structure_member=household_structure_member)
             if instances:
                 self.dispatch_user_items_as_json(instances, container)
 
