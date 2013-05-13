@@ -14,6 +14,7 @@ Welcome to bhp_off_study documentation!
    overview
    models
    mixins
+   forms
    managers
    signals
 
