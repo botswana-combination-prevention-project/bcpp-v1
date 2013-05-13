@@ -169,6 +169,10 @@ class ConsentHelper(object):
                 pass
         return current_consent_version
 
+    def is_off_study(self):
+        if self.get_subject_instance().is_off_study():
+            raise self._get_exception_cls()('Data collection not allowed after off study date. Subject was taken off study before this form\'s report datetime \'{0}\'. (ConsentHelper)'.format(self.get_subject_instance().get_report_datetime()))
+
     def is_consented_for_subject_instance(self):
         """Searches for a valid consent instance for this subject for the possible consent models.
 

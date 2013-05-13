@@ -1,7 +1,10 @@
+from django.core.exceptions import ValidationError
 try:
     from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
 except ImportError:
     from bhp_sync.models import BaseSyncUuidModel
+#from bhp_off_study.mixins import OffStudyMixin
+from bhp_off_study.exceptions import SubjectOffStudyError
 from bhp_consent.classes import ConsentHelper
 
 
@@ -30,6 +33,12 @@ class BaseConsentedUuidModel(BaseSyncUuidModel):
     def get_requires_consent(self):
         """Users may override to return False to bypass consent checks for this model instance."""
         return True
+
+    def save(self, *args, **kwargs):
+        if 'is_off_study' in dir(self):
+            if self.is_off_study():
+                raise SubjectOffStudyError('Model cannot be saved. Subject is off study. Perhaps catch this exception in forms clean() method.')
+        super(BaseConsentedUuidModel, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True
