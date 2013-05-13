@@ -7,7 +7,7 @@ class OffStudyMixin(object):
     def get_off_study_cls(self):
         """Returns the model class of the local apps off study form, called by private method :func:`_get_off_study_cls`.
 
-        .. note:: This method must be overridden in the local app. 
+        .. note:: This method must be overridden in the local app.
                   For example, in module mpepu_infant.models add::
 
                     from bhp_off_study.mixins import OffStudyMixin
