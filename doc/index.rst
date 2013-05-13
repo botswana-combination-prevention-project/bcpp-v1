@@ -14,6 +14,7 @@ Welcome to bhp_registration's documentation!
    overview
    classes
    models
+   forms
    managers
    signals
 
