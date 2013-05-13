@@ -9,13 +9,13 @@ class OffStudyMixin(object):
 
         .. note:: This method must be overridden in the local app. 
                   For example, in module mpepu_infant.models add::
-        
+
                     from bhp_off_study.mixins import OffStudyMixin
                     from infant_off_study import InfantOffStudy
-                    
-                    
+
+
                     class InfantOffStudyMixin(OffStudyMixin):
-                        
+
                         def get_off_study_cls(self):
                             return InfantOffStudy
 """
