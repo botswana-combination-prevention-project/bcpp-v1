@@ -20,7 +20,7 @@ class SignalManager(object):
             'serialize_on_save',
             'tracker_on_post_save',
             'base_visit_tracking_add_or_update_entry_buckets_on_post_save',
-            'base_visit_tracking_on_post_save',
+            'base_visit_tracking_check_in_progress_on_post_save',
             'base_subject_get_or_create_registered_subject_on_post_save',
             'is_consented_instance_on_pre_save',
             'prepare_appointments_on_post_save',
@@ -34,7 +34,7 @@ class SignalManager(object):
         signals.post_save.disconnect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
         signals.post_save.disconnect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.disconnect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
-        signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
+        signals.post_save.disconnect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_check_in_progress_on_post_save")
         signals.pre_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
         signals.pre_save.disconnect(is_consented_instance_on_pre_save, weak=False, dispatch_uid="is_consented_instance_on_pre_save")
         signals.post_save.disconnect(pre_appointment_contact_on_post_delete, weak=False, dispatch_uid="pre_appointment_contact_on_post_delete")
@@ -48,7 +48,7 @@ class SignalManager(object):
         signals.post_save.connect(pre_appointment_contact_on_post_delete, weak=False, dispatch_uid="pre_appointment_contact_on_post_delete")
         signals.pre_save.connect(is_consented_instance_on_pre_save, weak=False, dispatch_uid="is_consented_instance_on_pre_save")
         signals.pre_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
-        signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_on_post_save")
+        signals.post_save.connect(base_visit_tracking_on_post_save, weak=False, dispatch_uid="base_visit_tracking_check_in_progress_on_post_save")
         signals.post_save.connect(base_visit_tracking_add_or_update_entry_buckets_on_post_save, weak=False, dispatch_uid="base_visit_tracking_add_or_update_entry_buckets_on_post_save")
         signals.post_save.connect(tracker_on_post_save, weak=False, dispatch_uid="tracker_on_post_save")
         signals.post_save.connect(serialize_on_save, weak=False, dispatch_uid="serialize_on_save")
