@@ -5,6 +5,6 @@ from base_off_study import BaseOffStudy
 
 @receiver(post_save, weak=False, dispatch_uid="base_off_study_post_save")
 def base_off_study_post_save(sender, instance, **kwargs):
-    """Calls post_save method."""
+    """Calls :func:`bhp_off_study.models.BaseOffStudy.post_save_clear_future_appointments` method."""
     if isinstance(instance, BaseOffStudy):
         instance.post_save_clear_future_appointments()
