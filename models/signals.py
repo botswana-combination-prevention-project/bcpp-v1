@@ -7,4 +7,4 @@ from base_off_study import BaseOffStudy
 def base_off_study_post_save(sender, instance, **kwargs):
     """Calls post_save method."""
     if isinstance(instance, BaseOffStudy):
-        instance.post_save()
+        instance.post_save_clear_future_appointments()
