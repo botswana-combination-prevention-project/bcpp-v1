@@ -62,6 +62,12 @@
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>Base class for all classes that manage the entry state of additional, scheduled and unscheduled data.</p>
 <dl class="method">
+<dt id="bhp_entry.classes.BaseEntry.check_visit_model_reason_field">
+<tt class="descname">check_visit_model_reason_field</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.check_visit_model_reason_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms visit model has a reason attribute and the choices tuple uses required values correctly.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_entry.classes.BaseEntry.get_status">
 <tt class="descname">get_status</tt><big>(</big><em>action</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.get_status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Figures out the the current status of the user model instance, KEYED or NEW (not keyed).</p>
@@ -107,12 +113,6 @@ not have a visit model foreign key.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_entry.classes.BaseEntry.set_target_model_instance">
-<tt class="descname">set_target_model_instance</tt><big>(</big><em>target_model_instance=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_target_model_instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the instance of the target model class if it can using the visit_model_instance.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="bhp_entry.classes.BaseEntry.set_visit_model_fieldname">
 <tt class="descname">set_visit_model_fieldname</tt><big>(</big><em>visit_model_fieldname=None</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.BaseEntry.set_visit_model_fieldname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the field name for the foreignkey that points to the visit model.</p>
@@ -123,13 +123,23 @@ not have a visit model foreign key.</p>
 <dl class="class">
 <dt id="bhp_entry.classes.ScheduledEntry">
 <em class="property">class </em><tt class="descclassname">bhp_entry.classes.</tt><tt class="descname">ScheduledEntry</tt><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_entry.classes.base_entry.BaseEntry</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_entry.classes.base_scheduled_entry.BaseScheduledEntry</span></tt></p>
 <dl class="method">
 <dt id="bhp_entry.classes.ScheduledEntry.add_or_update_for_visit">
 <tt class="descname">add_or_update_for_visit</tt><big>(</big><em>visit_model_instance</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry.add_or_update_for_visit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loops thru the list of entries configured for the visit_definition of this visit_model_instance
 and Adds entries to or updates existing entries in the bucket.</p>
-<p>This just determines KEYED or NEW, bucket rules with reassess later.</p>
+<p>If reason for visit (visit tracking form) is not scheduled, deletes and/or does not create NEW.</p>
+<p>This just determines KEYED or NEW, bucket rules will reassess later.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.ScheduledEntry.check_visit_model_reason_field">
+<tt class="descname">check_visit_model_reason_field</tt><big>(</big><em>visit_model_instance</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.ScheduledEntry.check_visit_model_reason_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms visit model has a reason attribute and the choices tuple uses required values correctly.</p>
+<p>Called before visit model instance is set for this class.</p>
+<p>You can override the default list of required reasons by overriding the method &#8216;get_visit_reason_choices&#8217;
+on the visit model.</p>
 </dd></dl>
 
 <dl class="method">
@@ -162,7 +172,7 @@ and Adds entries to or updates existing entries in the bucket.</p>
 <dl class="class">
 <dt id="bhp_entry.classes.AdditionalEntry">
 <em class="property">class </em><tt class="descclassname">bhp_entry.classes.</tt><tt class="descname">AdditionalEntry</tt><a class="headerlink" href="#bhp_entry.classes.AdditionalEntry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_entry.classes.base_entry.BaseEntry</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_entry.classes.base_registered_subject_entry.BaseRegisteredSubjectEntry</span></tt></p>
 <dl class="method">
 <dt id="bhp_entry.classes.AdditionalEntry.add_from_rule">
 <tt class="descname">add_from_rule</tt><big>(</big><em>rule_name</em>, <em>visit_model_instance</em>, <em>content_type_map</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.AdditionalEntry.add_from_rule" title="Permalink to this definition">¶</a></dt>
@@ -175,6 +185,14 @@ and Adds entries to or updates existing entries in the bucket.</p>
 <dd><p>Remove an entry to the bucket using criteria including the rule group.name.</p>
 <p>To avoid rules overriding eachother, only the rule that created the bucket_instance
 may delete the bucket_instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_entry.classes.AdditionalEntry.update_for_registered_subject">
+<tt class="descname">update_for_registered_subject</tt><big>(</big><em>registered_subject</em><big>)</big><a class="headerlink" href="#bhp_entry.classes.AdditionalEntry.update_for_registered_subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loops thru the list of entries configured for this registered subject
+and updates existing entries in the bucket.</p>
+<p>This just determines KEYED or NEW, bucket rules with reassess later.</p>
 </dd></dl>
 
 </dd></dl>

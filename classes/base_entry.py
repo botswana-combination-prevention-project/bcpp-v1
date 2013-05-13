@@ -1,7 +1,5 @@
-from django.core.exceptions import FieldError
 from bhp_entry.models import BaseEntryBucket
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_visit_tracking.models import BaseVisitTracking
 
 
 class BaseEntry(object):
@@ -17,6 +15,7 @@ class BaseEntry(object):
         self._target_model_instance = None
         self._visit_model_instance = None
         self._visit_model_fieldname = None
+        self._visit_model_base_cls = None
 
     def reset(self, visit_model_instance):
         self._bucket_model_instance = None
@@ -25,8 +24,17 @@ class BaseEntry(object):
         self._visit_model_instance = None
         self.set_visit_model_instance(visit_model_instance)
 
+    def set_visit_model_base_cls(self):
+        from bhp_visit_tracking.models import BaseVisitTracking
+        self._visit_model_base_cls = BaseVisitTracking
+
+    def get_visit_model_base_cls(self):
+        if not self._visit_model_base_cls:
+            self.set_visit_model_base_cls()
+        return self._visit_model_base_cls
+
     def set_visit_model_instance(self, visit_model_instance=None):
-        if not isinstance(visit_model_instance, BaseVisitTracking):
+        if not isinstance(visit_model_instance, self.get_visit_model_base_cls()):
             raise TypeError('Parameter \'visit_model_instance\' must be an instance of BaseVisitTracking. Got {0}'.format(visit_model_instance))
         self.check_visit_model_reason_field(visit_model_instance)
         self._visit_model_instance = visit_model_instance
@@ -60,10 +68,10 @@ class BaseEntry(object):
             self._visit_model_fieldname = visit_model_fieldname
         else:
             if self.get_target_model_cls():
-                # look for a field value that is a base of BaseVisitTracking
+                # look for a field value that is a base of
                 for field in self.get_target_model_cls()._meta.fields:
                     if field.rel:
-                        if issubclass(field.rel.to, BaseVisitTracking):
+                        if issubclass(field.rel.to, self.get_visit_model_base_cls()):
                             self._visit_model_fieldname = field.name
                             break
             else:

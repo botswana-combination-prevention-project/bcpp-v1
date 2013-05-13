@@ -1,11 +1,12 @@
 from django.core.exceptions import FieldError
-from bhp_visit_tracking.models import BaseVisitTracking
+#from bhp_visit_tracking.models import BaseVisitTracking
 from base_entry import BaseEntry
 
 
 class BaseScheduledEntry(BaseEntry):
 
     def set_target_model_base_cls(self):
+        from bhp_visit_tracking.models import BaseVisitTracking
         self._target_model_base_cls = BaseVisitTracking
 
     def set_target_model_instance(self, target_model_instance=None):

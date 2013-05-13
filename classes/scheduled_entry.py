@@ -2,7 +2,6 @@ import copy
 from datetime import datetime
 from django.core.exceptions import ImproperlyConfigured
 from bhp_entry.models import Entry
-from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_KEYS, VISIT_REASON_NO_FOLLOW_KEYS
 from bhp_entry.models import ScheduledEntryBucket
 from base_scheduled_entry import BaseScheduledEntry
@@ -20,10 +19,10 @@ class ScheduledEntry(BaseScheduledEntry):
             self._filter_fieldname = filter_field_name
         else:
             if self.get_target_model_instance():
-                # look for a field value that is a base of BaseVisitTracking
+                # look for a field value that is a base of BaseVisitTracking, the target_model_base_cls
                 for field in self.get_target_model_cls()._meta.fields:
                     if field.rel:
-                        if issubclass(field.rel.to, BaseVisitTracking):
+                        if issubclass(field.rel.to, self.get_target_model_base_cls()):
                             self._filter_fieldname = field.name
                             break
             else:
