@@ -1,0 +1,3 @@
+VISIT_REASON_NO_FOLLOW_KEYS = ['missed', 'death', 'lost', 'off study']
+VISIT_REASON_FOLLOW_KEYS = ['scheduled', 'unscheduled']
+VISIT_REASON_REQUIRED_KEYS = VISIT_REASON_NO_FOLLOW_KEYS + VISIT_REASON_FOLLOW_KEYS

@@ -9,6 +9,6 @@ class BaseVisitTrackingFactory(BaseUuidModelFactory):
 
     appointment = factory.SubFactory(AppointmentFactory)
     report_datetime = datetime.today()
-    reason = 'clinic'
+    reason = 'scheduled'
     reason_missed = None
     info_source = 'subject'

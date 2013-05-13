@@ -1,11 +1,13 @@
 from datetime import datetime
 from django.db import models
+from django.core.exceptions import ImproperlyConfigured
 from bhp_consent.models import BaseConsentedUuidModel
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
 from bhp_base_model.fields import OtherCharField
 from bhp_appointment.models import Appointment
 from bhp_visit_tracking.managers import BaseVisitTrackingManager
 from bhp_visit_tracking.choices import VISIT_REASON
+from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_KEYS
 
 
 class BaseVisitTracking (BaseConsentedUuidModel):
@@ -111,13 +113,26 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     objects = BaseVisitTrackingManager()
 
     def get_visit_reason_choices(self):
-        """Returns a tuple for the reason ChoiceField set in ModelForm.
+        """Returns a dictionary converted from the reason ChoiceField set in ModelForm.
 
-        Users may override.
+        Users may override but must return a dictionary with the required keys."""
+        dct = {}
+        for tpl in VISIT_REASON:
+            dct.update({tpl[0]: tpl[1]})
+        return dct
+
+    def _get_visit_reason_choices(self):
+        """Returns a dictionary representing the visit model reason choices tuple.
 
         This is also called by the ScheduledEntry class when deciding to delete or create
         NEW forms for entry on the dashboard."""
-        return VISIT_REASON
+        choices_dct = self.get_visit_reason_choices()
+        if not isinstance(choices_dct, dict):
+            raise TypeError('Method get_visit_reason_choices must return a dictionary. Got {0}'.format(choices_dct))
+        for k in VISIT_REASON_REQUIRED_KEYS:
+            if k not in choices_dct:
+                raise ImproperlyConfigured('Dictionary returned by get_visit_reason_choices() must have keys {0}'.format(VISIT_REASON_REQUIRED_KEYS))
+        return choices_dct
 
     def post_save(self):
         pass
