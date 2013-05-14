@@ -41,7 +41,7 @@ class BaseEntry(object):
         if not self._visit_model_instance:
             raise AttributeError('Attribute _visit_model_instance cannot be None')
 
-    def check_visit_model_reason_field(self):
+    def check_visit_model_reason_field(self, visit_model_instance):
         """Confirms visit model has a reason attribute and the choices tuple uses required values correctly."""
         pass
 

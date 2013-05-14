@@ -2,7 +2,7 @@ import copy
 from datetime import datetime
 from django.core.exceptions import ImproperlyConfigured
 from bhp_entry.models import Entry
-from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_KEYS, VISIT_REASON_NO_FOLLOW_KEYS
+from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_CHOICES, VISIT_REASON_NO_FOLLOW_UP_CHOICES
 from bhp_entry.models import ScheduledEntryBucket
 from base_scheduled_entry import BaseScheduledEntry
 
@@ -49,32 +49,41 @@ class ScheduledEntry(BaseScheduledEntry):
                 pass
         self._bucket_model_instance = bucket_model_instance
 
-    def check_visit_model_reason_field(self, visit_model_instance):
-        """Confirms visit model has a reason attribute and the choices tuple uses required values correctly.
-
-        Called before visit model instance is set for this class.
-
-        You can override the default list of required reasons by overriding the method 'get_visit_reason_choices'
-        on the visit model."""
-
-        visit_reason_choices = visit_model_instance.get_visit_reason_choices()
-        # check that required reasons use the required key words
-        found = []
-        visit_reason_required_keys = VISIT_REASON_REQUIRED_KEYS
-        for k in visit_reason_required_keys:
-            if k in visit_reason_choices:
-                found.append(k)
-        if found.sort() != visit_reason_required_keys.sort():
-            raise ImproperlyConfigured('Visit model method \'get_visit_reason_choices\' must return a list of choices using each of the required words {0}. Got {1}.'.format(visit_reason_required_keys, visit_reason_choices))
-        for f in visit_model_instance.__class__._meta.fields:
-            if f.name == 'reason':
-                field = f
-                break
-        if not field:
-            raise ImproperlyConfigured('Visit model requires field \'reason\'.')
-        #for word in required_reasons:
-        #    if word in visit_model_instance.reason.lower() and visit_model_instance.reason.lower() != word:
-        #        raise ImproperlyConfigured('Visit model attribute \'reason\' value \'{1}\' is invalid. Must be \'{0}\'. The words {2} are reserved, as is, for the reason choices tuple. Check your visit model\'s field or form field definition.'.format(word, visit_model_instance.reason.lower(), required_reasons))
+#     def check_visit_model_reason_field(self, visit_model_instance):
+#         """Confirms visit model has a reason attribute and the choices tuple uses required values correctly.
+# 
+#         Called before visit model instance is set for this class.
+# 
+#         You can override the default list of required reasons by overriding the method 'get_visit_reason_choices'
+#         on the visit model."""
+# 
+#         #visit_reason_choices = visit_model_instance.get_visit_reason_choices()
+#         visit_reason_choices = visit_model_instance._get_visit_reason_choices()
+#         if not isinstance(visit_reason_choices, dict):
+#             raise TypeError('Expected dictionary from get_visit_reason_choices(). Got {0}'.format(visit_reason_choices))
+#         # check that the user visit reasons conform to use the required key words
+#         found = []
+#         visit_reason_required_keys = VISIT_REASON_REQUIRED_CHOICES
+#         visit_reason_required_keys.sort()
+#         for k in visit_reason_required_keys:
+#             # look for each required word
+#             for v in visit_reason_choices:
+#                 if k == v:
+#                     found.append(k)
+#         found.sort()
+#         if found != visit_reason_required_keys:
+#             raise ImproperlyConfigured('Visit model method \'get_visit_reason_choices\' must return a list of choices using each of the required words {0}. Got {1}.'.format(visit_reason_required_keys, visit_reason_choices))
+#         # ensure visir model has field reason
+#         for f in visit_model_instance.__class__._meta.fields:
+#             if f.name == 'reason':
+#                 field = f
+#                 break
+#         if not field:
+#             raise ImproperlyConfigured('Visit model requires field \'reason\'.')
+#         #for word in required_reasons:
+#         #    if word in visit_model_instance.reason.lower() and visit_model_instance.reason.lower() != word:
+#         #        raise ImproperlyConfigured('Visit model attribute \'reason\' value \'{1}\' is invalid. Must be \'{0}\'. The words {2} are reserved, as is, for the reason choices tuple. Check your visit model\'s field or form field definition.'.format(word, visit_model_instance.reason.lower(), required_reasons))
+#         return visit_reason_choices
 
     def add_or_update_for_visit(self, visit_model_instance):
         """ Loops thru the list of entries configured for the visit_definition of this visit_model_instance
@@ -87,7 +96,11 @@ class ScheduledEntry(BaseScheduledEntry):
         self.set_visit_model_instance(visit_model_instance)
         self.set_filter_model_instance(self.get_visit_model_instance())
         registered_subject = visit_model_instance.appointment.registered_subject
-        visit_reason_choices = visit_model_instance.get_visit_reason_choices()
+        visit_reason_choices = visit_model_instance._get_visit_reason_choices()
+        if 'get_visit_reason_no_follow_up_choices' in dir(visit_model_instance):
+            visit_reason_no_follow_up_choices = visit_model_instance.get_visit_reason_no_follow_up_choices()
+        else:
+            visit_reason_no_follow_up_choices = VISIT_REASON_NO_FOLLOW_UP_CHOICES
         # scheduled entries are only added if visit instance is 0
         if self.get_visit_model_instance().appointment.visit_instance == '0':
             filled_datetime = datetime.today()
@@ -105,8 +118,7 @@ class ScheduledEntry(BaseScheduledEntry):
                            'due_datetime': due_datetime,
                            'report_datetime': report_datetime,
                            'entry_status': entry_status}
-                if (self.get_visit_model_instance().reason.lower() in visit_reason_choices
-                        and self.get_visit_model_instance().reason.lower() not in VISIT_REASON_NO_FOLLOW_KEYS):
+                if self.get_visit_model_instance().reason.lower() in [x.lower() for x in visit_reason_no_follow_up_choices.itervalues()]:
                     # is missed, lost or death, so delete NEW forms
                     self.get_bucket_model_cls().objects.filter(
                             registered_subject=registered_subject,
