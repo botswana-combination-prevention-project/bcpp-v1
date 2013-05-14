@@ -20,7 +20,6 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
     reason = models.CharField(
         verbose_name="Please code the primary reason participant taken off-study",
         max_length=30,
-        # choices = OFF_STUDY_REASON,
         )
 
     reason_other = OtherCharField()
