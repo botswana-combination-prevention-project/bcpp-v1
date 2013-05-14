@@ -3,6 +3,7 @@ VISIT_REASON = (
     ('scheduled', 'Scheduled visit/contact'),
     ('unscheduled', 'Unscheduled visit/contact'),
     ('missed', 'Missed visit'),
-    ('lost to follow-up', 'Lost to follow-up (use only when taking subject off study)'),
+    ('lost', 'Lost to follow-up (use only when taking subject off study)'),
     ('death', 'Death'),
+    ('off study', 'Off Study')
 )

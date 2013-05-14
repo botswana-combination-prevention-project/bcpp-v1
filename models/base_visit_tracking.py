@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
@@ -7,7 +8,7 @@ from bhp_base_model.fields import OtherCharField
 from bhp_appointment.models import Appointment
 from bhp_visit_tracking.managers import BaseVisitTrackingManager
 from bhp_visit_tracking.choices import VISIT_REASON
-from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_KEYS
+from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_CHOICES, VISIT_REASON_NO_FOLLOW_UP_CHOICES, VISIT_REASON_FOLLOW_UP_CHOICES
 
 
 class BaseVisitTracking (BaseConsentedUuidModel):
@@ -112,27 +113,82 @@ class BaseVisitTracking (BaseConsentedUuidModel):
 
     objects = BaseVisitTrackingManager()
 
-    def get_visit_reason_choices(self):
-        """Returns a dictionary converted from the reason ChoiceField set in ModelForm.
-
-        Users may override but must return a dictionary with the required keys."""
+    def get_visit_reason_no_follow_up_choices(self):
+        """Returns the visit reasons that do not imply any data collection; that is, the subject is not available."""
         dct = {}
-        for tpl in VISIT_REASON:
-            dct.update({tpl[0]: tpl[1]})
+        for item in VISIT_REASON_NO_FOLLOW_UP_CHOICES:
+            dct.update({item: item})
         return dct
+
+    def get_visit_reason_follow_up_choices(self):
+        """Returns visit reasons that imply data is being collected; that is, subject is present."""
+        dct = {}
+        for item in VISIT_REASON_FOLLOW_UP_CHOICES:
+            dct.update({item: item})
+        return dct
+
+    def get_visit_reason_choices(self):
+        """Returns a tuple of the reasons choices for the reason field."""
+        return VISIT_REASON
+
+    def _check_visit_reason_keys(self):
+        user_keys = [tpl[0] for tpl in self.get_visit_reason_choices()]
+        default_keys = VISIT_REASON_REQUIRED_CHOICES
+        if list(set(default_keys) - set(user_keys)):
+            user_keys = [k for k in self.get_visit_reason_no_follow_up_choices().iterkeys()] + [k for k in self.get_visit_reason_follow_up_choices().iterkeys()]
+            missing_keys = list(set(default_keys) - set(user_keys))
+            if missing_keys:
+                raise ImproperlyConfigured(
+                    'User\'s visit reasons tuple must contain all keys for no follow-up {1} and all for follow-up {2}. Missing {3}. '
+                    'Override methods \'get_visit_reason_no_follow_up_choices\' and \'get_visit_reason_follow_up_choices\' on the visit model '
+                    'if you are not using the default keys. '
+                    'Got {0}'.format(
+                        user_keys,
+                        VISIT_REASON_NO_FOLLOW_UP_CHOICES,
+                        VISIT_REASON_FOLLOW_UP_CHOICES,
+                        missing_keys))
 
     def _get_visit_reason_choices(self):
         """Returns a dictionary representing the visit model reason choices tuple.
 
-        This is also called by the ScheduledEntry class when deciding to delete or create
+        Depending on how well the local VISIT_REASON choices tuple conforms to the default,
+        methods :func:`get_visit_reason_no_follow_up_choices` and :func:`get_visit_reason_follow_up_choices`
+        are used to make things work with it.
+
+        This is called by the ScheduledEntry class when deciding to delete or create
         NEW forms for entry on the dashboard."""
-        choices_dct = self.get_visit_reason_choices()
-        if not isinstance(choices_dct, dict):
-            raise TypeError('Method get_visit_reason_choices must return a dictionary. Got {0}'.format(choices_dct))
-        for k in VISIT_REASON_REQUIRED_KEYS:
-            if k not in choices_dct:
-                raise ImproperlyConfigured('Dictionary returned by get_visit_reason_choices() must have keys {0}'.format(VISIT_REASON_REQUIRED_KEYS))
-        return choices_dct
+
+        self._check_visit_reason_keys()
+        visit_reason_tuple = self.get_visit_reason_choices()
+        # convert to dictionary
+        visit_reason_choices = {}
+        for tpl in visit_reason_tuple:
+            visit_reason_choices.update({tpl[0]: tpl[1]})
+        if not isinstance(visit_reason_choices, dict):
+            raise TypeError('Method get_visit_reason_choices must return a dictionary or tuple of tuples. Got {0}'.format(visit_reason_choices))
+        visit_reason_required_choices = copy.deepcopy(VISIT_REASON_REQUIRED_CHOICES)
+        if 'get_visit_reason_no_follow_up_choices' in dir(self):
+            visit_reason_no_follow_up_choices = self.get_visit_reason_no_follow_up_choices()
+            if not isinstance(visit_reason_no_follow_up_choices, dict):
+                raise TypeError('Method get_visit_reason_no_follow_up_choices must return a dictionary. Got {0}'.format(visit_reason_no_follow_up_choices))
+            for key, value in visit_reason_no_follow_up_choices.iteritems():
+                if value not in visit_reason_required_choices:
+                    visit_reason_required_choices.remove(key)
+                    visit_reason_required_choices.append(value)
+        if 'get_visit_reason_follow_up_choices' in dir(self):
+            visit_reason_follow_up_choices = self.get_visit_reason_follow_up_choices()
+            if not isinstance(visit_reason_follow_up_choices, dict):
+                raise TypeError('Method visit_reason_follow_up_choices must return a dictionary. Got {0}'.format(visit_reason_follow_up_choices))
+            for key, value in visit_reason_follow_up_choices.iteritems():
+                if value not in visit_reason_required_choices:
+                    visit_reason_required_choices.remove(key)
+                    visit_reason_required_choices.append(value)
+        copy_visit_reason_choices = copy.deepcopy(visit_reason_choices)
+        copy_visit_reason_choices = [x.lower() for x in copy_visit_reason_choices]
+        for k in visit_reason_required_choices:
+            if k.lower() not in copy_visit_reason_choices:
+                raise ImproperlyConfigured('Dictionary returned by get_visit_reason_choices() must have keys {0}. Got {1} with {2}'.format(visit_reason_required_choices, visit_reason_choices.keys(), k))
+        return visit_reason_choices
 
     def post_save_check_in_progress(self):
         #set other appointments that are in progress to incomplete
