@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime, timedelta
 from django.conf import settings
 #from django.contrib import messages
@@ -24,7 +25,7 @@ class AppointmentDateHelper(object):
         # not used
         self.allow_backwards = False
         # True if appointments should land on the same day for a subject
-        Configuration = get_model('bhp_appointment','configuration')
+        Configuration = get_model('bhp_appointment', 'configuration')
         config = Configuration.objects.get_configuration()
         self.use_same_weekday = config.use_same_weekday
         self.allowed_iso_weekdays = config.allowed_iso_weekdays
@@ -71,10 +72,10 @@ class AppointmentDateHelper(object):
     def _check_if_allowed_isoweekday(self, appt_datetime):
         """ Checks if weekday is allowed, otherwise adjust forward or backward """
         allowed_iso_weekdays = [int(num) for num in str(self.allowed_iso_weekdays)]
-        forward = appt_datetime
+        forward = copy.deepcopy(appt_datetime)
         while forward.isoweekday() not in allowed_iso_weekdays:
             forward = forward + timedelta(days=+1)
-        backward = appt_datetime
+        backward = copy.deepcopy(appt_datetime)
         while backward.isoweekday() not in allowed_iso_weekdays:
             backward = backward + timedelta(days=-1)
         # which is closer to the original appt_datetime
@@ -100,30 +101,32 @@ class AppointmentDateHelper(object):
 
     def _move_to_same_weekday(self, appt_datetime, weekday=1):
         """ Moves appointment to use same weekday for each subject appointment."""
-        if weekday not in range(1, 8):
-            raise ValueError('Weekday must be a number between 1-7, Got %s' % (weekday, ))
-        # make all appointments land on the same isoweekday,
-        # if possible as date may change becuase of holiday and/or iso_weekday checks below)
-        forward = appt_datetime
-        while not forward.isoweekday() == weekday:
-            forward = forward + timedelta(days=+1)
-        backward = appt_datetime
-        while not backward.isoweekday() == weekday:
-            backward = backward - timedelta(days=+1)
-        # which is closer to the original appt_datetime
-        td_forward = abs(appt_datetime - forward)
-        td_backward = abs(appt_datetime - backward)
-        if td_forward <= td_backward:
-            appt_datetime = forward
-        else:
-            appt_datetime = backward
-        if not appt_datetime:
-            raise TypeError('Appt_datetime cannot be None')
+        if self.use_same_weekday:
+            if weekday not in range(1, 8):
+                raise ValueError('Weekday must be a number between 1-7, Got %s' % (weekday, ))
+            # make all appointments land on the same isoweekday,
+            # if possible as date may change becuase of holiday and/or iso_weekday checks below)
+            forward = appt_datetime
+            while not forward.isoweekday() == weekday:
+                forward = forward + timedelta(days=+1)
+            backward = appt_datetime
+            while not backward.isoweekday() == weekday:
+                backward = backward - timedelta(days=+1)
+            # which is closer to the original appt_datetime
+            td_forward = abs(appt_datetime - forward)
+            td_backward = abs(appt_datetime - backward)
+            if td_forward <= td_backward:
+                appt_datetime = forward
+            else:
+                appt_datetime = backward
+            if not appt_datetime:
+                raise TypeError('Appt_datetime cannot be None')
         return appt_datetime
 
-    def _move_on_appt_max_exceeded(self, appt_datetime, site, appointments_per_day_max=None, days_forward=None):
+    def _move_on_appt_max_exceeded(self, original_appt_datetime, site, appointments_per_day_max=None, days_forward=None):
         """Moves appointment date to another date if the appointments_per_day_max is exceeded."""
         from bhp_appointment.models import Appointment
+        appt_datetime = copy.deepcopy(original_appt_datetime)
         if not appointments_per_day_max:
             appointments_per_day_max = self.appointments_per_day_max
         if not days_forward:
@@ -156,4 +159,6 @@ class AppointmentDateHelper(object):
             appt_datetime = datetime(appt_date.year, appt_date.month, appt_date.day, appt_datetime.hour, appt_datetime.minute)
         if not appt_datetime:
             raise TypeError('Appt_datetime cannot be None')
+        #if abs(appt_datetime - original_appt_datetime) >= timedelta(days=1):
+        #    print 'date changed'
         return appt_datetime
