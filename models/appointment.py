@@ -115,6 +115,9 @@ class Appointment(BaseAppointment):
         self.validate_visit_instance()
         super(Appointment, self).save(*args, **kwargs)
 
+    def raw_save(self, *args, **kwargs):
+        super(Appointment, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return "{0} for {1}.{2}".format(self.registered_subject, self.visit_definition.code, self.visit_instance)
 
