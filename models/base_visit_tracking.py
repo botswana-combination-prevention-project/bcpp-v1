@@ -133,7 +133,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
 
     def _check_visit_reason_keys(self):
         user_keys = [tpl[0] for tpl in self.get_visit_reason_choices()]
-        default_keys = VISIT_REASON_REQUIRED_CHOICES
+        default_keys = copy.deepcopy(VISIT_REASON_REQUIRED_CHOICES)
         if list(set(default_keys) - set(user_keys)):
             user_keys = [k for k in self.get_visit_reason_no_follow_up_choices().iterkeys()] + [k for k in self.get_visit_reason_follow_up_choices().iterkeys()]
             missing_keys = list(set(default_keys) - set(user_keys))
@@ -141,19 +141,20 @@ class BaseVisitTracking (BaseConsentedUuidModel):
                 raise ImproperlyConfigured(
                     'User\'s visit reasons tuple must contain all keys for no follow-up {1} and all for follow-up {2}. Missing {3}. '
                     'Override methods \'get_visit_reason_no_follow_up_choices\' and \'get_visit_reason_follow_up_choices\' on the visit model '
-                    'if you are not using the default keys. '
+                    'if you are not using the default keys of {4}. '
                     'Got {0}'.format(
                         user_keys,
                         VISIT_REASON_NO_FOLLOW_UP_CHOICES,
                         VISIT_REASON_FOLLOW_UP_CHOICES,
-                        missing_keys))
+                        missing_keys,
+                        VISIT_REASON_REQUIRED_CHOICES))
 
     def _get_visit_reason_choices(self):
         """Returns a dictionary representing the visit model reason choices tuple.
 
         Depending on how well the local VISIT_REASON choices tuple conforms to the default,
         methods :func:`get_visit_reason_no_follow_up_choices` and :func:`get_visit_reason_follow_up_choices`
-        are used to make things work with it.
+        are used to manipulate it so that it works with ScheduledEntry like the default.
 
         This is called by the ScheduledEntry class when deciding to delete or create
         NEW forms for entry on the dashboard."""
@@ -171,6 +172,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
             visit_reason_no_follow_up_choices = self.get_visit_reason_no_follow_up_choices()
             if not isinstance(visit_reason_no_follow_up_choices, dict):
                 raise TypeError('Method get_visit_reason_no_follow_up_choices must return a dictionary. Got {0}'.format(visit_reason_no_follow_up_choices))
+            # ensure required keys are in no follow up
             for key, value in visit_reason_no_follow_up_choices.iteritems():
                 if value not in visit_reason_required_choices:
                     visit_reason_required_choices.remove(key)
@@ -179,6 +181,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
             visit_reason_follow_up_choices = self.get_visit_reason_follow_up_choices()
             if not isinstance(visit_reason_follow_up_choices, dict):
                 raise TypeError('Method visit_reason_follow_up_choices must return a dictionary. Got {0}'.format(visit_reason_follow_up_choices))
+            # ensure required keys are in follow up
             for key, value in visit_reason_follow_up_choices.iteritems():
                 if value not in visit_reason_required_choices:
                     visit_reason_required_choices.remove(key)
