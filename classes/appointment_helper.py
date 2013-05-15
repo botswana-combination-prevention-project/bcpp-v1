@@ -4,6 +4,8 @@ from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
 #from bhp_visit.classes import VisitDefinitionHelper
 from appointment_date_helper import AppointmentDateHelper
+from bhp_subject.models import SubjectConfiguration
+from bhp_appointment.models import Configuration
 
 
 class AppointmentHelper(object):
@@ -24,6 +26,7 @@ class AppointmentHelper(object):
         # base_appt_datetime must come from the membership_form model and not from the appt_datetime
         # of the first appointment as the user may change this.
         appointments = []
+        default_appt_type = self._get_default_appt_type(registered_subject)
         if source != 'BaseAppointmentMixin':  # just a temporary check to ensure this is called by the signal
             raise ImproperlyConfigured('AppointmentHelper.create_all() may only be called from BaseAppointmentMixin.')
         if ScheduleGroup.objects.filter(membership_form__content_type_map__model=model_name):
@@ -55,7 +58,8 @@ class AppointmentHelper(object):
                 defaults = {
                     'appt_datetime': appt_datetime,
                     'timepoint_datetime': appt_datetime,
-                    'dashboard_type': dashboard_type}
+                    'dashboard_type': dashboard_type,
+                    'appt_type': default_appt_type}
                 appointment, created = Appointment.objects.get_or_create(
                     registered_subject=registered_subject,
                     visit_definition=visit_definition,
@@ -115,3 +119,11 @@ class AppointmentHelper(object):
                     visit_definition=appointment.visit_definition,
                     visit_instance=str(next_visit_instance),
                     appt_datetime=appt_datetime)
+
+    def _get_default_appt_type(self, registered_subject):
+        default_appt_type = None
+        if SubjectConfiguration.objects.filter(subject_identifier=registered_subject.subject_identifier):
+            default_appt_type = SubjectConfiguration.objects.get(subject_identifier=registered_subject.subject_identifier).default_appt_type
+        if not default_appt_type:
+            default_appt_type = Configuration.objects.get_configuration().default_appt_type
+        return default_appt_type
