@@ -8,3 +8,21 @@ class TestSubjectVisit(BaseVisitTracking):
 
     class Meta:
         app_label = 'bhp_visit_tracking'
+
+
+class TestSubjectVisitTwo(BaseVisitTracking):
+
+    def get_requires_consent(self):
+        return False
+
+    class Meta:
+        app_label = 'bhp_visit_tracking'
+
+
+class TestSubjectVisitThree(BaseVisitTracking):
+
+    def get_requires_consent(self):
+        return False
+
+    class Meta:
+        app_label = 'bhp_visit_tracking'
