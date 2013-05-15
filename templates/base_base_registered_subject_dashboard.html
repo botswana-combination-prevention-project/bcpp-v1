@@ -115,12 +115,37 @@
 
         <td>
             <table name="right"  border=0 width=100%>
+                {% block top_links %}
+                    {% block subject_configuration %}
+                    {% if subject_configuration%}
+                       {% if visit_code and visit_instance %}
+                            <A href="{{ subject_configuration.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">settings</A>
+                       {% else %}
+                           <A href="{{ subject_configuration.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
+                       {% endif %}
+                    {% else %}
+                       {% if visit_code and visit_instance %}
+                            <A href="/admin/bhp_subject/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">settings</A>
+                       {% else %}
+                           <A href="/admin/bhp_subject/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
+                       {% endif %}
+                    {% endif %}
+                    {% endblock subject_configuration %}
+                    | <A href="/admin/bhp_appointment/appointment/?q={{ subject_identifier }}&o=3.1">appointments</A>
+                {% endblock top_links%}
                 {% block infants %}{% endblock infants %}   
-                {% block partner %}{% endblock partner %}
-                                             
+                {% block partner %}{% endblock partner %}                    
                 {% block maternal_consent %}{% endblock maternal_consent %}  
                 {% block locator %}{{ locator }}{% endblock locator %}                                                
                 {% block household_structure_members %}{% endblock household_structure_members %}                                                
+                {% block action_items %}
+                    <tr name="bottom right" >
+                        <td>
+                            <B>Action Items:&nbsp;</B>
+                            {{ rendered_action_items }}                                                
+                        </td>
+                    </tr>
+                {% endblock action_items %}
                 {% block clinic_plots %}{% endblock %}
                
                 {% block summaries %}
@@ -130,12 +155,7 @@
                     </td></tr>
                 {% endif %}
                 {% endblock summaries %}
-                <tr name="bottom right" >
-                    <td>
-                        <H4>Action Items</H4>
-                        {% block action_items %}{{ rendered_action_items }}{% endblock action_items %}                                                
-                    </td>
-                </tr>
+                
                 <tr name="middle right" >
                 <td style="line-height: 10px; padding:0;"><table><tr>
                 <td style="font-size: 10px;line-height: 10px; padding:0;"><H4>Laboratory</H4></td>
@@ -143,7 +163,6 @@
                 </td></tr></table>
                 </tr>                
                 {% block lab_plots %}{% endblock %}
-                {% block packing_lists %}{% endblock%}
                 {% block lab_results %}
                 <tr name="middle right"><td style="font-size: 10px;line-height: 10px; padding:0;">           
                     <span name="x_results" id="x_results">{{ local_results }}</span>

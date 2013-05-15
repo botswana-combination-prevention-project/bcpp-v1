@@ -81,9 +81,9 @@
     {% endblock additional_lab_bucket %}
 {% endif %}
 
-{% block packing_lists %}
-<a href="/admin/{% app_name %}_lab/packinglistitem/?q={{ subject_identifier }}">packing lists</A>
-{% endblock%}
+{% block top_links %}
+{{block.super }} | <a href="/admin/{% app_name %}_lab/packinglistitem/?q={{ subject_identifier }}">packing lists</A> | 
+{% endblock top_links%}
 
 {% block lab_plots %}
 {% for show_lab_plot in show_lab_plots %}

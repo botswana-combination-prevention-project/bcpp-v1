@@ -20,6 +20,7 @@ from bhp_entry.classes import ScheduledEntry, AdditionalEntry
 from bhp_locator.models import BaseLocator
 from bhp_lab_tracker.classes import lab_tracker
 from bhp_data_manager.models import ActionItem
+from bhp_subject.models import SubjectConfiguration
 
 
 class RegisteredSubjectDescriptor(object):
@@ -59,6 +60,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._subject_identifier = None
         self._subject_hiv_status = None
         self._subject_type = None
+        self._subject_configuration = None
         self.requisition_model = None
         self.is_dispatched, self.dispatch_producer = False, None
         self.appointment_row_template = 'appointment_row.html'
@@ -79,6 +81,7 @@ class RegisteredSubjectDashboard(Dashboard):
             # subject identifier is almost always available
             self.set_subject_identifier(self.registered_subject.subject_identifier)
             self.dashboard_identifier = self.get_subject_identifier()
+            
             if not self.get_subject_identifier():
                 # but if not, check for registration_identifier
                 self.set_subject_identifier(self.registered_subject.registration_identifier)
@@ -94,6 +97,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 subject_type=self.get_subject_type(),
                 subject_hiv_history=lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier),
                 subject_hiv_status=lab_tracker.get_current_value('HIV', self.registered_subject.subject_identifier),
+                subject_configuration=self.get_subject_configuration(),
                 )
         visit_code = kwargs.pop('visit_code', self.visit_code)
         visit_instance = kwargs.pop("visit_instance", self.visit_instance)
@@ -303,6 +307,17 @@ class RegisteredSubjectDashboard(Dashboard):
             self.set_subject_identifier()
         return self._subject_identifier
 
+    def _set_subject_configuration(self):
+        self._subject_configuration = None
+        if self.get_subject_identifier():
+            if SubjectConfiguration.objects.filter(subject_identifier=self.get_subject_identifier()):
+                self._subject_configuration = SubjectConfiguration.objects.get(subject_identifier=self.get_subject_identifier())
+
+    def get_subject_configuration(self):
+        if not self._subject_configuration:
+            self._set_subject_configuration()
+        return self._subject_configuration
+    
     def _set_subject_hiv_status(self):
         """Sets the hiv_status to the value from bhp_lab_tracker history model."""
         RESULT = 0
