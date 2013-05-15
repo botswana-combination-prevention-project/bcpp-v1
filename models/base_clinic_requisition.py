@@ -8,6 +8,10 @@ class BaseClinicRequisition (BaseRequisition):
 
     dmis_identifier = models.CharField(max_length=25, null=True, editable=False)
 
+    old_panel_id = models.CharField(max_length=50, null=True, editable=False)
+
+    old_aliquot_type_id = models.CharField(max_length=50, null=True, editable=False)
+
     def get_visit(self):
         for field in self._meta.fields:
             try:
