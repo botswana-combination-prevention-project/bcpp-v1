@@ -1,14 +1,25 @@
-#from bhp_visit.models import VisitDefinition, ScheduleGroup
+from django.db.models import get_model
 
 
-#class VisitDefinitionHelper(object):
-#
-#    def list_all_for_model(self, registered_subject, model_name):
-#        """ Lists all visit_definitions for which appointments would be created or updated for this model_name"""
-#        if ScheduleGroup.objects.filter(membership_form__content_type_map__model=model_name):
-#            # get list of visits for scheduled group containing this model
-#            visit_definitions = VisitDefinition.objects.filter(
-#                schedule_group=ScheduleGroup.objects.get(membership_form__content_type_map__model=model_name))
-#        else:
-#            visit_definitions = []
-#        return visit_definitions
+class VisitDefinitionHelper(object):
+
+    def copy(self, source_visit_definition, code, title, time_point, base_interval, base_interval_unit, grouping=None):
+        VisitDefinition = get_model('bhp_visit', 'VisitDefinition')
+        Entry = get_model('bhp_entry', 'Entry')
+
+        target_visit_definition = VisitDefinition.objects.create(
+            code=code,
+            title=title,
+            grouping=grouping,
+            time_point=time_point,
+            base_interval=base_interval,
+            base_interval_unit=base_interval_unit)
+        for schedule_group in source_visit_definition.schedule_group.all():
+            target_visit_definition.schedule_group.add(schedule_group)
+        for entry in Entry.objects.filter(visit_definition=source_visit_definition):
+            options = {}
+            entry.visit_definition = target_visit_definition
+            for fld in entry._meta.fields:
+                if fld.name not in ['id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified']:
+                    options.update({fld.name: getattr(entry, fld.name)})
+            Entry.objects.create(**options)
