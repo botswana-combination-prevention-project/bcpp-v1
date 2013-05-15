@@ -56,7 +56,7 @@ class Appointment(BaseAppointment):
         choices=APPT_TYPE,
         default='clinic',
         max_length=20,
-        help_text='Default is set in configuration.')
+        help_text='Default for subject may be edited in admin under section bhp_subject. See Subject Configuration.')
 
     objects = AppointmentManager()
 
