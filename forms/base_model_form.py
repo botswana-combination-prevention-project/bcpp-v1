@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.db.models.query import EmptyQuerySet
-from django.db.models import OneToOneField, ForeignKey
+from django.db.models import OneToOneField, ForeignKey, get_model
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_base_form.classes import LogicCheck
 
@@ -21,7 +21,7 @@ class BaseModelForm(forms.ModelForm):
                     except KeyError:
                         pass
         # if in admin edit mode, populate registered_subject's queryset
-    
+
         if 'registered_subject' in self.fields:
             try:
                 if 'registered_subject' in dir(self.instance):
@@ -30,8 +30,9 @@ class BaseModelForm(forms.ModelForm):
                 else:
                     self.fields['registered_subject'].queryset = self.instance.registered_subject.__class__.objects.none()
             except:
-                if 'registered_subject' not in self.initial:
-                    self.fields['registered_subject'].queryset = EmptyQuerySet()
+                if 'registered_subject' not in self.initial and 'registered_subject' not in self.data:
+                    RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
+                    self.fields['registered_subject'].queryset = RegisteredSubject.objects.none()
 
     def get_subject_identifier(self, cleaned_data):
         subject_identifier = None
