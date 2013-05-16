@@ -83,6 +83,22 @@ class BaseModelAdmin (admin.ModelAdmin):
         See comment for response_add() above"""
         http_response_redirect = super(BaseModelAdmin, self).response_add(request, obj, post_url_continue)
         if not '_addanother' in request.POST and not '_continue' in request.POST:
+            #try:
+            # first try to redirect back to admin without losing a search filter/list filter, if it exists
+            # Look at the referer for a query string '^.*\?.*$'
+            #ref = request.META.get('HTTP_REFERER', '')
+            #if ref.find('?') != -1:
+            #    # We've got a query string, set the session value
+            #    request.session['filtered'] = ref
+            # look for session variable "filtered" set in change_view
+            if request.session.get('filtered', None):
+                if 'next=' not in request.session.get('filtered'):
+                    #result['Location'] = request.session['filtered']
+                    http_response_redirect = HttpResponseRedirect(request.session['filtered'])
+                    request.session['filtered'] = None
+            ##except:
+            #    pass
+            # look for 'next' in URL querystring and reverse with kwargs for keyword string
             if request.GET.get('next'):
                 try:
                     kwargs = {}
@@ -97,24 +113,25 @@ class BaseModelAdmin (admin.ModelAdmin):
                     pass
                 except:
                     raise
+                request.session['filtered'] = None
         return http_response_redirect
 
-    def add_view(self, request, *args, **kwargs):
-        """ Deletes the session key, since we want the user to be directed to all listings
-        after a save on a new object.
-
-        from http://djangosnippets.org/snippets/2849/
-        """
-        result = super(BaseModelAdmin, self).add_view(request, *args, **kwargs)
-        request.session['filtered'] = None
-        return result
-    """
-    Used to redirect users back to their filtered list of locations if there were any
-    """
+#     def add_view(self, request, *args, **kwargs):
+#         """ Deletes the session key, since we want the user to be directed to all listings
+#         after a save on a new object.
+# 
+#         from http://djangosnippets.org/snippets/2849/
+#         """
+#         result = super(BaseModelAdmin, self).add_view(request, *args, **kwargs)
+#         request.session['filtered'] = None
+#         return result
+#     """
+#     Used to redirect users back to their filtered list of locations if there were any
+#     """
     def change_view(self, request, object_id, form_url='', extra_context=None):
         """ Saves the referer of the page to return to the filtered
         change_list after saving the page.
-
+  
         from http://djangosnippets.org/snippets/2849/
         """
         result = super(BaseModelAdmin, self).change_view(request, object_id, form_url, extra_context)
@@ -123,16 +140,18 @@ class BaseModelAdmin (admin.ModelAdmin):
         if ref.find('?') != -1:
             # We've got a query string, set the session value
             request.session['filtered'] = ref
-        if '_save' in request.POST:
-            """
-            We only kick into action if we've saved and if
-            there is a session key of 'filtered', then we
-            delete the key.
-            """
-            try:
-                if request.session['filtered'] is not None:
-                    result['Location'] = request.session['filtered']
-                    request.session['filtered'] = None
-            except:
-                pass
+#         if '_save' in request.POST:
+#             """
+#             We only kick into action if we've saved and if
+#             there is a session key of 'filtered', then we
+#             delete the key.
+#             """
+#             try:
+#                 # added so that if my "next=" is in the query string, let reponse_change take care of it
+#                 # TODO: combine this and what erik wrote in reponse_change
+#                 if request.session['filtered'] is not None and 'next=' not in request.session['filtered']:
+#                     result['Location'] = request.session['filtered']
+#                     request.session['filtered'] = None
+#             except:
+#                 pass
         return result
