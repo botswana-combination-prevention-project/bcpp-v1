@@ -317,3 +317,7 @@ class DispatchController(BaseDispatchController):
     def dispatch_registered_subjects(self):
         logger.info("Updating the Registered Subjects table...")
         self.update_model(('bhp_registration', 'RegisteredSubject'))
+        
+    def send_cypts(self, crypts_to_send, **kwargs):
+        logger.info('  dispatching {0} crypts to {1}.'.format(crypts_to_send.count(),self.get_using_destination()))
+        self._to_json(crypts_to_send, kwargs.get('additional_class',None))
