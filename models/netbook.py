@@ -50,7 +50,9 @@ class Netbook(BaseModel):
         null = True,
         blank = True,
         )        
-       
+    
+    objects = models.Manager()
+
     def get_absolute_url(self):
         return "/bhp_netbook/netbook/%s/" % self.id   
     
