@@ -1,6 +1,8 @@
 import re
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
@@ -115,6 +117,13 @@ class RegisteredSubject(BaseSubject):
 
     objects = RegisteredSubjectManager()
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # confirm have not reached max number of subjects
+            if self.__class__.objects.all().count() + 1 > settings.MAX_SUBJECTS:
+                raise ValidationError('Save failed. Maximum number of subjects has been reached. Got {0}.'.format(settings.MAX_SUBJECTS))
+        super(RegisteredSubject, self).save(*args, **kwargs)
+
     def get_registered_subject(self):
         return self
 
@@ -131,17 +140,18 @@ class RegisteredSubject(BaseSubject):
 
     def dispatch_container_lookup(self, using=None):
         return None
+
     def bypass_for_edit_dispatched_as_item(self):
         # requery myself
         obj = self.__class__.objects.get(pk=self.pk)
         #dont allow values in these fields to change if dispatched
-        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['study_site_id','registration_status', 'modified']]
+        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['study_site_id', 'registration_status', 'modified']]
         for k, v in may_not_change_these_fields:
             if k[0] != '_':
                 if getattr(self, k) != v:
                     return False
         return True
-    
+
     def __unicode__(self):
         if self.sid:
             return "{0} {1} ({2} {3})".format(self.mask_unset_subject_identifier(),
