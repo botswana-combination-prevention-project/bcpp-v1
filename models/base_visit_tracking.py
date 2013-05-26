@@ -121,6 +121,9 @@ class BaseVisitTracking (BaseConsentedUuidModel):
             dct.update({item: item})
         return dct
 
+    def get_off_study_reason(self):
+        return 'lost'
+
     def get_visit_reason_follow_up_choices(self):
         """Returns visit reasons that imply data is being collected; that is, subject is present."""
         dct = {}
