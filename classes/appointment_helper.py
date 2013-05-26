@@ -10,7 +10,7 @@ from bhp_appointment.models import Configuration
 
 class AppointmentHelper(object):
 
-    def create_all(self, registered_subject, model_name, base_appt_datetime=None, dashboard_type=None, source=None):
+    def create_all(self, registered_subject, model_name, using=None, base_appt_datetime=None, dashboard_type=None, source=None):
         """Creates appointments for a registered subject based on a list of visit definitions if given model_name is a member of a schedule group.
 
             Args:
@@ -60,7 +60,7 @@ class AppointmentHelper(object):
                     'timepoint_datetime': appt_datetime,
                     'dashboard_type': dashboard_type,
                     'appt_type': default_appt_type}
-                appointment, created = Appointment.objects.get_or_create(
+                appointment, created = Appointment.objects.using(using).get_or_create(
                     registered_subject=registered_subject,
                     visit_definition=visit_definition,
                     visit_instance='0',
@@ -73,39 +73,39 @@ class AppointmentHelper(object):
                         # need to correct the best_appt_datetime
                         appointment.appt_datetime = appt_datetime
                         appointment.best_appt_datetime = appt_datetime
-                        appointment.save()
+                        appointment.save(using)
                 appointments.append(appointment)
         return appointments
 
-    def delete_for_instance(self, model_instance):
+    def delete_for_instance(self, model_instance, using=None):
         """ Delete appointments for this registered_subject for this model_instance but only if visit report not yet submitted """
         #visit_definitions = self.list_visit_definitions_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
         visit_definitions = VisitDefinition.objects.list_all_for_model(model_instance.registered_subject, model_instance._meta.object_name.lower())
         Appointment = get_model('bhp_appointment', 'appointment')
         # only delete appointments without a visit model
-        appointments = Appointment.objects.filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)
+        appointments = Appointment.objects.using(using).filter(registered_subject=model_instance.registered_subject, visit_definition__in=visit_definitions)
         count = 0
         visit_model = model_instance.get_visit_model_cls(model_instance)
         # find the most recent visit model instance and delete any appointments after that
         for appointment in appointments:
-            if not visit_model.objects.filter(appointment=appointment):
+            if not visit_model.objects.using(using).filter(appointment=appointment):
                 appointment.delete()
                 count += 1
         for appointment in appointments:
-            if not visit_model.objects.filter(appointment=appointment):
+            if not visit_model.objects.using(using).filter(appointment=appointment):
                 appointment.delete()
                 count += 1
         return count
 
-    def create_next_instance(self, base_appointment_instance, next_appt_datetime):
+    def create_next_instance(self, base_appointment_instance, next_appt_datetime, using=None):
         """ Creates a continuation appointment given the base appointment instance (.0) and the next appt_datetime """
         appointment = base_appointment_instance
         Appointment = get_model('bhp_appointment', 'appointment')
-        if not Appointment.objects.filter(
+        if not Appointment.objects.using(using).filter(
             registered_subject=appointment.registered_subject,
             visit_definition=appointment.visit_definition,
             appt_datetime=next_appt_datetime):
-            aggr = Appointment.objects.filter(
+            aggr = Appointment.objects.using(using).filter(
                 registeredsubject=appointment.registered_subject,
                 visit_definition=appointment.visit_definition
                 ).aggregate(Max('visit_instance'))
@@ -114,7 +114,7 @@ class AppointmentHelper(object):
                 # check if there are rules to determine a better appt_datetime
                 appt_datetime = appointment_date_helper.get_best_datetime(next_appt_datetime, appointment.registered_subject.study_site)
                 next_visit_instance = int(aggr['visit_instance__max'] + 1.0)
-                Appointment.objects.create(
+                Appointment.objects.using(using).create(
                     registered_subject=appointment.registered_subject,
                     visit_definition=appointment.visit_definition,
                     visit_instance=str(next_visit_instance),
