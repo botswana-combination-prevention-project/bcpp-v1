@@ -47,7 +47,7 @@ class BaseAppointment (BaseSyncUuidModel):
 
     def is_new_appointment(self):
         if 'new' not in [s[0] for s in APPT_STATUS]:
-            raise TypeError('Choices tuple does not contain a \'new\' element.')
+            raise TypeError('Expected (\'new\', \'New\') as one tuple in the choices tuple APPT_STATUS. Got {0}'.format(APPT_STATUS))
         retval = False
         if self.appt_status.lower() == 'new':
             retval = True

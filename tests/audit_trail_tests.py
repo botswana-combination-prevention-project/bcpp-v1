@@ -1,8 +1,8 @@
 from datetime import datetime
 from django.test import TestCase
 from bhp_appointment.models import Appointment, PreAppointmentContact
-from bhp_visit.models import VisitDefinition
-from bhp_registration.models import RegisteredSubject
+from bhp_visit.tests.factories import VisitDefinitionFactory
+from bhp_registration.tests.factories import RegisteredSubjectFactory
 
 
 class AuditTrailTests(TestCase):
@@ -11,8 +11,8 @@ class AuditTrailTests(TestCase):
 
     def test_audit_trail(self):
         # save an appointment
-        visit_definition = VisitDefinition.objects.create(id='1', code='1000', title='Test')
-        registered_subject = RegisteredSubject.objects.create(id='1', subject_identifier='12345')
+        visit_definition = VisitDefinitionFactory(code='1000', title='Test')
+        registered_subject = RegisteredSubjectFactory(subject_identifier='12345')
         appointment = Appointment.objects.create(
             appt_datetime=datetime.today(),
             best_appt_datetime=datetime.today(),

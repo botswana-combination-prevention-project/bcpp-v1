@@ -26,7 +26,7 @@
         {% endif %}
 </td>
 <td>{{ appointment.appt_type|appt_type }}</td>
-<td nowrap>{{ appointment.appt_datetime|date:"Y-m-d D" }}</td>
+<td nowrap>{{ appointment.appt_datetime|date:"Y-m-d D" }}{% if appointment.appt_type == 'clinic' and appointment.appt_status == 'new' %}{% if appointment.is_confirmed %}/C{%else%}/NC{%endif%}{%endif%}</td>
 {% endblock appointment_columns %}
 
 {% block appointment_status_column %}
