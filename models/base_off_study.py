@@ -8,6 +8,7 @@ from bhp_crypto.utils import mask_encrypted
 from bhp_off_study.managers import OffStudyManager
 from bhp_off_study.exceptions import SubjectOffStudyDateError
 from bhp_visit_tracking.models import BaseVisitTracking
+from bhp_common.choices import YES_NO
 
 
 class BaseOffStudy(BaseRegisteredSubjectModel):
@@ -24,6 +25,13 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
 
     reason_other = OtherCharField()
 
+    has_scheduled_data = models.CharField(
+        max_length=10,
+        verbose_name='Are scheduled data being submitted on the off-study date?',
+        choices=YES_NO,
+        default='Yes',
+        help_text='')
+
     comment = models.TextField(
         max_length=250,
         verbose_name="Comments:",
@@ -35,6 +43,11 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
 
     def natural_key(self):
         return (self.offstudy_date, ) + self.registered_subject.natural_key()
+
+    def show_scheduled_entries_on_off_study_date(self):
+        if self.has_scheduled_data == 'No':
+            return False
+        return True
 
     def get_report_datetime(self):
         return datetime(self.offstudy_date.year, self.offstudy_date.month, self.offstudy_date.day)
