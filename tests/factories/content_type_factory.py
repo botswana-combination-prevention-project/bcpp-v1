@@ -1,3 +1,4 @@
+import factory
 from bhp_base_model.tests.factories import BaseModelFactory
 from django.contrib.contenttypes.models import ContentType
 
@@ -5,6 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 class ContentTypeFactory(BaseModelFactory):
     FACTORY_FOR = ContentType
 
-    name = 'contenttypemap'
+    name = factory.Sequence(lambda n: 'contenttypemap{0}'.format(n))
     app_label = 'bhp_content_type_map'
-    model = 'contenttypemap'
+    model = factory.Sequence(lambda n: 'contenttypemap{0}'.format(n))
