@@ -3,8 +3,6 @@ from datetime import date
 from django.conf import settings
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 
-starting_seq_num = 1000
-
 
 class BaseSubjectFactory(BaseUuidModelFactory):
     ABSTRACT_FACTORY = True
