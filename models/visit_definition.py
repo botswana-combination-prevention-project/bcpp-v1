@@ -2,10 +2,12 @@ from datetime import timedelta
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator
+from bhp_content_type_map.models import ContentTypeMap
 from bhp_visit.utils import get_lower_window_days, get_upper_window_days
 from bhp_visit.models import ScheduleGroup
 from bhp_visit.models import BaseWindowPeriodItem
 from bhp_visit.managers import VisitDefinitionManager
+from bhp_visit.validators import is_visit_tracking_model
 
 
 class VisitDefinition(BaseWindowPeriodItem):
@@ -19,6 +21,10 @@ class VisitDefinition(BaseWindowPeriodItem):
         verbose_name="Title",
         max_length=35,
         db_index=True)
+    visit_tracking_content_type_map = models.ForeignKey(ContentTypeMap,
+        null=True,
+        verbose_name='Visit Tracking Model',
+        validators=[is_visit_tracking_model, ])
     schedule_group = models.ManyToManyField(ScheduleGroup,
         null=True,
         blank=True,
