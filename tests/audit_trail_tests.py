@@ -3,6 +3,7 @@ from django.test import TestCase
 from bhp_appointment.models import Appointment, PreAppointmentContact
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_registration.tests.factories import RegisteredSubjectFactory
+from bhp_content_type_map.models import ContentTypeMap
 
 
 class AuditTrailTests(TestCase):
@@ -11,7 +12,9 @@ class AuditTrailTests(TestCase):
 
     def test_audit_trail(self):
         # save an appointment
-        visit_definition = VisitDefinitionFactory(code='1000', title='Test')
+        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='testvisit')
+
+        visit_definition = VisitDefinitionFactory(code='1000', title='Test', visit_tracking_content_type_map=visit_tracking_content_type_map)
         registered_subject = RegisteredSubjectFactory(subject_identifier='12345')
         appointment = Appointment.objects.create(
             appt_datetime=datetime.today(),

@@ -65,6 +65,14 @@ class AppointmentMethodTests(BaseAppointmentTests):
         """
         is_new_appointment() should return False if not "new" and "new" must be listed in the choices tuple.
         """
+        lab_tracker.autodiscover()
+        StudySpecificFactory()
+        study_site = StudySiteFactory()
+        ConfigurationFactory()
+        content_type_map_helper = ContentTypeMapHelper()
+        content_type_map_helper.populate()
+        content_type_map_helper.sync()
+
         appointment = Appointment()
         dte = datetime.today()
         appointment.appt_datetime = dte

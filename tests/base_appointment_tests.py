@@ -5,6 +5,12 @@ from bhp_variables.tests.factories import StudySiteFactory
 from bhp_appointment.tests.factories import AppointmentFactory
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_registration.tests.factories import RegisteredSubjectFactory
+from bhp_content_type_map.models import ContentTypeMap
+from bhp_lab_tracker.classes import lab_tracker
+from bhp_variables.models import StudySpecific, StudySite
+from bhp_content_type_map.classes import ContentTypeMapHelper
+from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from bhp_appointment.tests.factories import ConfigurationFactory
 
 
 class BaseAppointmentTests(TestCase):
@@ -17,7 +23,15 @@ class BaseAppointmentTests(TestCase):
         super(BaseAppointmentTests, self).__init__(*args, **kwargs)
 
     def setup(self):
-        self.visit_definition = VisitDefinitionFactory(code='9999', title='Test')
+        lab_tracker.autodiscover()
+        StudySpecificFactory()
+        study_site = StudySiteFactory()
+        ConfigurationFactory()
+        content_type_map_helper = ContentTypeMapHelper()
+        content_type_map_helper.populate()
+        content_type_map_helper.sync()
+        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='testvisit')
+        self.visit_definition = VisitDefinitionFactory(code='9999', title='Test', visit_tracking_content_type_map=visit_tracking_content_type_map)
         self.registered_subject = RegisteredSubjectFactory(subject_identifier='062-7982139-3', subject_type='maternal')
         study_site = StudySiteFactory(site_code='99', site_name='test site')
         self.appointment = AppointmentFactory(

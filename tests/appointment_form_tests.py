@@ -2,6 +2,8 @@ from datetime import datetime
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from base_appointment_tests import BaseAppointmentTests
 from bhp_appointment.forms import AppointmentForm
+from bhp_visit_tracking.models import TestSubjectVisit
+from bhp_content_type_map.models import ContentTypeMap
 
 
 class AppointmentFormTests(BaseAppointmentTests):
@@ -14,7 +16,8 @@ class AppointmentFormTests(BaseAppointmentTests):
         # confirm visit_instance is 0 for first appointment
         self.assertEqual(self.appointment.visit_instance, '0')
         #self.assertFormError(response, appointment_form, 'appt_datetime', appointment_form.errors, msg_prefix='')
-        visit_definition = VisitDefinitionFactory(id='2', code='9998', title='Test 9998')
+        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='testvisit')
+        visit_definition = VisitDefinitionFactory(id='2', code='9998', title='Test 9998', visit_tracking_content_type_map=visit_tracking_content_type_map)
 
         appointment_form = AppointmentForm(data={'registered_subject': self.appointment.registered_subject,
                                                  'visit_definition': visit_definition,
