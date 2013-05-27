@@ -42,6 +42,8 @@ class BasePackingListItem(BaseSyncUuidModel):
         blank=True,
         )
 
+    old_panel_id = models.CharField(max_length=50, null=True)
+
     #history = AuditTrail()
 
     def gender(self):
