@@ -59,7 +59,7 @@ class RequisitionLabel(ModelLabel):
         custom.update({
             'protocol': study_specific.protocol_number,
             'site': requisition.site.site_code,
-            'panel': requisition.panel.name[0:21],
+            'panel': requisition.panel.edc_name[0:21],
             'drawn_datetime': requisition.drawn_datetime,
             'subject_identifier': subject_identifier,
             'visit': requisition.get_visit().appointment.visit_definition.code,
