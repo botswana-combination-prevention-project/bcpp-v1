@@ -125,9 +125,9 @@
                        {% endif %}
                     {% else %}
                        {% if visit_code and visit_instance %}
-                            <A href="/admin/bhp_subject/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">settings</A>
+                            <A href="/admin/bhp_subject_config/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">settings</A>
                        {% else %}
-                           <A href="/admin/bhp_subject/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
+                           <A href="/admin/bhp_subject_config/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
                        {% endif %}
                     {% endif %}
                     {% endblock subject_configuration %}
