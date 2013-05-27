@@ -1,7 +1,7 @@
 from django.db import models
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_registration.models import RegisteredSubject
-from lab_panel.models import Panel
+from lab_clinic_api.models import Panel
 from base_packing_list import BasePackingList
 
 
