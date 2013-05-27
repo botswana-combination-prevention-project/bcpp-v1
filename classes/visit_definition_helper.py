@@ -14,8 +14,8 @@ class VisitDefinitionHelper(object):
             time_point=time_point,
             base_interval=base_interval,
             base_interval_unit=base_interval_unit)
-        for schedule_group in source_visit_definition.schedule_group.all():
-            target_visit_definition.schedule_group.add(schedule_group)
+        #for schedule_group in source_visit_definition.schedule_group.all():
+        #    target_visit_definition.schedule_group.add(schedule_group)
         for entry in Entry.objects.filter(visit_definition=source_visit_definition):
             options = {}
             entry.visit_definition = target_visit_definition

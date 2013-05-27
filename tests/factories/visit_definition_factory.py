@@ -9,5 +9,5 @@ starting_seq_num = 1000
 class VisitDefinitionFactory(BaseUuidModelFactory):
     FACTORY_FOR = VisitDefinition
     code = factory.Sequence(lambda n: 'CODE{0}'.format(n))
-    title = factory.LazyAttribute(lambda o: 'TITLE{0}'.format(o.code))
+    title = factory.Sequence(lambda n: 'TITLE{0}'.format(n))
     visit_tracking_content_type_map = factory.SubFactory(ContentTypeMapFactory)
