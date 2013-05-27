@@ -20,7 +20,7 @@ from bhp_entry.classes import ScheduledEntry, AdditionalEntry
 from bhp_locator.models import BaseLocator
 from bhp_lab_tracker.classes import lab_tracker
 from bhp_data_manager.models import ActionItem
-from bhp_subject.models import SubjectConfiguration
+from bhp_subject_config.models import SubjectConfiguration
 
 
 class RegisteredSubjectDescriptor(object):
@@ -317,7 +317,7 @@ class RegisteredSubjectDashboard(Dashboard):
         if not self._subject_configuration:
             self._set_subject_configuration()
         return self._subject_configuration
-    
+
     def _set_subject_hiv_status(self):
         """Sets the hiv_status to the value from bhp_lab_tracker history model."""
         RESULT = 0
