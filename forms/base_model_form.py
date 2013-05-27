@@ -17,7 +17,7 @@ class BaseModelForm(forms.ModelForm):
                 if self.instance.get_visit():
                     try:
                         attr = self.instance.get_visit()._meta.object_name.lower()
-                        self.fields[attr].queryset = self.instance.get_visit().__class__.objects.filter(pk=self.instance.subject_visit.pk)
+                        self.fields[attr].queryset = self.instance.get_visit().__class__.objects.filter(pk=self.instance.get_visit().pk)
                     except KeyError:
                         pass
         # if in admin edit mode, populate registered_subject's queryset
