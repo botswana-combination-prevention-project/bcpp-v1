@@ -67,7 +67,7 @@ class AppointmentHelper(object):
                     defaults=defaults)
                 if not created:
                     td = appointment.best_appt_datetime - appt_datetime
-                    if abs(td.total_seconds()) > 59:
+                    if td.days == 0 and abs(td.seconds()) > 59:
                         # the calculated appointment date does not match the best_appt_datetime (not within 59 seconds)
                         # which means you changed the date on the membership form and now
                         # need to correct the best_appt_datetime
