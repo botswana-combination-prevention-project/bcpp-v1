@@ -143,7 +143,9 @@ class AppointmentMethodTests(BaseAppointmentTests):
         for appt_status in APPT_STATUS:
             appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000', visit_instance='0')
             print 'appointment status is {0}'.format(appointment.appt_status)
+            print 'assert there is only one appointment instance'
             self.assertEquals(Appointment.objects.all().count(), 1)
+            print 'attempt to change to {0}'.format(appt_status[0])
             appointment.appt_status = appt_status[0]
             appointment.save()
             print 'change appointment status to {0}'.format(appt_status[0])
@@ -161,6 +163,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 raise TypeError()
 
     def test_validate_appt_datetime(self):
+        self.setup()
         # a new record, original appt_datetime and best_appt_datetime are equal. 
         appointment = Appointment()
         dte = datetime.today()
