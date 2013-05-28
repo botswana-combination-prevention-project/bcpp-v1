@@ -2,17 +2,17 @@ from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
-from forms import ScheduledLabEntryBucketForm
+from bhp_lab_entry.forms import ScheduledLabEntryBucketForm
 from bhp_lab_entry.models import LabEntry, LabEntryUnscheduled, ScheduledLabEntryBucket, AdditionalLabEntryBucket
 
 
 class LabEntryAdmin(BaseModelAdmin):
 
-    search_fields = ('visit_definition__code', 'panel__name', 'lab_clinic_api_panel')
+    search_fields = ('visit_definition__code', 'panel__name')
 
-    list_display = ('panel', 'lab_clinic_api_panel', 'visit_definition', 'entry_order', 'required', 'entry_category')
+    list_display = ('panel', 'visit_definition', 'entry_order', 'required', 'entry_category')
 
-    list_filter = ('entry_category', 'visit_definition__code', 'default_entry_status', 'created', 'lab_clinic_api_panel', 'panel__name',)
+    list_filter = ('entry_category', 'visit_definition__code', 'default_entry_status', 'created', 'panel__name',)
 
 admin.site.register(LabEntry, LabEntryAdmin)
 
