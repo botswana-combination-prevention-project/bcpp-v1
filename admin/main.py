@@ -2,7 +2,7 @@ from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
-from forms import ScheduledEntryBucketForm
+from bhp_entry.forms import ScheduledEntryBucketForm
 from bhp_entry.models import Entry, ScheduledEntryBucket, AdditionalEntryBucket
 
 
