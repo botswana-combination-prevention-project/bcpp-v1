@@ -11,10 +11,14 @@ from check_digit import CheckDigit
 class BaseIdentifier(object):
     """ Base class for all identifiers."""
 
-    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None, is_derived=False, add_check_digit=None, using=None):
+    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, 
+                 modulus=None, identifier_prefix=None, is_derived=False, add_check_digit=None, using=None,
+                 sequence_app_label=None, sequence_model_name=None):
         self.identifier_format = None
         self.app_name = None
         self.model_name = None
+        self._sequence_app_label = None
+        self._sequence_model_name = None
         self.padding = None
         self.modulus = None
         self.identifier_prefix = None
@@ -32,6 +36,8 @@ class BaseIdentifier(object):
         self.identifier_format = identifier_format or "{prefix}-{site_code}{device_id}{sequence}"
         self.app_name = app_name or 'bhp_identifier'
         self.model_name = model_name or 'subjectidentifier'
+        self._sequence_app_label = sequence_app_label or 'bhp_identifier'
+        self._sequence_model_name = sequence_model_name or 'sequence'
         self.padding = padding or 4
         self.modulus = modulus or settings.PROJECT_IDENTIFIER_MODULUS
         self.identifier_prefix = identifier_prefix or settings.PROJECT_IDENTIFIER_PREFIX
@@ -39,6 +45,22 @@ class BaseIdentifier(object):
         # confirm identifier tracking model exists
         if not get_model(self.app_name, self.model_name):
             raise ImproperlyConfigured('Identifier tracking model with app_name={0} and model_name={1} does not exist.'.format(self.app_name, self.model_name))
+
+    def _set_sequence_app_label(self, value):
+        self._sequence_app_label = value
+
+    def _set_sequence_model_name(self, value):
+        self._sequence_model_name = value
+
+    def _get_sequence_app_label(self):
+        if not self._sequence_app_label:
+            self._sequence_app_label()
+        return self._sequence_app_label
+
+    def _get_sequence_model_name(self):
+        if not self._sequence_model_name:
+            self._sequence_model_name()
+        return self._sequence_model_name
 
     def get_identifier_prep(self, **kwargs):
         """ Users may override to pass non-default keyword arguments to get_identifier
@@ -101,7 +123,12 @@ class BaseIdentifier(object):
         if self.is_derived == None:
             raise AttributeError('Instance attribute is_derived has not been set. Options are True/False')
         IdentifierModel = get_model(self.app_name, self.model_name)
-        self.identifier_model = IdentifierModel.objects.using(self.using).create(identifier=str(uuid.uuid4()), padding=self.padding, is_derived=self.is_derived)
+        self.identifier_model = IdentifierModel.objects.using(self.using).create(
+            identifier=str(uuid.uuid4()),
+            padding=self.padding,
+            is_derived=self.is_derived,
+            sequence_app_label=self._get_sequence_app_label(),
+            sequence_model_name=self._get_sequence_model_name())
         format_options.update(sequence=self.identifier_model.formatted_sequence)
         if self.is_derived:
             # if derived, does not use a sequence number -- that is the sequence is in the base identifier,

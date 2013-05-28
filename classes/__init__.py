@@ -1,3 +1,4 @@
+from base_identifier import BaseIdentifier
 from base_subject_identifier import BaseSubjectIdentifier
 from identifier import Identifier
 from check_digit import CheckDigit

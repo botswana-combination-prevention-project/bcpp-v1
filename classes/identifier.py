@@ -135,6 +135,10 @@ class Identifier(object):
         self._identifier_tracker.save()
 
     def set_site_code(self, value):
+        if not value:
+            raise IdentifierError('Cannot set site code to None.')
+        if not isinstance(value, basestring):
+            value = str(value)
         if not re.match('\d+', value):
             raise IndentifierFormatError('Site code must be a string of numbers. Got {0}.'.format(value))
         self._site_code = value
@@ -260,7 +264,7 @@ class Identifier(object):
 
     def get_identifier(self):
         if not self._identifier:
-            raise IdentifierError('Attribute self._identifier cannot be None. Call set_identifier() first.')
+            raise IdentifierError('Attribute self._identifier cannot be None. Call set_identifier() or create() first.')
         return self._identifier
 
     def _get_identifier_string(self):
