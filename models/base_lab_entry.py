@@ -1,18 +1,18 @@
 from django.db import models
 from bhp_common.choices import YES_NO
 from bhp_visit.models import BaseWindowPeriodItem
-from lab_panel.models import Panel
-from lab_clinic_api.models import Panel as LabClinicApiPanel
+#from lab_panel.models import Panel
+from lab_clinic_api.models import Panel
 from bhp_entry.choices import ENTRY_CATEGORY, ENTRY_WINDOW, ENTRY_STATUS
 
 
 class BaseLabEntry(BaseWindowPeriodItem):
 
     # TODO: this needs to be dropped
-    panel = models.ForeignKey(Panel)
+    #panel = models.ForeignKey(Panel)
 
     # TODO: this needs to be filled in then renamed as panel
-    lab_clinic_api_panel = models.ForeignKey(LabClinicApiPanel,
+    panel = models.ForeignKey(Panel,
         null=True,
         help_text='This is to replace panel above...')
 
