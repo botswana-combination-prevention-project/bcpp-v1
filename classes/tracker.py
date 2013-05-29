@@ -291,9 +291,9 @@ class LabTracker(object):
         history_model, created = HistoryModel.objects.get_or_create(
             source=source,
             source_identifier=source_identifier,
+            test_code=test_code,
             group_name=self.get_group_name(),
             subject_identifier=subject_identifier,
-            test_code=test_code,
             value_datetime=value_datetime,
             defaults={'value': value, 'history_datetime': datetime.today(), 'report_datetime': report_datetime})
         if not created:
