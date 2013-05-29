@@ -1,4 +1,6 @@
+from django.db import models
 from base_visit_tracking import BaseVisitTracking
+from bhp_base_model.models import BaseUuidModel
 
 
 class TestSubjectVisit(BaseVisitTracking):
@@ -26,3 +28,12 @@ class TestSubjectVisitThree(BaseVisitTracking):
 
     class Meta:
         app_label = 'bhp_visit_tracking'
+
+
+class TestScheduledModel(BaseUuidModel):
+
+    test_subject_visit = models.OneToOneField(TestSubjectVisit)
+
+    class Meta:
+        app_label = 'bhp_visit_tracking'
+    
