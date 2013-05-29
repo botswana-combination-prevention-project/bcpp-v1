@@ -16,6 +16,7 @@ from bhp_visit.classes import WindowPeriod
 #from signals import check_appt_status_on_post_save
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from bhp_appointment.exceptions import AppointmentStatusError
 
 
 class Appointment(BaseAppointment):
@@ -129,39 +130,56 @@ class Appointment(BaseAppointment):
         self.appt_datetime, self.best_appt_datetime = self.validate_appt_datetime()
         self.check_window_period()
         self.validate_visit_instance(using=using)
+        self.check_appt_status(using)
         super(Appointment, self).save(*args, **kwargs)
 
     def raw_save(self, *args, **kwargs):
-        signals.post_save.disconnect(check_appt_status_on_post_save, weak=False, dispatch_uid="check_appt_status_on_post_save")
         super(Appointment, self).save(*args, **kwargs)
-        signals.post_save.connect(check_appt_status_on_post_save, weak=False, dispatch_uid="check_appt_status_on_post_save")
 
-    def post_save_check_appt_status(self, created, using):
-        dirty = False
-        if not created:
-            if not self.visit_definition.visit_tracking_content_type_map.model_class().objects.filter(appointment=self):
-                if self.appt_status not in ['new', 'cancelled']:
-                    self.appt_status = 'new'
+    def check_appt_status(self, using):
+        """Checks the appt_status relative to the visit tracking form and ScheduledEntryBucket.
+        """
+        # for an existing appointment, check if there is a visit tracking form already on file
+        if not self.visit_definition.visit_tracking_content_type_map.model_class().objects.filter(appointment=self):
+            # no visit tracking, can only be New or Cqncelled
+            if self.appt_status not in ['new', 'cancelled']:
+                self.appt_status = 'new'
+        else:
+            # have visit tracking, can only be Done, Incomplete, In Progress
+            visit_model_instance = self.visit_definition.visit_tracking_content_type_map.model_class().objects.get(appointment=self)
+            if visit_model_instance.reason in visit_model_instance.get_visit_reason_no_follow_up_choices():
+                # visit reason implies no data will be collected, so set appointment to Done
+                self.appt_status = 'done'
             else:
-                visit_model_instance = self.visit_definition.visit_tracking_content_type_map.model_class().objects.get(appointment=self)
-                if visit_model_instance.reason in visit_model_instance.get_visit_reason_no_follow_up_choices():
-                    self.appt_status = 'done'
-                    dirty = True
-                else:
-                    if self.appt_status != 'in_progress':
-                        self.appt_status = 'in_progress'
-                        dirty = True
-                # look for any others in progress
                 ScheduledEntryBucket = get_model('bhp_entry', 'ScheduledEntryBucket')
-                for appointment in self.__class__.objects.filter(registered_subject=self.registered_subject, appt_status='in_progress').exclude(pk=self.pk):
-                    if ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='NEW').exists():
-                        appointment.appt_status = 'incomplete'
+                # set to in progress, if not already set
+                if self.appt_status in ['done', 'incomplete']:
+                    # test if Done or Incomplete
+                    if ScheduledEntryBucket.objects.filter(appointment=self, entry_status='NEW').exists():
+                        objs = ScheduledEntryBucket.objects.filter(appointment=self, entry_status='NEW')
+                        self.appt_status = 'incomplete'
                     else:
-                        appointment.appt_status = 'done'
-                    appointment.raw_save(using)
-                    #dirty = True
-            if dirty:
-                self.raw_save(using)
+                        self.appt_status = 'done'
+                elif self.appt_status in ['new', 'cancelled', 'in_progress']:
+                    self.appt_status = 'in_progress'
+                    # only one appointment can be "in_progress", so look for any others in progress and change
+                    # to Done or Incomplete, depending on ScheduledEntryBucket (if any NEW => incomplete)
+                    ScheduledEntryBucket = get_model('bhp_entry', 'ScheduledEntryBucket')
+                    for appointment in self.__class__.objects.filter(registered_subject=self.registered_subject, appt_status='in_progress').exclude(pk=self.pk):
+                        if ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='NEW').exists():
+                            # there are NEW forms
+                            if appointment.appt_status != 'incomplete':
+                                appointment.appt_status = 'incomplete'
+                                # call raw_save to avoid coming back to this method.
+                                appointment.raw_save(using)
+                        else:
+                            # all forms are KEYED or NOT REQUIRED
+                            if appointment.appt_status != 'done':
+                                appointment.appt_status = 'done'
+                                # call raw_save to avoid coming back to this method.
+                                appointment.raw_save(using)
+                else:
+                    raise AppointmentStatusError('Did not expect appt_status == \'{0}\''.format(self.appt_status))
 
     def __unicode__(self):
         return "{0} for {1}.{2}".format(self.registered_subject, self.visit_definition.code, self.visit_instance)
@@ -193,7 +211,7 @@ class Appointment(BaseAppointment):
         unique_together = (('registered_subject', 'visit_definition', 'visit_instance'),)
 
 
-@receiver(post_save, weak=False, dispatch_uid="check_appt_status_on_post_save")
-def check_appt_status_on_post_save(sender, instance, raw, created, using, **kwargs):
-    if isinstance(instance, Appointment):
-        instance.post_save_check_appt_status(created, using)
+#@receiver(post_save, weak=False, dispatch_uid="check_appt_status_on_post_save")
+#def check_appt_status_on_post_save(sender, instance, raw, created, using, **kwargs):
+#    if isinstance(instance, Appointment):
+#        instance.post_save_check_appt_status(created, using)

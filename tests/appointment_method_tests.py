@@ -19,9 +19,13 @@ from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_identifier.models import SubjectIdentifier, Sequence
 from bhp_off_study.exceptions import SubjectOffStudyError, SubjectOffStudyDateError
-from bhp_base_test.models import TestConsent, TestRegistration, TestVisit
+from bhp_base_test.models import TestConsent, TestRegistration
 from bhp_base_test.tests.factories import TestRegistrationFactory, TestVisitFactory, TestConsentFactory
 from bhp_appointment.exceptions import AppointmentStatusError
+from bhp_entry.models import ScheduledEntryBucket
+from bhp_entry.tests.factories import EntryFactory
+from bhp_visit_tracking.models import TestScheduledModel, TestSubjectVisit
+from bhp_visit_tracking.tests.factories import TestSubjectVisitFactory, TestScheduledModelFactory
 
 
 class AppointmentMethodTests(BaseAppointmentTests):
@@ -77,7 +81,11 @@ class AppointmentMethodTests(BaseAppointmentTests):
         dte = datetime.today()
         appointment.appt_datetime = dte
         self.assertEqual(appointment.is_new_appointment(), True, 'Expected is_new_appointment() to return True for appt_status=\'{0}\'. Got \'{1}\''.format(appointment.appt_status, appointment.is_new_appointment()))
-        appointment.appt_status = 'Done'
+        appointment.appt_status = 'done'
+        self.assertEqual(appointment.is_new_appointment(), False, 'Expected is_new_appointment() to return False for appt_status=\'{0}\'. Got \'{1}\''.format(appointment.appt_status, appointment.is_new_appointment()))
+        appointment.appt_status = 'incomplete'
+        self.assertEqual(appointment.is_new_appointment(), False, 'Expected is_new_appointment() to return False for appt_status=\'{0}\'. Got \'{1}\''.format(appointment.appt_status, appointment.is_new_appointment()))
+        appointment.appt_status = 'cancelled'
         self.assertEqual(appointment.is_new_appointment(), False, 'Expected is_new_appointment() to return False for appt_status=\'{0}\'. Got \'{1}\''.format(appointment.appt_status, appointment.is_new_appointment()))
         is_found_new = False
         for choice in APPT_STATUS:
@@ -108,26 +116,51 @@ class AppointmentMethodTests(BaseAppointmentTests):
         consent_catalogue.add_for_app = 'bhp_base_test'
         consent_catalogue.save()
 
-        print 'setup bhp_visit'
+        print 'setup bhp_visit (1000, 1010, 1020, 1030)'
         content_type_map = ContentTypeMap.objects.get(content_type__model=TestRegistration._meta.object_name.lower())
-        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model=TestVisit._meta.object_name.lower())
+        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model=TestSubjectVisit._meta.object_name.lower())
         membership_form = MembershipFormFactory(content_type_map=content_type_map)
         schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='Test Reg', grouping_key='REGISTRATION')
-        visit_definition = VisitDefinitionFactory(code='1000', title='Test Registration', grouping='test_subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
+        visit_definition = VisitDefinitionFactory(code='1000', title='Test Registration 00', grouping='test_subject', 
+                                                  time_point=0,
+                                                  base_interval=0,
+                                                  base_interval_unit='D',
+                                                  visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
-
+        visit_definition = VisitDefinitionFactory(code='1010', title='Test Registration 10', grouping='test_subject',
+                                                  time_point=10,
+                                                  base_interval=1,
+                                                  base_interval_unit='M',
+                                                  visit_tracking_content_type_map=visit_tracking_content_type_map)
+        visit_definition.schedule_group.add(schedule_group)
+        content_type_map = ContentTypeMap.objects.get(content_type__model=TestScheduledModel._meta.object_name.lower())
+        entry = EntryFactory(visit_definition=visit_definition, content_type_map=content_type_map)
+        
+        visit_definition = VisitDefinitionFactory(code='1020', title='Test Registration 20', grouping='test_subject',
+                                                  time_point=20,
+                                                  base_interval=2,
+                                                  base_interval_unit='M',
+                                                  visit_tracking_content_type_map=visit_tracking_content_type_map)
+        visit_definition.schedule_group.add(schedule_group)
+        visit_definition = VisitDefinitionFactory(code='1030', title='Test Registration 30', grouping='test_subject',
+                                                  time_point=30,
+                                                  base_interval=3,
+                                                  base_interval_unit='M',
+                                                  visit_tracking_content_type_map=visit_tracking_content_type_map)
+        visit_definition.schedule_group.add(schedule_group)
         # add consent
         test_consent = TestConsentFactory()
         # add registration
         registered_subject = RegisteredSubject.objects.get(subject_identifier=test_consent.subject_identifier)
         self.assertEquals(Appointment.objects.all().count(), 0)
-        # complete a registration forms
+        print 'complete a registration form'
         test_registration = TestRegistrationFactory(registered_subject=registered_subject)
-        self.assertEquals(Appointment.objects.all().count(), 1)
-        # get an appointment
-        appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000')
-        self.assertEqual(appointment.appt_status, 'new')
-        print 'update appointment and save, assert reverts to New or Cancelled when no visit tracking'
+        print 'assert 4 appointments created'
+        self.assertEquals(Appointment.objects.all().count(), 4)
+        print 'assert all set to new'
+        for appointment in Appointment.objects.all():
+            self.assertEqual(appointment.appt_status, 'new')
+        print 'attempt to set appointment status, assert reverts to New or Cancelled when no visit tracking'
         for appt_status in APPT_STATUS:
             appointment.appt_status = appt_status[0]
             appointment.save()
@@ -135,30 +168,122 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 self.assertIn(appointment.appt_status, ['cancelled'])
             else:
                 self.assertIn(appointment.appt_status, ['new', 'cancelled'])
-        print 'add a visit tracking form'
-        test_visit = TestVisitFactory(appointment=appointment, reason='scheduled')
+        print 'get appointment 1000'
+        appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000')
+        print 'add a visit tracking form for appointment 1000'
+        test_visit = TestSubjectVisitFactory(appointment=appointment, reason='scheduled')
+        print 'confirm appt_status changes to \'in_progress\''
         self.assertEquals(appointment.appt_status, 'in_progress')
-        print 'with a \'scheduled\' visit tracking form, update appointment and save, assert reverts to New or Cancelled'
-        print 'confirm appt_status can only be \'in_progress\''
+        print 'confirm not scheduled entries for visit'
+        self.assertEqual(ScheduledEntryBucket.objects.filter(appointment=appointment).count(), 0)
+        print 'try changing status'
         for appt_status in APPT_STATUS:
             appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000', visit_instance='0')
             print 'appointment status is {0}'.format(appointment.appt_status)
-            print 'assert there is only one appointment instance'
-            self.assertEquals(Appointment.objects.all().count(), 1)
-            print 'attempt to change to {0}'.format(appt_status[0])
+            #print 'assert there is only one appointment instance'
+            #self.assertEquals(Appointment.objects.all().count(), 1)
+            print '    attempt to change to {0}'.format(appt_status[0])
             appointment.appt_status = appt_status[0]
-            appointment.save()
-            print 'change appointment status to {0}'.format(appt_status[0])
+            print '    save'
             if appt_status[0] == 'cancelled':
-                self.assertRaises(AppointmentStatusError, appointment.save)
+                appointment.save()
+                print '    assert still in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
             elif appt_status[0] == 'new':
-                self.assertRaises(AppointmentStatusError, appointment.save)
+                appointment.save()
+                print '    assert still in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
             elif appt_status[0] == 'in_progress':
+                appointment.save()
+                print '    assert still in_progress'
                 self.assertEquals(appointment.appt_status, 'in_progress')
             elif appt_status[0] == 'done':
-                self.assertRaises(AppointmentStatusError, appointment.save)
+                appointment.save()
+                print '    assert allows change to Done'
+                self.assertEquals(appointment.appt_status, 'done')
             elif appt_status[0] == 'incomplete':
+                appointment.save()
+                print '    assert changes to Done'
+                self.assertEquals(appointment.appt_status, 'done')
+            else:
+                raise TypeError()
+
+        print 'get appointment 1010, which has entries'
+        appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1010')
+        print 'add a visit tracking form for appointment 1010'
+        test_visit = TestSubjectVisitFactory(appointment=appointment, reason='scheduled')
+        print 'confirm appt_status changes to \'in_progress\''
+        self.assertEquals(appointment.appt_status, 'in_progress')
+        print 'confirm not scheduled entries for visit'
+        self.assertEqual(ScheduledEntryBucket.objects.filter(appointment=appointment).count(), 1)
+        print 'try changing status'
+        for appt_status in APPT_STATUS:
+            appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1010', visit_instance='0')
+            print 'appointment status is {0}'.format(appointment.appt_status)
+            #print 'assert there is only one appointment instance'
+            #self.assertEquals(Appointment.objects.all().count(), 1)
+            print '    attempt to change to {0}'.format(appt_status[0])
+            appointment.appt_status = appt_status[0]
+            print '    save'
+            if appt_status[0] == 'cancelled':
+                appointment.save()
+                print '    assert still in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
+            elif appt_status[0] == 'new':
+                appointment.save()
+                print '    assert still in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
+            elif appt_status[0] == 'in_progress':
+                appointment.save()
+                print '    assert still in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
+            elif appt_status[0] == 'done':
+                appointment.save()
+                print '    assert change to Incomplete'
                 self.assertEquals(appointment.appt_status, 'incomplete')
+            elif appt_status[0] == 'incomplete':
+                appointment.save()
+                print '    assert leaves as incomplete'
+                self.assertEquals(appointment.appt_status, 'incomplete')
+            else:
+                raise TypeError()
+
+        print 'add the TestScheduledModel for visit 1010, scheduledentry should be KEYED'
+        TestScheduledModelFactory(test_subject_visit=test_visit)
+        print 'assert is KEYED in ScheduledEntryBucket'
+        for obj in ScheduledEntryBucket.objects.filter(appointment=appointment):
+            print obj.entry_status
+        ScheduledEntryBucket.objects.filter(appointment=appointment).update(entry_status='KEYED')
+        self.assertEqual(ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='KEYED').count(), 1)
+        print 'try changing status'
+        for appt_status in APPT_STATUS:
+            appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1010', visit_instance='0')
+            print 'appointment status is {0}'.format(appointment.appt_status)
+            #print 'assert there is only one appointment instance'
+            #self.assertEquals(Appointment.objects.all().count(), 1)
+            print '    attempt to change to {0}'.format(appt_status[0])
+            appointment.appt_status = appt_status[0]
+            print '    save'
+            if appt_status[0] == 'cancelled':
+                appointment.save()
+                print '    assert change to Done'
+                self.assertEquals(appointment.appt_status, 'done')
+            elif appt_status[0] == 'new':
+                appointment.save()
+                print '    assert change to Done'
+                self.assertEquals(appointment.appt_status, 'done')
+            elif appt_status[0] == 'in_progress':
+                appointment.save()
+                print '    assert still in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
+            elif appt_status[0] == 'done':
+                appointment.save()
+                print '    assert still Done'
+                self.assertEquals(appointment.appt_status, 'done')
+            elif appt_status[0] == 'incomplete':
+                appointment.save()
+                print '    assert change to Done'
+                self.assertEquals(appointment.appt_status, 'done')
             else:
                 raise TypeError()
 
