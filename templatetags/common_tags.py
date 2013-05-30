@@ -18,6 +18,11 @@ def hostname():
 
 
 @register.simple_tag
+def current_time(format_string):
+    return date.today().strftime(format_string)
+
+
+@register.simple_tag
 def project_title():
     if 'PROJECT_TITLE' not in dir(settings):
         raise ImproperlyConfigured('Attribute settings.PROJECT_TITLE not found. Please add PROJECT_TITLE=\'<long name of my project>\' to the settings file.')
