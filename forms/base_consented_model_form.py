@@ -11,7 +11,7 @@ class BaseConsentedModelForm(BaseModelForm):
 
     def __init__(self, *args, **kwargs):
         self.check_attached()
-        super(BaseModelForm, self).__init__(*args, **kwargs)
+        super(BaseConsentedModelForm, self).__init__(*args, **kwargs)
 
     def check_attached(self):
         """Confirms only that model exists in AttachedModel of the Consent Catalogue.
