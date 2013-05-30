@@ -38,7 +38,7 @@ class BaseModelForm(forms.ModelForm):
 
     def insert_translation_attributes(self):
         for k in self.fields.iterkeys():
-            self.fields[k].widget.attrs['translation'] = 'Erik'
+            self.fields[k].widget.attrs['translation'] = 'This test needs a translation'
         return None
 
     def get_subject_identifier(self, cleaned_data):
