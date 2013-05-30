@@ -33,6 +33,13 @@ class BaseModelForm(forms.ModelForm):
                 if 'registered_subject' not in self.initial and 'registered_subject' not in self.data:
                     RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
                     self.fields['registered_subject'].queryset = RegisteredSubject.objects.none()
+        # translation
+        self.insert_translation_attributes()
+
+    def insert_translation_attributes(self):
+        for k in self.fields.iterkeys():
+            self.fields[k].widget.attrs['translation'] = 'Erik'
+        return None
 
     def get_subject_identifier(self, cleaned_data):
         subject_identifier = None

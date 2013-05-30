@@ -1,1 +1,1 @@
-from base_model_form import BaseModelForm
+from bhp_base_model_form import BaseModelForm
