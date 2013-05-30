@@ -1,4 +1,16 @@
-{% extends "base_site.html" %}
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% load common_tags %}
+{% load dajaxice_templatetags %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/laboratory.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/calendar.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/result_report.css" />
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.6.2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dajax.core.js" charset="utf-8"></script>
+{% dajaxice_js_import %}
+{% endblock %}
 
 {% block title %}EDC {% project_number %} {{ title }} | {% project_title %}
 
