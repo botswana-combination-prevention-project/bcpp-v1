@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% load common_tags %}
+
+{% load dajaxice_templatetags %}
+
+{% block title %}{{ title }} | {% trans 'EDC site admin' %}{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/laboratory.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/calendar.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/result_report.css" />
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.6.2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dajax.core.js" charset="utf-8"></script>
+{% dajaxice_js_import %}
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{% project_title %} - Site Administration</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block footer %}<div id="footer"><small>2010-{% current_time "%Y" %} Botswana-Harvard AIDS Institute Partnership: For Research Purposes Only</small></div>{% endblock %}
