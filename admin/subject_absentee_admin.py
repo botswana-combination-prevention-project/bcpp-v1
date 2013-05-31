@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin, BaseTabularInline
+from bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
 from bhp_registration.admin import BaseRegisteredSubjectModelAdmin
 from bcpp_household.models import HouseholdStructureMember
 from bcpp_subject.forms import SubjectAbsenteeEntryForm
