@@ -5,7 +5,6 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from bhp_base_model.models import BaseModel
 from bhp_consent.exceptions import ConsentError, ConsentDoesNotExist
-from bhp_off_study.models import BaseOffStudy
 
 
 class ConsentHelper(object):
@@ -171,6 +170,7 @@ class ConsentHelper(object):
         return current_consent_version
 
     def is_off_study(self):
+        from bhp_off_study.models import BaseOffStudy
         if not isinstance(self.get_subject_instance(), BaseOffStudy):
             if self.get_subject_instance().is_off_study():
                 raise self._get_exception_cls()('Data collection not allowed after off study date. Subject was taken off study before this form\'s report datetime \'{0}\'. (ConsentHelper)'.format(self.get_subject_instance().get_report_datetime()))
