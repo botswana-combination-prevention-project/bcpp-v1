@@ -97,7 +97,7 @@ class ScheduledEntry(BaseScheduledEntry):
         if visit_model_instance.get_off_study_reason().lower() == self.get_visit_model_instance().reason.lower():
             if visit_model_instance.get_off_study_cls().objects.filter(registered_subject=registered_subject):
                 # has an off study form completed on same day as visit
-                visit_date = date(visit_model_instance.year, visit_model_instance.month, visit_model_instance.day)
+                visit_date = date(visit_model_instance.report_datetime.year, visit_model_instance.report_datetime.month, visit_model_instance.report_datetime.day)
                 off_study_instance = visit_model_instance.get_off_study_cls().objects.get(registered_subject=registered_subject, offstudy_date=visit_date)
                 show_scheduled_entries = off_study_instance.show_scheduled_entries_on_off_study_date()
         return show_scheduled_entries
