@@ -3,7 +3,7 @@ from bhp_base_form.forms import BaseModelForm
 from lab_barcode.models import ZplTemplate, LabelPrinter
 
 
-class LabelForm(forms.Form):
+class LabelForm(BaseModelForm):
 
     identifier = forms.CharField(
         max_length=25,
