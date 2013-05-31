@@ -49,9 +49,6 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
             return False
         return True
 
-    def is_off_study(self):
-        return True
-
     def get_report_datetime(self):
         return datetime(self.offstudy_date.year, self.offstudy_date.month, self.offstudy_date.day)
 
