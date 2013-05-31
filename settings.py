@@ -3,7 +3,7 @@ import os
 import platform
 import logger
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 DIRNAME = os.path.dirname(__file__)
 ADMINS = (
@@ -71,8 +71,7 @@ MEDIA_URL = ''
 
 # Absolute path to the directory that holds static files.
 # Example: "/home/media/media.lawrence.com/static/"
-#STATIC_ROOT = ''
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(DIRNAME, 'static')
 
 # URL that handles the static files served from STATIC_ROOT.
 # Example: "http://media.lawrence.com/static/"
@@ -147,16 +146,18 @@ INSTALLED_APPS = (
     'south',
     'audit_trail',
     'autocomplete',
-    'bhp_basesite',
+    'bhp_templates',
+    'bhp_static',
+#     'bhp_basesite',
     'bhp_crypto',
     'bhp_string',
     'bhp_lock',
     'bhp_appointment_helper',
-#     'bhp_userprofile',
+    'bhp_userprofile',
     'bhp_poll_mysql',
     'bhp_model_selector',
-#     'bhp_templatetags',
-#     'bhp_calendar',
+    'bhp_templatetags',
+    'bhp_calendar',
     'bhp_base_model',
 #     'bhp_actg_reference',
     'bhp_adverse',
@@ -168,9 +169,11 @@ INSTALLED_APPS = (
     'bhp_search',
     'bhp_consent',
     'bhp_locator',
+    'bhp_off_study',
     'bhp_registration',
     'bhp_botswana',
-#     'bhp_data_manager',
+    'bhp_data_manager',
+    'bhp_base_admin',
     'bhp_base_form',
     'bhp_variables',
     'bhp_research_protocol',
@@ -207,6 +210,7 @@ INSTALLED_APPS = (
     'bhp_visit_tracking',
     'bhp_appointment',
     'bhp_subject',
+    'bhp_nmap',
 #     'bhp_data_manager',
 #     'bhp_eligibility',
     'bhp_entry',
@@ -222,7 +226,8 @@ INSTALLED_APPS = (
     'bhp_model_describer',
     'bhp_subject_summary',
     'bhp_entry_rules',
-#     'bhp_dispatch',
+    'bhp_dispatch',
+    'bhp_netbook',
 #     'ph_dispenser',
     'bcpp',
     'bcpp_lab',
@@ -230,6 +235,10 @@ INSTALLED_APPS = (
     'bcpp_subject',
     'bcpp_dashboard',
     'bcpp_stats',
+    'bcpp_household',
+    'bcpp_survey',
+#     'bcpp_survey_dashboard',
+#     'bcpp_survey_lab',
 )
 
 # email settings
@@ -269,6 +278,7 @@ LABDB = 'bhplab'
 SESSION_COOKIE_AGE = 3000
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 DEVICE_ID = '99'
+MAX_SUBJECTS = 3000
 APPOINTMENTS_PER_DAY_MAX = 20
 APPOINTMENTS_DAYS_FORWARD = 15
 
