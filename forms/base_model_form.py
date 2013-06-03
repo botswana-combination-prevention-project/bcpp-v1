@@ -1,6 +1,5 @@
 from django import forms
 from django.conf import settings
-from django.db.models.query import EmptyQuerySet
 from django.db.models import OneToOneField, ForeignKey, get_model
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_base_form.classes import LogicCheck
@@ -12,9 +11,13 @@ class BaseModelForm(forms.ModelForm):
         super(BaseModelForm, self).__init__(*args, **kwargs)
         self.logic = LogicCheck(self._meta.model)
         # if in admin edit mode, populate visit model's queryset
+        # if not in admin, e.g. coming from the dashboard, might
+        # throw an exception.
         if self.instance:
             if 'get_visit' in dir(self.instance):
                 try:
+                    # but if self.instance.maternal_visit DoesNotExist, will throw an exception
+                    # when get_visit() is called
                     if self.instance.get_visit():
                         try:
                             attr = self.instance.get_visit()._meta.object_name.lower()
