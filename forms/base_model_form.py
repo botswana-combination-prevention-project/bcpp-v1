@@ -14,12 +14,15 @@ class BaseModelForm(forms.ModelForm):
         # if in admin edit mode, populate visit model's queryset
         if self.instance:
             if 'get_visit' in dir(self.instance):
-                if self.instance.get_visit():
-                    try:
-                        attr = self.instance.get_visit()._meta.object_name.lower()
-                        self.fields[attr].queryset = self.instance.get_visit().__class__.objects.filter(pk=self.instance.get_visit().pk)
-                    except KeyError:
-                        pass
+                try:
+                    if self.instance.get_visit():
+                        try:
+                            attr = self.instance.get_visit()._meta.object_name.lower()
+                            self.fields[attr].queryset = self.instance.get_visit().__class__.objects.filter(pk=self.instance.get_visit().pk)
+                        except KeyError:
+                            pass
+                except:
+                    pass
         # if in admin edit mode, populate registered_subject's queryset
 
         if 'registered_subject' in self.fields:
