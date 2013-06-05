@@ -1,0 +1,110 @@
+#section_navbar ul
+{
+list-style-type:none;
+margin:2px;
+padding:3px;
+}
+
+#section_navbar li
+{
+float: left;
+margin: 0 0.15em;
+}
+
+
+#section_navbar li
+{
+    background: white url(../img/nav-bg.gif) bottom repeat-x;
+	height: 2em;
+	line-height: 2em;
+	float: left;
+	width: 9em;
+	display: block;
+	border: 0.1em solid #dcdce9;
+	color: black;
+	text-decoration: none;
+	text-align: center;
+}
+
+#section_navbar li a {
+   background-image: url(../img/nav-bg.gif) bottom repeat-x;
+   text-decoration: none;   
+   color: black;
+
+}
+
+#section_navbar li.selected{   
+   background-image: url(../img/nav-bg-reverse.gif);
+   color: blue;    
+}
+
+
+
+
+#tile_wrap {
+   width:750px;
+   margin:5px auto;
+   background-color:white;
+   float:left;
+   }
+
+#add_model_tile {
+    float:left;
+    width:325px;
+    background-color: #F0F0F0  ;
+    border: 1px solid #D8D8D8;
+    padding: 2px;
+    height:30px;
+    margin:5px;
+    border-radius:5px;
+}
+#search_tile {
+    float:right;
+    width:180px;
+    background:#FFFFEC;
+    border: 1px solid #EEEEAA;
+    padding: 2px;
+    height:30px;
+    margin:5px;
+    border-radius:5px;
+}
+#appointments_tile {
+	float:left;
+	width:490px;
+	background:#DAF3FF;
+    border: 1px solid #AAD8EE;
+    padding: 2px;
+    height:200px;
+    margin:5px;
+    border-radius:10px;
+
+}
+
+#action_items_tile {
+	float:right;
+	width:220px;
+    background:#DAF3FF;
+    border: 1px solid #AAD8EE;
+	padding: 2px;
+	height:90px;
+    margin:5px;
+    border-radius:10px;
+}
+
+#counter_tile {
+	float:right;
+    width:220px;
+    background:#DAF3FF;
+    border: 1px solid #AAD8EE;
+    padding: 2px;
+    height:90px;
+    margin:5px;
+    border-radius:10px;
+}
+
+#empty_tile {
+    float: left;
+    width:500px;
+    padding:10px;
+    border-radius:10px;
+}

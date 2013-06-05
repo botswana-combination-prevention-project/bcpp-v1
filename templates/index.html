@@ -1,0 +1,37 @@
+{% extends "bhp_base_site.html" %}
+{% load common_tags %}
+
+{% block content %}
+{% block section_navigation %}
+<div id="section_navbar">
+<ul>
+{% if not sections %}
+    <p class="warning">Sections not defined. Please define your sections in module <A href="/edc/bhp_section/section/">bhp_section</A></p>
+{% endif%}
+{% for section in sections %}
+    <li class="{% if selected_section == section.0 %}selected{% else %}{% endif %}">
+    <A name="{{section.0}}" href="/{% app_name %}/section/{{section.0}}/">{{section.1}}</A>
+    </li>
+{% endfor %}
+<ul>
+</div>
+{% endblock section_navigation %}
+
+{% block warnings %}
+
+{% for msg in os_variables.warnings %}
+    <p class="warning">{{ msg }}</p>
+{% endfor %}
+{% endblock %}
+
+{% block section_title %}{% endblock %}
+
+{% block section_links %}{% endblock%}
+
+{% block top_search_label %}{% endblock%}
+
+{% block section_tiles %}{% endblock %}
+
+{% block other_section_links %}{% endblock%}
+
+{% endblock %}
