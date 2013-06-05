@@ -6,3 +6,4 @@ from base_search_by_date import BaseSearchByDate
 from base_search_by_week import BaseSearchByWeek
 #from base_search_by_week import *
 #from base_search_by_date import *
+from controller import search

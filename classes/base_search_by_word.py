@@ -2,35 +2,30 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsent
-from bhp_crypto.fields import BaseEncryptedField
 from bhp_search.forms import SearchForm
 from base_search import BaseSearch
 
 
 class BaseSearchByWord(BaseSearch):
 
-    search_type = 'word'
+    search_label = 'word'
 
-    def __init__(self, **kwargs):
-
-        super(BaseSearchByWord, self).__init__(**kwargs)
+    def __init__(self):
+        super(BaseSearchByWord, self).__init__()
+        self.search_helptext = 'Search by search term.'
         defaults = {'search_helptext': 'Search by search term.'}
         self.search_form = SearchForm
         self.context.update(**defaults)
 
-    def prepare_form(self, request, **kwargs):
-        super(BaseSearchByWord, self).prepare_form(request, **kwargs)
-        if self.ready:
-            self.update_context(search_result_title='Results for \'{0}\''.format(','.join([v for v in self.context.get('form').cleaned_data.itervalues()])))
+    def get_search_result(self, request, search_name):
+        """Returns a queryset using the search term as a filter.
 
-    def get_search_prep(self, request, **kwargs):
-        """Gets word or search term queryset object based on a name or 'queryset_label'.
+        The model to query is selected using the search_name.
 
-        Keyword Arguments:
-        search_name --
+        Arguments:
+            search_name --
 
         """
-        search_name = kwargs.get('search_name')
         model = self.get_search_model(search_name)
         if not isinstance(model(), RegisteredSubject):
             if not 'registered_subject' in dir(model()) and not isinstance(model(), BaseConsent):
@@ -82,16 +77,3 @@ class BaseSearchByWord(BaseSearch):
                                        'Got model {0}.'.format(model._meta.object_name.lower()))
         search_result = model.objects.filter(qset).order_by(self.context.get('order_by'))
         return search_result
-
-    def hash_for_encrypted_fields(self, search_term, model_instance):
-        """ Using the model's field objects and the search term, create a dictionary of
-        {field_name, search term} where search term is hashed if this is an encrypted field """
-        terms = {}
-        for field in model_instance._meta.fields:
-            if isinstance(field, BaseEncryptedField):
-                # change the search term to a hash using the hasher on the field
-                terms[field.attname] = field.field_cryptor.get_hash_with_prefix(search_term)
-            else:
-                # use the original search term
-                terms[field.attname] = search_term
-        return terms
