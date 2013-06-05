@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.contrib import admin
+from bhp_site_edc import edc as admin
 
 
 class BaseStackedInline (admin.StackedInline):
@@ -12,4 +12,5 @@ class BaseStackedInline (admin.StackedInline):
         if change:
             obj.user_modified = request.user.username
             obj.modified = datetime.today()
+
         super(BaseStackedInline, self).save_model(request, obj, form, change)

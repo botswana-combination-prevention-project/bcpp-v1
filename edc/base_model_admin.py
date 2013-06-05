@@ -1,5 +1,5 @@
-from django.contrib import admin
 from bhp_base_admin.mixin import SiteMixin
+from bhp_site_edc import edc as admin
 
 
 class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
