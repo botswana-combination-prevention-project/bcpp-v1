@@ -12,7 +12,7 @@ class ActionItem(BaseModel):
     Note can be displayed on the dashboard"""
     registered_subject = models.ForeignKey(RegisteredSubject)
     subject = models.CharField(verbose_name='Subject line', max_length=50, unique=True)
-    comment_date = models.DateField(verbose_name='Description', default=date.today())
+    action_date = models.DateField(verbose_name='action_date', default=date.today())
     expiration_date = models.DateField(default=date.today() + timedelta(days=90), help_text='Data note will automatically be set to \'Resolved\' in 90 days unless otherwise specified.')
     comment = EncryptedTextField(max_length=500)
     display_on_dashboard = models.BooleanField(default=True)
