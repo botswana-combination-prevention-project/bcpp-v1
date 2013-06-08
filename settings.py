@@ -3,7 +3,7 @@ import os
 import platform
 import logger
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DIRNAME = os.path.dirname(__file__)
 ADMINS = (
@@ -127,7 +127,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(DIRNAME, 'templates'),
+    os.path.join(DIRNAME, 'bhp_templates'),
 )
 
 INSTALLED_APPS = (
@@ -148,7 +148,6 @@ INSTALLED_APPS = (
     'autocomplete',
     'bhp_templates',
     'bhp_static',
-#     'bhp_basesite',
     'bhp_crypto',
     'bhp_string',
     'bhp_lock',
@@ -159,7 +158,7 @@ INSTALLED_APPS = (
     'bhp_templatetags',
     'bhp_calendar',
     'bhp_base_model',
-#     'bhp_actg_reference',
+    'bhp_actg_reference',
     'bhp_adverse',
 #     'bhp_haart',
     'bhp_code_lists',
@@ -167,6 +166,7 @@ INSTALLED_APPS = (
     'bhp_identifier',
     'bhp_content_type_map',
     'bhp_search',
+    'bhp_section',
     'bhp_consent',
     'bhp_locator',
     'bhp_off_study',
@@ -180,7 +180,7 @@ INSTALLED_APPS = (
     'bhp_sync',
     'bhp_device',
     'lab_common',
-#     'lab_import',
+    'lab_import',
     'lab_import_lis',
     'lab_import_dmis',
     'lab_flag',
@@ -202,16 +202,16 @@ INSTALLED_APPS = (
     'lab_clinic_api',
     'lab_clinic_reference',
     'lab_export',
-#     'lab_result_report',
+    'lab_result_report',
     'lab_packing',
-#     'lab_base_model',
+    'lab_base_model',
     'bhp_lab_tracker',
     'bhp_visit',
     'bhp_visit_tracking',
     'bhp_appointment',
     'bhp_subject',
     'bhp_nmap',
-#     'bhp_data_manager',
+    'bhp_data_manager',
 #     'bhp_eligibility',
     'bhp_entry',
     'bhp_lab_entry',
@@ -287,8 +287,8 @@ SUBJECT_APP_LIST = ['bcpp_subject']
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
-KEY_PATH = os.path.join(DIRNAME, 'keys')
-#KEY_PATH = '/Volumes/bhp041c/keys'
+#KEY_PATH = os.path.join(DIRNAME, 'keys')
+KEY_PATH = '/Volumes/bhp066/keys'
 #FIELD_MAX_LENGTH='default'
 FIELD_MAX_LENGTH = 'migration'
 
