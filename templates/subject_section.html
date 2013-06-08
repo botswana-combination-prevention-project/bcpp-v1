@@ -5,7 +5,7 @@
 <div id="tile_wrap">
 
     <div id="add_model_tile">{% block add_model_tile %}
-        <form method="GET" action="/admin/bcpp_subject/subjectconsentyearone/add/">
+        <form method="GET" action="{{ add_model.get_absolute_url}}">
         {% csrf_token %}
         <input type="hidden" name="next" value="section_search_url_name">
         <input type="hidden" name="section_name" value="{{ section_name }}">
