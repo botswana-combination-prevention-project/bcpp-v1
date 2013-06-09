@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns
 
 
-urlpatterns = patterns('bhp_mapping.views',
+urlpatterns = patterns('bhp_map.views',
     (r'^add_cart/', 'add_to_cart'),
     (r'^update_cart/', 'update_cart'),
     (r'^empty_cart/', 'empty_cart'),

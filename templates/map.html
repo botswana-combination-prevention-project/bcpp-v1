@@ -6,7 +6,7 @@
 		{% if option == 'plot' %}
 			{% if not has_items %}
 				<script language="javascript" type="text/javascript" defer> alert('Oops! No {{ item_label }} found. Try broadening your search');
-				window.location.replace('/mochudi_map/')
+				window.location.replace('/bhp_map/')
 				</script>
 			{% endif %}
 		{% endif %}
@@ -24,7 +24,7 @@
 		    	<button id="save_map_selection" disabled="disabled">Save</button> 
 		    	<button id="revert_map" disabled="disabled">Revert</button> 
 		    	<button id="clear_map">Clear</button> 
-		    	<a href="/mochudi_map/">Continue</a>
+		    	<a href="/bhp_map/">Continue</a>
 		    	</td>
 			</tr>
 			<tr>
@@ -35,8 +35,8 @@
 						    	<b>{{color}}</b> : {{sectx}},
 						{% endfor %}
 					{% else %}
-						<p>The following are coresponding numbers on icons and cso's of coresponding households</p>
-						<p>The is no </p>
+						<p>The following are corresponding numbers on icons and cso's of corresponding households</p>
+						<p>There is no </p>
 						{% for icon, cso in cso_icon_dict %}       	
 						    	<b>{{icon}}</b> : {{cso}},
 						{% endfor %}
@@ -83,9 +83,9 @@
 			</tr>
 			<tr align="center">
 				<td>
-				<input type="button" value="Checkout" onclick="window.location='/mochudi_map/checkout/'" /> 
-				<input type="button" value="select sections" onclick="window.location='/mochudi_map/section/'" />
-				<input type="button" value="Continue" onclick="window.location='/mochudi_map/'" />
+				<input type="button" value="Checkout" onclick="window.location='/bhp_map/checkout/'" /> 
+				<input type="button" value="select sections" onclick="window.location='/bhp_map/section/'" />
+				<input type="button" value="Continue" onclick="window.location='/bhp_map/'" />
 				</td>
 			</tr>
 		</table>

@@ -7,11 +7,11 @@
 		{% if option == 'plot' %}
 			{% if not has_items %}
 				<script language="javascript" type="text/javascript" defer> alert('Oops! No {{ item_label }} found. Try broadening your search');
-				window.location.replace('/mochudi_map/')
+				window.location.replace('/bhp_map/')
 				</script>
 			{% endif %}
 		{% endif %}      
-	   <form action="/mochudi_map/set_section/" method="post">
+	   <form action="/bhp_map/set_section/" method="post">
 	   	{% csrf_token %}
 	    <table align="center">
 	    	<tr>
@@ -72,7 +72,7 @@
 			<tr align="center">
 				<td>
 				<input type="button" value="select sections" onclick="window.location='../map_section/'" />
-				<input type="button" value="Continue" onclick="window.location='/mochudi_map/'" />
+				<input type="button" value="Continue" onclick="window.location='/bhp_map/'" />
 				</td>
 			</tr>
 		</table>

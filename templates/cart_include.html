@@ -5,7 +5,7 @@
 	{% endif %}
 	{% if identifiers %}
 		<div>Number of {{ item_label }}(s): {{ cart_size }}</div><br>
-		<form action="/mochudi_map/update_cart/" method="post">
+		<form action="/bhp_map/update_cart/" method="post">
 		{% csrf_token %}
 			<input type="hidden" name="option" value="{{ option }}" />
 		{% for identifier in identifiers %} 
@@ -14,7 +14,7 @@
 		{% endfor %}
 			<p>
 			<input type="submit" name="update" value="Remove selected" />
-			<input value="Preview" onclick="window.location='/mochudi_map/checkout/?option=preview'" type="button">
+			<input value="Preview" onclick="window.location='/bhp_map/checkout/?option=preview'" type="button">
 			</p>
 		 </form>
 	 {% endif %}

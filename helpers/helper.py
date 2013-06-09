@@ -4,6 +4,7 @@ from mochudi_household.choices import WARD_SECTIONS, MOCHUDI_WARDS
 from mochudi_household.models import Household
 #from bhp_dispatch.helpers import is_dispatched
 from bhp_map.choices import ICONS, OTHER_ICONS
+from bhp_map.classes import mapper
 
 
 def prepare_created_filter():

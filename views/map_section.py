@@ -1,8 +1,8 @@
 # Import django modules
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from mochudi_map.helpers import get_regions, get_icons
-#from mochudi_household.models import Household
+from bhp_map.classes import mapper
+from bhp_map.exceptions import MapperError
 
 
 def map_section(request):
@@ -12,28 +12,28 @@ def map_section(request):
 
    """
     template = 'map_section.html'
-#    item_model_cls = Household
-    item_region_field = 'ward'
-    region_label = 'ward'
-
-    cart_size = 0
-    identifiers = []
-    icon = request.session.get('icon', None)
-    if 'identifiers' in request.session:
-        cart_size = len(request.session['identifiers'])
-        identifiers = request.session['identifiers']
-    
-    return render_to_response(
-            template, {
-                'regions': get_regions(),
-                'icons': get_icons(),
-                'item_region_field': item_region_field,
-                'region_label': region_label,
-                'session_icon': icon,
-                'cart_size': cart_size,
-                'identifiers': identifiers,
-                'show_map': 1,
-                'has_items': True,
-                'option': 'plot'
-            },
-            context_instance=RequestContext(request))
+    mapper_name = request.GET.get('mapper_name', '')
+    if not mapper.get_registry(mapper_name):
+        raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
+    else:
+        m = mapper.get_registry(mapper_name)
+        cart_size = 0
+        identifiers = []
+        icon = request.session.get('icon', None)
+        if 'identifiers' in request.session:
+            cart_size = len(request.session['identifiers'])
+            identifiers = request.session['identifiers']
+        return render_to_response(
+                template, {
+                    'regions': m.get_regions(),
+                    'icons': m.get_icons(),
+                    'item_region_field': m.region_field_attr,
+                    'region_label': m.region_label,
+                    'session_icon': icon,
+                    'cart_size': cart_size,
+                    'identifiers': identifiers,
+                    'show_map': 1,
+                    'has_items': True,
+                    'option': 'plot'
+                },
+                context_instance=RequestContext(request))

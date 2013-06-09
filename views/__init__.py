@@ -1,4 +1,3 @@
-#from dispatched_households import *
 from add_to_cart import add_to_cart
 from index import index
 from save_section import save_section

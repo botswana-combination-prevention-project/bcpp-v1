@@ -121,7 +121,7 @@ function setMarkers(map, locations) {
 {% block bodyonload %}initialize(){% endblock %}
 
 {% block content %}
-<form enctype="multipart/form-data" method="post" action="/mochudi_map/upload_household_map/">
+<form enctype="multipart/form-data" method="post" action="/bhp_map/upload_household_map/">
 {% csrf_token %}
 <input type="hidden" value="{{ identifier }}" name="identifier" />
 <table>

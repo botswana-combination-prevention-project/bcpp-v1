@@ -1,73 +1,40 @@
 from django.shortcuts import render_to_response, HttpResponse
 from django.template import RequestContext
-from mochudi_household.models import Household
-from math import sin, cos, radians, degrees, acos
-
-def calc_dist(lat_a, long_a, lat_b, long_b):
-    """Calculate distance between two geographic points
-    
-        Using latitude and longitude of two points calculate distance between points
-        and return the distance in miles.
-    """
-    lat_a = radians(lat_a)
-    lat_b = radians(lat_b)
-    long_diff = radians(long_a - long_b)
-    distance = (sin(lat_a) * sin(lat_b) +
-                cos(lat_a) * cos(lat_b) * cos(long_diff))
-    return degrees(acos(distance)) * 69.09
+from bhp_map.classes import mapper
+from bhp_map.exceptions import MapperError
+from bhp_map.utils import calc_dist, get_longitude, get_latitude
 
 
 def db_update(request):
     """Updates coordinates of an entered household identifier
-    
-         Filter households by entered household then save the new coordinates of that household    
+
+         Filter households by entered household then save the new coordinates of that household
     """
-    mochudi_center_lat = -24.376534
-    mochudi_center_lon = 26.152276
-    mochudi_radius = 8.699197
-    
-    template = "db_update.html"
-    item_model_cls = Household
-    #item_identifier_field = 'household_identifier'    
-    identifier = request.POST.get('identifier')
-    gps_s = request.POST.get('gps_s')
-    longitude = request.POST.get('lon')
-    
-    gps_e = request.POST.get('gps_e')
-    latitude = request.POST.get('lat')
-    
-    
-    items = item_model_cls.objects.filter(household_identifier=identifier)
-        
-    if gps_s and longitude:
-        gps_s = float(gps_s)
-        longitude = float(longitude)
-        
-        lon = round((gps_s) + (longitude / 60), 5)
-    
-    if gps_e and latitude:
-        gps_e = float(gps_e)
-        latitude = float(latitude)
-        
-        lat = -1 * round((gps_e) + (latitude / 60), 5)  
-    
-    for item in items:
-        item.gps_point_1 = gps_e
-        item.gps_point_11 = latitude
-        
-        
-        item.gps_point_2 = gps_s
-        item.gps_point_21 = longitude
-        
-        
-        distance = calc_dist(lat, lon, mochudi_center_lat, mochudi_center_lon)
-        
-        if distance <= mochudi_radius:
-            item.save()
-        else:               
-            return HttpResponse("The coordinates you entered are outside mochudi, check if you have made errors.")
-    
-    return render_to_response(
-                template,
-            context_instance=RequestContext(request)
-        )
+    mapper_name = request.GET.get('mapper_name', '')
+    if not mapper.get_registry(mapper_name):
+        raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
+    else:
+        m = mapper.get_registry(mapper_name)
+        template = "db_update.html"
+        identifier = request.POST.get('identifier')
+        gps_s = request.POST.get('gps_s')
+        longitude = request.POST.get('lon')
+        gps_e = request.POST.get('gps_e')
+        latitude = request.POST.get('lat')
+        items = m.get_item_model_cls().objects.filter(**{m.identifier_field_attr: identifier})
+        lon = get_longitude(gps_s, longitude)
+        lat = get_latitude(gps_e, latitude)
+        for item in items:
+            setattr(item, m.gps_e_field_attr, gps_e)
+            setattr(item, m.gps_latitude_field_attr, latitude)
+            setattr(item, m.gps_s_field_attr, gps_s)
+            setattr(item, m.gps_longitude_field_attr, longitude)
+            distance = calc_dist(lat, lon, m.gps_center_lat, m.gps_center_lon)
+            if distance <= m.gps_radius:
+                item.save()
+            else:
+                return HttpResponse("The coordinates you entered are outside {0}, check if you have made errors.".format(m.map_area))
+        return render_to_response(
+                    template,
+                context_instance=RequestContext(request)
+            )
