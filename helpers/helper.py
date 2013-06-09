@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from mochudi_household.choices import WARD_SECTIONS, MOCHUDI_WARDS
 from mochudi_household.models import Household
 #from bhp_dispatch.helpers import is_dispatched
-from mochudi_map.choices import ICONS, OTHER_ICONS
+from bhp_map.choices import ICONS, OTHER_ICONS
 
 
 def prepare_created_filter():
@@ -34,7 +34,7 @@ def session_to_string(identifiers, new_line=True):
 
 
 def get_sections():
-    return list(WARD_SECTIONS)
+    return list(mapper.get_choices('WARD_SECTIONS'))
 
 def get_icons():
     return list(ICONS)
@@ -43,7 +43,9 @@ def get_other_icons():
     return list(OTHER_ICONS)
 
 def get_regions():
-    return sorted([tpl[0] for tpl in list(MOCHUDI_WARDS)])
+    if not mapper.get_choices('REGIONS'):
+        raise MapperError('Mapper choices tuple \'REGIONS\' not defined')
+    return sorted([tpl[0] for tpl in list(mapper.get_choices('REGIONS'))])
 
 
 def make_dictionary(list1, list2):
