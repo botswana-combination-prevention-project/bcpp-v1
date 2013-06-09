@@ -49,9 +49,9 @@ class Controller(object):
             mod = import_module(app)
             try:
                 before_import_registry = copy.copy(mapper._registry)
-                import_module('%s.mapper' % app)
+                import_module('%s.mappers' % app)
             except:
                 mapper._registry = before_import_registry
-                if module_has_submodule(mod, 'mapper'):
+                if module_has_submodule(mod, 'mappers'):
                     raise
 mapper = Controller()
