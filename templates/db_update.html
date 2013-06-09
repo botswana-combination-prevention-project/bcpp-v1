@@ -1,0 +1,43 @@
+{% extends "base_site_mochudi_survey.html" %}
+
+{% block content %}
+
+		<form action="/mochudi_map/db_update/" method="post">
+			{% csrf_token %}
+			<table align="center">
+					<tr>
+						<td colspan="2">
+							<H4>Instructions</H4>
+							<li>The latitude and longitude of the identifier you enter will be changed to the ones you enter</li>
+							<li>Enter an identifier</li>
+							<li>Enter latitude and longitude</li>
+						</td>
+					</tr>
+					<tr><td><br /><br /></td></tr>
+					<tr>		
+						<td><b>identifier:</b></td>
+						<td><input type="text" name="identifier"><br></td>
+					</tr>
+					<tr>
+						<td><b>GPS E:</b></td>
+						<td><input type="text" name="gps_e"></td>
+					</tr>
+					<tr>
+						<td><b>Latitude:</b></td>
+						<td><input type="text" name="lat"></td>
+					</tr>
+					<tr>
+						<td><b>GPS S:</b></td>
+						<td><input type="text" name="gps_s"></td>
+					</tr>
+					<tr>
+						<td><b>Longitude:</b></td>
+						<td><input type="text" name="lon"></td>
+					</tr>
+					<br />
+					<tr center>
+						<td><input type="submit" value="submit"></td>
+					</tr>
+			</table>			
+		</form>
+{% endblock content %}
