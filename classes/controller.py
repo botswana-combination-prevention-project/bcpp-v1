@@ -2,7 +2,7 @@ import copy
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.module_loading import module_has_submodule
-from base_mapper import BaseMapper
+from mapper import Mapper
 
 
 class AlreadyRegistered(Exception):
@@ -21,7 +21,7 @@ class Controller(object):
         self._registry = {}
 
     def set_registry(self, mapper_cls):
-        if not issubclass(mapper_cls, BaseMapper):
+        if not issubclass(mapper_cls, Mapper):
             raise AlreadyRegistered('Expected an instance of BaseSearch.')
         if mapper_cls.search_label in self._registry:
             raise AlreadyRegistered('The mapper class {0} is already registered ({1})'.format(mapper_cls, mapper_cls.name))
