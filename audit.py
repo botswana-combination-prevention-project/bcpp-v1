@@ -8,6 +8,7 @@ import re
 from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.fields import MyUUIDField
 from bhp_crypto.fields import BaseEncryptedField
+from bhp_sync.classes import SerializeToTransaction
 try:
     import settings_audit
 except ImportError:
@@ -101,7 +102,6 @@ class AuditTrail(object):
                 if not kwargs.get('raw'):
                     model = models.get_model(instance._meta.app_label, instance._meta.object_name.lower().replace('audit', ''))
                     if issubclass(model, BaseSyncUuidModel):
-                        from bhp_sync.classes import SerializeToTransaction
                         serialize_to_transaction = SerializeToTransaction()
                         serialize_to_transaction.serialize(sender, instance, **kwargs)
 #            connected = False
