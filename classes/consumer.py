@@ -1,5 +1,4 @@
 import logging
-import sys
 from django.db.models import get_model
 from django.core.serializers.base import DeserializationError
 from bhp_sync.classes import DeserializeFromTransaction
@@ -16,7 +15,7 @@ nullhandler = logger.addHandler(NullHandler())
 
 
 class Consumer(object):
-    
+
     def __init__(self):
         from bhp_dispatch.classes import SignalManager
         self.signal_manager = SignalManager()
@@ -56,6 +55,7 @@ class Consumer(object):
     def _reconnect_signals(self):
         self.signal_manager.reconnect()
         self.reconnect_signals()
+        self.signal_manager.reconnect()
 
     def reconnect_signals(self):
         """Reconnects app specific signals if overriden."""
