@@ -3,6 +3,8 @@ from _mapper import Mapper
 
 class BaseHouseholdMapper(Mapper):
 
+    name = 'household'
+
     def prepare_map_points(self, items, selected_icon, cart, cart_icon, dipatched_icon='red-circle', selected_section="All"):
         """Returns a list of household identifiers from the given queryset excluding those
         households that have been dispatched
