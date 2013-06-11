@@ -4,17 +4,20 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def index(request):
+def map_index(request, **kwargs):
     """Display filter options to chose what to display on the map
 
     Select the ward, section of the ward to use on the map
     """
     template = 'map_index.html'
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
+    print mapper_name
+    print "hhhhhhhhh"
+  
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         cart_size = 0
         identifiers = []
         icon = request.session.get('icon', None)

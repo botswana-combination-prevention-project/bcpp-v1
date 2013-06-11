@@ -1,5 +1,5 @@
 from add_to_cart import add_to_cart
-from index import index
+from index import map_index
 from save_section import save_section
 from map_section import map_section
 from subject_map import subject_map
