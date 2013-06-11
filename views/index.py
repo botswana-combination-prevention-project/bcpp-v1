@@ -11,9 +11,7 @@ def map_index(request, **kwargs):
     """
     template = 'map_index.html'
     mapper_name = kwargs.get('mapper_name', '')
-    print mapper_name
-    print "hhhhhhhhh"
-  
+
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
@@ -26,10 +24,11 @@ def map_index(request, **kwargs):
             identifiers = request.session['identifiers']
         return render_to_response(
                 template, {
+                    'mapper_name': mapper_name,
                     'region_label': m.region_label,
                     'regions': m.get_regions(),
                     'sections': m.get_sections(),
-                    'icons': m.get_icons(),
+                    #'icons': m.get_icons(),
                     'session_icon': icon,
                     'cart_size': cart_size,
                     'identifiers': identifiers

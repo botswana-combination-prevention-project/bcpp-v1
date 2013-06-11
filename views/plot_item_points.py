@@ -6,7 +6,7 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def plot_item_points(request):
+def plot_item_points(request, **kwargs):
     """Plot households from base selection criteria.
 
       * Filter points to plot by sending coordinates of a selected ward only to the households.html template.
@@ -14,7 +14,7 @@ def plot_item_points(request):
     # TODO: difference in ward ward section selected section and section ??? very confusing
             # docstring Comment is out of date?
     template = 'map.html'
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
