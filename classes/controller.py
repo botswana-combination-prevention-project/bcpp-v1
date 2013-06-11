@@ -23,24 +23,24 @@ class Controller(object):
     def set_registry(self, search_cls):
         if not issubclass(search_cls, BaseSearch):
             raise AlreadyRegistered('Expected an instance of BaseSearch.')
-        if search_cls.search_label in self._registry:
-            raise AlreadyRegistered('The search class {0} is already registered ({1})'.format(search_cls, search_cls.search_label))
-        self._registry[search_cls.search_label] = search_cls
+        if search_cls.search_type in self._registry:
+            raise AlreadyRegistered('A search class of type {1} is already registered ({0})'.format(search_cls, search_cls.search_type))
+        self._registry[search_cls.search_type] = search_cls
 
-    def get(self, search_label):
-        return self._registry.get(search_label)
+    def get(self, search_type):
+        return self._registry.get(search_type)
 
-    def get_registry(self, search_label=None):
-        if search_label:
-            if search_label in self._registry:
-                return self._registry.get(search_label)
+    def get_registry(self, search_type=None):
+        if search_type:
+            if search_type in self._registry:
+                return self._registry.get(search_type)
             else:
                 return {}
         return self._registry
 
     def register(self, search_cls):
-        if not search_cls.search_label:
-            raise AttributeError('Attribute search_label cannot be None')
+        if not search_cls.search_type:
+            raise AttributeError('Attribute search_type cannot be None')
         self.set_registry(search_cls)
 
     def autodiscover(self):

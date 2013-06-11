@@ -5,6 +5,7 @@ from django.db.models import get_model
 from django import forms
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from bhp_crypto.fields import BaseEncryptedField
+from bhp_search.exceptions import SearchError
 from defaults import defaults
 from patterns import patterns
 
@@ -15,7 +16,6 @@ class BaseSearch(object):
 
     APP_LABEL = 0
     MODEL_NAME = 1
-    SECTION_NAME = 2
 
     def __init__(self):
         """
@@ -33,6 +33,8 @@ class BaseSearch(object):
         self.search_model = {}
         self._context = {}
         self.pattern = patterns
+        if 'name' not in dir(self):
+            self.name = 'SEARCH'
 
     @property
     def context(self):
@@ -42,26 +44,27 @@ class BaseSearch(object):
         for k, v in kwargs.iteritems():
             self._context[k] = v
 
-    def validate_section_name(self, section_name):
+    def validate_for_section_name(self, section_name):
+        """Returns True if a search_cls has a search_name that matches the given section_name."""
         validated = False
         if not section_name:
             raise AttributeError('section_name cannot be None')
-        for v in self._get_search_models_prep().itervalues():
-            if v[self.SECTION_NAME] == section_name:
+        for search_name in self._get_search_models_prep():
+            if search_name == section_name:
                 validated = True
         return validated
 
-    def get_search_models_for_section(self, section_name):
-        """Finds the search model tuples for the given section and returns a list of the search model classes."""
-        search_models = []
-        if not section_name:
-            raise AttributeError('section_name cannot be None')
-        for v in self._get_search_models_prep().itervalues():
-            if v[self.SECTION_NAME] == section_name:
-                search_models.append(get_model(v[self.APP_LABEL], v[self.MODEL_NAME]))
-        if not search_models:
-            raise TypeError('No search models found for section name {0}'.format(section_name))
-        return search_models
+#     def get_search_models_for_section(self, section_name):
+#         """Finds the search model tuples for the given section and returns a list of the search model classes."""
+#         search_models = []
+#         if not section_name:
+#             raise AttributeError('section_name cannot be None')
+#         for search_name, model_tuple in self._get_search_models_prep().iteritems():
+#             if search_name == section_name:
+#                 search_models.append(get_model(model_tuple[self.APP_LABEL], model_tuple[self.MODEL_NAME]))
+#         if not search_models:
+#             raise TypeError('No search models found for section name {0}'.format(section_name))
+#         return search_models
 
     def prepare(self, request, **kwargs):
         self._prepare_context(request, **kwargs)
@@ -121,7 +124,11 @@ class BaseSearch(object):
     def get_most_recent_model(self):
         return None
 
-    def get_most_recent(self, model_name=None, page=1, limit=None):
+    def get_include_template_file(self, section_name):
+        app_label, model_name = self._get_search_models_prep().get(section_name)
+        return '{0}_include.html'.format(model_name)
+
+    def get_most_recent(self, section_name, page=1, limit=None):
         """Returns a queryset of the top most recent instances of the search model.
 
         Not technically a search function but it does use the other attributes like search_name...
@@ -131,24 +138,24 @@ class BaseSearch(object):
                 limit = settings.MOST_RECENT_LIMIT
             else:
                 limit = 10
+        app_label, model_name = self._get_search_models_prep().get(section_name)
         if model_name and limit > 0:
-            model = self._get_search_model(model_name)
-            search_result = model.objects.all().order_by('-created')[0:limit]
+            model_cls = get_model(app_label, model_name)
+            search_result = model_cls.objects.all().order_by('-created')[0:limit]
             return self._paginate(search_result, page)
         return None
 
-    def search(self, request):
+    def search(self, request, search_name, page=1, results_per_page=None):
         """
         Updates the context with the search results and has the queryset paginated.
 
         Keyword Arguments:
         search_result --
         """
-        search_result = self._get_search_result(request, self.search_name)
-        page = request.GET.get('page', '1')
+        search_result = self._get_search_result(request, search_name)
         if search_result:
             count = search_result.count()
-            search_result = self._paginate(search_result, page)
+            search_result = self._paginate(search_result, page, results_per_page)
             # Make sure page request is an int. If not, deliver first page.
             self.update_context(page=page)
             # If page request (9999) is out of range, deliver last page of results.
@@ -161,44 +168,40 @@ class BaseSearch(object):
             self.update_context(search_result=None)
             self.update_context(search_result_title='No matching records')
             self.update_context(count=0)
+        return search_result
 
     def _get_search_models_prep(self):
-        """Confirms self.get_search_models_prep returns a dictionary of format {\'model_name\': (app_label, model_name), ...}"""
+        """Confirms self.get_search_models_prep returns a dictionary of format {\'section_name\': (app_label, model_name), ...}"""
+        if 'get_search_prep_models' in dir(self):
+            raise ImproperlyConfigured('Method name has changed. get_search_prep_models() is now get_search_models_prep(). Please correct your search class.')
         dct = self.get_search_models_prep()
         if not isinstance(dct, dict):
             raise TypeError('Method get_search_models_prep must return a dictionary. Got {0}'.format(dct))
         for k, v in dct.iteritems():
             if not isinstance(k, basestring):
-                raise TypeError('Expected dictionary format {\'model_name\': (app_label, model_name), ...}. Got {0}'.format(dct))
+                raise TypeError('Expected dictionary format {{\'section_name\': (app_label, model_name), ...}}. Got {0}'.format(dct))
             if not isinstance(v, tuple):
-                raise TypeError('Expected dictionary format {\'model_name\': (app_label, model_name), ...}. Got {0}'.format(dct))
+                raise TypeError('Expected dictionary format {{\'section_name\': (app_label, model_name), ...}}. Got {0}'.format(dct))
+            if len(v) != 2:
+                raise TypeError('Expected dictionary format {{\'section_name\': (app_label, model_name), ...}} where the tuple has two elements. Got {0}'.format(v))
             if not get_model(v[0], v[1]):
                 raise TypeError('Dictionary key, value must have a value tuple that returns a model class using get_model. Failed on get_model({1}, {2}). Got {0}'.format(dct, v[0], v[1]))
         return dct
 
-    def get_search_prep_models(self):
-        raise ImproperlyConfigured('Method name has changed to \'get_search_models_prep\'. Please update your code.')
-
     def get_search_models_prep(self):
         """ Users should override this to define custom search models. """
-        return {'registeredsubject': ('bhp_registration', 'registeredsubject', None)}
+        return {'section_name': ('app_label', 'model_name')}
 
-    def _get_search_model(self, search_model_name):
-        search_models = self._get_search_models_prep()
-        try:
-            app_label, model_name, section_name = search_models[search_model_name]
-        except KeyError as e:
-            raise KeyError('{0}. {1}'.format(e, 'Check that your url parameter \'search_name\' in the template url '
-                                                'is the name of the model you are searching on and is a key in your '
-                                                'search model map (see get_search_models_prep()).'))
-        except:
-            raise
+    def get_search_model(self, search_name):
+        if search_name not in self._get_search_models_prep():
+            raise SearchError('search_name {0} not found. Using {1}'.format(self._get_search_models_prep()))
+        app_label, model_name = self._get_search_models_prep().get(search_name)
         return get_model(app_label, model_name)
 
     def _get_search_result(self, request, search_name):
         if not search_name:
             raise AttributeError('Attribute \'search_name\' cannot be None. Call view() first.')
-        return self.get_search_result(self, request, search_name)
+        return self.get_search_result(request, search_name)
 
     def get_search_result(self, request, search_name):
         """ Users should override this to define custom search logic. """

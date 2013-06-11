@@ -8,7 +8,7 @@ from base_search import BaseSearch
 
 class BaseSearchByWord(BaseSearch):
 
-    search_label = 'word'
+    search_type = 'word'
 
     def __init__(self):
         super(BaseSearchByWord, self).__init__()
