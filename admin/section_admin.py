@@ -1,4 +1,5 @@
-from bhp_site_edc import edc as admin
+from django.contrib import admin
+#from bhp_site_edc import edc as admin
 from bhp_section.models import Section
 
 

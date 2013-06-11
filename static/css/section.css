@@ -1,3 +1,76 @@
+/* SECTION TABLES */
+
+table {
+    border-collapse: collapse;
+    border-color: #ccc;
+}
+
+td, th {
+    font-size: 10px;
+    line-height: 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    padding: 3px;
+    font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+}
+
+th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+thead th,
+tfoot td {
+    color: #666;
+    padding: 2px 5px;
+    font-size: 10px;
+    background: #e1e1e1 url(../img/nav-bg.gif) top left repeat-x;
+    border-left: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+tfoot td {
+    border-bottom: none;
+    border-top: 1px solid #ddd;
+}
+
+thead th:first-child,
+tfoot td:first-child {
+    border-left: none !important;
+}
+
+thead th.optional {
+    font-weight: normal !important;
+}
+
+fieldset table {
+    border-right: 1px solid #eee;
+}
+
+tr.row-label td {
+    font-size: 9px;
+    padding-top: 2px;
+    padding-bottom: 0;
+    border-bottom: none;
+    color: #666;
+    margin-top: -1px;
+}
+
+tr.alt {
+    background: #f6f6f6;
+}
+
+.row1 {
+    background: #EDF3FE;
+}
+
+.row2 {
+    background: white;
+}
+
+
+/* SECTION NAVBAR */
 #section_navbar ul
 {
 list-style-type:none;
@@ -39,13 +112,16 @@ margin: 0 0.15em;
 }
 
 
+/* SECTION TILES */
 
-
-#tile_wrap {
+#tile_wrapper {
    width:750px;
    margin:5px auto;
    background-color:white;
    float:left;
+   overflow:hidden;
+   display: block;
+   content: ".";
    }
 
 #add_model_tile {
@@ -68,16 +144,25 @@ margin: 0 0.15em;
     margin:5px;
     border-radius:5px;
 }
-#appointments_tile {
-	float:left;
-	width:490px;
-	background:#DAF3FF;
+
+#search_result_tile {
+    float:left;
+    background:#DAF3FF;
     border: 1px solid #AAD8EE;
     padding: 2px;
-    height:200px;
     margin:5px;
     border-radius:10px;
 
+}
+#appointments_tile {
+	width: 490px;
+	float:left;
+	background:#DAF3FF;
+    border: 1px solid #AAD8EE;
+    padding: 2px;
+    margin:5px;
+    border-radius:10px;
+    overflow:hidden;
 }
 
 #action_items_tile {

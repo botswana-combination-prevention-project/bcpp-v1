@@ -16,12 +16,12 @@ class SectionIndex(BaseSection):
         if view is None:
             view = self.view
         urlpattern = []
-        #for section_name in self.get_section_name_list():
-        #    urlpattern += url_patterns(
-        #        '{app_name}.views'.format(app_name=self.app_name),
-        #        url(r'^(?P<selected_section>{section_name})/$'.format(section_name=section_name),
-        #        self.view,
-        #        name="section_index_{0}_url".format(section_name)))
+        for section_name in self.get_section_name_list():
+            urlpattern += url_patterns(
+                '{app_name}.views'.format(app_name=self.app_name),
+                url(r'^(?P<selected_section>{section_name})/$'.format(section_name=section_name),
+                self.view,
+                name="section_index_{0}_url".format(section_name)))
         urlpattern += url_patterns(
                 '{app_name}.views'.format(app_name=self.app_name),
                 url(r'',
