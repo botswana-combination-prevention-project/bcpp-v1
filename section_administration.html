@@ -19,24 +19,46 @@
 {% endblock %}
 
 {% block other_section_links %}
-<H5>Other Links</H5>
-<ol type=1>
+<H5>Users and settings</H5>
+<ul>
 <li><A href="/admin/auth/user/">User Management</A>
 <li><A href="/admin/auth/group/">Group Management</A>
 <li><A href="/edc/bhp_variables/studyspecific/">Study Specific Variables</A>
-<li><A href="/bhp_sync/">Synchronize with Community Server</A>
-</ol>
+</ul>
 
+{% if 'bhp_sync' in installed_apps and bhp_dispatch not in installed_apps %}
+<H5>Device Synchronization</H5>
+<ul>
+<li><A href="/bhp_sync/">Synchronize devices with Community Server (Return)</A></li>
+</ul>
+{% endif %}
+
+{%  if 'bhp_sync' in installed_apps and 'bhp_dispatch' in installed_apps %}
+<H5>Device Dispatch and Return</H5>
+<ul>
+<li><A name="dispatch-to-producer" href="/admin/mochudi_household/">Dispatch data to netbook</A>
+<li><A href="/bhp_sync/">Return data from devices to Community Server</A>
+<li><A href="/mochudi_map/">Dispatch data to devices by Map</A>
+<li><A href="/mochudi_map/map_section/">Divide ward in sections</A>
+<li><A href="/mochudi_map/gps_point_update/">Update household GPS Coordinates</A>
+</ul>
+{% endif %}
+
+{% if 'lab_clinic_api' in installed_apps %}
 <H5>Lab</H5>
-<ol type=1>
-<li><A href="/admin/{{app_name}}_lab/">Requisitions and Packing Lists</A>
-<li><A href="/admin/lab_clinic_api/">Results</A>
-</ol>
+<ul>
+<li><A href="/admin/{{app_name}}_lab/">Requisitions and Packing Lists</A></li>
+<li><A href="/admin/lab_clinic_api/">Results</A></li>
+</ul>
+{% endif %}
 
+{% if 'ph_dispenser' in installed_apps %}
 <h5>Pharmacy</h5>
-<ul type=1>
+<ul>
 <li><A href="/admin/ph_dispenser/">Dispensings</A>
 </ul>
+{% endif %}
+
 {% endblock %}
 
 
