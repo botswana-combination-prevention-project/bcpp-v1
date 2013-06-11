@@ -17,5 +17,5 @@ urlpatterns = patterns('bhp_map.views',
     (r'^map_section/(?P<mapper_name>\w+)/', 'map_section'),
     (r'^db_update/(?P<mapper_name>\w+)/', 'db_update'),
     (r'^gps_point_update/(?P<mapper_name>\w+)/', 'db_update_index'),
-    (r'^', 'index/(?P<mapper_name>\w+)/'),
+    (r'^/(?P<mapper_name>\w+)/', 'index'),
 )
