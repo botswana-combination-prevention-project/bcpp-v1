@@ -8,15 +8,24 @@ class Mapper(object):
 
     def __init__(self, *args, **kwargs):
         self._item_model_cls = None
+        self._item_label = None
         self._regions = None
         self._sections = None
         self._icons = None
         self._other_icons = None
         self._landmarks = None
-        self._item_name = None
+        self._region_label = None
+        self._section_label = None
+        self._region_field_attr = None
+        self._section_field_attr = None
+        self._identifier_field_attr = None
+        self._identifier_label = None
+        self._other_identifier_field_attr = None  # e.g. cso_number
+        self._other_identifier_label = None
+
         # item_model_cls
-        if 'model' in kwargs:
-            self.set_item_model_cls(kwargs.get('model'))
+        if 'item_model' in kwargs:
+            self.set_item_model_cls(kwargs.get('item_model'))
         if 'regions' in kwargs:
             self.set_regions(kwargs('regions'))
         if 'sections' in kwargs:
@@ -27,8 +36,8 @@ class Mapper(object):
             self.set_other_icons(kwargs('other_icons'))
         if 'landmarks' in kwargs:
             self.set_landmarks(kwargs('landmarks'))
-        if 'item_name' in kwargs:
-            self.set_item_name(kwargs('item_name'))
+        if 'item_label' in kwargs:
+            self.set_item_label(kwargs('item_label'))
 
     def __repr__(self):
         try:
@@ -36,6 +45,88 @@ class Mapper(object):
         except (UnicodeEncodeError, UnicodeDecodeError):
             u = '[Bad Unicode data]'
         return smart_str(u'<%s: %s>' % (self.__class__.__name__, u))
+
+    def _get_attr(self, attrname):
+        if not attrname:  # attrname is the class variable name
+            raise TypeError('attrname may not be None.')
+        _name = '_{0}'.format(attrname)  # the instance variable name
+        if not getattr(self, _name):  # if instance variable is not set
+            getattr(self, 'set_{0}'.format(attrname))()
+        return getattr(self, _name)
+
+    def _set_attr(self, attrname, attr=None, allow_none=False):
+        if attrname.startswith('_'):
+            raise TypeError('attrname cannot start with \'_\'')
+        if attr:
+            setattr(self, '_{0}'.format(attrname), attr)  # set the instance variable to attr
+        else:
+            try:
+                setattr(self, '_{0}'.format(attrname), getattr(self, attrname))  # set the instance variable to the value of the class variable.
+            except:
+                pass
+        if not allow_none:
+            if not getattr(self, '_{0}'.format(attrname)):
+                raise MapperError('Attribute \'{0}\' may not be None.'.format(attrname))
+
+    def set_identifier_field_attr(self, attr=None):
+        self._set_attr('identifier_field_attr', attr)
+
+    def get_identifier_field_attr(self):
+        return self._get_attr('identifier_field_attr')
+
+    def set_other_identifier_field_attr(self, attr=None):
+        self._set_attr('other_identifier_field_attr', attr)
+
+    def get_other_identifier_field_attr(self):
+        return self._get_attr('other_identifier_field_attr')
+
+    def set_identifier_label(self, attr=None):
+        self._set_attr('identifier_label', attr)
+
+    def get_identifier_label(self):
+        return self._get_attr('identifier_label')
+
+    def set_other_identifier_label(self, attr=None):
+        self._set_attr('other_identifier_label', attr)
+
+    def get_other_identifier_label(self):
+        return self._get_attr('other_identifier_label')
+
+    def set_region_field_attr(self, attr=None):
+        self._set_attr('region_field_attr', attr)
+
+    def get_region_field_attr(self):
+        return self._get_attr('region_field_attr')
+
+    def set_region_label(self, attr=None):
+        self._set_attr('region_label', attr, allow_none=True)
+        if not self._region_label:
+            self._region_label = self.get_region_field_attr()
+
+    def get_region_label(self):
+        return self._get_attr('region_label')
+
+    def set_section_field_attr(self, attr=None):
+        self._set_attr('section_field_attr', attr)
+
+    def get_section_field_attr(self):
+        return self._get_attr('section_field_attr')
+
+    def set_section_label(self, attr=None):
+        self._set_attr('section_label', attr, allow_none=True)
+        if not self._section_label:
+            self._section_label = self.get_section_field_attr()
+
+    def get_section_label(self):
+        return self._get_attr('section_label')
+
+    def set_item_label(self, attr=None):
+        self._set_attr('item_label', attr, allow_none=True)
+        if not self._item_label:
+            self._item_label = self.get_item_model_cls()._meta.object_name
+
+    def get_item_label(self):
+        return self._get_attr('item_label')
 
     def set_icons(self, tpl=None):
         if tpl:
@@ -91,13 +182,7 @@ class Mapper(object):
             self.set_item_model_cls()
         return self._item_model_cls
 
-    def set_item_name(self):
-        self._item_name = self.get_item_model_cls()._meta.object_name
 
-    def get_item_name(self):
-        if not self._item_name:
-            self.set_item_name()
-        return self._item_name
 
     def set_regions(self, tpl=None):
         if tpl:
@@ -202,14 +287,14 @@ class Mapper(object):
         letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
                     "O", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
         for item in items:
-            identifier_label = str(getattr(item, self.identifier_field_attr))
+            identifier_label = str(getattr(item, self.get_identifier_field_attr()))
             other_identifier_label = ""
-            if getattr(item, self.other_identifier_field_attr):  # e.g. cso_number
-                other_identifier_label = str("  {0}: ".format(self.other_identifier_field_label) + getattr(self.other_identifier_field_attr))
+            if getattr(item, self.get_other_identifier_field_attr()):  # e.g. cso_number
+                other_identifier_label = str("  {0}: ".format(self.get_other_identifier_label()) + getattr(item, self.get_other_identifier_field_attr()))
             if item.is_dispatched_as_item():
                 icon = dipatched_icon
                 identifier_label = "{0} already dispatched".format(identifier_label)
-            elif getattr(item, self.identifier_field_attr) in cart:  # e.g household_identifier
+            elif getattr(item, self.get_identifier_field_attr()) in cart:  # e.g household_identifier
                 icon = cart_icon
                 identifier_label = "{0} in shopping cart waiting to be dispatched".format(identifier_label)
             else:

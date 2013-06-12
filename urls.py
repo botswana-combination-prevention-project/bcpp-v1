@@ -15,12 +15,12 @@ urlpatterns = patterns('bhp_map.views',
 #     url(r'^clear_all_sections/(?P<mapper_name>\w+)/', 'clear_all_sections'),
 #     url(r'^subject_map/(?P<mapper_name>\w+)/', 'subject_map'),
 #     url(r'^upload_household_map/(?P<mapper_name>\w+)/', 'upload_household_map'),
-#     url(r'^map_section/(?P<mapper_name>\w+)/', 'map_section'),
-#     url(r'^db_update/(?P<mapper_name>\w+)/', 'db_update'),
-#     url(r'^gps_point_update/(?P<mapper_name>\w+)/', 'db_update_index'),
+     url(r'^map_section/(?P<mapper_name>\w+)/', 'map_section', name='map_section_url'),
+     url(r'^db_update/(?P<mapper_name>\w+)/', 'db_update', name='map_db_update'),
+     url(r'^gps_point_update/(?P<mapper_name>\w+)/', 'db_update_index', name='map_gps_point_update_url'),
 )
 
 for mapper_name in mapper.get_registry().iterkeys():
-    urlpatterns += patterns('bhp_map.views', url(r'^(?P<mapper_name>{0})/$'.format(mapper_name), 'map_index', name='selected_mappper_index_url'))
+    urlpatterns += patterns('bhp_map.views', url(r'^(?P<mapper_name>{0})/$'.format(mapper_name), 'map_index', name='selected_map_index_url'))
 
-urlpatterns += patterns('bhp_map.views', url(r'^', 'map_index', name='mapper_index_url'))
+urlpatterns += patterns('bhp_map.views', url(r'^', 'map_index', name='map_index_url'))

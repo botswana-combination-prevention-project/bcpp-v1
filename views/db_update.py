@@ -5,16 +5,16 @@ from bhp_map.exceptions import MapperError
 from bhp_map.utils import calc_dist, get_longitude, get_latitude
 
 
-def db_update(request):
+def db_update(request, **kwargs):
     """Updates coordinates of an entered household identifier
 
          Filter households by entered household then save the new coordinates of that household
     """
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         template = "db_update.html"
         identifier = request.POST.get('identifier')
         gps_s = request.POST.get('gps_s')

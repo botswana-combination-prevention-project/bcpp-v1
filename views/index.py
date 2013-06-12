@@ -30,7 +30,11 @@ def map_index(request, **kwargs):
         return render_to_response(
                 template, {
                     'mapper_name': mapper_name,
-                    'region_label': m.region_label,
+                    'item_label': m.get_item_label(),
+                    'region_field_attr': m.get_region_field_attr(),
+                    'region_label': m.get_region_label(),
+                    'section_field_attr': m.get_section_field_attr(),
+                    'section_label': m.get_section_label(),
                     'regions': m.get_regions(),
                     'sections': m.get_sections(),
                     'icons': m.get_icons(),

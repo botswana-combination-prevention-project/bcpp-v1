@@ -361,13 +361,13 @@ function initialize() {
         {% endfor %}
         
         var sec = document.getElementById("sec").value;
-                    
+        {% comment %} e.g. region_field_attr='ward', section_field_attr='ward_section', ...{% endcomment %}
         if (sec=="yes"){
-			window.location.replace("{{ action_script_url }}" + arr + "&section=" + document.getElementById("section").value + "&ward=" + document.getElementById("ward").value);
+			window.location.replace("{% url action_script_url_name mapper_name %}?{{ identifier_field_attr}}=" + arr + "&{{ section_field_attr }}=" + document.getElementById("{{ section_field_attr }}").value + "&{{ region_field_attr }}=" + document.getElementById("{{ region_field_attr }}").value);
 					}
 		else{
 			// example or result produced by the lien below: locations/save/?household_identifiers="H99101-02,H992302-4"
-			window.location.replace("{{ action_script_url }}" + arr);
+			window.location.replace("{% url action_script_url_name mapper_name %}?{{ identifier_field_attr}}=" + arr);
 			
 		}
                  

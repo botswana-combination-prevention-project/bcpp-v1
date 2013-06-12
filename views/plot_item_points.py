@@ -14,33 +14,35 @@ def plot_item_points(request, **kwargs):
     # TODO: difference in ward ward section selected section and section ??? very confusing
             # docstring Comment is out of date?
     template = 'map.html'
-    mapper_item_name = kwargs.get('mapper_item_name', '')
-    if not mapper.get_registry(mapper_item_name):
-        raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_item_name))
+    mapper_item_label = kwargs.get('mapper_item_label', '')
+    mapper_name = kwargs.get('mapper_name', '')
+
+    if not mapper.get_registry(mapper_name):
+        raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_item_label))
     else:
-        m = mapper.get_registry(mapper_item_name)()
+        m = mapper.get_registry(mapper_name)()
         item_target_field = 'target'
         # TODO:
-        action_script_url = '/bhp_map/add_cart/?identifiers='
+        #action_script_url = '/bhp_map/add_cart/?household_identifiers='
+        action_script_url_name = 'map_plot_item_points_url'
         has_items = False
-        mapper_item_name = m.get_item_name()
+        mapper_mapper_item_label = m.get_item_label()
         identifiers = request.session.get('identifiers', [])
-        selected_section = request.POST.get('section')
+        selected_section = request.POST.get(m.get_section_field_attr())
         cart_size = len(identifiers)
         cso_icon_dict = []
         section_color_code_list = []
-        selected_region = request.POST.get(m.region_field_attr)  # TODO: this should not be "ward" on the template
+        selected_region = request.POST.get(m.get_region_field_attr())  # TODO: this should not be "ward" on the template
         request.session['icon'] = request.POST.get('marker_icon')
         if selected_section == 'All':
             items = m.get_item_model_cls().objects.filter(
-                Q(**{m.region_field_attr: selected_region, item_target_field: 1}) |
-                Q(**{'{0}__in'.format(m.identifier_field_attr): identifiers}))
+                Q(**{m.get_region_field_attr(): selected_region, item_target_field: 1}) |
+                Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers}))
         else:
             items = m.get_item_model_cls().objects.filter(
-                Q(**{m.region_field_attr: selected_region, m.section_field_attr: selected_section, item_target_field: 1}) |
-                Q(**{'{0}__in'.format(m.identifier_field_attr): identifiers, m.section_field_attr: selected_section, item_target_field: 1}))
+                Q(**{m.get_region_field_attr(): selected_region, m.get_section_field_attr(): selected_section, item_target_field: 1}) |
+                Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers, m.get_section_field_attr(): selected_section, item_target_field: 1}))
         icon = str(request.session['icon'])
-        print selected_section
         payload = m.prepare_map_points(items,
             icon,
             identifiers,
@@ -62,10 +64,11 @@ def plot_item_points(request, **kwargs):
             has_items = True
         return render_to_response(
             template, {
+                'mapper_name': mapper_name,
                 'payload': payload,
-                'action_script_url': action_script_url,
+                'action_script_url_name': action_script_url_name,
                 'has_items': has_items,
-                'mapper_item_name': mapper_item_name,
+                'mapper_item_label': mapper_item_label,
                 'selected_region': selected_region,
                 'selected_icon': request.session['icon'],
                 'icons': m.get_icons(),

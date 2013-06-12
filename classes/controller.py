@@ -24,9 +24,10 @@ class Controller(object):
     def set_registry(self, mapper_cls):
         if not issubclass(mapper_cls, Mapper):
             raise MapperError('Expected a subclass of Mapper.')
-        if mapper_cls.name in self._registry:
-            raise AlreadyRegistered('The mapper class {0} is already registered ({1})'.format(mapper_cls, mapper_cls.name))
-        self._registry[mapper_cls.name] = mapper_cls
+        # use map_area class attribute ass the dictionary key
+        if mapper_cls.map_area in self._registry:
+            raise AlreadyRegistered('The mapper class {0} is already registered ({1})'.format(mapper_cls, mapper_cls.map_area))
+        self._registry[mapper_cls.map_area] = mapper_cls
 
     def get(self, name):
         return self._registry.get(name)
@@ -36,12 +37,10 @@ class Controller(object):
             if name in self._registry:
                 return self._registry.get(name)
             else:
-                return {}
+                raise MapperError('{0} is not a valid mapper name in {1}.'.format(name, self._registry))
         return self._registry
 
     def register(self, mapper_cls):
-        #if not mapper_cls.name:
-        #    raise AttributeError('Mapper attribute name cannot be None')
         self.set_registry(mapper_cls)
 
     def autodiscover(self):
