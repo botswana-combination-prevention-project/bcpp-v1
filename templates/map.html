@@ -1,12 +1,12 @@
 {% extends "base_map.html" %}
 
 {% block mapping %}
-	<H3>{{ item_label }} Map</H3>
+	<H3>{{ mapper_item_name }} Map</H3>
 	{% if show_map == 1 %}
 		{% if option == 'plot' %}
 			{% if not has_items %}
-				<script language="javascript" type="text/javascript" defer> alert('Oops! No {{ item_label }} found. Try broadening your search');
-				window.location.replace('/bhp_map/')
+				<script language="javascript" type="text/javascript" defer> alert('Oops! No {{ mapper_item_name }} found. Try broadening your search');
+				window.location.replace('{% url map_index_url %}')
 				</script>
 			{% endif %}
 		{% endif %}
@@ -50,8 +50,8 @@
 			    <H4> Instructions</H4>
 			    <ol>
 			    <li>Choose the icon you want used for markers</li>
-			    <li>(optional) Click on a marker to view information about a {{ item_label }}</li>
-			    <li>Draw a polygon around the {{item_label}}s to select; </li>
+			    <li>(optional) Click on a marker to view information about a {{ mapper_item_name }}</li>
+			    <li>Draw a polygon around the {{mapper_item_name}}s to select; </li>
 			    <li>
 			    	<ul>
 			    		<li>Right click on the map and click to the first point to close the polygon</li>
@@ -60,7 +60,7 @@
 			         </ul>
 			    </li>
 			    <li>Click the save button</li>
-			    <li>Once the data is sent, you can choose to continue selecting more {{item_label}}s or checkout the ones you have selected already.
+			    <li>Once the data is sent, you can choose to continue selecting more {{mapper_item_name}}s or checkout the ones you have selected already.
 			    
 			    </li>
 			    </ol>
@@ -76,16 +76,16 @@
 		    <tr><td rowspan="3">{% include "cart_include.html" %}</td></tr>
 	    	<tr>
 		    	<td>
-		    		<p>Success! Your dispatch cart now contains these {{item_label}}s: {{ cart }}.</p>
-		    		Click the continue button to select more {{item_label}}s or click the checkout button
+		    		<p>Success! Your dispatch cart now contains these {{mapper_item_name}}s: {{ cart }}.</p>
+		    		Click the continue button to select more {{mapper_item_name}}s or click the checkout button
 		    		to finish this session.
 		    	</td>
 			</tr>
 			<tr align="center">
 				<td>
-				<input type="button" value="Checkout" onclick="window.location='/bhp_map/checkout/'" /> 
-				<input type="button" value="select sections" onclick="window.location='/bhp_map/section/'" />
-				<input type="button" value="Continue" onclick="window.location='/bhp_map/'" />
+				<input type="button" value="Checkout" onclick="window.location='{% url map_checkout_cart_url %}'" /> 
+				<input type="button" value="select sections" onclick="window.location='{% url map_section_url %}'" />
+				<input type="button" value="Continue" onclick="window.location='{% url map_index_url %}'" />
 				</td>
 			</tr>
 		</table>

@@ -14,16 +14,16 @@ def plot_item_points(request, **kwargs):
     # TODO: difference in ward ward section selected section and section ??? very confusing
             # docstring Comment is out of date?
     template = 'map.html'
-    mapper_name = kwargs.get('mapper_name', '')
-    if not mapper.get_registry(mapper_name):
-        raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
+    mapper_item_name = kwargs.get('mapper_item_name', '')
+    if not mapper.get_registry(mapper_item_name):
+        raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_item_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_item_name)()
         item_target_field = 'target'
         # TODO:
-        action_script_url = '/mochudi_map/add_cart/?household_identifiers='
+        action_script_url = '/bhp_map/add_cart/?identifiers='
         has_items = False
-        item_label = m.get_item_model_cls._meta.object_name
+        mapper_item_name = m.get_item_name()
         identifiers = request.session.get('identifiers', [])
         selected_section = request.POST.get('section')
         cart_size = len(identifiers)
@@ -32,11 +32,11 @@ def plot_item_points(request, **kwargs):
         selected_region = request.POST.get(m.region_field_attr)  # TODO: this should not be "ward" on the template
         request.session['icon'] = request.POST.get('marker_icon')
         if selected_section == 'All':
-            items = m.get_item_model_cls.objects.filter(
+            items = m.get_item_model_cls().objects.filter(
                 Q(**{m.region_field_attr: selected_region, item_target_field: 1}) |
                 Q(**{'{0}__in'.format(m.identifier_field_attr): identifiers}))
         else:
-            items = m.get_item_model_cls.objects.filter(
+            items = m.get_item_model_cls().objects.filter(
                 Q(**{m.region_field_attr: selected_region, m.section_field_attr: selected_section, item_target_field: 1}) |
                 Q(**{'{0}__in'.format(m.identifier_field_attr): identifiers, m.section_field_attr: selected_section, item_target_field: 1}))
         icon = str(request.session['icon'])
@@ -65,7 +65,7 @@ def plot_item_points(request, **kwargs):
                 'payload': payload,
                 'action_script_url': action_script_url,
                 'has_items': has_items,
-                'item_label': item_label,
+                'mapper_item_name': mapper_item_name,
                 'selected_region': selected_region,
                 'selected_icon': request.session['icon'],
                 'icons': m.get_icons(),

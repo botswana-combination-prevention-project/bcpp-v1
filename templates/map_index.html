@@ -1,56 +1,50 @@
-{% extends "section.html" %}
+{% extends "base_bhp_map.html" %}
 
 {% block content %}
-    <H3>{{ item_label }} Map</H3>
-        
-   <form action="{% url plot_item_points_url mappper_name %}" method="post">
+    {% if mapper_names %}
+        <div id="section_navbar">
+        <ul>
+        {% for mapper_name in mapper_names %}
+         <li><a href="{% url selected_mappper_index_url mapper_name %}">{{ mapper_name }} maps</a>
+        {% endfor %}
+        </ul>
+        </div>
+    {% else %}
+    
+    <H5>Dispatch by {{ mapper_name }} Map</H5>
+   <form action="{% url map_plot_item_points_url mapper_name %}" method="post">
    	{% csrf_token %}
-    <table align="center">
-    	<tr>
-    		<td colspan="2">
-    			<H4> Instructions</H4>
+    <div id="instructions">  
+    			<H5>Instructions</H5>
 			    <ol>
 				    <li>Select a {{ region_label }};</li>
 				    <li>Choose the icon you want used for markers</li>
 				    <li>Select a {{ region_label }} section;</li>
 				    <li>Click the submit button</li>
 			    </ol>
-    		</td>
-    	</tr>
-       	<tr width="100">
-    		<td rowspan="4">
-    			{% include "cart_include.html" %}
-    		</td>
-    	</tr>
-	    <tr valign="top">	
-			<td><b><!-- form to select a region from a drop down menu -->Select {{ region_label }}:</b></td>
-			<td>
+    </div>	
+
+    <div id="selection_box">  
+	<!-- form to select a region from a drop down menu -->{{ region_label }}:
+	
 				<select id="{{ region_label }}" name="{{ region_label }}">
 				<!-- loop though the region dictionary from a view to list all region -->
 				{% for region in regions %}
 				  <option value="{{ region }}">{{ region }}</option>
 				{% endfor %}
 				</select>
-			</td>
-		</tr>
-		</tr>
-			<td><b>Select section:</b></td>
-			<td>
-				<select id="section" name="section">
-				<!-- loop though the section dictionary from a view to list all sections -->
-				<option value="All">All</option>
-				{% for section in sections %}
-				  <option value="{{ section }}">{{ section }}</option>
-				{% endfor %}
-				</select>
-			</td>
-		</tr>
-		<tr align="center">
-			<td colspan = "2">
-				<p><input type="submit" value="submit"></p>
-			</td>
-		</tr>
-      </table>
-	</form>	
+	Section:
+    <select id="section" name="section">
+	<!-- loop though the section dictionary from a view to list all sections -->
+	<option value="All">All</option>
+	{% for section in sections %}
+	    <option value="{{ section }}">{{ section }}</option>
+	{% endfor %}
+	</select>
+	<input type="submit" value="submit">
+	</form>
+    </div>
+
+	{% endif %}	
 {% endblock content %}
       

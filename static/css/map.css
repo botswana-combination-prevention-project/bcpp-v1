@@ -1,3 +1,24 @@
 body {font-family: sans-serif}
 #map {width: 1000px; height:500px}
 #locations {overflow:auto; width:500px; height:100px}
+
+#instructions {
+    float:left;
+    background:#DAF3FF;
+    border: 1px solid #AAD8EE;
+    padding: 2px;
+    margin:5px;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+#selection_box {
+    float:left;
+    clear: both;
+    background:#DAF3FF;
+    border: 1px solid #AAD8EE;
+    padding: 2px;
+    margin:5px;
+    border-radius:10px;
+    overflow:hidden;
+}

@@ -13,6 +13,7 @@ class Mapper(object):
         self._icons = None
         self._other_icons = None
         self._landmarks = None
+        self._item_name = None
         # item_model_cls
         if 'model' in kwargs:
             self.set_item_model_cls(kwargs.get('model'))
@@ -26,6 +27,8 @@ class Mapper(object):
             self.set_other_icons(kwargs('other_icons'))
         if 'landmarks' in kwargs:
             self.set_landmarks(kwargs('landmarks'))
+        if 'item_name' in kwargs:
+            self.set_item_name(kwargs('item_name'))
 
     def __repr__(self):
         try:
@@ -87,6 +90,14 @@ class Mapper(object):
         if not self._item_model_cls:
             self.set_item_model_cls()
         return self._item_model_cls
+
+    def set_item_name(self):
+        self._item_name = self.get_item_model_cls()._meta.object_name
+
+    def get_item_name(self):
+        if not self._item_name:
+            self.set_item_name()
+        return self._item_name
 
     def set_regions(self, tpl=None):
         if tpl:
