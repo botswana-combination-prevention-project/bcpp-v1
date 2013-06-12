@@ -5,17 +5,17 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def clear_section(request):
+def clear_section(request, **kwargs):
     """Assigns selected section to None for all items in a region.
 
     Filters the households by ward and assigns the ward_section field to Null for the whole ward
     This allows for re-assigning of ward section for households within a ward.
     """
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         selected_region = request.POST.get('region')
         items = m.get_item_model_cls().objects.filter(**{m.region_field_attr: selected_region})
         if items:
@@ -30,6 +30,7 @@ def clear_section(request):
             identifiers = request.session['identifiers']
         return render_to_response(
                 'map_section.html', {
+                    'mapper_name': mapper_name,
                     'regions': m.get_regions(),
                     'region_label': m.region_label,
                     'item_label': m.get_item_model_cls._meta.object_name,

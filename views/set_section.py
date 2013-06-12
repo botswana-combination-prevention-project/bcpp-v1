@@ -5,7 +5,7 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def set_section(request):
+def set_section(request, **kwargs):
     """Plot items of a the whole ward to assign a ward section by selecting items.
 
     Filter points to plot by sending coordinates of a selected ward and section only to the households.html template.
@@ -15,11 +15,11 @@ def set_section(request):
     :template:`mochudi_map/templates/household.html`
     """
     template = 'assign_section.html'
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         #item_region_field = 'ward'
         has_items = False
         items = []
@@ -48,6 +48,7 @@ def set_section(request):
             has_items = True
         return render_to_response(
             template, {
+                'mapper_name': mapper_name,
                 'payload': payload,
                 'action_script_url': action_script_url,
                 'regions': m.get_regions(),
@@ -57,7 +58,7 @@ def set_section(request):
                 'sections': m.get_sections(),
                 'option': 'plot',
                 'has_items': has_items,
-                'item_region_field': m.region_field_attr,
+                'item_region_field': m.get_region_field_attr(),
                 'show_map': 1,
                 'identifiers': identifiers,
                 'cart_size': cart_size

@@ -25,6 +25,7 @@ def map_section(request, **kwargs):
             identifiers = request.session['identifiers']
         return render_to_response(
                 template, {
+                    'mapper_name': mapper_name,
                     'regions': m.get_regions(),
                     'icons': m.get_icons(),
                     'item_region_field': m.get_region_field_attr(),

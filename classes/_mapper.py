@@ -171,7 +171,9 @@ class Mapper(object):
             self._item_model_cls = cls
         else:
             try:
-                self._item_model_cls = self.model
+                if not self.item_model_cls:
+                    raise MapperError('Attribute \'item_model_cls\' may not be None (see _item_model_cls) .')
+                self._item_model_cls = self.item_model_cls
             except:
                 pass
         if not self._item_model_cls:

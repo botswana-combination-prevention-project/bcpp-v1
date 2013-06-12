@@ -1,37 +1,19 @@
-{% extends "base_site_mochudi_survey.html" %}
+{% extends "base_bhp_map.html" %}
 
 {% block content %}
-    <H3>{{ item_label }} Map</H3>
-        
-   <form action="/bhp_map/clear_section/" method="post">
+    <H5>{{ mapper_name }} map</H5>
+       
+   	<form action="{% url clear_section_url mapper_name %}" method="post">
    	{% csrf_token %}
-    <table align="center">
-    	<tr>
-    		<td colspan="2">
-    			<H4> Instructions</H4>
-    			<p>This will clear the section for the selected {{ region_label }}.</p>
-			    <ol>
-				    <li>Select a {{ region_label }};</li>
-				    <li>Click the submit button</li>
-			    </ol>
-    		</td>
-    	</tr>
-        <tr>	
-			<td><b><!-- form to select a region from a drop down menu -->Select {{ region_label }}:</b></td>
-			<td>
-				<select id="region" name="region">
-				<!-- loop though the ward dictionary from a view to list all ward -->
-				{% for region in regions %}
-				  <option value="{{ region }}">{{ region }}</option>
-				{% endfor %}
-				</select>
-			</td>
-		</tr>
-		<tr align="center">
-			<td colspan = "2">
-				<p><input type="submit" value="submit"></p>
-			</td>
-		</tr>
-      </table>
-	</form>	
+   
+   	<div id="selection_box"> 
+		Clear {{ section_label }} in:&nbsp;<select id="{{ region_field_attr }}" name="{{ region_field_attr }}">
+		{% for region in regions %}
+	  		<option value="{{ region }}">{{ region }}</option>
+		{% endfor %}
+		</select>
+		<input type="submit" value="submit">
+   	</form>
+   	</div>
+	
 {% endblock content %}
