@@ -146,6 +146,7 @@ class Section(object):
             #    search_result = search_instance.get_most_recent(self.get_section_name(), page)
         return render_to_response(self.get_template(), {
             'app_name': settings.APP_NAME,
+            'installed_apps': settings.INSTALLED_APPS,
             'selected_section': self.get_section_name(),
             'sections': section_index.get_section_list(),
             'section_name': self.get_section_name(),
