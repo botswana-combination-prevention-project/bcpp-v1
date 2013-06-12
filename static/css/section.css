@@ -91,12 +91,15 @@ margin: 0 0.15em;
 	height: 2em;
 	line-height: 2em;
 	float: left;
-	width: 8em;
+	width: 8em auto;
 	display: block;
 	border: 0.1em solid #dcdce9;
 	color: black;
 	text-decoration: none;
 	text-align: center;
+	overflow:hidden;
+	padding:1px;
+	
 }
 
 #section_navbar li a {
