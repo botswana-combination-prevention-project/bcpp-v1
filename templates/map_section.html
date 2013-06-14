@@ -14,11 +14,11 @@
 	   
 	   	<div id="section_navbar">
     	<ul>
-    	<li><A href="{% url clear_all_sections_url mapper_name %}">clear {{ section_label }}s</A>
+    	<li><A href="{% url "clear_all_sections_url" mapper_name %}">clear {{ section_label }}s</A>
     	</ul>
     	</div>
 	   
-	   <form action="{% url map_plot_item_points_url mapper_name %}" method="post">
+	   <form action="{% url "map_plot_item_points_url" mapper_name %}" method="post">
 	   	{% csrf_token %}
 	    
 	    <div id="selection_box"> 

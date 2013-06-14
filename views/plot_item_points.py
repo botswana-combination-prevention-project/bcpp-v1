@@ -67,6 +67,7 @@ def plot_item_points(request, **kwargs):
                 'mapper_name': mapper_name,
                 'payload': payload,
                 'action_script_url_name': action_script_url_name,
+                'identifier_field_attr': m.get_identifier_field_attr(),
                 'has_items': has_items,
                 'mapper_item_label': mapper_item_label,
                 'selected_region': selected_region,

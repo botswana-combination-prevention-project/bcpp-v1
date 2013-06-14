@@ -5,15 +5,15 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def save_cart(request):
+def save_cart(request, **kwargs):
     """Dispatch households in shopping cart to netbook.
     """
     #Make sure we have identifiers in our session
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         if 'identifiers' in request.session:
             if len(request.session['identifiers']) > 0:
                 identifiers = request.session['identifiers']

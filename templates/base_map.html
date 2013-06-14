@@ -1,5 +1,4 @@
 {% extends "base_bhp_map.html" %}
-
 {% block extrahead %}
 {{ block.super }} 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -14,7 +13,7 @@ var map, marker, locationByID = {}, currentObject, geocoder;
 var pointArray = new Array();
 var x = 0;
 {% for lon, lat, label, icon, cso in payload %}       	
-    	pointArray.push(["{{ label }}", {{ lon }}, {{ lat }}, "{{ STATIC_URL }}images/{{ icon }}.png", x+1, "{{ cso }}"]);
+    	pointArray.push(["{{ label }}", {{ lon }}, {{ lat }}, "{{ STATIC_URL }}img/{{ icon }}.png", x+1, "{{ cso }}"]);
 {% endfor %}
 
 //adding information to markers when clicked
@@ -363,10 +362,10 @@ function initialize() {
         var sec = document.getElementById("sec").value;
         {% comment %} e.g. region_field_attr='ward', section_field_attr='ward_section', ...{% endcomment %}
         if (sec=="yes"){
-			window.location.replace("{% url action_script_url_name mapper_name %}?{{ identifier_field_attr}}=" + arr + "&{{ section_field_attr }}=" + document.getElementById("{{ section_field_attr }}").value + "&{{ region_field_attr }}=" + document.getElementById("{{ region_field_attr }}").value);
+			window.location.replace("{% url action_script_url_name mapper_name %}?{{ identifier_field_attr }}=" + arr + "&{{ section_field_attr }}=" + document.getElementById("{{ section_field_attr }}").value + "&{{ region_field_attr }}=" + document.getElementById("{{ region_field_attr }}").value);
 					}
 		else{
-			// example or result produced by the lien below: locations/save/?household_identifiers="H99101-02,H992302-4"
+			// example or result produced by the line below: locations/save/?household_identifiers="H99101-02,H992302-4"
 			window.location.replace("{% url action_script_url_name mapper_name %}?{{ identifier_field_attr}}=" + arr);
 			
 		}
@@ -454,7 +453,7 @@ function setMarkers(map, locations) {
 
 {% endblock%}
 
-{% block bodyonload %}initialize(){% endblock %}
+{% block bodyclass %} {{block.super}}" onload="initialize() {% endblock %}
 
 {% block content %}
 {% block mapping %}{% endblock %}

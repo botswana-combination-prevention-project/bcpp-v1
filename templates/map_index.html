@@ -5,7 +5,7 @@
         <div id="section_navbar">
         <ul>
         {% for mapper_name in mapper_names %}
-         <li><a href="{% url selected_map_index_url mapper_name %}">{{ mapper_name }} maps</a>
+         <li><a href="{% url "selected_map_index_url" mapper_name %}">{{ mapper_name }} maps</a>
         {% endfor %}
         </ul>
         </div>
@@ -14,13 +14,13 @@
     <H5>Dispatch by {{ mapper_name }} Map</H5>
     <div id="section_navbar">
     <ul>
-    <li><A href="{% url map_section_url mapper_name %}">Manage {{ section_label }}s</A>
-    <li><A href="{% url map_gps_point_update_url mapper_name %}">Update GPS</A>
+    <li><A href="{% url "map_section_url" mapper_name %}">Manage {{ section_label }}s</A>
+    <li><A href="{% url "map_gps_point_update_url" mapper_name %}">Update GPS</A>
     </ul>
     </div>
 
     <div id="selection_box">  
-    <form action="{% url map_plot_item_points_url mapper_name %}" method="post">
+    <form action="{% url "map_plot_item_points_url" mapper_name %}" method="post">
     {% csrf_token %}
 	{{ region_label }}:&nbsp;<select id="{{ region_field_attr }}" name="{{ region_field_attr }}">
 				{% for region in regions %}

@@ -7,17 +7,17 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def add_to_cart(request):
+def add_to_cart(request, **kwargs):
     """Adds a list of identifiers to a shopping cart and returns back to map or checkout cart.
 
     The list of identifiers of points that are within a polygon.
     """
     template = 'map.html'
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         # a list of additional item identifiers, such as household_identifiers, to add to the cart (session['identifiers'])
         additional_item_identifiers = request.GET.get(m.get_identifier_field_attr(), [])
         message = ""
@@ -48,6 +48,7 @@ def add_to_cart(request):
             )
         return render_to_response(
                 template, {
+                    'mapper_name': mapper_name,
                     'payload': payload,
                     'identifiers': item_identifiers,
                     'cart': cart,

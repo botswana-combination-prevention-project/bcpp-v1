@@ -6,7 +6,7 @@
 		{% if option == 'plot' %}
 			{% if not has_items %}
 				<script language="javascript" type="text/javascript" defer> alert('Oops! No {{ mapper_item_label }} found. Try broadening your search');
-				window.location.replace('{% url selected_map_index_url mapper_name %}')
+				window.location.replace('{% url "selected_map_index_url" mapper_name %}')
 				</script>
 			{% endif %}
 		{% endif %}
@@ -24,7 +24,7 @@
 		    	<button id="save_map_selection" disabled="disabled">Save</button> 
 		    	<button id="revert_map" disabled="disabled">Revert</button> 
 		    	<button id="clear_map">Clear</button> 
-		    	<a href="{% url selected_map_index_url mapper_name %}">Continue</a>
+		    	<a href="{% url "selected_map_index_url" mapper_name %}">Continue</a>
 		    	</td>
 			</tr>
 			<tr>
