@@ -12,9 +12,9 @@
         use the name and pass the url parameter to 
         successfully reverse 
     {%endcomment %}
-    {% url section_url_name selected_section as section %}
-    {% url section_search_url_name selected_section search_label  as section_search_label %}
-    {% url section_search_url_name selected_section search_label search_by_name as section_search_by_name %}    
+    {% url "section_url_name" "selected_section" as section %}
+    {% url "section_search_url_name" "selected_section" "search_label"  as section_search_label %}
+    {% url "section_search_url_name" "selected_section" "search_label" "search_by_name" as section_search_by_name %}    
 
     <div class="breadcrumbs">
         <a href="/{% app_name %}">Home</a>
