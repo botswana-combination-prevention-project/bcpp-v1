@@ -13,7 +13,7 @@ from section_index_view import section_index_view
 
 
 # class Section(View):  # 1.5
-class SectionView(object):
+class BaseSectionView(object):
 
     def __init__(self):
         self._template = None
@@ -128,11 +128,11 @@ class SectionView(object):
         appointments = Appointment.objects.filter().order_by(appt_datetime__lt=datetime.datetime(date.today().year, date.today().month, date.today().day + 1))[0:10]
         return appointments
 
-    def get_action_items(self):
-        actions = ActionItem.objects.filter(action_status='open').order_by(action_datetime)[0:10]
+#    def get_action_items(self):
+#        actions = ActionItem.objects.filter(action_status='open').order_by(action_datetime)[0:10]
 
 # 1.5    def get(self, request, *args, **kwargs):
-#        self._view(request, *args, **kwargs)
+#            self._view(request, *args, **kwargs)
 
     def _view(self, request, *args, **kwargs):
         @login_required
@@ -168,5 +168,3 @@ class SectionView(object):
                 'search_result_include_file': search_result_include_file,
             }, context_instance=RequestContext(request))
         return view(request, *args, **kwargs)
-
-#section = Section()

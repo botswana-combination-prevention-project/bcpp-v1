@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import patterns as url_patterns, url
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from base_section_view import BaseSectionView
+from base_section_index_view import BaseSectionIndexView
 
 
-class SectionIndexView(BaseSectionView):
+class SectionIndexView(BaseSectionIndexView):
 
     app_name = 'bhp_section'
 
