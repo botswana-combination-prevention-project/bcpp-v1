@@ -1,4 +1,4 @@
 #from base_section_index_view import BaseSection
 from section_index_view import SectionIndexView, section_index_view
-from section_view import SectionView
+from base_section_view import BaseSectionView
 from controller import site_sections
