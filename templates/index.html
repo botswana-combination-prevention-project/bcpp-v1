@@ -7,11 +7,11 @@
 <div id="section_navbar">
 <ul>
 {% if not sections %}
-    <p class="warning">Sections not defined. Please define your sections in module <A href="/edc/bhp_section/section/">bhp_section</A></p>
+    <p class="warning">Sections not defined. Please define your sections in module <A href="/admin/bhp_section/section/">bhp_section</A></p>
 {% endif%}
 {% for section in sections %}
     <li class="{% if selected_section == section.0 %}selected{% else %}{% endif %}">
-    <A name="{{section.0}}" href="/{% app_name %}/section/{{section.0}}/">{{section.1}}</A>
+    <A name="{{section.0}}" href="{% url section_index_url_name section.0 %}">{{section.1}}</A>
     </li>
 {% endfor %}
 <ul>

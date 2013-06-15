@@ -1,17 +1,19 @@
 from datetime import datetime, date
+#from django.views.base import View  # for 1.5
 from django.conf.urls.defaults import patterns as url_patterns, url
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from section_index import section_index
 from bhp_appointment.models import Appointment
 from bhp_data_manager.models import ActionItem
 from bhp_search.classes import search
 from bhp_section.exceptions import SectionError
+from section_index_view import section_index_view
 
 
-class Section(object):
+# class Section(View):  # 1.5
+class SectionView(object):
 
     def __init__(self):
         self._template = None
@@ -101,7 +103,7 @@ class Section(object):
             view = self._view
         urlpattern_first = []
         urlpattern_last = []
-        for section_name in section_index.get_section_name_list():
+        for section_name in section_index_view.get_section_name_list():
             # try to match this section to a search class
             for search_type, search_cls in search.get_registry().iteritems():  # e.g. search_label == 'word', more a search type??
                 # if search classes registered, create urls for the search classes for current section_name
@@ -129,36 +131,42 @@ class Section(object):
     def get_action_items(self):
         actions = ActionItem.objects.filter(action_status='open').order_by(action_datetime)[0:10]
 
-    def _view(self, request, **kwargs):
-        self.set_section_name(kwargs.get('section_name'))
-        self.set_search_type(self.get_section_name(), kwargs.get('search_type'))
-        search_result = None
-        search_result_include_file = None
-        if self.get_search_type(self.get_section_name()):
-            search_cls = search.get(self.get_search_type(self.get_section_name()))
-            search_instance = search_cls()
-            search_result_include_file = search_instance.get_include_template_file(self.get_section_name())
-            search_instance.prepare(request, **kwargs)
-            page = request.GET.get('page', '1')
-            if search_instance.form_is_valid:
-                search_result = search_instance.search(request, self.get_section_name(), page)
-            #else:
-            #    search_result = search_instance.get_most_recent(self.get_section_name(), page)
-        return render_to_response(self.get_template(), {
-            'app_name': settings.APP_NAME,
-            'installed_apps': settings.INSTALLED_APPS,
-            'selected_section': self.get_section_name(),
-            'sections': section_index.get_section_list(),
-            'section_name': self.get_section_name(),
-            'search_name': self.get_search_name(self.get_section_name()),
-            'sections_using_search': self.get_sections_using_search(),
-            'search_type': self.get_search_type(self.get_section_name()),
-            'add_search_model_label': 'Add',
-            'search_model_admin_url': 'url',
-            'search_result': search_result,
-            #'appointments': self.get_appointment_tile(),
-            #'action_items': self.get_action_items_tile(),
-            'search_result_include_file': search_result_include_file,
-        }, context_instance=RequestContext(request))
+# 1.5    def get(self, request, *args, **kwargs):
+#        self._view(request, *args, **kwargs)
 
-section = Section()
+    def _view(self, request, *args, **kwargs):
+        @login_required
+        def view(request, *args, **kwargs):
+            self.set_section_name(kwargs.get('section_name'))
+            self.set_search_type(self.get_section_name(), kwargs.get('search_type'))
+            search_result = None
+            search_result_include_file = None
+            if self.get_search_type(self.get_section_name()):
+                search_cls = search.get(self.get_search_type(self.get_section_name()))
+                search_instance = search_cls()
+                search_result_include_file = search_instance.get_include_template_file(self.get_section_name())
+                search_instance.prepare(request, **kwargs)
+                page = request.GET.get('page', '1')
+                if search_instance.form_is_valid:
+                    search_result = search_instance.search(request, self.get_section_name(), page)
+                #else:
+                #    search_result = search_instance.get_most_recent(self.get_section_name(), page)
+            return render_to_response(self.get_template(), {
+                'app_name': settings.APP_NAME,
+                'installed_apps': settings.INSTALLED_APPS,
+                'selected_section': self.get_section_name(),
+                'sections': section_index_view.get_section_list(),
+                'section_name': self.get_section_name(),
+                'search_name': self.get_search_name(self.get_section_name()),
+                'sections_using_search': self.get_sections_using_search(),
+                'search_type': self.get_search_type(self.get_section_name()),
+                'add_search_model_label': 'Add',
+                'search_model_admin_url': 'url',
+                'search_result': search_result,
+                #'appointments': self.get_appointment_tile(),
+                #'action_items': self.get_action_items_tile(),
+                'search_result_include_file': search_result_include_file,
+            }, context_instance=RequestContext(request))
+        return view(request, *args, **kwargs)
+
+#section = Section()

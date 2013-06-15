@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import patterns as url_patterns, url
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from base_section import BaseSection
+from base_section_view import BaseSectionView
 
 
-class SectionIndex(BaseSection):
+class SectionIndexView(BaseSectionView):
 
     app_name = 'bhp_section'
 
@@ -21,7 +21,7 @@ class SectionIndex(BaseSection):
                 '{app_name}.views'.format(app_name=self.app_name),
                 url(r'^(?P<selected_section>{section_name})/$'.format(section_name=section_name),
                 self.view,
-                name="section_index_{0}_url".format(section_name)))
+                name="section_index_url_name"))
         urlpattern += url_patterns(
                 '{app_name}.views'.format(app_name=self.app_name),
                 url(r'',
@@ -39,4 +39,4 @@ class SectionIndex(BaseSection):
                    'selected_section': self.selected_section},
                   context_instance=RequestContext(request))
 
-section_index = SectionIndex()
+section_index_view = SectionIndexView()

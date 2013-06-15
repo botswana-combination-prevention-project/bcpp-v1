@@ -1,7 +1,7 @@
 from bhp_section.models import Section as SectionModel
 
 
-class BaseSection(object):
+class BaseSectionIndexView(object):
 
     """ Base section class. """
 
