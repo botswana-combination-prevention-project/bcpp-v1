@@ -1,0 +1,32 @@
+{% extends "section.html"%}
+{% load admin_urls %}
+{% load url from future %}
+
+{% block section_tiles %}
+
+<div id="tile_wrapper">
+
+    <div id="add_model_tile">{% block add_model_tile %}
+        <form method="GET" action="{% url add_model_opts|admin_urlname:'add' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="section_url">
+        <input type="hidden" name="section_name" value="{{ section_name }}">
+        <input type="submit" value="Add {{ add_model_name }}"  />
+        </form>
+    {% endblock %}
+    </div>
+
+    <div id="search_tile">{% block search_tile %}
+    <form method="POST" action="{% url 'section_search_url' section_name search_type %}">
+    {% csrf_token %}
+    <input type="text" name="search_term" value="">&nbsp;<input type="submit" value="Search">
+    </form>
+    {% endblock %}</div>
+    {% if search_result %}
+    <div id="search_result_tile">
+        {% include search_result_include_file %}  
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -129,7 +129,7 @@ margin: 0 0.15em;
 
 #add_model_tile {
     float:left;
-    width:325px;
+    width:auto;
     background-color: #F0F0F0  ;
     border: 1px solid #D8D8D8;
     padding: 2px;
@@ -139,7 +139,7 @@ margin: 0 0.15em;
 }
 #search_tile {
     float:right;
-    width:180px;
+    width:auto;
     background:#FFFFEC;
     border: 1px solid #EEEEAA;
     padding: 2px;
@@ -152,9 +152,9 @@ margin: 0 0.15em;
     float:left;
     background:#DAF3FF;
     border: 1px solid #AAD8EE;
-    padding: 2px;
+    padding: 3px;
     margin:5px;
-    border-radius:10px;
+    /*border-radius:10px;*/
 
 }
 #appointments_tile {

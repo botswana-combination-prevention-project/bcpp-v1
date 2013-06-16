@@ -6,37 +6,86 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from bhp_appointment.models import Appointment
-from bhp_data_manager.models import ActionItem
+#from bhp_data_manager.models import ActionItem
 from bhp_search.classes import search
 from bhp_section.exceptions import SectionError
-from section_index_view import section_index_view
 
 
 # class Section(View):  # 1.5
 class BaseSectionView(object):
 
+    section_name = None
+    section_list = None
+    section_template = None
+    add_model = None
+
     def __init__(self):
+        self._context = {}
         self._template = None
         self._section_name = None
+        self._add_model_cls = None
+        self._section_list = None
         self.search_label = None
-        self.urlpattern_prepared = False
+        #self.urlpattern_prepared = False
         self._sections_using_search = []
         self._custom_template = {}
         self._search_type = {}
         self._search_name = {}
-        search.autodiscover()
 
-    def _get_custom_template(self, section_name=None):
-        return self._custom_template.get(section_name, self.get_default_template())
+    @property
+    def context(self):
+        return self._context
+
+    def update_context(self, **kwargs):
+        for k, v in kwargs.iteritems():
+            self._context[k] = v
+
+    def set_section_list(self, value=None):
+        if self.section_list:
+            # class variable set in urls
+            self._section_list = self.section_list
+        elif not value:
+            raise AttributeError('Attribute \'sections_list\' may not be None. Should be set in urls.py')
+        else:
+            self._section_list = value
+
+    def get_section_list(self):
+        if not self._section_list:
+            self.set_section_list()
+        return self._section_list
 
     def set_section_name(self, value=None):
-        self._section_name = value
+        if self.section_name:
+            self._section_name = self.section_name
+        else:
+            self._section_name = value
         self._set_template()
 
     def get_section_name(self):
         if not self._section_name:
             self.set_section_name()
         return self._section_name
+
+    def _set_add_model_cls(self, value=None):
+        if self.add_model:
+            self._add_model_cls = self.add_model
+        else:
+            self._add_model_cls = value
+
+    def get_add_model_cls(self):
+        if not self._add_model_cls:
+            self._set_add_model_cls()
+        return self._add_model_cls
+
+    def get_add_model_name(self):
+        if self.get_add_model_cls():
+            return self.get_add_model_cls()._meta.verbose_name
+        return None
+
+    def get_add_model_opts(self):
+        if self.get_add_model_cls():
+            return self.get_add_model_cls()._meta
+        return None
 
     def set_search_type(self, section_name, search_type=None):
         if search_type:
@@ -61,8 +110,6 @@ class BaseSectionView(object):
         return None
 
     def get_sections_using_search(self, section_name=None):
-        if not self.urlpattern_prepared:
-            raise SectionError('Call urlpatterns(), in urls.py, first to update the list for those sections linked to a search class')
         if section_name:
             if section_name in self._sections_using_search:
                 return [section_name]
@@ -77,51 +124,48 @@ class BaseSectionView(object):
     def _set_template(self, template=None):
         if template:
             self._template = template
-        elif self._get_custom_template(self.get_section_name()):
-            self._template = self._get_custom_template(self.get_section_name())
+        elif self.section_template:
+            self._template = self.section_template
         else:
-            self._template = self.get_default_template()
-
-    def get_default_template(self):
-            if self.get_sections_using_search(self.get_section_name()):
-                #return 'section_using_search.html'
-                return 'subject_section.html'
-            elif self.get_section_name():
-                return 'section_{0}.html'.format(self.get_section_name())
-            else:
-                return 'section.html'
+            self._template = self._get_default_template()
 
     def get_template(self):
         if not self._template:
             self._set_template()
         return self._template
 
+    def _get_default_template(self):
+        return 'section_{0}.html'.format(self.get_section_name())
+
     def urlpatterns(self, view=None):
         """ Generates a urlpattern for the view of this subclass."""
-        self.urlpattern_prepared = True
+        if not search.is_autodiscovered:
+            raise SectionError('Search register not ready. Call search.autodiscover() first.')
+        #self.urlpattern_prepared = True
         if view is None:
             view = self._view
         urlpattern_first = []
         urlpattern_last = []
-        for section_name in section_index_view.get_section_name_list():
-            # try to match this section to a search class
-            for search_type, search_cls in search.get_registry().iteritems():  # e.g. search_label == 'word', more a search type??
-                # if search classes registered, create urls for the search classes for current section_name
-                if search_cls().validate_for_section_name(section_name):
-                    self.set_search_type(section_name, search_type)
-                    self.set_search_name(section_name, search_cls().name)
-                    urlpattern_first += url_patterns(
-                        '',
-                        url(r'^(?P<section_name>{section_name})/(?P<search_type>{search_type})/$'.format(section_name=section_name, search_type=search_type),
-                        self._view,
-                        name="section_search_url"))
-                    self.add_to_sections_using_search(section_name)
-            # create a urlpattern for each section_name
-            urlpattern_last += url_patterns(
-                '',
-                url(r'^(?P<section_name>{section_name})/$'.format(section_name=section_name),
-                self._view,
-                name="section_url".format(section_name)))
+        #for section_name in section_index_view.get_section_name_list():
+        #    # try to match this section to a search class
+        section_name = self.get_section_name()
+        for search_type, search_cls in search.get_registry().iteritems():
+            # for each type of search, look for an association with this section_name
+            if search_cls().get_section_name() == section_name:
+                self.set_search_type(section_name, search_type)
+                self.set_search_name(section_name, search_cls().name)
+                urlpattern_first += url_patterns(
+                    '',
+                    url(r'^(?P<section_name>{section_name})/(?P<search_type>{search_type})/$'.format(section_name=section_name, search_type=search_type),
+                    self._view,
+                    name="section_search_url"))
+                self.add_to_sections_using_search(section_name)
+        # create a urlpattern for the section_name
+        urlpattern_last += url_patterns(
+            '',
+            url(r'^(?P<section_name>{section_name})/$'.format(section_name=section_name),
+            self._view,
+            name="section_url".format(section_name)))
         return urlpattern_first + urlpattern_last
 
     def get_appointment_tile(self):
@@ -144,23 +188,25 @@ class BaseSectionView(object):
             if self.get_search_type(self.get_section_name()):
                 search_cls = search.get(self.get_search_type(self.get_section_name()))
                 search_instance = search_cls()
-                search_result_include_file = search_instance.get_include_template_file(self.get_section_name())
+                search_result_include_file = search_instance.get_include_template_file()
                 search_instance.prepare(request, **kwargs)
                 page = request.GET.get('page', '1')
                 if search_instance.form_is_valid:
-                    search_result = search_instance.search(request, self.get_section_name(), page)
-                #else:
-                #    search_result = search_instance.get_most_recent(self.get_section_name(), page)
+                    search_result = search_instance.search(request, page)
+                else:
+                    search_result = search_instance.get_most_recent(page)
             return render_to_response(self.get_template(), {
                 'app_name': settings.APP_NAME,
                 'installed_apps': settings.INSTALLED_APPS,
                 'selected_section': self.get_section_name(),
-                'sections': section_index_view.get_section_list(),
+                'sections': self.get_section_list(),
                 'section_name': self.get_section_name(),
                 'search_name': self.get_search_name(self.get_section_name()),
                 'sections_using_search': self.get_sections_using_search(),
                 'search_type': self.get_search_type(self.get_section_name()),
-                'add_search_model_label': 'Add',
+                'add_model': self.get_add_model_cls(),
+                'add_model_opts': self.get_add_model_opts(),
+                'add_model_name': self.get_add_model_name(),
                 'search_model_admin_url': 'url',
                 'search_result': search_result,
                 #'appointments': self.get_appointment_tile(),
