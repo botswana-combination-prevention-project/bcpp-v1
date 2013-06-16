@@ -17,7 +17,7 @@ class BaseSearchByWord(BaseSearch):
         self.search_form = SearchForm
         self.context.update(**defaults)
 
-    def get_search_result(self, request, search_name):
+    def get_search_result(self, request):
         """Returns a queryset using the search term as a filter.
 
         The model to query is selected using the search_name.
@@ -26,7 +26,7 @@ class BaseSearchByWord(BaseSearch):
             search_name --
 
         """
-        model = self.get_search_model(search_name)
+        model = self.get_search_model_cls()
         if not isinstance(model(), RegisteredSubject):
             if not 'registered_subject' in dir(model()) and not isinstance(model(), BaseConsent):
                 raise ImproperlyConfigured('Search models must have a foreign key to '
