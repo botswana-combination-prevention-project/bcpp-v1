@@ -362,8 +362,8 @@ MOVED_REASON = (
 )
 
 PLACE_SUBJECT_MOVED = (
-    ('IN_MOCHUDI', 'Within Mochudi'),
-    ('OUT_MOCHUDI', 'Outside Mochudi'),
+    ('IN_VILLAGE', 'Within Village'),
+    ('OUT_VILLAGE', 'Outside Village'),
     ('IN_WARD', 'Within the Survey Ward'),
 )
 
