@@ -132,7 +132,16 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
 
 #Demographics
 class DemographicsForm (BaseSubjectModelForm):
+    
+    def clean(self):
 
+        cleaned_data = self.cleaned_data
+        #validating marital status
+        if cleaned_data['maritalstatus'] == 'Married' and not cleaned_data['numwives']:
+            raise forms.ValidationError('If participant is married, give number of wives')
+        cleaned_data = super(DemographicsForm, self).clean()
+        return cleaned_data
+    
     class Meta:
         model = Demographics
 
