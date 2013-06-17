@@ -169,7 +169,7 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
         #validating when testing declined
         if cleaned_data['HHhivtest'] == 'Declined' and not cleaned_data['whynohivtest']:
             raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing (2)')
-        cleaned_data = super(DemographicsForm, self).clean()
+        cleaned_data = super(HivTestingHistoryForm, self).clean()
         return cleaned_data
 
 
