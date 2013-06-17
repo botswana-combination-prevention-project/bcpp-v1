@@ -2,7 +2,7 @@
 
 {% block content %}
 
-		<form action="{% url map_db_update mapper_name %}" method="post">
+		<form action="{% url "map_db_update" mapper_name %}" method="post">
 			{% csrf_token %}
 			<table>
 					<tr>

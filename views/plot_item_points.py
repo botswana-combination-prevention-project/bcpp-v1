@@ -64,6 +64,8 @@ def plot_item_points(request, **kwargs):
             has_items = True
         return render_to_response(
             template, {
+                'region_field_attr': m.get_region_field_attr(),
+                'section_field_attr': m.get_section_field_attr(),
                 'mapper_name': mapper_name,
                 'payload': payload,
                 'action_script_url_name': action_script_url_name,
