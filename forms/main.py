@@ -162,6 +162,16 @@ class EducationForm (BaseSubjectModelForm):
 
 #HivTestingHistory
 class HivTestingHistoryForm (BaseSubjectModelForm):
+    
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+        #validating when testing declined
+        if cleaned_data['HHhivtest'] == 'Declined' and not cleaned_data['whynohivtest']:
+            raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing (2)')
+        cleaned_data = super(DemographicsForm, self).clean()
+        return cleaned_data
+
 
     class Meta:
         model = HivTestingHistory
@@ -176,7 +186,7 @@ class HivTestReviewForm (BaseSubjectModelForm):
 
 #HivTestingSupplemental
 class HivTestingSupplementalForm (BaseSubjectModelForm):
-
+    
     class Meta:
         model = HivTestingSupplemental
 
