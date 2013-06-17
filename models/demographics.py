@@ -31,16 +31,19 @@ class Demographics (BaseScheduledVisitModel):
         help_text="",
         )
 
-    numwives = models.CharField(
+    numwives = models.IntegerField(
         verbose_name = ("10. How many wives do (you/your husband) have (including traditional marriage),"
                         " including yourself?"),
-        max_length = 15,
-        help_text="Note:Enter -8 if participant does not want to respond.",
+        max_length = 2,
+        null=True, 
+        blank=True,
+        help_text="Note:leave blank if participant does not want to respond.",
         )
 
     livewith = models.ManyToManyField(LiveWith,
         verbose_name = "11. Who do you currently live with ?",
-        max_length = 25,
+        null=True, 
+        blank=True,
         help_text="[indicate all that apply]",
         )
     
