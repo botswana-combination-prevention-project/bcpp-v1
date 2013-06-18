@@ -309,6 +309,24 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
+        #if no medical care, explain why not
+        if cleaned_data['medical_care'] == 'No' and not cleaned_data['no_medical_care']:
+            raise forms.ValidationError('If participant has not received any medical care, please give reason why not')
+        #if never taken arv's give reason why
+        if cleaned_data['evertakearv'] == 'No' and not cleaned_data['whynoarv']:
+            raise forms.ValidationError('If participant has not taken any ARV\'s, give the main reason why not')
+        #if partipant has taken arv's, give date when these were started
+        if cleaned_data['evertakearv'] == 'Yes' and not cleaned_data['firstarv']:
+            raise forms.ValidationError('If participant has taken ARV\'s, give the date when these were first started.')
+        #if taking arv's have you missed any
+        if cleaned_data['onarv'] == 'Yes' and not cleaned_data['adherence4day']:
+            raise forms.ValidationError('If participant is taking ARV\'s, have they skipped/ missed taking any? Pleae indicate')
+        #if you are not taking any arv's do not indicate that you have missed taking medication
+        if cleaned_data['onarv'] == 'No' and cleaned_data['adherence4day']:
+            raise forms.ValidationError('You do not have to indicate missed medication (70) because you are not taking any ARV\'s (68)')
+        #if currently taking arv's, how well has participant been taking medication
+        if cleaned_data['onarv'] == 'Yes' and cleaned_data['adherence4wk']:
+            raise forms.ValidationError('If participant is currently taking ARV\'s, how well has he/she been taking the medication this past week?')
 
         return cleaned_data
 
