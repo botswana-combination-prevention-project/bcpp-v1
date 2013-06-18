@@ -219,6 +219,32 @@ class HivTestingSupplementalForm (BaseSubjectModelForm):
 
 #SexualBehaviour
 class SexualBehaviourForm (BaseSubjectModelForm):
+    
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+        #if respondent has had sex, answer all following questions on form
+        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['lastyearpartners']:
+            raise forms.ValidationError('If participant has had sex, how many people has he/she had sex with')
+        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['moresex']:
+            raise forms.ValidationError('If participant has had sex, we need to know if this person lives outside community')
+        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['firstsex']:
+            raise forms.ValidationError('If participant has had sex, how old was he/she when he/she first had sex')
+        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['condom']:
+            raise forms.ValidationError('If participant has had sex, was a condom used the last time he/she had sex?')
+        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['alcohol_sex']:
+            raise forms.ValidationError('If participant has had sex, did he/she or partner have alcohol?')
+        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['lastsex']:
+            raise forms.ValidationError('If participant has had sex, when was the last time he/she had sex?')
+        if cleaned_data['lastsex'] == 'Days' and not cleaned_data['lastsex_calc']:
+            raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of days')
+        if cleaned_data['lastsex'] == 'Months' and not cleaned_data['lastsex_calc']:
+            raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of months')
+        if cleaned_data['lastsex'] == 'Years' and not cleaned_data['lastsex_calc']:
+            raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of years')
+        
+        cleaned_data = super(SexualBehaviourForm, self).clean()
+        return cleaned_data
 
     class Meta:
         model = SexualBehaviour
