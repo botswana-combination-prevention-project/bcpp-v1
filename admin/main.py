@@ -671,13 +671,17 @@ class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
         'arvshivtest',
         'prefer_hivtest',
         'hivtest_time',
+        'hivtest_time_other',
         'hivtest_week',
-        'hivtest_year',)
+        'hivtest_week_other',
+        'hivtest_year',
+        'hivtest_year_other')
     radio_fields = {
         "wherehivtest":admin.VERTICAL,
         "whyhivtest":admin.VERTICAL,
         "whynohivtest":admin.VERTICAL,
         "hiv_pills":admin.VERTICAL,
+        "arvshivtest":admin.VERTICAL,
         "prefer_hivtest":admin.VERTICAL,
         "whynohivtest":admin.VERTICAL,
         "hivtest_time":admin.VERTICAL,
@@ -880,6 +884,7 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
         'wherecirc',
         'whycirc',)
     radio_fields = {
+        "circumcised": admin.VERTICAL,
         "wherecirc": admin.VERTICAL,
         "whycirc": admin.VERTICAL,}
     filter_horizontal = ("healthbenefitsSMC",)
@@ -904,6 +909,7 @@ class UncircumcisedAdmin(SubjectVisitModelAdmin):
         'awarefree',
     )
     radio_fields = {
+        "circumcised":admin.VERTICAL,
         "reasoncirc":admin.VERTICAL,
         "futurecirc":admin.VERTICAL,
         "circumcision_day":admin.VERTICAL,
