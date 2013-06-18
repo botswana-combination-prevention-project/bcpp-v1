@@ -829,6 +829,7 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         "firstpositive",
         "medical_care",
+        "no_medical_care",
         'everrecommendedarv',
         'evertakearv',
         'whynoarv',
@@ -838,6 +839,7 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'adherence4wk',)
     radio_fields = {
         "medical_care":admin.VERTICAL,
+        "no_medical_care":admin.VERTICAL,
         "everrecommendedarv":admin.VERTICAL,
         "evertakearv":admin.VERTICAL,
         "whynoarv":admin.VERTICAL,
@@ -856,11 +858,9 @@ class HivMedicalCareAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         "firsthivcarepositive",
         "lasthivcarepositive",
-        'lowestCD4',
-        'no_medical_care',)
+        'lowestCD4',)
     radio_fields = {
-        "lowestCD4":admin.VERTICAL,
-        "no_medical_care":admin.VERTICAL,}
+        "lowestCD4":admin.VERTICAL,}
 admin.site.register(HivMedicalCare, HivMedicalCareAdmin)
 
 
