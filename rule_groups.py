@@ -113,6 +113,22 @@ class MedicalCareRuleGroup(RuleGroup):
 rule_groups.register(MedicalCareRuleGroup)
 
 
+class PositiveRuleCroup(RuleGroup):
+    
+    HHhivtest = ScheduledDataRule(
+        logic=Logic(
+            predicate=('HHhivtest', 'equals', 'Positive'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivcareadherence'])
+    
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivTestingHistory
+rule_groups.register(PositiveRuleCroup)
+
+
 class MaleCircumcisionRuleGroup(RuleGroup):
 
     gender = ScheduledDataRule(
@@ -197,14 +213,14 @@ class StigmaPositiveBRuleGroup(RuleGroup):
     
     recordedhivresult = ScheduledDataRule(
         logic=Logic(
-            predicate=('recordedhivresult', 'equals', 'HIV-Negative'),
+            predicate=('recordedhivresult', 'equals', 'HIV-Positive'),
             consequence='new',
             alternative='not_required'),
         target_model=['positiveparticipant'])
     
     verbalhivresult = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbalhivresult', 'equals', 'HIV-Negative'),
+            predicate=('verbalhivresult', 'equals', 'HIV-Positive'),
             consequence='new',
             alternative='not_required'),
         target_model=['positiveparticipant'])
