@@ -39,6 +39,8 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
     whynohivtest = models.CharField(
         verbose_name="Supplemental HT4. If you were not tested for HIV in the 12 months prior to today, what is the main reason why not?",
         max_length=55,
+        null=True, 
+        blank=True,
         choices=WHYNOHIVTESTING_CHOICE,
         help_text="",
         )
