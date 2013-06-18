@@ -10,9 +10,9 @@ class Circumcision (BaseScheduledVisitModel):
     """CS002"""
     
     circumcised = models.CharField(
-        verbose_name = "72. Are you circumcised?",
-        max_length = 15,
-        choices = YES_NO_UNSURE,
+        verbose_name="72. Are you circumcised?",
+        max_length=15,
+        choices=YES_NO_UNSURE,
         help_text="",
         )
     
