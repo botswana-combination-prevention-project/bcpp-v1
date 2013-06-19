@@ -387,7 +387,22 @@ class ReproductiveHealthForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-
+        #pregnancy and antenal registration
+        if cleaned_data['currentpregnant'] == 'Yes' and not cleaned_data['ancreg']:
+            raise forms.ValidationError('If participant currently pregnant, have they registered for antenatal care?')
+        #if currently pregnant when was the last lnmp
+        if cleaned_data['currentpregnant'] == 'Yes' and not cleaned_data['lnmp']:
+            raise forms.ValidationError('If participant currently pregnant, when was the last known menstrual period?')
+        #if mother has children, when was the last birth
+        if cleaned_data['numberchildren'] > 0 and not cleaned_data['lastbirth']:
+            raise forms.ValidationError('If the participant has given birth, when was the last (most recent) birth?')
+        #if mother has children, did they ever go for anc
+        if cleaned_data['numberchildren'] > 0 and not cleaned_data['anclastpregnancy']:
+            raise forms.ValidationError('If the participant has children, during their last pregnancy, did they do for antenatal care?')
+        #if mother has children, did they ever go for anc
+        if cleaned_data['numberchildren'] > 0 and not cleaned_data['hivlastpregnancy']:
+            raise forms.ValidationError('If the participant has children/ has given birth, did they ever test for HIV on their last pregnancy?')
+        
         return cleaned_data
 
     class Meta:
