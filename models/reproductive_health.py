@@ -95,7 +95,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
 
     pregARV = models.CharField(
         verbose_name="85. Were you given antiretroviral medications to protect the baby?",
-        max_length=15,
+        max_length=95,
         choices=PREGARV_CHOICE,
         null=True,
         blank=True,
