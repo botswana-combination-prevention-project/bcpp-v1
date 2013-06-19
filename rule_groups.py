@@ -202,6 +202,13 @@ class StigmaPositiveARuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['positiveparticipant'])
     
+    HH_hivtest = ScheduledDataRule(
+        logic=Logic(
+            predicate=('HHhivtest', 'equals', 'Negative'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['stigma', 'stigmaopinion'])
+    
     class Meta:
         app_label = 'bcpp_subject'
         filter_model = (SubjectVisit, 'subject_visit')
@@ -224,6 +231,21 @@ class StigmaPositiveBRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['positiveparticipant'])
+    
+    recorded_hivresult = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recordedhivresult', 'equals', 'HIV-Negative'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['stigma', 'stigmaopinion'])
+    
+    verbal_hivresult = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbalhivresult', 'equals', 'HIV-Negative'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['stigma', 'stigmaopinion'])
+    
     
     class Meta:
         app_label = 'bcpp_subject'
