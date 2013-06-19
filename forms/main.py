@@ -509,7 +509,13 @@ class AccessToCareForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-
+        
+        #if other, specify
+        if cleaned_data['often_medicalcare'] == 'OTHER' and not cleaned_data['often_medicalcare_other']:
+            raise forms.ValidationError('if other medical care is used, specify the kind of medical care received')
+        if cleaned_data['whereaccess'] == 'Other, specify' and not cleaned_data['whereaccess_other']:
+            raise forms.ValidationError('if medical access is \'OTHER\', provide the type of medical access obtained')
+        
         return cleaned_data
 
     class Meta:
