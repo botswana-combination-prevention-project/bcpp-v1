@@ -18,7 +18,7 @@ class QualityOfLife (BaseScheduledVisitModel):
         )
     self_care = models.CharField(
         verbose_name="2. Self-Care",
-        max_length=50,
+        max_length=65,
         choices=SELF_CARE,
         help_text="",
         )
