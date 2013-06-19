@@ -79,7 +79,7 @@ class OutpatientCare (BaseScheduledVisitModel):
     travel_time = models.CharField (
         verbose_name=("11. For this most recent outpatient medical care visit, how long did it take you to get"
                   " to the clinic? "),
-        max_length=20,
+        max_length=25,
         choices=TRAVEL_HOURS,
         help_text="",
         )
@@ -101,7 +101,7 @@ class OutpatientCare (BaseScheduledVisitModel):
     waiting_hours = models.CharField (
         verbose_name=("14. For this most recent outpatient medical care visit, how long did you have"
                       " to wait before you were seen, from when you arrived at the facility? "),
-        max_length=20,
+        max_length=25,
         choices=TRAVEL_HOURS,
         help_text="",
         )
