@@ -20,6 +20,8 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
     reason_no_care = models.CharField(
         verbose_name="2. If you have never received HIV related medical/clinical care, why not? ",
         max_length=115,
+        null=True,
+        blank=True,
         choices=NO_MEDICALCARE_REASON,
         help_text="",
         )
