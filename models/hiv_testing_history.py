@@ -10,34 +10,34 @@ class HivTestingHistory (BaseScheduledVisitModel):
     """CS002"""
     
     HHhivtest = models.CharField(
-        verbose_name = "16. [For Interviewer:] What was the result of today's HIV test result?",
-        max_length = 75,
-        choices = HHHIVTEST_CHOICE,
+        verbose_name="16. [For Interviewer:] What was the result of today's HIV test result?",
+        max_length=75,
+        choices=HHHIVTEST_CHOICE,
         help_text="",
         )
 
     whynohivtest = models.CharField(
-        verbose_name = "17. What was the main reason why you did not want HIV testing as part of today's visit?",
-        max_length = 25,
-        null=True, 
+        verbose_name="17. What was the main reason why you did not want HIV testing as part of today's visit?",
+        max_length=25,
+        null=True,
         blank=True,
-        choices = WHYNOHIVTEST_CHOICE,
+        choices=WHYNOHIVTEST_CHOICE,
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
         )
 
     everhivtest = models.CharField(
-        verbose_name = "18. Not including today's HIV test, have you ever been tested for HIV before?",
-        max_length = 15,
-        choices = YES_NO_DONT_ANSWER,
+        verbose_name="18. Not including today's HIV test, have you ever been tested for HIV before?",
+        max_length=15,
+        choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
     
     hivtestrecord = models.CharField(
-        verbose_name = "19. Is a record of last HIV test [OPD card, Tebelopele, other] available to review?",
-        max_length = 15,
-        null=True, 
+        verbose_name="19. Is a record of last HIV test [OPD card, Tebelopele, other] available to review?",
+        max_length=15,
+        null=True,
         blank=True,
-        choices = YES_NO_DONT_ANSWER,
+        choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
     
