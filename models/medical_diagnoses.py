@@ -113,7 +113,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         blank=True,
         help_text=("Note:Record date the diagnosis was documented in the OPD record or"
                    " the date of the pathology report.  If report not available, then "
-                   "record participant's best knowledge. Enter -8 if participant does not"
+                   "record participant's best knowledge. Leave if participant does not"
                    " want to respond."),
         )
 
