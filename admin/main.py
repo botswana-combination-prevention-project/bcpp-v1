@@ -1075,7 +1075,9 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'often_medicalcare',
+        'often_medicalcare_other',
         'whereaccess',
+        'whereaccess_other',
         'overallaccess',
         'emergencyaccess',
         'expensiveaccess',
