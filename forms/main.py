@@ -414,6 +414,41 @@ class MedicalDiagnosesForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
+        #Validating that heartattack info is not given if patient has never had a heartattach
+        if cleaned_data['heartattack'] == 'No' and cleaned_data['heartattackrecord'] or cleaned_data['dateheartattack'] or cleaned_data['dxheartattack']:
+            raise forms.ValidationError('You are giving more heartattack related information yet have answered \'NO\', to (Q86)')
+        #if patient has had heart attack, is summary in OPD
+        if cleaned_data['heartattack'] == 'Yes' and not cleaned_data['heartattackrecord']:
+            raise forms.ValidationError('if patient has had a heart attack, is there a record available on the OPD card?')
+        #if OPD record available, give date as on OPD
+        if cleaned_data['heartattackrecord'] == 'Yes' and not cleaned_data['dateheartattack']:
+            raise forms.ValidationError('If a record of the heart attack is available on the OPD card, give the date of diagnosis')
+        #if OPD record available, give diagnosis as recorded on OPD
+        if cleaned_data['heartattackrecord'] == 'Yes' and not cleaned_data['dxheartattack']:
+            raise forms.ValidationError('If a record of the heart attack is available on the OPD card, provide the diagnosis detail (Q89).')
+        
+        #Validating that cancer info is not given if patient has never been diagnosed with cancer
+        if cleaned_data['cancer'] == 'No' and cleaned_data['cancerrecord'] or cleaned_data['datecancer'] or cleaned_data['dxcancer']:
+            raise forms.ValidationError('You are giving more cancer related information yet have answered \'NO\',patient has never been told he/she has cancer to (Q90)')
+        #if patient has had cancer, is summary in OPD
+        if cleaned_data['cancer'] == 'Yes' and not cleaned_data['cancerrecord']:
+            raise forms.ValidationError('if patient has cancer, is there a cancer record available on the OPD card?')
+        if cleaned_data['cancerrecord'] == 'Yes' and not cleaned_data['datecancer']:
+            raise forms.ValidationError('if cancer record is available on the OPD card, what is the cancer diagnosis date?')
+        if cleaned_data['cancerrecord'] == 'Yes' and not cleaned_data['dxcancer']:
+            raise forms.ValidationError('if cancer record is available on the OPD card, specify the cancer diagnosis?')
+        
+        #Validating that TB info is not given if patient has never been diagnosed with TB
+        if cleaned_data['tb'] == 'No' and cleaned_data['tbrecord'] or cleaned_data['datetb'] or cleaned_data['dxTB']:
+            raise forms.ValidationError('You are giving more TB related information yet have answered \'NO\',patient has never been diagnosed with TB to (Q95)')
+        #if patient ever had TB, is summary in OPD
+        if cleaned_data['tb'] == 'Yes' and not cleaned_data['tbrecord']:
+            raise forms.ValidationError('if patient has had TB, is there a record available on the OPD card?')
+        if cleaned_data['tbrecord'] == 'Yes' and not cleaned_data['datetb']:
+            raise forms.ValidationError('if a TB record is available on the OPD card, give the TB diagnosis date')
+        if cleaned_data['tbrecord'] == 'Yes' and not cleaned_data['dxTB']:
+            raise forms.ValidationError('if a TB record is available on the OPD card, what is the TB diagnosis type?')
+        
 
         return cleaned_data
 
