@@ -106,8 +106,6 @@ class RecentPartnerAdmin(SubjectVisitModelAdmin):
         "rel_type": admin.VERTICAL,
         "partner_residency": admin.VERTICAL,
         "partner_gender": admin.VERTICAL,
-        "last_sex_contact": admin.VERTICAL,
-        "first_sex_contact": admin.VERTICAL,
         "having_sex": admin.VERTICAL,
         "having_sex_reg": admin.VERTICAL,
         "alcohol_before_sex": admin.VERTICAL,
@@ -148,8 +146,6 @@ class SecondPartnerAdmin(SubjectVisitModelAdmin):
         "rel_type": admin.VERTICAL,
         "partner_residency": admin.VERTICAL,
         "partner_gender": admin.VERTICAL,
-        "last_sex_contact": admin.VERTICAL,
-        "first_sex_contact": admin.VERTICAL,
         "having_sex": admin.VERTICAL,
         "having_sex_reg": admin.VERTICAL,
         "alcohol_before_sex": admin.VERTICAL,
@@ -190,8 +186,6 @@ class ThirdPartnerAdmin(SubjectVisitModelAdmin):
         "rel_type": admin.VERTICAL,
         "partner_residency": admin.VERTICAL,
         "partner_gender": admin.VERTICAL,
-        "last_sex_contact": admin.VERTICAL,
-        "first_sex_contact": admin.VERTICAL,
         "having_sex": admin.VERTICAL,
         "having_sex_reg": admin.VERTICAL,
         "alcohol_before_sex": admin.VERTICAL,
@@ -556,7 +550,9 @@ class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
         'intendresidency',
         'nightsaway',
         'cattlepostlands',
-        'reasonaway',)
+        'cattlepostlands_other',
+        'reasonaway',
+        'reasonaway_other',)
     radio_fields = {
         "lengthresidence":admin.VERTICAL,
         "forteennights":admin.VERTICAL,
