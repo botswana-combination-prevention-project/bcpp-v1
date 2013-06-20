@@ -27,7 +27,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         )
 
     friendstigma = models.CharField(
-        verbose_name=("Supplemental ST25. I fear that if I disclosed my HIV status to my"
+        verbose_name=("Supplemental ST15. I fear that if I disclosed my HIV status to my"
                       " friends, they would lose respect for me."),
         max_length=25,
         choices=AGREE_STRONGLY,
@@ -43,7 +43,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         )
 
     enactedtalkstigma = models.CharField(
-        verbose_name="Supplemental ST17People have talked badly about me.",
+        verbose_name="Supplemental ST17. People have talked badly about me.",
         max_length=25,
         choices=AGREE_STRONGLY,
         help_text="",
