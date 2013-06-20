@@ -34,23 +34,21 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         choices=GENDER,
         help_text="",
         )
-    last_sex_contact = models.DateField(
+    last_sex_contact = models.IntegerField(
         verbose_name="5. When was the last (most recent) time you had sex with this person (how long ago)? ",
-        max_length=25,
-        choices=MAIN_PARTNER_RESIDENCY,
+        max_length=2,
         help_text="You can give either a date or the number of days/months/years since last sex. Interviewer, convert to days and record",
         )
     last_sex_contact_other = OtherCharField(
-        verbose_name="Record number of days converted to.",
+        verbose_name="Record if number is in days/months/years",
         )
-    first_sex_contact = models.DateField(
+    first_sex_contact = models.IntegerField(
         verbose_name="6.When was the first time you had sex with this person (how long ago)? ",
-        max_length=25,
-        choices=MAIN_PARTNER_RESIDENCY,
+        max_length=2,
         help_text="You can give either a date or the number of days/months/years since last sex. Interviewer, convert to days and record",
         )
     first_sex_contact_other = OtherCharField(
-        verbose_name="Record number of days converted to.",
+        verbose_name="Record if number is in days/months/years",
         )
     regular_sex = models.IntegerField(
         verbose_name=("7.During the last 3 months (of your relationship if it has ended) how"
@@ -60,19 +58,19 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         )
     having_sex = models.CharField(
         verbose_name="8. Are you still having sex with this person? ",
-        max_length=17,
+        max_length=25,
         choices=YES_NO_REFUSED,
         help_text="",
         )
     having_sex_reg = models.CharField(
         verbose_name="9. Are you still having sex with this person? ",
-        max_length=17,
+        max_length=25,
         choices=SEX_REGULARITY,
         help_text="",
         )
     alcohol_before_sex = models.CharField(
         verbose_name="10. Last time you had sex with this partner, did you drink alcohol before sex? ",
-        max_length=17,
+        max_length=20,
         choices=YES_NO_REFUSED,
         help_text="",
         )
@@ -84,7 +82,7 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         )
     partner_arv = models.CharField(
         verbose_name="12. Is this partner taking antiretroviral treatment?  ",
-        max_length=8,
+        max_length=15,
         null=True,
         blank=True,
         choices=YES_NO_DONT_KNOW,
@@ -92,7 +90,7 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         )
     status_disclosure = models.CharField(
         verbose_name="13.Have you disclosed your HIV status to this partner? ",
-        max_length=8,
+        max_length=20,
         null=True,
         blank=True,
         choices=YES_NO_REFUSED,
@@ -101,7 +99,7 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
     multiple_partners = models.CharField(
         verbose_name=("14. To the best of your knowledge, did he/she ever have other"
                       " sex partners while you two were having a sexual relationship?"),
-        max_length=8,
+        max_length=15,
         null=True,
         blank=True,
         choices=YES_NO_DONT_KNOW,
@@ -109,7 +107,7 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         )
     intercourse_type = models.CharField(
         verbose_name="15. Can you tell me what type of sex you had with this sex partner?  ",
-        max_length=8,
+        max_length=25,
         null=True,
         blank=True,
         choices=INTERCOURSE_TYPE,
