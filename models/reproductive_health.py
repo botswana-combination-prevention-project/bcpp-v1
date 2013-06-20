@@ -51,7 +51,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
 
     ancreg = models.CharField(
         verbose_name="80. Have you registered for antenatal care?",
-        max_length=15,
+        max_length=55,
         null=True,
         blank=True,
         choices=ANCREG_CHOICE,
@@ -64,7 +64,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text=("Note:If participant does not want to answer, leave blank.  "
-                   "If participant is unable to estimate date, record -4."),
+                   "If participant is unable to estimate date, leave blank"),
         )
 
     lastbirth = models.DateField(
