@@ -14,7 +14,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     
     flooring_type = models.CharField(
         verbose_name="1. What is the main type of flooring for this household?",
-        max_length=20,
+        max_length=25,
         choices=FLOORING_TYPE,
         help_text="",
         )
@@ -31,7 +31,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
         )
     water_source = models.CharField(
         verbose_name="3. What is the main source of drinking water for this household? ",
-        max_length=24,
+        max_length=35,
         choices=WATER_SOURCE,
         help_text="",
         )
@@ -39,16 +39,20 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     
     energy_source = models.CharField(
         verbose_name="4. What is the main source of energy used for cooking? ",
-        max_length=20,
+        max_length=35,
         choices=ENERGY_SOURCE,
         help_text="",
         )
+    energy_source_other = OtherCharField()
+    
     toilet_facility = models.CharField(
         verbose_name="5. What is the main toilet facility used in this household? ",
-        max_length=28,
+        max_length=35,
         choices=TOILET_FACILITY,
         help_text="",
         )
+    toilet_facility_other = OtherCharField()
+    
     electrical_appliances= models.ManyToManyField(ElectricalAppliances, 
         verbose_name=("6.Does any member of this household have any of the following that are"
                       " currently working? "),
@@ -85,7 +89,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
         help_text=("Note: May need to assist in adding up sheep between household members"
                    " or helping estimate. If resident does not want to answer, leave blank."),
         )
-    cattle_owned = models.CharField(
+    cattle_owned = models.IntegerField(
         verbose_name=("10. How many head of cattle (cows and bulls) are owned by the members"
                       " of this household? [If unsure of exact number, give your best guess] "),
         max_length=3,
@@ -97,7 +101,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     smaller_meals = models.CharField(
         verbose_name=("11. In the past 4 weeks, did you or any household member have to eat a"
                       " smaller meal than you felt you needed because there was not enough food? "),
-        max_length=20,
+        max_length=25,
         choices=SMALLER_MEALS,
         help_text="",
         )
