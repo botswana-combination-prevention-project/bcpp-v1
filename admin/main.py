@@ -372,6 +372,7 @@ class BaselineHouseholdSurveyAdmin(SubjectVisitModelAdmin):
         "water_source",
         "water_source_other",
         "energy_source",
+        "energy_source_other",
         "toilet_facility",
         "electrical_appliances",
         "transport_mode",
