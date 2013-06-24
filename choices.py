@@ -9,7 +9,7 @@ YES_NO_DONT_ANSWER = (
 YES_NO_UNSURE = (
         ('Yes','Yes'),
         ('No','No'),
-        ('I am not sure','I am not sure'),
+        ('not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
@@ -60,7 +60,7 @@ NIGHTSAWAY_CHOICE = (
 CATTLEPOSTLANDS_CHOICE = (
         ('Farm/lands','Farm/lands'),
         ('Cattle post','Cattle post'),
-        ('Other community, specify:','Other community, specify:'),
+        ('Other community','Other community, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
@@ -99,7 +99,7 @@ SOLVEENGAGEMENT_CHOICE = (
     )
 
 RELIGION_CHOICE = (
-        ('Christian, specify demonination:','Christian, specify demonination:'),
+        ('Christian','Christian, specify demonination:'),
         ('Hindu','Hindu'),
         ('Islam','Islam'),
         ('None','None'),
@@ -108,7 +108,7 @@ RELIGION_CHOICE = (
     )
 
 ETHNIC_CHOICE = (
-        ('Tswana, specify ethnic group:','Tswana, specify ethnic group:'),
+        ('Tswana','Tswana, specify ethnic group:'),
         ('Kalanga','Kalanga'),
         ('Basarwa','Basarwa'),
         ('Kgalagadi','Kgalagadi'),
@@ -120,8 +120,8 @@ ETHNIC_CHOICE = (
 
 MARITALSTATUS_CHOICE = (
         ('Single/never married','Single/never married'),
-        ('Married (common law/civil or customary/traditional)','Married (common law/civil or customary/traditional)'),
-        ('Divorced or formally separated','Divorced or formally separated'),
+        ('Married','Married (common law/civil or customary/traditional)'),
+        ('Divorced/separated','Divorced or formally separated'),
         ('Widowed','Widowed'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
@@ -151,8 +151,8 @@ HHHIVTEST_CHOICE = (
         ('Positive','Positive'),
         ('Negative','Negative'),
         ('Indeterminate','Indeterminate'),
-        ('Participant declined testing','Participant declined testing'),
-        ('Test could not be performed (e.g. supply outage, technical problem)','Test could not be performed (e.g. supply outage, technical problem)'),
+        ('Declined','Participant declined testing'),
+        ('Not performed','Test could not be performed (e.g. supply outage, technical problem)'),
     )
 
 WHYNOHIVTESTING_CHOICE = (
@@ -193,8 +193,8 @@ VERBALHIVRESULT_CHOICE = (
 
 WHEREHIVTEST_CHOICE = (
         ('Tebelopele VCT center','Tebelopele VCT center'),
-        ('Antenatal care at healthcare facility (including private clinics)','Antenatal care at healthcare facility (including private clinics)'),
-        ('Other (not antenatal care) at healthcare facility (including private clinics)','Other (not antenatal care) at healthcare facility (including private clinics)'),
+        ('Antenatal care at healthcare facility','Antenatal care at healthcare facility (including private clinics)'),
+        ('Other (not antenatal care) at healthcare facility','Other (not antenatal care) at healthcare facility (including private clinics)'),
         ('In my house as part of door-to-door services','In my house as part of door-to-door services'),
         ('In a mobile tent or vehicle in my neighborhood','In a mobile tent or vehicle in my neighborhood'),
         ('Other, specify:','Other, specify:'),
@@ -212,8 +212,27 @@ WHYHIVTEST_CHOICE = (
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
+HIVTEST_PREFEREDTIME= (
+        ('Yes, specify','Yes, specify:'),
+        ('No, any time of day is fine','No, any time of day is fine'),
+        ('I am not sure','I am not sure'),
+        ('Don\'t want to answer','Don\'t want to answer'),
+    )
 
-WHYNOHIVTEST_CHOICE = (
+HIVTEST_PREFEREDWEEK= (
+        ('Yes, specify','Yes, specify:'),
+        ('No, any day of the week is fine','No, any day of the week is fine'),
+        ('I am not sure','I am not sure'),
+        ('Don\'t want to answer','Don\'t want to answer'),
+    )
+HIVTEST_PREFEREDYEAR= (
+        ('Yes, specify','Yes, specify:'),
+        ('No, any month is fine','No, any month is fine'),
+        ('I am not sure','I am not sure'),
+        ('Don\'t want to answer','Don\'t want to answer'),
+    )
+
+HIVTESTPREFERENCE_CHOICE = (
         ('At my home','At my home'),
         ('At a mobile testing tent or vehicle in my neighborhood','At a mobile testing tent or vehicle in my neighborhood'),
         ('At a health facility in my community','At a health facility in my community'),
@@ -260,7 +279,7 @@ LASTSEX_CHOICE = (
 
 FIRSTPARTNERLIVE_CHOICE = (
         ('In this community','In this community'),
-        ('On farm/cattle post that is part of this community','On farm/cattle post that is part of this community'),
+        ('On farm/cattle post','On farm/cattle post that is part of this community'),
         ('Outside this community','Outside this community'),
         ('Both in this community and outside this community','Both in this community and outside this community'),
         ('Don\'t want to answer','Don\'t want to answer'),
@@ -279,9 +298,9 @@ FIRSTRELATIONSHIP_CHOICE = (
 
 
 FIRSTPARTNERHIV_CHOICE = (
-        ('HIV-positive','HIV-positive'),
-        ('HIV-negative','HIV-negative'),
-        ('I am not sure HIV status','I am not sure HIV status'),
+        ('positive','HIV-positive'),
+        ('negative','HIV-negative'),
+        ('I am not sure','I am not sure HIV status'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
@@ -484,20 +503,6 @@ REASONCIRC_CHOICE = (
 
 WHYNOHIVTEST_CHOICE = (
         ('Yes, specify:','Yes, specify:'),
-        ('No, any time of day is fine','No, any time of day is fine'),
-        ('I am not sure','I am not sure'),
-        ('Don\'t want to answer','Don\'t want to answer'),
-    )
-
-WHYNOHIVTEST_CHOICE = (
-        ('Yes, specify:','Yes, specify:'),
-        ('No, any day of the week is fine','No, any day of the week is fine'),
-        ('I am not sure','I am not sure'),
-        ('Don\'t want to answer','Don\'t want to answer'),
-    )
-
-WHYNOHIVTEST_CHOICE = (
-        ('Yes, specify:','Yes, specify:'),
         ('No, any month is fine','No, any month is fine'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
@@ -559,7 +564,7 @@ WHERECIRC_CHOICE = (
         ('No, not sexually active and will not become sexual active','No, not sexually active and will not become sexual active'),
         ('No, prior surgical sterilization','No, prior surgical sterilization'),
         ('No, partner(s) surgically sterilized','No, partner(s) surgically sterilized'),
-        ('No, post-menopause (at least 24 consecutive months without a period)','No, post-menopause (at least 24 consecutive months without a period)'),
+        ('No, post-menopause','No, post-menopause (at least 24 consecutive months without a period)'),
         ('Other, specify:','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
@@ -575,7 +580,7 @@ ANCREG_CHOICE = (
 
 PREGARV_CHOICE = (
         ('Yes, AZT (single drug, twice a day)','Yes, AZT (single drug, twice a day)'),
-        ('Yes, HAART [multiple drugs like Atripla, Truvada, or Combivir taken once or twice a day]','Yes, HAART [multiple drugs like Atripla, Truvada, or Combivir taken once or twice a day]'),
+        ('Yes, HAART ','Yes, HAART [multiple drugs like Atripla, Truvada, or Combivir taken once or twice a day]'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
@@ -623,10 +628,10 @@ ALCOHOL_CHOICE = (
 WHEREACCESS_CHOICE = (
         ('Traditional, faith, or religious healer/doctor','Traditional, faith, or religious healer/doctor'),
         ('Pharmacy','Pharmacy'),
-        ('Public or government health facility or clinic','Public or government health facility or clinic'),
-        ('Private health facility or clinic','Private health facility or clinic'),
+        ('Public or government','Public or government health facility or clinic'),
+        ('Private health facility','Private health facility or clinic'),
         ('Community health worker','Community health worker'),
-        ('Other, specify:','Other, specify:'),
+        ('OTHER','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
