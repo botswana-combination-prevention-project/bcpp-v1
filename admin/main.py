@@ -1,9 +1,9 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HouseholdComposition, Respondent
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HouseholdComposition, Respondent, FutureHivTesting
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm, HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm, AccessToCareForm, HouseholdCompositionForm
+from bcpp_subject.forms import SubjectLocatorForm, SubjectDeathForm, RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm, QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm, CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm, EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm, MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm, HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm, AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):
@@ -665,7 +665,22 @@ class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
         'whyhivtest',
         'whynohivtest',
         'hiv_pills',
-        'arvshivtest',
+        'arvshivtest',)
+    radio_fields = {
+        "wherehivtest":admin.VERTICAL,
+        "whyhivtest":admin.VERTICAL,
+        "whynohivtest":admin.VERTICAL,
+        "hiv_pills":admin.VERTICAL,
+        "arvshivtest":admin.VERTICAL}
+admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
+
+
+# FutureHivTesting 
+class FutureHivTestingAdmin(SubjectVisitModelAdmin):
+ 
+    form = HivTestingSupplementalForm
+    fields = (
+        "subject_visit",
         'prefer_hivtest',
         'hivtest_time',
         'hivtest_time_other',
@@ -674,17 +689,11 @@ class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
         'hivtest_year',
         'hivtest_year_other')
     radio_fields = {
-        "wherehivtest":admin.VERTICAL,
-        "whyhivtest":admin.VERTICAL,
-        "whynohivtest":admin.VERTICAL,
-        "hiv_pills":admin.VERTICAL,
-        "arvshivtest":admin.VERTICAL,
-        "prefer_hivtest":admin.VERTICAL,
-        "whynohivtest":admin.VERTICAL,
+        'prefer_hivtest':admin.VERTICAL,
         "hivtest_time":admin.VERTICAL,
         "hivtest_week":admin.VERTICAL,
         "hivtest_year":admin.VERTICAL,}
-admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
+admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 
 
 #SexualBehaviour
