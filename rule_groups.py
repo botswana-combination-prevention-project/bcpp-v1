@@ -184,7 +184,7 @@ class StigmaPositiveARuleGroup(RuleGroup):
             predicate=('HHhivtest', 'equals', 'Positive'),
             consequence='new',
             alternative='not_required'),
-        target_model=['supplementalht', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
+        target_model=['hivtestingsupplemental', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
     
     HH_hivtest = ScheduledDataRule(
         logic=Logic(
@@ -207,7 +207,7 @@ class StigmaPositiveBRuleGroup(RuleGroup):
             predicate=('recordedhivresult', 'equals', 'HIV-Positive'),
             consequence='new',
             alternative='not_required'),
-        target_model=['supplementalht', 'hivcareadherence','positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
+        target_model=['hivtestingsupplemental', 'hivcareadherence','positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
     
     verbalhivresult = ScheduledDataRule(
         logic=Logic(
