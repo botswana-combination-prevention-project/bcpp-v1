@@ -678,7 +678,7 @@ admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
 # FutureHivTesting 
 class FutureHivTestingAdmin(SubjectVisitModelAdmin):
  
-    form = HivTestingSupplementalForm
+    form = FutureHivTestingForm
     fields = (
         "subject_visit",
         'prefer_hivtest',
