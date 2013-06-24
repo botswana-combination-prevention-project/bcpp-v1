@@ -22,9 +22,9 @@ def gen_admin( **kwargs):
 #     foreign_key_field = "id"
 #     base_model_admin = 'MyModelAdmin'
 
-#     app_label = 'bcpp_subject'
-#     foreign_key_field = "subject_visit"
-#     base_model_admin = 'SubjectVisitModelAdmin'
+    app_label = 'bcpp_subject'
+    foreign_key_field = "subject_visit"
+    base_model_admin = 'SubjectVisitModelAdmin'
 
 #     app_label = 'bcpp_subject'
 #     foreign_key_field = "appointment"
