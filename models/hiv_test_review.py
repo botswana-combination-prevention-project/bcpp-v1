@@ -9,9 +9,8 @@ class HivTestReview (BaseScheduledVisitModel):
     
     """CS002"""
     
-    hivtestdate = models.DateTimeField(
+    hivtestdate = models.DateField(
         verbose_name="20. What was the recorded date of the last HIV test?",
-        max_length=25,
         null=True,
         blank=True,
         help_text=("Note:If participant does not want to answer, leave blank.  "
@@ -28,7 +27,7 @@ class HivTestReview (BaseScheduledVisitModel):
         )
 
     whenhivtest = models.CharField(
-        verbose_name=("22. Not including today's HIV test, when was the last [most recent]"
+        verbose_name=("22. When was the last [most recent]"
                         " time you were tested for HIV?"),
         max_length=25,
         choices=WHENHIVTEST_CHOICE,
