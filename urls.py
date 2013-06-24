@@ -23,7 +23,7 @@ urlpatterns += subject_dashboard.get_urlpatterns('bcpp_dashboard.views', regex, 
 
 regex = {}
 regex['dashboard_type'] = 'subject'
-regex['subject_identifier'] = '066\-[0-9]{6,8}\-[0-9]{1}'
+regex['subject_identifier'] = '041\-[0-9]{6,8}\-[0-9]{1}'
 regex['visit_code'] = '[A-Z0-9]+'
 regex['visit_instance'] = '[0-9]{1}'
 subject_dashboard = SubjectDashboard()
