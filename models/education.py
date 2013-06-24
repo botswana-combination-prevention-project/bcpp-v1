@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import EDUCATION_CHOICE, EMPLOYMENT_CHOICE, YES_NO_DONT_ANSWER
 from bcpp_subject.choices import MONTHLY_INCOME
@@ -7,9 +6,9 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Education (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     education = models.CharField(
         verbose_name="12. What is your highest level of education attainment?",
         max_length=65,
@@ -39,11 +38,8 @@ class Education (BaseScheduledVisitModel):
         choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
-    
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_education_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

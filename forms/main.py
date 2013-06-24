@@ -1,5 +1,5 @@
 from django import forms
-from datetime import datetime 
+from datetime import datetime
 from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HouseholdComposition, Respondent, FutureHivTesting 
 
@@ -144,7 +144,7 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #validating if other community, you specify
-        if cleaned_data['cattlepostlands'] == 'Other community' and not cleaned_data['cattlepostlands_other']:
+        if cleaned_data.get('cattlepostlands') == 'Other community' and not cleaned_data['cattlepostlands_other']:
             raise forms.ValidationError('If participant was staying in another community, specify the community')
         #if reason for staying away is OTHER, specify reason
         if cleaned_data['reasonaway'] == 'Other' and not cleaned_data['reasonaway_other']:

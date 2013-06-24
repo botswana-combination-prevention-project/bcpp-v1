@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp_list.models import LiveWith
@@ -8,9 +7,9 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Demographics (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     religion = models.CharField(
         verbose_name="7. What is your religion affiliation?",
         max_length=35,
@@ -40,7 +39,7 @@ class Demographics (BaseScheduledVisitModel):
         max_length=2,
         null=True,
         blank=True,
-        help_text="Note:leave blank if participant does not want to respond.",
+        help_text="Leave blank if participant does not want to respond.",
         )
 
     livewith = models.ManyToManyField(LiveWith,
@@ -49,11 +48,8 @@ class Demographics (BaseScheduledVisitModel):
         blank=True,
         help_text="[indicate all that apply]",
         )
-    
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_demographics_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

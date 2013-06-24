@@ -9,9 +9,9 @@ from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOI
 
 
 class BaselineHouseholdSurvey (BaseScheduledVisitModel):
-    
+
     """CS001"""
-    
+
     flooring_type = models.CharField(
         verbose_name="1. What is the main type of flooring for this household?",
         max_length=25,
@@ -19,7 +19,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
         help_text="",
         )
     flooring_type_other = OtherCharField()
-    
+
     living_rooms = models.IntegerField(
         verbose_name=("2.How many living rooms are there in this household unit"
                       " (exclude garage, bathroom, kitchen, store-room, etc if not used as living room )? "),
@@ -36,7 +36,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
         help_text="",
         )
     water_source_other = OtherCharField()
-    
+
     energy_source = models.CharField(
         verbose_name="4. What is the main source of energy used for cooking? ",
         max_length=35,
@@ -105,7 +105,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
         choices=SMALLER_MEALS,
         help_text="",
         )
-   
+
     history = AuditTrail()
 
     def get_absolute_url(self):

@@ -6,17 +6,17 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivTestingHistory (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
-    HHhivtest = models.CharField(
+
+    hiv_result = models.CharField(
         verbose_name="16. [For Interviewer:] What was the result of today's HIV test result?",
         max_length=75,
         choices=HHHIVTEST_CHOICE,
         help_text="",
         )
 
-    whynohivtest = models.CharField(
+    why_not_tested = models.CharField(
         verbose_name="17. What was the main reason why you did not want HIV testing as part of today's visit?",
         max_length=25,
         null=True,
@@ -25,14 +25,14 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
         )
 
-    everhivtest = models.CharField(
+    has_tested = models.CharField(
         verbose_name="18. Have you ever been tested for HIV before?",
         max_length=15,
         choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
-    
-    hivtestrecord = models.CharField(
+
+    has_record = models.CharField(
         verbose_name="19. Is a record of last HIV test [OPD card, Tebelopele, other] available to review?",
         max_length=15,
         null=True,
@@ -40,7 +40,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
-    
+
     history = AuditTrail()
 
     def get_absolute_url(self):

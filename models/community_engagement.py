@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp_list.models import NeighbourhoodProblems
 from bcpp.choices import COMMUNITYENGAGEMENT_CHOICE, VOTEENGAGEMENT_CHOICE, SOLVEENGAGEMENT_CHOICE
@@ -7,7 +6,7 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class CommunityEngagement (BaseScheduledVisitModel):
-    
+
     """CS002"""
     
     communityengagement = models.CharField(
@@ -36,11 +35,8 @@ class CommunityEngagement (BaseScheduledVisitModel):
         choices=SOLVEENGAGEMENT_CHOICE,
         help_text="",
         )
-    
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_communityengagement_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

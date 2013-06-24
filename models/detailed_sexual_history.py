@@ -6,9 +6,9 @@ from bcpp_subject.choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_
 
 
 class DetailedSexualHistory (BaseScheduledVisitModel):
-    
+
     """CS003"""
-    
+
     rel_type = models.CharField(
         verbose_name="1.  What type of relationship do you have with this person? ",
         max_length=37,
@@ -16,7 +16,7 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         help_text="",
         )
     rel_type_other = OtherCharField()
-    
+
     partner_residency = models.CharField(
         verbose_name="2. To the best of your knowledge, where does you main sexual partner live? ",
         max_length=25,
@@ -114,6 +114,6 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         help_text=("Remember: Vaginal sex is when a man puts his penis in the vagina of a woman."
                    " Anal sex is when a man puts his penis in the rectum of a man or a woman."),
         )
-    
+
     class Meta:
         abstract = True

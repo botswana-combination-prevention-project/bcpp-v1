@@ -1,4 +1,5 @@
-from subject_consent import *
+from subject_consent import SubjectConsent
+from subject_off_study import SubjectOffStudy
 from subject_visit import SubjectVisit
 from subject_locator import SubjectLocator
 from subject_death import SubjectDeath

@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO_REFUSED
 from bcpp_subject.choices import NO_MEDICALCARE_REASON, HEALTH_CARE_PLACE, CARE_REGULARITY, DOCTOR_VISITS
@@ -7,10 +6,11 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivHealthCareCosts (BaseScheduledVisitModel):
-    
-    """CE001"""
-    """Read to Participant: The next set of questions are about you obtaining medical or clinical care related to HIV."""
-    
+
+    """CE001.
+
+    Read to Participant: The next set of questions are about you obtaining medical or clinical care related to HIV."""
+
     hiv_medical_care = models.CharField(
         verbose_name="1. Have you ever received HIV related medical/clinical care? ",
         max_length=17,
@@ -44,11 +44,8 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         choices=DOCTOR_VISITS,
         help_text="",
         )
-     
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_hivhealthcarecosts_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'
