@@ -1,18 +1,21 @@
 from datetime import date
 from django import forms
-from django.core.exceptions  import ObjectDoesNotExist
-from bhp_common.utils import formatted_age
 from bhp_common.utils import check_initials_field
 from bhp_consent.forms import BaseSubjectConsentForm
 from dateutil.relativedelta import relativedelta
 from bhp_variables.models import StudySpecific
 from bhp_registration.models import RegisteredSubject
-from bcpp_survey.models import Survey
+#from bcpp_survey.models import Survey
 from bcpp_household.models import HouseholdStructureMember
-from bcpp_subject.models import SubjectConsentYearOne, SubjectConsentYearTwo, SubjectConsentYearThree, SubjectConsentYearFour, SubjectConsentYearFive
+from bcpp_subject.models import SubjectConsent  # SubjectConsentYearOne, SubjectConsentYearTwo, SubjectConsentYearThree, SubjectConsentYearFour, SubjectConsentYearFive
 
 
-class MyBaseSubjectConsentForm(BaseSubjectConsentForm):
+class SubjectConsentForm(BaseSubjectConsentForm):
+
+#    try:
+#        survey = Survey.objects.get(survey_slug='bcpp-year-2')
+#    except:
+#        survey = None
 
     def clean(self):
 
@@ -81,55 +84,58 @@ class MyBaseSubjectConsentForm(BaseSubjectConsentForm):
         if my_gender and household_structure_member:
             if household_structure_member.gender != my_gender:
                 raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_structure_member.gender, my_gender))
-        return super(MyBaseSubjectConsentForm, self).clean()
-
-
-class SubjectConsentYearOneForm(MyBaseSubjectConsentForm):
-    try:
-        survey = Survey.objects.get(survey_slug='bcpp-year-1')
-    except:
-        survey = None
+        return super(SubjectConsentForm, self).clean()
 
     class Meta:
-        model = SubjectConsentYearOne
-        exclude = ('assessment_score', 'is_minor', )
+        model = SubjectConsent
 
-
-class SubjectConsentYearTwoForm(MyBaseSubjectConsentForm):
-    try:
-        survey = Survey.objects.get(survey_slug='bcpp-year-2')
-    except:
-        survey = None
-
-    class Meta:
-        model = SubjectConsentYearTwo
-
-
-class SubjectConsentYearThreeForm(MyBaseSubjectConsentForm):
-    try:
-        survey = Survey.objects.get(survey_slug='bcpp-year-3')
-    except:
-        survey = None
-
-    class Meta:
-        model = SubjectConsentYearThree
-
-
-class SubjectConsentYearFourForm(MyBaseSubjectConsentForm):
-    try:
-        survey = Survey.objects.get(survey_slug='bcpp-year-4')
-    except:
-        survey = None
-
-    class Meta:
-        model = SubjectConsentYearFour
-
-
-class SubjectConsentYearFiveForm(MyBaseSubjectConsentForm):
-    try:
-        survey = Survey.objects.get(survey_slug='bcpp-year-5')
-    except:
-        survey = None
-
-    class Meta:
-        model = SubjectConsentYearFive
+# 
+# class SubjectConsentYearOneForm(MyBaseSubjectConsentForm):
+#     try:
+#         survey = Survey.objects.get(survey_slug='bcpp-year-1')
+#     except:
+#         survey = None
+# 
+#     class Meta:
+#         model = SubjectConsentYearOne
+#         exclude = ('assessment_score', 'is_minor', )
+# 
+# 
+# class SubjectConsentYearTwoForm(MyBaseSubjectConsentForm):
+#     try:
+#         survey = Survey.objects.get(survey_slug='bcpp-year-2')
+#     except:
+#         survey = None
+# 
+#     class Meta:
+#         model = SubjectConsentYearTwo
+# 
+# 
+# class SubjectConsentYearThreeForm(MyBaseSubjectConsentForm):
+#     try:
+#         survey = Survey.objects.get(survey_slug='bcpp-year-3')
+#     except:
+#         survey = None
+# 
+#     class Meta:
+#         model = SubjectConsentYearThree
+# 
+# 
+# class SubjectConsentYearFourForm(MyBaseSubjectConsentForm):
+#     try:
+#         survey = Survey.objects.get(survey_slug='bcpp-year-4')
+#     except:
+#         survey = None
+# 
+#     class Meta:
+#         model = SubjectConsentYearFour
+# 
+# 
+# class SubjectConsentYearFiveForm(MyBaseSubjectConsentForm):
+#     try:
+#         survey = Survey.objects.get(survey_slug='bcpp-year-5')
+#     except:
+#         survey = None
+# 
+#     class Meta:
+#         model = SubjectConsentYearFive
