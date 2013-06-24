@@ -1,6 +1,5 @@
 from main import *
-from subject_consent_admin import *
-
+from subject_consent_admin import SubjectConsentAdmin
 from subject_locator_admin import SubjectLocatorAdmin
 from subject_refusal_admin import SubjectRefusalAdmin
 from subject_absentee_admin import *

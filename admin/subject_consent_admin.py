@@ -2,16 +2,17 @@ from django.contrib import admin
 from bhp_consent.admin import BaseConsentModelAdmin
 from bhp_registration.models import RegisteredSubject
 from bcpp_household.models import HouseholdStructureMember
-from bcpp_subject.forms import SubjectConsentYearOneForm, SubjectConsentYearTwoForm, SubjectConsentYearThreeForm, SubjectConsentYearFourForm, SubjectConsentYearFiveForm
-from bcpp_subject.models import SubjectConsentYearOne, SubjectConsentYearTwo, SubjectConsentYearThree, SubjectConsentYearFour, SubjectConsentYearFive
+from bcpp_subject.models import SubjectConsent  # YearOneForm, SubjectConsentYearTwoForm, SubjectConsentYearThreeForm, SubjectConsentYearFourForm, SubjectConsentYearFiveForm
+from bcpp_subject.forms import SubjectConsentForm  # YearOne, SubjectConsentYearTwo, SubjectConsentYearThree, SubjectConsentYearFour, SubjectConsentYearFive
 
 
-class BaseSubjectConsentAdmin(BaseConsentModelAdmin):
+class SubjectConsentAdmin(BaseConsentModelAdmin):
 
     dashboard_type = 'subject'
+    form = SubjectConsentForm
 
     def __init__(self, *args, **kwargs):
-        super(BaseSubjectConsentAdmin, self).__init__(*args, **kwargs)
+        super(SubjectConsentAdmin, self).__init__(*args, **kwargs)
         for i, item in enumerate(self.fields):
             if item == 'assessment_score':
                 del self.fields[i]
@@ -21,7 +22,7 @@ class BaseSubjectConsentAdmin(BaseConsentModelAdmin):
         self.radio_fields.update({"is_minor": admin.VERTICAL})
 
     def save_model(self, request, obj, form, change):
-        super(BaseSubjectConsentAdmin, self).save_model(request, obj, form, change)
+        super(SubjectConsentAdmin, self).save_model(request, obj, form, change)
         # update hsm member_status
         household_structure_member = obj.household_structure_member
         household_structure_member.member_status = 'CONSENTED'
@@ -32,48 +33,51 @@ class BaseSubjectConsentAdmin(BaseConsentModelAdmin):
         household_structure_member = obj.household_structure_member
         household_structure_member.member_status = None
         household_structure_member.save()
-        return super(BaseSubjectConsentAdmin, self).delete_model(request, obj)
+        return super(SubjectConsentAdmin, self).delete_model(request, obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure_member":
             kwargs["queryset"] = HouseholdStructureMember.objects.filter(id__exact=request.GET.get('household_structure_member', 0))
         if db_field.name == "registered_subject":
             kwargs["queryset"] = RegisteredSubject.objects.filter(id__exact=request.GET.get('registered_subject', 0))
-        return super(BaseSubjectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(SubjectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+admin.site.register(SubjectConsent, SubjectConsentAdmin)
 
 
-class SubjectConsentYearOneAdmin(BaseSubjectConsentAdmin):
-    form = SubjectConsentYearOneForm
-admin.site.register(SubjectConsentYearOne, SubjectConsentYearOneAdmin)
-
-
-class SubjectConsentYearTwoAdmin(BaseSubjectConsentAdmin):
-
-    form = SubjectConsentYearTwoForm
-
-    def __init__(self, *args, **kwargs):
-        super(SubjectConsentYearTwoAdmin, self).__init__(*args, **kwargs)
-        # add 'is_minor' before guardian name
-        for i, fld in enumerate(self.fields):
-            if fld == 'guardian_name':
-                self.fields.insert(i, 'is_minor')
-                break
-admin.site.register(SubjectConsentYearTwo, SubjectConsentYearTwoAdmin)
-
-
-class SubjectConsentYearThreeAdmin(BaseSubjectConsentAdmin):
-    form = SubjectConsentYearThreeForm
-admin.site.register(SubjectConsentYearThree, SubjectConsentYearThreeAdmin)
-
-
-class SubjectConsentYearFourAdmin(BaseSubjectConsentAdmin):
-    form = SubjectConsentYearFourForm
-admin.site.register(SubjectConsentYearFour, SubjectConsentYearFourAdmin)
-
-
-class SubjectConsentYearFiveAdmin(BaseSubjectConsentAdmin):
-    form = SubjectConsentYearFiveForm
-admin.site.register(SubjectConsentYearFive, SubjectConsentYearFiveAdmin)
+# 
+# class SubjectConsentYearOneAdmin(BaseSubjectConsentAdmin):
+#     form = SubjectConsentYearOneForm
+# admin.site.register(SubjectConsentYearOne, SubjectConsentYearOneAdmin)
+# 
+# 
+# class SubjectConsentYearTwoAdmin(BaseSubjectConsentAdmin):
+# 
+#     form = SubjectConsentYearTwoForm
+# 
+#     def __init__(self, *args, **kwargs):
+#         super(SubjectConsentYearTwoAdmin, self).__init__(*args, **kwargs)
+#         # add 'is_minor' before guardian name
+#         for i, fld in enumerate(self.fields):
+#             if fld == 'guardian_name':
+#                 self.fields.insert(i, 'is_minor')
+#                 break
+# admin.site.register(SubjectConsentYearTwo, SubjectConsentYearTwoAdmin)
+# 
+# 
+# class SubjectConsentYearThreeAdmin(BaseSubjectConsentAdmin):
+#     form = SubjectConsentYearThreeForm
+# admin.site.register(SubjectConsentYearThree, SubjectConsentYearThreeAdmin)
+# 
+# 
+# class SubjectConsentYearFourAdmin(BaseSubjectConsentAdmin):
+#     form = SubjectConsentYearFourForm
+# admin.site.register(SubjectConsentYearFour, SubjectConsentYearFourAdmin)
+# 
+# 
+# class SubjectConsentYearFiveAdmin(BaseSubjectConsentAdmin):
+#     form = SubjectConsentYearFiveForm
+# admin.site.register(SubjectConsentYearFive, SubjectConsentYearFiveAdmin)
 
 # 
 # # SubjectConsent

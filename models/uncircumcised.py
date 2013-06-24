@@ -9,14 +9,14 @@ class Uncircumcised (BaseCircumcision):
     
     """CS002"""
     
-    reasoncirc = models.CharField(
+    reason_circ = models.CharField(
         verbose_name="Supplemental MC3. What is the main reason that have you not yet been circumcised?",
         max_length=15,
         choices=REASONCIRC_CHOICE,
         help_text="",
         )
 
-    futurecirc = models.CharField(
+    future_circ = models.CharField(
         verbose_name="73. Would you ever consider being circumcised in the future?",
         max_length=15,
         choices=YES_NO_UNSURE,
@@ -47,7 +47,7 @@ class Uncircumcised (BaseCircumcision):
         help_text="",
         )
 
-    futurereasonsSMC = models.CharField(
+    future_reasons_smc = models.CharField(
         verbose_name=("Supplemental MC7. Which of the following might increase your willingness to"
                         " be circumcised the most?"),
         max_length=15,
@@ -63,7 +63,7 @@ class Uncircumcised (BaseCircumcision):
         help_text="",
         )
 
-    awarefree = models.CharField(
+    aware_free = models.CharField(
         verbose_name=("Supplemental MC9. Where did you learn that circumcision services were "
                         "available free at most health facilities?"),
         max_length=15,

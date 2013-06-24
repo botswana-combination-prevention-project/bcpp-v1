@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp.choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
@@ -65,9 +64,6 @@ class AccessToCare (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_accesstocare_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

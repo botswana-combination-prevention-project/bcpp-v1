@@ -1,5 +1,5 @@
 from django.db import models
-from bcpp_list.models import CicumcisionBenefits
+from bcpp_list.models import CircumcisionBenefits
 from bcpp.choices import YES_NO_UNSURE
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -15,7 +15,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
         help_text="",
         )
 
-    health_benefits_smc = models.ManyToManyField(CicumcisionBenefits,
+    health_benefits_smc = models.ManyToManyField(CircumcisionBenefits,
         verbose_name="Supplemental MC2. What do you believe are the health benefits of male circumcision?",
         max_length=25,
         help_text="Indicate all that apply.",
