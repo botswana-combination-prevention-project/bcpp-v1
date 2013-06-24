@@ -1,7 +1,7 @@
 from django import forms
 from datetime import datetime 
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HouseholdComposition, Respondent 
+from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HouseholdComposition, Respondent, FutureHivTesting 
 
 
 # SubjectLocator
@@ -226,18 +226,15 @@ class HivTestingSupplementalForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-        #validating a need to specify the participant's preference 
-        if cleaned_data['hivtest_time'] == 'Yes, specify' and not cleaned_data['hivtest_time_other']:
-            raise forms.ValidationError('If participant prefers a different test date/time than what is indicated, indicate the preference.')
         
-        if cleaned_data['hivtest_week'] == 'Yes, specify' and not cleaned_data['hivtest_week_other']:
-            raise forms.ValidationError('If participant has preference for testing on a particular day of the week, indicate the preference.')
+        #if no, don't answer next question
+        if cleaned_data['hiv_pills'] == 'No' and  cleaned_data['arvshivtest']:
+            raise forms.ValidationError('You are answering information about ARV\'s yet have answered \'NO\', patient has never heard about ARV\'s. Please correct')
+        if cleaned_data['hiv_pills'] == 'Yes' or cleaned_data['hiv_pills'] == 'not sure' and not cleaned_data['arvshivtest']:
+            raise forms.ValidationError('if "%s", answer whether participant believes that HIV positive can live longer if taking ARV\'s. (Q Supplemental HT6)')
         
-        if cleaned_data['hivtest_year'] == 'Yes, specify' and not cleaned_data['hivtest_year_other']:
-            raise forms.ValidationError('If participant prefers time of the year than the options given, indicate the preference.')
-        cleaned_data = super(HivTestingSupplementalForm, self).clean()
         return cleaned_data
-    
+
     class Meta:
         model = HivTestingSupplemental
 
@@ -559,3 +556,28 @@ class RespondentForm (BaseSubjectModelForm):
 
     class Meta:
         model = Respondent
+
+
+# FutureHivTesting
+class FutureHivTestingForm (BaseSubjectModelForm):
+    
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+        
+        #validating a need to specify the participant's preference 
+        if cleaned_data['hivtest_time'] == 'Yes, specify' and not cleaned_data['hivtest_time_other']:
+            raise forms.ValidationError('If participant prefers a different test date/time than what is indicated, indicate the preference.')
+        
+        if cleaned_data['hivtest_week'] == 'Yes, specify' and not cleaned_data['hivtest_week_other']:
+            raise forms.ValidationError('If participant has preference for testing on a particular day of the week, indicate the preference.')
+        
+        if cleaned_data['hivtest_year'] == 'Yes, specify' and not cleaned_data['hivtest_year_other']:
+            raise forms.ValidationError('If participant prefers time of the year than the options given, indicate the preference.')
+        
+        cleaned_data = super(FutureHivTestingForm, self).clean()
+
+        return cleaned_data
+
+    class Meta:
+        model = FutureHivTesting
