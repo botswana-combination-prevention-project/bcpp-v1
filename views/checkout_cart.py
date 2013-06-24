@@ -7,7 +7,7 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def checkout_cart(request):
+def checkout_cart(request, **kwargs):
     """Previews selected households in the cart.
 
     At the point the use has following options:
@@ -17,11 +17,11 @@ def checkout_cart(request):
 
     Uses template :template:`mochudi_map/templates/view_cart.html`
     """
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         #item_model_cls = Household
         #item_identifier_field = 'household_identifier'
         template = 'view_cart.html'
@@ -39,6 +39,7 @@ def checkout_cart(request):
                 )
         return render_to_response(
             template, {
+                'mapper_name': mapper_name,
                 'payload': payload,
                 'identifiers': item_identifiers,
                 'cart_size': cart_size,

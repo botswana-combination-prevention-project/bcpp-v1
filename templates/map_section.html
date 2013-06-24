@@ -7,14 +7,14 @@
 		{% if option == 'plot' %}
 			{% if not has_items %}
 				<script language="javascript" type="text/javascript" defer> alert('Oops! No {{ item_label }} found. Try broadening your search');
-				window.location.replace('/bhp_map/')
+				window.location.replace('{% url "selected_map_index_url" mapper_name %}')
 				</script>
 			{% endif %}
 		{% endif %}      
 	   
 	   	<div id="section_navbar">
     	<ul>
-    	<li><A href="{% url "clear_all_sections_url" mapper_name %}">clear {{ section_label }}s</A>
+    	<li><A href="{% url "clear_all_sections_url" mapper_name %}">clear sections</A>
     	</ul>
     	</div>
 	   
@@ -46,7 +46,7 @@
 			<tr align="center">
 				<td>
 				<input type="button" value="select sections" onclick="window.location='../map_section/'" />
-				<input type="button" value="Continue" onclick="window.location='/bhp_map/'" />
+				<input type="button" value="Continue" onclick="window.location='{% url "selected_map_index_url" mapper_name %}'" />
 				</td>
 			</tr>
 		</table>

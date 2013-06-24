@@ -3,7 +3,7 @@
 {% block content %}
     <H5>{{ mapper_name }} map</H5>
        
-   	<form action="{% url clear_section_url mapper_name %}" method="post">
+   	<form action="{% url "clear_section_url" mapper_name %}" method="post">
    	{% csrf_token %}
    
    	<div id="selection_box"> 

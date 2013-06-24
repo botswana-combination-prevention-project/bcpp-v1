@@ -6,17 +6,17 @@ from bhp_map.exceptions import MapperError
 from bhp_map.utils import get_longitude, get_latitude
 
 
-def save_section(request):
+def save_section(request, **kwargs):
     """Assigns selected houselholds to the choosen ward section and save to database.
 
     for selected households by a polygon save the selected section to the ward_section
     field for each household
     """
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         selected_section = request.GET.get('section')
         selected_region = request.GET.get('region')
         message = ""
@@ -42,6 +42,7 @@ def save_section(request):
         return render_to_response(
                 'map_section.html', {
                     'payload': payload,
+                    'mapper_name': mapper_name,
                     'identifiers': item_identifiers,
                     'regions': m.get_regions(),
                     'selected_section': selected_section,

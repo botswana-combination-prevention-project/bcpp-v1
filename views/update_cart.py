@@ -4,17 +4,17 @@ from bhp_map.classes import mapper
 from bhp_map.exceptions import MapperError
 
 
-def update_cart(request):
+def update_cart(request, **kwargs):
     """Removes household identifier(s) from cart.
 
     Uses template :template:`mochudi_map/templates/view_cart.html`
     """
 
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = mapper.get_registry(mapper_name)()
         update_error = 0
         items = []
         payload = []
@@ -46,6 +46,7 @@ def update_cart(request):
         return render_to_response(
             'view_cart.html', {
                 'payload': payload,
+                'mapper_name': mapper_name,
                 'identifiers': identifiers,
                 'cart_size': cart_size,
                 'selected_icon': icon,

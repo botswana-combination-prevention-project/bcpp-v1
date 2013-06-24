@@ -26,6 +26,7 @@ def subject_map(request):
         return render_to_response(
                 'subject_map_location.html', {
                     'latitude': latitude,
+                    'mapper_name':mapper_name,
                     'longitude': longitude,
                     'landmarks': landmark_list,
                     'identifier': identifier
