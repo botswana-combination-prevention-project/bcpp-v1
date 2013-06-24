@@ -7,7 +7,9 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 class HivCareAdherence (BaseScheduledVisitModel):
     
-    """CS002"""
+    """CS002- 
+    Note to Interviewer: This section is only to be completed by HIV-positive"
+    " participants who knew that they were HIV-positive before today."""
     
     firstpositive = models.DateField(
         verbose_name="58. When was your first positive HIV test result?",
