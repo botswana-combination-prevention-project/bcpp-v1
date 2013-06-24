@@ -11,7 +11,7 @@
         <tbody>
         <tr>
         <td>
-        <form method="GET" action="{% url admin:bcpp_subject_subjectconsent_add %}">
+        <form method="GET" action="">
         {% csrf_token %}
         <input type="hidden" name="next" value="section_search_url_name">
         <input type="hidden" name="section_name" value="{{ section_name }}">
