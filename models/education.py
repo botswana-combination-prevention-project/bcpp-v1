@@ -11,30 +11,32 @@ class Education (BaseScheduledVisitModel):
     """CS002"""
     
     education = models.CharField(
-        verbose_name = "12. What is your highest level of education attainment?",
-        max_length = 15,
-        choices = EDUCATION_CHOICE,
+        verbose_name="12. What is your highest level of education attainment?",
+        max_length=65,
+        choices=EDUCATION_CHOICE,
         help_text="",
         )
 
     employment = models.CharField(
-        verbose_name = "13. What is your current employment [working for payment] status?",
-        max_length = 15,
-        choices = EMPLOYMENT_CHOICE,
+        verbose_name="13. What is your current employment [working for payment] status?",
+        max_length=35,
+        choices=EMPLOYMENT_CHOICE,
         help_text="",
         )
 
-    moneyforwork  = models.CharField(
-        verbose_name = "14. In the past month, how much money did you earn from work you did?",
-        max_length = 15,
-        choices = MONTHLY_INCOME,
+    moneyforwork = models.CharField(
+        verbose_name="14. In the past month, how much money did you earn from work you did?",
+        max_length=25,
+        null=True, 
+        blank=True,
+        choices=MONTHLY_INCOME,
         help_text="",
         )
 
     seekingwork = models.CharField(
-        verbose_name = "15. Are you currently seeking [more] employment?",
-        max_length = 15,
-        choices = YES_NO_DONT_ANSWER,
+        verbose_name="15. Are you currently seeking [more] employment?",
+        max_length=25,
+        choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
     
