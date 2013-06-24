@@ -26,7 +26,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         )
 
     everhivtest = models.CharField(
-        verbose_name="18. Not including today's HIV test, have you ever been tested for HIV before?",
+        verbose_name="18. Have you ever been tested for HIV before?",
         max_length=15,
         choices=YES_NO_DONT_ANSWER,
         help_text="",
