@@ -50,6 +50,7 @@ from stigma import Stigma
 from stigma_opinion import StigmaOpinion
 from positive_participant import PositiveParticipant
 from access_to_care import AccessToCare
+from future_hiv_testing import FutureHivTesting
 
 
 from subject_refusal import SubjectRefusal
