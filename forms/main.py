@@ -1,7 +1,17 @@
 from django import forms
 from datetime import datetime
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HouseholdComposition, Respondent, FutureHivTesting 
+from bcpp_subject.models import (SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, 
+                                 QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, 
+                                 HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, 
+                                 CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, 
+                                 Demographics, CommunityEngagement, Education, HivTestingHistory, 
+                                 HivTestReview, HivTested, HivUntested, FutureHivTesting, SexualBehaviour, 
+                                 MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, 
+                                 HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, 
+                                 ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, 
+                                 PositiveParticipant, AccessToCare, HouseholdComposition, 
+                                 Respondent)
 
 
 # SubjectLocator
@@ -110,11 +120,11 @@ class BaselineHouseholdSurveyForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #validating if other, specify
-        if cleaned_data['flooring_type'] == 'OTHER' and not cleaned_data['flooring_type_other']:
+        if cleaned_data.get('flooring_type') == 'OTHER' and not cleaned_data.get('flooring_type_other'):
             raise forms.ValidationError('If participant has a different flooring type from what is on the list, provide the flooring type')
-        if cleaned_data['water_source'] == 'OTHER' and not cleaned_data['water_source_other']:
+        if cleaned_data.get('water_source') == 'OTHER' and not cleaned_data.get('water_source_other'):
             raise forms.ValidationError('If participant uses a different water source, specify it')
-        if cleaned_data['energy_source'] == 'OTHER' and not cleaned_data['energy_source_other']:
+        if cleaned_data.get('energy_source') == 'OTHER' and not cleaned_data.get('energy_source_other'):
             raise forms.ValidationError('If a different energy source is used, specify it')
         cleaned_data = super(BaselineHouseholdSurveyForm, self).clean()
         return cleaned_data
@@ -144,10 +154,10 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #validating if other community, you specify
-        if cleaned_data.get('cattlepostlands') == 'Other community' and not cleaned_data['cattlepostlands_other']:
+        if cleaned_data.get('cattlepostlands') == 'Other community' and not cleaned_data.get('cattlepostlands_other'):
             raise forms.ValidationError('If participant was staying in another community, specify the community')
         #if reason for staying away is OTHER, specify reason
-        if cleaned_data['reasonaway'] == 'Other' and not cleaned_data['reasonaway_other']:
+        if cleaned_data.get('reasonaway') == 'Other' and not cleaned_data.get('reasonaway_other'):
             raise forms.ValidationError('If participant was away from community for \'OTHER\' reason, provide/specify reason')
         cleaned_data = super(ResidencyMobilityForm, self).clean()
         return cleaned_data
@@ -163,7 +173,7 @@ class DemographicsForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #validating marital status
-        if cleaned_data['maritalstatus'] == 'Married' and not cleaned_data['numwives']:
+        if cleaned_data.get('maritalstatus') == 'Married' and not cleaned_data.get('numwives'):
             raise forms.ValidationError('If participant is married, give number of wives')
         cleaned_data = super(DemographicsForm, self).clean()
         return cleaned_data
@@ -193,7 +203,7 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #validating when testing declined
-        if cleaned_data['HHhivtest'] == 'Declined' and not cleaned_data['whynohivtest']:
+        if cleaned_data.get('HHhivtest') == 'Declined' and not cleaned_data.get('whynohivtest'):
             raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing (2)')
         cleaned_data = super(HivTestingHistoryForm, self).clean()
         return cleaned_data
@@ -220,24 +230,60 @@ class HivTestReviewForm (BaseSubjectModelForm):
         model = HivTestReview
 
 
-#HivTestingSupplemental
-class HivTestingSupplementalForm (BaseSubjectModelForm):
+# #HivTestingSupplemental
+# class HivTestingSupplementalForm (BaseSubjectModelForm):
+#     
+#     def clean(self):
+# 
+#         cleaned_data = self.cleaned_data
+#         
+#         #if no, don't answer next question
+#         if cleaned_data.get('hiv_pills') == 'No' and  cleaned_data.get('arvshivtest'):
+#             raise forms.ValidationError('You are answering information about ARV\'s yet have answered \'NO\', patient has never heard about ARV\'s. Please correct')
+#         if cleaned_data.get('hiv_pills') == 'Yes' or cleaned_data.get('hiv_pills') == 'not sure' and not cleaned_data.get('arvshivtest'):
+#             raise forms.ValidationError('if "%s", answer whether participant believes that HIV positive can live longer if taking ARV\'s. (Q Supplemental HT6)')
+#         
+#         return cleaned_data
+# 
+#     class Meta:
+#         model = HivTestingSupplemental
+
+
+
+#HivTested
+class HivTestedForm (BaseSubjectModelForm):
     
     def clean(self):
-
         cleaned_data = self.cleaned_data
-        
+         
         #if no, don't answer next question
-        if cleaned_data['hiv_pills'] == 'No' and  cleaned_data['arvshivtest']:
+        if cleaned_data.get('hiv_pills') == 'No' and  cleaned_data.get('arvshivtest'):
             raise forms.ValidationError('You are answering information about ARV\'s yet have answered \'NO\', patient has never heard about ARV\'s. Please correct')
-        if cleaned_data['hiv_pills'] == 'Yes' or cleaned_data['hiv_pills'] == 'not sure' and not cleaned_data['arvshivtest']:
+        if cleaned_data.get('hiv_pills') == 'Yes' or cleaned_data.get('hiv_pills') == 'not sure' and not cleaned_data.get('arvshivtest'):
             raise forms.ValidationError('if "%s", answer whether participant believes that HIV positive can live longer if taking ARV\'s. (Q Supplemental HT6)')
-        
+         
         return cleaned_data
 
     class Meta:
-        model = HivTestingSupplemental
+        model = HivTested
 
+      
+#HivUntested
+class HivUntestedForm (BaseSubjectModelForm):
+    
+    def clean(self):
+        cleaned_data = self.cleaned_data
+         
+        #if no, don't answer next question
+        if cleaned_data.get('hiv_pills') == 'No' and  cleaned_data.get('arvshivtest'):
+            raise forms.ValidationError('You are answering information about ARV\'s yet have answered \'NO\', patient has never heard about ARV\'s. Please correct')
+        if cleaned_data.get('hiv_pills') == 'Yes' or cleaned_data.get('hiv_pills') == 'not sure' and not cleaned_data.get('arvshivtest'):
+            raise forms.ValidationError('if "%s", answer whether participant believes that HIV positive can live longer if taking ARV\'s. (Q Supplemental HT6)')
+         
+        return cleaned_data
+
+    class Meta:
+        model = HivUntested
 
 #SexualBehaviour
 class SexualBehaviourForm (BaseSubjectModelForm):
@@ -246,23 +292,23 @@ class SexualBehaviourForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #if respondent has had sex, answer all following questions on form
-        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['lastyearpartners']:
+        if cleaned_data.get('eversex') == 'Yes' and not cleaned_data.get('lastyearpartners'):
             raise forms.ValidationError('If participant has had sex, how many people has he/she had sex with')
-        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['moresex']:
+        if cleaned_data.get('eversex') == 'Yes' and not cleaned_data.get('moresex'):
             raise forms.ValidationError('If participant has had sex, we need to know if this person lives outside community')
-        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['firstsex']:
+        if cleaned_data.get('eversex') == 'Yes' and not cleaned_data.get('firstsex'):
             raise forms.ValidationError('If participant has had sex, how old was he/she when he/she first had sex')
-        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['condom']:
+        if cleaned_data.get('eversex') == 'Yes' and not cleaned_data.get('condom'):
             raise forms.ValidationError('If participant has had sex, was a condom used the last time he/she had sex?')
-        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['alcohol_sex']:
+        if cleaned_data.get('eversex') == 'Yes' and not cleaned_data.get('alcohol_sex'):
             raise forms.ValidationError('If participant has had sex, did he/she or partner have alcohol?')
-        if cleaned_data['eversex'] == 'Yes' and not cleaned_data['lastsex']:
+        if cleaned_data.get('eversex') == 'Yes' and not cleaned_data.get('lastsex'):
             raise forms.ValidationError('If participant has had sex, when was the last time he/she had sex?')
-        if cleaned_data['lastsex'] == 'Days' and not cleaned_data['lastsex_calc']:
+        if cleaned_data.get('lastsex') == 'Days' and not cleaned_data.get('lastsex_calc'):
             raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of days')
-        if cleaned_data['lastsex'] == 'Months' and not cleaned_data['lastsex_calc']:
+        if cleaned_data.get('lastsex') == 'Months' and not cleaned_data.get('lastsex_calc'):
             raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of months')
-        if cleaned_data['lastsex'] == 'Years' and not cleaned_data['lastsex_calc']:
+        if cleaned_data.get('lastsex') == 'Years' and not cleaned_data.get('lastsex_calc'):
             raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of years')
         
         cleaned_data = super(SexualBehaviourForm, self).clean()
@@ -278,9 +324,9 @@ class MonthsRecentPartnerForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #ensuring that question about antiretrovirals is not answered if partner is known to be HIV negative
-        if cleaned_data['firstpartnerhiv'] == 'negative' and cleaned_data['firsthaart'] == 'Yes' or cleaned_data['firsthaart'] == 'No' or cleaned_data['firsthaart'] == 'not sure' or cleaned_data['firsthaart'] == 'Don\'t want to answer':
+        if cleaned_data.get('firstpartnerhiv') == 'negative' and cleaned_data.get('firsthaart') == 'Yes' or cleaned_data.get('firsthaart') == 'No' or cleaned_data.get('firsthaart') == 'not sure' or cleaned_data.get('firsthaart') == 'Don\'t want to answer':
             raise forms.ValidationError('Do not answer this question if partners HIV status is known to be negative')
-        if cleaned_data['firstpartnerhiv'] == 'I am not sure' and cleaned_data['firsthaart'] == 'Yes' or cleaned_data['firsthaart'] == 'No' or cleaned_data['firsthaart'] == 'not sure' or cleaned_data['firsthaart'] == 'Don\'t want to answer':
+        if cleaned_data.get('firstpartnerhiv') == 'I am not sure' and cleaned_data.get('firsthaart') == 'Yes' or cleaned_data.get('firsthaart') == 'No' or cleaned_data.get('firsthaart') == 'not sure' or cleaned_data.get('firsthaart') == 'Don\'t want to answer':
             raise forms.ValidationError('If partner status is not known, do not give information about status of ARV\'s')
         cleaned_data = super(MonthsRecentPartnerForm, self).clean()
         return cleaned_data
@@ -295,9 +341,9 @@ class MonthsSecondPartnerForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #ensuring that question about antiretrovirals is not answered if partner is known to be HIV negative
-        if cleaned_data['firstpartnerhiv'] == 'negative' and cleaned_data['firsthaart'] == 'Yes' or cleaned_data['firsthaart'] == 'No' or cleaned_data['firsthaart'] == 'not sure' or cleaned_data['firsthaart'] == 'Don\'t want to answer':
+        if cleaned_data.get('firstpartnerhiv') == 'negative' and cleaned_data.get('firsthaart') == 'Yes' or cleaned_data.get('firsthaart') == 'No' or cleaned_data.get('firsthaart') == 'not sure' or cleaned_data.get('firsthaart') == 'Don\'t want to answer':
             raise forms.ValidationError('Do not answer this question if partners HIV status is known to be negative')
-        if cleaned_data['firstpartnerhiv'] == 'I am not sure' and cleaned_data['firsthaart'] == 'Yes' or cleaned_data['firsthaart'] == 'No' or cleaned_data['firsthaart'] == 'not sure' or cleaned_data['firsthaart'] == 'Don\'t want to answer':
+        if cleaned_data.get('firstpartnerhiv') == 'I am not sure' and cleaned_data.get('firsthaart') == 'Yes' or cleaned_data.get('firsthaart') == 'No' or cleaned_data.get('firsthaart') == 'not sure' or cleaned_data.get('firsthaart') == 'Don\'t want to answer':
             raise forms.ValidationError('If partner status is not known, do not give information about status of ARV\'s')
         cleaned_data = super(MonthsSecondPartnerForm, self).clean()
 
@@ -313,9 +359,9 @@ class MonthsThirdPartnerForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #ensuring that question about antiretrovirals is not answered if partner is known to be HIV negative
-        if cleaned_data['firstpartnerhiv'] == 'negative' and cleaned_data['firsthaart'] == 'Yes' or cleaned_data['firsthaart'] == 'No' or cleaned_data['firsthaart'] == 'not sure' or cleaned_data['firsthaart'] == 'Don\'t want to answer':
+        if cleaned_data.get('firstpartnerhiv') == 'negative' and cleaned_data.get('firsthaart') == 'Yes' or cleaned_data.get('firsthaart') == 'No' or cleaned_data.get('firsthaart') == 'not sure' or cleaned_data.get('firsthaart') == 'Don\'t want to answer':
             raise forms.ValidationError('Do not answer this question if partners HIV status is known to be negative')
-        if cleaned_data['firstpartnerhiv'] == 'I am not sure' and cleaned_data['firsthaart'] == 'Yes' or cleaned_data['firsthaart'] == 'No' or cleaned_data['firsthaart'] == 'not sure' or cleaned_data['firsthaart'] == 'Don\'t want to answer':
+        if cleaned_data.get('firstpartnerhiv') == 'I am not sure' and cleaned_data.get('firsthaart') == 'Yes' or cleaned_data.get('firsthaart') == 'No' or cleaned_data.get('firsthaart') == 'not sure' or cleaned_data.get('firsthaart') == 'Don\'t want to answer':
             raise forms.ValidationError('If partner status is not known, do not give information about status of ARV\'s')
         cleaned_data = super(MonthsThirdPartnerForm, self).clean()
 
@@ -332,22 +378,22 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #if no medical care, explain why not
-        if cleaned_data['medical_care'] == 'No' and not cleaned_data['no_medical_care']:
+        if cleaned_data.get('medical_care') == 'No' and not cleaned_data.get('no_medical_care'):
             raise forms.ValidationError('If participant has not received any medical care, please give reason why not')
         #if never taken arv's give reason why
-        if cleaned_data['evertakearv'] == 'No' and not cleaned_data['whynoarv']:
+        if cleaned_data.get('evertakearv') == 'No' and not cleaned_data.get('whynoarv'):
             raise forms.ValidationError('If participant has not taken any ARV\'s, give the main reason why not')
         #if partipant has taken arv's, give date when these were started
-        if cleaned_data['evertakearv'] == 'Yes' and not cleaned_data['firstarv']:
+        if cleaned_data.get('evertakearv') == 'Yes' and not cleaned_data.get('firstarv'):
             raise forms.ValidationError('If participant has taken ARV\'s, give the date when these were first started.')
         #if taking arv's have you missed any
-        if cleaned_data['onarv'] == 'Yes' and not cleaned_data['adherence4day']:
+        if cleaned_data.get('onarv') == 'Yes' and not cleaned_data.get('adherence4day'):
             raise forms.ValidationError('If participant is taking ARV\'s, have they skipped/ missed taking any? Pleae indicate')
         #if you are not taking any arv's do not indicate that you have missed taking medication
-        if cleaned_data['onarv'] == 'No' and cleaned_data['adherence4day']:
+        if cleaned_data.get('onarv') == 'No' and cleaned_data.get('adherence4day'):
             raise forms.ValidationError('You do not have to indicate missed medication (70) because you are not taking any ARV\'s (68)')
         #if currently taking arv's, how well has participant been taking medication
-        if cleaned_data['onarv'] == 'Yes' and cleaned_data['adherence4wk']:
+        if cleaned_data.get('onarv') == 'Yes' and cleaned_data.get('adherence4wk'):
             raise forms.ValidationError('If participant is currently taking ARV\'s, how well has he/she been taking the medication this past week?')
 
         return cleaned_data
@@ -410,19 +456,19 @@ class ReproductiveHealthForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #pregnancy and antenal registration
-        if cleaned_data['currentpregnant'] == 'Yes' and not cleaned_data['ancreg']:
+        if cleaned_data.get('currentpregnant') == 'Yes' and not cleaned_data.get('ancreg'):
             raise forms.ValidationError('If participant currently pregnant, have they registered for antenatal care?')
         #if currently pregnant when was the last lnmp
-        if cleaned_data['currentpregnant'] == 'Yes' and not cleaned_data['lnmp']:
+        if cleaned_data.get('currentpregnant') == 'Yes' and not cleaned_data.get('lnmp'):
             raise forms.ValidationError('If participant currently pregnant, when was the last known menstrual period?')
         #if mother has children, when was the last birth
-        if cleaned_data['numberchildren'] > 0 and not cleaned_data['lastbirth']:
+        if cleaned_data.get('numberchildren') > 0 and not cleaned_data.get('lastbirth'):
             raise forms.ValidationError('If the participant has given birth, when was the last (most recent) birth?')
         #if mother has children, did they ever go for anc
-        if cleaned_data['numberchildren'] > 0 and not cleaned_data['anclastpregnancy']:
+        if cleaned_data.get('numberchildren') > 0 and not cleaned_data.get('anclastpregnancy'):
             raise forms.ValidationError('If the participant has children, during their last pregnancy, did they do for antenatal care?')
         #if mother has children, did they ever go for anc
-        if cleaned_data['numberchildren'] > 0 and not cleaned_data['hivlastpregnancy']:
+        if cleaned_data.get('numberchildren') > 0 and not cleaned_data.get('hivlastpregnancy'):
             raise forms.ValidationError('If the participant has children/ has given birth, did they ever test for HIV on their last pregnancy?')
         
         return cleaned_data
@@ -437,38 +483,38 @@ class MedicalDiagnosesForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #Validating that heartattack info is not given if patient has never had a heartattach
-        if cleaned_data['heartattack'] == 'No' and cleaned_data['heartattackrecord'] or cleaned_data['dateheartattack'] or cleaned_data['dxheartattack']:
+        if cleaned_data.get('heartattack') == 'No' and cleaned_data.get('heartattackrecord') or cleaned_data.get('dateheartattack') or cleaned_data.get('dxheartattack'):
             raise forms.ValidationError('You are giving more heartattack related information yet have answered \'NO\', to (Q86)')
         #if patient has had heart attack, is summary in OPD
-        if cleaned_data['heartattack'] == 'Yes' and not cleaned_data['heartattackrecord']:
+        if cleaned_data.get('heartattack') == 'Yes' and not cleaned_data.get('heartattackrecord'):
             raise forms.ValidationError('if patient has had a heart attack, is there a record available on the OPD card?')
         #if OPD record available, give date as on OPD
-        if cleaned_data['heartattackrecord'] == 'Yes' and not cleaned_data['dateheartattack']:
+        if cleaned_data.get('heartattackrecord') == 'Yes' and not cleaned_data.get('dateheartattack'):
             raise forms.ValidationError('If a record of the heart attack is available on the OPD card, give the date of diagnosis')
         #if OPD record available, give diagnosis as recorded on OPD
-        if cleaned_data['heartattackrecord'] == 'Yes' and not cleaned_data['dxheartattack']:
+        if cleaned_data.get('heartattackrecord') == 'Yes' and not cleaned_data.get('dxheartattack'):
             raise forms.ValidationError('If a record of the heart attack is available on the OPD card, provide the diagnosis detail (Q89).')
         
         #Validating that cancer info is not given if patient has never been diagnosed with cancer
-        if cleaned_data['cancer'] == 'No' and cleaned_data['cancerrecord'] or cleaned_data['datecancer'] or cleaned_data['dxcancer']:
+        if cleaned_data.get('cancer') == 'No' and cleaned_data.get('cancerrecord') or cleaned_data.get('datecancer') or cleaned_data.get('dxcancer'):
             raise forms.ValidationError('You are giving more cancer related information yet have answered \'NO\',patient has never been told he/she has cancer to (Q90)')
         #if patient has had cancer, is summary in OPD
-        if cleaned_data['cancer'] == 'Yes' and not cleaned_data['cancerrecord']:
+        if cleaned_data.get('cancer') == 'Yes' and not cleaned_data.get('cancerrecord'):
             raise forms.ValidationError('if patient has cancer, is there a cancer record available on the OPD card?')
-        if cleaned_data['cancerrecord'] == 'Yes' and not cleaned_data['datecancer']:
+        if cleaned_data.get('cancerrecord') == 'Yes' and not cleaned_data.get('datecancer'):
             raise forms.ValidationError('if cancer record is available on the OPD card, what is the cancer diagnosis date?')
-        if cleaned_data['cancerrecord'] == 'Yes' and not cleaned_data['dxcancer']:
+        if cleaned_data.get('cancerrecord') == 'Yes' and not cleaned_data.get('dxcancer'):
             raise forms.ValidationError('if cancer record is available on the OPD card, specify the cancer diagnosis?')
         
         #Validating that TB info is not given if patient has never been diagnosed with TB
-        if cleaned_data['tb'] == 'No' and cleaned_data['tbrecord'] or cleaned_data['datetb'] or cleaned_data['dxTB']:
+        if cleaned_data.get('tb') == 'No' and cleaned_data.get('tbrecord') or cleaned_data.get('datetb') or cleaned_data.get('dxTB'):
             raise forms.ValidationError('You are giving more TB related information yet have answered \'NO\',patient has never been diagnosed with TB to (Q95)')
         #if patient ever had TB, is summary in OPD
-        if cleaned_data['tb'] == 'Yes' and not cleaned_data['tbrecord']:
+        if cleaned_data.get('tb') == 'Yes' and not cleaned_data.get('tbrecord'):
             raise forms.ValidationError('if patient has had TB, is there a record available on the OPD card?')
-        if cleaned_data['tbrecord'] == 'Yes' and not cleaned_data['datetb']:
+        if cleaned_data.get('tbrecord') == 'Yes' and not cleaned_data.get('datetb'):
             raise forms.ValidationError('if a TB record is available on the OPD card, give the TB diagnosis date')
-        if cleaned_data['tbrecord'] == 'Yes' and not cleaned_data['dxTB']:
+        if cleaned_data.get('tbrecord') == 'Yes' and not cleaned_data.get('dxTB'):
             raise forms.ValidationError('if a TB record is available on the OPD card, what is the TB diagnosis type?')
         
 
@@ -533,9 +579,9 @@ class AccessToCareForm (BaseSubjectModelForm):
         cleaned_data = self.cleaned_data
         
         #if other, specify
-        if cleaned_data['often_medicalcare'] == 'OTHER' and not cleaned_data['often_medicalcare_other']:
+        if cleaned_data.get('often_medicalcare') == 'OTHER' and not cleaned_data.get('often_medicalcare_other'):
             raise forms.ValidationError('if other medical care is used, specify the kind of medical care received')
-        if cleaned_data['whereaccess'] == 'Other, specify' and not cleaned_data['whereaccess_other']:
+        if cleaned_data.get('whereaccess') == 'Other, specify' and not cleaned_data.get('whereaccess_other'):
             raise forms.ValidationError('if medical access is \'OTHER\', provide the type of medical access obtained')
         
         return cleaned_data
@@ -566,13 +612,13 @@ class FutureHivTestingForm (BaseSubjectModelForm):
         cleaned_data = self.cleaned_data
         
         #validating a need to specify the participant's preference 
-        if cleaned_data['hivtest_time'] == 'Yes, specify' and not cleaned_data['hivtest_time_other']:
+        if cleaned_data.get('hivtest_time') == 'Yes, specify' and not cleaned_data.get('hivtest_time_other'):
             raise forms.ValidationError('If participant prefers a different test date/time than what is indicated, indicate the preference.')
         
-        if cleaned_data['hivtest_week'] == 'Yes, specify' and not cleaned_data['hivtest_week_other']:
+        if cleaned_data.get('hivtest_week') == 'Yes, specify' and not cleaned_data.get('hivtest_week_other'):
             raise forms.ValidationError('If participant has preference for testing on a particular day of the week, indicate the preference.')
         
-        if cleaned_data['hivtest_year'] == 'Yes, specify' and not cleaned_data['hivtest_year_other']:
+        if cleaned_data.get('hivtest_year') == 'Yes, specify' and not cleaned_data.get('hivtest_year_other'):
             raise forms.ValidationError('If participant prefers time of the year than the options given, indicate the preference.')
         
         cleaned_data = super(FutureHivTestingForm, self).clean()
