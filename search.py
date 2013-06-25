@@ -3,12 +3,12 @@ from bhp_search.classes import BaseSearchByWord, search
 from models import SubjectConsent
 
 
-class SearchByWord(BaseSearchByWord):
+class SubjectSearchByWord(BaseSearchByWord):
 
     section_name = 'subject'
     search_model = SubjectConsent  # (SubjectConsent, Household, HouseholdStructure, HouseholdStructureMember)
 
-search.register(SearchByWord)
+search.register(SubjectSearchByWord)
 
 # from bhp_search.classes import BaseSearchByWord, search
 #

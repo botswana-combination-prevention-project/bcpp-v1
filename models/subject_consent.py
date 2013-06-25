@@ -1,17 +1,11 @@
 from django.db import models
-#from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_registration.models import RegisteredSubject
-#from base_subject_consent import BaseSubjectConsent
+from base_subject_consent import BaseSubjectConsent
 from bhp_common.choices import YES_NO
-from bhp_botswana.models import BaseBwConsent
-from bcpp_survey.models import Survey
-from subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class SubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
-
-    survey = models.OneToOneField(Survey)
+class SubjectConsent(BaseSubjectConsent):
 
     is_minor = models.CharField(
         verbose_name="Is subject a minor?",

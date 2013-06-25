@@ -1,12 +1,12 @@
 from django.db import models
 from bhp_registration.models import RegisteredSubject
 from bhp_botswana.models import BaseBwConsent
-from bhp_appointment_helper.models import BaseAppointmentMixin
 from bcpp_household.models import HouseholdStructureMember
 from bcpp_survey.models import Survey
+from subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class BaseSubjectConsent(BaseBwConsent, BaseAppointmentMixin):
+class BaseSubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
 
     registered_subject = models.ForeignKey(RegisteredSubject)
 
@@ -25,9 +25,6 @@ class BaseSubjectConsent(BaseBwConsent, BaseAppointmentMixin):
         return self.consent_datetime
 
     def save(self, *args, **kwargs):
-#        if self.subject_identifier:
-#            if self.is_dispatched:
-#                raise ValidationError('Subject is currently dispatched.')
         self.survey = self.household_structure_member.survey
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
