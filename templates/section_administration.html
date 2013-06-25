@@ -1,4 +1,6 @@
 {% extends "base_section.html"%}
+{% load admin_urls %}
+{% load url from future %}
 
 {% block section_title%}<H5>Site Administration</H5>{%endblock%}
 {% block section_links %}
@@ -25,7 +27,9 @@
 <ul>
 <li><A name="dispatch-to-producer" href="/admin/mochudi_household/">Dispatch data to netbook</A>
 <li><A href="/bhp_sync/">Return data from devices to Community Server</A>
-<li><A href="{% url "map_index_url" %}">Dispatch data to devices by Map</A>
+  {% if 'bhp_map' in installed_apps %}
+    <li><A href="{% url 'map_index_url' %}">Dispatch data to devices by Map</A>
+  {% endif %}
 {% endif %}
 
 {% if 'lab_clinic_api' in installed_apps %}
