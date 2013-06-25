@@ -32,7 +32,7 @@ def plot_item_points(request, **kwargs):
         cart_size = len(identifiers)
         cso_icon_dict = []
         section_color_code_list = []
-        selected_region = request.POST.get(m.get_region_field_attr())  # TODO: this should not be "ward" on the template
+        selected_region = request.POST.get(m.get_region_field_attr())
         request.session['icon'] = request.POST.get('marker_icon')
         if selected_section == 'All':
             items = m.get_item_model_cls().objects.filter(

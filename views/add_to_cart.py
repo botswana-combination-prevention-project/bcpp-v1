@@ -18,8 +18,8 @@ def add_to_cart(request, **kwargs):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
         m = mapper.get_registry(mapper_name)()
-        # a list of additional item identifiers, such as household_identifiers, to add to the cart (session['identifiers'])
-        additional_item_identifiers = request.GET.get(m.get_identifier_field_attr(), [])
+        
+        additional_item_identifiers = request.GET.get('identifiers', [])
         message = ""
         is_error = False
         item_identifiers = []
@@ -48,6 +48,7 @@ def add_to_cart(request, **kwargs):
             )
         return render_to_response(
                 template, {
+                    'identifier_field_attr': m.get_identifier_field_attr(),
                     'mapper_name': mapper_name,
                     'payload': payload,
                     'identifiers': item_identifiers,

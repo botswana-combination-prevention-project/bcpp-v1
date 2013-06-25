@@ -4,7 +4,7 @@ from bhp_map.classes import mapper
 
 urlpatterns = patterns('bhp_map.views',
     url(r'^add_cart/(?P<mapper_name>\w+)/', 'add_to_cart', name='map_add_cart_url'),
-     url(r'^update_cart/(?P<mapper_name>\w+)/', 'update_cart', name='update_identifier_cart'),
+    url(r'^update_cart/(?P<mapper_name>\w+)/', 'update_cart', name='update_identifier_cart'),
 #     url(r'^empty_cart/(?P<mapper_name>\w+)/', 'empty_cart'),
     url(r'^checkout/(?P<mapper_name>\w+)/', 'checkout_cart', name='map_checkout_cart_url'),
     url(r'^complete/(?P<mapper_name>\w+)/', 'save_cart', name='complete_cart_save'),
