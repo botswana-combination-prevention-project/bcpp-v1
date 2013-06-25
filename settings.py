@@ -161,6 +161,7 @@ INSTALLED_APPS = (
     'bhp_actg_reference',
     'bhp_adverse',
 #     'bhp_haart',
+    'bhp_map',
     'bhp_code_lists',
     'bhp_common',
     'bhp_identifier',

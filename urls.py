@@ -60,6 +60,13 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
+    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('bhp_sync.urls')),
+    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('bhp_dispatch.urls')),
+    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('bhp_map.urls')),
+)
+
+
+urlpatterns += patterns('',
     url(r'^{app_name}/login/'.format(app_name=APP_NAME),
         'django.contrib.auth.views.login',
         name='{app_name}_login'.format(app_name=APP_NAME)),
