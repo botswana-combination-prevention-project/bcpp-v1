@@ -184,8 +184,6 @@ class Mapper(object):
             self.set_item_model_cls()
         return self._item_model_cls
 
-
-
     def set_regions(self, tpl=None):
         if tpl:
             if not issubclass(tpl, (tuple, list)):
