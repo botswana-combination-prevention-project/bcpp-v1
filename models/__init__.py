@@ -34,7 +34,10 @@ from community_engagement import CommunityEngagement
 from education import Education
 from hiv_testing_history import HivTestingHistory
 from hiv_test_review import HivTestReview
-from hiv_testing_supplemental import HivTestingSupplemental
+# from hiv_testing_supplemental import HivTestingSupplemental
+from hiv_tested import HivTested
+from hiv_untested import HivUntested
+from future_hiv_testing import FutureHivTesting
 from sexual_behaviour import SexualBehaviour
 from months_recent_partner import MonthsRecentPartner
 from months_second_partner import MonthsSecondPartner
@@ -51,7 +54,6 @@ from stigma import Stigma
 from stigma_opinion import StigmaOpinion
 from positive_participant import PositiveParticipant
 from access_to_care import AccessToCare
-from future_hiv_testing import FutureHivTesting
 
 
 from subject_refusal import SubjectRefusal
