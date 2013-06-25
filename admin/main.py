@@ -4,7 +4,7 @@ from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts,
                                  LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist,
                                  ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory,
-                                 HivTestReview, HivTestingSupplemental, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner,
+                                 HivTestReview, HivTested, HivUntested, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner,
                                  MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
                                  ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
                                  AccessToCare, HouseholdComposition, Respondent, FutureHivTesting)
@@ -12,7 +12,7 @@ from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm,
                                 HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm,
                                 CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm,
-                                EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestingSupplementalForm, SexualBehaviourForm,
+                                EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestedForm, HivUntestedForm, SexualBehaviourForm,
                                 MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm,
                                 HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm,
                                 MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
@@ -472,25 +472,60 @@ class HivTestReviewAdmin(SubjectVisitModelAdmin):
 admin.site.register(HivTestReview, HivTestReviewAdmin)
 
 
-# HivTestingSupplemental
-class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
+# HivTested
+class HivTestedAdmin(SubjectVisitModelAdmin):
 
-    form = HivTestingSupplementalForm
+    form = HivTestedForm
     fields = (
         "subject_visit",
         'numhivtests',
         'wherehivtest',
         'whyhivtest',
-        'whynohivtest',
         'hiv_pills',
         'arvshivtest',)
     radio_fields = {
         "wherehivtest":admin.VERTICAL,
         "whyhivtest":admin.VERTICAL,
+        "hiv_pills":admin.VERTICAL,
+        "arvshivtest":admin.VERTICAL,}
+admin.site.register(HivTested, HivTestedAdmin)
+
+
+#HivUntested 
+class HivUntestedAdmin(SubjectVisitModelAdmin):
+ 
+    form = HivUntestedForm
+    fields = (
+        "subject_visit",
+        'whynohivtest',
+        'hiv_pills',
+        'arvshivtest',)
+    radio_fields = {
         "whynohivtest":admin.VERTICAL,
         "hiv_pills":admin.VERTICAL,
-        "arvshivtest":admin.VERTICAL}
-admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
+        "arvshivtest":admin.VERTICAL,}
+admin.site.register(HivUntested, HivUntestedAdmin)
+
+
+# # HivTestingSupplemental 
+# class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
+#  
+#     form = HivTestingSupplementalForm
+#     fields = (
+#         "subject_visit",
+#         'numhivtests',
+#         'wherehivtest',
+#         'whyhivtest',
+#         'whynohivtest',
+#         'hiv_pills',
+#         'arvshivtest',)
+#     radio_fields = {
+#         "wherehivtest":admin.VERTICAL,
+#         "whyhivtest":admin.VERTICAL,
+#         "whynohivtest":admin.VERTICAL,
+#         "hiv_pills":admin.VERTICAL,
+#         "arvshivtest":admin.VERTICAL}
+# admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
 
 
 # FutureHivTesting 
