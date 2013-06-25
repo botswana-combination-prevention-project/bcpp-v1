@@ -11,6 +11,6 @@ from update_cart import update_cart
 from empty_cart import empty_cart
 from clear_all_sections import clear_all_sections
 from clear_section import clear_section
-#from upload_household_map import upload_household_map
+from upload_item_map import upload_item_map
 from db_update import db_update
 from db_update_index import db_update_index
