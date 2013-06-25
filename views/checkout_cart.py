@@ -8,22 +8,20 @@ from bhp_map.exceptions import MapperError
 
 
 def checkout_cart(request, **kwargs):
-    """Previews selected households in the cart.
+    """Previews selected items in the cart.
 
     At the point the use has following options:
-        1. Choose to preview the households on the map.
-        2. Continue more households to the cart.
-        3. Removed some of the households from the cart
+        1. Choose to preview the items on the map.
+        2. Continue more items to the cart.
+        3. Removed some of the items from the cart
 
-    Uses template :template:`mochudi_map/templates/view_cart.html`
+    Uses template :template:`bhp_map/templates/view_cart.html`
     """
     mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
         m = mapper.get_registry(mapper_name)()
-        #item_model_cls = Household
-        #item_identifier_field = 'household_identifier'
         template = 'view_cart.html'
         payload = []
         item_identifiers = request.session.get('identifiers', [])

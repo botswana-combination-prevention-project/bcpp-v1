@@ -3,7 +3,7 @@ from django.template import RequestContext
 
 
 def db_update_index(request, **kwargs):
-    """Update coordinates of a household form
+    """Update coordinates of a item form
     """
 
     template = "db_update.html"

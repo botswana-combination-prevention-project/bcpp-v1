@@ -8,8 +8,8 @@ from bhp_map.exceptions import MapperError
 def clear_section(request, **kwargs):
     """Assigns selected section to None for all items in a region.
 
-    Filters the households by ward and assigns the ward_section field to Null for the whole ward
-    This allows for re-assigning of ward section for households within a ward.
+    Filters the items by ward and assigns the ward_section field to Null for the whole ward
+    This allows for re-assigning of ward section for items within a ward.
     """
     mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):

@@ -7,10 +7,10 @@ from bhp_map.utils import get_longitude, get_latitude
 
 
 def save_section(request, **kwargs):
-    """Assigns selected houselholds to the choosen ward section and save to database.
+    """Assigns selected items to the chosen ward section and save to database.
 
-    for selected households by a polygon save the selected section to the ward_section
-    field for each household
+    for selected items by a polygon save the selected section to the ward_section
+    field for each item
     """
     mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):
@@ -24,13 +24,12 @@ def save_section(request, **kwargs):
         item_identifiers = None
         item_identifiers = []
         payload = []
-        item_identifiers = request.GET.get('household_identifiers')
+        item_identifiers = request.GET.get('identifiers')
         if item_identifiers:
             item_identifiers = item_identifiers.split(",")
         items = []
         if item_identifiers:
             items = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.item_identifier_field_attr): item_identifiers})
-            #households = Household.objects.filter(household_identifier__in=household_identifiers)
             for item in items:
                 setattr(item, m.section_field_attr, selected_section)
                 item.save()

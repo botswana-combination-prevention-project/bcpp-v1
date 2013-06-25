@@ -6,7 +6,7 @@ from bhp_map.exceptions import MapperError
 
 
 def save_cart(request, **kwargs):
-    """Dispatch households in shopping cart to netbook.
+    """Dispatch items in shopping cart to netbook.
     """
     #Make sure we have identifiers in our session
     mapper_name = kwargs.get('mapper_name', '')
@@ -17,7 +17,7 @@ def save_cart(request, **kwargs):
         if 'identifiers' in request.session:
             if len(request.session['identifiers']) > 0:
                 identifiers = request.session['identifiers']
-                # TODO: code to send identifies to be dispatched
+                
                 pks = m.item_model_cls().objects.filter(**{'{0}__in'.format(m.identifier_field_attr): identifiers}).values_list('pk')
                 selected = list(itertools.chain(*pks))
                 content_type = ContentType.objects.get_for_model(m.item_model_cls())

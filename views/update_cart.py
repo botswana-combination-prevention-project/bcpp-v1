@@ -5,9 +5,9 @@ from bhp_map.exceptions import MapperError
 
 
 def update_cart(request, **kwargs):
-    """Removes household identifier(s) from cart.
+    """Removes item identifier(s) from cart.
 
-    Uses template :template:`mochudi_map/templates/view_cart.html`
+    Uses template :template:`bhp_map/templates/view_cart.html`
     """
 
     mapper_name = kwargs.get('mapper_name', '')
@@ -23,7 +23,7 @@ def update_cart(request, **kwargs):
         # We have household identifiers to remove from cart
         if deleted_ids:
             if len(deleted_ids) == 0:
-                message = "Please select at least one household to remove from the cart"
+                message = "Please select at least one Item to remove from the cart"
                 update_error = 1
             else:
                 if 'identifiers' in request.session:
@@ -37,7 +37,7 @@ def update_cart(request, **kwargs):
         if option == 'preview':
             items = m.get_item_model_cls.objects.filter(household_identifier__in=identifiers)
             icon = request.session['icon']
-            # Get list of points to map from a list of households
+            
             payload = m.prepare_map_points(items,
                 icon,
                 request.session['identifiers'],

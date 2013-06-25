@@ -6,9 +6,9 @@ from bhp_map.utils import calc_dist, get_longitude, get_latitude
 
 
 def db_update(request, **kwargs):
-    """Updates coordinates of an entered household identifier
+    """Updates coordinates of an entered item identifier
 
-         Filter households by entered household then save the new coordinates of that household
+         Filter items by entered item then save the new coordinates of that item
     """
     mapper_name = kwargs.get('mapper_name', '')
     if not mapper.get_registry(mapper_name):

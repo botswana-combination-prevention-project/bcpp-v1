@@ -18,9 +18,9 @@ var x = 0;
 {% endfor %}
 
 //adding information to markers when clicked
-function bindInfoWindow(marker, map, infoWindow, householdInfor) {
+function bindInfoWindow(marker, map, infoWindow, ItemInfor) {
 		google.maps.event.addListener(marker, 'click', function() {
-		infoWindow.setContent(householdInfor);
+		infoWindow.setContent(ItemInfor);
 		infoWindow.open(map, marker);
 	});
 }
@@ -367,8 +367,8 @@ function initialize() {
 			window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr + "&{{ section_field_attr }}=" + document.getElementById("{{ section_field_attr }}").value + "&{{ region_field_attr }}=" + document.getElementById("{{ region_field_attr }}").value);
 					}
 		else{
-			// example or result produced by the line below: locations/save/?household_identifiers="H99101-02,H992302-4"
-			window.location.replace("{% url "map_add_cart_url" mapper_name %}?{{ identifier_field_attr}}=" + arr);			
+			// example or result produced by the line below: locations/save/?item_identifiers="H99101-02,H992302-4"
+			window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr);			
 		}    
         
     });

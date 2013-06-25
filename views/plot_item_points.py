@@ -7,9 +7,9 @@ from bhp_map.exceptions import MapperError
 
 
 def plot_item_points(request, **kwargs):
-    """Plot households from base selection criteria.
+    """Plot items from base selection criteria.
 
-      * Filter points to plot by sending coordinates of a selected ward only to the households.html template.
+      * Filter points to plot by sending coordinates of a selected ward only to the items.html template.
       * Regions contain sections    """
     # TODO: difference in ward ward section selected section and section ??? very confusing
             # docstring Comment is out of date?

@@ -8,11 +8,11 @@ from bhp_map.exceptions import MapperError
 def set_section(request, **kwargs):
     """Plot items of a the whole ward to assign a ward section by selecting items.
 
-    Filter points to plot by sending coordinates of a selected ward and section only to the households.html template.
+    Filter points to plot by sending coordinates of a selected ward and section only.
     example of selected criteria; ward: makgophana, section: SECTION A
     **Template:**
 
-    :template:`mochudi_map/templates/household.html`
+    :template:`bhp_map/templates/assign_section.html`
     """
     template = 'assign_section.html'
     mapper_name = kwargs.get('mapper_name', '')
@@ -24,7 +24,7 @@ def set_section(request, **kwargs):
         has_items = False
         items = []
         identifiers = request.session.get('identifiers', [])
-        action_script_url = '/bhp_map/sections/?household_identifiers='
+        action_script_url = 'save_section_url'
         cart_size = len(identifiers)
         sections = m.get_sections()
         ward_sections = []

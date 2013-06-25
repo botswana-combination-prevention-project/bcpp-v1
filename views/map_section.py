@@ -6,7 +6,7 @@ from bhp_map.exceptions import MapperError
 
 
 def map_section(request, **kwargs):
-    """Select ward and section to separate households into section in a ward
+    """Select ward and section to separate items into section in a ward
 
     The selected ward and section are going to be use to set a section for the ward selected.
 
