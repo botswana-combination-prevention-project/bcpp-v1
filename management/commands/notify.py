@@ -39,7 +39,7 @@ class Command(BaseCommand):
         
         count           = self.get_import_results_count(import_age, cut_off_date)
         if count > 0:
-            print "{0} results imported between {1} and {2}. No need to send notification".format(cut_off_date, now)
+            print "{0} results imported between {1} and {2}. No need to send notification".format(count, cut_off_date, now)
         else:
             if not args:
                 args = [None]
