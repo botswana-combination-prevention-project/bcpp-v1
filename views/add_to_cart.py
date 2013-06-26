@@ -26,13 +26,11 @@ def add_to_cart(request, **kwargs):
         cart_size = 0
         cart = None
         temp_list = []
-        print additional_item_identifiers
         if additional_item_identifiers:
             additional_item_identifiers = additional_item_identifiers.split(",")
             for ids in additional_item_identifiers:
                 temp_list.append(ids.split(" ")[0])
             additional_item_identifiers = temp_list
-            print additional_item_identifiers
         if additional_item_identifiers:
             if 'identifiers' in request.session:
                 # add to cart, Merge identifiers in the session with the additional ones, removing duplicates
