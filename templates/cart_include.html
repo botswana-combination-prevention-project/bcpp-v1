@@ -14,7 +14,7 @@
 		{% endfor %}
 			<p>
 			<input type="submit" name="update" value="Remove selected" />
-			<input value="Preview" onclick="window.location='{% url "map_checkout_cart_url" mapper_name%}?option=preview'" type="button">
+			<input name="preview" value="Preview" onclick="window.location='{% url "map_checkout_cart_url" mapper_name%}?option=preview'" type="button">
 			</p>
 		 </form>
 	 {% endif %}

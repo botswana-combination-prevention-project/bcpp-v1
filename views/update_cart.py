@@ -20,7 +20,7 @@ def update_cart(request, **kwargs):
         payload = []
         message = None
         deleted_ids = request.POST.getlist('identifiers')
-        # We have household identifiers to remove from cart
+        # We have item identifiers to remove from cart
         if deleted_ids:
             if len(deleted_ids) == 0:
                 message = "Please select at least one Item to remove from the cart"
@@ -34,10 +34,10 @@ def update_cart(request, **kwargs):
         cart_size = len(request.session['identifiers'])
         icon = request.session.get('icon', None)
         option = request.POST.get('option', 'save')
+        print identifiers
         if option == 'preview':
-            items = m.get_item_model_cls.objects.filter(household_identifier__in=identifiers)
+            items = m.get_item_model_cls.objects.filter(**{'{0}__in'.format(m.get_identifier_field_attr): identifiers})
             icon = request.session['icon']
-            
             payload = m.prepare_map_points(items,
                 icon,
                 request.session['identifiers'],

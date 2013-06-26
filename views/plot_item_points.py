@@ -22,8 +22,6 @@ def plot_item_points(request, **kwargs):
     else:
         m = mapper.get_registry(mapper_name)()
         item_target_field = 'target'
-        # TODO:
-        #action_script_url_name = '/bhp_map/add_cart/?household_identifiers='
         action_script_url_name = 'map_add_cart_url'
         has_items = False
         mapper_mapper_item_label = m.get_item_label()

@@ -63,7 +63,7 @@
       </tbody>
     </table>
     
-    <form action="{% url 'complete_cart_save' mapper_name %}" method="post">
+    <form action="{% url "complete_cart_save" mapper_name %}" method="post">
     {% csrf_token %}
       <table align="center">
         <tbody>

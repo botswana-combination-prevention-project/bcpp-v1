@@ -28,6 +28,7 @@ def checkout_cart(request, **kwargs):
         cart_size = len(item_identifiers)
         icon = request.session.get('icon', None)
         option = request.GET.get('option', 'save')
+        print option
         if option == 'preview':
             item_instances = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.identifier_field_attr): item_identifiers})
             payload = m.prepare_map_points(item_instances,
