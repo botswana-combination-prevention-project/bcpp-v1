@@ -229,6 +229,7 @@ INSTALLED_APPS = (
     'bhp_entry_rules',
     'bhp_dispatch',
     'bhp_netbook',
+    'bhp_household',
 #     'ph_dispenser',
     'bcpp',
     'bcpp_lab',

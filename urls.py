@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.conf import settings
 import databrowse
 from django.db.models import get_models
-from django.views.generic.simple import redirect_to
+from django.views.generic import RedirectView
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from bhp_entry_rules.classes import rule_groups
@@ -25,7 +25,7 @@ for model in get_models():
 
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^admin/logout/$', redirect_to, {'url': '/{app_name}/logout/'.format(app_name=APP_NAME)}),
+    (r'^admin/logout/$', RedirectView.as_view(url='/{app_name}/logout/'.format(app_name=APP_NAME))),
     (r'^admin/', include(admin.site.urls)),
 )
 
@@ -85,8 +85,8 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/$'.format(app_name=APP_NAME), redirect_to, {'url': '/{app_name}/section/'.format(app_name=APP_NAME)}),
-    url(r'', redirect_to, {'url': '/{app_name}/section/'.format(app_name=APP_NAME)}),
+    url(r'^{app_name}/$'.format(app_name=APP_NAME), RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
+    url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     )
 
 urlpatterns += staticfiles_urlpatterns()
