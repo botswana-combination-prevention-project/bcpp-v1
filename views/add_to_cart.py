@@ -45,7 +45,7 @@ def add_to_cart(request, **kwargs):
         else:
             message = "No items were selected"
             is_error = True
-        item_instances = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.identifier_field_attr): item_identifiers})
+        item_instances = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.get_identifier_field_attr()): item_identifiers})
         icon = request.session['icon']
         payload = m.prepare_map_points(item_instances,
             icon,
