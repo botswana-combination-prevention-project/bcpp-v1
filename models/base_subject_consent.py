@@ -8,7 +8,7 @@ from subject_off_study_mixin import SubjectOffStudyMixin
 
 class BaseSubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
 
-    registered_subject = models.ForeignKey(RegisteredSubject)
+    registered_subject = models.ForeignKey(RegisteredSubject, editable=False)
 
     household_structure_member = models.OneToOneField(HouseholdStructureMember)
 

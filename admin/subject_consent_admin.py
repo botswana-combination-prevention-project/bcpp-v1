@@ -16,7 +16,6 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         for i, item in enumerate(self.fields):
             if item == 'assessment_score':
                 del self.fields[i]
-        self.fields.insert(0, 'registered_subject')
         self.fields.insert(0, 'household_structure_member')
         self.search_fields.append('household_structure_member__household_structure__household__household_identifier')
         self.radio_fields.update({"is_minor": admin.VERTICAL})
