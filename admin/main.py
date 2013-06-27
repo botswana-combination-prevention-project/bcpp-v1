@@ -277,7 +277,7 @@ class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
         'cattle_postlands',
         'cattle_postlands_other',
         'reason_away',
-        'reasonaway_other',)
+        'reason_away_other',)
     radio_fields = {
         "length_residence": admin.VERTICAL,
         "forteen_nights": admin.VERTICAL,
@@ -368,10 +368,10 @@ class HivTestReviewAdmin(SubjectVisitModelAdmin):
     form = HivTestReviewForm
     fields = (
         "subject_visit",
-        "hivtestdate",
-        'recordedhivresult',
         'whenhivtest',
-        'verbalhivresult',)
+        'verbalhivresult',
+        "hivtestdate",
+        'recordedhivresult',)
     radio_fields = {
         "recordedhivresult": admin.VERTICAL,
         "whenhivtest": admin.VERTICAL,
