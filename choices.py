@@ -58,6 +58,7 @@ NIGHTSAWAY_CHOICE = (
 
 
 CATTLEPOSTLANDS_CHOICE = (
+        ('N/A', 'Not Applicable'),
         ('Farm/lands','Farm/lands'),
         ('Cattle post','Cattle post'),
         ('Other community','Other community, specify:'),
@@ -66,6 +67,7 @@ CATTLEPOSTLANDS_CHOICE = (
 
 
 REASONAWAY_CHOICE = (
+        ('N/A', 'Not Applicable'),
         ('Cattle post or farm/lands','Cattle post or farm/lands'),
         ('Work','Work'),
         ('Education','Education'),
