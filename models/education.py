@@ -23,7 +23,7 @@ class Education (BaseScheduledVisitModel):
         help_text="",
         )
 
-    moneyforwork = models.CharField(
+    money_forwork = models.CharField(
         verbose_name="14. In the past month, how much money did you earn from work you did?",
         max_length=25,
         null=True, 
@@ -32,7 +32,7 @@ class Education (BaseScheduledVisitModel):
         help_text="",
         )
 
-    seekingwork = models.CharField(
+    seeking_work = models.CharField(
         verbose_name="15. Are you currently seeking [more] employment?",
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
