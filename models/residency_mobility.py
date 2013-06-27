@@ -11,7 +11,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
     """CS002"""
     
     lengthresidence = models.CharField(
-        verbose_name="1. How long have your lived in this community?",
+        verbose_name="1. How long have you lived in this community?",
         max_length=25,
         choices=LENGTHRESIDENCE_CHOICE,
         help_text="",
@@ -21,7 +21,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         verbose_name=("2. In the past 12 months, have you typically spent 14 or more nights per month"
                       " in this community? [If moved into the community in the past 12 months, "
                       "then since moving in have you typically spent 14 or more nights per month"
-                      " in this household?]"),
+                      " in this community?]"),
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
         help_text="",
@@ -50,6 +50,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         null=True,
         blank=True,
         choices=CATTLEPOSTLANDS_CHOICE,
+        default='N/A',
         help_text="",
         )
     cattlepostlands_other = OtherCharField()
@@ -59,6 +60,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         max_length=50,
         null=True,
         blank=True,
+        default='N/A',
         choices=REASONAWAY_CHOICE,
         help_text="",
         )
