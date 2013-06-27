@@ -136,10 +136,11 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         return VISIT_REASON
 
     def _check_visit_reason_keys(self):
-        user_keys = [tpl[0] for tpl in self.get_visit_reason_choices()]
+        #user_keys = [tpl[0] for tpl in self.get_visit_reason_choices()]
+        user_keys = [k for k in self.get_visit_reason_no_follow_up_choices().iterkeys()] + [k for k in self.get_visit_reason_follow_up_choices().iterkeys()]
         default_keys = copy.deepcopy(VISIT_REASON_REQUIRED_CHOICES)
         if list(set(default_keys) - set(user_keys)):
-            user_keys = [k for k in self.get_visit_reason_no_follow_up_choices().iterkeys()] + [k for k in self.get_visit_reason_follow_up_choices().iterkeys()]
+            #user_keys = [k for k in self.get_visit_reason_no_follow_up_choices().iterkeys()] + [k for k in self.get_visit_reason_follow_up_choices().iterkeys()]
             missing_keys = list(set(default_keys) - set(user_keys))
             if missing_keys:
                 raise ImproperlyConfigured(
