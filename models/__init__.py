@@ -3,3 +3,4 @@ from test_base_off_study import TestBaseOffStudy
 from test_registration import TestRegistration
 from test_consent import TestConsent
 from test_visit import TestVisit
+from test_scheduled_model import TestScheduledModel
