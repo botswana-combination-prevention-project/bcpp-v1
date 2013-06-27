@@ -44,7 +44,7 @@ def plot_item_points(request, **kwargs):
         payload = m.prepare_map_points(items,
             icon,
             identifiers,
-            'mark',
+            'egg-circle',
             'red-circle', selected_section)
         if selected_section != "ALL":
             for lon, lat, identifier_label, icon, other_identifier_label in payload:

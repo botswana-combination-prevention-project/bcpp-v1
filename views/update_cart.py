@@ -41,7 +41,7 @@ def update_cart(request, **kwargs):
             payload = m.prepare_map_points(items,
                 icon,
                 request.session['identifiers'],
-                'mark'
+                'egg-circle'
                 )
         return render_to_response(
             'view_cart.html', {

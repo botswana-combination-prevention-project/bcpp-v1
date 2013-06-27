@@ -37,7 +37,7 @@ def checkout_cart(request, **kwargs):
             payload = m.prepare_map_points(item_instances,
                 icon,
                 item_identifiers,
-                'mark'
+                'egg-circle'
                 )
         return render_to_response(
             template, {

@@ -41,7 +41,7 @@ def set_section(request, **kwargs):
         payload = m.prepare_map_points(items,
             icon,
             identifiers,
-            'mark'
+            'egg-circle'
             )
 
         if payload:

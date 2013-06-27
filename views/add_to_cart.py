@@ -48,7 +48,7 @@ def add_to_cart(request, **kwargs):
         payload = m.prepare_map_points(item_instances,
             icon,
             request.session['identifiers'],
-            'mark'
+            'egg-circle'
             )
         return render_to_response(
                 template, {

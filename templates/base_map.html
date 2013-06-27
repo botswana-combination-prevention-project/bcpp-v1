@@ -466,10 +466,10 @@ function setLandMarks(map, locations) {
   // Origins, anchor positions and coordinates of the marker
   // increase in the X direction to the right and in
   // the Y direction down.
-  var image = new google.maps.MarkerImage('{{ STATIC_URL }}images/mark.png', // This marker is 20 pixels wide by 32 pixels tall.
- new google.maps.Size(35, 40), // The origin for this image is 0,0.
- new google.maps.Point(0, 0), // The anchor for this image is the base of the flagpole at 0,32.
- new google.maps.Point(0, 32));
+  var image = new google.maps.MarkerImage('{{ STATIC_URL }}img/wht-circle.png', // This marker is 20 pixels wide by 32 pixels tall.
+	 new google.maps.Size(35, 40), // The origin for this image is 0,0.
+	 new google.maps.Point(0, 0), // The anchor for this image is the base of the flagpole at 0,32.
+	 new google.maps.Point(0, 32));
   var shadow = new google.maps.MarkerImage('http://goo.gl/g1PTn', // The shadow image is larger in the horizontal dimension
   // while the position and offset are the same as for the main image.
   new google.maps.Size(37, 32), new google.maps.Point(0, 0), new google.maps.Point(0, 32));

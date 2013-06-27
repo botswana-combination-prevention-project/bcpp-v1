@@ -17,8 +17,8 @@ def save_cart(request, **kwargs):
         if 'identifiers' in request.session:
             if len(request.session['identifiers']) > 0:
                 identifiers = request.session['identifiers']
-                
-                pks = m.item_model_cls().objects.filter(**{'{0}__in'.format(m.identifier_field_attr): identifiers}).values_list('pk')
+                print m.get_item_model_cls()
+                pks = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.identifier_field_attr): identifiers}).values_list('pk')
                 selected = list(itertools.chain(*pks))
                 content_type = ContentType.objects.get_for_model(m.item_model_cls())
                 return HttpResponseRedirect("/dispatch/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
