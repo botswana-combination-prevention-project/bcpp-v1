@@ -6,6 +6,7 @@ from bhp_base_model.models import BaseModel
 from bhp_model_selector.classes import ModelSelector
 from audit_trail.models import AuditComment
 from audit_trail.forms import AuditTrailForm
+from bhp_section.classes import section_index_view
 
 
 @login_required
@@ -35,8 +36,8 @@ def audit_trail_view(request, **kwargs):
     app_label = ''
     model_name = ''
     verbose_name = ''
-    template = kwargs.get('audit_trail_template', 'audit_trail')
-    template = '{0}.html'.format(template)
+    #template = kwargs.get('audit_trail_template', 'audit_trail')
+    template = 'section_audit_trail.html'
     err_message = ''
     status_message = ''
 
@@ -147,6 +148,8 @@ def audit_trail_view(request, **kwargs):
             back_url_name = 'dashboard_visit_url'
 
     options.update({
+        'sections': section_index_view.get_section_list(),
+        'selected_section': section_name,
         'section_name': section_name,
         'report_title': report_title,
         'verbose_name': verbose_name,
