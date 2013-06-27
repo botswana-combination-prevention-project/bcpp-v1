@@ -19,10 +19,11 @@ class VisitDefinitionHelperTests(TestCase):
         content_type_map_helper.sync()
 
         print 'setup a visit definition'
-        content_type_map = ContentTypeMap.objects.get(content_type__model=TestSubjectUuidModel._meta.object_name.lower())
+        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='testvisit')
+        content_type_map = ContentTypeMap.objects.get(content_type__model='testsubjectuuidmodel')
         membership_form = MembershipFormFactory(content_type_map=content_type_map)
         schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='Group Name', grouping_key='Grouping Key')
-        visit_definition = VisitDefinitionFactory(code='1000', title='visit 1000', grouping='Grouping', time_point=0, base_interval=0, base_interval_unit='D')
+        visit_definition = VisitDefinitionFactory(code='1000', title='visit 1000', grouping='Grouping', time_point=0, base_interval=0, base_interval_unit='D', visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
 
         print '    add entries'
