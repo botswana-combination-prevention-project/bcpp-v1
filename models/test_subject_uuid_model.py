@@ -2,9 +2,17 @@ from django.db import models
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsentedUuidModel
 from bhp_base_model.models import TestForeignKey, TestManyToMany
+from bhp_off_study.mixins import OffStudyMixin
+from bhp_off_study.models import TestOffStudy
 
 
-class TestSubjectUuidModel(BaseConsentedUuidModel):
+class SubjectOffStudyMixin(OffStudyMixin):
+
+    def get_off_study_cls(self):
+        return TestOffStudy
+
+
+class TestSubjectUuidModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     name = models.CharField(max_length=10)
 

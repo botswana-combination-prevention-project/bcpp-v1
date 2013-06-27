@@ -1,9 +1,7 @@
-from django.core.exceptions import ValidationError
 try:
     from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
 except ImportError:
     from bhp_sync.models import BaseSyncUuidModel
-#from bhp_off_study.mixins import OffStudyMixin
 from bhp_off_study.exceptions import SubjectOffStudyError
 from bhp_consent.classes import ConsentHelper
 
