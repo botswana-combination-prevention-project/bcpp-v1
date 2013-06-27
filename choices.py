@@ -64,7 +64,38 @@ CATTLEPOSTLANDS_CHOICE = (
         ('Other community','Other community, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
-
+COMMUNITIES = (
+        ('Bokaa', 'Bokaa'),
+        ('Digawana', 'Digawana'),
+        ('Gumare', 'Gumare'),
+        ('Gweta', 'Gweta'),
+        ('Lentsweletau', 'Lentsweletau'),
+        ('Lerala', 'Lerala'),
+        ('Letlhakeng', 'Letlhakeng'),
+        ('Mandunyane', 'Mandunyane'),
+        ('Mankgodi', 'Mankgodi'),
+        ('Mmadinare', 'Mmadinare'),
+        ('Mmathethe', 'Mmathethe'),
+        ('Masunga', 'Masunga'),
+        ('Maunatlala', 'Maunatlala'),
+        ('Mathangwane', 'Mathangwane'),
+        ('Metsimotlhabe', 'Metsimotlhabe'),
+        ('Molapowabojang', 'Molapowabojang'),
+        ('Nata', 'Nata'),
+        ('Nkange', 'Nkange'),
+        ('Oodi', 'Oodi'),
+        ('Otse', 'Otse'),
+        ('Raikops', 'Raikops'),
+        ('Ramokgonami', 'Ramokgonami'),
+        ('Ranaka', 'Ranaka'),
+        ('Sebina', 'Sebina'),
+        ('Sefare', 'Sefare'),
+        ('Sefophe', 'Sefophe'),
+        ('Shakawe', 'Shakawe'),  
+        ('Shoshong', 'Shoshong'),
+        ('Tati Siding', 'Tati Siding'),
+        ('Tsetsebjwe', 'Tsetsebjwe'), 
+    )
 
 REASONAWAY_CHOICE = (
         ('N/A', 'Not Applicable'),
@@ -98,10 +129,11 @@ SOLVEENGAGEMENT_CHOICE = (
         ('No','No'),
         ('Don\'t know','Don\'t know'),
         ('Don\'t want to answer','Don\'t want to answer'),
+        ('None', 'No problems'),
     )
 
 RELIGION_CHOICE = (
-        ('Christian','Christian, specify demonination:'),
+        ('Christian','Christian, specify denomination:'),
         ('Hindu','Hindu'),
         ('Islam','Islam'),
         ('None','None'),
