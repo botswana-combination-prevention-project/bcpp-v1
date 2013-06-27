@@ -154,10 +154,10 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #validating if other community, you specify
-        if cleaned_data.get('cattlepostlands') == 'Other community' and not cleaned_data.get('cattlepostlands_other'):
+        if cleaned_data.get('cattle_postlands') == 'Other community' and not cleaned_data.get('cattle_postlands_other'):
             raise forms.ValidationError('If participant was staying in another community, specify the community')
         #if reason for staying away is OTHER, specify reason
-        if cleaned_data.get('reasonaway') == 'Other' and not cleaned_data.get('reasonaway_other'):
+        if cleaned_data.get('reason_away') == 'Other' and not cleaned_data.get('reason_away_other'):
             raise forms.ValidationError('If participant was away from community for \'OTHER\' reason, provide/specify reason')
         cleaned_data = super(ResidencyMobilityForm, self).clean()
         return cleaned_data
@@ -172,8 +172,17 @@ class DemographicsForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
+        #validating religion affiliation
+        if cleaned_data.get('religion') == 'Christian' and not cleaned_data.get('religion_other'):
+            raise forms.ValidationError('If participant is a Christian, specify denomination.')
+        #validating ethnicity
+        if cleaned_data.get('ethnic') == 'Tswana' and not cleaned_data.get('other'):
+            raise forms.ValidationError('If participant is Tswana, specify the ethnic group.')
+        #validating Other
+        if cleaned_data.get('ethnic') == 'Other' and not cleaned_data.get('other'):
+            raise forms.ValidationError('If participant ethnic group not given in list-of-options, specify the ethnic group.')
         #validating marital status
-        if cleaned_data.get('maritalstatus') == 'Married' and not cleaned_data.get('numwives'):
+        if cleaned_data.get('marital_status') == 'Married' and not cleaned_data.get('num_wives'):
             raise forms.ValidationError('If participant is married, give number of wives')
         cleaned_data = super(DemographicsForm, self).clean()
         return cleaned_data
