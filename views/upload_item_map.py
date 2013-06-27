@@ -5,8 +5,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from django.db.models import Q
 #from django.template import RequestContext
-from mochudi_household.models import Household
+from bhp_map.classes import mapper
+from bhp_map.exceptions import MapperError
 
 
 def handle_uploaded_file(f, identifier):
@@ -27,19 +29,24 @@ def handle_uploaded_file(f, identifier):
 
 @login_required
 @csrf_protect
-def upload_item_map(request):
+def upload_item_map(request, **kwargs):
     """Uploads item map saved on disk as an images e.g google map screenshot.
     """
     identifier = request.POST.get('identifier')
+    mapper_item_label = kwargs.get('mapper_item_label', '')
+    mapper_name = kwargs.get('mapper_name', '')
+    if not mapper.get_registry(mapper_name):
+        raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_item_label))
+    else:
+        m = mapper.get_registry(mapper_name)()
+
+        try:
+            filename = handle_uploaded_file(request.FILES['file'], identifier)
+            if filename:
+                item = m.get_item_model_cls().objects.get(Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifier}))
+                item.uploaded_map = filename
+                item.save()
+        except:
+            raise
     
-
-    try:
-        filename = handle_uploaded_file(request.FILES['file'], identifier)
-        if filename:
-            household = Household.objects.get(household_identifier=identifier)
-            household.uploaded_map = filename
-            household.save()
-    except:
-        raise
-
-    return HttpResponseRedirect('{% url section %}')
+        return HttpResponseRedirect('{% url "section" mapper_name %}')
