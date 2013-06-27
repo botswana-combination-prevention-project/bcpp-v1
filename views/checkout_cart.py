@@ -28,7 +28,10 @@ def checkout_cart(request, **kwargs):
         cart_size = len(item_identifiers)
         icon = request.session.get('icon', None)
         option = request.GET.get('option', 'save')
-        print option
+        landmark_list = []
+        landmarks = m.get_landmarks()
+        for place, lon, lat in landmarks:
+            landmark_list.append([place, lon, lat])
         if option == 'preview':
             item_instances = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.identifier_field_attr): item_identifiers})
             payload = m.prepare_map_points(item_instances,
@@ -41,6 +44,7 @@ def checkout_cart(request, **kwargs):
                 'mapper_name': mapper_name,
                 'payload': payload,
                 'identifiers': item_identifiers,
+                'landmarks': landmark_list,
                 'cart_size': cart_size,
                 'selected_icon': icon,
                 'option': option

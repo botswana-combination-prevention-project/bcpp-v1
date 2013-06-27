@@ -60,6 +60,11 @@ def plot_item_points(request, **kwargs):
             section_color_code_list.append([key_color[:-1], sec_value])
         if payload:
             has_items = True
+            
+        landmark_list = []
+        landmarks = m.get_landmarks()
+        for place, lon, lat in landmarks:
+            landmark_list.append([place, lon, lat])
         return render_to_response(
             template, {
                 'region_field_attr': m.get_region_field_attr(),
@@ -76,6 +81,7 @@ def plot_item_points(request, **kwargs):
                 'option': 'plot',
                 'show_map': 1,
                 'identifiers': identifiers,
+                'landmarks': landmark_list,
                 'cart_size': cart_size,
                 'cso_icon_dict': cso_icon_dict,
                 'section_color_code_list': section_color_code_list,
