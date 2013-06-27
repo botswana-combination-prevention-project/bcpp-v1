@@ -5,9 +5,6 @@ from neighbourhood_problems import NeighbourhoodProblems
 from circumcision_benefits import CircumcisionBenefits
 from family_planning import FamilyPlanning
 from medical_care_access import MedicalCareAccess
-
-
-from bcpp_wards import BcppWards
 from household_survey_code import HouseholdSurveyCode
 from household_survey_reason import HouseholdSurveyReason
 from household_survey_source import HouseholdSurveySource
