@@ -57,7 +57,7 @@ class BaseSyncUuidModel(BaseUuidModel):
             using = kwargs.get('using', 'default')
             outgoing_transaction.objects.using(using).create(
                 tx_name=self._meta.object_name,
-                app_label=self._meta.app_label, 
+                #app_label=self._meta.app_label,
                 tx_pk=self.pk,
                 tx=json_obj,
                 timestamp=datetime.today().strftime('%Y%m%d%H%M%S%f'),
