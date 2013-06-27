@@ -3,7 +3,7 @@ from django.db.models import get_model
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.db.models import signals
 from audit_trail.audit import AuditTrail
 from bhp_variables.models import StudySite
@@ -140,6 +140,8 @@ class Appointment(BaseAppointment):
         """Checks the appt_status relative to the visit tracking form and ScheduledEntryBucket.
         """
         # for an existing appointment, check if there is a visit tracking form already on file
+        if not self.visit_definition.visit_tracking_content_type_map:
+            raise ImproperlyConfigured('Unable to determine the visit tracking model. Update bhp_visit.visit_definition {0} and select the correct visit model.'.format(self.visit_definition))
         if not self.visit_definition.visit_tracking_content_type_map.model_class().objects.filter(appointment=self):
             # no visit tracking, can only be New or Cqncelled
             if self.appt_status not in ['new', 'cancelled']:
@@ -156,7 +158,7 @@ class Appointment(BaseAppointment):
                 if self.appt_status in ['done', 'incomplete']:
                     # test if Done or Incomplete
                     if ScheduledEntryBucket.objects.filter(appointment=self, entry_status='NEW').exists():
-                        objs = ScheduledEntryBucket.objects.filter(appointment=self, entry_status='NEW')
+                        #objs = ScheduledEntryBucket.objects.filter(appointment=self, entry_status='NEW')
                         self.appt_status = 'incomplete'
                     else:
                         self.appt_status = 'done'

@@ -1,11 +1,12 @@
 from datetime import datetime
 from bhp_appointment.models import Appointment, PreAppointmentContact
 from base_appointment_tests import BaseAppointmentTests
+from factories import PreAppointmentContactFactory
 
 
 class PreAppointmentContactMethodTests(BaseAppointmentTests):
 
-    fixtures = ['test_configuration.json', 'test_variables.json']
+    #fixtures = ['test_configuration.json', 'test_variables.json']
 
     def test_post_save(self):
         self.setup()
@@ -25,7 +26,7 @@ class PreAppointmentContactMethodTests(BaseAppointmentTests):
         self.assertEqual(self.appointment.contact_count, 0)
         self.assertEqual(self.appointment.is_confirmed, True)
         # create an instance
-        pre_appointment_contact = PreAppointmentContact.objects.create(appointment=self.appointment, contact_datetime=datetime.today(), is_contacted='Yes', is_confirmed=False)
+        pre_appointment_contact = PreAppointmentContactFactory(appointment=self.appointment, is_confirmed=False)
         # check updated appointment (contact_count, is_confirmed, dirty)
         # post save should do nothing (dirty=False)
         self.assertEqual(pre_appointment_contact.post_save(), (1, False, False))
@@ -36,15 +37,13 @@ class PreAppointmentContactMethodTests(BaseAppointmentTests):
         self.assertEqual(appointment.is_confirmed, False)
 
         # make another attempt to contact,  but not confirmed
-        pre_appointment_contact = PreAppointmentContact.objects.create(appointment=appointment, contact_datetime=datetime.today(), is_contacted='Yes', is_confirmed=False)
+        pre_appointment_contact = PreAppointmentContactFactory(appointment=appointment, is_confirmed=False)
         self.assertEqual(pre_appointment_contact.post_save(), (2, False, False))
         # is _confirmed false because not instances of pre_appt exist except the current one and the one before, both have is_confirmed=False
         self.assertEqual(appointment.is_confirmed, False)
         # make another attempt to contact,  confirmed
-        pre_appointment_contact = PreAppointmentContact.objects.create(
+        pre_appointment_contact = PreAppointmentContactFactory(
             appointment=appointment,
-            contact_datetime=datetime.today(),
-            is_contacted='Yes',
             is_confirmed=True)
         # even if you run post save again, it should update since self.pk is excluded
         self.assertEqual(pre_appointment_contact.post_save(), (3, True, True))
@@ -58,8 +57,8 @@ class PreAppointmentContactMethodTests(BaseAppointmentTests):
     def test_post_delete(self):
         """ post_delete() has to update appointment contact_count and is_confirmed."""
         self.setup()
-        PreAppointmentContact.objects.create(appointment=self.appointment, contact_datetime=datetime.today(), is_contacted='Yes', is_confirmed=False)
-        pre_appointment_contact = PreAppointmentContact.objects.create(appointment=self.appointment, contact_datetime=datetime.today(), is_contacted='Yes', is_confirmed=True)
+        PreAppointmentContactFactory(appointment=self.appointment, is_confirmed=False)
+        pre_appointment_contact = PreAppointmentContactFactory(appointment=self.appointment)
         appointment = Appointment.objects.get(pk=self.appointment.pk)
         self.assertEqual(appointment.contact_count, 2)
         self.assertEqual(appointment.is_confirmed, True)

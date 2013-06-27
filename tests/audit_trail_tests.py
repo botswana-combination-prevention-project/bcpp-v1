@@ -4,14 +4,24 @@ from bhp_appointment.models import Appointment, PreAppointmentContact
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_registration.tests.factories import RegisteredSubjectFactory
 from bhp_content_type_map.models import ContentTypeMap
+from bhp_appointment.tests.factories import ConfigurationFactory
+from bhp_content_type_map.classes import ContentTypeMapHelper
+from bhp_lab_tracker.classes import lab_tracker
+from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 
 
 class AuditTrailTests(TestCase):
 
-    fixtures = ['test_configuration.json']
+    #fixtures = ['test_configuration.json']
 
     def test_audit_trail(self):
-        # save an appointment
+        lab_tracker.autodiscover()
+        StudySpecificFactory()
+        study_site = StudySiteFactory()
+        ConfigurationFactory()
+        content_type_map_helper = ContentTypeMapHelper()
+        content_type_map_helper.populate()
+        content_type_map_helper.sync()
         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='testvisit')
 
         visit_definition = VisitDefinitionFactory(code='1000', title='Test', visit_tracking_content_type_map=visit_tracking_content_type_map)

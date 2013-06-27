@@ -4,28 +4,19 @@ from bhp_appointment.choices import APPT_STATUS
 from bhp_appointment.models import Appointment
 from bhp_visit.models import VisitDefinition
 from base_appointment_tests import BaseAppointmentTests
-from django.test import TestCase
-from django.db.models import get_app, get_models
-from bhp_identifier.exceptions import IdentifierError
 from bhp_lab_tracker.classes import lab_tracker
-from bhp_variables.models import StudySpecific, StudySite
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.tests.factories import ConsentCatalogueFactory
-from bhp_appointment.models import Appointment
 from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_identifier.models import SubjectIdentifier, Sequence
-from bhp_off_study.exceptions import SubjectOffStudyError, SubjectOffStudyDateError
-from bhp_base_test.models import TestConsent, TestRegistration
-from bhp_base_test.tests.factories import TestRegistrationFactory, TestVisitFactory, TestConsentFactory
-from bhp_appointment.exceptions import AppointmentStatusError
+from bhp_base_test.models import TestConsent, TestVisit
+# from bhp_base_test.tests.factories import TestConsentFactory, TestScheduledModelFactory
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_entry.tests.factories import EntryFactory
-from bhp_visit_tracking.models import TestScheduledModel, TestSubjectVisit
-from bhp_visit_tracking.tests.factories import TestSubjectVisitFactory, TestScheduledModelFactory
+from bhp_visit_tracking.models import TestScheduledModel
 
 
 class AppointmentMethodTests(BaseAppointmentTests):
@@ -102,6 +93,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
 
     def test_validate_appt_status(self):
         # setup visit 1000
+        from bhp_base_test.tests.factories import TestRegistrationFactory, TestVisitFactory, TestConsentFactory, TestScheduledModelFactory
         app_label = 'bhp_base_test'
         lab_tracker.autodiscover()
         StudySpecificFactory()
@@ -117,8 +109,8 @@ class AppointmentMethodTests(BaseAppointmentTests):
         consent_catalogue.save()
 
         print 'setup bhp_visit (1000, 1010, 1020, 1030)'
-        content_type_map = ContentTypeMap.objects.get(content_type__model=TestRegistration._meta.object_name.lower())
-        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model=TestSubjectVisit._meta.object_name.lower())
+        content_type_map = ContentTypeMap.objects.get(content_type__model='testregistration')
+        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model=TestVisit._meta.object_name.lower())
         membership_form = MembershipFormFactory(content_type_map=content_type_map)
         schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='Test Reg', grouping_key='REGISTRATION')
         visit_definition = VisitDefinitionFactory(code='1000', title='Test Registration 00', grouping='test_subject', 
@@ -134,8 +126,8 @@ class AppointmentMethodTests(BaseAppointmentTests):
                                                   visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
         content_type_map = ContentTypeMap.objects.get(content_type__model=TestScheduledModel._meta.object_name.lower())
-        entry = EntryFactory(visit_definition=visit_definition, content_type_map=content_type_map)
-        
+        EntryFactory(visit_definition=visit_definition, content_type_map=content_type_map)
+
         visit_definition = VisitDefinitionFactory(code='1020', title='Test Registration 20', grouping='test_subject',
                                                   time_point=20,
                                                   base_interval=2,
@@ -171,7 +163,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
         print 'get appointment 1000'
         appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000')
         print 'add a visit tracking form for appointment 1000'
-        test_visit = TestSubjectVisitFactory(appointment=appointment, reason='scheduled')
+        test_visit = TestVisitFactory(appointment=appointment, reason='scheduled')
         print 'confirm appt_status changes to \'in_progress\''
         self.assertEquals(appointment.appt_status, 'in_progress')
         print 'confirm not scheduled entries for visit'
@@ -211,7 +203,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
         print 'get appointment 1010, which has entries'
         appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1010')
         print 'add a visit tracking form for appointment 1010'
-        test_visit = TestSubjectVisitFactory(appointment=appointment, reason='scheduled')
+        test_visit = TestVisitFactory(appointment=appointment, reason='scheduled')
         print 'confirm appt_status changes to \'in_progress\''
         self.assertEquals(appointment.appt_status, 'in_progress')
         print 'confirm not scheduled entries for visit'
@@ -249,10 +241,10 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 raise TypeError()
 
         print 'add the TestScheduledModel for visit 1010, scheduledentry should be KEYED'
-        TestScheduledModelFactory(test_subject_visit=test_visit)
+        TestScheduledModelFactory(test_visit=test_visit)
         print 'assert is KEYED in ScheduledEntryBucket'
-        for obj in ScheduledEntryBucket.objects.filter(appointment=appointment):
-            print obj.entry_status
+        #for obj in ScheduledEntryBucket.objects.filter(appointment=appointment):
+        #    print obj.entry_status
         ScheduledEntryBucket.objects.filter(appointment=appointment).update(entry_status='KEYED')
         self.assertEqual(ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='KEYED').count(), 1)
         print 'try changing status'
@@ -266,12 +258,12 @@ class AppointmentMethodTests(BaseAppointmentTests):
             print '    save'
             if appt_status[0] == 'cancelled':
                 appointment.save()
-                print '    assert change to Done'
-                self.assertEquals(appointment.appt_status, 'done')
+                print '    assert change to in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
             elif appt_status[0] == 'new':
                 appointment.save()
-                print '    assert change to Done'
-                self.assertEquals(appointment.appt_status, 'done')
+                print '    assert change to in_progress'
+                self.assertEquals(appointment.appt_status, 'in_progress')
             elif appt_status[0] == 'in_progress':
                 appointment.save()
                 print '    assert still in_progress'

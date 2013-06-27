@@ -11,6 +11,7 @@ from bhp_variables.models import StudySpecific, StudySite
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_appointment.tests.factories import ConfigurationFactory
+from bhp_base_test.models import TestVisit
 
 
 class BaseAppointmentTests(TestCase):
