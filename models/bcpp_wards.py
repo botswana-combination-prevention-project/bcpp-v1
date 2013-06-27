@@ -1,7 +1,7 @@
 from bhp_base_model.models import BaseListModel
 
 
-class BcppWards (BaseListModel):
+class BcppWard (BaseListModel):
     pass
 
     class Meta:
