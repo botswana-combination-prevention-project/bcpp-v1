@@ -57,10 +57,11 @@ class OffStudyMethodsTests(TestCase):
             may_store_samples='Yes',
             )
         # create some visit definitions
-        VisitDefinitionFactory(code='1000')
-        VisitDefinitionFactory(code='1300')
-        VisitDefinitionFactory(code='1600')
-        VisitDefinitionFactory(code='1800')
+        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='testvisit')
+        VisitDefinitionFactory(code='1000', visit_tracking_content_type_map=visit_tracking_content_type_map)
+        VisitDefinitionFactory(code='1300', visit_tracking_content_type_map=visit_tracking_content_type_map)
+        VisitDefinitionFactory(code='1600', visit_tracking_content_type_map=visit_tracking_content_type_map)
+        VisitDefinitionFactory(code='1800', visit_tracking_content_type_map=visit_tracking_content_type_map)
 
     def create_appointments(self, now, appts):
         for visit_code, dte in appts.iteritems():
