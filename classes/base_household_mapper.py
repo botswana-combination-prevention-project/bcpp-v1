@@ -5,11 +5,9 @@ class BaseHouseholdMapper(Mapper):
 
     
     def prepare_map_points(self, items, selected_icon, cart, cart_icon, dipatched_icon='red-circle', selected_section="All"):
-        """Returns a list of household identifiers from the given queryset excluding those
-        households that have been dispatched
+        """Returns a list of item identifiers from the given queryset excluding those
+        items that have been dispatched
         """
-    #    item_identifier_field = 'household_identifier'
-    #    item_region_field = 'ward_section'
         payload = []
         icon_number = 0
         if selected_section == "All":
