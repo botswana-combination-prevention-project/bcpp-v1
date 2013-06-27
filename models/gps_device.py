@@ -16,10 +16,10 @@ class GpsDevice(BaseListModel):
     objects = GpsDeviceManager()
 
     def __unicode__(self):
-        return "%s %s %s" % (self.name, self.gps_make, self.gps_model)
+        return "{0} {1} {2}".format(self.name, self.gps_make, self.gps_model)
 
     def get_absolute_url(self):
-        return "/bcpp_household/gpsdevice/%s/" % self.id
+        return "/bcpp_household/gpsdevice/{0}/".format(self.id)
 
     def natural_key(self):
         return (self.gps_serial_number, )

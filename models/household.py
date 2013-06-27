@@ -6,12 +6,10 @@ from bhp_common.choices import YES_NO
 from bhp_device.classes import Device
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import EncryptedCharField, EncryptedTextField, EncryptedDecimalField
-# from bcpp_household.choices import BCPP_WARDS 
-from bcpp_household.choices import BCPP_VILLAGES
-from bcpp_list.models import BcppWards
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
 from gps_device import GpsDevice
+from ward import Ward
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 
 
@@ -112,7 +110,7 @@ class Household(BaseDispatchSyncUuidModel):
     
     village = EncryptedCharField(
         verbose_name=_("Village"),
-        choices=BCPP_VILLAGES,
+        editable=False,
         db_index=True,
         )
     
@@ -122,10 +120,8 @@ class Household(BaseDispatchSyncUuidModel):
         blank=True,
         )
 
-    ward = models.ManyToManyField(BcppWards,
+    ward = models.OneToOneField(Ward,
         verbose_name="Ward",
-#         verbose_name=_("Ward"),
-#         choices=BCPP_WARDS,
         db_index=True,
         )
     # this is a flag for follow-up / missing data
@@ -170,15 +166,11 @@ class Household(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            if self.old_household_identifier:
-                self.household_identifier = self.old_household_identifier
-                if not re.search('\d+', self.household_identifier):
-                    raise IdentifierError('Expected household_identifier format to include an integer. Format H999999-99. Did you try to use an "old" paper identifier of the incorrect format? Got {0}'.format(self.household_identifier))
-            else:
-                device = Device()
-                identifier = Identifier()
-                self.household_identifier = identifier.get_identifier()
-                self.device_id = device.device_id
+            self.village = self.ward.village_name
+            device = Device()
+            identifier = Identifier()
+            self.household_identifier = identifier.get_identifier()
+            self.device_id = device.device_id
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
