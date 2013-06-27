@@ -264,121 +264,27 @@ class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "community_resident": admin.VERTICAL, }
 admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
 
-# ResidentSurvey WIKI
-'''
-copy the following to your ModelAdmin class in admin.py
-class CS002Admin (MyModelAdmin):
-    fields = (
-        'mobiltyqol',
-        'selfcareqol',
-        'activitiesqol',
-        'painqol',
-        'anxietyqol',
-        'healthqol',
-        'anyvisit3mo',
-        'pcvisit3mo',
-        'hospvisit3mo',
-        'privatevisit3mo',
-        'tradvisit3mo',
-        'totalvisit3mo',
-        'recentvisit',
-        'clinic3mo',
-        'revisit3mo',
-        'costvisit3mo',
-        'timetoclinic3mo',
-        'transportcosts3mo',
-        'otherpaymentcosts3mo',
-        'waitcosts',
-        'hosp3mo',
-        'nightshosp3mo',
-        'rehospmo',
-        'hospital3mo',
-        'recenthospnights3mo',
-        'costhosp3mo',
-        'timetohosp3mo',
-        'transporthosp3mo',
-        'otherpaymenthosp3mo',
-        'medicines3mo',
-        'otherpaymentmeds3mo',
-        'hivcarecosts',
-        'hivnocarecosts',
-        'hivcarelocationcosts',
-        'hivcaretimescosts',
-        'hivaccompanycosts',
-        'employedcosts',
-        'occupationcosts',
-        'workchangecosts',
-        'workdayscosts',
-        'workincomecosts',
-        'workpaidcosts',
-        'householdincomecosts',
-        'nonworkactivitiescosts',
-        'workpaidcosts',
-        'workpaidcosts',
-        'nightsawaycosts',
-        'weeksawaycosts',
-        'dayslostcosts',
-        'dayslostadlcosts',
-    )
-    radio_fields = {
-        "mobiltyqol": admin.VERTICAL,
-        "selfcareqol": admin.VERTICAL,
-        "activitiesqol": admin.VERTICAL,
-        "painqol": admin.VERTICAL,
-        "anxietyqol": admin.VERTICAL,
-        "anyvisit3mo": admin.VERTICAL,
-        "pcvisit3mo": admin.VERTICAL,
-        "hospvisit3mo": admin.VERTICAL,
-        "privatevisit3mo": admin.VERTICAL,
-        "tradvisit3mo": admin.VERTICAL,
-        "recentvisit": admin.VERTICAL,
-        "revisit3mo": admin.VERTICAL,
-        "timetoclinic3mo": admin.VERTICAL,
-        "otherpaymentcosts3mo": admin.VERTICAL,
-        "waitcosts": admin.VERTICAL,
-        "rehospmo": admin.VERTICAL,
-        "timetohosp3mo": admin.VERTICAL,
-        "otherpaymenthosp3mo": admin.VERTICAL,
-        "otherpaymentmeds3mo": admin.VERTICAL,
-        "hivcarecosts": admin.VERTICAL,
-        "hivnocarecosts": admin.VERTICAL,
-        "hivcarelocationcosts": admin.VERTICAL,
-        "hivcaretimescosts": admin.VERTICAL,
-        "hivaccompanycosts": admin.VERTICAL,
-        "employedcosts": admin.VERTICAL,
-        "occupationcosts": admin.VERTICAL,
-        "workincomecosts": admin.VERTICAL,
-        "workpaidcosts": admin.VERTICAL,
-        "householdincomecosts": admin.VERTICAL,
-        "nonworkactivitiescosts": admin.VERTICAL,
-        "workpaidcosts": admin.VERTICAL,
-        "workpaidcosts": admin.VERTICAL,
-        "weeksawaycosts": admin.VERTICAL,
-    }
-admin.site.register(CS002, CS002Admin)
-'''
-
 
 class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
 
     form = ResidencyMobilityForm
     fields = (
         "subject_visit",
-        'lengthresidence',
-        'forteennights',
-        'intendresidency',
-        'nightsaway',
-        'cattlepostlands',
-        'cattlepostlands_other',
-        'reasonaway',
+        'length_residence',
+        'forteen_nights',
+        'intend_residency',
+        'nights_away',
+        'cattle_postlands',
+        'cattle_postlands_other',
+        'reason_away',
         'reasonaway_other',)
     radio_fields = {
-        "lengthresidence": admin.VERTICAL,
-        "forteennights": admin.VERTICAL,
-        "intendresidency": admin.VERTICAL,
-        "nightsaway": admin.VERTICAL,
-        "cattlepostlands": admin.VERTICAL,
-        "reasonaway": admin.VERTICAL, }
+        "length_residence": admin.VERTICAL,
+        "forteen_nights": admin.VERTICAL,
+        "intend_residency": admin.VERTICAL,
+        "nights_away": admin.VERTICAL,
+        "cattle_postlands": admin.VERTICAL,
+        "reason_away": admin.VERTICAL, }
 admin.site.register(ResidencyMobility, ResidencyMobilityAdmin)
 
 
@@ -390,14 +296,14 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         'religion',
         'ethnic',
-        'maritalstatus',
-        'numwives',
-        'livewith',)
+        'marital_status',
+        'num_wives',
+        'live_with',)
     radio_fields = {
         "religion": admin.VERTICAL,
         "ethnic": admin.VERTICAL,
-        "maritalstatus": admin.VERTICAL, }
-    filter_horizontal = ('livewith',)
+        "marital_status": admin.VERTICAL, }
+    filter_horizontal = ('live_with',)
 admin.site.register(Demographics, DemographicsAdmin)
 
 
@@ -407,15 +313,16 @@ class CommunityEngagementAdmin(SubjectVisitModelAdmin):
     form = CommunityEngagementForm
     fields = (
         "subject_visit",
-        'communityengagement',
-        'voteengagement',
-        'problemsengagement',
-        'solveengagement',)
+        'community_engagement',
+        'vote_engagement',
+        'problems_engagement',
+        'problems_engagement_other',
+        'solve_engagement',)
     radio_fields = {
-        "communityengagement": admin.VERTICAL,
-        "voteengagement": admin.VERTICAL,
-        "solveengagement": admin.VERTICAL, }
-    filter_horizontal = ('problemsengagement',)
+        "community_engagement": admin.VERTICAL,
+        "vote_engagement": admin.VERTICAL,
+        "solve_engagement": admin.VERTICAL, }
+    filter_horizontal = ('problems_engagement',)
 admin.site.register(CommunityEngagement, CommunityEngagementAdmin)
 
 
@@ -427,13 +334,13 @@ class EducationAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         'education',
         'employment',
-        'moneyforwork',
-        'seekingwork',)
+        'money_forwork',
+        'seeking_work',)
     radio_fields = {
         "education": admin.VERTICAL,
         "employment": admin.VERTICAL,
-        "moneyforwork": admin.VERTICAL,
-        "seekingwork": admin.VERTICAL, }
+        "money_forwork": admin.VERTICAL,
+        "seeking_work": admin.VERTICAL, }
 admin.site.register(Education, EducationAdmin)
 
 
