@@ -205,7 +205,7 @@ OCCUPATION = (
 
 MONTHLY_INCOME = (
     ('None', 'None'),
-    ('1-200 pula', '1-200 pula'),
+    ('1-199 pula', '1-199 pula'),
     ('200-499 pula', '200-499 pula'),
     ('500-999 pula', '500-999 pula'),
     ('1000-4999 pula', '1000-4999 pula'),
