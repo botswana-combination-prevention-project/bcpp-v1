@@ -396,3 +396,11 @@ RELATION = (
     ('partner', 'partner/boyfriend/girlfriend'),
     ('OTHER', 'Other, specify'),
 )
+
+
+YES_NO_RECORD_REFUSAL = (
+        ('Yes','Yes'),
+        ('No','No'),
+        ('Don\'t want to answer','Don\'t want to answer'),
+        ('record refusal', 'Participant does not want to provide record'),
+    )
