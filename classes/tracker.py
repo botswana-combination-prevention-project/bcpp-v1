@@ -498,6 +498,7 @@ class LabTracker(object):
         return history_model
 
     def log_default_value_used(self, group_name, subject_identifier, subject_type, value_datetime=None):
+        """Logs that a default value was used. """
         default_value_log = DefaultValueLog.objects.create(
             subject_identifier=subject_identifier,
             subject_type=subject_type,
