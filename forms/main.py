@@ -212,7 +212,7 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
 
         cleaned_data = self.cleaned_data
         #validating when testing declined
-        if cleaned_data.get('HHhivtest') == 'Declined' and not cleaned_data.get('whynohivtest'):
+        if cleaned_data.get('hiv_result') == 'Declined' and not cleaned_data.get('why_not_tested'):
             raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing (2)')
         cleaned_data = super(HivTestingHistoryForm, self).clean()
         return cleaned_data
@@ -229,8 +229,8 @@ class HivTestReviewForm (BaseSubjectModelForm):
         cleaned_data = self.cleaned_data
         
         #to ensure that HIV test date is not greater than today
-        if cleaned_data.get('hivtestdate'):
-            if cleaned_data.get('hivtestdate') > datetime.today():
+        if cleaned_data.get('hiv_test_date'):
+            if cleaned_data.get('hiv_test_date') > datetime.today():
                 raise forms.ValidationError('The last recorded HIV test date cannot be greater than today\'s date. Please correct.')
         
         return super(HivTestReviewForm, self).clean()
@@ -264,11 +264,13 @@ class HivTestedForm (BaseSubjectModelForm):
     
     def clean(self):
         cleaned_data = self.cleaned_data
-         
+        
+        if cleaned_data.get('num_hiv_tests') == 0:
+            raise forms.ValidationError('if participant has tested before, number of HIV tests before today cannot be zero. Please correct')
         #if no, don't answer next question
-        if cleaned_data.get('hiv_pills') == 'No' and  cleaned_data.get('arvshivtest'):
+        if cleaned_data.get('hiv_pills') == 'No' and  cleaned_data.get('arvs_hiv_test'):
             raise forms.ValidationError('You are answering information about ARV\'s yet have answered \'NO\', patient has never heard about ARV\'s. Please correct')
-        if cleaned_data.get('hiv_pills') == 'Yes' or cleaned_data.get('hiv_pills') == 'not sure' and not cleaned_data.get('arvshivtest'):
+        if cleaned_data.get('hiv_pills') == 'Yes' or cleaned_data.get('hiv_pills') == 'not sure' and not cleaned_data.get('arvs_hiv_test'):
             raise forms.ValidationError('if "%s", answer whether participant believes that HIV positive can live longer if taking ARV\'s. (Q Supplemental HT6)')
          
         return cleaned_data
@@ -284,9 +286,9 @@ class HivUntestedForm (BaseSubjectModelForm):
         cleaned_data = self.cleaned_data
          
         #if no, don't answer next question
-        if cleaned_data.get('hiv_pills') == 'No' and  cleaned_data.get('arvshivtest'):
+        if cleaned_data.get('hiv_pills') == 'No' and  cleaned_data.get('arvs_hiv_test'):
             raise forms.ValidationError('You are answering information about ARV\'s yet have answered \'NO\', patient has never heard about ARV\'s. Please correct')
-        if cleaned_data.get('hiv_pills') == 'Yes' or cleaned_data.get('hiv_pills') == 'not sure' and not cleaned_data.get('arvshivtest'):
+        if cleaned_data.get('hiv_pills') == 'Yes' or cleaned_data.get('hiv_pills') == 'not sure' and not cleaned_data.get('arvs_hiv_test'):
             raise forms.ValidationError('if "%s", answer whether participant believes that HIV positive can live longer if taking ARV\'s. (Q Supplemental HT6)')
          
         return cleaned_data
@@ -621,13 +623,13 @@ class FutureHivTestingForm (BaseSubjectModelForm):
         cleaned_data = self.cleaned_data
         
         #validating a need to specify the participant's preference 
-        if cleaned_data.get('hivtest_time') == 'Yes, specify' and not cleaned_data.get('hivtest_time_other'):
+        if cleaned_data.get('hiv_test_time') == 'Yes, specify' and not cleaned_data.get('hiv_test_time_other'):
             raise forms.ValidationError('If participant prefers a different test date/time than what is indicated, indicate the preference.')
         
-        if cleaned_data.get('hivtest_week') == 'Yes, specify' and not cleaned_data.get('hivtest_week_other'):
+        if cleaned_data.get('hiv_test_week') == 'Yes, specify' and not cleaned_data.get('hiv_test_week_other'):
             raise forms.ValidationError('If participant has preference for testing on a particular day of the week, indicate the preference.')
         
-        if cleaned_data.get('hivtest_year') == 'Yes, specify' and not cleaned_data.get('hivtest_year_other'):
+        if cleaned_data.get('hiv_test_year') == 'Yes, specify' and not cleaned_data.get('hiv_test_year_other'):
             raise forms.ValidationError('If participant prefers time of the year than the options given, indicate the preference.')
         
         cleaned_data = super(FutureHivTestingForm, self).clean()
