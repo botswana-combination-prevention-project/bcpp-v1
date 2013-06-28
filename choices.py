@@ -215,6 +215,7 @@ WHENHIVTEST_CHOICE = (
         ('1 to 5 months ago','1 to 5 months ago'),
         ('6 to 12 months ago','6 to 12 months ago'),
         ('more than 12 months ago','more than 12 months ago'),
+        ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
     
