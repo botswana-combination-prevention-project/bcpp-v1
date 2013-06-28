@@ -50,7 +50,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
         help_text="",
         )
 
-    arvshivtest = models.CharField(
+    arvs_hiv_test = models.CharField(
         verbose_name="Supplemental HT6. Do you believe that treatment for HIV with antiretroviral therapy (or ARVs) can help HIV-positive people to live longer?",
         max_length=25,
         null=True, 
