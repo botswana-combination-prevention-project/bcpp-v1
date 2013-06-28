@@ -10,7 +10,7 @@ class HivTested (HivTestingSupplemental):
     
     """CS002- for those who have tested for HIV. Its branch off from Q18 - HIV testing History"""
     
-    numhivtests = models.IntegerField(
+    num_hiv_tests = models.IntegerField(
         verbose_name="Supplemental HT1. How many times before today have you had an HIV test?",
         max_length=2,
         null=True,
@@ -18,8 +18,9 @@ class HivTested (HivTestingSupplemental):
         help_text="Note:Leave blank if participant does not want to respond.",
         )
 
-    wherehivtest = models.CharField(
-        verbose_name="Supplemental HT2. Where were you tested for HIV, the last [most recent] time you were tested?",
+    where_hiv_test = models.CharField(
+        verbose_name=("Supplemental HT2. Where were you tested for HIV, the last"
+                      " [most recent] time you were tested?"),
         max_length=85,
         null=True,
         blank=True,
@@ -27,8 +28,10 @@ class HivTested (HivTestingSupplemental):
         help_text="",
         )
 
-    whyhivtest = models.CharField(
-        verbose_name="Supplemental HT3. Not including today's HIV test, which of the following statements best describes the reason you were tested the last [most recent] time you were tested before today?",
+    why_hiv_test = models.CharField(
+        verbose_name=("Supplemental HT3. Not including today's HIV test, which of the following"
+                      " statements best describes the reason you were tested the last"
+                      " [most recent] time you were tested before today?"),
         max_length=105,
         null=True, 
         blank=True,
