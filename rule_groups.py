@@ -28,12 +28,28 @@ rule_groups.register(ResourceUtilizationRuleGroup)
 
 class HivTestingHistoryRuleGroup(RuleGroup):
 
-    hivtestrecord = ScheduledDataRule(
+    has_record = ScheduledDataRule(
         logic=Logic(
-            predicate=('hivtestrecord', 'equals', 'Yes'),
+            predicate=('has_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivtestreview'])
+    
+    has_tested = ScheduledDataRule(
+        logic=Logic(
+            predicate=('has_tested', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivtested'])
+    
+    hiv_tested = ScheduledDataRule(
+        logic=Logic(
+            predicate=('has_tested', 'equals', 'No'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivuntested'])
+    
+    
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -179,16 +195,16 @@ rule_groups.register(FemaleReproductiveRuleGroup)
 
 class StigmaPositiveARuleGroup(RuleGroup):
 
-    HHhivtest = ScheduledDataRule(
+    hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=('HHhivtest', 'equals', 'Positive'),
+            predicate=('hiv_result', 'equals', 'Positive'),
             consequence='new',
             alternative='not_required'),
         target_model=['positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
 
     HH_hivtest = ScheduledDataRule(
         logic=Logic(
-            predicate=('HHhivtest', 'equals', 'Negative'),
+            predicate=('hiv_result', 'equals', 'Negative'),
             consequence='new',
             alternative='not_required'),
         target_model=['futurehivtesting','stigma', 'stigmaopinion'])
@@ -202,30 +218,30 @@ rule_groups.register(StigmaPositiveARuleGroup)
 
 class StigmaPositiveBRuleGroup(RuleGroup):
 
-    recordedhivresult = ScheduledDataRule(
+    recorded_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=('recordedhivresult', 'equals', 'HIV-Positive'),
+            predicate=('recorded_hiv_result', 'equals', 'HIV-Positive'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivcareadherence','positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
     
-    verbalhivresult = ScheduledDataRule(
+    verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbalhivresult', 'equals', 'HIV-Positive'),
+            predicate=('verbal_hiv_result', 'equals', 'HIV-Positive'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
 
     recorded_hivresult = ScheduledDataRule(
         logic=Logic(
-            predicate=('recordedhivresult', 'equals', 'HIV-Negative'),
+            predicate=('recorded_hiv_result', 'equals', 'HIV-Negative'),
             consequence='new',
             alternative='not_required'),
         target_model=['futurehivtesting','stigma', 'stigmaopinion'])
 
     verbal_hivresult = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbalhivresult', 'equals', 'HIV-Negative'),
+            predicate=('verbal_hiv_result', 'equals', 'HIV-Negative'),
             consequence='new',
             alternative='not_required'),
         target_model=['futurehivtesting','stigma', 'stigmaopinion'])
