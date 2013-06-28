@@ -9,7 +9,7 @@ def process_report(modeladmin, request, queryset, **kwargs):
         raise TypeError('Please select only one report at a time.')
     return HttpResponseRedirect("/bhp_birt_reports/report_parameters/?reports={0}".format(print_list(report_names)))
     
-process_report.short_description = "Generate Report(s)"
+process_report.short_description = "Generate Report"
 
 def print_list(report_names):
     comma_names = ""

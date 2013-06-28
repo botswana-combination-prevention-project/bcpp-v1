@@ -9,6 +9,8 @@ class ReportParameter(BaseModel):
     
     report =  models.ForeignKey(BaseReport)
     
+    is_active = models.BooleanField(default=False)
+    
     parameter_name = models.CharField(
         verbose_name=("parameter name"),
         max_length=25,

@@ -10,6 +10,7 @@ def generate_report(request, **kwargs):
     data = request.POST
     report_name = None
     token_string = '\"'
+    flag = False
     run_string = 'java -jar'+' '+settings.REPORTS_JAR_PATH+' '+settings.REPORTS_TEMPLATES_PATH+' '+settings.REPORTS_OUTPUT_PATH+' '+request.user.username
     for key, value in data.iteritems():
         if key == 'report':
@@ -22,7 +23,10 @@ def generate_report(request, **kwargs):
                     token_string = token_string + tk + ' '
                 token_string = token_string.rstrip()
                 token_string = token_string+'\"'
-            value = token_string
+                flag = True
+            if flag:
+                value = token_string
+                flag = False
             run_string = run_string +' '+key+' '+value
     run_string +=' '+report_name
     #print run_string

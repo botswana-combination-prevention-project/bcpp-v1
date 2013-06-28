@@ -28,23 +28,25 @@ def report_parameters(request, **kwargs):
     fields = {}
     query_string = None
     for param in report_params:
-        if param.is_selectfield:
-            #need to do this because we don't know which model we'd need to import
-            #at runtime for the ModelChoiceField queryset.
-            Model = get_model(param.app_name, param.model_name) 
-            #Model = get_model('mochudi_household', 'household')
-            query_string = param.query_string
-            #evaluated = eval(query_string)
-            fields.update({param.parameter_name: forms.ModelChoiceField(label=param.parameter_name,queryset=eval(query_string),required=True)})
-        else:
-            if param.parameter_type == 'datetimefield':
-                fields.update({param.parameter_name: forms.DateTimeField(label=param.parameter_name,widget=widgets.AdminDateWidget)})
-            elif param.parameter_type == 'charfield':
-                fields.update({param.parameter_name: forms.CharField(max_length=50, label=param.parameter_name,widget=forms.TextInput)})
-            elif param.parameter_type == 'integerfield':
-                fields.update({param.parameter_name: forms.IntegerField(label=param.parameter_name,widget=forms.TextInput)})
-            elif param.parameter_type == 'doublefield':
-                fields.update({param.parameter_name: forms.DecimalField(label=param.parameter_name,widget=forms.TextInput)})
+        if param.is_active:
+            if param.is_selectfield:
+                #need to do this because we don't know which model we'd need to import
+                #at runtime for the ModelChoiceField queryset.
+                Model = get_model(param.app_name, param.model_name) 
+                #Model = get_model('mochudi_household', 'household')
+                query_string = param.query_string
+                #evaluated = eval(query_string)
+                fields.update({param.parameter_name: forms.ModelChoiceField(label=param.parameter_name,queryset=eval(query_string),required=True)})
+            else:
+                if param.parameter_type == 'datetimefield':
+                    fields.update({param.parameter_name: forms.DateTimeField(label=param.parameter_name,widget=widgets.AdminDateWidget)})
+                    #fields[param.parameter_name].widget = fields[param.parameter_name].hidden_widget()
+                elif param.parameter_type == 'charfield':
+                    fields.update({param.parameter_name: forms.CharField(max_length=50, label=param.parameter_name,widget=forms.TextInput)})
+                elif param.parameter_type == 'integerfield':
+                    fields.update({param.parameter_name: forms.IntegerField(label=param.parameter_name,widget=forms.TextInput)})
+                elif param.parameter_type == 'doublefield':
+                    fields.update({param.parameter_name: forms.DecimalField(label=param.parameter_name,widget=forms.TextInput)})
     form = type('ContactForm', tuple([forms.BaseForm]), { 'base_fields': fields })
     return render_to_response(
         #'entere_parameters.html', {'params': report_params, 'report': reports[0]},
