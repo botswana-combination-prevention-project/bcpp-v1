@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
-from bcpp.choices import HHHIVTEST_CHOICE, WHYNOHIVTEST_CHOICE, YES_NO_DONT_ANSWER
+from bcpp.choices import HHHIVTEST_CHOICE, WHYNOHIVTESTING_CHOICE, YES_NO_DONT_ANSWER
+from bcpp_subject.choices import YES_NO_RECORD_REFUSAL
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -18,10 +19,10 @@ class HivTestingHistory (BaseScheduledVisitModel):
 
     why_not_tested = models.CharField(
         verbose_name="17. What was the main reason why you did not want HIV testing as part of today's visit?",
-        max_length=25,
+        max_length=65,
         null=True,
         blank=True,
-        choices=WHYNOHIVTEST_CHOICE,
+        choices=WHYNOHIVTESTING_CHOICE,
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
         )
 
@@ -34,10 +35,10 @@ class HivTestingHistory (BaseScheduledVisitModel):
 
     has_record = models.CharField(
         verbose_name="19. Is a record of last HIV test [OPD card, Tebelopele, other] available to review?",
-        max_length=15,
+        max_length=45,
         null=True,
         blank=True,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_RECORD_REFUSAL,
         help_text="",
         )
 
