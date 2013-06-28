@@ -368,14 +368,14 @@ class HivTestReviewAdmin(SubjectVisitModelAdmin):
     form = HivTestReviewForm
     fields = (
         "subject_visit",
-        'whenhivtest',
-        'verbalhivresult',
-        "hivtestdate",
-        'recordedhivresult',)
+        'when_hiv_test',
+        'verbal_hiv_result',
+        "hiv_test_date",
+        'recorded_hiv_result',)
     radio_fields = {
-        "recordedhivresult": admin.VERTICAL,
-        "whenhivtest": admin.VERTICAL,
-        "verbalhivresult": admin.VERTICAL, }
+        "recorded_hiv_result": admin.VERTICAL,
+        "when_hiv_test": admin.VERTICAL,
+        "verbal_hiv_result": admin.VERTICAL, }
 admin.site.register(HivTestReview, HivTestReviewAdmin)
 
 
@@ -385,16 +385,16 @@ class HivTestedAdmin(SubjectVisitModelAdmin):
     form = HivTestedForm
     fields = (
         "subject_visit",
-        'numhivtests',
-        'wherehivtest',
-        'whyhivtest',
+        'num_hiv_tests',
+        'where_hiv_test',
+        'why_hiv_test',
         'hiv_pills',
-        'arvshivtest',)
+        'arvs_hiv_test',)
     radio_fields = {
-        "wherehivtest":admin.VERTICAL,
-        "whyhivtest":admin.VERTICAL,
+        "where_hiv_test":admin.VERTICAL,
+        "why_hiv_test":admin.VERTICAL,
         "hiv_pills":admin.VERTICAL,
-        "arvshivtest":admin.VERTICAL,}
+        "arvs_hiv_test":admin.VERTICAL,}
 admin.site.register(HivTested, HivTestedAdmin)
 
 
@@ -406,11 +406,11 @@ class HivUntestedAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         'whynohivtest',
         'hiv_pills',
-        'arvshivtest',)
+        'arvs_hiv_test',)
     radio_fields = {
         "whynohivtest":admin.VERTICAL,
         "hiv_pills":admin.VERTICAL,
-        "arvshivtest":admin.VERTICAL,}
+        "arvs_hiv_test":admin.VERTICAL,}
 admin.site.register(HivUntested, HivUntestedAdmin)
 
 
@@ -442,17 +442,17 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'prefer_hivtest',
-        'hivtest_time',
-        'hivtest_time_other',
-        'hivtest_week',
-        'hivtest_week_other',
-        'hivtest_year',
-        'hivtest_year_other')
+        'hiv_test_time',
+        'hiv_test_time_other',
+        'hiv_test_week',
+        'hiv_test_week_other',
+        'hiv_test_year',
+        'hiv_test_year_other')
     radio_fields = {
         'prefer_hivtest':admin.VERTICAL,
-        "hivtest_time":admin.VERTICAL,
-        "hivtest_week":admin.VERTICAL,
-        "hivtest_year":admin.VERTICAL,}
+        "hiv_test_time":admin.VERTICAL,
+        "hiv_test_week":admin.VERTICAL,
+        "hiv_test_year":admin.VERTICAL,}
 admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 
 
