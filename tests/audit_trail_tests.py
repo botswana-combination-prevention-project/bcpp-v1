@@ -12,12 +12,10 @@ from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 
 class AuditTrailTests(TestCase):
 
-    #fixtures = ['test_configuration.json']
-
     def test_audit_trail(self):
         lab_tracker.autodiscover()
         StudySpecificFactory()
-        study_site = StudySiteFactory()
+        StudySiteFactory()
         ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()

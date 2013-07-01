@@ -20,7 +20,6 @@ from bhp_visit_tracking.models import TestScheduledModel
 
 
 class AppointmentMethodTests(BaseAppointmentTests):
-    #fixtures = ['test_configuration.json', 'test_variables.json']
 
     def test_save(self):
         # create an appointment
@@ -62,7 +61,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
         """
         lab_tracker.autodiscover()
         StudySpecificFactory()
-        study_site = StudySiteFactory()
+        StudySiteFactory()
         ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
@@ -97,7 +96,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
         app_label = 'bhp_base_test'
         lab_tracker.autodiscover()
         StudySpecificFactory()
-        study_site = StudySiteFactory()
+        StudySiteFactory()
         ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()

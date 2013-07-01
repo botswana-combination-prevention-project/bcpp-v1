@@ -6,8 +6,6 @@ from factories import PreAppointmentContactFactory
 
 class PreAppointmentContactMethodTests(BaseAppointmentTests):
 
-    #fixtures = ['test_configuration.json', 'test_variables.json']
-
     def test_post_save(self):
         self.setup()
         appt_pk = self.appointment.pk
