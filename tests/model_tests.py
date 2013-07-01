@@ -2,7 +2,7 @@ import re
 from django.test import TestCase
 from django.conf import settings
 from bhp_registration.models import RegisteredSubject
-from bhp_consent.models import TestSubjectConsent
+
 from bhp_identifier.exceptions import IdentifierError
 from factories import RegisteredSubjectFactory
 
@@ -18,10 +18,11 @@ class ModelTests(TestCase):
 
     def test_p2(self):
         """Tests natural key."""
-        from bhp_consent.tests.factories import TestSubjectConsentFactory
+        from bhp_base_test.models import TestConsent
+        from bhp_base_test.tests.factories import TestConsentFactory
 
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        for index, cls_tpl in enumerate([(RegisteredSubject, RegisteredSubjectFactory), (TestSubjectConsent, TestSubjectConsentFactory)]):
+        for index, cls_tpl in enumerate([(RegisteredSubject, RegisteredSubjectFactory), (TestConsent, TestConsentFactory)]):
             cls, cls_factory = cls_tpl
             print 'using {0}'.format(cls._meta.object_name)
             print 'test {0} natural key'.format(cls._meta.object_name)
@@ -31,7 +32,7 @@ class ModelTests(TestCase):
             args = rs.natural_key()
             rs3 = cls.objects.get_by_natural_key(*args)
             self.assertEqual(rs, rs3)
-            print 'test {0} does not change subject identifier on save of exisiting instance'.format(cls._meta.object_name)
+            print 'test {0} does not change subject identifier on save of existing instance'.format(cls._meta.object_name)
             rs = cls_factory()
             old_identifier = rs.subject_identifier
             rs.subject_identifier = 'TEST_IDENTIFIER{0}'.format(index)
@@ -64,7 +65,7 @@ class ModelTests(TestCase):
             self.assertIsNotNone(rs.subject_identifier)
             if issubclass(cls, RegisteredSubject):
                 self.assertTrue(re_pk.match(rs.subject_identifier))
-            if issubclass(cls, TestSubjectConsent):
+            if issubclass(cls, TestConsent):
                 self.assertTrue(rs.subject_identifier.startswith(settings.PROJECT_IDENTIFIER_PREFIX))
             print 'test {0} unicode is masked if subject identifier is a uuid'.format(cls._meta.object_name)
             rs = cls_factory()
