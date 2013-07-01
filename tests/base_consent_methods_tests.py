@@ -6,7 +6,6 @@ from bhp_variables.tests.factories import StudySiteFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_base_model.models import TestForeignKey, TestManyToMany
 from bhp_base_test.models import TestConsent, TestSubjectUuidModel, TestConsentNoRs
-from bhp_base_test.tests.factories import TestConsentFactory, TestConsentNoRsFactory
 from bhp_consent.tests.factories import ConsentCatalogueFactory
 from bhp_identifier.exceptions import IdentifierError
 from bhp_content_type_map.classes import ContentTypeMapHelper
@@ -21,6 +20,7 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         self.create_study_variables()
 
     def test_subject_consent_save(self):
+        from bhp_base_test.tests.factories import TestConsentFactory
         print 'TEST SUBJECT CONSENT WITH KEY TO RS'
         TestConsent.objects.all().delete()
         RegisteredSubject.objects.all().delete()
@@ -91,6 +91,8 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         print 'ok'
 
     def test_subject_consent_no_registered_subject(self):
+        from bhp_base_test.tests.factories import TestConsentNoRsFactory
+
         print 'TEST SUBJECT CONSENT WITH NO KEY TO RS'
         TestConsent.objects.all().delete()
         TestConsentNoRs.objects.all().delete()
@@ -152,7 +154,7 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        content_type_map = ContentTypeMap.objects.get(model__iexact=TestConsent._meta.object_name)
+        content_type_map = ContentTypeMap.objects.get(model__iexact='TestConsent')
         ConsentCatalogueFactory(content_type_map=content_type_map, add_for_app='bhp_base_test')
 
     def test_subject_uuid_model(self):
