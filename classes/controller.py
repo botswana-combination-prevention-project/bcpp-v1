@@ -17,7 +17,7 @@ class NotRegistered(Exception):
 class Controller(object):
 
     """ Main controller of :class:`Search` objects. """
-    
+
     SECTION_NAME = 0
 
     def __init__(self):
@@ -69,12 +69,12 @@ class Controller(object):
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             try:
-                before_import_registry = copy.copy(search._registry)
+                before_import_registry = copy.copy(site_search._registry)
                 import_module('%s.search' % app)
             except:
-                search._registry = before_import_registry
+                site_search._registry = before_import_registry
                 if module_has_submodule(mod, 'search'):
                     raise
         self.is_autodiscovered = True
 
-search = Controller()
+site_search = Controller()
