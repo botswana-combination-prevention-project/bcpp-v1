@@ -152,9 +152,8 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        # prepare the consent catalogue
         content_type_map = ContentTypeMap.objects.get(model__iexact=TestConsent._meta.object_name)
-        ConsentCatalogueFactory(content_type_map=content_type_map, add_for_app='bhp_consent')
+        ConsentCatalogueFactory(content_type_map=content_type_map, add_for_app='bhp_base_test')
 
     def test_subject_uuid_model(self):
         self.test_consent_catalogue()

@@ -1,15 +1,15 @@
 from django.test import TestCase
 from bhp_registration.models import RegisteredSubject
-from bhp_consent.forms import TestSubjectUuidModelForm
+from bhp_base_test.forms import TestSubjectUuidModelForm
 from base_methods import BaseMethods
-from bhp_consent.tests.factories import TestSubjectConsentFactory
+from bhp_base_test.tests.factories import TestConsentFactory
 from bhp_base_model.tests.factories import TestManyToManyFactory, TestForeignKeyFactory
 
 
 class FormsTests(TestCase, BaseMethods):
 
     def test_base_consented_model_form(self):
-        subject_consent = TestSubjectConsentFactory()
+        subject_consent = TestConsentFactory()
         self.prepare_consent_catalogue()
         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
         test_m2m = TestManyToManyFactory(name='test_m2m', short_name='test_m2m')

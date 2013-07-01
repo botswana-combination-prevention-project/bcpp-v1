@@ -1,8 +1,7 @@
 from datetime import datetime
-from bhp_variables.models import StudySite, StudySpecific
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_consent.models import ConsentCatalogue, TestSubjectConsent
+from bhp_base_test.models import TestConsent
 from bhp_variables.tests.factories import StudySiteFactory, StudySpecificFactory
 from factories import ConsentCatalogueFactory
 
@@ -17,12 +16,11 @@ class BaseMethods(object):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        # prepare the consent catalogue
-        content_type_map = ContentTypeMap.objects.get(model__iexact=TestSubjectConsent._meta.object_name)
-        ConsentCatalogueFactory(content_type_map=content_type_map, add_for_app='bhp_consent')
+        content_type_map = ContentTypeMap.objects.get(model__iexact='TestConsent')
+        ConsentCatalogueFactory(content_type_map=content_type_map, add_for_app='bhp_base_test')
 
     def create_consent(self):
-        subject_consent = TestSubjectConsent.objects.create(
+        subject_consent = TestConsent.objects.create(
             first_name='TEST',
             last_name='TESTER',
             user_provided_subject_identifier=None,

@@ -1,29 +1,18 @@
 import re
 from django.test import TestCase
-from django.conf import settings
-from bhp_consent.models import ConsentCatalogue
-from bhp_consent.tests.factories import ConsentCatalogueFactory, TestSubjectConsentFactory
+from bhp_base_test.tests.factories import TestConsentFactory
 from bhp_variables.tests.factories import StudySiteFactory, StudySpecificFactory
 from bhp_registration.models import RegisteredSubject
 
 
 class ModelTests(TestCase):
 
-#     def test_p1(self):
-#         for cls, cls_factory in [(ConsentCatalogue, ConsentCatalogueFactory)]:
-#             print 'using {0}'.format(cls._meta.object_name)
-#             print 'test {0} natural key'.format(cls._meta.object_name)
-#             rs1 = cls_factory()
-#             args = rs1.natural_key()
-#             rs2 = cls.objects.get_by_natural_key(*args)
-#             self.assertEqual(rs1, rs2)
-
     def test_p2(self):
         """TEST registered subject is create when consent is created"""
         study_site = StudySiteFactory(site_code='10', site_name='TEST_SITE')
-        study_specific = StudySpecificFactory()
+        StudySpecificFactory()
         print "create a new consent"
-        subject_consent = TestSubjectConsentFactory(first_name='ERIK1', study_site=study_site)
+        subject_consent = TestConsentFactory(first_name='ERIK1', study_site=study_site)
         print 'assert subject_identifier is not None. Got {0}'.format(subject_consent.subject_identifier)
         self.assertIsNotNone(subject_consent.subject_identifier)
         # confirm registered_subject is created and updated
