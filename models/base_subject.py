@@ -15,6 +15,7 @@ from bhp_crypto.fields import EncryptedFirstnameField, EncryptedLastnameField
 from bhp_consent.exceptions import ConsentError
 from bhp_identifier.exceptions import IdentifierError
 from bhp_subject.managers import BaseSubjectManager
+from bhp_subject.exceptions import SubjectError
 
 
 class BaseSubject (BaseSyncUuidModel):
@@ -103,55 +104,70 @@ class BaseSubject (BaseSyncUuidModel):
             return True
         return False
 
+    def _get_or_created_registered_subject(self, using):
+        ret = None
+        if 'registered_subject' in dir(self):
+            if self.registered_subject:
+                ret = self.registered_subject
+        if not ret:
+            options = self._get_registered_subject_options()
+            RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
+            registered_subject, created = RegisteredSubject.objects.using(using).get_or_create(subject_identifier=self.subject_identifier, identity=self.identity, defaults=options)
+            if not created:
+                self._update_registered_subject(using, options, registered_subject)
+            ret = registered_subject
+        return ret
+
+    def _get_registered_subject_options(self):
+        """Returns a dictionary of RegisteredSubject attributes ({field, value}) to be used, for example, as the defaults kwarg RegisteredSubject.objects.get_or_create()."""
+        options = {
+            'subject_identifier': self.subject_identifier,
+            'study_site': self.study_site,
+            'dob': self.dob,
+            'is_dob_estimated': self.is_dob_estimated,
+            'gender': self.gender,
+            'initials': self.initials,
+            'identity': self.identity,
+            'identity_type': self.identity_type,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'subject_type': self.get_subject_type(),
+            }
+        if self.last_name:
+            options.update({'registration_status': 'consented'})
+        return options
+
+    def _update_registered_subject(self, using, registered_subject=None):
+        """Updates the registered_subject attribute using options from self."""
+        options = self._get_registered_subject_options()
+        if not registered_subject:
+            registered_subject = self.registered_subject
+        for k in registered_subject.__dict__.iterkeys():
+            if k in options:
+                setattr(registered_subject, k, options.get(k))
+        registered_subject.save(using=using)
+
     def post_save_get_or_create_registered_subject(self, **kwargs):
         """Creates or \'gets and updates\' the registered subject instance for this subject.
 
         Called by a post save signal.
 
-        ..note:: RegisteredSubject also inherits fom BaseSubject. This method does nothing if \'self\' is an
+        ..note:: RegisteredSubject also inherits from BaseSubject. This method does nothing if \'self\' is an
                  instance of RegisteredSubject.
+        ..note:: 'self' may not have an attribute registered_subject or the attribute may not be set.
         """
         using = kwargs.get('using', None)
+        # skip if self is an instance of RegisteredSubject
         if not self.is_registered_subject():
             if 'registered_subject' in dir(self):
-                # subject_identifier_as_pk should never be changed once set!!
-                self.registered_subject.subject_identifier = self.subject_identifier
-                self.registered_subject.study_site = self.study_site
-                self.registered_subject.dob = self.dob
-                self.registered_subject.is_dob_estimated = self.is_dob_estimated
-                self.registered_subject.gender = self.gender
-                self.registered_subject.initials = self.initials
-                self.registered_subject.identity = self.identity
-                self.registered_subject.first_name = self.first_name
-                self.registered_subject.last_name = self.last_name
-                if self.last_name:
-                    self.registered_subject.registration_status = 'consented'
-                self.registered_subject.subject_type = self.get_subject_type()
-                self.registered_subject.save(using=using)
+                if not self.registered_subject:
+                    self.registered_subject = self._get_or_created_registered_subject(using)
+                else:
+                    self._update_registered_subject(using)
             else:
-                # subject_identifier_as_pk should never be changed once set!!
-                defaults = {
-                    'subject_identifier': self.subject_identifier,
-                    'study_site': self.study_site,
-                    'dob': self.dob,
-                    'is_dob_estimated': self.is_dob_estimated,
-                    'gender': self.gender,
-                    'initials': self.initials,
-                    'identity': self.identity,
-                    'identity_type': self.identity_type,
-                    'first_name': self.first_name,
-                    'last_name': self.last_name,
-                    'subject_type': self.get_subject_type(),
-                    }
-                if self.last_name:
-                    defaults.update({'registration_status': 'consented'})
-                RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-                registered_subject, created = RegisteredSubject.objects.using(using).get_or_create(subject_identifier=self.subject_identifier, identity=self.identity, defaults=defaults)
-                if not created:
-                    for k in registered_subject.__dict__.iterkeys():
-                        if k in defaults:
-                            setattr(registered_subject, k, defaults.get(k))
-                    registered_subject.save(using=using)
+                # self does not have a foreign key to RegisteredSubject but RegisteredSubject
+                # still needs to be created or updated
+                self._get_or_created_registered_subject(using)
 
     def get_subject_type(self):
         """Returns a subject type.

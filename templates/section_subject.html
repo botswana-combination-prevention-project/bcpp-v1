@@ -6,15 +6,16 @@
 
 <div id="tile_wrapper">
 
-    <div id="add_model_tile">{% block add_model_tile %}
+    {% block add_model_tile %}
+    <div id="add_model_tile">
         <form method="GET" action="{% url add_model_opts|admin_urlname:'add' %}">
         {% csrf_token %}
         <input type="hidden" name="next" value="section_url">
         <input type="hidden" name="section_name" value="{{ section_name }}">
         <input type="submit" value="Add {{ add_model_name }}"  />
         </form>
-    {% endblock %}
-    </div>
+    </div>{% endblock %}
+    
 
     <div id="search_tile">{% block search_tile %}
     <form method="POST" action="{% url 'section_search_url' section_name search_type %}">
