@@ -4,7 +4,6 @@ from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactor
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_visit_tracking.models import TestSubjectVisit, TestSubjectVisitTwo, TestSubjectVisitThree
-from bhp_consent.models import TestSubjectUuidModel
 from bhp_visit.classes import VisitDefinitionHelper
 from bhp_visit.models import VisitDefinition
 from bhp_entry.models import Entry
