@@ -9,11 +9,11 @@ from bhp_appointment.tests.factories import ConfigurationFactory, AppointmentFac
 from bhp_visit.models import VisitDefinition
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_visit_tracking.models import TestSubjectVisit
-from bhp_consent.models import TestSubjectConsent, AttachedModel
-from bhp_consent.tests.factories import TestSubjectConsentFactory
+from bhp_consent.models import AttachedModel
+from bhp_base_test.tests.factories import TestConsentFactory
 from bhp_consent.tests.factories import ConsentCatalogueFactory
 from bhp_variables.tests.factories import StudySiteFactory
-from bhp_off_study.models import TestOffStudy
+from bhp_base_test.models import TestOffStudy
 
 
 class OffStudyMethodsTests(TestCase):
@@ -24,7 +24,7 @@ class OffStudyMethodsTests(TestCase):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        content_type_map = ContentTypeMap.objects.get(model__iexact=TestSubjectConsent._meta.object_name)
+        content_type_map = ContentTypeMap.objects.get(model__iexact='TestConsent')
         consent_catalogue = ConsentCatalogueFactory(
             name='test',
             content_type_map=content_type_map,
@@ -41,7 +41,7 @@ class OffStudyMethodsTests(TestCase):
         # create a subject
         self.registered_subject = RegisteredSubjectFactory()
         # consent the subject
-        self.subject_consent = TestSubjectConsentFactory(
+        self.subject_consent = TestConsentFactory(
             first_name='TEST',
             last_name='TESTER',
             initials='TT',

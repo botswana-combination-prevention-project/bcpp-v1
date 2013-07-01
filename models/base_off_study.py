@@ -95,5 +95,4 @@ class BaseOffStudy(BaseRegisteredSubjectModel):
                                       mask_encrypted(self.registered_subject.first_name))
 
     class Meta:
-        app_label = 'bhp_off_study'
         abstract = True
