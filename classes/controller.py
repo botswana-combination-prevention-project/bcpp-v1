@@ -42,7 +42,7 @@ class Controller(object):
         return self.get_registry()
 
     def get_section_names(self):
-        return self._registry().keys()
+        return self.get_registry().keys()
 
     def register(self, section_view_cls):
         if not section_view_cls.section_name:

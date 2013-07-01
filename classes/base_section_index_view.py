@@ -1,5 +1,6 @@
+from django.core.exceptions import ImproperlyConfigured
 from controller import site_sections
-from bhp_search.classes import search
+from bhp_search.classes import site_search
 
 
 class BaseSectionIndexView(object):
@@ -27,7 +28,7 @@ class BaseSectionIndexView(object):
         if not self.is_setup:
             site_sections.autodiscover()
             self._set_section_list()
-            search.autodiscover(self.get_section_list())
+            site_search.autodiscover(self.get_section_list())
             self.is_setup = True
 
     def _set_section_list(self):
@@ -38,6 +39,9 @@ class BaseSectionIndexView(object):
         for site_section in site_sections.all().itervalues():
             unordered_section_list.append((site_section.section_name, site_section.section_display_name, site_section.section_display_index))
             display_indexes.append(site_section.section_display_index)
+        # are display_indexes unique?
+        if list(set(display_indexes)).sort() != display_indexes.sort():
+            raise ImproperlyConfigured('Section classes must have a unique section_display_index. Got {0} from site_sections {1}. Check the section model in each app.'.format(display_indexes, site_sections.get_section_names()))
         display_indexes.sort()
         for index in display_indexes:
             for section_tpl in unordered_section_list:

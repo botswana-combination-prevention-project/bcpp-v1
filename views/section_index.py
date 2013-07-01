@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from bhp_search.classes import search
+from bhp_search.classes import site_search
 
 
 @login_required
@@ -17,7 +17,7 @@ def section_index(request, **kwargs):
         pass
     app_list = [app for app in settings.INSTALLED_APPS if re.search('^{app_name}'.format(app_name=settings.APP_NAME), app)]
     bhp_app_list = [app for app in settings.INSTALLED_APPS if re.search('^bhp', app)]
-    search_cls = search.get(settings.APP_NAME, 'word')
+    search_cls = site_search.get(settings.APP_NAME, 'word')
     search_by_word = search_cls()
     page = request.GET.get('page', '1')
     search_results = search_by_word.get_most_recent(search_name, page)

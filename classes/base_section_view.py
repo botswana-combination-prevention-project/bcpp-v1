@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from bhp_appointment.models import Appointment
 #from bhp_data_manager.models import ActionItem
-from bhp_search.classes import search
+from bhp_search.classes import site_search
 from bhp_section.exceptions import SectionError
 
 
@@ -139,7 +139,7 @@ class BaseSectionView(object):
 
     def urlpatterns(self, view=None):
         """ Generates a urlpattern for the view of this subclass."""
-        if not search.is_autodiscovered:
+        if not site_search.is_autodiscovered:
             raise SectionError('Search register not ready. Call search.autodiscover() first.')
         #self.urlpattern_prepared = True
         if view is None:
@@ -149,7 +149,7 @@ class BaseSectionView(object):
         #for section_name in section_index_view.get_section_name_list():
         #    # try to match this section to a search class
         section_name = self.get_section_name()
-        for search_type, search_cls in search.get_registry().iteritems():
+        for search_type, search_cls in site_search.get_registry().iteritems():
             # for each type of search, look for an association with this section_name
             if search_cls().get_section_name() == section_name:
                 self.set_search_type(section_name, search_type)
@@ -186,7 +186,7 @@ class BaseSectionView(object):
             search_result = None
             search_result_include_file = None
             if self.get_search_type(self.get_section_name()):
-                search_cls = search.get(self.get_search_type(self.get_section_name()))
+                search_cls = site_search.get(self.get_search_type(self.get_section_name()))
                 search_instance = search_cls()
                 search_result_include_file = search_instance.get_include_template_file()
                 search_instance.prepare(request, **kwargs)
