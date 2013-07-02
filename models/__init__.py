@@ -14,3 +14,5 @@ from household_survey_status import HouseholdSurveyStatus
 
 from subject_absentee_reason import SubjectAbsenteeReason
 from subject_moved_reason import SubjectMovedReason
+
+from partner_residency import PartnerResidency
