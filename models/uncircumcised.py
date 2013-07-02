@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
+from bhp_base_model.fields import OtherCharField
 from bcpp.choices import REASONCIRC_CHOICE, YES_NO_UNSURE, CIRCUMCISION_DAY, CIRCUMCISION_WEEK, CIRCUMCISION_MONTH, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE, YES_NO_DONT_ANSWER
 from base_circumcision import BaseCircumcision
 
@@ -10,7 +11,7 @@ class Uncircumcised (BaseCircumcision):
     """CS002"""
     
     reason_circ = models.CharField(
-        verbose_name="Supplemental MC3. What is the main reason that have you not yet been circumcised?",
+        verbose_name="Supplemental MC3. What is the main reason that you have not yet been circumcised?",
         max_length=15,
         choices=REASONCIRC_CHOICE,
         help_text="",
@@ -30,6 +31,7 @@ class Uncircumcised (BaseCircumcision):
         choices=CIRCUMCISION_DAY,
         help_text="",
         )
+    circumcision_day_other = OtherCharField()
 
     circumcision_week = models.CharField(
         verbose_name=("Supplemental MC5. In the future, is there a particular day of the week that"
@@ -38,6 +40,7 @@ class Uncircumcised (BaseCircumcision):
         choices=CIRCUMCISION_WEEK,
         help_text="",
         )
+    circumcision_week_other = OtherCharField()
 
     circumcision_year = models.CharField(
         verbose_name=("Supplemental MC6. In the future, is there a particular time of year that you"
@@ -46,6 +49,7 @@ class Uncircumcised (BaseCircumcision):
         choices=CIRCUMCISION_MONTH,
         help_text="",
         )
+    circumcision_year_other = OtherCharField()
 
     future_reasons_smc = models.CharField(
         verbose_name=("Supplemental MC7. Which of the following might increase your willingness to"
@@ -67,6 +71,8 @@ class Uncircumcised (BaseCircumcision):
         verbose_name=("Supplemental MC9. Where did you learn that circumcision services were "
                         "available free at most health facilities?"),
         max_length=15,
+        null=True, 
+        blank=True,
         choices=AWAREFREE_CHOICE,
         help_text="",
         )
