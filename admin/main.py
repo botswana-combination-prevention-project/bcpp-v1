@@ -194,6 +194,7 @@ class BaselineHouseholdSurveyAdmin(SubjectVisitModelAdmin):
         "energy_source",
         "energy_source_other",
         "toilet_facility",
+        "toilet_facility_other",
         "electrical_appliances",
         "transport_mode",
         "goats_owned",
@@ -759,7 +760,7 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         "heart_attack": admin.VERTICAL,
         "heart_attack_record": admin.VERTICAL,
-        "dx_heart_attack": admin.VERTICAL,
+#         "dx_heart_attack": admin.VERTICAL,
         "cancer": admin.VERTICAL,
         "cancer_record": admin.VERTICAL,
         "dx_cancer": admin.VERTICAL,
@@ -767,6 +768,7 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
         "tb": admin.VERTICAL,
         "tb_record": admin.VERTICAL,
         "dx_tb": admin.VERTICAL, }
+    filter_horizontal = ('dx_heart_attack',)
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
 
 
