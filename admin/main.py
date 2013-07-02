@@ -662,7 +662,9 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
         "health_benefits_smc",
         'when_circ',
         'where_circ',
-        'why_circ',)
+        'where_circ_other',
+        'why_circ',
+        'why_circ_other',)
     radio_fields = {
         "circumcised": admin.VERTICAL,
         "where_circ": admin.VERTICAL,
@@ -682,8 +684,11 @@ class UncircumcisedAdmin(SubjectVisitModelAdmin):
         'reason_circ',
         'future_circ',
         'circumcision_day',
+        'circumcision_day_other',
         'circumcision_week',
+        'circumcision_week_other',
         'circumcision_year',
+        'circumcision_year_other',
         'future_reasons_smc',
         'service_facilities',
         'aware_free',
