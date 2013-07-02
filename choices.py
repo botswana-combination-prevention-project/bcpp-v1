@@ -573,13 +573,13 @@ AWAREFREE_CHOICE = (
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
-WHERECIRC_CHOICE = (
+PLACE_CIRC = (
         ('Government clinic or hospital','Government clinic or hospital'),
         ('Traditional location (Bogerwa)','Traditional location (Bogerwa)'),
         ('Outreach site (mobile or temporary center)','Outreach site (mobile or temporary center)'),
         ('Private practitioner','Private practitioner'),
         ('I am not sure','I am not sure'),
-        ('Other, specify:','Other, specify:'),
+        ('Other','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
@@ -587,11 +587,12 @@ WHYCIRC_CHOICE = (
         ('Prevent HIV/AIDS','Prevent HIV/AIDS'),
         ('Other medical reason','Other medical reason'),
         ('Personal preference','Personal preference'),
+        ('Improved hygiene', 'Improved hygiene'),
         ('Cultural tradition and/or religion','Cultural tradition and/or religion'),
         ('Acceptance by sexual partner(s)','Acceptance by sexual partner(s)'),
         ('Acceptance by family, friends, and/or community','Acceptance by family, friends, and/or community'),
         ('I am not sure','I am not sure'),
-        ('Other, specify:','Other, specify:'),
+        ('Other','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
