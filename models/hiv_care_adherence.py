@@ -1,6 +1,7 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bcpp.choices import YES_NO_DONT_ANSWER, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE, ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE
+from bhp_base_model.fields import OtherCharField 
+from bcpp.choices import YES_NO_DONT_ANSWER, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE, ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -57,12 +58,13 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     why_no_arv = models.CharField(
         verbose_name="66. What was the main reason why you have not started ARVs?",
-        max_length=15,
+        max_length=75,
         null=True,
         blank=True,
         choices=WHYNOARV_CHOICE,
         help_text="",
         )
+    why_no_arv_other = OtherCharField()
 
     first_arv = models.DateField(
         verbose_name="67. When did you first start taking antiretroviral therapy (ARVs)?",
@@ -78,15 +80,22 @@ class HivCareAdherence (BaseScheduledVisitModel):
         choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
+    arv_stop_date = models.DateField(
+        verbose_name="68b. When did you stop taking ARV\'s?", 
+        null=True, 
+        blank=True,
+        help_text="",
+        )
 
     arv_stop = models.CharField(
         verbose_name="69. What was the main reason why you stopped taking ARVs?",
         max_length=80,
-        choices=WHYNOARV_CHOICE,
+        choices=WHYARVSTOP_CHOICE,
         null=True,
         blank=True,
         help_text="",
         )
+    arv_stop_other = OtherCharField()
 
     adherence_4_day = models.CharField(
         verbose_name=("70. During the past 4 days, on how many days have you missed taking all your"
