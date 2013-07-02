@@ -605,8 +605,12 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'ever_recommended_arv',
         'arv_naive',
         'why_no_arv',
+        'why_no_arv_other',
+        'first_arv',
         'on_arv',
         'arv_stop',
+        'arv_stop_date',
+        'arv_stop_other',
         'adherence_4_day',
         'adherence_4_wk',)
     radio_fields = {
