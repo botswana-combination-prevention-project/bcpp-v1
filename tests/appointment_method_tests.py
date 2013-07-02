@@ -159,6 +159,8 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 self.assertIn(appointment.appt_status, ['cancelled'])
             else:
                 self.assertIn(appointment.appt_status, ['new', 'cancelled'])
+            print '    {0} becomes {1}'.format(appt_status[0], appointment.appt_status) 
+
         print 'get appointment 1000'
         appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000')
         print 'add a visit tracking form for appointment 1000'
