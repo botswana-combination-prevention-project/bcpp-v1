@@ -620,6 +620,7 @@ PREGARV_CHOICE = (
         ('Yes, HAART ','Yes, HAART [multiple drugs like Atripla, Truvada, or Combivir taken once or twice a day]'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
+        ('No','No ARV\'s'),
     )
 
 
@@ -627,7 +628,7 @@ DXHEARTATTACK_CHOICE = (
         ('Myocardial infarction (heart attack)','Myocardial infarction (heart attack)'),
         ('Congestive cardiac failure','Congestive cardiac failure'),
         ('Stroke (cerebrovascular accident, CVA)','Stroke (cerebrovascular accident, CVA)'),
-        ('Other, specify:','Other, specify:'),
+        ('Other','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
@@ -641,7 +642,7 @@ DXCANCER_CHOICE = (
         ('Prostate cancer','Prostate cancer'),
         ('Cancer of mouth, throat, voice box (larynx)','Cancer of mouth, throat, voice box (larynx)'),
         ('Cancer of oesophagus','Cancer of oesophagus'),
-        ('Other, specify:','Other, specify:'),
+        ('Other','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
@@ -649,7 +650,7 @@ DXCANCER_CHOICE = (
 DXTB_CHOICE = (
         ('Pulmonary tuberculosis','Pulmonary tuberculosis'),
         ('Extrapulmonary (outside the lungs) tuberculosis','Extrapulmonary (outside the lungs) tuberculosis'),
-        ('Other, specify:','Other, specify:'),
+        ('Other','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
