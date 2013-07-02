@@ -462,20 +462,20 @@ class SexualBehaviourAdmin(SubjectVisitModelAdmin):
     form = SexualBehaviourForm
     fields = (
         "subject_visit",
-        'eversex',
-        'lastyearpartners',
-        'moresex',
-        'firstsex',
+        'ever_sex',
+        'last_year_partners',
+        'more_sex',
+        'first_sex',
         'condom',
         'alcohol_sex',
-        'lastsex',
-        'lastsex_calc',)
+        'last_sex',
+        'last_sex_calc',)
     radio_fields = {
-        "eversex": admin.VERTICAL,
-        "moresex": admin.VERTICAL,
+        "ever_sex": admin.VERTICAL,
+        "more_sex": admin.VERTICAL,
         "condom": admin.VERTICAL,
         "alcohol_sex": admin.VERTICAL,
-        "lastsex": admin.VERTICAL, }
+        "last_sex": admin.VERTICAL, }
 admin.site.register(SexualBehaviour, SexualBehaviourAdmin)
 
 
@@ -502,7 +502,6 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         'first_condom_freq',
         'first_partner_cp',)
     radio_fields = {
-        "first_partner_live": admin.VERTICAL,
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
         "first_sex_current": admin.VERTICAL,
@@ -514,6 +513,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         "first_disclose": admin.VERTICAL,
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
+    filter_horizontal = ("first_partner_live",)
 admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 
 
@@ -540,7 +540,6 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         'first_condom_freq',
         'first_partner_cp',)
     radio_fields = {
-        "first_partner_live": admin.VERTICAL,
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
         "first_sex_current": admin.VERTICAL,
@@ -552,6 +551,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         "first_disclose": admin.VERTICAL,
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
+    filter_horizontal = ("first_partner_live",)
 admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 
 
@@ -578,7 +578,6 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         'first_condom_freq',
         'first_partner_cp',)
     radio_fields = {
-        "first_partner_live": admin.VERTICAL,
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
         "first_sex_current": admin.VERTICAL,
@@ -590,6 +589,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         "first_disclose": admin.VERTICAL,
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
+    filter_horizontal = ("first_partner_live",)
 admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)
 
 
