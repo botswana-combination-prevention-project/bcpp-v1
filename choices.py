@@ -464,7 +464,7 @@ NO_MEDICAL_CARE = (
 
 WHYNOARV_CHOICE = (
         ('Did not feel sick','Did not feel sick'),
-        ('Was afraid treatment  would make me feel bad/sick','Was afraid treatment  would make me feel bad/sick'),
+        ('Was afraid treatment would make me feel bad/sick','Was afraid treatment  would make me feel bad/sick'),
         ('Difficulty finding someone to go with me for counseling (mopati)','Difficulty finding someone to go with me for counseling (mopati)'),
         ('Hard due to work responsibilities','Hard due to work responsibilities'),
         ('Hard due to family/childcare responsibilities','Hard due to family/childcare responsibilities'),
@@ -475,12 +475,12 @@ WHYNOARV_CHOICE = (
         ('Traditional healer advised against taking','Traditional healer advised against taking'),
         ('Religious beliefs','Religious beliefs'),
         ('Cultural beliefs','Cultural beliefs'),
-        ('Other, specify:','Other, specify:'),
+        ('Other','Other, specify:'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
-WHYNOARV_CHOICE = (
+WHYARVSTOP_CHOICE = (
         ('Did not feel they were helping','Did not feel they were helping'),
         ('ARVs made me feel bad or sick','ARVs made me feel bad or sick'),
         ('Difficulty finding someone to go with me for counseling (mopati)','Difficulty finding someone to go with me for counseling (mopati)'),
@@ -493,7 +493,7 @@ WHYNOARV_CHOICE = (
         ('Traditional healer advised against taking','Traditional healer advised against taking'),
         ('Religious beliefs','Religious beliefs'),
         ('Cultural beliefs','Cultural beliefs'),
-        ('Other, specify:','Other, specify:'),
+        ('Other','Other, specify:'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
