@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
-from bcpp_list.models import ElectricalAppliances, TransportMode, LiveWith, NeighbourhoodProblems, CircumcisionBenefits, FamilyPlanning, MedicalCareAccess, HouseholdSurveyCode, HouseholdSurveyReason, HouseholdSurveySource, SurveyGroup, HouseholdStructureRelation, HouseholdSurveyStatus, SubjectAbsenteeReason, SubjectMovedReason, PartnerResidency
+from bcpp_list.models import ElectricalAppliances, TransportMode, LiveWith, NeighbourhoodProblems, CircumcisionBenefits, FamilyPlanning, MedicalCareAccess, HouseholdSurveyCode, HouseholdSurveyReason, HouseholdSurveySource, SurveyGroup, HouseholdStructureRelation, HouseholdSurveyStatus, SubjectAbsenteeReason, SubjectMovedReason, PartnerResidency, HeartDisease
 
 
 class ElectricalAppliancesAdmin(BaseModelAdmin):
@@ -81,3 +81,8 @@ admin.site.register(SubjectMovedReason, SubjectMovedReasonAdmin)
 class PartnerResidencyAdmin(BaseModelAdmin):
     pass
 admin.site.register(PartnerResidency, PartnerResidencyAdmin)
+
+
+class HeartDiseaseAdmin(BaseModelAdmin):
+    pass
+admin.site.register(HeartDisease, HeartDiseaseAdmin)
