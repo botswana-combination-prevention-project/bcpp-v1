@@ -1,6 +1,7 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bcpp.choices import WHERECIRC_CHOICE, WHYCIRC_CHOICE
+from bhp_base_model.fields import OtherCharField  
+from bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE
 from base_circumcision import BaseCircumcision
 
 
@@ -9,7 +10,7 @@ class Circumcised (BaseCircumcision):
     """CS002"""
 
     when_circ = models.IntegerField(
-        verbose_name="74. At what age where you circumcised?",
+        verbose_name="74. At what age were you circumcised?",
         max_length=2,
         null=True,
         blank=True,
@@ -18,17 +19,19 @@ class Circumcised (BaseCircumcision):
 
     where_circ = models.CharField(
         verbose_name="Supplemental MC10. Where were you circumcised?",
-        max_length=25,
-        choices=WHERECIRC_CHOICE,
+        max_length=45,
+        choices=PLACE_CIRC,
         help_text="",
         )
+    where_circ_other = OtherCharField()
 
     why_circ = models.CharField(
-        verbose_name="Supplemental MC11. What was the main reason why were you circumcised?",
-        max_length=25,
+        verbose_name="Supplemental MC11. What was the main reason why you were circumcised?",
+        max_length=55,
         choices=WHYCIRC_CHOICE,
         help_text="",
         )
+    why_circ_other = OtherCharField()
 
     history = AuditTrail()
 
