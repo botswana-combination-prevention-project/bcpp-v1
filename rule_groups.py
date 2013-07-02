@@ -1,6 +1,6 @@
 from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
 from bhp_registration.models import RegisteredSubject
-from models import SubjectVisit, ResourceUtilization, HivTestingHistory, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, HivCareAdherence, Circumcision, HivTestReview
+from models import SubjectVisit, ResourceUtilization, HivTestingHistory, SexualBehaviour, HivCareAdherence, Circumcision, HivTestReview
 
 
 class ResourceUtilizationRuleGroup(RuleGroup):
@@ -60,57 +60,46 @@ rule_groups.register(HivTestingHistoryRuleGroup)
 
 class SexualBehaviourRuleGroup(RuleGroup):
 
-    eversex_two = ScheduledDataRule(
+    ever_sex_two = ScheduledDataRule(
         logic=Logic(
-            predicate=('eversex', 'equals', 'No'),
+            predicate=(('ever_sex', 'equals', 'No'),('ever_sex', 'equals', 'Don\'t want to answer', 'or')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+    
+    partner = ScheduledDataRule(
+        logic=Logic(
+            predicate=('last_year_partners', 'equals', 0),
             consequence='not_required',
             alternative='new'),
         target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
 
-    eversex = ScheduledDataRule(
+    partners = ScheduledDataRule(
         logic=Logic(
-            predicate=('eversex', 'equals', 'Yes'),
+            predicate=('last_year_partners', 'equals', 1),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['monthssecondpartner', 'monthsthirdpartner'])
+    
+    last_year_partners = ScheduledDataRule(
+        logic=Logic(
+            predicate=('last_year_partners', 'equals', 2),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['monthsthirdpartner'])
+    
+    more_partners = ScheduledDataRule(
+        logic=Logic(
+            predicate=('last_year_partners', 'gt', 2),
             consequence='new',
             alternative='not_required'),
-        target_model=['monthsrecentpartner'])
-
+        target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+    
     class Meta:
         app_label = 'bcpp_subject'
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = SexualBehaviour
 rule_groups.register(SexualBehaviourRuleGroup)
-
-
-class SexualPartnersRuleGroup(RuleGroup):
-
-    concurrent = ScheduledDataRule(
-        logic=Logic(
-            predicate=('concurrent', 'equals', 'Yes'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['monthssecondpartner'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
-        source_model = MonthsRecentPartner
-rule_groups.register(SexualPartnersRuleGroup)
-
-
-class MoreSexualPartnersRuleGroup(RuleGroup):
-
-    concurrent = ScheduledDataRule(
-        logic=Logic(
-            predicate=('concurrent', 'equals', 'Yes'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['monthsthirdpartner'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
-        source_model = MonthsSecondPartner
-rule_groups.register(MoreSexualPartnersRuleGroup)
 
 
 class MedicalCareRuleGroup(RuleGroup):
