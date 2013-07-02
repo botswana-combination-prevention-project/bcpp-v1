@@ -1,22 +1,23 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from base_scheduled_visit_model import BaseScheduledVisitModel
-from bcpp.choices import FIRSTPARTNERLIVE_CHOICE, SEXDAYS_CHOICE, LASTSEX_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, FIRSTRELATIONSHIP_CHOICE, FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE
+from bcpp_list.models import PartnerResidency
+from bcpp.choices import SEXDAYS_CHOICE, LASTSEX_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, FIRSTRELATIONSHIP_CHOICE, FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE
 
 
 class BaseSexualPartner (BaseScheduledVisitModel):
 
     """CS002"""
 
-    first_partner_live = models.CharField(
-        verbose_name="1. Over the past 12 months, where has this sexual partner lived to the best of your knowledge?",
-        max_length=50,
-        choices=FIRSTPARTNERLIVE_CHOICE,
+    first_partner_live = models.ManyToManyField(PartnerResidency,
+        verbose_name=("1. Over the past 12 months, where has this sexual partner"
+                      " lived to the best of your knowledge?"),
         help_text="",
         )
 
     third_last_sex = models.CharField(
-        verbose_name="2. When was the last [most recent] time you had sex with this person (how long ago)?",
+        verbose_name=("2. When was the last [most recent] time you had sex with"
+                      " this person (how long ago)?"),
         max_length=25,
         choices=SEXDAYS_CHOICE,
         help_text="",
@@ -34,9 +35,9 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         help_text="",
         )
     first_first_sex_calc = models.IntegerField(
-        verbose_name="3b. Give the number of days/ months since last had sex.",
+        verbose_name="3b. Give the number of days/ months since first had sex.",
         max_length=2,
-        help_text="e.g. if last sex was last night, then it should be recorded as 1 day",
+        help_text="e.g. if first sex was last night, then it should be recorded as 1 day",
         )
 
     first_sex_current = models.CharField(
@@ -59,7 +60,8 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         null=True,
         blank=True,
         validators=[MinValueValidator(10), MaxValueValidator(64)],
-        help_text="Note: If participant does not want to answer, leave blank. If participant is unable to estimate age, record -4",
+        help_text=("Note: If participant does not want to answer, leave blank."
+                   " If participant is unable to estimate age, record -4"),
         )
 
     concurrent = models.CharField(
