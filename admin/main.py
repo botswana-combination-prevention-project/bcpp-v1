@@ -677,7 +677,7 @@ admin.site.register(Circumcised, CircumcisedAdmin)
 class UncircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = UncircumcisedForm
-    fields = (
+    fields = [
         "subject_visit",
         "circumcised",
         "health_benefits_smc",
@@ -692,7 +692,7 @@ class UncircumcisedAdmin(SubjectVisitModelAdmin):
         'future_reasons_smc',
         'service_facilities',
         'aware_free',
-    )
+    ]
     radio_fields = {
         "circumcised": admin.VERTICAL,
         "reason_circ": admin.VERTICAL,
@@ -713,24 +713,27 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
     form = ReproductiveHealthForm
     fields = (
         "subject_visit",
-        'numberchildren',
-        'morechildren',
-        'wherecirc',
-        'familyplanning',
-        'currentpregnant',
-        'ancreg',
-        'anclastpregnancy',
-        'hivlastpregnancy',
-        'pregARV',)
+        'number_children',
+        'more_children',
+        'where_circ',
+        'family_planning',
+        'family_planning_other',
+        'current_pregnant',
+        'anc_reg',
+        'lnmp',
+        'last_birth',
+        'anc_last_pregnancy',
+        'hiv_last_pregnancy',
+        'preg_arv',)
     radio_fields = {
-        "morechildren": admin.VERTICAL,
-        "wherecirc": admin.VERTICAL,
-        "currentpregnant": admin.VERTICAL,
-        "ancreg": admin.VERTICAL,
-        "anclastpregnancy": admin.VERTICAL,
-        "hivlastpregnancy": admin.VERTICAL,
-        "pregARV": admin.VERTICAL, }
-    filter_horizontal = ("familyplanning",)
+        "more_children": admin.VERTICAL,
+        "where_circ": admin.VERTICAL,
+        "current_pregnant": admin.VERTICAL,
+        "anc_reg": admin.VERTICAL,
+        "anc_last_pregnancy": admin.VERTICAL,
+        "hiv_last_pregnancy": admin.VERTICAL,
+        "preg_arv": admin.VERTICAL, }
+    filter_horizontal = ("family_planning",)
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)
 
 
@@ -740,30 +743,30 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
     form = MedicalDiagnosesForm
     fields = (
         "subject_visit",
-       'heartattack',
-       'heartattackrecord',
-       "dateheartattack",
-       'dxheartattack',
+       'heart_attack',
+       'heart_attack_record',
+       "date_heart_attack",
+       'dx_heart_attack',
        'cancer',
-       'cancerrecord',
-       'datecancer',
-       'dxcancer',
+       'cancer_record',
+       'date_cancer',
+       'dx_cancer',
        'sti',
        'tb',
-       'tbrecord',
-       'datetb',
-       'dxTB',)
+       'tb_record',
+       'date_tb',
+       'dx_tb',)
     radio_fields = {
-        "heartattack": admin.VERTICAL,
-        "heartattackrecord": admin.VERTICAL,
-        "dxheartattack": admin.VERTICAL,
+        "heart_attack": admin.VERTICAL,
+        "heart_attack_record": admin.VERTICAL,
+        "dx_heart_attack": admin.VERTICAL,
         "cancer": admin.VERTICAL,
-        "cancerrecord": admin.VERTICAL,
-        "dxcancer": admin.VERTICAL,
+        "cancer_record": admin.VERTICAL,
+        "dx_cancer": admin.VERTICAL,
         "sti": admin.VERTICAL,
         "tb": admin.VERTICAL,
-        "tbrecord": admin.VERTICAL,
-        "dxTB": admin.VERTICAL, }
+        "tb_record": admin.VERTICAL,
+        "dx_tb": admin.VERTICAL, }
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
 
 
