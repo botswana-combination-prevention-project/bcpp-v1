@@ -91,12 +91,14 @@ class RegisteredSubjectDashboard(Dashboard):
             if not self.get_subject_identifier():
                 raise AttributeError('RegisteredSubjectDashboard requires a subject_identifier. '
                                      'RegisteredSubject has no identifier for this subject.')
+            subject_hiv_status=lab_tracker.get_current_value('HIV', self.registered_subject.subject_identifier)[0]
+            subject_hiv_history=lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier)
             self.context.add(
                 registered_subject=self.registered_subject,
                 subject_identifier=self.get_subject_identifier(),
                 subject_type=self.get_subject_type(),
-                subject_hiv_history=lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier),
-                subject_hiv_status=lab_tracker.get_current_value('HIV', self.registered_subject.subject_identifier),
+                subject_hiv_history=subject_hiv_history,
+                subject_hiv_status=subject_hiv_status,
                 subject_configuration=self.get_subject_configuration(),
                 )
         visit_code = kwargs.pop('visit_code', self.visit_code)
