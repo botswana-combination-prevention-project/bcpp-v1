@@ -9,14 +9,14 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
     
     """CS002"""
     
-    heartattack = models.CharField(
+    heart_attack = models.CharField(
         verbose_name="86. In the past 12 months, have you been told that you had heart disease or a stroke?",
         max_length=25,
         choices=YES_NO_UNSURE,
         help_text="",
         )
 
-    heartattackrecord = models.CharField(
+    heart_attack_record = models.CharField(
         verbose_name=("87. Is a record (OPD card, discharge summary) of a heart disease or stroke"
                        " diagnosis available to review?"),
         max_length=25,
@@ -26,7 +26,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="",
         )
 
-    dateheartattack = models.DateField(
+    date_heart_attack = models.DateField(
         verbose_name="88. Date of the heart disease or stroke diagnosis:",
         null=True,
         blank=True,
@@ -36,7 +36,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
                    "  If unable to estimate date, leave blank"),
         )
 
-    dxheartattack = models.CharField(
+    dx_heart_attack = models.CharField(
         verbose_name="89. [Interviewer:]What is the heart disease or stroke diagnosis as recorded?",
         max_length=45,
         null=True,
@@ -52,7 +52,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="",
         )
 
-    cancerrecord = models.CharField(
+    cancer_record = models.CharField(
         verbose_name="91. Is a record (OPD card, discharge summary) of a cancer diagnosis available to review?",
         max_length=25,
         null=True,
@@ -61,7 +61,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="",
         )
 
-    datecancer = models.DateField(
+    date_cancer = models.DateField(
         verbose_name="92. Date of the diagnosis of cancer:",
         null=True,
         blank=True,
@@ -71,7 +71,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
                     "leave blank.  If unable to estimate date, leave blank."),
         )
 
-    dxcancer = models.CharField(
+    dx_cancer = models.CharField(
         verbose_name="93. [Interviewer:] What is the cancer diagnosis as recorded?",
         max_length=45,
         null=True,
@@ -97,7 +97,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="",
         )
 
-    tbrecord = models.CharField(
+    tb_record = models.CharField(
         verbose_name=("96. Is a record (OPD card, discharge summary, TB card) of a tuberculosis"
                        " infection available to review?"),
         max_length=25,
@@ -107,7 +107,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="",
         )
 
-    datetb = models.DateField(
+    date_tb = models.DateField(
         verbose_name="97. Date of the diagnosis of tuberculosis:",
         null=True,
         blank=True,
@@ -117,7 +117,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
                    " want to respond."),
         )
 
-    dxTB = models.CharField(
+    dx_tb = models.CharField(
         verbose_name="98. [Interviewer:]What is the tuberculosis diagnosis as recorded?",
         max_length=50,
         null=True,
