@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
-from bcpp.choices import YES_NO_UNSURE, YES_NO_DONT_ANSWER, DXHEARTATTACK_CHOICE, DXCANCER_CHOICE, DXTB_CHOICE   
+from bcpp_list.models import HeartDisease
+from bcpp.choices import YES_NO_UNSURE, YES_NO_DONT_ANSWER, DXCANCER_CHOICE, DXTB_CHOICE   
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -36,13 +37,13 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
                    "  If unable to estimate date, leave blank"),
         )
 
-    dx_heart_attack = models.CharField(
+    dx_heart_attack = models.ManyToManyField(HeartDisease,
         verbose_name="89. [Interviewer:]What is the heart disease or stroke diagnosis as recorded?",
-        max_length=45,
         null=True,
         blank=True,
-        choices=DXHEARTATTACK_CHOICE,
-        help_text="Note: If record of diagnosis is not available, record the participant's best knowledge.",
+#         choices=DXHEARTATTACK_CHOICE,
+        help_text=("Note: If record of diagnosis is not available, record the participant's"
+                   " best knowledge. (tick all that apply)"),
         )
 
     cancer = models.CharField(
