@@ -23,7 +23,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text="Note:If participant does not want to answer, record -8.",
         )
     
-    lengthresidence = models.CharField(
+    length_residence = models.CharField(
         verbose_name="3. How long have your lived in this community?",
         max_length=15,
         choices=LENGTHRESIDENCE_CHOICE,
@@ -35,13 +35,13 @@ class SubjectRefusal (BaseMemberStatusModel):
         validators=[date_not_before_study_start, date_not_future],
         help_text="Date format is YYYY-MM-DD")
     
-    whynoparticipate = models.CharField(
+    why_no_participate = models.CharField(
         verbose_name="4. What was the main reason you do not want to participate in the study?",
         max_length=15,
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
         )
-    whynoparticipate_other = OtherCharField()
+    why_no_participate_other = OtherCharField()
     
     subject_refusal_status = models.CharField(
         verbose_name="Refusal status",
@@ -51,14 +51,14 @@ class SubjectRefusal (BaseMemberStatusModel):
         default='REFUSED',
         editable=False)
     
-    hivtesttoday = models.CharField(
+    hiv_test_today = models.CharField(
         verbose_name="5. [For interviewer] Did resident complete HIV testing today?",
         max_length=15,
         choices=YES_NO_UNSURE,
         help_text="",
         )
     
-    whynohivtest = models.CharField(
+    why_no_hivtest = models.CharField(
         verbose_name="6. What was the main reason why you did not want HIV testing as part of today's visit?",
         max_length=15,
         null=True,
