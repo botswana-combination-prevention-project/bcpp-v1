@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_model.classes import BaseModelAdmin
+from bhp_base_admin.admin import BaseModelAdmin
 from bhp_birt_reports.models import ReportParameter
 from bhp_birt_reports.models import BaseReport
 from bhp_birt_reports.actions import process_report
