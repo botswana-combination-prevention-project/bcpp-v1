@@ -42,14 +42,15 @@ def generate_report(request, **kwargs):
     count = 0
     for line in lines:
         if line.find('enc1:::') != -1:
-            print line
             lines[count] = ReportDecryptor().decrypt(line)
         count+=1
     f = open(settings.REPORTS_OUTPUT_PATH+'report_'+request.user.username+'_'+report_name+'.html','w')
     for line in lines:
         f.write(line+'\n')
     f.close()
+    report = 'report_'+request.user.username+'_'+report_name+'.html'
     return render_to_response(
-        'report_'+request.user.username+'_'+report_name+'.html', {},
+        #'report_'+request.user.username+'_'+report_name+'.html', {},
+        'render_report_template.html', {'report' : report},
         context_instance=RequestContext(request)
         )
