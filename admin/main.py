@@ -405,11 +405,11 @@ class HivUntestedAdmin(SubjectVisitModelAdmin):
     form = HivUntestedForm
     fields = (
         "subject_visit",
-        'whynohivtest',
+        'why_no_hiv_test',
         'hiv_pills',
         'arvs_hiv_test',)
     radio_fields = {
-        "whynohivtest":admin.VERTICAL,
+        "why_no_hiv_test":admin.VERTICAL,
         "hiv_pills":admin.VERTICAL,
         "arvs_hiv_test":admin.VERTICAL,}
 admin.site.register(HivUntested, HivUntestedAdmin)
@@ -792,17 +792,17 @@ class StigmaAdmin(SubjectVisitModelAdmin):
     form = StigmaForm
     fields = (
         "subject_visit",
-        'anticipatestigma',
-        'enactedshamestigma',
-        'salivastigma',
-        'teacherstigma',
-        'childrenstigma',)
+        'anticipate_stigma',
+        'enacted_shame_stigma',
+        'saliva_stigma',
+        'teacher_stigma',
+        'children_stigma',)
     radio_fields = {
-        "anticipatestigma": admin.VERTICAL,
-        "enactedshamestigma": admin.VERTICAL,
-        "salivastigma": admin.VERTICAL,
-        "teacherstigma": admin.VERTICAL,
-        "childrenstigma": admin.VERTICAL, }
+        "anticipate_stigma": admin.VERTICAL,
+        "enacted_shame_stigma": admin.VERTICAL,
+        "saliva_stigma": admin.VERTICAL,
+        "teacher_stigma": admin.VERTICAL,
+        "children_stigma": admin.VERTICAL, }
 admin.site.register(Stigma, StigmaAdmin)
 
 
@@ -812,21 +812,21 @@ class StigmaOpinionAdmin(SubjectVisitModelAdmin):
     form = StigmaOpinionForm
     fields = (
         "subject_visit",
-        'testcommunitystigma',
-        'gossipcommunitystigma',
-        'respectcommunitystigma',
-        'enactedverbalstigma',
-        'enactedphyicalstigma',
-        'enactedfamilystigma',
-        'fearstigma',)
+        'test_community_stigma',
+        'gossip_community_stigma',
+        'respect_community_stigma',
+        'enacted_verbal_stigma',
+        'enacted_phyical_stigma',
+        'enacted_family_stigma',
+        'fear_stigma',)
     radio_fields = {
-        "testcommunitystigma": admin.VERTICAL,
-        "gossipcommunitystigma": admin.VERTICAL,
-        "respectcommunitystigma": admin.VERTICAL,
-        "enactedverbalstigma": admin.VERTICAL,
-        "enactedphyicalstigma": admin.VERTICAL,
-        "enactedfamilystigma": admin.VERTICAL,
-        "fearstigma": admin.VERTICAL, }
+        "test_community_stigma": admin.VERTICAL,
+        "gossip_community_stigma": admin.VERTICAL,
+        "respect_community_stigma": admin.VERTICAL,
+        "enacted_verbal_stigma": admin.VERTICAL,
+        "enacted_phyical_stigma": admin.VERTICAL,
+        "enacted_family_stigma": admin.VERTICAL,
+        "fear_stigma": admin.VERTICAL, }
 admin.site.register(StigmaOpinion, StigmaOpinionAdmin)
 
 
@@ -836,21 +836,21 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
     form = PositiveParticipantForm
     fields = (
         "subject_visit",
-        'internalize1stigma',
-        'internalized2stigma',
-        'friendstigma',
-        'familystigma',
-        'enactedtalkstigma',
-        'enactedrespectstigma',
-        'enactedjobstigma',)
+        'internalize_stigma',
+        'internalized_stigma',
+        'friend_stigma',
+        'family_stigma',
+        'enacted_talk_stigma',
+        'enacted_respect_stigma',
+        'enacted_jobs_tigma',)
     radio_fields = {
-        "internalize1stigma": admin.VERTICAL,
-        "internalized2stigma": admin.VERTICAL,
-        "friendstigma": admin.VERTICAL,
-        "familystigma": admin.VERTICAL,
-        "enactedtalkstigma": admin.VERTICAL,
-        "enactedrespectstigma": admin.VERTICAL,
-        "enactedjobstigma": admin.VERTICAL, }
+        "internalize_stigma": admin.VERTICAL,
+        "internalized_stigma": admin.VERTICAL,
+        "friend_stigma": admin.VERTICAL,
+        "family_stigma": admin.VERTICAL,
+        "enacted_talk_stigma": admin.VERTICAL,
+        "enacted_respect_stigma": admin.VERTICAL,
+        "enacted_jobs_tigma": admin.VERTICAL, }
 admin.site.register(PositiveParticipant, PositiveParticipantAdmin)
 
 
