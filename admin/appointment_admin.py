@@ -72,6 +72,7 @@ class AppointmentAdmin(BaseModelAdmin):
         'contact_count',
         'visit_definition',
         'visit_instance',
+        'best_appt_datetime',
         'created',
         'hostname_created',
         )
