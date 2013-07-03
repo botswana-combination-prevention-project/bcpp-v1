@@ -12,21 +12,21 @@ class PositiveParticipant (BaseScheduledVisitModel):
     """Interviewer Note: The following supplemental questions are only asked for"
     "respondents with known HIV infection. SKIP for respondents without known HIV infection. """
     
-    internalize1stigma = models.CharField(
+    internalize_stigma = models.CharField(
         verbose_name="Supplemental ST13. I think less of myself.",
         max_length=25,
         choices=AGREE_STRONGLY,
         help_text="",
         )
 
-    internalized2stigma = models.CharField(
+    internalized_stigma = models.CharField(
         verbose_name=("Supplemental ST14. I have felt ashamed because of having HIV."),
         max_length=25,
         choices=AGREE_STRONGLY,
         help_text="",
         )
 
-    friendstigma = models.CharField(
+    friend_stigma = models.CharField(
         verbose_name=("Supplemental ST15. I fear that if I disclosed my HIV status to my"
                       " friends, they would lose respect for me."),
         max_length=25,
@@ -34,7 +34,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         help_text="",
         )
 
-    familystigma = models.CharField(
+    family_stigma = models.CharField(
         verbose_name=("Supplemental ST16. I fear that if I disclosed my HIV status to my family,"
                       " they would exclude me from usual family activities."),
         max_length=25,
@@ -42,21 +42,21 @@ class PositiveParticipant (BaseScheduledVisitModel):
         help_text="",
         )
 
-    enactedtalkstigma = models.CharField(
+    enacted_talk_stigma = models.CharField(
         verbose_name="Supplemental ST17. People have talked badly about me.",
         max_length=25,
         choices=AGREE_STRONGLY,
         help_text="",
         )
 
-    enactedrespectstigma = models.CharField(
+    enacted_respect_stigma = models.CharField(
         verbose_name=("Supplemental ST18. I have lost respect or standing in the community."),
         max_length=25,
         choices=AGREE_STRONGLY,
         help_text="",
         )
 
-    enactedjobstigma = models.CharField(
+    enacted_jobs_tigma = models.CharField(
         verbose_name=("Supplemental ST19. I have lost a job because of having HIV."),
         max_length=25,
         choices=AGREE_STRONGLY,
