@@ -10,7 +10,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
     
     """CS002"""
     
-    testcommunitystigma = models.CharField(
+    test_community_stigma = models.CharField(
         verbose_name=("Supplemental ST6. People are hesitant to take an HIV test due to"
                       " fear of people’s reaction if the test result is positive for HIV."),
         max_length=25,
@@ -18,7 +18,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         help_text="",
         )
 
-    gossipcommunitystigma = models.CharField(
+    gossip_community_stigma = models.CharField(
         verbose_name=("Supplemental ST7. People talk badly about people living with or thought"
                       " to be living with HIV to others."),
         max_length=25,
@@ -26,7 +26,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         help_text="",
         )
 
-    respectcommunitystigma = models.CharField(
+    respect_community_stigma = models.CharField(
         verbose_name=("Supplemental ST8. People living with or thought to be living with HIV"
                       " lose respect or standing."),
         max_length=25,
@@ -34,7 +34,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         help_text="",
         )
 
-    enactedverbalstigma = models.CharField(
+    enacted_verbal_stigma = models.CharField(
         verbose_name=("Supplemental ST9. People living with or thought to be living with HIV"
                       " are verbally insulted, harassed and/or threatened."),
         max_length=25,
@@ -42,7 +42,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         help_text="",
         )
 
-    enactedphyicalstigma = models.CharField(
+    enacted_phyical_stigma = models.CharField(
         verbose_name=("Supplemental ST10. People living with or thought to be living with"
                       " HIV are sometimes physically assaulted."),
         max_length=25,
@@ -50,7 +50,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         help_text="",
         )
 
-    enactedfamilystigma = models.CharField(
+    enacted_family_stigma = models.CharField(
         verbose_name=("Supplemental ST11. People living with or thought to be living with"
                       " HIV are now more accepted by others as there is now an effective"
                       " treatment available."),
@@ -59,7 +59,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         help_text="",
         )
 
-    fearstigma = models.CharField(
+    fear_stigma = models.CharField(
         verbose_name=("Supplemental ST12. People living with HIV are less able to financially"
                       " support themselves and their families."),
         max_length=25,
