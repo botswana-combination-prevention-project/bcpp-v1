@@ -13,6 +13,10 @@ def generate_report(request, **kwargs):
     report_name = None
     token_string = '\"'
     flag = False
+    vital_contants = ['REPORTS_JAR_PATH','REPORTS_TEMPLATES_PATH','REPORTS_OUTPUT_PATH']
+    for cons in vital_contants:
+        if cons not in dir(settings):
+            raise TypeError('Please add \'{0}\' to the settings file'.format(cons))
     run_string = 'java -jar'+' '+settings.REPORTS_JAR_PATH+' '+settings.REPORTS_TEMPLATES_PATH+' '+settings.REPORTS_OUTPUT_PATH+' '+request.user.username
     for key, value in data.iteritems():
         if key == 'report':
