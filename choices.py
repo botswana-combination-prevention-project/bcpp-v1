@@ -486,6 +486,7 @@ WHYARVSTOP_CHOICE = (
         ('Difficulty finding someone to go with me for counseling (mopati)','Difficulty finding someone to go with me for counseling (mopati)'),
         ('Hard due to work responsibilities','Hard due to work responsibilities'),
         ('Hard due to family/childcare responsibilities','Hard due to family/childcare responsibilities'),
+        ('Doctor or nurse at clinic told me to stop', 'Doctor or nurse at clinic told me to stop'),
         ('Transportation costs','Transportation costs'),
         ('Was afraid of someone (friends/family) seeing me at the HIV clinic','Was afraid of someone (friends/family) seeing me at the HIV clinic'),
         ('Sexual partner advised against taking','Sexual partner advised against taking'),
