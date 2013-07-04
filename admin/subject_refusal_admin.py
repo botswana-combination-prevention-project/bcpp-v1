@@ -15,25 +15,25 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'report_datetime',
         'sex',
         'age',
-        'lengthresidence',
+        'length_residence',
         'refusal_date', 
-        'whynoparticipate',
-        'whynoparticipate_other',
+        'why_no_participate',
+        'why_no_participate_other',
 #         'subject_refusal_status',
-        'hivtesttoday',
-        'whynohivtest',
+        'hiv_test_today',
+        'why_no_hivtest',
         'comment')
     
     radio_fields = {
         "sex":admin.VERTICAL,
-        "lengthresidence":admin.VERTICAL,
-        "whynoparticipate":admin.VERTICAL,
-        "hivtesttoday":admin.VERTICAL,
-        "whynohivtest":admin.VERTICAL,}
+        "length_residence":admin.VERTICAL,
+        "why_no_participate":admin.VERTICAL,
+        "hiv_test_today":admin.VERTICAL,
+        "why_no_hivtest":admin.VERTICAL,}
     
     list_display = (
         'household_structure_member', 
-        'whynoparticipate')
+        'why_no_participate')
     
     search_fields = [
         'household_structure_member__first_name',
@@ -41,7 +41,7 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
     
     list_filter = (
         'survey', 
-        'whynoparticipate')
+        'why_no_participate')
     
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
