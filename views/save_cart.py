@@ -1,7 +1,7 @@
 import itertools
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
-from bhp_map.classes import mapper
+from bhp_map.classes import site_mapper
 from bhp_map.exceptions import MapperError
 
 
@@ -10,10 +10,10 @@ def save_cart(request, **kwargs):
     """
     #Make sure we have identifiers in our session
     mapper_name = kwargs.get('mapper_name', '')
-    if not mapper.get_registry(mapper_name):
+    if not site_mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)()
+        m = site_mapper.get_registry(mapper_name)()
         if 'identifiers' in request.session:
             if len(request.session['identifiers']) > 0:
                 identifiers = request.session['identifiers']

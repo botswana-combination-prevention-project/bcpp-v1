@@ -7,6 +7,7 @@ from bhp_map.exceptions import MapperError
 class Mapper(object):
 
     def __init__(self, *args, **kwargs):
+        self._map_area = None
         self._item_model_cls = None
         self._item_label = None
         self._regions = None
@@ -24,6 +25,8 @@ class Mapper(object):
         self._other_identifier_label = None
 
         # item_model_cls
+        if 'map_area' in kwargs:
+            self.set_map_area(kwargs.get('map_area'))
         if 'item_model' in kwargs:
             self.set_item_model_cls(kwargs.get('item_model'))
         if 'regions' in kwargs:
@@ -67,6 +70,12 @@ class Mapper(object):
         if not allow_none:
             if not getattr(self, '_{0}'.format(attrname)):
                 raise MapperError('Attribute \'{0}\' may not be None.'.format(attrname))
+
+    def set_map_area(self, attr=None):
+        self._set_attr('map_area', attr)
+
+    def get_map_area(self):
+        return self._get_attr('map_area')
 
     def set_identifier_field_attr(self, attr=None):
         self._set_attr('identifier_field_attr', attr)

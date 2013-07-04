@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from bhp_map.classes import mapper
+from bhp_map.classes import site_mapper
 from bhp_map.exceptions import MapperError
 
 
@@ -11,10 +11,10 @@ def update_cart(request, **kwargs):
     """
 
     mapper_name = kwargs.get('mapper_name', '')
-    if not mapper.get_registry(mapper_name):
+    if not site_mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)()
+        m = site_mapper.get_registry(mapper_name)()
         update_error = 0
         items = []
         payload = []
@@ -34,7 +34,6 @@ def update_cart(request, **kwargs):
         cart_size = len(request.session['identifiers'])
         icon = request.session.get('icon', None)
         option = request.POST.get('option', 'save')
-        
         if option == 'preview':
             items = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers})
             icon = request.session['icon']

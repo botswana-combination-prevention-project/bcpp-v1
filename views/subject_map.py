@@ -1,7 +1,7 @@
 # Import django modules
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from bhp_map.classes import mapper
+from bhp_map.classes import site_mapper
 from bhp_map.exceptions import MapperError
 
 
@@ -12,10 +12,10 @@ def subject_map(request):
         on the dashboard
     """
     mapper_name = request.GET.get('mapper_name', '')
-    if not mapper.get_registry(mapper_name):
+    if not site_mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)
+        m = site_mapper.get_registry(mapper_name)
         longitude = request.POST.get('lon')
         latitude = request.POST.get('lat')
         identifier = request.POST.get('identifier')
@@ -26,7 +26,7 @@ def subject_map(request):
         return render_to_response(
                 'subject_map_location.html', {
                     'latitude': latitude,
-                    'mapper_name':mapper_name,
+                    'mapper_name': mapper_name,
                     'longitude': longitude,
                     'landmarks': landmark_list,
                     'identifier': identifier

@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 #from bhp_mapping.helpers import prepare_map_points
 #from mochudi_household.models import Household
-from bhp_map.classes import mapper
+from bhp_map.classes import site_mapper
 from bhp_map.exceptions import MapperError
 
 
@@ -18,10 +18,10 @@ def checkout_cart(request, **kwargs):
     Uses template :template:`bhp_map/templates/view_cart.html`
     """
     mapper_name = kwargs.get('mapper_name', '')
-    if not mapper.get_registry(mapper_name):
+    if not site_mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)()
+        m = site_mapper.get_registry(mapper_name)()
         template = 'view_cart.html'
         payload = []
         item_identifiers = request.session.get('identifiers', [])

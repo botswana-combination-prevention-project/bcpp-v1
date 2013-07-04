@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response, HttpResponse
 from django.template import RequestContext
-from bhp_map.classes import mapper
+from bhp_map.classes import site_mapper
 from bhp_map.exceptions import MapperError
 from bhp_map.utils import calc_dist, get_longitude, get_latitude
 
@@ -11,10 +11,10 @@ def db_update(request, **kwargs):
          Filter items by entered item then save the new coordinates of that item
     """
     mapper_name = kwargs.get('mapper_name', '')
-    if not mapper.get_registry(mapper_name):
+    if not site_mapper.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = mapper.get_registry(mapper_name)()
+        m = site_mapper.get_registry(mapper_name)()
         template = "db_update.html"
         identifier = request.POST.get('identifier')
         gps_s = request.POST.get('gps_s')

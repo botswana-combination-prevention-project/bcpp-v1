@@ -1,9 +1,8 @@
-from _mapper import Mapper
+from mapper import Mapper
 
 
 class BaseHouseholdMapper(Mapper):
 
-    
     def prepare_map_points(self, items, selected_icon, cart, cart_icon, dipatched_icon='red-circle', selected_section="All"):
         """Returns a list of item identifiers from the given queryset excluding those
         items that have been dispatched
