@@ -101,6 +101,12 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         null=True,
         )
 
+    subject_identifier = models.CharField(
+        verbose_name='subject_identifier',
+        max_length=50,
+        editable=False,
+        help_text='updated automatically as a convenience to avoid sql joins')
+
     """
     #TODO: add next_scheduled_visit_datetime but put in checks for the window period etc.
     next_scheduled_visit_datetime = models.DateTimeField(
@@ -113,6 +119,10 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     """
 
     objects = BaseVisitTrackingManager()
+
+    def save(self, *args, **kwargs):
+        self.subject_identifier = self.appointment.registered_subject.subject_identifier
+        super(BaseVisitTracking, self).save(*args, **kwargs)
 
     def get_visit_reason_no_follow_up_choices(self):
         """Returns the visit reasons that do not imply any data collection; that is, the subject is not available."""
