@@ -864,6 +864,7 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "report_datetime",
         "access_care",
         "access_care_other",
+        "medical_care_access",
         "medical_care_access_other",
         "overall_access",
         "emergency_access",
