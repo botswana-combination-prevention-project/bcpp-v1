@@ -1,4 +1,5 @@
-from bhp_search.classes import BaseSearchByWord, search
+from bhp_search.classes import BaseSearchByWord, site_search
+# from bhp_search.classes import BaseSearch
 #from bccp_household.models import Household, HouseholdStructure, HouseholdStructureMember
 from models import SubjectConsent
 
@@ -7,8 +8,7 @@ class SubjectSearchByWord(BaseSearchByWord):
 
     section_name = 'subject'
     search_model = SubjectConsent  # (SubjectConsent, Household, HouseholdStructure, HouseholdStructureMember)
-
-search.register(SubjectSearchByWord)
+site_search.register(SubjectSearchByWord)
 
 # from bhp_search.classes import BaseSearchByWord, search
 #
