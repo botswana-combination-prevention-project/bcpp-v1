@@ -33,7 +33,6 @@ class BaseSearch(object):
         self._section_name_list = None
         self._section_name = None
         self._search_model_cls = None
-        #self.search_model = {}
         self._context = {}
         self.pattern = patterns
         if 'name' not in dir(self):
