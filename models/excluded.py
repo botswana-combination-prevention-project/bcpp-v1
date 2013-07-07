@@ -16,5 +16,7 @@ class Excluded (BaseSyncUuidModel):
         )
     excluded = models.TextField()
 
+    objects = models.Manager()
+
     class Meta:
         app_label = 'bhp_supplemental_fields'
