@@ -26,7 +26,6 @@ class BaseSectionView(object):
         self._add_model_cls = None
         self._section_list = None
         self.search_label = None
-        #self.urlpattern_prepared = False
         self._sections_using_search = []
         self._custom_template = {}
         self._search_type = {}
@@ -174,43 +173,53 @@ class BaseSectionView(object):
 
 #    def get_action_items(self):
 #        actions = ActionItem.objects.filter(action_status='open').order_by(action_datetime)[0:10]
-
 # 1.5    def get(self, request, *args, **kwargs):
 #            self._view(request, *args, **kwargs)
+
+    def _contribute_to_context(self, context):
+        context = self.contribute_to_context(context)
+        return context
+
+    def contribute_to_context(self, context):
+        """Users may override to add context key, value for the template."""
+        return context
+
+    def view(self, request, *args, **kwargs):
+        self.set_section_name(kwargs.get('section_name'))
+        self.set_search_type(self.get_section_name(), kwargs.get('search_type'))
+        search_result = None
+        search_result_include_file = None
+        if self.get_search_type(self.get_section_name()):
+            search_cls = site_search.get(self.get_search_type(self.get_section_name()))
+            search_instance = search_cls()
+            search_result_include_file = search_instance.get_include_template_file()
+            search_instance.prepare(request, **kwargs)
+            page = request.GET.get('page', '1')
+            if search_instance.form_is_valid:
+                search_result = search_instance.search(request, page)
+            else:
+                search_result = search_instance.get_most_recent(page)
+        default_context = {
+            'app_name': settings.APP_NAME,
+            'installed_apps': settings.INSTALLED_APPS,
+            'selected_section': self.get_section_name(),
+            'sections': self.get_section_list(),
+            'section_name': self.get_section_name(),
+            'search_name': self.get_search_name(self.get_section_name()),
+            'sections_using_search': self.get_sections_using_search(),
+            'search_type': self.get_search_type(self.get_section_name()),
+            'add_model': self.get_add_model_cls(),
+            'add_model_opts': self.get_add_model_opts(),
+            'add_model_name': self.get_add_model_name(),
+            'search_model_admin_url': 'url',
+            'search_result': search_result,
+            'search_result_include_file': search_result_include_file,
+            }
+        context = self._contribute_to_context(default_context)
+        return render_to_response(self.get_template(), context, context_instance=RequestContext(request))
 
     def _view(self, request, *args, **kwargs):
         @login_required
         def view(request, *args, **kwargs):
-            self.set_section_name(kwargs.get('section_name'))
-            self.set_search_type(self.get_section_name(), kwargs.get('search_type'))
-            search_result = None
-            search_result_include_file = None
-            if self.get_search_type(self.get_section_name()):
-                search_cls = site_search.get(self.get_search_type(self.get_section_name()))
-                search_instance = search_cls()
-                search_result_include_file = search_instance.get_include_template_file()
-                search_instance.prepare(request, **kwargs)
-                page = request.GET.get('page', '1')
-                if search_instance.form_is_valid:
-                    search_result = search_instance.search(request, page)
-                else:
-                    search_result = search_instance.get_most_recent(page)
-            return render_to_response(self.get_template(), {
-                'app_name': settings.APP_NAME,
-                'installed_apps': settings.INSTALLED_APPS,
-                'selected_section': self.get_section_name(),
-                'sections': self.get_section_list(),
-                'section_name': self.get_section_name(),
-                'search_name': self.get_search_name(self.get_section_name()),
-                'sections_using_search': self.get_sections_using_search(),
-                'search_type': self.get_search_type(self.get_section_name()),
-                'add_model': self.get_add_model_cls(),
-                'add_model_opts': self.get_add_model_opts(),
-                'add_model_name': self.get_add_model_name(),
-                'search_model_admin_url': 'url',
-                'search_result': search_result,
-                #'appointments': self.get_appointment_tile(),
-                #'action_items': self.get_action_items_tile(),
-                'search_result_include_file': search_result_include_file,
-            }, context_instance=RequestContext(request))
+            return self.view(request, *args, **kwargs)
         return view(request, *args, **kwargs)
