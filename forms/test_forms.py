@@ -1,8 +1,14 @@
-from bhp_consent.forms import BaseConsentedModelForm
-from bhp_base_test.models import TestSubjectUuidModel
+from bhp_base_form.forms import BaseModelForm
+from bhp_base_test.models import TestModel, TestSubjectUuidModel
 
 
-class TestSubjectUuidModelForm (BaseConsentedModelForm):
+class TestSubjectUuidModelForm (BaseModelForm):
 
     class Meta:
         model = TestSubjectUuidModel
+
+
+class TestModelForm (BaseModelForm):
+
+    class Meta:
+        model = TestModel

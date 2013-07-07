@@ -7,3 +7,4 @@ from test_visit import TestVisit
 from test_scheduled_model import TestScheduledModel
 from test_subject_uuid_model import TestSubjectUuidModel
 from test_off_study import TestOffStudy
+from test_model import TestModel
