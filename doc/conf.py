@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# bhp_supplimental documentation build configuration file, created by
+# bhp_supplemental documentation build configuration file, created by
 # sphinx-quickstart on Thu Jul 12 09:47:42 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -51,7 +51,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'bhp_supplimental'
+project = u'bhp_supplemental'
 copyright = u'2013, erik van widenfelt'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -175,7 +175,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'bhp_supplimentaldoc'
+htmlhelp_basename = 'bhp_supplementaldoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -194,7 +194,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'bhp_supplimental.tex', u'bhp\\_supplimental Documentation',
+  ('index', 'bhp_supplemental.tex', u'bhp\\_supplemental Documentation',
    u'erik van widenfelt', 'manual'),
 ]
 
@@ -224,7 +224,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'bhp_supplimental', u'bhp_supplimental Documentation',
+    ('index', 'bhp_supplemental', u'bhp_supplemental Documentation',
      [u'erik van widenfelt'], 1)
 ]
 
@@ -238,8 +238,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'bhp_supplimental', u'bhp_supplimental Documentation',
-   u'erik van widenfelt', 'bhp_supplimental', 'One line description of project.',
+  ('index', 'bhp_supplemental', u'bhp_supplemental Documentation',
+   u'erik van widenfelt', 'bhp_supplemental', 'One line description of project.',
    'Miscellaneous'),
 ]
 
