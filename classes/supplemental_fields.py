@@ -22,19 +22,16 @@ class SupplementalFields(object):
                 ...
     """
 
-    def __init__(self, supplemental_fields, p):
-        # check parameters
+    def __init__(self, supplemental_fields, p, group_name=None):
         if not isinstance(supplemental_fields, tuple):
             raise AttributeError('Attribute \'supplemental_fields\' must be a tuple of field names. Got {0}'.format(supplemental_fields))
         if not p < 1:
             raise AttributeError('Probability \'p\' must be less than 1. Got {0}.'.format(p))
         if len(str(p)) > 5:
             raise AttributeError('Probability \'p\' many not have more than 3 decimal places. Got {0}.'.format(p))
-        # a p of .9 means the fields will NOT be removed 9/10 times
-        # convert p to a list of 0s and 1s where 1 means the fields are removed from the list
-        # the sequence always has 1000 elements to allow for 3 decimal places in p
         self._supplemental_fields = supplemental_fields
         self._p = p
+        self._group_name = group_name
         self._original_fields = None
         self._are_fields_verified = False
 
@@ -80,6 +77,11 @@ class SupplementalFields(object):
             # Instances are logged in :func:`base_model_admin.save_model`
             if Excluded.objects.filter(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk).exists():
                 exclude_fields = self._get_supplemental_fields()
+        elif self.group_name:
+            if Group.objects.filter(group_name=self._group_name).exists():
+                group = Group.objects.get(group_name=self._group_name)
+                if group.choice:
+                    exclude_fields = self._get_supplemental_fields()
         else:
             if random.choice(self._get_p_as_sequence()):  # either 0 or 1
                 exclude_fields = tuple(self._get_supplemental_fields())
