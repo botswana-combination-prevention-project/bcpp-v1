@@ -15,9 +15,8 @@ nullhandler = logger.addHandler(NullHandler())
 
 class SiteMixin (object):
 
-    """Overide ModelAdmin to force username to be saved on add/change and other stuff"""
-
     def update_modified_stamp(self, request, obj, change):
+        """Forces username to be saved on add/change and other stuff, called from save_model"""
         if not change:
             obj.user_created = request.user.username
         if change:
