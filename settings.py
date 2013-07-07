@@ -1,6 +1,7 @@
 # Django settings for bhp project.
 import os
 import platform
+import sys
 import logger
 
 DEBUG = True
@@ -11,31 +12,94 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'init_command': 'SET storage_engine=INNODB',
+testing_db_name = 'sqlite'
+if 'test' in sys.argv:
+    # make tests faster
+    SOUTH_TESTS_MIGRATE = False
+    if testing_db_name == 'sqlite':
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': 'default',
+                'USER': 'root',
+                'PASSWORD': 'cc3721b',
+                'HOST': '',
+                'PORT': ''},
+            'lab_api': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': 'lab',
+                'USER': 'root',
+                'PASSWORD': 'cc3721b',
+                'HOST': '',
+                'PORT': '',
+            },
+#             'survey': {
+#                 'ENGINE': 'django.db.backends.sqlite3',
+#                 'NAME': 'survey',
+#                 'USER': 'root',
+#                 'PASSWORD': 'cc3721b',
+#                 'HOST': '',
+#                 'PORT': '',
+#             },
+            'dispatch_destination': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': 'producer',
+                'USER': 'root',
+                'PASSWORD': 'cc3721b',
+                'HOST': '',
+                'PORT': '',
+            },
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'OPTIONS': {
+                    'init_command': 'SET storage_engine=INNODB',
+                },
+                'NAME': 'test_default',
+                'USER': 'root',
+                'PASSWORD': 'cc3721b',
+                'HOST': '',
+                'PORT': '',
+            },
+            'dispatch_destination': {
+                'ENGINE': 'django.db.backends.mysql',
+                'OPTIONS': {
+                    'init_command': 'SET storage_engine=INNODB',
+                },
+                'NAME': 'test_destination',
+                'USER': 'root',
+                'PASSWORD': 'cc3721b',
+                'HOST': '',
+                'PORT': '',
+            },
+        }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '',
+            'PORT': '',
         },
-        'NAME': 'bhp066',
-        'USER': 'root',
-        'PASSWORD': 'cc3721b',
-        'HOST': '',
-        'PORT': '',
-    },
-    'lab_api': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'init_command': 'SET storage_engine=INNODB',
+        'lab_api': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'lab',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.50',
+            'PORT': '3306',
         },
-        'NAME': 'lab',
-        'USER': 'root',
-        'PASSWORD': 'cc3721b',
-        'HOST': '192.168.1.50',
-        'PORT': '3306',
-    },
-}
+    }
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -62,7 +126,7 @@ USE_L10N = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(DIRNAME, '')
+MEDIA_ROOT = os.path.join(DIRNAME, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -158,6 +222,8 @@ INSTALLED_APPS = (
     'bhp_templatetags',
     'bhp_calendar',
     'bhp_base_model',
+    'bhp_base_test',
+    'bhp_variables',
     'bhp_actg_reference',
     'bhp_adverse',
 #     'bhp_haart',
@@ -211,6 +277,7 @@ INSTALLED_APPS = (
     'bhp_visit_tracking',
     'bhp_appointment',
     'bhp_subject',
+    'bhp_supplemental_fields',
     'bhp_nmap',
     'bhp_data_manager',
 #     'bhp_eligibility',
