@@ -1,13 +1,16 @@
 import re
 from uuid import uuid4
 from django.db import models
+from django.conf import settings
 from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
-try:
+
+if 'bhp_dispatch' in settings.INSTALLED_APPS:
     from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
-except ImportError:
+else:
     from bhp_sync.models import BaseSyncUuidModel
+
 from bhp_base_model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from bhp_common.choices import GENDER_UNDETERMINED
 from bhp_base_model.fields import IsDateEstimatedField
