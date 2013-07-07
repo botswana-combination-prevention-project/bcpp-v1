@@ -1,9 +1,9 @@
 import copy
 import random
-from bhp_supplimental_fields.models import Excluded
+from bhp_supplemental_fields.models import Excluded
 
 
-class SupplimentalFields(object):
+class SupplementalFields(object):
     """ Excludes fields on the fly based on a given probability.
 
         * p is the probability the field will appear on the form; that is, will NOT be excluded from the fields attribute tuple
@@ -12,20 +12,20 @@ class SupplimentalFields(object):
         * if the forms Meta class exclude attribute already specifies fields to exclude, an error will occur.
 
         For example::
-            # If p=0.1, the supplimental fields will appear 100/1000 times the admin add form is shown.
-            from bhp_base_admin.classes import SupplimentalFields
+            # If p=0.1, the supplemental fields will appear 100/1000 times the admin add form is shown.
+            from bhp_base_admin.classes import SupplementalFields
 
             class MyModelAdmin(model.ModelAdmin):
                 form = MyForm
-                supplimental_fields = SupplimentalFields(('regular_sex', 'having_sex', 'having_sex_reg', ), p=0.9)
+                supplemental_fields = SupplementalFields(('regular_sex', 'having_sex', 'having_sex_reg', ), p=0.9)
                 fields = ('field0', 'field1', 'regular_sex', 'having_sex', 'having_sex_reg')
                 ...
     """
 
-    def __init__(self, supplimental_fields, p):
+    def __init__(self, supplemental_fields, p):
         # check parameters
-        if not isinstance(supplimental_fields, tuple):
-            raise AttributeError('Attribute \'supplimental_fields\' must be a tuple of field names. Got {0}'.format(supplimental_fields))
+        if not isinstance(supplemental_fields, tuple):
+            raise AttributeError('Attribute \'supplemental_fields\' must be a tuple of field names. Got {0}'.format(supplemental_fields))
         if not p < 1:
             raise AttributeError('Probability \'p\' must be less than 1. Got {0}.'.format(p))
         if len(str(p)) > 5:
@@ -33,7 +33,7 @@ class SupplimentalFields(object):
         # a p of .9 means the fields will NOT be removed 9/10 times
         # convert p to a list of 0s and 1s where 1 means the fields are removed from the list
         # the sequence always has 1000 elements to allow for 3 decimal places in p
-        self._supplimental_fields = supplimental_fields
+        self._supplemental_fields = supplemental_fields
         self._p = p
         self._original_fields = None
         self._are_fields_verified = False
@@ -50,8 +50,8 @@ class SupplimentalFields(object):
         fields = self._get_fields(exclude_fields)
         return fields, exclude_fields
 
-    def _get_supplimental_fields(self):
-        return self._supplimental_fields
+    def _get_supplemental_fields(self):
+        return self._supplemental_fields
 
     def _get_p_as_sequence(self):
         """Converts p to a list of 0s and 1s where 1s will include the fields.
@@ -79,14 +79,14 @@ class SupplimentalFields(object):
             # Instances are only logged if exclude fields is not null
             # Instances are logged in :func:`base_model_admin.save_model`
             if Excluded.objects.filter(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk).exists():
-                exclude_fields = self._get_supplimental_fields()
+                exclude_fields = self._get_supplemental_fields()
         else:
             if random.choice(self._get_p_as_sequence()):  # either 0 or 1
-                exclude_fields = tuple(self._get_supplimental_fields())
+                exclude_fields = tuple(self._get_supplemental_fields())
         return exclude_fields
 
     def _verify_fields(self, fields, model):
-        """Verifies all supplimental_fields exist in fields and keeps a unaltered copy of fields.
+        """Verifies all supplemental_fields exist in fields and keeps a unaltered copy of fields.
 
             * only runs once per instance.
             * does some error checking, e.g. form.Meta.exclude not set, field is editable an nullable
@@ -94,16 +94,16 @@ class SupplimentalFields(object):
         """
         if not self._are_fields_verified:
             # any field listed in supplimentatl_fields must be in fields
-            for supplimental_field in self._get_supplimental_fields():
-                if supplimental_field not in fields:
-                    raise AttributeError('Supplimental field \'{0}\' must be listed in fields.'.format(supplimental_field))
-            # supplimental_fields must be nullable and editable
+            for supplemental_field in self._get_supplemental_fields():
+                if supplemental_field not in fields:
+                    raise AttributeError('Supplemental field \'{0}\' must be listed in fields.'.format(supplemental_field))
+            # supplemental_fields must be nullable and editable
             for fld in model._meta.fields:
-                if fld.name in self._get_supplimental_fields():
+                if fld.name in self._get_supplemental_fields():
                     if not fld.null:
-                        raise TypeError('Supplimental fields must allow nulls, field \'{1}\' does not. See model {0}.'.format(model._meta.object_name, fld.name))
+                        raise TypeError('Supplemental fields must allow nulls, field \'{1}\' does not. See model {0}.'.format(model._meta.object_name, fld.name))
                     if not fld.editable:
-                        raise TypeError('Supplimental fields must be \'editable\', field \'{1}\' is not. See model {0}'.format(model._meta.object_name, fld.name))
+                        raise TypeError('Supplemental fields must be \'editable\', field \'{1}\' is not. See model {0}'.format(model._meta.object_name, fld.name))
             # save the original ModelAdmin field list with this instance before it is altered
             self._original_fields = copy.deepcopy(fields)
             # set to True so this code is not run again for this instance

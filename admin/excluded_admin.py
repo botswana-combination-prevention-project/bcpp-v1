@@ -1,6 +1,6 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
-from bhp_supplimental_fields.models import Excluded
+from bhp_supplemental_fields.models import Excluded
 
 
 class ExcludedAdmin(BaseModelAdmin):

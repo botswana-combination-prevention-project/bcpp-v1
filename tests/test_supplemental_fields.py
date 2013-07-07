@@ -1,40 +1,40 @@
 import numpy
 from django.test import TestCase
 from bhp_base_test.models import TestModel
-from bhp_supplimental_fields.classes import SupplimentalFields
+from bhp_supplemental_fields.classes import SupplementalFields
 
 
-class TestSupplimentalFields(TestCase):
+class TestSupplementalFields(TestCase):
 
     def test_p1(self):
-        sf = SupplimentalFields(('f3', 'f4'), p=0.1)
+        sf = SupplementalFields(('f3', 'f4'), p=0.1)
         seq = sf._get_p_as_sequence()
         self.assertEqual(len(seq), 1000)
         self.assertEqual(seq.count(0), 100)
         self.assertEqual(seq.count(1), 900)
 
-        sf = SupplimentalFields(('f3', 'f4'), p=0.5)
+        sf = SupplementalFields(('f3', 'f4'), p=0.5)
         seq = sf._get_p_as_sequence()
         self.assertEqual(len(seq), 1000)
         self.assertEqual(seq.count(0), 500)
         self.assertEqual(seq.count(1), 500)
 
-        sf = SupplimentalFields(('f3', 'f4'), p=0.135)
+        sf = SupplementalFields(('f3', 'f4'), p=0.135)
         seq = sf._get_p_as_sequence()
         self.assertEqual(len(seq), 1000)
         self.assertEqual(seq.count(0), 135)
         self.assertEqual(seq.count(1), 865)
 
-        self.assertRaises(AttributeError, SupplimentalFields, "X", p=0.1)
-        self.assertRaises(AttributeError, SupplimentalFields, ('f3', 'f4'), p=1)
-        self.assertRaises(AttributeError, SupplimentalFields, ('f3', 'f4'), p=0.1355)
+        self.assertRaises(AttributeError, SupplementalFields, "X", p=0.1)
+        self.assertRaises(AttributeError, SupplementalFields, ('f3', 'f4'), p=1)
+        self.assertRaises(AttributeError, SupplementalFields, ('f3', 'f4'), p=0.1355)
 
         P = 0
         INC = 1
         EXC = 2
         for opt in [(0.135, 135, 865), (0.5, 500, 500), (0.75, 750, 250)]:
             print 'p={0} include(0)={1} exclude(1)={2}'.format(*opt)
-            sf = SupplimentalFields(('f3', 'f4'), p=opt[P])
+            sf = SupplementalFields(('f3', 'f4'), p=opt[P])
             self.assertEqual(sf._get_p_as_sequence().count(0), opt[INC])
             self.assertEqual(sf._get_p_as_sequence().count(1), opt[EXC])
             zero = []
