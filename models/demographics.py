@@ -34,8 +34,15 @@ class Demographics (BaseScheduledVisitModel):
         )
 
     num_wives = models.IntegerField(
-        verbose_name=("10. How many wives do (you/your husband) have (including traditional marriage),"
+        verbose_name=("10. How many wives does your husband have (including traditional marriage),"
                         " including yourself?"),
+        max_length=2,
+        null=True,
+        blank=True,
+        help_text="Leave blank if participant does not want to respond.",
+        )
+    husband_wives = models.IntegerField(
+        verbose_name=("10b. How many wives do you have ?"),
         max_length=2,
         null=True,
         blank=True,
@@ -44,8 +51,6 @@ class Demographics (BaseScheduledVisitModel):
 
     live_with = models.ManyToManyField(LiveWith,
         verbose_name="11. Who do you currently live with ?",
-        null=True,
-        blank=True,
         help_text="[indicate all that apply]",
         )
 
