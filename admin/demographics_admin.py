@@ -13,6 +13,7 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
         'ethnic',
         'marital_status',
         'num_wives',
+        'husband_wives',
         'live_with',)
     radio_fields = {
         "religion": admin.VERTICAL,
