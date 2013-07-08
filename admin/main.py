@@ -2,18 +2,18 @@ from django.contrib import admin
 from bhp_base_admin.admin import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts,
-                                 LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist,
-                                 Demographics, CommunityEngagement, Education,
-                                 HivTestReview, HivTested, HivUntested, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner,
-                                 MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
+                                 LabourMarketWages, Grant, CeaEnrolmentChecklist, CsEnrolmentChecklist,
+                                 CommunityEngagement, Education,
+                                 HivTestReview, HivTested, HivUntested, MonthsRecentPartner, MonthsSecondPartner,
+                                 MonthsThirdPartner, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
                                  ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
                                  AccessToCare, HouseholdComposition, Respondent, FutureHivTesting, TodaysHivResult)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm,
-                                HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm,
-                                CsEnrolmentChecklistForm, DemographicsForm, CommunityEngagementForm,
-                                EducationForm, HivTestReviewForm, HivTestedForm, HivUntestedForm, SexualBehaviourForm,
-                                MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm,
+                                HivHealthCareCostsForm, LabourMarketWagesForm, CeaEnrolmentChecklistForm,
+                                CsEnrolmentChecklistForm, CommunityEngagementForm,
+                                EducationForm, HivTestReviewForm, HivTestedForm, HivUntestedForm,
+                                MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm,
                                 HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm,
                                 ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
                                 AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm, TodaysHivResultForm)
@@ -180,42 +180,6 @@ class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
 admin.site.register(LabourMarketWages, LabourMarketWagesAdmin)
 
 
-# BaselineHouseholdSurvey
-class BaselineHouseholdSurveyAdmin(SubjectVisitModelAdmin):
-
-    form = BaselineHouseholdSurveyForm
-    fields = (
-        "subject_visit",
-        "flooring_type",
-        "flooring_type_other",
-        "living_rooms",
-        "water_source",
-        "water_source_other",
-        "energy_source",
-        "energy_source_other",
-        "toilet_facility",
-        "toilet_facility_other",
-        "electrical_appliances",
-        "transport_mode",
-        "goats_owned",
-        "sheep_owned",
-        "cattle_owned",
-        "smaller_meals",
-        )
-    radio_fields = {
-        "flooring_type": admin.VERTICAL,
-        "water_source": admin.VERTICAL,
-        "energy_source": admin.VERTICAL,
-        "toilet_facility": admin.VERTICAL,
-        "smaller_meals": admin.VERTICAL,
-        }
-    filter_horizontal = (
-        "electrical_appliances",
-        "transport_mode",
-        )
-admin.site.register(BaselineHouseholdSurvey, BaselineHouseholdSurveyAdmin)
-
-
 # CeaEnrolmentChecklist
 class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
 
@@ -264,24 +228,6 @@ class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "citizen": admin.VERTICAL,
         "community_resident": admin.VERTICAL, }
 admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
-
-
-# Demographics
-class DemographicsAdmin(SubjectVisitModelAdmin):
-
-    form = DemographicsForm
-    fields = (
-        "subject_visit",
-        'religion',
-        'ethnic',
-        'marital_status',
-        'num_wives',
-        'live_with',)
-    radio_fields = {
-        "religion": admin.VERTICAL,
-        "marital_status": admin.VERTICAL, }
-    filter_horizontal = ('live_with',)
-admin.site.register(Demographics, DemographicsAdmin)
 
 
 # CommunityEngagement
@@ -411,29 +357,6 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
 admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 
 
-# SexualBehaviour
-class SexualBehaviourAdmin(SubjectVisitModelAdmin):
-
-    form = SexualBehaviourForm
-    fields = (
-        "subject_visit",
-        'ever_sex',
-        'last_year_partners',
-        'more_sex',
-        'first_sex',
-        'condom',
-        'alcohol_sex',
-        'last_sex',
-        'last_sex_calc',)
-    radio_fields = {
-        "ever_sex": admin.VERTICAL,
-        "more_sex": admin.VERTICAL,
-        "condom": admin.VERTICAL,
-        "alcohol_sex": admin.VERTICAL,
-        "last_sex": admin.VERTICAL, }
-admin.site.register(SexualBehaviour, SexualBehaviourAdmin)
-
-
 # MonthsRecentPartner
 class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
 
@@ -546,39 +469,6 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
 admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)
-
-
-# HivCareAdherence
-class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
-
-    form = HivCareAdherenceForm
-    fields = (
-        "subject_visit",
-        "first_positive",
-        "medical_care",
-        "no_medical_care",
-        'ever_recommended_arv',
-        'arv_naive',
-        'why_no_arv',
-        'why_no_arv_other',
-        'first_arv',
-        'on_arv',
-        'arv_stop',
-        'arv_stop_date',
-        'arv_stop_other',
-        'adherence_4_day',
-        'adherence_4_wk',)
-    radio_fields = {
-        "medical_care": admin.VERTICAL,
-        "no_medical_care": admin.VERTICAL,
-        "ever_recommended_arv": admin.VERTICAL,
-        "arv_naive": admin.VERTICAL,
-        "why_no_arv": admin.VERTICAL,
-        "on_arv": admin.VERTICAL,
-        "arv_stop": admin.VERTICAL,
-        "adherence_4_day": admin.VERTICAL,
-        "adherence_4_wk": admin.VERTICAL, }
-admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
 
 
 # HivMedicalCare
