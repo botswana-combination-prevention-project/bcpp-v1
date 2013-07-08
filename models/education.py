@@ -26,8 +26,6 @@ class Education (BaseScheduledVisitModel):
     money_forwork = models.CharField(
         verbose_name="14. In the past month, how much money did you earn from work you did?",
         max_length=25,
-        null=True, 
-        blank=True,
         choices=MONTHLY_INCOME,
         help_text="",
         )
