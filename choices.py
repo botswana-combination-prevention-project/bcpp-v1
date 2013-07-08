@@ -97,15 +97,15 @@ COMMUNITIES = (
         ('Tsetsebjwe', 'Tsetsebjwe'), 
     )
 
-REASONAWAY_CHOICE = (
-        ('N/A', 'Not Applicable'),
-        ('Cattle post or farm/lands','Cattle post or farm/lands'),
-        ('Work','Work'),
-        ('Education','Education'),
-        ('family/social events (wedding, funerals, holidays)','family/social events (wedding, funerals, holidays)'),
-        ('Other','Other'),
-        ('Don\'t want to answer','Don\'t want to answer'),
-    )
+# REASONAWAY_CHOICE = (
+#         ('N/A', 'Not Applicable'),
+#         ('Cattle post or farm/lands','Cattle post or farm/lands'),
+#         ('Work','Work'),
+#         ('Education','Education'),
+#         ('family/social events (wedding, funerals, holidays)','family/social events (wedding, funerals, holidays)'),
+#         ('Other','Other'),
+#         ('Don\'t want to answer','Don\'t want to answer'),
+#     )
 
 
 COMMUNITYENGAGEMENT_CHOICE = (
@@ -142,11 +142,24 @@ RELIGION_CHOICE = (
     )
 
 ETHNIC_CHOICE = (
-        ('Tswana','Tswana, specify ethnic group:'),
-        ('Kalanga','Kalanga'),
+        ('Babirwa', 'Babirwa'),
+        ('Bahambukushu', 'Bahambukushu'),
+        ('Baherero', 'Baherero'),
+        ('Bahurutshe', 'Bahurutshe'),
+        ('Bakalaka','Bakalaka'),
+        ('Bakgatla', 'Bakgatla'),
+        ('Bakwena', 'Bakwena'),
+        ('Balete', 'Balete'),
+        ('Bangwaketse', 'Bangwaketse'),
+        ('Bangwato', 'Bangwato'),
+        ('Bakgalagadi','Bakgalagadi'),
         ('Basarwa','Basarwa'),
-        ('Kgalagadi','Kgalagadi'),
+        ('Basobea', 'Basobea'),
+        ('Batawana', 'Batawana'),
+        ('Batlokwa', 'Batlokwa'),
+        ('Batswapong', 'Batswapong'),
         ('White African','White African'),
+        ('Indian African', 'Indian African'),
         ('Asian','Asian'),
         ('Other, specify:','Other, specify:'),
         ('Don\'t want to answer','Don\'t want to answer'),
