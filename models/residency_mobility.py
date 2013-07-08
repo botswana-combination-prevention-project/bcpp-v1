@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
-from bhp_base_model.fields import OtherCharField
-from bcpp.choices import LENGTHRESIDENCE_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, REASONAWAY_CHOICE, COMMUNITIES 
+# from bhp_base_model.fields import OtherCharField
+from bcpp.choices import LENGTHRESIDENCE_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES 
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -47,8 +47,6 @@ class ResidencyMobility (BaseScheduledVisitModel):
         verbose_name=("5. In the past 12 months, during the times you were away from this community, "
                       "where were you primarily staying?"),
         max_length=25,
-        null=True,
-        blank=True,
         choices=CATTLEPOSTLANDS_CHOICE,
         default='N/A',
         help_text="",
@@ -62,16 +60,16 @@ class ResidencyMobility (BaseScheduledVisitModel):
         help_text="Other community, specify",  
         )
 
-    reason_away = models.CharField(
-        verbose_name="6. In the past 12 months, what was the primary reason for being away from this community?",
-        max_length=50,
-        null=True,
-        blank=True,
-        default='N/A',
-        choices=REASONAWAY_CHOICE,
-        help_text="",
-        )
-    reason_away_other = OtherCharField()
+#     reason_away = models.CharField(
+#         verbose_name="6. In the past 12 months, what was the primary reason for being away from this community?",
+#         max_length=50,
+#         null=True,
+#         blank=True,
+#         default='N/A',
+#         choices=REASONAWAY_CHOICE,
+#         help_text="",
+#         )
+#     reason_away_other = OtherCharField()
     
     history = AuditTrail()
 
