@@ -10,3 +10,7 @@ from partner_admin import RecentPartnerAdmin, SecondPartnerAdmin, ThirdPartnerAd
 from residency_mobility_admin import ResidencyMobilityAdmin
 from hiv_testing_history_admin import HivTestingHistoryAdmin
 from pregnancy_admin import PregnancyAdmin
+from baseline_household_survey_admin import BaselineHouseholdSurveyAdmin
+from demographics_admin import DemographicsAdmin
+from sexual_behaviour_admin import SexualBehaviourAdmin
+from hiv_care_adherence_admin import HivCareAdherenceAdmin
