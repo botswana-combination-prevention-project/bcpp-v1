@@ -3,20 +3,20 @@ from bhp_base_admin.admin import BaseTabularInline
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts,
                                  LabourMarketWages, Grant, BaselineHouseholdSurvey, CeaEnrolmentChecklist, CsEnrolmentChecklist,
-                                 ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory,
+                                 Demographics, CommunityEngagement, Education,
                                  HivTestReview, HivTested, HivUntested, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner,
                                  MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
                                  ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
-                                 AccessToCare, HouseholdComposition, Respondent, FutureHivTesting)
+                                 AccessToCare, HouseholdComposition, Respondent, FutureHivTesting, TodaysHivResult)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm,
                                 HivHealthCareCostsForm, LabourMarketWagesForm, BaselineHouseholdSurveyForm, CeaEnrolmentChecklistForm,
-                                CsEnrolmentChecklistForm, ResidencyMobilityForm, DemographicsForm, CommunityEngagementForm,
-                                EducationForm, HivTestingHistoryForm, HivTestReviewForm, HivTestedForm, HivUntestedForm, SexualBehaviourForm,
+                                CsEnrolmentChecklistForm, DemographicsForm, CommunityEngagementForm,
+                                EducationForm, HivTestReviewForm, HivTestedForm, HivUntestedForm, SexualBehaviourForm,
                                 MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm, HivCareAdherenceForm,
-                                HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm, ReproductiveHealthForm,
-                                MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
-                                AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm)
+                                HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm,
+                                ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
+                                AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm, TodaysHivResultForm)
 
 
 # QualityOfLife
@@ -266,29 +266,6 @@ class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
 admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
 
 
-class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
-
-    form = ResidencyMobilityForm
-    fields = (
-        "subject_visit",
-        'length_residence',
-        'forteen_nights',
-        'intend_residency',
-        'nights_away',
-        'cattle_postlands',
-        'cattle_postlands_other',
-        'reason_away',
-        'reason_away_other',)
-    radio_fields = {
-        "length_residence": admin.VERTICAL,
-        "forteen_nights": admin.VERTICAL,
-        "intend_residency": admin.VERTICAL,
-        "nights_away": admin.VERTICAL,
-        "cattle_postlands": admin.VERTICAL,
-        "reason_away": admin.VERTICAL, }
-admin.site.register(ResidencyMobility, ResidencyMobilityAdmin)
-
-
 # Demographics
 class DemographicsAdmin(SubjectVisitModelAdmin):
 
@@ -302,7 +279,6 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
         'live_with',)
     radio_fields = {
         "religion": admin.VERTICAL,
-        "ethnic": admin.VERTICAL,
         "marital_status": admin.VERTICAL, }
     filter_horizontal = ('live_with',)
 admin.site.register(Demographics, DemographicsAdmin)
@@ -345,38 +321,16 @@ class EducationAdmin(SubjectVisitModelAdmin):
 admin.site.register(Education, EducationAdmin)
 
 
-# HivTestingHistory
-class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
-
-    form = HivTestingHistoryForm
-    fields = (
-        "subject_visit",
-        'hiv_result',
-        'why_not_tested',
-        'has_tested',
-        'has_record',)
-    radio_fields = {
-        "hiv_result": admin.VERTICAL,
-        "why_not_tested": admin.VERTICAL,
-        "has_tested": admin.VERTICAL,
-        "has_record": admin.VERTICAL, }
-admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)
-
-
 # HivTestReview
 class HivTestReviewAdmin(SubjectVisitModelAdmin):
 
     form = HivTestReviewForm
     fields = (
         "subject_visit",
-        'when_hiv_test',
-        'verbal_hiv_result',
-        "hiv_test_date",
-        'recorded_hiv_result',)
+        'hiv_test_date',
+        'recorded_hiv_result')
     radio_fields = {
-        "recorded_hiv_result": admin.VERTICAL,
-        "when_hiv_test": admin.VERTICAL,
-        "verbal_hiv_result": admin.VERTICAL, }
+        "recorded_hiv_result": admin.VERTICAL, }
 admin.site.register(HivTestReview, HivTestReviewAdmin)
 
 
@@ -708,33 +662,16 @@ class UncircumcisedAdmin(SubjectVisitModelAdmin):
 admin.site.register(Uncircumcised, UncircumcisedAdmin)
 
 
-# ReproductiveHealth
 class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
-
+    
     form = ReproductiveHealthForm
     fields = (
         "subject_visit",
-        'number_children',
-        'more_children',
-        'where_circ',
-        'family_planning',
-        'family_planning_other',
-        'current_pregnant',
-        'anc_reg',
-        'lnmp',
-        'last_birth',
-        'anc_last_pregnancy',
-        'hiv_last_pregnancy',
-        'preg_arv',)
-    radio_fields = {
-        "more_children": admin.VERTICAL,
-        "where_circ": admin.VERTICAL,
-        "current_pregnant": admin.VERTICAL,
-        "anc_reg": admin.VERTICAL,
-        "anc_last_pregnancy": admin.VERTICAL,
-        "hiv_last_pregnancy": admin.VERTICAL,
-        "preg_arv": admin.VERTICAL, }
-    filter_horizontal = ("family_planning",)
+        "number_children",
+        "menopause",
+        )
+    radio_field = {
+        "menopause": admin.VERTICAL,}
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)
 
 
@@ -905,3 +842,14 @@ class HouseholdCompositionAdmin (SubjectVisitModelAdmin):
     radio_fields = {
         "contact":admin.VERTICAL,}
 admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)
+
+
+class TodaysHivResultAdmin (SubjectVisitModelAdmin):
+
+    form = TodaysHivResultForm
+    fields = (
+        'subject_visit',
+        'hiv_result')
+    radio_fields = {
+        "hiv_result":admin.VERTICAL,}
+admin.site.register(TodaysHivResult, TodaysHivResultAdmin)
