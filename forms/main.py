@@ -4,14 +4,14 @@ from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import (SubjectLocator, SubjectDeath, RecentPartner, SecondPartner, ThirdPartner, 
                                  QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, 
                                  HivHealthCareCosts, LabourMarketWages, Grant, BaselineHouseholdSurvey, 
-                                 CeaEnrolmentChecklist, CsEnrolmentChecklist, ResidencyMobility, 
-                                 Demographics, CommunityEngagement, Education, HivTestingHistory, 
+                                 CeaEnrolmentChecklist, CsEnrolmentChecklist, 
+                                 Demographics, CommunityEngagement, Education,
                                  HivTestReview, HivTested, HivUntested, FutureHivTesting, SexualBehaviour, 
                                  MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, 
                                  HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, 
                                  ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, 
                                  PositiveParticipant, AccessToCare, HouseholdComposition, 
-                                 Respondent)
+                                 Respondent, TodaysHivResult)
 
 
 # SubjectLocator
@@ -147,25 +147,6 @@ class CsEnrolmentChecklistForm (BaseSubjectModelForm):
         model = CsEnrolmentChecklist
 
 
-#ResidencyMobility
-class ResidencyMobilityForm (BaseSubjectModelForm):
-    
-    def clean(self):
-
-        cleaned_data = self.cleaned_data
-        #validating if other community, you specify
-        if cleaned_data.get('cattle_postlands') == 'Other community' and not cleaned_data.get('cattle_postlands_other'):
-            raise forms.ValidationError('If participant was staying in another community, specify the community')
-        #if reason for staying away is OTHER, specify reason
-        if cleaned_data.get('reason_away') == 'Other' and not cleaned_data.get('reason_away_other'):
-            raise forms.ValidationError('If participant was away from community for \'OTHER\' reason, provide/specify reason')
-        cleaned_data = super(ResidencyMobilityForm, self).clean()
-        return cleaned_data
-
-    class Meta:
-        model = ResidencyMobility
-
-
 #Demographics
 class DemographicsForm (BaseSubjectModelForm):
     
@@ -203,23 +184,6 @@ class EducationForm (BaseSubjectModelForm):
 
     class Meta:
         model = Education
-
-
-#HivTestingHistory
-class HivTestingHistoryForm (BaseSubjectModelForm):
-    
-    def clean(self):
-
-        cleaned_data = self.cleaned_data
-        #validating when testing declined
-        if cleaned_data.get('hiv_result') == 'Declined' and not cleaned_data.get('why_not_tested'):
-            raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing (2)')
-        cleaned_data = super(HivTestingHistoryForm, self).clean()
-        return cleaned_data
-
-
-    class Meta:
-        model = HivTestingHistory
 
 
 #HivTestReview
@@ -473,32 +437,12 @@ class UncircumcisedForm (BaseSubjectModelForm):
         randomise = [('aware_free',14,[1,1,0,0,0,0,0,0,0,0])]
 
 
-#ReproductiveHealth
 class ReproductiveHealthForm (BaseSubjectModelForm):
-    def clean(self):
-
-        cleaned_data = self.cleaned_data
-        #pregnancy and antenal registration
-        if cleaned_data.get('current_pregnant') == 'Yes' and not cleaned_data.get('anc_reg'):
-            raise forms.ValidationError('If participant currently pregnant, have they registered for antenatal care?')
-        #if currently pregnant when was the last lnmp
-        if cleaned_data.get('current_pregnant') == 'Yes' and not cleaned_data.get('lnmp'):
-            raise forms.ValidationError('If participant currently pregnant, when was the last known menstrual period?')
-        #if mother has children, when was the last birth
-        if cleaned_data.get('number_children') > 0 and not cleaned_data.get('last_birth'):
-            raise forms.ValidationError('If the participant has given birth, when was the last (most recent) birth?')
-        #if mother has children, did they ever go for anc
-        if cleaned_data.get('number_children') > 0 and not cleaned_data.get('anc_last_pregnancy'):
-            raise forms.ValidationError('If the participant has children, during their last pregnancy, did they do for antenatal care?')
-        #if mother has children, did they ever go for anc
-        if cleaned_data.get('number_children') > 0 and not cleaned_data.get('hiv_last_pregnancy'):
-            raise forms.ValidationError('If the participant has children/ has given birth, did they ever test for HIV on their last pregnancy?')
-        
-        return cleaned_data
-
+    
     class Meta:
         model = ReproductiveHealth
-
+        
+        
 
 #MedicalDiagnoses
 class MedicalDiagnosesForm (BaseSubjectModelForm):
@@ -650,3 +594,10 @@ class FutureHivTestingForm (BaseSubjectModelForm):
 
     class Meta:
         model = FutureHivTesting
+
+
+class TodaysHivResultForm(BaseSubjectModelForm):
+    
+    class Meta:
+        model = TodaysHivResult
+
