@@ -3,3 +3,7 @@ from subject_consent_form import SubjectConsentForm
 from subject_refusal_form import SubjectRefusalForm
 from subject_absentee_form import SubjectAbsenteeForm, SubjectAbsenteeEntryForm
 from subject_moved_form import SubjectMovedForm
+
+from residency_mobility_form import ResidencyMobilityForm
+from hiv_testing_history_form import HivTestingHistoryForm
+from pregnancy_form import PregnancyForm
