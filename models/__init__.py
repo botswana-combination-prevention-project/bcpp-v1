@@ -54,7 +54,8 @@ from stigma import Stigma
 from stigma_opinion import StigmaOpinion
 from positive_participant import PositiveParticipant
 from access_to_care import AccessToCare
-
+from todays_hiv_result import TodaysHivResult
+from pregnancy import Pregnancy
 
 from subject_refusal import SubjectRefusal
 from subject_absentee import *
