@@ -7,3 +7,7 @@ from subject_moved_form import SubjectMovedForm
 from residency_mobility_form import ResidencyMobilityForm
 from hiv_testing_history_form import HivTestingHistoryForm
 from pregnancy_form import PregnancyForm
+from baseline_household_survey_form import BaselineHouseholdSurveyForm
+from demographics_form import DemographicsForm
+from sexual_behaviour_form import SexualBehaviourForm
+from hiv_care_adherence_form import HivCareAdherenceForm
