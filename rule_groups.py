@@ -1,6 +1,8 @@
 from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
 from bhp_registration.models import RegisteredSubject
-from models import SubjectVisit, ResourceUtilization, HivTestingHistory, SexualBehaviour, HivCareAdherence, Circumcision, HivTestReview
+from models import (SubjectVisit, ResourceUtilization, HivTestingHistory, 
+                    SexualBehaviour, HivCareAdherence, Circumcision, 
+                    HivTestReview, ReproductiveHealth)
 
 
 class ResourceUtilizationRuleGroup(RuleGroup):
@@ -27,6 +29,13 @@ rule_groups.register(ResourceUtilizationRuleGroup)
 
 
 class HivTestingHistoryRuleGroup(RuleGroup):
+    
+    take_hiv_testing = ScheduledDataRule(
+        logic=Logic(
+            predicate=('take_hiv_testing', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['todayshivresult'])
 
     has_record = ScheduledDataRule(
         logic=Logic(
@@ -42,7 +51,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivtested'])
     
-    hiv_tested = ScheduledDataRule(
+    hiv_untested = ScheduledDataRule(
         logic=Logic(
             predicate=('has_tested', 'equals', 'No'),
             consequence='new',
@@ -173,13 +182,31 @@ class FemaleReproductiveRuleGroup(RuleGroup):
             predicate=('gender', 'equals', 'm'),
             consequence='not_required',
             alternative='new'),
-        target_model=['reproductivehealth'])
+        target_model=['reproductivehealth', 'pregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = RegisteredSubject
 rule_groups.register(FemaleReproductiveRuleGroup)
+
+
+
+class ReproductiveRuleGroup(RuleGroup):
+
+    menopause = ScheduledDataRule(
+        logic=Logic(
+            predicate=('menopause', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pregnancy'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = ReproductiveHealth
+rule_groups.register(ReproductiveRuleGroup)
+
 
 
 class StigmaPositiveARuleGroup(RuleGroup):
