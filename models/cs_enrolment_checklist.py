@@ -1,6 +1,6 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bhp_base_model.validators import eligible_if_yes
+from bhp_base_model.validators import eligible_if_yes, eligible_if_no
 from bhp_common.choices import YES_NO, YES_NO_REFUSED
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_registration.models import BaseRegisteredSubjectModel
@@ -35,8 +35,8 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
                       " involuntary incarceration? "),
         max_length=3,
         choices=YES_NO,
-        validators=[eligible_if_yes, ],
-        help_text=" if 'NO,' STOP participant cannot be enrolled",
+        validators=[eligible_if_no, ],
+        help_text=" if 'YES,' STOP participant cannot be enrolled",
         )
 
     citizen = models.CharField(
