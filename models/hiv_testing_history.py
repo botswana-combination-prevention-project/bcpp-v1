@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
-from bcpp.choices import HHHIVTEST_CHOICE, WHYNOHIVTESTING_CHOICE, YES_NO_DONT_ANSWER
+from bcpp.choices import YES_NO_UNSURE, WHYNOHIVTESTING_CHOICE, YES_NO_DONT_ANSWER, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 from bcpp_subject.choices import YES_NO_RECORD_REFUSAL
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -10,10 +10,10 @@ class HivTestingHistory (BaseScheduledVisitModel):
 
     """CS002"""
 
-    hiv_result = models.CharField(
-        verbose_name="16. [For Interviewer:] What was the result of today's HIV test result?",
+    take_hiv_testing = models.CharField(
+        verbose_name="16. Would you like to take an HIV testing today?",
         max_length=75,
-        choices=HHHIVTEST_CHOICE,
+        choices=YES_NO_UNSURE,
         help_text="",
         )
 
@@ -41,6 +41,26 @@ class HivTestingHistory (BaseScheduledVisitModel):
         choices=YES_NO_RECORD_REFUSAL,
         help_text="",
         )
+    
+    when_hiv_test = models.CharField(
+        verbose_name=("20. When was the last [most recent]"
+                        " time you were tested for HIV?"),
+        max_length=25,
+        null=True,
+        blank=True,
+        choices=WHENHIVTEST_CHOICE,
+        help_text="",
+        )
+
+    verbal_hiv_result = models.CharField(
+        verbose_name="21. Please tell me the results of your last [most recent] HIV test?",
+        max_length=30,
+        null=True,
+        blank=True,
+        choices=VERBALHIVRESULT_CHOICE,
+        help_text="",
+        )
+
 
     history = AuditTrail()
 
