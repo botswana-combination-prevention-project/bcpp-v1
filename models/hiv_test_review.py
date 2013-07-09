@@ -18,7 +18,8 @@ class HivTestReview (BaseScheduledVisitModel):
         verbose_name="23. What was the recorded HIV test result?",
         max_length=30,
         choices=RECORDEDHIVRESULT_CHOICE,
-        help_text="",
+        help_text=("if the participant and written record differ, the result"
+                   " from the written record should be recorded"),
         )
     
     history = AuditTrail()
