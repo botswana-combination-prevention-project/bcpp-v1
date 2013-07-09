@@ -186,11 +186,14 @@ EDUCATION_CHOICE = (
 
 EMPLOYMENT_CHOICE = (
         ('Not working','Not working'),
-        ('Full-time employed','Full-time employed'),
-        ('Part-time employed','Part-time employed'),
-        ('Seasonal or intermittent employment','Seasonal or intermittent employment'),
+        ('Full-time Govt','Yes in the Government Sector (full time)'),
+        ('Full-time Private','Yes in the Private Sector (full time)'),
+        ('self employed-own', 'Yes self-employed working on my own'),
+        ('self employed-employees', 'Yes self-employed working with employees'),
+        ('part-time', 'Yes part-time/ intermittently'),
         ('Informal self-employment','Informal self-employment'),
         ('Student','Student'),
+        ('Pensioner', 'Pensioner (retired)'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
