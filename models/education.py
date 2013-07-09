@@ -18,7 +18,7 @@ class Education (BaseScheduledVisitModel):
 
     employment = models.CharField(
         verbose_name="13. What is your current employment [working for payment] status?",
-        max_length=35,
+        max_length=45,
         choices=EMPLOYMENT_CHOICE,
         help_text="",
         )
