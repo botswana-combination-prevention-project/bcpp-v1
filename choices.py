@@ -341,7 +341,7 @@ OPPORTUNISTIC_ILLNESSES = (
  
 
 NEXT_APPOINTMENT_SOURCE = (
-    ('subject', 'Subject'), 
+    ('participant', 'Participant'), 
     ('household member', 'household member'), 
     ('hbc', 'HBC'), 
     ('other', 'Other')
@@ -369,19 +369,19 @@ PLACE_SUBJECT_MOVED = (
 
 
 ABSENTEE_REASON = (
-    ('goes to school in mochudi and comes home daily', 'Schools in Mochudi, home daily'),
-    ('goes to school outside mochudi and comes home daily', 'Schools outside Mochudi, home daily'),
-    ('goes to school outside mochudi and comes home irregularly ', 'Schools outside Mochudi, home irregularly '),
-    ('goes to school outside mochudi and comes home monthly ', 'Schools outside Mochudi, home monthly '),
-    ('goes to school outside mochudi and comes home on weekends ', 'Schools outside Mochudi, home on weekends '),
     ('gone visiting (relatives,holidays,weddings,funerals)', 'Gone visiting'),
     ('stays at lands or cattlepost ', 'Stays at Lands/Cattlepost '),
     ('stepped out(shops, errands etc) ', 'Stepped out (shops, errands, ) '),
-    ('works in mochudi and comes home daily', 'Works in Mochudi, home daily'),
-    ('works outside mochudi and comes home daily', 'Works outside Mochudi, home daily'),
-    ('works outside mochudi and comes home irregularly ', 'Works outside Mochudi, home irregularly '),
-    ('works outside mochudi and comes home monthly ', 'Works outside Mochudi, home monthly '),
-    ('works outside mochudi and comes home on weekends ', 'Works outside Mochudi, home on weekends '),
+    ('works in village and comes home daily', 'Works in the village, home daily'),
+    ('goes to school in village and comes home daily', 'Schools in this village, home daily'),
+    ('works outside village and comes home daily', 'Works outside the village, home daily'),
+    ('goes to school outside village and comes home daily', 'Schools outside village, home daily'),
+    ('works outside village and comes home irregularly ', 'Works outside the village, home irregularly '),
+    ('goes to school outside village and comes home irregularly ', 'Schools outside village, home irregularly '),
+    ('works outside village and comes home monthly ', 'Works outside the village, home monthly '),
+    ('goes to school outside village and comes home monthly ', 'Schools outside village, home monthly '),
+    ('works outside village and comes home on weekends ', 'Works outside the village, home on weekends '),
+    ('goes to school outside village and comes home on weekends ', 'Schools outside village, home on weekends '),
     ('OTHER', 'Other...'),
 )
 
