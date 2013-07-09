@@ -207,7 +207,8 @@ HHHIVTEST_CHOICE = (
 
 WHYNOHIVTESTING_CHOICE = (
         ('I already knew I am HIV positive','I already knew I am HIV positive'),
-        ('I was not asked to test','I was not asked to test'),
+        ('I recently tested', 'I recently tested (I know my status)'),
+#         ('I was not asked to test','I was not asked to test'),
         ('I didn\'t believe I was at risk of getting HIV','I didn\'t believe I was at risk of getting HIV'),
         ('I am afraid to find out the result','I am afraid to find out the result'),
         ('I am afraid of what others would think of me','I am afraid of what others would think of me'),
@@ -338,8 +339,8 @@ FIRSTPARTNERLIVE_CHOICE = (
 
 
 FIRSTRELATIONSHIP_CHOICE = (
-        ('Long-term partner (>2 years) or spouse', 'Long-term partner (>2 years) or spouse'),
-        ('2 years) or spouse','2 years) or spouse'),
+        ('Long-term partner', 'Long-term partner (>2 years) or spouse'),
+        ('2 years or spouse','2 years or spouse'),
         ('Boyfriend/Girlfriend','Boyfriend/Girlfriend'),
         ('Casual (known) partner','Casual (known) partner'),
         ('One time partner (previously unknown)','One time partner (previously unknown)'),
