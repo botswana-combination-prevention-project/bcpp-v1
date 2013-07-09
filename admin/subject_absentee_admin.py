@@ -30,7 +30,7 @@ class SubjectAbsenteeEntryInline(BaseTabularInline):
         'reason', 
         'reason_other', 
         'next_appt_datetime', 
-        'next_appt_datetime_source')
+        'next_appt_datetime_source',)
     form = SubjectAbsenteeEntryForm
     model = SubjectAbsenteeEntry
     max_num = 3
