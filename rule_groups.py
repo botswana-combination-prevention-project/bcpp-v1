@@ -2,7 +2,7 @@ from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, A
 from bhp_registration.models import RegisteredSubject
 from models import (SubjectVisit, ResourceUtilization, HivTestingHistory, 
                     SexualBehaviour, HivCareAdherence, Circumcision, 
-                    HivTestReview, ReproductiveHealth)
+                    HivTestReview, ReproductiveHealth, MedicalDiagnoses)
 
 
 class ResourceUtilizationRuleGroup(RuleGroup):
@@ -268,3 +268,34 @@ class StigmaPositiveBRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 rule_groups.register(StigmaPositiveBRuleGroup)
+
+
+class MedicalDiagnosesRuleGroup(RuleGroup):
+
+    heart_attack_record = ScheduledDataRule(
+        logic=Logic(
+            predicate=('heart_attack_record', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['heartattack'])
+
+    cancer_record = ScheduledDataRule(
+        logic=Logic(
+            predicate=('cancer_record', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['cancer'])
+    
+    tb_record = ScheduledDataRule(
+        logic=Logic(
+            predicate=('tb_record', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['tubercolosis'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = MedicalDiagnoses
+rule_groups.register(MedicalDiagnosesRuleGroup)
+
