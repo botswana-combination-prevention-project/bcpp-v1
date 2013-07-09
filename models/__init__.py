@@ -17,3 +17,4 @@ from subject_moved_reason import SubjectMovedReason
 
 from partner_residency import PartnerResidency
 from heart_disease import HeartDisease
+from diagnoses import Diagnoses
