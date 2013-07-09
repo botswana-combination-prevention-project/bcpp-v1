@@ -6,7 +6,8 @@ from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientC
                                  CommunityEngagement, Education,
                                  HivTestReview, HivTested, HivUntested, MonthsRecentPartner, MonthsSecondPartner,
                                  MonthsThirdPartner, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
-                                 ReproductiveHealth, MedicalDiagnoses, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
+                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis, 
+                                 SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
                                  AccessToCare, HouseholdComposition, Respondent, FutureHivTesting, TodaysHivResult)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm,
@@ -15,7 +16,8 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 EducationForm, HivTestReviewForm, HivTestedForm, HivUntestedForm,
                                 MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm,
                                 HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm,
-                                ReproductiveHealthForm, MedicalDiagnosesForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
+                                ReproductiveHealthForm, MedicalDiagnosesForm, HeartAttackForm, CancerForm, 
+                                TubercolosisForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
                                 AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm, TodaysHivResultForm)
 
 
@@ -571,32 +573,57 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
     form = MedicalDiagnosesForm
     fields = (
         "subject_visit",
-       'heart_attack',
+       'diagnoses',
+#        'heart_attack',
        'heart_attack_record',
-       "date_heart_attack",
-       'dx_heart_attack',
-       'cancer',
+#        'cancer',
        'cancer_record',
-       'date_cancer',
-       'dx_cancer',
        'sti',
-       'tb',
-       'tb_record',
-       'date_tb',
+#        'tb',
+       'tb_record',)
+    radio_fields = {
+#         "heart_attack": admin.VERTICAL,
+        "heart_attack_record": admin.VERTICAL,
+#         "cancer": admin.VERTICAL,
+        "cancer_record": admin.VERTICAL,
+        "sti": admin.VERTICAL,
+#         "tb": admin.VERTICAL,
+        "tb_record": admin.VERTICAL,}
+admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
+
+
+class HeartAttackAdmin(SubjectVisitModelAdmin):
+
+    form = HeartAttackForm
+    fields = (
+        "subject_visit",
+       "date_heart_attack",
+       'dx_heart_attack',)
+    filter_horizontal = ('dx_heart_attack',)
+admin.site.register(HeartAttack, HeartAttackAdmin)
+
+
+class CancerAdmin(SubjectVisitModelAdmin):
+
+    form = CancerForm
+    fields = (
+        "subject_visit",
+       "date_cancer",
+       'dx_cancer',)
+    radio_fields = {'dx_cancer': admin.VERTICAL,}
+admin.site.register(Cancer, CancerAdmin)
+
+
+class TubercolosisAdmin(SubjectVisitModelAdmin):
+
+    form = TubercolosisForm
+    fields = (
+        "subject_visit",
+       "date_tb",
        'dx_tb',)
     radio_fields = {
-        "heart_attack": admin.VERTICAL,
-        "heart_attack_record": admin.VERTICAL,
-#         "dx_heart_attack": admin.VERTICAL,
-        "cancer": admin.VERTICAL,
-        "cancer_record": admin.VERTICAL,
-        "dx_cancer": admin.VERTICAL,
-        "sti": admin.VERTICAL,
-        "tb": admin.VERTICAL,
-        "tb_record": admin.VERTICAL,
         "dx_tb": admin.VERTICAL, }
-    filter_horizontal = ('dx_heart_attack',)
-admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
+admin.site.register(Tubercolosis, TubercolosisAdmin)
 
 
 # SubstanceUse
