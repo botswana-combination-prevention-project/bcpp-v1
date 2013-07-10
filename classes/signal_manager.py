@@ -69,7 +69,7 @@ class SignalManager(object):
 
     def get_signal_by_dispatch_uid(self, dispatch_uid):
         signal = None
-        for receiver_signal in signals.post_save.receivers:
+        for receiver_signal in signals.post_save.receivers + signals.pre_delete.receivers:
             if str(receiver_signal[0][0]) == dispatch_uid:
                 signal = receiver_signal
                 break
@@ -83,7 +83,7 @@ class SignalManager(object):
         else:
             object_name = obj._meta.object_name.lower()
             #raise TypeError('Expected a model class or a string of the name of the model class. Got {0}'.format(obj))
-        for dispatch_uid in ['audit_serialize_on_save_{0}audit'.format(object_name), 'audit_on_save_{0}audit'.format(object_name)]:
+        for dispatch_uid in ['audit_serialize_on_save_{0}audit'.format(object_name), 'audit_on_save_{0}audit'.format(object_name), 'audit_delete_{0}audit'.format(object_name)]:
             audit_signal = self.get_signal_by_dispatch_uid(dispatch_uid)
             if audit_signal:
                 self.audit_signals.append(audit_signal)
