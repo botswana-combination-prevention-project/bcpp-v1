@@ -1,7 +1,8 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bcpp.choices import EDUCATION_CHOICE, EMPLOYMENT_CHOICE, YES_NO_DONT_ANSWER
-from bcpp_subject.choices import MONTHLY_INCOME
+from bhp_common.choices import YES_NO
+from bcpp.choices import EDUCATION_CHOICE
+from bcpp_subject.choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -10,30 +11,50 @@ class Education (BaseScheduledVisitModel):
     """CS002"""
 
     education = models.CharField(
-        verbose_name="12. What is your highest level of education attainment?",
+        verbose_name="What is your highest level of education attainment?",
         max_length=65,
         choices=EDUCATION_CHOICE,
         help_text="",
         )
 
-    employment = models.CharField(
-        verbose_name="13. What is your current employment [working for payment] status?",
+    working = models.CharField(
+        verbose_name="Are you currently working?",
+        choices=YES_NO,
+        max_length=3,
+        help_text="",
+        )
+    
+    job_type = models.CharField(
+        verbose_name="In your main job what type of work do you do?",
         max_length=45,
-        choices=EMPLOYMENT_CHOICE,
+        choices=JOB_TYPE,
+        help_text="",
+        )
+    
+    reason_unemployed = models.CharField(
+        verbose_name="What is the reason why you are not working?",
+        max_length=65,
+        blank=True,
+        null=True,
+        choices=REASON_UNEMPLOYED,
+        help_text="",
+        )
+    
+    job_description = models.CharField(
+        verbose_name=("Describe the work that you do or did in your most recent"
+                      " job. If you have more than one profession, choose the"
+                      " one you spend the most time doing."),
+        max_length=65,
+        choices=JOB_DESCRIPTION,
         help_text="",
         )
 
-    money_forwork = models.CharField(
-        verbose_name="14. In the past month, how much money did you earn from work you did?",
+    monthly_income = models.CharField(
+        verbose_name=("In the past month, how much money did you earn from"
+                      " work you did or received in payment [retirement benefits"
+                      "child maintenance(alimony), food basket, etc]?"),
         max_length=25,
         choices=MONTHLY_INCOME,
-        help_text="",
-        )
-
-    seeking_work = models.CharField(
-        verbose_name="15. Are you currently seeking [more] employment?",
-        max_length=25,
-        choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
 
