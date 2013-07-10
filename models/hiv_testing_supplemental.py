@@ -5,9 +5,9 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivTestingSupplemental (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
 #     numhivtests = models.IntegerField(
 #         verbose_name="Supplemental HT1. How many times before today have you had an HIV test?",
 #         max_length=2,
@@ -15,7 +15,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
 #         blank=True,
 #         help_text="Note:Leave blank if participant does not want to respond.",
 #         )
-# 
+#
 #     wherehivtest = models.CharField(
 #         verbose_name="Supplemental HT2. Where were you tested for HIV, the last [most recent] time you were tested?",
 #         max_length=85,
@@ -24,20 +24,20 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
 #         choices=WHEREHIVTEST_CHOICE,
 #         help_text="",
 #         )
-# 
+#
 #     whyhivtest = models.CharField(
 #         verbose_name="Supplemental HT3. Not including today's HIV test, which of the following statements best describes the reason you were tested the last [most recent] time you were tested before today?",
 #         max_length=105,
-#         null=True, 
+#         null=True,
 #         blank=True,
 #         choices=WHYHIVTEST_CHOICE,
 #         help_text="",
 #         )
-# 
+#
 #     whynohivtest = models.CharField(
 #         verbose_name="Supplemental HT4. If you were not tested for HIV in the 12 months prior to today, what is the main reason why not?",
 #         max_length=55,
-#         null=True, 
+#         null=True,
 #         blank=True,
 #         choices=WHYNOHIVTESTING_CHOICE,
 #         help_text="",
@@ -56,7 +56,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
                       "antiretroviral therapy (or ARVs) can help HIV-positive people"
                       " to live longer?"),
         max_length=25,
-        null=True, 
+        null=True,
         blank=True,
         choices=YES_NO_UNSURE,
         help_text="",

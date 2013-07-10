@@ -30,12 +30,12 @@ class BaseScheduledVisitModel(MyBaseUuidModel):
 
     def get_visit(self):
         return self.subject_visit
-    
+
     def is_dispatched_item_within_container(self, using=None):
-        return (('bcpp_household', 'household'), 'subject_visit__household_structure_member__household_structure__household')
+        return (('bcpp_household', 'household'), 'subject_visit__household_member__household_structure__household')
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'subject_visit__household_structure_member__household_structure__household__household_identifier')
+        return (Household, 'subject_visit__household_member__household_structure__household__household_identifier')
 
     class Meta:
         abstract = True

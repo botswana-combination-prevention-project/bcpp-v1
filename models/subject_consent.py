@@ -19,14 +19,14 @@ class SubjectConsent(BaseSubjectConsent):
     history = AuditTrail()
 
     def deserialize_get_missing_fk(self, attrname):
-        if attrname == 'household_structure_member':
+        if attrname == 'household_member':
             registered_subject = RegisteredSubject.objects.get(subject_identifier=self.subject_identifier)
             survey = self.survey
             internal_identifier = registered_subject.registration_identifier
-            household_structure_member = self.household_structure_member.__class__.objects.get(
+            household_member = self.household_member.__class__.objects.get(
                 internal_identifier=internal_identifier,
                 survey=survey)
-            retval = household_structure_member
+            retval = household_member
         else:
             retval = None
         return retval
@@ -53,14 +53,14 @@ class SubjectConsent(BaseSubjectConsent):
 #         help_text='Subject is a minor if aged 16-17. A guardian must be present for consent. HIV status may NOT be revealed in the household.')
 # 
 #     def deserialize_get_missing_fk(self, attrname):
-#         if attrname == 'household_structure_member':
+#         if attrname == 'household_member':
 #             registered_subject = RegisteredSubject.objects.get(subject_identifier=self.subject_identifier)
 #             survey = self.survey
 #             internal_identifier = registered_subject.registration_identifier
-#             household_structure_member = self.household_structure_member.__class__.objects.get(
+#             household_member = self.household_member.__class__.objects.get(
 #                 internal_identifier=internal_identifier,
 #                 survey=survey)
-#             retval = household_structure_member
+#             retval = household_member
 #         else:
 #             retval = None
 #         return retval

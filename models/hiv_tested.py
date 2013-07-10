@@ -7,9 +7,9 @@ from hiv_testing_supplemental import HivTestingSupplemental
 
 
 class HivTested (HivTestingSupplemental):
-    
+
     """CS002- for those who have tested for HIV. Its branch off from Q18 - HIV testing History"""
-    
+
     num_hiv_tests = models.IntegerField(
         verbose_name="Supplemental HT1. How many times before today have you had an HIV test?",
         max_length=2,
@@ -33,7 +33,7 @@ class HivTested (HivTestingSupplemental):
                       " statements best describes the reason you were tested the last"
                       " [most recent] time you were tested before today?"),
         max_length=105,
-        null=True, 
+        null=True,
         blank=True,
         choices=WHYHIVTEST_CHOICE,
         help_text="",

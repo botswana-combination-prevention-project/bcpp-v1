@@ -4,7 +4,7 @@ from bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry
 
 class SubjectAbsenteeEntryForm(BaseMembershipForm):
 
-    household_structure_member_fk = 'subject_absentee'
+    household_member_fk = 'subject_absentee'
 
     class Meta:
         model = SubjectAbsenteeEntry

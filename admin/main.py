@@ -7,7 +7,7 @@ from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientC
                                  CommunityEngagement, Education,
                                  HivTestReview, HivTested, HivUntested, MonthsRecentPartner, MonthsSecondPartner,
                                  MonthsThirdPartner, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
-                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis, 
+                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis,
                                  SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
                                  AccessToCare, HouseholdComposition, Respondent, FutureHivTesting, 
                                  TodaysHivResult, HivResultDocumentation)
@@ -18,7 +18,7 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 EducationForm, HivTestReviewForm, HivTestedForm, HivUntestedForm,
                                 MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm,
                                 HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm,
-                                ReproductiveHealthForm, MedicalDiagnosesForm, HeartAttackForm, CancerForm, 
+                                ReproductiveHealthForm, MedicalDiagnosesForm, HeartAttackForm, CancerForm,
                                 TubercolosisForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
                                 AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm, 
                                 TodaysHivResultForm, HivResultDocumentationForm)
@@ -301,16 +301,16 @@ class HivTestedAdmin(SubjectVisitModelAdmin):
         'hiv_pills',
         'arvs_hiv_test',)
     radio_fields = {
-        "where_hiv_test":admin.VERTICAL,
-        "why_hiv_test":admin.VERTICAL,
-        "hiv_pills":admin.VERTICAL,
-        "arvs_hiv_test":admin.VERTICAL,}
+        "where_hiv_test": admin.VERTICAL,
+        "why_hiv_test": admin.VERTICAL,
+        "hiv_pills": admin.VERTICAL,
+        "arvs_hiv_test": admin.VERTICAL, }
 admin.site.register(HivTested, HivTestedAdmin)
 
 
-#HivUntested 
+# HivUntested
 class HivUntestedAdmin(SubjectVisitModelAdmin):
- 
+
     form = HivUntestedForm
     fields = (
         "subject_visit",
@@ -318,15 +318,15 @@ class HivUntestedAdmin(SubjectVisitModelAdmin):
         'hiv_pills',
         'arvs_hiv_test',)
     radio_fields = {
-        "why_no_hiv_test":admin.VERTICAL,
-        "hiv_pills":admin.VERTICAL,
-        "arvs_hiv_test":admin.VERTICAL,}
+        "why_no_hiv_test": admin.VERTICAL,
+        "hiv_pills": admin.VERTICAL,
+        "arvs_hiv_test": admin.VERTICAL, }
 admin.site.register(HivUntested, HivUntestedAdmin)
 
 
-# # HivTestingSupplemental 
+# # HivTestingSupplemental
 # class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
-#  
+#
 #     form = HivTestingSupplementalForm
 #     fields = (
 #         "subject_visit",
@@ -337,17 +337,17 @@ admin.site.register(HivUntested, HivUntestedAdmin)
 #         'hiv_pills',
 #         'arvshivtest',)
 #     radio_fields = {
-#         "wherehivtest":admin.VERTICAL,
-#         "whyhivtest":admin.VERTICAL,
-#         "whynohivtest":admin.VERTICAL,
-#         "hiv_pills":admin.VERTICAL,
-#         "arvshivtest":admin.VERTICAL}
+#         "wherehivtest": admin.VERTICAL,
+#         "whyhivtest": admin.VERTICAL,
+#         "whynohivtest": admin.VERTICAL,
+#         "hiv_pills": admin.VERTICAL,
+#         "arvshivtest": admin.VERTICAL}
 # admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
 
 
-# FutureHivTesting 
+# FutureHivTesting
 class FutureHivTestingAdmin(SubjectVisitModelAdmin):
- 
+
     form = FutureHivTestingForm
     fields = (
         "subject_visit",
@@ -359,10 +359,10 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
         'hiv_test_year',
         'hiv_test_year_other')
     radio_fields = {
-        'prefer_hivtest':admin.VERTICAL,
-        "hiv_test_time":admin.VERTICAL,
-        "hiv_test_week":admin.VERTICAL,
-        "hiv_test_year":admin.VERTICAL,}
+        'prefer_hivtest': admin.VERTICAL,
+        "hiv_test_time": admin.VERTICAL,
+        "hiv_test_week": admin.VERTICAL,
+        "hiv_test_year": admin.VERTICAL, }
 admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 
 
@@ -568,7 +568,7 @@ admin.site.register(Uncircumcised, UncircumcisedAdmin)
 
 
 class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
-    
+
     form = ReproductiveHealthForm
     fields = (
         "subject_visit",
@@ -576,7 +576,7 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
         "menopause",
         )
     radio_field = {
-        "menopause": admin.VERTICAL,}
+        "menopause": admin.VERTICAL, }
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)
 
 
@@ -601,7 +601,7 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
         "cancer_record": admin.VERTICAL,
         "sti": admin.VERTICAL,
 #         "tb": admin.VERTICAL,
-        "tb_record": admin.VERTICAL,}
+        "tb_record": admin.VERTICAL, }
     filter_horizontal = ('diagnoses',)
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
 
@@ -624,7 +624,7 @@ class CancerAdmin(SubjectVisitModelAdmin):
         "subject_visit",
        "date_cancer",
        'dx_cancer',)
-    radio_fields = {'dx_cancer': admin.VERTICAL,}
+    radio_fields = {'dx_cancer': admin.VERTICAL, }
 admin.site.register(Cancer, CancerAdmin)
 
 
@@ -771,7 +771,7 @@ class HouseholdCompositionAdmin (SubjectVisitModelAdmin):
         'contact',
         'phone_number',)
     radio_fields = {
-        "contact":admin.VERTICAL,}
+        "contact": admin.VERTICAL, }
 admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)
 
 

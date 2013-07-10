@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 from bhp_variables.models import StudySpecific
 from bhp_registration.models import RegisteredSubject
 #from bcpp_survey.models import Survey
-from bcpp_household.models import HouseholdStructureMember
+from bcpp_household_member.models import HouseholdMember
 from bcpp_subject.models import SubjectConsent  # SubjectConsentYearOne, SubjectConsentYearTwo, SubjectConsentYearThree, SubjectConsentYearFour, SubjectConsentYearFive
 
 
@@ -44,20 +44,20 @@ class SubjectConsentForm(BaseSubjectConsentForm):
             raise forms.ValidationError('Identity numbers do not match. Please check both the identity and your confirmation.')
         report_datetime = cleaned_data.get('consent_datetime')
         survey = cleaned_data.get('survey')
-        household_structure_member = cleaned_data.get("household_structure_member")
-        if not household_structure_member:
-            raise forms.ValidationError("HouseholdStructureMember cannot be None.")
+        household_member = cleaned_data.get("household_member")
+        if not household_member:
+            raise forms.ValidationError("HouseholdMember cannot be None.")
         identity_type = cleaned_data.get('identity_type')
         if not identity_type:
             raise forms.ValidationError("identity_type cannot be None.")
-        household_identifier = household_structure_member.household_structure.household.household_identifier
+        household_identifier = household_member.household_structure.household.household_identifier
         if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).exists():
             if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).count() > 1:
                 raise forms.ValidationError("More than one subject is using this identity number. Cannot continue.")
             registered_subject = RegisteredSubject.objects.get(identity=cleaned_data.get('identity'))
-            previous_household_structure_member = HouseholdStructureMember.objects.filter(pk=registered_subject.registration_identifier)
-            if previous_household_structure_member:
-                if not previous_household_structure_member[0].household_structure.household.household_identifier == household_identifier:
+            previous_household_member = HouseholdMember.objects.filter(pk=registered_subject.registration_identifier)
+            if previous_household_member:
+                if not previous_household_member[0].household_structure.household.household_identifier == household_identifier:
                         raise forms.ValidationError("Subject not found in {0} for this registered subject / omang'.".format(household_identifier))
         #check date of consent is within survey start and end dates
         if survey:
@@ -72,70 +72,19 @@ class SubjectConsentForm(BaseSubjectConsentForm):
         check_initials_field(my_first_name, my_last_name, my_initials)
 
         #check first name matches householdstructuremember
-        if my_first_name and household_structure_member:
-            if household_structure_member.first_name != my_first_name:
-                raise forms.ValidationError("First name does not match. The first name recorded in the household member's information are '%s' but you wrote '%s'" % (household_structure_member.first_name, my_first_name))
+        if my_first_name and household_member:
+            if household_member.first_name != my_first_name:
+                raise forms.ValidationError("First name does not match. The first name recorded in the household member's information are '%s' but you wrote '%s'" % (household_member.first_name, my_first_name))
 
         #check 1st and last letters of initials match subjects name
         check_initials_field(my_first_name, my_last_name, my_initials)
 
         #check subjectconsent gender with householdstructuremember gender
         my_gender = cleaned_data.get("gender", None)
-        if my_gender and household_structure_member:
-            if household_structure_member.gender != my_gender:
-                raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_structure_member.gender, my_gender))
+        if my_gender and household_member:
+            if household_member.gender != my_gender:
+                raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, my_gender))
         return super(SubjectConsentForm, self).clean()
 
     class Meta:
         model = SubjectConsent
-
-# 
-# class SubjectConsentYearOneForm(MyBaseSubjectConsentForm):
-#     try:
-#         survey = Survey.objects.get(survey_slug='bcpp-year-1')
-#     except:
-#         survey = None
-# 
-#     class Meta:
-#         model = SubjectConsentYearOne
-#         exclude = ('assessment_score', 'is_minor', )
-# 
-# 
-# class SubjectConsentYearTwoForm(MyBaseSubjectConsentForm):
-#     try:
-#         survey = Survey.objects.get(survey_slug='bcpp-year-2')
-#     except:
-#         survey = None
-# 
-#     class Meta:
-#         model = SubjectConsentYearTwo
-# 
-# 
-# class SubjectConsentYearThreeForm(MyBaseSubjectConsentForm):
-#     try:
-#         survey = Survey.objects.get(survey_slug='bcpp-year-3')
-#     except:
-#         survey = None
-# 
-#     class Meta:
-#         model = SubjectConsentYearThree
-# 
-# 
-# class SubjectConsentYearFourForm(MyBaseSubjectConsentForm):
-#     try:
-#         survey = Survey.objects.get(survey_slug='bcpp-year-4')
-#     except:
-#         survey = None
-# 
-#     class Meta:
-#         model = SubjectConsentYearFour
-# 
-# 
-# class SubjectConsentYearFiveForm(MyBaseSubjectConsentForm):
-#     try:
-#         survey = Survey.objects.get(survey_slug='bcpp-year-5')
-#     except:
-#         survey = None
-# 
-#     class Meta:
-#         model = SubjectConsentYearFive

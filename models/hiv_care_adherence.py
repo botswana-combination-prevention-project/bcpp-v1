@@ -1,13 +1,13 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bhp_base_model.fields import OtherCharField 
+from bhp_base_model.fields import OtherCharField
 from bcpp.choices import YES_NO_DONT_ANSWER, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE, ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivCareAdherence (BaseScheduledVisitModel):
 
-    """CS002- 
+    """CS002-
     Note to Interviewer: This section is only to be completed by HIV-positive"
     " participants who knew that they were HIV-positive before today."""
 
@@ -81,8 +81,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
         help_text="",
         )
     arv_stop_date = models.DateField(
-        verbose_name="68b. When did you stop taking ARV\'s?", 
-        null=True, 
+        verbose_name="68b. When did you stop taking ARV\'s?",
+        null=True,
         blank=True,
         help_text="",
         )

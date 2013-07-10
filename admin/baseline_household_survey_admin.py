@@ -4,7 +4,6 @@ from bcpp_subject.models import BaselineHouseholdSurvey
 from bcpp_subject.forms import BaselineHouseholdSurveyForm
 
 
-
 # BaselineHouseholdSurvey
 class BaselineHouseholdSurveyAdmin(SubjectVisitModelAdmin):
 
@@ -39,4 +38,3 @@ class BaselineHouseholdSurveyAdmin(SubjectVisitModelAdmin):
         "transport_mode",
         )
 admin.site.register(BaselineHouseholdSurvey, BaselineHouseholdSurveyAdmin)
-

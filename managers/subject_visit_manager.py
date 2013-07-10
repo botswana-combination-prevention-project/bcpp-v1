@@ -1,4 +1,3 @@
-from django.db import models
 from django.db.models.query import QuerySet
 from bhp_visit_tracking.managers import BaseVisitTrackingManager
 

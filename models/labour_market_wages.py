@@ -9,9 +9,9 @@ from my_base_uuid_model import MyBaseUuidModel
 
 
 class LabourMarketWages (BaseScheduledVisitModel):
-    
+
     """CE001"""
-    
+
     employed = models.CharField(
         verbose_name="6. Are you currently employed? ",
         max_length=40,
@@ -27,7 +27,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
         help_text="",
         )
     occupation_other = OtherCharField()
-    
+
     job_description_change = models.IntegerField(
         verbose_name=("8. In the past 3 months, how many times have you changed your job? "
                       "For example, changed your type of work or your employer. "),
@@ -36,7 +36,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
         blank=True,
         help_text="Note: Enter number of times. If participant does not want to answer, leave blank",
         )
-    
+
     days_worked = models.IntegerField(
         verbose_name="9. In the past month, how many days did you work?. ",
         max_length=2,
@@ -73,7 +73,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
         help_text="",
         )
     other_occupation_other = OtherCharField()
-    
+
     govt_grant = models.CharField(
         verbose_name="14. Do you receive any government grant for yourself or on behalf of someone else? ",
         max_length=17,
@@ -88,7 +88,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
 #         )
     nights_out = models.IntegerField(
         verbose_name="16. In the past month, how many nights did you spend away from home?. ",
-        max_length=2, 
+        max_length=2,
         null=True,
         blank=True,
         help_text="Note: Enter number of nights. If participant does not want to answer, leave blank",
@@ -116,7 +116,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
         blank=True,
         help_text="Note: Enter number of days including zero. If participant does not want to answer, leave blank",
         )
-    
+
     history = AuditTrail()
 
     def get_absolute_url(self):
@@ -129,7 +129,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
 
 
 class GrantType(MyBaseUuidModel):
-    
+
     grant_number = models.IntegerField(
         verbose_name="How many of each type of grant do you receive?",
         max_length=2,
@@ -140,19 +140,18 @@ class GrantType(MyBaseUuidModel):
         max_length=34,
         )
     other_grant = OtherCharField()
-    
+
     class Meta:
         abstract = True
 
 
 class Grant(GrantType):
-    
+
     labour_market_wages = models.ForeignKey(LabourMarketWages)
-    
+
     history = AuditTrail()
-    
-    class Meta: 
+
+    class Meta:
         app_label = 'bcpp_subject'
         verbose_name = "Grants"
         verbose_name_plural = "Grants"
-    

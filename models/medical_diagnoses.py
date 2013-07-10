@@ -2,26 +2,26 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp_list.models import Diagnoses
-from bcpp.choices import YES_NO_UNSURE, YES_NO_DONT_ANSWER  
+from bcpp.choices import YES_NO_UNSURE, YES_NO_DONT_ANSWER
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class MedicalDiagnoses (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     diagnoses = models.ManyToManyField(Diagnoses,
         verbose_name="Have you ever had any of the following diagnoses?",
         help_text="tick all that apply",
         )
-    
+
 #     heart_attack = models.CharField(
 #         verbose_name="86. In the past 12 months, have you been told that you had heart disease or a stroke?",
 #         max_length=25,
 #         choices=YES_NO_UNSURE,
 #         help_text="",
 #         )
-    
+
     heart_attack_record = models.CharField(
         verbose_name=("87. Is a record (OPD card, discharge summary) of a heart disease or stroke"
                        " diagnosis available to review?"),
@@ -47,7 +47,6 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         choices=YES_NO_DONT_ANSWER,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
-
 
     sti = models.CharField(
         verbose_name=("94. In the past 12 months, have you been treated for discharge from the "
@@ -75,7 +74,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         choices=YES_NO_DONT_ANSWER,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
-    
+
     history = AuditTrail()
 
     def get_absolute_url(self):

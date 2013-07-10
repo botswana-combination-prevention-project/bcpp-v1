@@ -55,7 +55,7 @@ class BaseSubjectEntry(BaseUuidModel):
                     break
         if not field:
             raise TypeError('Method \'dispatch_container_lookup\' cannot find the "inline\'s" related field for class {0}'.format(self.__class__))
-        return (Household, '{0}__household_structure_member__household_structure__household__household_identifier'.format(field.name))
+        return (Household, '{0}__household_member__household_structure__household__household_identifier'.format(field.name))
 
     class Meta:
         abstract = True

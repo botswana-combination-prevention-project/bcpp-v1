@@ -3,10 +3,8 @@ from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import BaselineHouseholdSurvey
 
 
-
-# BaselineHouseholdSurvey
 class BaselineHouseholdSurveyForm (BaseSubjectModelForm):
-    
+
     def clean(self):
 
         cleaned_data = self.cleaned_data

@@ -48,13 +48,13 @@ class SubjectMoved(BaseMemberStatusModel):
         return 'MOVED'
 
     def post_save_update_hsm_status(self):
-        self.household_structure_member.lives_in_household = 'No'
+        self.household_member.lives_in_household = 'No'
         super(SubjectMoved, self).post_save_update_hsm_status()
 
     def save(self, *args, **kwargs):
         kwargs['reason'] = 'moved'
         kwargs['info_source'] = 'subject'
-        self.survey = self.household_structure_member.survey
+        self.survey = self.household_member.survey
         super(SubjectMoved, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -67,4 +67,4 @@ class SubjectMoved(BaseMemberStatusModel):
         app_label = 'bcpp_subject'
         verbose_name = "Subject Moved"
         verbose_name_plural = "Subject Moved"
-        ordering = ['household_structure_member']
+        ordering = ['household_member']

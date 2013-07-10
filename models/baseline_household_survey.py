@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-# from django.core.validators import MaxValueValidator, MinValueValidator
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
 from base_scheduled_visit_model import BaseScheduledVisitModel
@@ -44,7 +43,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
         help_text="",
         )
     energy_source_other = OtherCharField()
-    
+
     toilet_facility = models.CharField(
         verbose_name="5. What is the main toilet facility used in this household? ",
         max_length=35,
@@ -52,8 +51,8 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
         help_text="",
         )
     toilet_facility_other = OtherCharField()
-    
-    electrical_appliances= models.ManyToManyField(ElectricalAppliances, 
+
+    electrical_appliances = models.ManyToManyField(ElectricalAppliances,
         verbose_name=("6.Does any member of this household have any of the following that are"
                       " currently working? "),
         null=True,

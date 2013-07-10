@@ -4,7 +4,7 @@ from bcpp_subject.models import Demographics
 
 
 class DemographicsForm (BaseSubjectModelForm):
-    
+
     def clean(self):
 
         cleaned_data = self.cleaned_data
@@ -19,6 +19,6 @@ class DemographicsForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant is married, give number of wives')
         cleaned_data = super(DemographicsForm, self).clean()
         return cleaned_data
-    
+
     class Meta:
         model = Demographics

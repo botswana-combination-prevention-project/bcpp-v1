@@ -34,4 +34,3 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivCareAdherence
-        

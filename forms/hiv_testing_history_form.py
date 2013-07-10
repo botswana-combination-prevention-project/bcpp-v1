@@ -3,9 +3,8 @@ from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import HivTestingHistory
 
 
-#HivTestingHistory
 class HivTestingHistoryForm (BaseSubjectModelForm):
-    
+
     def clean(self):
 
         cleaned_data = self.cleaned_data
@@ -18,7 +17,6 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant has tested before, let us know the result of the last HIV test.')
         cleaned_data = super(HivTestingHistoryForm, self).clean()
         return cleaned_data
-
 
     class Meta:
         model = HivTestingHistory

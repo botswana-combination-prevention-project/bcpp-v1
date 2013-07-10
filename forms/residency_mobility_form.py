@@ -5,7 +5,7 @@ from bcpp_subject.models import ResidencyMobility
 
 #ResidencyMobility
 class ResidencyMobilityForm (BaseSubjectModelForm):
-    
+
     def clean(self):
 
         cleaned_data = self.cleaned_data

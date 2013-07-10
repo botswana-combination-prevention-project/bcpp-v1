@@ -35,7 +35,7 @@ class SubjectAbsentee(BaseMemberStatusModel):
         return 'ABSENT'
 
     def save(self, *args, **kwargs):
-        self.survey = self.household_structure_member.survey
+        self.survey = self.household_member.survey
         super(SubjectAbsentee, self).save(*args, **kwargs)
 
     class Meta:

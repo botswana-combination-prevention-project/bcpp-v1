@@ -13,7 +13,7 @@ class PregnancyForm (BaseSubjectModelForm):
         #if currently pregnant when was the last lnmp
         if cleaned_data.get('current_pregnant') == 'Yes' and not cleaned_data.get('lnmp'):
             raise forms.ValidationError('If participant currently pregnant, when was the last known menstrual period?')
-       
+
         return cleaned_data
 
     class Meta:
