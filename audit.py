@@ -127,7 +127,7 @@ class AuditTrail(object):
                 ## Uncomment this line for pre r8223 Django builds
                 #dispatcher.connect(_audit_delete, signal=models.signals.pre_delete, sender=cls, weak=False)
                 ## Comment this line for pre r8223 Django builds
-                models.signals.pre_delete.connect(_audit_delete, sender=cls, weak=False)
+                models.signals.pre_delete.connect(_audit_delete, sender=cls, weak=False, dispatch_uid='audit_delete_{0}'.format(model._meta.object_name.lower()))
                 # begin: erikvw added for serialization
                 # models.signals.pre_delete.connect(_serialize, sender=model, weak=False, dispatch_uid='audit_serialize_on_delete')
                 # end: erikvw added for serialization
