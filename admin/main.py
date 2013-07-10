@@ -9,7 +9,7 @@ from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientC
                                  MonthsThirdPartner, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
                                  ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis,
                                  SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
-                                 AccessToCare, HouseholdComposition, Respondent, FutureHivTesting, 
+                                 AccessToCare, HouseholdComposition, Respondent, FutureHivTesting,
                                  TodaysHivResult, HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm,
@@ -20,7 +20,7 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm,
                                 ReproductiveHealthForm, MedicalDiagnosesForm, HeartAttackForm, CancerForm,
                                 TubercolosisForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
-                                AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm, 
+                                AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm,
                                 TodaysHivResultForm, HivResultDocumentationForm)
 
 
@@ -272,7 +272,7 @@ class EducationAdmin(SubjectVisitModelAdmin):
         'job_type': admin.VERTICAL,
         'reason_unemployed': admin.VERTICAL,
         'job_description': admin.VERTICAL,
-        "monthly_income": admin.VERTICAL,}
+        "monthly_income": admin.VERTICAL, }
 admin.site.register(Education, EducationAdmin)
 
 
@@ -783,8 +783,8 @@ class TodaysHivResultAdmin (SubjectVisitModelAdmin):
         'hiv_result',
         'why_not_tested',)
     radio_fields = {
-        "hiv_result":admin.VERTICAL,
-        'why_not_tested':admin.VERTICAL,}
+        "hiv_result": admin.VERTICAL,
+        'why_not_tested': admin.VERTICAL, }
 admin.site.register(TodaysHivResult, TodaysHivResultAdmin)
 
 
@@ -797,6 +797,6 @@ class HivResultDocumentationAdmin (SubjectVisitModelAdmin):
         'result_recorded',
         'result_doc_type',)
     radio_fields = {
-        "result_recorded":admin.VERTICAL,
-        'result_doc_type':admin.VERTICAL,}
+        "result_recorded": admin.VERTICAL,
+        'result_doc_type': admin.VERTICAL, }
 admin.site.register(HivResultDocumentation, HivResultDocumentationAdmin)
