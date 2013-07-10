@@ -11,7 +11,7 @@ class HivTestReview (BaseScheduledVisitModel):
 
     hiv_test_date = models.DateField(
         verbose_name="22. What was the recorded date of the last HIV test?",
-        help_text="",
+        help_text="(obtain this information from the card the participant presents to you)",
         )
 
     recorded_hiv_result = models.CharField(
