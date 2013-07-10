@@ -5,7 +5,8 @@ from django.conf import settings
 from django.db.models import get_model
 from bhp_dashboard.classes import Dashboard
 from bhp_registration.models import RegisteredSubject
-from bcpp_household.models import HouseholdStructureMember, Household, HouseholdStructure, HouseholdSurvey, HouseholdLogEntry, HouseholdLog
+from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
+from bcpp_household_member.models import HouseholdMember
 from bcpp_survey.models import Survey
 from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 
@@ -18,7 +19,7 @@ class HouseholdDashboard(Dashboard):
         self.subject_type = 'household'  # yuk
         self.dashboard_type = 'household'
         self.household_structure = None
-        self.household_structure_members = None
+        self.household_members = None
         self.current_member_count = None
         self.survey = None
         self.surveys = None
@@ -64,31 +65,30 @@ class HouseholdDashboard(Dashboard):
             if HouseholdStructure.objects.filter(household=self.household, survey=self.survey):
                 self.household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey)
                 # list household members in side bar
-                self.household_structure_members = HouseholdStructureMember.objects.filter(
+                self.household_members = HouseholdMember.objects.filter(
                                                         household_structure__household=self.household,
                                                         household_structure__survey=self.survey,
                                                         ).order_by('household_structure', 'first_name')
-                for household_structure_member in self.household_structure_members:
-                    if not RegisteredSubject.objects.filter(registration_identifier=household_structure_member.internal_identifier):
-                        raise ValueError('{0} expects all household_structure_members to have '
-                                         'an entry in RegisterSubject. Got None for {1}.'.format(self, household_structure_member,))
+                for household_member in self.household_members:
+                    if not RegisteredSubject.objects.filter(registration_identifier=household_member.internal_identifier):
+                        raise ValueError('{0} expects all household_members to have '
+                                         'an entry in RegisterSubject. Got None for {1}.'.format(self, household_member,))
                 if not HouseholdLog.objects.filter(household=self.household, survey=self.survey):
                     household_log = HouseholdLog.objects.create(household=self.household, survey=self.survey)
                 else:
                     household_log = HouseholdLog.objects.get(household=self.household, survey=self.survey)
                 household_log_entries = HouseholdLogEntry.objects.filter(household_log__household=self.household, household_log__survey=self.survey)
-                self.current_member_count = self.household_structure_members.count()
+                self.current_member_count = self.household_members.count()
         self.surveys = Survey.objects.all().order_by('survey_name')
 
         # call super to initialize default context
         super(HouseholdDashboard, self).create(**kwargs)
-        household_surveys = HouseholdSurvey.objects.filter(household=self.household)
+
         self.context.add(
             household=self.household,
             household_identifier=self.household_identifier,
-            household_surveys=household_surveys,
             household_structure=self.household_structure,
-            household_structure_members=self.household_structure_members,
+            household_members=self.household_members,
             subject_rccs=subject_rccs,
             household_log=household_log,
             household_log_entries=household_log_entries,
@@ -107,11 +107,11 @@ class HouseholdDashboard(Dashboard):
 
         self.urlpatterns = patterns(view,
 
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/(?P<gender>\w+)/(?P<initials>\w+)/(?P<household_structure_member>{pk})/$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/(?P<gender>\w+)/(?P<initials>\w+)/(?P<household_member>{pk})/$'.format(**regex),
               'dashboard',
                 name="dashboard_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/(?P<registered_subject>{pk})/(?P<household_structure_member>{pk})/$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/(?P<registered_subject>{pk})/(?P<household_member>{pk})/$'.format(**regex),
               'dashboard',
                 name="dashboard_url"
                 ),
@@ -119,7 +119,7 @@ class HouseholdDashboard(Dashboard):
               'dashboard',
                 name="dashboard_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure_member>{pk})/$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_member>{pk})/$'.format(**regex),
               'dashboard',
                 name="dashboard_url"
                 ),
