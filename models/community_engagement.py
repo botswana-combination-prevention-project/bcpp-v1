@@ -11,10 +11,12 @@ class CommunityEngagement (BaseScheduledVisitModel):
     """CS002"""
     
     community_engagement = models.CharField(
-        verbose_name="CE1. How active are you in community activities such as celebrations, health campaigns and development of the community that surrounds you??",
+        verbose_name=("CE1. How active are you in community activities such as"
+                      " burial society, Motshelo, Syndicate, PTA, VDC, Mophato"
+                      " and development of the community that surrounds you??"),
         max_length=25,
         choices=COMMUNITYENGAGEMENT_CHOICE,
-        help_text="",
+        help_text="VDC(Village Developement Committee)",
         )
 
     vote_engagement = models.CharField(
