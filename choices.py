@@ -171,13 +171,15 @@ DOCTOR_VISITS = (
 )
 
 
-EMPLOYMENT_INFO = (
-    ('government sector', 'Yes, In the government sector'),
-    ('private sector', 'Yes, in the private sector'),
-    ('self-employed working on my own', 'Yes, self-employed working on my own'),
-    ('self-employed with own employees', 'Yes, self-employed with own employees'),
-    ('not working', 'No, not working'),
-    ('Don\'t want to answer', 'Don\'t want to answer'),
+JOB_TYPE = (
+    ('piece job', 'Occassional or Casual employment (piece job)'),
+    ('seasonal', 'Seasonal employment'),
+    ('full-time', 'Formal wage employment (full-time)'),
+    ('part-time', 'Formal wage employment (part-time)'),
+    ('agric', 'Self-employed in agriculture'),
+    ('self full-time', 'Self-employed making money, full time'),
+    ('self part-time', 'Self-employed making money, part time'),
+    ('OTHER', 'Other'),
 )
 
 
@@ -202,6 +204,49 @@ OCCUPATION = (
     ('Don\'t want to answer', 'Don\'t want to answer'),
 )
 
+REASON_UNEMPLOYED = (
+    ('waiting', 'Waiting to continue agricultural work'),
+    ('unemployed- looking', 'Unemployed (looking for work)'),
+    ('unemployed- waiting', 'Unemployed (waiting to start new work)'),
+    ('unable to work', 'Unable to work (permanently sick or injured)'),
+    ('student', 'Student/ Apprentice/ Volunteer'),
+    ('housewife', 'Housewife/ Homemaker (not looking for work)'),
+    ('retired', 'Retired'),
+    ('OTHER', 'Other'),
+    ('not looking', 'Not looking for work'),
+)
+
+
+EMPLOYMENT_INFO = (
+    ('government sector', 'Yes, In the government sector'),
+    ('private sector', 'Yes, in the private sector'),
+    ('self-employed working on my own', 'Yes, self-employed working on my own'),
+    ('self-employed with own employees', 'Yes, self-employed with own employees'),
+    ('not working', 'No, not working'),
+    ('Don\'t want to answer', 'Don\'t want to answer'),
+     )
+
+JOB_DESCRIPTION = (
+    ('farmer', 'Farmer (own land)'),
+    ('farm work', 'Farm work on employers land'),
+    ('domestic', 'Domestic worker'),
+    ('bar/hotel', 'Work in bar/ hotel/ guest house'),
+    ('fishing', 'Fishing'),
+    ('mining', 'Mining'),
+    ('shop', 'Working in shop'),
+    ('selling', 'Informal selling'),
+    ('sexworker', 'Commercial sex work'),
+    ('transport', 'Transport (trucker/ taxi driver)'),
+    ('factory', 'Factory worker'),
+    ('guard', 'Guard (security company)'),
+    ('police', 'Police/ Soldier'),
+    ('office', 'Clerical and office work'),
+    ('govt worker', 'Government worker'),
+    ('teacher', 'Teacher'),
+    ('hcw', 'Health care worker'),
+    ('Other', 'Other professional'),
+    ('OTHER', 'Other'),
+)
 
 MONTHLY_INCOME = (
     ('None', 'None'),
@@ -246,6 +291,18 @@ OTHER_OCCUPATION = (
     ('Don\'t want to answer', 'Don\'t want to answer'),
 )
 
+
+HIV_DOC_TYPE = (
+    ('Tebelopele', 'Tebelopele'),
+    ('Lab result form', 'Lab result form'),
+    ('OPD', 'OPD card/ ANC record'),
+    ('IDCC', 'IDCC record'),
+    ('OTHER', 'Other'),
+#     ('', ''),
+#     ('', ''),
+#     ('', ''),
+#     ('', ''),
+)
 
 GRANT_TYPE = (
     ('Child support ', 'Child support '),
