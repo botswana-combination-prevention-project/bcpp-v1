@@ -9,6 +9,8 @@ class TestModelAdmin(BaseModelAdmin):
 
     form = TestModelForm
     fields = ('f1', 'f2', 'f3', 'f4', 'f5')
-    supplimental_fields = SupplementalFields(('f3', 'f4'), p=0.5)
+    supplimental_fields = SupplementalFields(('f3', 'f4'), p=0.1)
+
+    conditional_fields = ConditionalFields(('f3', ), gender='M', age=(18, 64), bcpp_subject__monthsrecentpartner__first_haart='Yes')
 
 admin.site.register(TestModel, TestModelAdmin)
