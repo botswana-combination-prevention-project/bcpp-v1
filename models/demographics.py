@@ -1,8 +1,8 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
-from bcpp_list.models import LiveWith
-from bcpp.choices import RELIGION_CHOICE, ETHNIC_CHOICE, MARITALSTATUS_CHOICE
+from bcpp_list.models import LiveWith, Religion
+from bcpp.choices import ETHNIC_CHOICE, MARITALSTATUS_CHOICE
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -10,10 +10,8 @@ class Demographics (BaseScheduledVisitModel):
 
     """CS002"""
 
-    religion = models.CharField(
+    religion = models.ManyToManyField(Religion,
         verbose_name="7. What is your religion affiliation?",
-        max_length=35,
-        choices=RELIGION_CHOICE,
         help_text="",
         )
     religion_other = OtherCharField()
@@ -42,7 +40,7 @@ class Demographics (BaseScheduledVisitModel):
         help_text="Leave blank if participant does not want to respond.",
         )
     husband_wives = models.IntegerField(
-        verbose_name=("10b. How many wives do you have ?"),
+        verbose_name=("10b. How many wives do you have, including traditional marriage?"),
         max_length=2,
         null=True,
         blank=True,
