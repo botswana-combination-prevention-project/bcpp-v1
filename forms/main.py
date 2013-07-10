@@ -13,7 +13,7 @@ from bcpp_subject.models import (SubjectLocator, SubjectDeath, RecentPartner, Se
                                  ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, 
                                  Tubercolosis, SubstanceUse, Stigma, StigmaOpinion, 
                                  PositiveParticipant, AccessToCare, HouseholdComposition, 
-                                 Respondent, TodaysHivResult)
+                                 Respondent, TodaysHivResult, HivResultDocumentation)
 
 
 # SubjectLocator
@@ -488,6 +488,17 @@ class FutureHivTestingForm (BaseSubjectModelForm):
 
 class TodaysHivResultForm(BaseSubjectModelForm):
     
+    def clean(self):
+    
+        cleaned_data = self.cleaned_data
+    #validating when testing declined
+        if cleaned_data.get('hiv_result') == 'Declined' and not cleaned_data.get('why_not_tested'):
+            raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing (2)')
+        
+        cleaned_data = super(TodaysHivResultForm, self).clean()
+        
+        return cleaned_data
+    
     class Meta:
         model = TodaysHivResult
 
@@ -508,3 +519,9 @@ class TubercolosisForm (BaseSubjectModelForm):
     
     class Meta:
         model = Tubercolosis
+
+
+class HivResultDocumentationForm (BaseSubjectModelForm):
+    
+    class Meta:
+        model = HivResultDocumentation
