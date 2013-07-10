@@ -7,7 +7,7 @@ from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
                               SurveyGroup, HouseholdStructureRelation, 
                               HouseholdSurveyStatus, SubjectAbsenteeReason, 
                               SubjectMovedReason, PartnerResidency, HeartDisease,
-                              Diagnoses)
+                              Diagnoses, Religion)
 
 
 class ElectricalAppliancesAdmin(BaseModelAdmin):
@@ -98,3 +98,8 @@ admin.site.register(HeartDisease, HeartDiseaseAdmin)
 class DiagnosesAdmin(BaseModelAdmin):
     pass
 admin.site.register(Diagnoses, DiagnosesAdmin)
+
+
+class ReligionAdmin(BaseModelAdmin):
+    pass
+admin.site.register(Religion, ReligionAdmin)
