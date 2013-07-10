@@ -29,13 +29,6 @@ rule_groups.register(ResourceUtilizationRuleGroup)
 
 
 class HivTestingHistoryRuleGroup(RuleGroup):
-    
-    take_hiv_testing = ScheduledDataRule(
-        logic=Logic(
-            predicate=('take_hiv_testing', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['todayshivresult'])
 
     has_record = ScheduledDataRule(
         logic=Logic(
@@ -58,7 +51,13 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivuntested'])
     
-    
+    other_record = ScheduledDataRule(
+        logic=Logic(
+            predicate=('other_record', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivresultdocumentation'])
+
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -151,16 +150,7 @@ class CircumcisionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['circumcised'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
-        source_model = Circumcision
-rule_groups.register(CircumcisionRuleGroup)
-
-
-class NoCircumcisionRuleGroup(RuleGroup):
-
+    
     circumcised = ScheduledDataRule(
         logic=Logic(
             predicate=('circumcised', 'equals', 'No'),
@@ -172,7 +162,7 @@ class NoCircumcisionRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = Circumcision
-rule_groups.register(NoCircumcisionRuleGroup)
+rule_groups.register(CircumcisionRuleGroup)
 
 
 class FemaleReproductiveRuleGroup(RuleGroup):
@@ -196,7 +186,7 @@ class ReproductiveRuleGroup(RuleGroup):
 
     menopause = ScheduledDataRule(
         logic=Logic(
-            predicate=('menopause', 'equals', 'Yes'),
+            predicate=('menopause', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
         target_model=['pregnancy'])
