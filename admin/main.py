@@ -9,7 +9,8 @@ from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientC
                                  MonthsThirdPartner, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
                                  ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis, 
                                  SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
-                                 AccessToCare, HouseholdComposition, Respondent, FutureHivTesting, TodaysHivResult)
+                                 AccessToCare, HouseholdComposition, Respondent, FutureHivTesting, 
+                                 TodaysHivResult, HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm,
                                 HivHealthCareCostsForm, LabourMarketWagesForm, CeaEnrolmentChecklistForm,
@@ -19,7 +20,8 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm,
                                 ReproductiveHealthForm, MedicalDiagnosesForm, HeartAttackForm, CancerForm, 
                                 TubercolosisForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
-                                AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm, TodaysHivResultForm)
+                                AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm, 
+                                TodaysHivResultForm, HivResultDocumentationForm)
 
 
 # QualityOfLife
@@ -259,14 +261,18 @@ class EducationAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'education',
-        'employment',
-        'money_forwork',
-        'seeking_work',)
+        'working',
+        'job_type',
+        'reason_unemployed',
+        'job_description',
+        'monthly_income',)
     radio_fields = {
         "education": admin.VERTICAL,
-        "employment": admin.VERTICAL,
-        "money_forwork": admin.VERTICAL,
-        "seeking_work": admin.VERTICAL, }
+        "working": admin.VERTICAL,
+        'job_type': admin.VERTICAL,
+        'reason_unemployed': admin.VERTICAL,
+        'job_description': admin.VERTICAL,
+        "monthly_income": admin.VERTICAL,}
 admin.site.register(Education, EducationAdmin)
 
 
@@ -596,6 +602,7 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
         "sti": admin.VERTICAL,
 #         "tb": admin.VERTICAL,
         "tb_record": admin.VERTICAL,}
+    filter_horizontal = ('diagnoses',)
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
 
 
@@ -773,7 +780,23 @@ class TodaysHivResultAdmin (SubjectVisitModelAdmin):
     form = TodaysHivResultForm
     fields = (
         'subject_visit',
-        'hiv_result')
+        'hiv_result',
+        'why_not_tested',)
     radio_fields = {
-        "hiv_result":admin.VERTICAL,}
+        "hiv_result":admin.VERTICAL,
+        'why_not_tested':admin.VERTICAL,}
 admin.site.register(TodaysHivResult, TodaysHivResultAdmin)
+
+
+class HivResultDocumentationAdmin (SubjectVisitModelAdmin):
+
+    form = HivResultDocumentationForm
+    fields = (
+        'subject_visit',
+        'result_date',
+        'result_recorded',
+        'result_doc_type',)
+    radio_fields = {
+        "result_recorded":admin.VERTICAL,
+        'result_doc_type':admin.VERTICAL,}
+admin.site.register(HivResultDocumentation, HivResultDocumentationAdmin)
