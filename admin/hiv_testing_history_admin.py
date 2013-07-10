@@ -18,5 +18,5 @@ class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
         "has_tested": admin.VERTICAL,
         "has_record": admin.VERTICAL,
         "verbal_hiv_result": admin.VERTICAL,
-        'other_record': admin.VERTICAL,}
+        'other_record': admin.VERTICAL}
 admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)
