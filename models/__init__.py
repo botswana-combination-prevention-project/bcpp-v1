@@ -59,6 +59,7 @@ from positive_participant import PositiveParticipant
 from access_to_care import AccessToCare
 from todays_hiv_result import TodaysHivResult
 from pregnancy import Pregnancy
+from hiv_result_documentation import HivResultDocumentation
 
 
 from subject_refusal import SubjectRefusal
