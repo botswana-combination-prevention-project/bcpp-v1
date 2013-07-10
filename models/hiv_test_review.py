@@ -6,9 +6,9 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivTestReview (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     hiv_test_date = models.DateField(
         verbose_name="22. What was the recorded date of the last HIV test?",
         help_text="",
@@ -21,7 +21,7 @@ class HivTestReview (BaseScheduledVisitModel):
         help_text=("if the participant and written record differ, the result"
                    " from the written record should be recorded"),
         )
-    
+
     history = AuditTrail()
 
     def get_absolute_url(self):

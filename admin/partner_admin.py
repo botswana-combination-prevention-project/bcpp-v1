@@ -7,6 +7,7 @@ from bcpp_subject.forms import RecentPartnerForm, SecondPartnerForm, ThirdPartne
 class RecentPartnerAdmin(SubjectVisitModelAdmin):
 
     form = RecentPartnerForm
+
     fields = (
         "subject_visit",
         "rel_type",
@@ -27,6 +28,7 @@ class RecentPartnerAdmin(SubjectVisitModelAdmin):
         "status_disclosure",
         "multiple_partners",
         "intercourse_type")
+
     radio_fields = {
         "rel_type": admin.VERTICAL,
         "partner_residency": admin.VERTICAL,

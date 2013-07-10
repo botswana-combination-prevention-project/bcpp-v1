@@ -60,6 +60,7 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         verbose_name="8. Are you still having sex with this person? ",
         max_length=25,
         choices=YES_NO_REFUSED,
+        null=True,
         help_text="",
         )
     having_sex_reg = models.CharField(

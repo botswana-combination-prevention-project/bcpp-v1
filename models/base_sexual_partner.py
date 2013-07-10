@@ -91,6 +91,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         verbose_name="Supplemental SH1. What is this partner's HIV status?",
         max_length=25,
         choices=FIRSTPARTNERHIV_CHOICE,
+        null=True,
         help_text="",
         )
 
@@ -107,6 +108,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         verbose_name="Supplemental SH3. Have you told this partner your HIV status?",
         max_length=30,
         choices=FIRSTDISCLOSE_CHOICE,
+        null=True,
         help_text="",
         )
 
@@ -115,6 +117,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
                         "do you or your partner use a condom?"),
         max_length=25,
         choices=FIRSTCONDOMFREQ_CHOICE,
+        null=True,
         help_text="",
         )
 
@@ -123,6 +126,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
                         "other sex partners while you two were having a sexual relationship?"),
         max_length=25,
         choices=YES_NO_UNSURE,
+        null=True,
         help_text="",
         )
 

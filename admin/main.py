@@ -1,5 +1,6 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseTabularInline
+from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts,
                                  LabourMarketWages, Grant, CeaEnrolmentChecklist, CsEnrolmentChecklist,
@@ -363,6 +364,12 @@ admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsRecentPartnerForm
+    supplemental_fields = SupplementalFields(
+        ('first_partner_hiv',
+        'first_haart',
+        'first_disclose',
+        'first_condom_freq',
+        'first_partner_cp'), p=0.1, group='HT')
     fields = (
         "subject_visit",
         'first_partner_live',
