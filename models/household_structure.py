@@ -2,13 +2,13 @@ from django.db import models
 from django.db.models import get_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from audit_trail.audit import AuditTrail
+from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdStructureManager
 from household import Household
-from base_uuid_model import BaseUuidModel
 
 
-class HouseholdStructure(BaseUuidModel):
+class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     """ Each year/survey a new household_structure is created for the household """
 
@@ -66,8 +66,8 @@ class HouseholdStructure(BaseUuidModel):
         if created:
             self.__class__.objects.fetch_household_members(self, using)
         # recount members, may be greater but not less than the actual number of members
-        household_structure_member = get_model(app_label="bcpp_household", model_name="householdstructuremember")
-        current_member_count = household_structure_member.objects.filter(household_structure=self).count()
+        household_member = get_model(app_label="bcpp_household_member", model_name="householdmember")
+        current_member_count = household_member.objects.filter(household_structure=self).count()
         self.member_count = self.member_count or 0
         if self.member_count < current_member_count:
             self.member_count = current_member_count

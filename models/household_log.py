@@ -6,10 +6,10 @@ from bcpp_household.choices import NEXT_APPOINTMENT_SOURCE
 from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdLogManager, HouseholdLogEntryManager
 from household import Household
-from base_uuid_model import BaseUuidModel
+from bhp_dispatch.models import BaseDispatchSyncUuidModel
 
 
-class HouseholdLog(BaseUuidModel):
+class HouseholdLog(BaseDispatchSyncUuidModel):
 
     household = models.ForeignKey(Household)
 
@@ -34,7 +34,7 @@ class HouseholdLog(BaseUuidModel):
         unique_together = ('household', 'survey')
 
 
-class HouseholdLogEntry(BaseUuidModel):
+class HouseholdLogEntry(BaseDispatchSyncUuidModel):
 
     household_log = models.ForeignKey(HouseholdLog)
 
@@ -62,13 +62,6 @@ class HouseholdLogEntry(BaseUuidModel):
         null=True,
         blank=False
         )
-
-#     rcc_collection_date = models.DateField(
-#         verbose_name='Collect RCC On',
-#         null=True,
-#         blank=True)
-# 
-#     rcc_collected = models.BooleanField(default=False)
 
     comment = EncryptedCharField(
         null=True,

@@ -21,32 +21,30 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         return super(HouseholdStructureAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = (
-        'household', 
-        'survey', 
-        'member_count', 
+        'household',
+        'survey',
+        'member_count',
         'note')
     list_display = (
-        'household', 
-        'survey', 
-        'member_count', 
-        'created', 
+        'household',
+        'survey',
+        'member_count',
+        'created',
         'hostname_created')
     list_filter = (
-        'survey', 
-        'member_count', 
-        'created', 
-        'hostname_created', 
-        'household__ward_section', 
+        'survey',
+        'member_count',
+        'created',
+        'hostname_created',
+        'household__ward_section',
         'household__ward')
     search_fields = (
-        'household__household_identifier', 
-        'household__id', 'id', 
-        'household__ward', 
+        'household__household_identifier',
+        'household__id', 'id',
+        'household__ward',
         'household__ward_section')
-    #raw_fields = ("household", "survey")
     radio_fields = {
         'survey': admin.VERTICAL,
         }
     list_per_page = 15
-
 admin.site.register(HouseholdStructure, HouseholdStructureAdmin)

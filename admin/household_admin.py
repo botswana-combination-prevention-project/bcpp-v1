@@ -29,8 +29,8 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     radio_fields = {
 #        'village': admin.VERTICAL,
-        'was_surveyed_previously': admin.VERTICAL,}
-    
+        'was_surveyed_previously': admin.VERTICAL, }
+
 #    filter_horizontal = ('ward',)
 
     list_display = ('household_identifier', 'cso_number', 'village', 'ward', 'ward_section', 'created')

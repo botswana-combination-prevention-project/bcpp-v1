@@ -1,6 +1,6 @@
 from bhp_map.classes import Mapper
 from bcpp_household.models import Household
-from bhp_map.classes import mapper
+#from bhp_map.classes import site_mapper
 from bhp_map.choices import ICONS, OTHER_ICONS
 
 
@@ -28,4 +28,4 @@ class BaseHouseholdMapper(Mapper):
     gps_latitude_field_attr = 'gps_point_11'
     gps_longitude_field_attr = 'gps_point_21'
 
-mapper.register(BaseHouseholdMapper)
+#site_mapper.register(BaseHouseholdMapper)

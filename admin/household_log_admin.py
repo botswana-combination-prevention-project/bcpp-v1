@@ -27,5 +27,5 @@ class HouseholdLogAdmin(BaseModelAdmin):
     list_per_page = 15
     readonly_fields = ('household', 'survey')
     search_fields = ('household__household_identifier',)
-    list_filter=('survey', 'hostname_created', 'created')
+    list_filter = ('survey', 'hostname_created', 'created')
 admin.site.register(HouseholdLog, HouseholdLogAdmin)

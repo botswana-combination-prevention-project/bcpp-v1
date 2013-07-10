@@ -2,6 +2,7 @@ import re
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
+from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_common.choices import YES_NO
 from bhp_device.classes import Device
 from bhp_identifier.exceptions import IdentifierError
@@ -9,8 +10,6 @@ from bhp_crypto.fields import EncryptedCharField, EncryptedTextField, EncryptedD
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
 from gps_device import GpsDevice
-from ward import Ward
-from bhp_dispatch.models import BaseDispatchSyncUuidModel
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -54,7 +53,7 @@ class Household(BaseDispatchSyncUuidModel):
         default=0,
         )
 
-    gps_device = models.ForeignKey(GpsDevice,
+    gps_device = models.OneToOneField(GpsDevice,
         help_text=_("select your GPS device"),
         )
 
@@ -103,25 +102,26 @@ class Household(BaseDispatchSyncUuidModel):
         verbose_name="CSO Number",
         blank=True,
         null=True,
-        #unique=True,
+        # unique=True,
         db_index=True,
         help_text=_("provide the CSO number or leave BLANK."),
         )
-    
+
     village = EncryptedCharField(
         verbose_name=_("Village"),
         editable=False,
         db_index=True,
         )
-    
+
     ward_section = models.CharField(
         max_length=25,
         null=True,
         blank=True,
         )
 
-    ward = models.OneToOneField(Ward,
+    ward = models.CharField(
         verbose_name="Ward",
+        max_length=25,
         db_index=True,
         )
     # this is a flag for follow-up / missing data
@@ -206,7 +206,7 @@ class Household(BaseDispatchSyncUuidModel):
             return -1 * round((x) + (y / 60), 5)
         return None
 
-    #We can't call a method from a template so wrap the method within a property
+    # We can't call a method from a template so wrap the method within a property
     lat = property(gps_lat)
     lon = property(gps_lon)
 
@@ -227,19 +227,19 @@ class Household(BaseDispatchSyncUuidModel):
         return 'household_identifier'
 
     def dispatch_container_lookup(self):
-        dispatch_container = models.get_model('bhp_dispatch','DispatchContainerRegister')
+        dispatch_container = models.get_model('bhp_dispatch', 'DispatchContainerRegister')
         if dispatch_container.objects.filter(container_identifier=self.household_identifier, is_dispatched=True).exists():
             return dispatch_container.objects.get(container_identifier=self.household_identifier, is_dispatched=True)
         return None
 
     def include_for_dispatch(self):
         return True
-    
+
     def is_server(self):
         if Device().get_device_id() == '99':
             return True
         return False
-    
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-household_identifier', ]
