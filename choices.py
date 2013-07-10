@@ -45,7 +45,7 @@ LENGTHRESIDENCE_CHOICE = (
     )
 
 NIGHTSAWAY_CHOICE = (
-        ('None','None'),
+        ('zero','Zero nights'),
         ('1-6 nights','1-6 nights'),
         ('1-2 weeks','1-2 weeks'),
         ('3 weeks to less than 1 month','3 weeks to less than 1 month'),
@@ -133,7 +133,15 @@ SOLVEENGAGEMENT_CHOICE = (
     )
 
 RELIGION_CHOICE = (
-        ('Christian','Christian, specify denomination:'),
+        ('Anglican', 'Anglican'),
+        ('Apostolic', 'Apostolic'),
+        ('Baptist', 'Baptist'),
+        ('Catholic', 'Catholic'),
+        ('Methodist', 'Methodist'),
+        ('Pentecostal', 'Pentecostal'),
+        ('St John', 'St John'),
+        ('ZCC', 'ZCC'),
+        ('traditionalist', 'Traditionalist'),
         ('Hindu','Hindu'),
         ('Islam','Islam'),
         ('None','None'),
@@ -221,8 +229,8 @@ WHYNOHIVTESTING_CHOICE = (
     )
 
 RECORDEDHIVRESULT_CHOICE = (
-        ('HIV-Negative','HIV-Negative (Non-reactive)'),
-        ('HIV-Positive','HIV-Positive (Reactive)'),
+        ('HIV-Negative','HIV Negative (Non-reactive)'),
+        ('HIV-Positive','HIV Positive (Reactive)'),
         ('Indeterminate','Indeterminate'),
         ('No result recorded','No result recorded'),
     )
@@ -237,8 +245,8 @@ WHENHIVTEST_CHOICE = (
     )
     
 VERBALHIVRESULT_CHOICE = (
-        ('HIV-Negative','HIV-Negative (Non-reactive)'),
-        ('HIV-Positive','HIV-Positive (Reactive)'),
+        ('HIV-Negative','HIV Negative (Non-reactive)'),
+        ('HIV-Positive','HIV Positive (Reactive)'),
         ('I am not sure','I am not sure'),
         ('Don\'t want to answer','Don\'t want to answer'),
     )
