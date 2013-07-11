@@ -5,6 +5,9 @@ from bhp_supplemental_fields.models import Excluded
 
 class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
 
+    instructions = 'Please complete the questions below.'
+    required_instructions_add = 'Required questions are in bold. Additional questions may be required based on submitted data.'
+
     def save_model(self, request, obj, form, change):
         self.update_modified_stamp(request, obj, change)
         super(BaseModelAdmin, self).save_model(request, obj, form, change)
@@ -14,13 +17,24 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
                 Excluded.objects.get_or_create(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk, excluded=self.form._meta.exclude)
             self.form._meta.exclude = None
 
+    def add_view(self, request, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['instructions'] = self.instructions
+        extra_context['required_instructions'] = self.required_instructions
+        return super(BaseModelAdmin, self).add_view(request, form_url=form_url, extra_context=extra_context)
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['instructions'] = self.instructions
+        extra_context['required_instructions'] = self.required_instructions
+        return super(BaseModelAdmin, self).change_view(request, object_id, form_url=form_url, extra_context=extra_context)
+
     def get_form(self, request, obj=None, **kwargs):
         """Overrides to check if conditional and supplemental fields have been defined in the admin class.
 
             * get_form is called once to render and again to save, e.g. on GET and then on POST.
-            * Need to be sure that the same random choice is given on GET and POST for both
-              add and change. Also, need to be sure the same random choice on 'add' is
-              given for 'change'.
+            * Need to be sure that the same conditional and/or supplemental choice is given on GET and POST for both
+              add and change.
         """
         if not request.method == 'POST':
             exclude_conditional_fields = None
