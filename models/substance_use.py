@@ -10,7 +10,7 @@ class SubstanceUse (BaseScheduledVisitModel):
     """CS002"""
     
     alcohol = models.CharField(
-        verbose_name=("99. In the past month, how often did you consume alcohol?"
+        verbose_name=("In the past month, how often did you consume alcohol?"
                       "  [If you don't know exactly, give your best guess.]"),
         max_length=25,
         choices=ALCOHOL_CHOICE,
@@ -18,7 +18,7 @@ class SubstanceUse (BaseScheduledVisitModel):
         )
 
     smoke = models.CharField(
-        verbose_name="100. Do you currently smoke any tobacco products, such as cigarettes, cigars, or pipes?",
+        verbose_name="Do you currently smoke any tobacco products, such as cigarettes, cigars, or pipes?",
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
         help_text="",

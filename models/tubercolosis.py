@@ -10,12 +10,12 @@ class Tubercolosis (BaseScheduledVisitModel):
     """CS002 - Medical Diagnoses- Tubercolosis"""
     
     date_tb = models.DateField(
-        verbose_name="97. Date of the diagnosis of tuberculosis:",
+        verbose_name="Date of the diagnosis of tuberculosis:",
         help_text="",
         )
 
     dx_tb = models.CharField(
-        verbose_name="98. [Interviewer:]What is the tuberculosis diagnosis as recorded?",
+        verbose_name="[Interviewer:]What is the tuberculosis diagnosis as recorded?",
         max_length=50,
         choices=DXTB_CHOICE,
         help_text="",

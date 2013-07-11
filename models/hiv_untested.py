@@ -11,13 +11,13 @@ class HivUntested (HivTestingSupplemental):
     """CS002- for those who have NOT tested for HIV. Its branch off from Q18 - HIV testing History"""
 
     why_no_hiv_test = models.CharField(
-        verbose_name=("Supplemental HT4. If you were not tested for HIV in the 12 months prior"
+        verbose_name=("If you were not tested for HIV in the 12 months prior"
                       " to today, what is the main reason why not?"),
         max_length=55,
         null=True,
         blank=True,
         choices=WHYNOHIVTESTING_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
 
     history = AuditTrail()

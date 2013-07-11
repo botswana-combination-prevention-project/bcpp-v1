@@ -10,7 +10,7 @@ class HeartAttack (BaseScheduledVisitModel):
     """CS002 - Medical Diagonoses - Sub"""
 
     date_heart_attack = models.DateField(
-        verbose_name="88. Date of the heart disease or stroke diagnosis:",
+        verbose_name="Date of the heart disease or stroke diagnosis:",
         help_text=("Note:Record date of first day of hospital admission or date the diagnosis"
                    " was documented in the OPD record. If report not available, then record "
                    "participant's best knowledge. If participant does not want to answer,leave blank."
@@ -18,7 +18,7 @@ class HeartAttack (BaseScheduledVisitModel):
         )
 
     dx_heart_attack = models.ManyToManyField(HeartDisease,
-        verbose_name="89. [Interviewer:]What is the heart disease or stroke diagnosis as recorded?",
+        verbose_name="[Interviewer:]What is the heart disease or stroke diagnosis as recorded?",
         help_text=("Note: If record of diagnosis is not available, record the participant's"
                    " best knowledge. (tick all that apply)"),
         )

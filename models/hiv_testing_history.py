@@ -12,14 +12,14 @@ class HivTestingHistory (BaseScheduledVisitModel):
     """CS002"""
 
     has_tested = models.CharField(
-        verbose_name="18. Have you ever been tested for HIV before?",
+        verbose_name="Have you ever been tested for HIV before?",
         max_length=15,
         choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
     
     when_hiv_test = models.CharField(
-        verbose_name=("20. When was the last [most recent]"
+        verbose_name=("When was the last [most recent]"
                         " time you were tested for HIV?"),
         max_length=25,
         null=True,
@@ -29,7 +29,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         )
 
     has_record = models.CharField(
-        verbose_name=("19. Is a record of last HIV test [OPD card, Tebelopele,"
+        verbose_name=("Is a record of last HIV test [OPD card, Tebelopele,"
                       " other] available to review?"),
         max_length=45,
         null=True,
@@ -40,7 +40,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
     
 
     verbal_hiv_result = models.CharField(
-        verbose_name="21. Please tell me the results of your last [most recent] HIV test?",
+        verbose_name="Please tell me the results of your last [most recent] HIV test?",
         max_length=30,
         null=True,
         blank=True,

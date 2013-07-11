@@ -10,12 +10,12 @@ class Cancer (BaseScheduledVisitModel):
     """CS002 - Medical Diagnoses - Cancer"""
 
     date_cancer = models.DateField(
-        verbose_name="92. Date of the diagnosis of cancer:",
+        verbose_name="Date of the diagnosis of cancer:",
         help_text="",
         )
 
     dx_cancer = models.CharField(
-        verbose_name="93. [Interviewer:] What is the cancer diagnosis as recorded?",
+        verbose_name="[Interviewer:] What is the cancer diagnosis as recorded?",
         max_length=45,
         choices=DXCANCER_CHOICE,
         help_text="",

@@ -11,70 +11,70 @@ class Uncircumcised (BaseCircumcision):
     """CS002"""
     
     reason_circ = models.CharField(
-        verbose_name="Supplemental MC3. What is the main reason that you have not yet been circumcised?",
+        verbose_name="What is the main reason that you have not yet been circumcised?",
         max_length=15,
         choices=REASONCIRC_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
 
     future_circ = models.CharField(
-        verbose_name="73. Would you ever consider being circumcised in the future?",
+        verbose_name="Would you ever consider being circumcised in the future?",
         max_length=15,
         choices=YES_NO_UNSURE,
         help_text="",
         )
 
     circumcision_day = models.CharField(
-        verbose_name=("Supplemental MC4. In the future, is there a particular time of day that you"
+        verbose_name=("In the future, is there a particular time of day that you"
                         " would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_DAY,
-        help_text="",
+        help_text="supplemental",
         )
     circumcision_day_other = OtherCharField()
 
     circumcision_week = models.CharField(
-        verbose_name=("Supplemental MC5. In the future, is there a particular day of the week that"
+        verbose_name=("In the future, is there a particular day of the week that"
                         " you would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_WEEK,
-        help_text="",
+        help_text="supplemental",
         )
     circumcision_week_other = OtherCharField()
 
     circumcision_year = models.CharField(
-        verbose_name=("Supplemental MC6. In the future, is there a particular time of year that you"
+        verbose_name=("In the future, is there a particular time of year that you"
                         " would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_MONTH,
-        help_text="",
+        help_text="supplemental",
         )
     circumcision_year_other = OtherCharField()
 
     future_reasons_smc = models.CharField(
-        verbose_name=("Supplemental MC7. Which of the following might increase your willingness to"
+        verbose_name=("Which of the following might increase your willingness to"
                         " be circumcised the most?"),
         max_length=15,
         choices=FUTUREREASONSSMC_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
 
     service_facilities = models.CharField(
-        verbose_name=("Supplemental MC8. Were you aware that circumcision services are provided "
+        verbose_name=("Were you aware that circumcision services are provided "
                         "free of charge at most health facilities?"),
         max_length=15,
         choices=YES_NO_DONT_ANSWER,
-        help_text="",
+        help_text="supplemental",
         )
 
     aware_free = models.CharField(
-        verbose_name=("Supplemental MC9. Where did you learn that circumcision services were "
+        verbose_name=("Where did you learn that circumcision services were "
                         "available free at most health facilities?"),
         max_length=15,
         null=True, 
         blank=True,
         choices=AWAREFREE_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
     
     history = AuditTrail()

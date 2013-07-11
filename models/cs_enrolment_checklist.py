@@ -16,13 +16,13 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
             datetime_not_future, ])
 
     census_number = models.CharField(
-        verbose_name="1.  [Interviewer] Household number: ",
+        verbose_name="[Interviewer] Household number: ",
         max_length=5,
         help_text="if 'Not a census enumerated household,' STOP participant cannot be enrolled",
         )
 
     mental_capacity = models.CharField(
-        verbose_name=("2. [Interviewer] Does the prospective participant have sufficient"
+        verbose_name=("[Interviewer] Does the prospective participant have sufficient"
                       " mental capacity to provide considered informed consent? "),
         max_length=3,
         choices=YES_NO,
@@ -31,7 +31,7 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     incarceration = models.CharField(
-        verbose_name=("3. [Interviewer] Is the prospective participant currently under"
+        verbose_name=("[Interviewer] Is the prospective participant currently under"
                       " involuntary incarceration? "),
         max_length=3,
         choices=YES_NO,
@@ -40,7 +40,7 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     citizen = models.CharField(
-        verbose_name="4.[Interviewer] Is the prospective participant a Botswana citizen? ",
+        verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
         validators=[eligible_if_yes, ],
@@ -48,7 +48,7 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     community_resident = models.CharField(
-        verbose_name=("8.[Participant] In the past 12 months, have you typically spent 3 or"
+        verbose_name=("[Participant] In the past 12 months, have you typically spent 3 or"
                       " more nights per month in [name of study community]? [If moved into the"
                       " community in the past 12 months, then since moving in have you typically"
                       " spent more than 3 nights per month in this community] "),
@@ -59,7 +59,7 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     date_minor_signed = models.DateTimeField(
-        verbose_name="10. [Interviewer] Date study ASSENT signed:",
+        verbose_name="[Interviewer] Date study ASSENT signed:",
         max_length=25,
         null=True,
         blank=True,
@@ -67,7 +67,7 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     date_guardian_signed = models.DateTimeField(
-        verbose_name="11. Date/Time study PARENT/GUARDIAN PERMISSION signed",
+        verbose_name="Date/Time study PARENT/GUARDIAN PERMISSION signed",
         max_length=25,
         null=True,
         blank=True,
@@ -76,7 +76,7 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     date_consent_signed = models.DateTimeField(
-        verbose_name="14. Date/Time study CONSENT signed",
+        verbose_name="Date/Time study CONSENT signed",
         max_length=25,
         help_text="If not signed, STOP participant cannot be enrolled.",
         )

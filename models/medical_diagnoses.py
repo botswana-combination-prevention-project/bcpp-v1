@@ -15,15 +15,8 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="tick all that apply",
         )
 
-#     heart_attack = models.CharField(
-#         verbose_name="86. In the past 12 months, have you been told that you had heart disease or a stroke?",
-#         max_length=25,
-#         choices=YES_NO_UNSURE,
-#         help_text="",
-#         )
-
     heart_attack_record = models.CharField(
-        verbose_name=("87. Is a record (OPD card, discharge summary) of a heart disease or stroke"
+        verbose_name=("Is a record (OPD card, discharge summary) of a heart disease or stroke"
                        " diagnosis available to review?"),
         max_length=25,
         null=True,
@@ -32,15 +25,8 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
 
-#     cancer = models.CharField(
-#         verbose_name="90. In the past 12 months, have you been told that you have cancer?",
-#         max_length=25,
-#         choices=YES_NO_UNSURE,
-#         help_text="",
-#         )
-
     cancer_record = models.CharField(
-        verbose_name="91. Is a record (OPD card, discharge summary) of a cancer diagnosis available to review?",
+        verbose_name="Is a record (OPD card, discharge summary) of a cancer diagnosis available to review?",
         max_length=25,
         null=True,
         blank=True,
@@ -49,7 +35,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         )
 
     sti = models.CharField(
-        verbose_name=("94. In the past 12 months, have you been treated for discharge from the "
+        verbose_name=("In the past 12 months, have you been treated for discharge from the "
                        "penis/vagina or for a sore in the genitals or sexually transmitted infection?"),
         max_length=25,
         choices=YES_NO_UNSURE,
@@ -57,16 +43,8 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
                    " sore on the genitals/anus"),
         )
 
-#     tb = models.CharField(
-#         verbose_name=("95. In the past 12 months, have you been told that you have active tuberculosis"
-#                        " [not latent/sleeping/inactive tuberculosis]?"),
-#         max_length=25,
-#         choices=YES_NO_UNSURE,
-#         help_text="",
-#         )
-
     tb_record = models.CharField(
-        verbose_name=("96. Is a record (OPD card, discharge summary, TB card) of a tuberculosis"
+        verbose_name=("Is a record (OPD card, discharge summary, TB card) of a tuberculosis"
                        " infection available to review?"),
         max_length=25,
         null=True,

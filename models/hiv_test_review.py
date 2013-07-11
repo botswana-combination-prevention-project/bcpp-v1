@@ -10,12 +10,12 @@ class HivTestReview (BaseScheduledVisitModel):
     """CS002"""
 
     hiv_test_date = models.DateField(
-        verbose_name="22. What was the recorded date of the last HIV test?",
+        verbose_name="What was the recorded date of the last HIV test?",
         help_text="(obtain this information from the card the participant presents to you)",
         )
 
     recorded_hiv_result = models.CharField(
-        verbose_name="23. What was the recorded HIV test result?",
+        verbose_name="What was the recorded HIV test result?",
         max_length=30,
         choices=RECORDEDHIVRESULT_CHOICE,
         help_text=("if the participant and written record differ, the result"

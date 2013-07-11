@@ -12,32 +12,33 @@ class CommunityEngagement (BaseScheduledVisitModel):
     
     community_engagement = models.CharField(
         verbose_name=("CE1. How active are you in community activities such as"
-                      " burial society, Motshelo, Syndicate, PTA, VDC, Mophato"
+                      " burial society, Motshelo, Syndicate, PTA, "
+                      "VDC(Village Developement Committee), Mophato"
                       " and development of the community that surrounds you??"),
         max_length=25,
         choices=COMMUNITYENGAGEMENT_CHOICE,
-        help_text="VDC(Village Developement Committee)",
+        help_text="supplemental",
         )
 
     vote_engagement = models.CharField(
         verbose_name="CE2. Did you vote in the last local government election?",
         max_length=25,
         choices=VOTEENGAGEMENT_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
 
     problems_engagement = models.ManyToManyField(NeighbourhoodProblems,
-        verbose_name="CE3. What are the major problems in this neighbourhood??",
-        help_text=("Note:Interviewer to read question but NOT the responses. Check the boxes of"
+        verbose_name="What are the major problems in this neighbourhood??",
+        help_text=("supplemental. Note:Interviewer to read question but NOT the responses. Check the boxes of"
                    " any of problems mentioned."),
         )
     problems_engagement_other = OtherCharField()
 
     solve_engagement = models.CharField(
-        verbose_name="CE4. If there is a problem in this neighbourhood, do the adults work together in solving it?",
+        verbose_name="If there is a problem in this neighbourhood, do the adults work together in solving it?",
         max_length=25,
         choices=SOLVEENGAGEMENT_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
 
     history = AuditTrail()

@@ -12,13 +12,13 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
     Read to Participant: The next set of questions are about you obtaining medical or clinical care related to HIV."""
 
     hiv_medical_care = models.CharField(
-        verbose_name="1. Have you ever received HIV related medical/clinical care? ",
+        verbose_name="Have you ever received HIV related medical/clinical care? ",
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
         )
     reason_no_care = models.CharField(
-        verbose_name="2. If you have never received HIV related medical/clinical care, why not? ",
+        verbose_name="If you have never received HIV related medical/clinical care, why not? ",
         max_length=115,
         null=True,
         blank=True,
@@ -26,20 +26,20 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         help_text="",
         )
     place_care_received = models.CharField(
-        verbose_name="3. Where do you receive most of your HIV related health care? ",
+        verbose_name="Where do you receive most of your HIV related health care? ",
         max_length=40,
         choices=HEALTH_CARE_PLACE,
         help_text="",
         )
     care_regularity = models.CharField(
-        verbose_name=("4. In the past 3 months, how many times did you obtain HIV related health care"
+        verbose_name=("In the past 3 months, how many times did you obtain HIV related health care"
                       " in this location? "),
         max_length=20,
         choices=CARE_REGULARITY,
         help_text="",
         )
     doctor_visits = models.CharField(
-        verbose_name="5. In the last 3 months, how often did someone take you to the doctor? ",
+        verbose_name="In the last 3 months, how often did someone take you to the doctor? ",
         max_length=32,
         choices=DOCTOR_VISITS,
         help_text="",

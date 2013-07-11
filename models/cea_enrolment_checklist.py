@@ -12,7 +12,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
     """CE003"""
 
     mental_capacity = models.CharField(
-        verbose_name=("1. [Interviewer] Does the prospective participant have sufficient"
+        verbose_name=("[Interviewer] Does the prospective participant have sufficient"
                       " mental capacity to provide considered informed consent? "),
         max_length=3,
         choices=YES_NO,
@@ -21,7 +21,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     incarceration = models.CharField(
-        verbose_name=("2. [Interviewer] Is the prospective participant currently under"
+        verbose_name=("[Interviewer] Is the prospective participant currently under"
                       " involuntary incarceration? "),
         max_length=3,
         choices=YES_NO,
@@ -30,7 +30,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     citizen = models.CharField(
-        verbose_name="3.[Interviewer] Is the prospective participant a Botswana citizen? ",
+        verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
         validators=[eligible_if_yes, ],
@@ -38,7 +38,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     community_resident = models.CharField(
-        verbose_name=("7.[Participant] In the past 12 months, have you typically spent 3 or"
+        verbose_name=("[Participant] In the past 12 months, have you typically spent 3 or"
                       " more nights per month in [name of study community]? [If moved into the"
                       " community in the past 12 months, then since moving in have you typically"
                       " spent more than 3 nights per month in this community] "),
@@ -49,27 +49,27 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     enrolment_reason = models.CharField(
-        verbose_name="9. [Interviewer] What is the reason for enrollment of this participant? ",
+        verbose_name="[Interviewer] What is the reason for enrollment of this participant? ",
         max_length=45,
         choices=ENROLMENT_REASON,
         help_text="",
         )
 
     cd4_date = models.DateField(
-        verbose_name="10. [Interviewer] Date of the most recent CD4 measurement? ",
+        verbose_name="[Interviewer] Date of the most recent CD4 measurement? ",
         max_length=25,
         help_text="",
         )
 
     cd4_count = models.DecimalField(
-        verbose_name="11. [Interviewer] Most recent (within past 3 months) CD4 measurement?",
+        verbose_name="[Interviewer] Most recent (within past 3 months) CD4 measurement?",
         max_digits=6,
         decimal_places=2,
         validators=[MinValueValidator(0), MaxValueValidator(3000)],
         )
 
     opportunistic_illness = models.CharField(
-        verbose_name=("12. [Interviewer] Does the patient currently have AIDS opportunistic"
+        verbose_name=("[Interviewer] Does the patient currently have AIDS opportunistic"
                       " illness (refer to SOP for list of eligible conditions)? "),
         max_length=3,
         choices=OPPORTUNISTIC_ILLNESSES,
@@ -77,13 +77,13 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         )
 
     diagnosis_date = models.DateField(
-        verbose_name="13. [Interviewer] Date of diagnosis of the AIDS opportunistic illness? ",
+        verbose_name="[Interviewer] Date of diagnosis of the AIDS opportunistic illness? ",
         max_length=3,
         help_text="",
         )
 
     date_signed = models.DateTimeField(
-        verbose_name="14. [Interviewer] Date/ Time study CONSENT signed:",
+        verbose_name="[Interviewer] Date/ Time study CONSENT signed:",
         max_length=25,
         help_text=" if 'NO,' STOP participant cannot be enrolled",
         )

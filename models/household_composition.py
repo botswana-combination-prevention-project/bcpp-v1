@@ -17,7 +17,7 @@ class HouseholdComposition (BaseScheduledVisitModel):
     " who has heard the consent script about these questions and is willing to answer. """
 
     housecode = EncryptedCharField(
-        verbose_name="1. Household code",
+        verbose_name="Household code",
         max_length=25,
         blank=True,
         null=True,
@@ -25,7 +25,7 @@ class HouseholdComposition (BaseScheduledVisitModel):
         )
 
     physical_add = EncryptedCharField(
-        verbose_name="2. Description of physical address: ",
+        verbose_name="Description of physical address: ",
         max_length=150,
         blank=True,
         null=True,
@@ -33,21 +33,21 @@ class HouseholdComposition (BaseScheduledVisitModel):
         )
 
     coordinates = EncryptedDecimalField(
-        verbose_name="3. GPS coordinates",
+        verbose_name="GPS coordinates",
         max_digits=10,
         decimal_places=4,
         help_text=" Record coordinates of the main gate to the household",
         )
 
     contact = models.CharField(
-        verbose_name="4. [To the respondent] Can we contact you by telephone?",
+        verbose_name="[To the respondent] Can we contact you by telephone?",
         max_length=3,
         choices=YES_NO,
         help_text="",
         )
 
     phone_number = models.IntegerField(
-        verbose_name="5. [To the respondent] What phone numbers can we use to reach you?",
+        verbose_name="[To the respondent] What phone numbers can we use to reach you?",
         max_length=25,
         help_text="",
         )

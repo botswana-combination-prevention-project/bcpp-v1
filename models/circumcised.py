@@ -10,7 +10,7 @@ class Circumcised (BaseCircumcision):
     """CS002"""
 
     when_circ = models.IntegerField(
-        verbose_name="74. At what age were you circumcised?",
+        verbose_name="At what age were you circumcised?",
         max_length=2,
         null=True,
         blank=True,
@@ -18,18 +18,18 @@ class Circumcised (BaseCircumcision):
         )
 
     where_circ = models.CharField(
-        verbose_name="Supplemental MC10. Where were you circumcised?",
+        verbose_name="Where were you circumcised?",
         max_length=45,
         choices=PLACE_CIRC,
-        help_text="",
+        help_text="supplemental",
         )
     where_circ_other = OtherCharField()
 
     why_circ = models.CharField(
-        verbose_name="Supplemental MC11. What was the main reason why you were circumcised?",
+        verbose_name="What was the main reason why you were circumcised?",
         max_length=55,
         choices=WHYCIRC_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
     why_circ_other = OtherCharField()
 

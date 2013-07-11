@@ -11,56 +11,57 @@ class AccessToCare (BaseScheduledVisitModel):
     """CS002"""
 
     access_care = models.CharField(
-        verbose_name=("Supplemental AC1. In the past year, where do you MOST OFTEN get"
+        verbose_name=("In the past year, where do you MOST OFTEN get"
                       " medical care or treatment when you or someone in your family is sick or hurt?"),
         max_length=50,
         choices=WHEREACCESS_CHOICE,
-        help_text="",
+        help_text="supplemental",
         )
     access_care_other = OtherCharField()
 
     medical_care_access = models.ManyToManyField(MedicalCareAccess,
-        verbose_name=("Supplemental AC2. In the past year, where else have you obtained"
+        verbose_name=("In the past year, where else have you obtained"
                       " medical care or treatment when you or someone in your family"
-                      " is sick or hurt?"),
-        help_text="(check all that apply)",
+                      " is sick or hurt? (check all that apply)"),
+        help_text="supplemental",
         )
     medical_care_access_other = OtherCharField()
 
     overall_access = models.CharField(
-        verbose_name=("Supplemental AC3. If I need medical care, I can get seen by an"
+        verbose_name=("If I need medical care, I can get seen by an"
                         " appropriate health professional without any trouble."),
         max_length=25,
         choices=AGREE_STRONGLY,
-        help_text="",
+        help_text="supplemental",
         )
 
     emergency_access = models.CharField(
-        verbose_name="Supplemental AC4. It is hard for me to get medical care in an emergency",
+        verbose_name="It is hard for me to get medical care in an emergency",
         max_length=25,
         choices=AGREE_STRONGLY,
-        help_text="",
+        help_text="supplemental",
         )
 
     expensive_access = models.CharField(
-        verbose_name="Supplemental AC5. Sometimes I go without the medical care I need because it is too expensive.",
+        verbose_name=("Sometimes I go without the medical care I need because"
+                      " it is too expensive."),
         max_length=25,
         choices=AGREE_STRONGLY,
-        help_text="",
+        help_text="supplemental",
         )
 
     convenient_access = models.CharField(
-        verbose_name="Supplemental AC6. Places where I can get medical care are very conveniently located.",
+        verbose_name="Places where I can get medical care are very conveniently located.",
         max_length=25,
         choices=AGREE_STRONGLY,
-        help_text="",
+        help_text="supplemental",
         )
 
     whenever_access = models.CharField(
-        verbose_name="Supplemental AC7. I am able to get medical care whenever I need it.",
+        verbose_name="I am able to get medical care whenever I need it.",
         max_length=25,
         choices=AGREE_STRONGLY,
-        help_text="",
+        help_text="supplemental",
         )
 
     history = AuditTrail()

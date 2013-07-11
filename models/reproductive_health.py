@@ -10,7 +10,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
     """CS002"""
     
     number_children = models.IntegerField(
-        verbose_name=("75. How many children have you given birth to? Please include any"
+        verbose_name=("How many children have you given birth to? Please include any"
                       " children that may have died at (stillbirth) or after birth. "
                       "Do not include any current pregnancies or miscarriages that occur"
                       " early in pregnancy (prior to 20 weeks)."),
@@ -21,7 +21,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         )
     
     menopause = models.CharField(
-        verbose_name="75b. Have you reached menopause?",
+        verbose_name="Have you reached menopause?",
         max_length=3,
         choices=YES_NO,
         help_text="this also refers to pre-menopause",

@@ -11,14 +11,14 @@ class ResidencyMobility (BaseScheduledVisitModel):
     """CS002"""
     
     length_residence = models.CharField(
-        verbose_name="1. How long have you lived in this community?",
+        verbose_name="How long have you lived in this community?",
         max_length=25,
         choices=LENGTHRESIDENCE_CHOICE,
         help_text="",
         )
 
     forteen_nights = models.CharField(
-        verbose_name=("2. In the past 12 months, have you typically spent 14 or more nights per month"
+        verbose_name=("In the past 12 months, have you typically spent 14 or more nights per month"
                       " in this community? [If moved into the community in the past 12 months, "
                       "then since moving in have you typically spent 14 or more nights per month"
                       " in this community?]"),
@@ -28,14 +28,14 @@ class ResidencyMobility (BaseScheduledVisitModel):
         )
 
     intend_residency  = models.CharField(
-        verbose_name="3. Do you intend to stay in this community for the next year?",
+        verbose_name="Do you intend to stay in this community for the next year?",
         max_length=25,
         choices=YES_NO_UNSURE,
         help_text="",
         )
 
     nights_away = models.CharField(
-        verbose_name=("4. In the past 12 months, in total how many nights did you spend away"
+        verbose_name=("In the past 12 months, in total how many nights did you spend away"
                       " from this community, including visits to cattle post and lands?"
                       "[If you don't know exactly, give your best guess]"),
         max_length=35,
@@ -44,7 +44,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         )
 
     cattle_postlands = models.CharField(
-        verbose_name=("5. In the past 12 months, during the times you were away from this community, "
+        verbose_name=("In the past 12 months, during the times you were away from this community, "
                       "where were you primarily staying?"),
         max_length=25,
         choices=CATTLEPOSTLANDS_CHOICE,
@@ -59,17 +59,6 @@ class ResidencyMobility (BaseScheduledVisitModel):
         blank=True,
         help_text="Other community, specify",  
         )
-
-#     reason_away = models.CharField(
-#         verbose_name="6. In the past 12 months, what was the primary reason for being away from this community?",
-#         max_length=50,
-#         null=True,
-#         blank=True,
-#         default='N/A',
-#         choices=REASONAWAY_CHOICE,
-#         help_text="",
-#         )
-#     reason_away_other = OtherCharField()
     
     history = AuditTrail()
 

@@ -11,20 +11,20 @@ from base_member_status_model import BaseMemberStatusModel
 class SubjectRefusal (BaseMemberStatusModel):
 
     sex = models.CharField(
-        verbose_name="1. [For interviewer] Resident sex?",
+        verbose_name="[For interviewer] Resident sex?",
         max_length=15,
         choices=GENDER,
         help_text="",
         )
 
     age = models.CharField(
-        verbose_name="2. What is your age?",
+        verbose_name="What is your age?",
         max_length=15,
         help_text="Note:If participant does not want to answer, record -8.",
         )
 
     length_residence = models.CharField(
-        verbose_name="3. How long have your lived in this community?",
+        verbose_name="How long have your lived in this community?",
         max_length=15,
         choices=LENGTHRESIDENCE_CHOICE,
         help_text="",
@@ -36,7 +36,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text="Date format is YYYY-MM-DD")
 
     why_no_participate = models.CharField(
-        verbose_name="4. What was the main reason you do not want to participate in the study?",
+        verbose_name="What was the main reason you do not want to participate in the study?",
         max_length=15,
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
@@ -52,14 +52,14 @@ class SubjectRefusal (BaseMemberStatusModel):
         editable=False)
 
     hiv_test_today = models.CharField(
-        verbose_name="5. [For interviewer] Did resident complete HIV testing today?",
+        verbose_name="[For interviewer] Did resident complete HIV testing today?",
         max_length=15,
         choices=YES_NO_UNSURE,
         help_text="",
         )
 
     why_no_hivtest = models.CharField(
-        verbose_name="6. What was the main reason why you did not want HIV testing as part of today's visit?",
+        verbose_name="What was the main reason why you did not want HIV testing as part of today's visit?",
         max_length=15,
         null=True,
         blank=True,

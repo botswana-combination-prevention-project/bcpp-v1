@@ -10,7 +10,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
     """CE001"""
     
     out_patient = models.CharField (
-        verbose_name=("1. In the last 3 months, have you sought outpatient medical care for yourself?"
+        verbose_name=("In the last 3 months, have you sought outpatient medical care for yourself?"
                       " Not including any visits for which you were hospitalized. "),
         max_length=17,
         choices=YES_NO_REFUSED,
