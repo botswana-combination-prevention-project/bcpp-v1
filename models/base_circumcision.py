@@ -9,7 +9,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
     """CS002"""
 
     circumcised = models.CharField(
-        verbose_name=("Supplemental MC1. Do you believe that male circumcision"
+        verbose_name=("Do you believe that male circumcision"
                       " has any health benefits for you?"),
         max_length=15,
         choices=YES_NO_UNSURE,
@@ -17,7 +17,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
         )
 
     health_benefits_smc = models.ManyToManyField(CircumcisionBenefits,
-        verbose_name=("Supplemental MC2. What do you believe are the health"
+        verbose_name=("What do you believe are the health"
                       " benefits of male circumcision? (Indicate all that apply.)"),
         max_length=25,
         help_text="supplemental",
