@@ -8,7 +8,7 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Pregnancy (BaseScheduledVisitModel):
-    
+
     """CS002"""
 
     more_children = models.CharField(
