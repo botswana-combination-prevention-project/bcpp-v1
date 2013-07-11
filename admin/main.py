@@ -273,6 +273,9 @@ class EducationAdmin(SubjectVisitModelAdmin):
         'reason_unemployed': admin.VERTICAL,
         'job_description': admin.VERTICAL,
         "monthly_income": admin.VERTICAL, }
+    required_instructions = ("Read to Participant: Next, I will ask you some"
+                              " questions about what education and work you"
+                              " may have done or are currently doing.")
 admin.site.register(Education, EducationAdmin)
 
 
@@ -363,6 +366,11 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
         "hiv_test_time": admin.VERTICAL,
         "hiv_test_week": admin.VERTICAL,
         "hiv_test_year": admin.VERTICAL, }
+    required_instructions = ("Note to Interviewer: If participant is known"
+                              " to be HIV-infected (tested positive today or"
+                              " previously), skip to the next section. "
+                              "Read to Participant: The following questions are"
+                              " about how you would like to have HIV testing in the future.")
 admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 
 
@@ -407,6 +415,15 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
+    required_instructions = ("Interviewer Note: Ask the respondent to answer"
+                             " the following questions about their most recent"
+                             " sexual partner in the past 12 months. It may be"
+                             " helpful for respondent to give initials or"
+                             " nickname, but DO NOT write down or otherwise"
+                             "record this information. "
+                             "Read to Participant: I am now going to ask you"
+                             " about your most recent sexual partners. I will"
+                             " start with your last or most recent sexual partner.")
 admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 
 
@@ -445,6 +462,18 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
+    required_instructions = ("Interviewer Note: If the respondent has only had "
+                             "one partner, SKIP to HIV adherence questions if HIV"
+                             " negative. Else go to Reproductive health for women,"
+                             " or circumcision for men. Ask the respondent to"
+                             " answer the following questions about their second"
+                             "most recent sexual partner. It may be helpful for"
+                             " respondent to give initials or nickname, but DO NOT"
+                             " write down or otherwise record this information."
+                             " Read to Participant: I am now going to ask you about"
+                             "your second most recent sexual partner in the past"
+                             " 12 months, the one before the person we were just"
+                             "talking about.")
 admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 
 
@@ -483,6 +512,18 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
+    required_instructions = ("Interviewer Note: If the respondent has only had "
+                             "two partners, SKIP HIV adherence questions if HIV"
+                             " negative, if HIV positive, proceed. Else go to Reproductive health for women,"
+                             " or circumcision for men. Ask the respondent to"
+                             " answer the following questions about their second"
+                             "most recent sexual partner. It may be helpful for"
+                             " respondent to give initials or nickname, but DO NOT"
+                             " write down or otherwise record this information."
+                             " Read to Participant: I am now going to ask you about"
+                             "your second most recent sexual partner in the past"
+                             " 12 months, the one before the person we were just"
+                             "talking about.")
 admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)
 
 
@@ -509,6 +550,14 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
         'circumcised',)
     radio_fields = {
          'circumcised': admin.VERTICAL, }
+    required_instructions = ("Note to Interviewer: This section is to be completed"
+                             " by male participants. SKIP for female participants."
+                             "Read to Participant: Some men are circumcised. "
+                             "Male circumcision is [enter site specific word] when"
+                             " the foreskin of the man's penis has been cut off."
+                             " I would like to ask you a few questions regarding"
+                             " male circumcision. Here is a diagram to clarify what"
+                             " a circumcised and uncircumcised man looks like.")
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
@@ -575,8 +624,12 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
         "number_children",
         "menopause",
         )
-    radio_field = {
-        "menopause": admin.VERTICAL, }
+    radio_fields = {
+        "menopause": admin.VERTICAL,}
+    required_instructions = ("Note to Interviewer: This section is to be"
+                             " completed by female participants. SKIP for male participants."
+                             "Read to Participant: I am now going to ask you questions"
+                             " about reproductive health and pregnancy.")
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)
 
 
@@ -603,6 +656,13 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
 #         "tb": admin.VERTICAL,
         "tb_record": admin.VERTICAL, }
     filter_horizontal = ('diagnoses',)
+    required_instructions = ("Read to Participant: I am now going to ask you"
+                             "some questions about major illnesses that you may"
+                             "have had in the past 12 months. Sometimes people"
+                             "call different sicknesses by different names."
+                             "If you do not understand what I mean, please ask."
+                             "Also, please remember that your answers will be"
+                             "kept confidential.")
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
 
 
@@ -651,6 +711,8 @@ class SubstanceUseAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         "alcohol": admin.VERTICAL,
         "smoke": admin.VERTICAL, }
+    required_instructions = ("Read to Participant: I would like to now ask you"
+                             "questions about drinking alcohol and smoking.")
 admin.site.register(SubstanceUse, SubstanceUseAdmin)
 
 
@@ -671,6 +733,16 @@ class StigmaAdmin(SubjectVisitModelAdmin):
         "saliva_stigma": admin.VERTICAL,
         "teacher_stigma": admin.VERTICAL,
         "children_stigma": admin.VERTICAL, }
+    required_instructions = ("Interviewer Note: The following supplemental "
+                             "questions are only asked for respondents NOT known"
+                             " to have HIV. SKIP for respondents with known HIV infection."
+                             "Read to Participant: Different people feel differently about"
+                             " people living with HIV. I am going to ask you about issues"
+                             " relevant to HIV and AIDS and also people living with HIV."
+                             " Some of the questions during the interview will ask for your"
+                             " opinion on how you think people living with HIV are treated."
+                             "To start, when thinking about yourself, please tell me how "
+                             "strongly you agree or disagree with the following statements.")
 admin.site.register(Stigma, StigmaAdmin)
 
 
@@ -695,6 +767,10 @@ class StigmaOpinionAdmin(SubjectVisitModelAdmin):
         "enacted_phyical_stigma": admin.VERTICAL,
         "enacted_family_stigma": admin.VERTICAL,
         "fear_stigma": admin.VERTICAL, }
+    required_instructions = ("Read to Participant: Using your own opinions and"
+                             "thinking about this community, please tell me how"
+                             "strongly you agree or disagree with the following"
+                             "statements.")
 admin.site.register(StigmaOpinion, StigmaOpinionAdmin)
 
 
@@ -719,6 +795,19 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
         "enacted_talk_stigma": admin.VERTICAL,
         "enacted_respect_stigma": admin.VERTICAL,
         "enacted_jobs_tigma": admin.VERTICAL, }
+    required_instructions = ("Interviewer Note: The following supplemental questions"
+                             "are only asked for respondents with known HIV infection."
+                             "SKIP for respondents without known HIV infection. "
+                             "Read to Participant: You let us know earlier that you"
+                             "are HIV positive. I would now like to ask you a few"
+                             "questions about your experiences living with HIV."
+                             "Please remember this interview and your responses"
+                             "are private and confidential.In this section,"
+                             "I'm going to read you statements"
+                             " about how you may feel about yourself and your "
+                             "HIV/AIDS infection. I would like you to tell me"
+                             "if you strongly agree, agree, disagree or strongly"
+                             " disagree with each statement?")
 admin.site.register(PositiveParticipant, PositiveParticipantAdmin)
 
 
@@ -740,19 +829,18 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "convenient_access",
         "whenever_access"
     )
-
     radio_fields = {
         "access_care": admin.VERTICAL,
         "overall_access": admin.VERTICAL,
         "emergency_access": admin.VERTICAL,
         "expensive_access": admin.VERTICAL,
         "convenient_access": admin.VERTICAL,
-        "whenever_access": admin.VERTICAL
-    }
-
+        "whenever_access": admin.VERTICAL}
     filter_horizontal = (
-        "medical_care_access",
-    )
+        "medical_care_access",)
+    required_instructions = ("Read to Participant: Now, I will be asking you"
+                             "about your preferences and options for accessing"
+                             "health care when you need it.")
 admin.site.register(AccessToCare, AccessToCareAdmin)
 
 
