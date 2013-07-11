@@ -23,6 +23,7 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
               given for 'change'.
         """
         if not request.method == 'POST':
+            exclude_conditional_fields = None
             if 'conditional_fields' in dir(self):
                 # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
                 if 'exclude' in dir(self.form.Meta):
