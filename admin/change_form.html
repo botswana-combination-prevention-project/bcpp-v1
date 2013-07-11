@@ -49,6 +49,7 @@
 {% endif %}
 
 {% block field_sets %}
+<b>Instructions:</b> {{ instructions }} {{ required_instructions }}
 {% for fieldset in adminform %}
   {% include "admin/includes/fieldset.html" %}
 {% endfor %}
