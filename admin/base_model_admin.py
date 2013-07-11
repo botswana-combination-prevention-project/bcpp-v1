@@ -6,7 +6,7 @@ from bhp_supplemental_fields.models import Excluded
 class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
 
     instructions = 'Please complete the questions below.'
-    required_instructions_add = 'Required questions are in bold. Additional questions may be required based on submitted data.'
+    required_instructions = 'Required questions are in bold. Additional questions may be required based on submitted data.'
 
     def save_model(self, request, obj, form, change):
         self.update_modified_stamp(request, obj, change)
