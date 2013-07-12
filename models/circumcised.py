@@ -21,17 +21,23 @@ class Circumcised (BaseCircumcision):
         verbose_name="Where were you circumcised?",
         max_length=45,
         choices=PLACE_CIRC,
+        null=True,
         help_text="supplemental",
         )
-    where_circ_other = OtherCharField()
+    where_circ_other = OtherCharField(
+        null=True,
+        )
 
     why_circ = models.CharField(
         verbose_name="What was the main reason why you were circumcised?",
         max_length=55,
         choices=WHYCIRC_CHOICE,
+        null=True,
         help_text="supplemental",
         )
-    why_circ_other = OtherCharField()
+    why_circ_other = OtherCharField(
+        null=True,
+        )
 
     history = AuditTrail()
 
