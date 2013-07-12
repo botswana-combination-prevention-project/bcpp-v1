@@ -295,13 +295,10 @@ OTHER_OCCUPATION = (
 HIV_DOC_TYPE = (
     ('Tebelopele', 'Tebelopele'),
     ('Lab result form', 'Lab result form'),
-    ('OPD', 'OPD card/ ANC record'),
-    ('IDCC', 'IDCC record'),
-    ('OTHER', 'Other'),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
-#     ('', ''),
+    ('ART Prescription', 'ART Prescription'),
+    ('PMTCT Prescription', 'PMTCT Prescription'),
+    ('Record of CD4 count', 'Record of CD4 count'),
+    ('OTHER', 'Other OPD card or ANC card documentation'),
 )
 
 GRANT_TYPE = (
