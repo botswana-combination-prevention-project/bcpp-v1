@@ -20,10 +20,12 @@ class HivCareAdherence (BaseScheduledVisitModel):
         )
 
     medical_care = models.CharField(
-        verbose_name="Have you ever received HIV-related medical or clinical care?",
+        verbose_name=("Have you ever received HIV-related medical or clinical"
+                      " care, for such things as a CD4 count (masole), IDCC/ PMTCT"
+                      " registration, additional clinic-based counseling?"),
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
-        help_text="if 'NO' go to question 65, if 'YES', answer HIV medical care section",
+        help_text="if 'YES', answer HIV medical care section",
         )
 
     no_medical_care = models.CharField(
