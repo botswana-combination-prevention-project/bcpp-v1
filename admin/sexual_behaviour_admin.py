@@ -10,19 +10,17 @@ class SexualBehaviourAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'ever_sex',
+        'lifetime_sex_partners',
         'last_year_partners',
         'more_sex',
         'first_sex',
         'condom',
-        'alcohol_sex',
-        'last_sex',
-        'last_sex_calc',)
+        'alcohol_sex',)
     radio_fields = {
         "ever_sex": admin.VERTICAL,
         "more_sex": admin.VERTICAL,
         "condom": admin.VERTICAL,
-        "alcohol_sex": admin.VERTICAL,
-        "last_sex": admin.VERTICAL, }
+        "alcohol_sex": admin.VERTICAL,}
     required_instructions = ("Read to Participant: In this part of the interview,"
                              " I will be asking you some questions about your"
                              " sexual relationships that you might have had,"
