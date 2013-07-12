@@ -15,23 +15,30 @@ class AccessToCare (BaseScheduledVisitModel):
                       " medical care or treatment when you or someone in your family is sick or hurt?"),
         max_length=50,
         choices=WHEREACCESS_CHOICE,
+        null=True,
         help_text="supplemental",
         )
-    access_care_other = OtherCharField()
+    access_care_other = OtherCharField(
+        null=True,
+        )
 
     medical_care_access = models.ManyToManyField(MedicalCareAccess,
         verbose_name=("In the past year, where else have you obtained"
                       " medical care or treatment when you or someone in your family"
                       " is sick or hurt? (check all that apply)"),
+        null=True,
         help_text="supplemental",
         )
-    medical_care_access_other = OtherCharField()
+    medical_care_access_other = OtherCharField(
+        null=True,
+        )
 
     overall_access = models.CharField(
         verbose_name=("If I need medical care, I can get seen by an"
                         " appropriate health professional without any trouble."),
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
@@ -39,6 +46,7 @@ class AccessToCare (BaseScheduledVisitModel):
         verbose_name="It is hard for me to get medical care in an emergency",
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
@@ -47,6 +55,7 @@ class AccessToCare (BaseScheduledVisitModel):
                       " it is too expensive."),
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
@@ -54,6 +63,7 @@ class AccessToCare (BaseScheduledVisitModel):
         verbose_name="Places where I can get medical care are very conveniently located.",
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
@@ -61,6 +71,7 @@ class AccessToCare (BaseScheduledVisitModel):
         verbose_name="I am able to get medical care whenever I need it.",
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
