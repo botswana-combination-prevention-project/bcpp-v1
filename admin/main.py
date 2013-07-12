@@ -353,6 +353,13 @@ admin.site.register(Circumcision, CircumcisionAdmin)
 class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
+    supplemental_fields = SupplementalFields(
+        ("circumcised",
+        "health_benefits_smc",
+        'where_circ', 
+        'where_circ_other',
+        'why_circ', 
+        'why_circ_other'), p=0.18, group='MC')
     fields = (
         "subject_visit",
         "circumcised",
