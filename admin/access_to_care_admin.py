@@ -17,7 +17,8 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         'emergency_access',
         'expensive_access',
         'convenient_access',
-        'whenever_access'), p=0.09, group='AC')
+        'whenever_access',
+        'local_hiv_care'), p=0.09, group='AC')
     fields = (
         "subject_visit",
         "report_datetime",
@@ -29,7 +30,8 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "emergency_access",
         "expensive_access",
         "convenient_access",
-        "whenever_access"
+        "whenever_access",
+        "local_hiv_care",
     )
     radio_fields = {
         "access_care": admin.VERTICAL,
@@ -37,7 +39,8 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "emergency_access": admin.VERTICAL,
         "expensive_access": admin.VERTICAL,
         "convenient_access": admin.VERTICAL,
-        "whenever_access": admin.VERTICAL}
+        "whenever_access": admin.VERTICAL,
+        "local_hiv_care": admin.VERTICAL,}
     filter_horizontal = (
         "medical_care_access",)
     required_instructions = ("Read to Participant: Now, I will be asking you"
