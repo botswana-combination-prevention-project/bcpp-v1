@@ -14,3 +14,10 @@ from baseline_household_survey_admin import BaselineHouseholdSurveyAdmin
 from demographics_admin import DemographicsAdmin
 from sexual_behaviour_admin import SexualBehaviourAdmin
 from hiv_care_adherence_admin import HivCareAdherenceAdmin
+
+from hiv_tested_admin import HivTestedAdmin
+from hiv_untested_admin import HivUntestedAdmin
+from months_partner_admin import *
+from hiv_test_review_admin import HivTestReviewAdmin
+from uncircumcised_admin import UncircumcisedAdmin
+from access_to_care_admin import AccessToCareAdmin
