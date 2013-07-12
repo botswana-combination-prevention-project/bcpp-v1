@@ -13,6 +13,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
                       " has any health benefits for you?"),
         max_length=15,
         choices=YES_NO_UNSURE,
+        null=True,
         help_text="supplemental",
         )
 
@@ -20,6 +21,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
         verbose_name=("What do you believe are the health"
                       " benefits of male circumcision? (Indicate all that apply.)"),
         max_length=25,
+        null=True,
         help_text="supplemental",
         )
 
