@@ -21,7 +21,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         )
     
     menopause = models.CharField(
-        verbose_name="Have you reached menopause?",
+        verbose_name="Have you reached menopause (more than 12 months without a period)?",
         max_length=3,
         choices=YES_NO,
         help_text="this also refers to pre-menopause",
