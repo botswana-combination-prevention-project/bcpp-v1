@@ -52,7 +52,7 @@ class Education (BaseScheduledVisitModel):
     monthly_income = models.CharField(
         verbose_name=("In the past month, how much money did you earn from"
                       " work you did or received in payment [retirement benefits"
-                      "child maintenance(alimony), food basket, etc]?"),
+                      " child maintenance, food basket, etc]?"),
         max_length=25,
         choices=MONTHLY_INCOME,
         help_text="",
