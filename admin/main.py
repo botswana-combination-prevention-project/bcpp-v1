@@ -2,29 +2,29 @@ from django.contrib import admin
 from bhp_base_admin.admin import BaseTabularInline
 from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts,
+from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, 
+                                 HospitalAdmission, HivHealthCareCosts,
                                  LabourMarketWages, Grant, CeaEnrolmentChecklist, CsEnrolmentChecklist,
                                  CommunityEngagement, Education,
-                                 HivTestReview, HivTested, HivUntested, MonthsRecentPartner, MonthsSecondPartner,
-                                 MonthsThirdPartner, HivMedicalCare, Circumcision, Circumcised, Uncircumcised,
+                                 HivMedicalCare, Circumcision, Circumcised,
                                  ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis,
                                  SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
-                                 AccessToCare, HouseholdComposition, Respondent, FutureHivTesting,
+                                 HouseholdComposition, Respondent, FutureHivTesting,
                                  TodaysHivResult, HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, HospitalAdmissionForm,
-                                HivHealthCareCostsForm, LabourMarketWagesForm, CeaEnrolmentChecklistForm,
+from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, 
+                                HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, 
+                                CeaEnrolmentChecklistForm,
                                 CsEnrolmentChecklistForm, CommunityEngagementForm,
-                                EducationForm, HivTestReviewForm, HivTestedForm, HivUntestedForm,
-                                MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm,
-                                HivMedicalCareForm, CircumcisionForm, CircumcisedForm, UncircumcisedForm,
+                                EducationForm, HivMedicalCareForm, 
+                                CircumcisionForm, CircumcisedForm,
                                 ReproductiveHealthForm, MedicalDiagnosesForm, HeartAttackForm, CancerForm,
-                                TubercolosisForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, PositiveParticipantForm,
-                                AccessToCareForm, HouseholdCompositionForm, FutureHivTestingForm,
+                                TubercolosisForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, 
+                                PositiveParticipantForm, HouseholdCompositionForm, 
+                                FutureHivTestingForm,
                                 TodaysHivResultForm, HivResultDocumentationForm)
 
 
-# QualityOfLife
 class QualityOfLifeAdmin(SubjectVisitModelAdmin):
 
     form = QualityOfLifeForm
@@ -47,7 +47,6 @@ class QualityOfLifeAdmin(SubjectVisitModelAdmin):
 admin.site.register(QualityOfLife, QualityOfLifeAdmin)
 
 
-# ResourceUtilization
 class ResourceUtilizationAdmin(SubjectVisitModelAdmin):
 
     form = ResourceUtilizationForm
@@ -99,7 +98,6 @@ class OutpatientCareAdmin(SubjectVisitModelAdmin):
 admin.site.register(OutpatientCare, OutpatientCareAdmin)
 
 
-# HospitalAdmission
 class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
 
     form = HospitalAdmissionForm
@@ -122,7 +120,6 @@ class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
 admin.site.register(HospitalAdmission, HospitalAdmissionAdmin)
 
 
-# HivHealthCareCosts
 class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
 
     form = HivHealthCareCostsForm
@@ -144,12 +141,10 @@ class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
 admin.site.register(HivHealthCareCosts, HivHealthCareCostsAdmin)
 
 
-# Grant
 class GrantInlineAdmin(BaseTabularInline):
     model = Grant
 
 
-# LabourMarketWages
 class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
 
     form = LabourMarketWagesForm
@@ -185,7 +180,6 @@ class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
 admin.site.register(LabourMarketWages, LabourMarketWagesAdmin)
 
 
-# CeaEnrolmentChecklist
 class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
 
     form = CeaEnrolmentChecklistForm
@@ -212,7 +206,6 @@ class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
 admin.site.register(CeaEnrolmentChecklist, CeaEnrolmentChecklistAdmin)
 
 
-# CsEnrolmentChecklist
 class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
 
     form = CsEnrolmentChecklistForm
@@ -235,7 +228,6 @@ class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
 admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
 
 
-# CommunityEngagement
 class CommunityEngagementAdmin(SubjectVisitModelAdmin):
 
     form = CommunityEngagementForm
@@ -254,7 +246,6 @@ class CommunityEngagementAdmin(SubjectVisitModelAdmin):
 admin.site.register(CommunityEngagement, CommunityEngagementAdmin)
 
 
-# Education
 class EducationAdmin(SubjectVisitModelAdmin):
 
     form = EducationForm
@@ -279,55 +270,6 @@ class EducationAdmin(SubjectVisitModelAdmin):
 admin.site.register(Education, EducationAdmin)
 
 
-# HivTestReview
-class HivTestReviewAdmin(SubjectVisitModelAdmin):
-
-    form = HivTestReviewForm
-    fields = (
-        "subject_visit",
-        'hiv_test_date',
-        'recorded_hiv_result')
-    radio_fields = {
-        "recorded_hiv_result": admin.VERTICAL, }
-admin.site.register(HivTestReview, HivTestReviewAdmin)
-
-
-# HivTested
-class HivTestedAdmin(SubjectVisitModelAdmin):
-
-    form = HivTestedForm
-    fields = (
-        "subject_visit",
-        'num_hiv_tests',
-        'where_hiv_test',
-        'why_hiv_test',
-        'hiv_pills',
-        'arvs_hiv_test',)
-    radio_fields = {
-        "where_hiv_test": admin.VERTICAL,
-        "why_hiv_test": admin.VERTICAL,
-        "hiv_pills": admin.VERTICAL,
-        "arvs_hiv_test": admin.VERTICAL, }
-admin.site.register(HivTested, HivTestedAdmin)
-
-
-# HivUntested
-class HivUntestedAdmin(SubjectVisitModelAdmin):
-
-    form = HivUntestedForm
-    fields = (
-        "subject_visit",
-        'why_no_hiv_test',
-        'hiv_pills',
-        'arvs_hiv_test',)
-    radio_fields = {
-        "why_no_hiv_test": admin.VERTICAL,
-        "hiv_pills": admin.VERTICAL,
-        "arvs_hiv_test": admin.VERTICAL, }
-admin.site.register(HivUntested, HivUntestedAdmin)
-
-
-# # HivTestingSupplemental
 # class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
 #
 #     form = HivTestingSupplementalForm
@@ -348,7 +290,6 @@ admin.site.register(HivUntested, HivUntestedAdmin)
 # admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
 
 
-# FutureHivTesting
 class FutureHivTestingAdmin(SubjectVisitModelAdmin):
 
     form = FutureHivTestingForm
@@ -374,160 +315,6 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
 admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 
 
-# MonthsRecentPartner
-class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
-
-    form = MonthsRecentPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_partner_hiv',
-        'first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.1, group='HT')
-    fields = (
-        "subject_visit",
-        'first_partner_live',
-        'third_last_sex',
-        'third_last_sex_calc',
-        'first_first_sex',
-        'first_first_sex_calc',
-        'first_sex_current',
-        'first_relationship',
-        'first_exchange',
-        'concurrent',
-        'goods_exchange',
-        'first_sex_freq',
-        'first_partner_hiv',
-        'first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp',)
-    radio_fields = {
-        "third_last_sex": admin.VERTICAL,
-        "first_first_sex": admin.VERTICAL,
-        "first_sex_current": admin.VERTICAL,
-        "first_relationship": admin.VERTICAL,
-        "concurrent": admin.VERTICAL,
-        "goods_exchange": admin.VERTICAL,
-        "first_partner_hiv": admin.VERTICAL,
-        "first_haart": admin.VERTICAL,
-        "first_disclose": admin.VERTICAL,
-        "first_condom_freq": admin.VERTICAL,
-        "first_partner_cp": admin.VERTICAL, }
-    filter_horizontal = ("first_partner_live",)
-    required_instructions = ("Interviewer Note: Ask the respondent to answer"
-                             " the following questions about their most recent"
-                             " sexual partner in the past 12 months. It may be"
-                             " helpful for respondent to give initials or"
-                             " nickname, but DO NOT write down or otherwise"
-                             "record this information. "
-                             "Read to Participant: I am now going to ask you"
-                             " about your most recent sexual partners. I will"
-                             " start with your last or most recent sexual partner.")
-admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
-
-
-# MonthsSecondPartner
-class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
-
-    form = MonthsSecondPartnerForm
-    fields = (
-        "subject_visit",
-        'first_partner_live',
-        'third_last_sex',
-        'third_last_sex_calc',
-        'first_first_sex',
-        'first_first_sex_calc',
-        'first_sex_current',
-        'first_relationship',
-        'first_exchange',
-        'concurrent',
-        'goods_exchange',
-        'first_sex_freq',
-        'first_partner_hiv',
-        'first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp',)
-    radio_fields = {
-        "third_last_sex": admin.VERTICAL,
-        "first_first_sex": admin.VERTICAL,
-        "first_sex_current": admin.VERTICAL,
-        "first_relationship": admin.VERTICAL,
-        "concurrent": admin.VERTICAL,
-        "goods_exchange": admin.VERTICAL,
-        "first_partner_hiv": admin.VERTICAL,
-        "first_haart": admin.VERTICAL,
-        "first_disclose": admin.VERTICAL,
-        "first_condom_freq": admin.VERTICAL,
-        "first_partner_cp": admin.VERTICAL, }
-    filter_horizontal = ("first_partner_live",)
-    required_instructions = ("Interviewer Note: If the respondent has only had "
-                             "one partner, SKIP to HIV adherence questions if HIV"
-                             " negative. Else go to Reproductive health for women,"
-                             " or circumcision for men. Ask the respondent to"
-                             " answer the following questions about their second"
-                             "most recent sexual partner. It may be helpful for"
-                             " respondent to give initials or nickname, but DO NOT"
-                             " write down or otherwise record this information."
-                             " Read to Participant: I am now going to ask you about"
-                             "your second most recent sexual partner in the past"
-                             " 12 months, the one before the person we were just"
-                             "talking about.")
-admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
-
-
-# MonthsThirdPartner
-class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
-
-    form = MonthsThirdPartnerForm
-    fields = (
-        "subject_visit",
-        'first_partner_live',
-        'third_last_sex',
-        'third_last_sex_calc',
-        'first_first_sex',
-        'first_first_sex_calc',
-        'first_sex_current',
-        'first_relationship',
-        'first_exchange',
-        'concurrent',
-        'goods_exchange',
-        'first_sex_freq',
-        'first_partner_hiv',
-        'first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp',)
-    radio_fields = {
-        "third_last_sex": admin.VERTICAL,
-        "first_first_sex": admin.VERTICAL,
-        "first_sex_current": admin.VERTICAL,
-        "first_relationship": admin.VERTICAL,
-        "concurrent": admin.VERTICAL,
-        "goods_exchange": admin.VERTICAL,
-        "first_partner_hiv": admin.VERTICAL,
-        "first_haart": admin.VERTICAL,
-        "first_disclose": admin.VERTICAL,
-        "first_condom_freq": admin.VERTICAL,
-        "first_partner_cp": admin.VERTICAL, }
-    filter_horizontal = ("first_partner_live",)
-    required_instructions = ("Interviewer Note: If the respondent has only had "
-                             "two partners, SKIP HIV adherence questions if HIV"
-                             " negative, if HIV positive, proceed. Else go to Reproductive health for women,"
-                             " or circumcision for men. Ask the respondent to"
-                             " answer the following questions about their second"
-                             "most recent sexual partner. It may be helpful for"
-                             " respondent to give initials or nickname, but DO NOT"
-                             " write down or otherwise record this information."
-                             " Read to Participant: I am now going to ask you about"
-                             "your second most recent sexual partner in the past"
-                             " 12 months, the one before the person we were just"
-                             "talking about.")
-admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)
-
-
-# HivMedicalCare
 class HivMedicalCareAdmin(SubjectVisitModelAdmin):
 
     form = HivMedicalCareForm
@@ -541,7 +328,6 @@ class HivMedicalCareAdmin(SubjectVisitModelAdmin):
 admin.site.register(HivMedicalCare, HivMedicalCareAdmin)
 
 
-# Circumcision
 class CircumcisionAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisionForm
@@ -561,7 +347,6 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
-# Circumcised
 class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
@@ -582,40 +367,6 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
 admin.site.register(Circumcised, CircumcisedAdmin)
 
 
-# Uncircumcised
-class UncircumcisedAdmin(SubjectVisitModelAdmin):
-
-    form = UncircumcisedForm
-    fields = [
-        "subject_visit",
-        "circumcised",
-        "health_benefits_smc",
-        'reason_circ',
-        'future_circ',
-        'circumcision_day',
-        'circumcision_day_other',
-        'circumcision_week',
-        'circumcision_week_other',
-        'circumcision_year',
-        'circumcision_year_other',
-        'future_reasons_smc',
-        'service_facilities',
-        'aware_free',
-    ]
-    radio_fields = {
-        "circumcised": admin.VERTICAL,
-        "reason_circ": admin.VERTICAL,
-        "future_circ": admin.VERTICAL,
-        "circumcision_day": admin.VERTICAL,
-        "circumcision_week": admin.VERTICAL,
-        "circumcision_year": admin.VERTICAL,
-        "future_reasons_smc": admin.VERTICAL,
-        "service_facilities": admin.VERTICAL,
-        "aware_free": admin.VERTICAL}
-    filter_horizontal = ("health_benefits_smc",)
-admin.site.register(Uncircumcised, UncircumcisedAdmin)
-
-
 class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
 
     form = ReproductiveHealthForm
@@ -633,27 +384,20 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)
 
 
-# MedicalDiagnoses
 class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
 
     form = MedicalDiagnosesForm
     fields = (
         "subject_visit",
        'diagnoses',
-#        'heart_attack',
        'heart_attack_record',
-#        'cancer',
        'cancer_record',
        'sti',
-#        'tb',
        'tb_record',)
     radio_fields = {
-#         "heart_attack": admin.VERTICAL,
         "heart_attack_record": admin.VERTICAL,
-#         "cancer": admin.VERTICAL,
         "cancer_record": admin.VERTICAL,
         "sti": admin.VERTICAL,
-#         "tb": admin.VERTICAL,
         "tb_record": admin.VERTICAL, }
     filter_horizontal = ('diagnoses',)
     required_instructions = ("Read to Participant: I am now going to ask you"
@@ -700,7 +444,6 @@ class TubercolosisAdmin(SubjectVisitModelAdmin):
 admin.site.register(Tubercolosis, TubercolosisAdmin)
 
 
-# SubstanceUse
 class SubstanceUseAdmin(SubjectVisitModelAdmin):
 
     form = SubstanceUseForm
@@ -716,7 +459,6 @@ class SubstanceUseAdmin(SubjectVisitModelAdmin):
 admin.site.register(SubstanceUse, SubstanceUseAdmin)
 
 
-# Stigma
 class StigmaAdmin(SubjectVisitModelAdmin):
 
     form = StigmaForm
@@ -746,7 +488,6 @@ class StigmaAdmin(SubjectVisitModelAdmin):
 admin.site.register(Stigma, StigmaAdmin)
 
 
-# StigmaOpinion
 class StigmaOpinionAdmin(SubjectVisitModelAdmin):
 
     form = StigmaOpinionForm
@@ -774,7 +515,6 @@ class StigmaOpinionAdmin(SubjectVisitModelAdmin):
 admin.site.register(StigmaOpinion, StigmaOpinionAdmin)
 
 
-# PositiveParticipant
 class PositiveParticipantAdmin(SubjectVisitModelAdmin):
 
     form = PositiveParticipantForm
@@ -810,38 +550,6 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
                              " disagree with each statement?")
 admin.site.register(PositiveParticipant, PositiveParticipantAdmin)
 
-
-# AccessToCare
-class AccessToCareAdmin(SubjectVisitModelAdmin):
-
-    form = AccessToCareForm
-
-    fields = (
-        "subject_visit",
-        "report_datetime",
-        "access_care",
-        "access_care_other",
-        "medical_care_access",
-        "medical_care_access_other",
-        "overall_access",
-        "emergency_access",
-        "expensive_access",
-        "convenient_access",
-        "whenever_access"
-    )
-    radio_fields = {
-        "access_care": admin.VERTICAL,
-        "overall_access": admin.VERTICAL,
-        "emergency_access": admin.VERTICAL,
-        "expensive_access": admin.VERTICAL,
-        "convenient_access": admin.VERTICAL,
-        "whenever_access": admin.VERTICAL}
-    filter_horizontal = (
-        "medical_care_access",)
-    required_instructions = ("Read to Participant: Now, I will be asking you"
-                             "about your preferences and options for accessing"
-                             "health care when you need it.")
-admin.site.register(AccessToCare, AccessToCareAdmin)
 
 
 class RespondentInlineAdmin(BaseTabularInline):
