@@ -13,7 +13,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         'first_haart',
         'first_disclose',
         'first_condom_freq',
-        'first_partner_cp'), p=0.1, group='HT')
+        'first_partner_cp'), p=0.1, group='SH')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -60,6 +60,12 @@ admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsSecondPartnerForm
+    supplemental_fields = SupplementalFields(
+        ('first_partner_hiv',
+        'first_haart',
+        'first_disclose',
+        'first_condom_freq',
+        'first_partner_cp'), p=0.1, group='SH')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -109,6 +115,12 @@ admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsThirdPartnerForm
+    supplemental_fields = SupplementalFields(
+        ('first_partner_hiv',
+        'first_haart',
+        'first_disclose',
+        'first_condom_freq',
+        'first_partner_cp'), p=0.1, group='SH')
     fields = (
         "subject_visit",
         'first_partner_live',
