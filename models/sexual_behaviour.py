@@ -17,6 +17,18 @@ class SexualBehaviour (BaseScheduledVisitModel):
         choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
+    
+    lifetime_sex_partners = models.IntegerField(
+        verbose_name=("In your life time, how many different people have you had"
+                      " sex with?  Please remember to include casual and once-off partners"
+                      " (prostitutes and truck drivers) as well as long-term partners"
+                      " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
+                      "number, please give a best guess]"),
+        max_length=3,
+        null=True, 
+        blank=True,
+        help_text="",
+        )
 
     last_year_partners = models.IntegerField(
         verbose_name=("In the past 12 months, how many different people have you had"
@@ -69,24 +81,6 @@ class SexualBehaviour (BaseScheduledVisitModel):
         choices=ALCOHOL_SEX,
         help_text="",
         )
-
-    last_sex = models.CharField(
-        verbose_name="When was the last time you had sex?",
-        max_length=25,
-        choices=LASTSEX_CHOICE,
-        null=True,
-        blank=True,
-        help_text=("Note:Respondent should give the number of days/months/years since last sex"
-                   " (e.g. if last sex was last night, then it should be recorded as 1 day). "
-                   "Leave blank if participant does not want to respond"),
-        )
-    last_sex_calc = models.IntegerField(
-        verbose_name="Enter the number of days/months/years",
-        null=True, 
-        blank=True,
-        max_length=2,
-        )
-    
     
     history = AuditTrail()
 
