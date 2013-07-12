@@ -11,7 +11,8 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
     """CS002"""
 
     diagnoses = models.ManyToManyField(Diagnoses,
-        verbose_name="Have you ever had any of the following diagnoses?",
+        verbose_name=("Do you recall or is there a record of having any of the"
+                      " following serious illnesses?"),
         help_text="tick all that apply",
         )
 
