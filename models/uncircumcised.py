@@ -13,6 +13,7 @@ class Uncircumcised (BaseCircumcision):
     reason_circ = models.CharField(
         verbose_name="What is the main reason that you have not yet been circumcised?",
         max_length=15,
+        null=True,
         choices=REASONCIRC_CHOICE,
         help_text="supplemental",
         )
@@ -29,33 +30,40 @@ class Uncircumcised (BaseCircumcision):
                         " would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_DAY,
+        null=True,
         help_text="supplemental",
         )
-    circumcision_day_other = OtherCharField()
+    circumcision_day_other = OtherCharField(
+        null=True,)
 
     circumcision_week = models.CharField(
         verbose_name=("In the future, is there a particular day of the week that"
                         " you would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_WEEK,
+        null=True,
         help_text="supplemental",
         )
-    circumcision_week_other = OtherCharField()
+    circumcision_week_other = OtherCharField(
+        null=True,)
 
     circumcision_year = models.CharField(
         verbose_name=("In the future, is there a particular time of year that you"
                         " would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_MONTH,
+        null=True,
         help_text="supplemental",
         )
-    circumcision_year_other = OtherCharField()
+    circumcision_year_other = OtherCharField(
+        null=True,)
 
     future_reasons_smc = models.CharField(
         verbose_name=("Which of the following might increase your willingness to"
                         " be circumcised the most?"),
         max_length=15,
         choices=FUTUREREASONSSMC_CHOICE,
+        null=True,
         help_text="supplemental",
         )
 
@@ -64,6 +72,7 @@ class Uncircumcised (BaseCircumcision):
                         "free of charge at most health facilities?"),
         max_length=15,
         choices=YES_NO_DONT_ANSWER,
+        null=True,
         help_text="supplemental",
         )
 
