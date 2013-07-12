@@ -82,7 +82,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
 
     first_sex_freq = models.IntegerField(
         verbose_name=("During the last 3 months [of your relationship, if it has ended] how many "
-                        "times (on average) did you have sex with this partner?"),
+                        "times did you have sex with this partner?"),
         max_length=2,
         help_text="",
         )
