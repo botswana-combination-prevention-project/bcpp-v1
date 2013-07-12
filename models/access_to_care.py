@@ -74,6 +74,16 @@ class AccessToCare (BaseScheduledVisitModel):
         null=True,
         help_text="supplemental",
         )
+    
+    local_hiv_care = models.CharField(
+        verbose_name=("Would you be willing to come to the clinic within your "
+                      "community to receive HIV care and treatment, if " 
+                      "available locally?"),
+        max_length=25,
+        choices=AGREE_STRONGLY,
+        null=True,
+        help_text="supplemental",
+        )
 
     history = AuditTrail()
 
