@@ -4,10 +4,12 @@ from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, 
                                  HospitalAdmission, HivHealthCareCosts,
-                                 LabourMarketWages, Grant, CeaEnrolmentChecklist, CsEnrolmentChecklist,
+                                 LabourMarketWages, Grant, CeaEnrolmentChecklist, 
+                                 CsEnrolmentChecklist,
                                  CommunityEngagement, Education,
                                  HivMedicalCare, Circumcision, Circumcised,
-                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis,
+                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack, 
+                                 Cancer, Tubercolosis,
                                  SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
                                  HouseholdComposition, Respondent, FutureHivTesting,
                                  TodaysHivResult, HivResultDocumentation)
@@ -18,9 +20,10 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 CsEnrolmentChecklistForm, CommunityEngagementForm,
                                 EducationForm, HivMedicalCareForm, 
                                 CircumcisionForm, CircumcisedForm,
-                                ReproductiveHealthForm, MedicalDiagnosesForm, HeartAttackForm, CancerForm,
-                                TubercolosisForm, SubstanceUseForm, StigmaForm, StigmaOpinionForm, 
-                                PositiveParticipantForm, HouseholdCompositionForm, 
+                                ReproductiveHealthForm, MedicalDiagnosesForm, 
+                                HeartAttackForm, CancerForm,
+                                TubercolosisForm, SubstanceUseForm, StigmaForm, 
+                                StigmaOpinionForm, PositiveParticipantForm, HouseholdCompositionForm, 
                                 FutureHivTestingForm,
                                 TodaysHivResultForm, HivResultDocumentationForm)
 
