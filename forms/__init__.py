@@ -11,3 +11,12 @@ from baseline_household_survey_form import BaselineHouseholdSurveyForm
 from demographics_form import DemographicsForm
 from sexual_behaviour_form import SexualBehaviourForm
 from hiv_care_adherence_form import HivCareAdherenceForm
+from partner_form import *
+from hiv_tested_form import HivTestedForm
+from hiv_untested_form import HivUntestedForm
+from months_partner_form import *
+from hiv_test_review_form import HivTestReviewForm
+from uncircumcised_form import UncircumcisedForm
+from access_to_care_form import AccessToCareForm
+from future_hiv_testing_form import FutureHivTestingForm
+from todays_hiv_result_form import TodaysHivResultForm
