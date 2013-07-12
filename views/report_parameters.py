@@ -36,7 +36,8 @@ def report_parameters(request, **kwargs):
                 #Model = get_model('mochudi_household', 'household')
                 query_string = param.query_string
                 #evaluated = eval(query_string)
-                fields.update({param.parameter_name: forms.ModelChoiceField(label=param.parameter_name,queryset=eval(query_string),required=True)})
+                #ModelMultipleChoiceField
+                fields.update({param.parameter_name: forms.ModelMultipleChoiceField(label=param.parameter_name,queryset=eval(query_string),required=True)})
             else:
                 if param.parameter_type == 'datetimefield':
                     fields.update({param.parameter_name: forms.DateTimeField(label=param.parameter_name,widget=widgets.AdminDateWidget)})
