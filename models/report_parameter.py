@@ -22,7 +22,11 @@ class ReportParameter(BaseModel):
         choices=PARAM_TYPES,
         )
     
-    is_selectfield = models.BooleanField(default=False)
+    is_selectfield = models.BooleanField(
+                                         verbose_name=("is selectfield"),
+                                         default=False,
+                                         help_text = 'Allows multiple selects'
+                                         )
     
     app_name = models.CharField(
         verbose_name=("application"),
