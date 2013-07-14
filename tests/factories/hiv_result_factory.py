@@ -2,11 +2,11 @@ import factory
 from datetime import date, datetime
 from bcpp_subject.tests.factories import SubjectVisitFactory
 from base_scheduled_model_factory import BaseScheduledModelFactory
-from bcpp_subject.models import TodaysHivResult
+from bcpp_subject.models import HivResult
 
 
-class TodaysHivResultFactory(BaseScheduledModelFactory):
-    FACTORY_FOR = TodaysHivResult
+class HivResultFactory(BaseScheduledModelFactory):
+    FACTORY_FOR = HivResult
 
     subject_visit = factory.SubFactory(SubjectVisitFactory)
 
