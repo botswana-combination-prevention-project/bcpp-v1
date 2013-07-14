@@ -5,19 +5,17 @@ from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, 
                                  HospitalAdmission, HivHealthCareCosts,
                                  LabourMarketWages, Grant, CeaEnrolmentChecklist, 
-                                 CsEnrolmentChecklist,
                                  CommunityEngagement, Education,
                                  HivMedicalCare, Circumcision, Circumcised,
                                  ReproductiveHealth, MedicalDiagnoses, HeartAttack, 
                                  Cancer, Tubercolosis,
                                  SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
                                  HouseholdComposition, Respondent, FutureHivTesting,
-                                 TodaysHivResult, HivResultDocumentation)
+                                 HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, 
                                 HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, 
-                                CeaEnrolmentChecklistForm,
-                                CsEnrolmentChecklistForm, CommunityEngagementForm,
+                                CeaEnrolmentChecklistForm, CommunityEngagementForm,
                                 EducationForm, HivMedicalCareForm, 
                                 CircumcisionForm, CircumcisedForm,
                                 ReproductiveHealthForm, MedicalDiagnosesForm, 
@@ -207,28 +205,6 @@ class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "enrolment_reason": admin.VERTICAL,
         "opportunistic_illness": admin.VERTICAL, }
 admin.site.register(CeaEnrolmentChecklist, CeaEnrolmentChecklistAdmin)
-
-
-class CsEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
-
-    form = CsEnrolmentChecklistForm
-    fields = (
-        "registered_subject",
-        "registration_datetime",
-        "census_number",
-        "mental_capacity",
-        "incarceration",
-        "citizen",
-        "community_resident",
-        "date_minor_signed",
-        "date_guardian_signed",
-        "date_consent_signed",)
-    radio_fields = {
-        "mental_capacity": admin.VERTICAL,
-        "incarceration": admin.VERTICAL,
-        "citizen": admin.VERTICAL,
-        "community_resident": admin.VERTICAL, }
-admin.site.register(CsEnrolmentChecklist, CsEnrolmentChecklistAdmin)
 
 
 class CommunityEngagementAdmin(SubjectVisitModelAdmin):
@@ -561,7 +537,6 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
 admin.site.register(PositiveParticipant, PositiveParticipantAdmin)
 
 
-
 class RespondentInlineAdmin(BaseTabularInline):
     model = Respondent
 
@@ -579,19 +554,6 @@ class HouseholdCompositionAdmin (SubjectVisitModelAdmin):
     radio_fields = {
         "contact": admin.VERTICAL, }
 admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)
-
-
-class TodaysHivResultAdmin (SubjectVisitModelAdmin):
-
-    form = TodaysHivResultForm
-    fields = (
-        'subject_visit',
-        'hiv_result',
-        'why_not_tested',)
-    radio_fields = {
-        "hiv_result": admin.VERTICAL,
-        'why_not_tested': admin.VERTICAL, }
-admin.site.register(TodaysHivResult, TodaysHivResultAdmin)
 
 
 class HivResultDocumentationAdmin (SubjectVisitModelAdmin):

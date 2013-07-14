@@ -12,7 +12,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
     
     test_community_stigma = models.CharField(
         verbose_name=("People are hesitant to take an HIV test due to"
-                      " fear of people’s reaction if the test result is positive for HIV."),
+                      " fear of people\'s reaction if the test result is positive for HIV."),
         max_length=25,
         choices=AGREE_STRONGLY,
         help_text="supplemental",

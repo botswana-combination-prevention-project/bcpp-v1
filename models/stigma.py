@@ -7,12 +7,12 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Stigma (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     anticipate_stigma = models.CharField(
         verbose_name=("Would you be, or have you ever been,"
-                      " hesitant to take an HIV test due to fear of people’s "
+                      " hesitant to take an HIV test due to fear of people\'s "
                       "reaction if you tested positive for HIV."),
         max_length=25,
         choices=AGREE_STRONGLY,
@@ -49,7 +49,7 @@ class Stigma (BaseScheduledVisitModel):
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
-    
+
     history = AuditTrail()
 
     def get_absolute_url(self):

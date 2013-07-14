@@ -1,20 +1,16 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import ALCOHOL_CHOICE, YES_NO_DONT_ANSWER
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class SubstanceUse (BaseScheduledVisitModel):
-    
-    """CS002"""
-    
+
     alcohol = models.CharField(
-        verbose_name=("In the past month, how often did you consume alcohol?"
-                      "  [If you don't know exactly, give your best guess.]"),
+        verbose_name=("In the past month, how often did you consume alcohol?"),
         max_length=25,
         choices=ALCOHOL_CHOICE,
-        help_text="",
+        help_text="If participant does not know exactly, ask to give a best guess.",
         )
 
     smoke = models.CharField(
@@ -24,11 +20,7 @@ class SubstanceUse (BaseScheduledVisitModel):
         help_text="",
         )
 
-    
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_substanceuse_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

@@ -18,6 +18,9 @@ class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
 
+    def get_subject_type(self):
+        return 'subject'
+
     def deserialize_get_missing_fk(self, attrname):
         if attrname == 'household_member':
             registered_subject = RegisteredSubject.objects.get(subject_identifier=self.subject_identifier)

@@ -8,15 +8,10 @@ from subject_off_study_mixin import SubjectOffStudyMixin
 
 class BaseSubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
 
-    registered_subject = models.ForeignKey(RegisteredSubject, editable=False)
-
     household_member = models.OneToOneField(HouseholdMember)
-
-    survey = models.ForeignKey(Survey)
-
-    is_signed = models.BooleanField(
-        default=False
-        )
+    survey = models.OneToOneField(Survey)
+    is_signed = models.BooleanField(default=False)
+    registered_subject = models.OneToOneField(RegisteredSubject, editable=False, null=True)
 
     def __unicode__(self):
         return self.subject_identifier
@@ -30,40 +25,15 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
 
     def post_save_update_hsm_status(self, **kwargs):
         using = kwargs.get('using', None)
-        hsm = self.household_member
-        hsm.member_status = 'CONSENTED'
-        hsm.save(using=using)
-        rs = self.registered_subject
-        rs.registration_status = 'consented'
-        rs.save(using=using)
-        if self.registered_subject.pk != self.household_member.registered_subject.pk:
-            raise TypeError('Expected self.registered_subject.pk == self.household_member.registered_subject.pk. Got {0} != {1}.'.format(self.registered_subject.pk, self.household_member.registered_subject.pk))
+        self.household_member.member_status = 'consented'
+        self.household_member.save(using=using)
+        self.registered_subject.registration_status = 'consented'
+        self.registered_subject.save(using=using)
+#        if self.registered_subject.pk != self.household_member.registered_subject.pk:
+#            raise TypeError('Expected self.registered_subject.pk == self.household_member.registered_subject.pk. Got {0} != {1}.'.format(self.registered_subject.pk, self.household_member.registered_subject.pk))
 
     def dispatch_container_lookup(self, using=None):
         return (('bcpp_household', 'household'), 'household_member__household_structure__household__household_identifier')
-
-    def household_structure(self):
-        return unicode(self.household_member.household_structure)
-
-    def hiv_result(self):
-        #return hiv_result.household_hiv_result_option
-        return self.subject_hiv_result__household_hiv_result_option
-
-    def art_status(self):
-        if self.subject_hiv_result.household_hiv_result_option.result_option == 'A':
-            art_status = "N/A"
-        else:
-            art_status = self.subject_art_history.art_status
-        return art_status
-
-    def calendar_absolute_url(self):
-        return "/admin%s" % self.get_absolute_url()
-
-    def calendar_datetime(self):
-        return self.consent_datetime
-
-    def calendar_label(self):
-        return '%s: %s [%s]' % (self.__unicode__(), self.first_name, self.initials)
 
     class Meta:
         abstract = True

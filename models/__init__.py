@@ -24,7 +24,7 @@ from baseline_household_survey import BaselineHouseholdSurvey
 #CE003
 from cea_enrolment_checklist import CeaEnrolmentChecklist
 #CS008
-from cs_enrolment_checklist import CsEnrolmentChecklist
+from enrolment_checklist import EnrolmentChecklist
 
 
 #CS002
@@ -57,7 +57,7 @@ from stigma import Stigma
 from stigma_opinion import StigmaOpinion
 from positive_participant import PositiveParticipant
 from access_to_care import AccessToCare
-from todays_hiv_result import TodaysHivResult
+from hiv_result import HivResult
 from pregnancy import Pregnancy
 from hiv_result_documentation import HivResultDocumentation
 

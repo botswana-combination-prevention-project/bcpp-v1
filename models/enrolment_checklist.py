@@ -6,7 +6,7 @@ from bhp_base_model.validators import datetime_not_before_study_start, datetime_
 from bhp_registration.models import BaseRegisteredSubjectModel
 
 
-class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
+class EnrolmentChecklist (BaseRegisteredSubjectModel):
 
     """CS008"""
 
@@ -58,31 +58,34 @@ class CsEnrolmentChecklist (BaseRegisteredSubjectModel):
         help_text="if 'NO (or don't want to answer)' STOP participant cannot be enrolled.",
         )
 
-    date_minor_signed = models.DateTimeField(
-        verbose_name="[Interviewer] Date study ASSENT signed:",
-        max_length=25,
-        null=True,
-        blank=True,
-        help_text="For participants, aged 16 and 17 years only. If not signed, STOP participant cannot be enrolled.",
-        )
+#     date_minor_signed = models.DateTimeField(
+#         verbose_name="[Interviewer] Date study ASSENT signed:",
+#         max_length=25,
+#         null=True,
+#         blank=True,
+#         help_text="For participants, aged 16 and 17 years only. If not signed, STOP participant cannot be enrolled.",
+#         )
+# 
+#     date_guardian_signed = models.DateTimeField(
+#         verbose_name="Date/Time study PARENT/GUARDIAN PERMISSION signed",
+#         max_length=25,
+#         null=True,
+#         blank=True,
+#         help_text=("For participants, aged 16 and 17 years only. If not signed, STOP participant cannot"
+#                    " be enrolled. END here for participants age 16 and 17 years"),
+#         )
 
-    date_guardian_signed = models.DateTimeField(
-        verbose_name="Date/Time study PARENT/GUARDIAN PERMISSION signed",
-        max_length=25,
-        null=True,
-        blank=True,
-        help_text=("For participants, aged 16 and 17 years only. If not signed, STOP participant cannot"
-                   " be enrolled. END here for participants age 16 and 17 years"),
-        )
-
-    date_consent_signed = models.DateTimeField(
-        verbose_name="Date/Time study CONSENT signed",
-        max_length=25,
-        help_text="If not signed, STOP participant cannot be enrolled.",
-        )
+#     date_consent_signed = models.DateTimeField(
+#         verbose_name="Date/Time study CONSENT signed",
+#         max_length=25,
+#         help_text="If not signed, STOP participant cannot be enrolled.",
+#         )
 
     history = AuditTrail()
 
+    def get_registration_datetime(self):
+        return self.registration_datetime
+
     class Meta:
         app_label = "bcpp_subject"
-        verbose_name = "CS Enrolment Checklist"
+        verbose_name = "Enrolment Checklist"
