@@ -9,7 +9,7 @@ from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import EncryptedCharField, EncryptedTextField, EncryptedDecimalField
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
-from gps_device import GpsDevice
+# from gps_device import GpsDevice
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -53,9 +53,9 @@ class Household(BaseDispatchSyncUuidModel):
         default=0,
         )
 
-    gps_device = models.OneToOneField(GpsDevice,
-        help_text=_("select your GPS device"),
-        )
+#     gps_device = models.OneToOneField(GpsDevice,
+#         help_text=_("select your GPS device"),
+#         )
 
     gps_waypoint = models.CharField(
         verbose_name=_('Waypoint'),
@@ -107,11 +107,11 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=_("provide the CSO number or leave BLANK."),
         )
 
-    village = EncryptedCharField(
-        verbose_name=_("Village"),
-        editable=False,
-        db_index=True,
-        )
+#     village = EncryptedCharField(
+#         verbose_name=_("Village"),
+#         editable=False,
+#         db_index=True,
+#         )
 
     ward_section = models.CharField(
         max_length=25,
@@ -166,7 +166,7 @@ class Household(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.village = self.ward.village_name
+            #self.village = self.ward.village_name
             device = Device()
             identifier = Identifier()
             self.household_identifier = identifier.get_identifier()

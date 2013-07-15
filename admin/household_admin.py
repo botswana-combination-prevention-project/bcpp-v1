@@ -14,7 +14,6 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     list_max_show_all = 1000
 
     fields = (
-        'gps_device',
         'gps_waypoint',
         'gps_datetime',
         'gps_point_1',
@@ -23,7 +22,6 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
         'gps_point_21',
         'was_surveyed_previously',
         'cso_number',
-#        'village',
         'ward',
         'comment')
 
@@ -33,11 +31,11 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
 #    filter_horizontal = ('ward',)
 
-    list_display = ('household_identifier', 'cso_number', 'village', 'ward', 'ward_section', 'created')
+    list_display = ('household_identifier', 'cso_number', 'ward', 'ward_section', 'created')
 
-    list_filter = ('was_surveyed_previously', 'created', 'target', 'ward_section', 'ward', 'village')
+    list_filter = ('was_surveyed_previously', 'created', 'target', 'ward_section', 'ward')
 
-    search_fields = ('household_identifier', 'cso_number', 'village', 'ward', 'ward_section', 'id')
+    search_fields = ('household_identifier', 'cso_number', 'ward', 'ward_section', 'id')
 
     readonly_fields = ('household_identifier',)
 
