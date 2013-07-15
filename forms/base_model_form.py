@@ -40,12 +40,12 @@ class BaseModelForm(forms.ModelForm):
                     RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
                     self.fields['registered_subject'].queryset = RegisteredSubject.objects.none()
         # translation
-        self.insert_translation_attributes()
+        #self.insert_translation_help_text_attributes()
 
-    def insert_translation_attributes(self):
-        for k in self.fields.iterkeys():
-            self.fields[k].widget.attrs['translation'] = 'This test needs a translation'
-        return None
+#     def insert_translation_help_text_attributes(self):
+#         for k in self.fields.iterkeys():
+#             self.fields[k].translation_help_text = 'This is translation help text'
+#         return None
 
     def get_subject_identifier(self, cleaned_data):
         subject_identifier = None
