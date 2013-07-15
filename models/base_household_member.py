@@ -15,7 +15,7 @@ from bcpp_dashboard.forms.main import ParticipationForm
 
 class BaseHouseholdMember(BaseDispatchSyncUuidModel):
 
-    registered_subject = models.ForeignKey(RegisteredSubject, null=True)  # will always be set in post_save()
+    registered_subject = models.OneToOneField(RegisteredSubject, null=True)  # will always be set in post_save()
 
     internal_identifier = models.CharField(
         max_length=36,
@@ -79,31 +79,6 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
     def update_hiv_history_on_pre_save(self, **kwargs):
         """Updates from lab_tracker."""
         self.hiv_history = self.get_hiv_history()
-
-    def update_registered_subject_on_post_save(self, **kwargs):
-        using = kwargs.get('using', None)
-        if not self.internal_identifier:
-            self.internal_identifier = self.pk
-            # decide now, either access an existing registered_subject or create a new one
-            if RegisteredSubject.objects.using(using).filter(registration_identifier=self.internal_identifier).exists():
-                registered_subject = RegisteredSubject.objects.using(using).get(registration_identifier=self.internal_identifier)
-            else:
-                # define registered_subject now as the audit trail requires access to the registered_subject object
-                # even if no subject_identifier exists. That is, it is going to call
-                # get_subject_identifier().
-                registered_subject = RegisteredSubject.objects.using(using).create(
-                    created=self.created,
-                    first_name=self.first_name,
-                    initials=self.initials,
-                    gender=self.gender,
-                    subject_type='SUBJECT',
-                    registration_identifier=self.internal_identifier,
-                    registration_datetime=self.created,
-                    user_created=self.user_created,
-                    registration_status='MEMBER',)
-            # set registered_subject for this hsm
-            self.registered_subject = registered_subject
-            self.save(using=using)
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using', None)
