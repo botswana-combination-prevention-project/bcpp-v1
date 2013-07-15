@@ -2,28 +2,26 @@ from django.contrib import admin
 from bhp_base_admin.admin import BaseTabularInline
 from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare, 
-                                 HospitalAdmission, HivHealthCareCosts,
-                                 LabourMarketWages, Grant, CeaEnrolmentChecklist, 
+from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
+                                 HospitalAdmission, HivHealthCareCosts, CeaEnrolmentChecklist,
                                  CommunityEngagement, Education,
                                  HivMedicalCare, Circumcision, Circumcised,
-                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack, 
+                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack,
                                  Cancer, Tubercolosis,
                                  SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
                                  HouseholdComposition, Respondent, FutureHivTesting,
                                  HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm, 
-                                HospitalAdmissionForm, HivHealthCareCostsForm, LabourMarketWagesForm, 
+from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
+                                HospitalAdmissionForm, HivHealthCareCostsForm,
                                 CeaEnrolmentChecklistForm, CommunityEngagementForm,
-                                EducationForm, HivMedicalCareForm, 
+                                EducationForm, HivMedicalCareForm,
                                 CircumcisionForm, CircumcisedForm,
-                                ReproductiveHealthForm, MedicalDiagnosesForm, 
+                                ReproductiveHealthForm, MedicalDiagnosesForm,
                                 HeartAttackForm, CancerForm,
-                                TubercolosisForm, SubstanceUseForm, StigmaForm, 
-                                StigmaOpinionForm, PositiveParticipantForm, HouseholdCompositionForm, 
-                                FutureHivTestingForm,
-                                TodaysHivResultForm, HivResultDocumentationForm)
+                                TubercolosisForm, SubstanceUseForm, StigmaForm,
+                                StigmaOpinionForm, PositiveParticipantForm, HouseholdCompositionForm,
+                                FutureHivTestingForm, HivResultDocumentationForm)
 
 
 class QualityOfLifeAdmin(SubjectVisitModelAdmin):
@@ -142,45 +140,6 @@ class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
 admin.site.register(HivHealthCareCosts, HivHealthCareCostsAdmin)
 
 
-class GrantInlineAdmin(BaseTabularInline):
-    model = Grant
-
-
-class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
-
-    form = LabourMarketWagesForm
-    inlines = [GrantInlineAdmin, ]
-    fields = (
-        "subject_visit",
-        "employed",
-        "occupation",
-        "occupation_other",
-        "job_description_change",
-        "days_worked",
-        "monthly_income",
-        "salary_payment",
-        "household_income",
-        "other_occupation",
-        "other_occupation_other",
-        "govt_grant",
-        "nights_out",
-        "weeks_out",
-        "days_not_worked",
-        "days_inactivite",
-        )
-    radio_fields = {
-        "employed": admin.VERTICAL,
-        "occupation": admin.VERTICAL,
-        "monthly_income": admin.VERTICAL,
-        "salary_payment": admin.VERTICAL,
-        "household_income": admin.VERTICAL,
-        "other_occupation": admin.VERTICAL,
-        "govt_grant": admin.VERTICAL,
-        "weeks_out": admin.VERTICAL,
-        }
-admin.site.register(LabourMarketWages, LabourMarketWagesAdmin)
-
-
 class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
 
     form = CeaEnrolmentChecklistForm
@@ -247,26 +206,6 @@ class EducationAdmin(SubjectVisitModelAdmin):
                               " questions about what education and work you"
                               " may have done or are currently doing.")
 admin.site.register(Education, EducationAdmin)
-
-
-# class HivTestingSupplementalAdmin(SubjectVisitModelAdmin):
-#
-#     form = HivTestingSupplementalForm
-#     fields = (
-#         "subject_visit",
-#         'numhivtests',
-#         'wherehivtest',
-#         'whyhivtest',
-#         'whynohivtest',
-#         'hiv_pills',
-#         'arvshivtest',)
-#     radio_fields = {
-#         "wherehivtest": admin.VERTICAL,
-#         "whyhivtest": admin.VERTICAL,
-#         "whynohivtest": admin.VERTICAL,
-#         "hiv_pills": admin.VERTICAL,
-#         "arvshivtest": admin.VERTICAL}
-# admin.site.register(HivTestingSupplemental, HivTestingSupplementalAdmin)
 
 
 class FutureHivTestingAdmin(SubjectVisitModelAdmin):

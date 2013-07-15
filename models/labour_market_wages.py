@@ -3,9 +3,8 @@ from django.core.urlresolvers import reverse
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO_REFUSED
-from bcpp_subject.choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION, GRANT_TYPE
+from bcpp_subject.choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION
 from base_scheduled_visit_model import BaseScheduledVisitModel
-from my_base_uuid_model import MyBaseUuidModel
 
 
 class LabourMarketWages (BaseScheduledVisitModel):
@@ -121,32 +120,3 @@ class LabourMarketWages (BaseScheduledVisitModel):
         app_label = 'bcpp_subject'
         verbose_name = "Labour Market & Lost Wages"
         verbose_name_plural = "Labour Market & Lost Wages"
-
-
-class GrantType(MyBaseUuidModel):
-
-    grant_number = models.IntegerField(
-        verbose_name="How many of each type of grant do you receive?",
-        max_length=2,
-        )
-    grant_type = models.CharField(
-        verbose_name="Grant name",
-        choices=GRANT_TYPE,
-        max_length=34,
-        )
-    other_grant = OtherCharField()
-
-    class Meta:
-        abstract = True
-
-
-class Grant(GrantType):
-
-    labour_market_wages = models.ForeignKey(LabourMarketWages)
-
-    history = AuditTrail()
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        verbose_name = "Grants"
-        verbose_name_plural = "Grants"

@@ -83,11 +83,12 @@ class FormsTests(TestCase):
         self.assertEqual(appointment.registered_subject.pk, registered_subject.pk)
 
         subject_visit = SubjectVisitFactory(appointment=appointment)
-
+        n = 0
         for model_admin in admin.site._registry:
             if self.app_label == model_admin._meta.app_label:
                 m = get_model(model_admin._meta.app_label, model_admin._meta.object_name)
                 if issubclass(m, BaseScheduledVisitModel):
+                    n += 1
                     model_name = model_admin._meta.object_name
                     print('{0}_{1}_add'.format(model_admin._meta.app_label, model_name.lower()))
                     url = reverse('admin:{0}_{1}_add'.format(model_admin._meta.app_label, model_name.lower()))
@@ -105,5 +106,6 @@ class FormsTests(TestCase):
                     url = reverse('admin:{0}_{1}_change'.format(model_admin._meta.app_label, model_admin._meta.object_name.lower()), args=(model.id, ))
                     print('  url = {0}'.format(url))
                     print('  subject_visit.get_subject_identifier() = {0}'.format(model.subject_visit.get_subject_identifier()))
-                    print('  post url')
-                    response = self.client.post(url, )
+                    #print('  post url')
+                    #response = self.client.post(url, )
+        print('tested {0} forms'.format(n))

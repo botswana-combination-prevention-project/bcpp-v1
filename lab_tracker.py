@@ -5,11 +5,11 @@ from models import HivTestReview
 
 class SubjectHivLabTracker(HivLabTracker):
     models = [
-        (HivTestReview, 'hivtestdate', 'recordedhivresult', 'verbalhivresult'),
+        (HivTestReview, 'recorded_hiv_result', 'hiv_test_date', ),
         ]
 
     def get_default_value(self, group_name, subject_identifier, value_datetime):
         """Returns the a value if none is available."""
-        return 'UNKNOWN'
+        return 'UNK'
 
 lab_tracker.register(SubjectHivLabTracker)

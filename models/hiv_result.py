@@ -1,6 +1,6 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
-from bcpp.choices import HHHIVTEST_CHOICE, WHYNOHIVTESTING_CHOICE
+from bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -9,7 +9,7 @@ class HivResult (BaseScheduledVisitModel):
     hiv_result = models.CharField(
         verbose_name="Record today\'s HIV test result:",
         max_length=50,
-        choices=HHHIVTEST_CHOICE,
+        choices=HIV_RESULT,
         help_text="If participant declined HIV testing, please select a reason below.",
         )
 

@@ -1,12 +1,12 @@
 from datetime import datetime
 from django.db import models
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from subject_visit import SubjectVisit
-from my_base_uuid_model import MyBaseUuidModel
+from bhp_consent.models import BaseConsentedUuidModel
 from bcpp_household.models import Household
+from subject_visit import SubjectVisit
 
 
-class BaseScheduledVisitModel(MyBaseUuidModel):
+class BaseScheduledVisitModel(BaseConsentedUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 

@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp.choices import REASONCIRC_CHOICE, YES_NO_UNSURE, CIRCUMCISION_DAY, CIRCUMCISION_WEEK, CIRCUMCISION_MONTH, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE, YES_NO_DONT_ANSWER
-from base_circumcision import BaseCircumcision
 
 
 class Uncircumcised (BaseCircumcision):
@@ -80,12 +79,12 @@ class Uncircumcised (BaseCircumcision):
         verbose_name=("Where did you learn that circumcision services were "
                         "available free at most health facilities?"),
         max_length=15,
-        null=True, 
+        null=True,
         blank=True,
         choices=AWAREFREE_CHOICE,
         help_text="supplemental",
         )
-    
+
     history = AuditTrail()
 
     def get_absolute_url(self):
