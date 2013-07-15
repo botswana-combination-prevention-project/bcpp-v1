@@ -13,7 +13,7 @@ class SubjectAbsenteeEntryAdmin(BaseModelAdmin):
         'subject_absentee',
         'report_datetime',)
     radio_fields = {
-        "subject_absentee_reason": admin.VERTICAL,
+        "reason": admin.VERTICAL,
         "next_appt_datetime_source": admin.VERTICAL}
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
