@@ -22,8 +22,8 @@
                     {% if field.field.help_text %}
                         <p class="help">{{ field.field.help_text|safe }}</p>
                     {% endif %}
-                    {% if field.field.translation %}
-                        <p class="translation">{{ field.field.translation|safe }}</p>
+                    {% if field.field.translation_help_text %}
+                        <p class="help">{{ field.field.translation_help_text|safe }}</p>
                     {% endif %}
                 </div>
             {% endfor %}
