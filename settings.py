@@ -277,6 +277,7 @@ INSTALLED_APPS = (
     'bhp_visit_tracking',
     'bhp_appointment',
     'bhp_subject',
+    'bhp_subject_config',
     'bhp_supplemental_fields',
     'bhp_nmap',
     'bhp_data_manager',
@@ -297,6 +298,7 @@ INSTALLED_APPS = (
     'bhp_dispatch',
     'bhp_netbook',
     'bhp_household',
+    'bhp_household_member',
 #     'ph_dispenser',
     'bcpp',
     'bcpp_lab',
@@ -305,6 +307,7 @@ INSTALLED_APPS = (
     'bcpp_dashboard',
     'bcpp_stats',
     'bcpp_household',
+    'bcpp_household_member',
     'bcpp_survey',
 #     'bcpp_survey_dashboard',
 #     'bcpp_survey_lab',
@@ -352,6 +355,7 @@ APPOINTMENTS_PER_DAY_MAX = 20
 APPOINTMENTS_DAYS_FORWARD = 15
 
 SUBJECT_APP_LIST = ['bcpp_subject']
+DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
