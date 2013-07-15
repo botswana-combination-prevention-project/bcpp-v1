@@ -9,7 +9,6 @@ from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  ReproductiveHealth, MedicalDiagnoses, HeartAttack,
                                  Cancer, Tubercolosis, SubstanceUse, Stigma, 
                                  StigmaOpinion, PositiveParticipant, 
-                                 HouseholdComposition, Respondent, 
                                  HivResultDocumentation)
 
 
@@ -182,18 +181,6 @@ class PositiveParticipantForm (BaseSubjectModelForm):
 
     class Meta:
         model = PositiveParticipant
-
-
-class HouseholdCompositionForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = HouseholdComposition
-
-
-class RespondentForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = Respondent
 
 
 class HeartAttackForm (BaseSubjectModelForm):

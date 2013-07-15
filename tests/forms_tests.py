@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.db.models import get_model
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from bhp_common.utils import convert_from_camel
 from bhp_lab_tracker.classes import lab_tracker
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
@@ -84,14 +85,19 @@ class FormsTests(TestCase):
 
         subject_visit = SubjectVisitFactory(appointment=appointment)
         n = 0
-        for model_admin in admin.site._registry:
-            if self.app_label == model_admin._meta.app_label:
-                m = get_model(model_admin._meta.app_label, model_admin._meta.object_name)
-                if issubclass(m, BaseScheduledVisitModel):
+        # collect inline models
+        inline_models = []
+        for model, model_admin in admin.site._registry.iteritems():
+            if self.app_label == model._meta.app_label:
+                inline_models = inline_models + [m.model for m in model_admin.inlines]
+        print('Inline models are {0}'.format(', '.join([m._meta.object_name for m in inline_models])))
+        for model, model_admin in admin.site._registry.iteritems():
+            if self.app_label == model._meta.app_label:
+                if issubclass(model, BaseScheduledVisitModel) and model not in inline_models:
                     n += 1
-                    model_name = model_admin._meta.object_name
-                    print('{0}_{1}_add'.format(model_admin._meta.app_label, model_name.lower()))
-                    url = reverse('admin:{0}_{1}_add'.format(model_admin._meta.app_label, model_name.lower()))
+                    model_name = model._meta.object_name
+                    print('{0}_{1}_add'.format(model._meta.app_label, model_name.lower()))
+                    url = reverse('admin:{0}_{1}_add'.format(model._meta.app_label, model_name.lower()))
                     response = self.client.get(url)
                     print('  assert response=200')
                     self.assertEqual(response.status_code, 200)
@@ -100,12 +106,28 @@ class FormsTests(TestCase):
                     factory_mod = __import__('bcpp_subject.tests.factories', fromlist=['{0}Factory'.format(model_name)])
                     factory = getattr(factory_mod, '{0}Factory'.format(model_name))
                     print('  instantiate the factory')
-                    model = factory(subject_visit=subject_visit)
-                    print('  subject_visit = {0}'.format(model.subject_visit))
-                    print('  get admin change url for pk={0}'.format(model.id))
-                    url = reverse('admin:{0}_{1}_change'.format(model_admin._meta.app_label, model_admin._meta.object_name.lower()), args=(model.id, ))
+                    model_instance = factory(subject_visit=subject_visit)
+                    print('  subject_visit = {0}'.format(model_instance.subject_visit))
+                    print('  get admin change url for pk={0}'.format(model_instance.id))
+                    url = reverse('admin:{0}_{1}_change'.format(model_instance._meta.app_label, model_instance._meta.object_name.lower()), args=(model_instance.id, ))
                     print('  url = {0}'.format(url))
-                    print('  subject_visit.get_subject_identifier() = {0}'.format(model.subject_visit.get_subject_identifier()))
+                    print('  subject_visit.get_subject_identifier() = {0}'.format(model_instance.subject_visit.get_subject_identifier()))
+                    if model_admin.inlines:
+                        for inline_admin in model_admin.inlines:
+                            print('  inline model {0}'.format(inline_admin.model))
+                            print('    {0}_{1}_add'.format(inline_admin.model._meta.app_label, inline_admin.model._meta.object_name.lower()))
+                            url = reverse('admin:{0}_{1}_add'.format(inline_admin.model._meta.app_label, inline_admin.model._meta.object_name.lower()))
+                            response = self.client.get(url)
+                            print('    assert response=200')
+                            self.assertEqual(response.status_code, 200)
+                            print('    assert template')
+                            self.assertTemplateUsed(response, 'admin/change_form.html')
+                            factory_mod = __import__('bcpp_subject.tests.factories', fromlist=['{0}Factory'.format(inline_admin.model._meta.object_name)])
+                            factory = getattr(factory_mod, '{0}Factory'.format(inline_admin.model._meta.object_name))
+                            print('    instantiate the factory {0}'.format(factory))
+                            factory(**{convert_from_camel(model_instance._meta.object_name): model_instance, 'subject_visit': model_instance.subject_visit})
+                            factory(**{convert_from_camel(model_instance._meta.object_name): model_instance, 'subject_visit': model_instance.subject_visit})
+
                     #print('  post url')
                     #response = self.client.post(url, )
         print('tested {0} forms'.format(n))

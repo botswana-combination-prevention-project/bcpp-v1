@@ -3,13 +3,10 @@ from subject_off_study import SubjectOffStudy
 from subject_visit import SubjectVisit
 from subject_locator import SubjectLocator
 from subject_death import SubjectDeath
-from base_scheduled_visit_model import BaseScheduledVisitModel
-
 #CS003
 from recent_partner import RecentPartner
 from second_partner import SecondPartner
 from third_partner import ThirdPartner
-
 #CE001
 from quality_of_life import QualityOfLife
 from resource_utilization import ResourceUtilization
@@ -18,16 +15,12 @@ from hospital_admission import HospitalAdmission
 from hiv_health_care_costs import HivHealthCareCosts
 from labour_market_wages import LabourMarketWages
 from grant import Grant
-
 #CS001
 from baseline_household_survey import BaselineHouseholdSurvey
-
 #CE003
 from cea_enrolment_checklist import CeaEnrolmentChecklist
 #CS008
 from enrolment_checklist import EnrolmentChecklist
-
-
 #CS002
 from residency_mobility import ResidencyMobility
 from demographics import Demographics
@@ -35,7 +28,6 @@ from community_engagement import CommunityEngagement
 from education import Education
 from hiv_testing_history import HivTestingHistory
 from hiv_test_review import HivTestReview
-# from hiv_testing_supplemental import HivTestingSupplemental
 from hiv_tested import HivTested
 from hiv_untested import HivUntested
 from future_hiv_testing import FutureHivTesting
@@ -61,13 +53,8 @@ from access_to_care import AccessToCare
 from hiv_result import HivResult
 from pregnancy import Pregnancy
 from hiv_result_documentation import HivResultDocumentation
-
-
 from subject_refusal import SubjectRefusal
 from subject_absentee import *
 from subject_absentee_entry import SubjectAbsenteeEntry
 from subject_moved import SubjectMoved
-
-
-#CS004
-from household_composition import HouseholdComposition, Respondent
+#from household_composition import HouseholdComposition, Respondent

@@ -14,10 +14,7 @@ class EnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "mental_capacity",
         "incarceration",
         "citizen",
-        "community_resident",
-        "date_minor_signed",
-        "date_guardian_signed",
-        "date_consent_signed",)
+        "community_resident")
     radio_fields = {
         "mental_capacity": admin.VERTICAL,
         "incarceration": admin.VERTICAL,

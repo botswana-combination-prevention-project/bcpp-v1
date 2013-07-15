@@ -11,4 +11,4 @@ class HivResultFactory(BaseScheduledModelFactory):
     subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
-    hiv_result = (('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate'), ('Declined', 'Participant declined testing'), ('Not performed', 'Test could not be performed (e.g. supply outage, technical problem)'))[0][0]
+    hiv_result = (('POS', 'HIV Positive (Reactive)'), ('NEG', 'HIV Negative (Non-reactive)'), ('IND', 'Indeterminate'), ('Declined', 'Participant declined testing'), ('Not performed', 'Test could not be performed (e.g. supply outage, technical problem)'))[0][0]

@@ -20,4 +20,6 @@ from months_partner_admin import *
 from hiv_test_review_admin import HivTestReviewAdmin
 from uncircumcised_admin import UncircumcisedAdmin
 from access_to_care_admin import AccessToCareAdmin
-from labour_market_wages_admin import LabourMarketWagesAdmin
+from labour_market_wages_admin import LabourMarketWagesAdmin, GrantInlineAdmin
+from enrolment_checklist_admin import EnrolmentChecklistAdmin
+from grant_admin import GrantAdmin

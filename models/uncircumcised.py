@@ -3,12 +3,11 @@ from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp.choices import REASONCIRC_CHOICE, YES_NO_UNSURE, CIRCUMCISION_DAY, CIRCUMCISION_WEEK, CIRCUMCISION_MONTH, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE, YES_NO_DONT_ANSWER
+from base_circumcision import BaseCircumcision
 
 
 class Uncircumcised (BaseCircumcision):
-    
-    """CS002"""
-    
+
     reason_circ = models.CharField(
         verbose_name="What is the main reason that you have not yet been circumcised?",
         max_length=15,

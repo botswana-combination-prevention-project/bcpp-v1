@@ -40,7 +40,7 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "expensive_access": admin.VERTICAL,
         "convenient_access": admin.VERTICAL,
         "whenever_access": admin.VERTICAL,
-        "local_hiv_care": admin.VERTICAL,}
+        "local_hiv_care": admin.VERTICAL}
     filter_horizontal = (
         "medical_care_access",)
     required_instructions = ("Read to Participant: Now, I will be asking you"

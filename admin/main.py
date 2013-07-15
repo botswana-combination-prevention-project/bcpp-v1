@@ -1,5 +1,4 @@
 from django.contrib import admin
-from bhp_base_admin.admin import BaseTabularInline
 from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
@@ -8,8 +7,7 @@ from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientC
                                  HivMedicalCare, Circumcision, Circumcised,
                                  ReproductiveHealth, MedicalDiagnoses, HeartAttack,
                                  Cancer, Tubercolosis,
-                                 SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant,
-                                 HouseholdComposition, Respondent, FutureHivTesting,
+                                 SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, FutureHivTesting,
                                  HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
@@ -20,7 +18,7 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 ReproductiveHealthForm, MedicalDiagnosesForm,
                                 HeartAttackForm, CancerForm,
                                 TubercolosisForm, SubstanceUseForm, StigmaForm,
-                                StigmaOpinionForm, PositiveParticipantForm, HouseholdCompositionForm,
+                                StigmaOpinionForm, PositiveParticipantForm,
                                 FutureHivTestingForm, HivResultDocumentationForm)
 
 
@@ -476,23 +474,23 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
 admin.site.register(PositiveParticipant, PositiveParticipantAdmin)
 
 
-class RespondentInlineAdmin(BaseTabularInline):
-    model = Respondent
-
-
-class HouseholdCompositionAdmin (SubjectVisitModelAdmin):
-
-    form = HouseholdCompositionForm
-    inlines = [RespondentInlineAdmin, ]
-    fields = (
-        'housecode',
-        'physical_add',
-        'coordinates',
-        'contact',
-        'phone_number',)
-    radio_fields = {
-        "contact": admin.VERTICAL, }
-admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)
+# class RespondentInlineAdmin(BaseTabularInline):
+#     model = Respondent
+# 
+# 
+# class HouseholdCompositionAdmin (SubjectVisitModelAdmin):
+# 
+#     form = HouseholdCompositionForm
+#     inlines = [RespondentInlineAdmin, ]
+#     fields = (
+#         'housecode',
+#         'physical_add',
+#         'coordinates',
+#         'contact',
+#         'phone_number',)
+#     radio_fields = {
+#         "contact": admin.VERTICAL, }
+# admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)
 
 
 class HivResultDocumentationAdmin (SubjectVisitModelAdmin):
