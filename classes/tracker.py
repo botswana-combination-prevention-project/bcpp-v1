@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, date
 from django.db.models import ForeignKey, OneToOneField, Max, get_model
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.exceptions import ImproperlyConfigured
@@ -386,6 +386,8 @@ class LabTracker(object):
             retval = instance.get_result_datetime(date_attr)
         else:
             retval = getattr(instance, date_attr)
+        #if isinstance(retval, date):
+        #    raise
         return retval
 
     def _get_tracker_result_value(self, instance, value_attr=None, **kwargs):
