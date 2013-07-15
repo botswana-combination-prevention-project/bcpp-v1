@@ -89,8 +89,13 @@ urlpatterns += patterns('',
     url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     )
 
-urlpatterns += staticfiles_urlpatterns()
+#urlpatterns += staticfiles_urlpatterns()
 
+
+if settings.DEBUG:
+    urlpatterns += patterns('django.contrib.staticfiles.views',
+        url(r'^static/(?P<path>.*)$', 'serve'),
+    )
 # from django.conf.urls.defaults import patterns, include, url
 # from django.contrib import admin
 # from django.conf import settings
