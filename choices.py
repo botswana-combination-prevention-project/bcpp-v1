@@ -205,18 +205,17 @@ EMPLOYMENT_CHOICE = (
         ('Don\'t want to answer','Don\'t want to answer'),
     )
 
-HHHIVTEST_CHOICE = (
-        ('Positive','Positive'),
-        ('Negative','Negative'),
-        ('Indeterminate','Indeterminate'),
-        ('Declined','Participant declined testing'),
-        ('Not performed','Test could not be performed (e.g. supply outage, technical problem)'),
+HIV_RESULT = (
+        ('POS', 'HIV Positive (Reactive)'),
+        ('NEG', 'HIV Negative (Non-reactive)'),
+        ('IND', 'Indeterminate'),
+        ('Declined', 'Participant declined testing'),
+        ('Not performed', 'Test could not be performed (e.g. supply outage, technical problem)'),
     )
 
 WHYNOHIVTESTING_CHOICE = (
         ('I already knew I am HIV positive','I already knew I am HIV positive'),
         ('I recently tested', 'I recently tested (I know my status)'),
-#         ('I was not asked to test','I was not asked to test'),
         ('I didn\'t believe I was at risk of getting HIV','I didn\'t believe I was at risk of getting HIV'),
         ('I am afraid to find out the result','I am afraid to find out the result'),
         ('I am afraid of what others would think of me','I am afraid of what others would think of me'),
@@ -229,26 +228,27 @@ WHYNOHIVTESTING_CHOICE = (
     )
 
 RECORDEDHIVRESULT_CHOICE = (
-        ('HIV-Negative','HIV Negative (Non-reactive)'),
-        ('HIV-Positive','HIV Positive (Reactive)'),
-        ('Indeterminate','Indeterminate'),
-        ('No result recorded','No result recorded'),
+        ('POS', 'HIV Positive (Reactive)'),
+        ('NEG', 'HIV Negative (Non-reactive)'),
+        ('IND', 'Indeterminate'),
+        ('No result recorded', 'No result recorded'),
     )
 
 WHENHIVTEST_CHOICE = (
-        ('In the last month','In the last month'),
-        ('1 to 5 months ago','1 to 5 months ago'),
-        ('6 to 12 months ago','6 to 12 months ago'),
-        ('more than 12 months ago','more than 12 months ago'),
-        ('I am not sure','I am not sure'),
-        ('Don\'t want to answer','Don\'t want to answer'),
+        ('In the last month', 'In the last month'),
+        ('1 to 5 months ago', '1 to 5 months ago'),
+        ('6 to 12 months ago', '6 to 12 months ago'),
+        ('more than 12 months ago', 'more than 12 months ago'),
+        ('I am not sure', 'I am not sure'),
+        ('Don\'t want to answer', 'Don\'t want to answer'),
     )
-    
+
 VERBALHIVRESULT_CHOICE = (
-        ('HIV-Negative','HIV Negative (Non-reactive)'),
-        ('HIV-Positive','HIV Positive (Reactive)'),
-        ('I am not sure','I am not sure'),
-        ('Don\'t want to answer','Don\'t want to answer'),
+        ('POS', 'HIV Positive (Reactive)'),
+        ('NEG', 'HIV Negative (Non-reactive)'),
+        ('IND', 'Indeterminate'),
+        ('I am not sure', 'I am not sure'),
+        ('Don\'t want to answer', 'Don\'t want to answer'),
     )
 
 WHEREHIVTEST_CHOICE = (
