@@ -64,6 +64,13 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
                     self.form._meta.exclude = exclude_supplemental_fields
         form = super(BaseModelAdmin, self).get_form(request, obj, **kwargs)
         form = self.auto_number(form)
+        form = self.insert_translation_help_text(form)
+        return form
+
+    def insert_translation_help_text(self, form):
+        WIDGET = 1
+        for fld in form.base_fields.iteritems():
+            fld[WIDGET].translation_help_text = unicode('translation')
         return form
 
     def auto_number(self, form):
@@ -73,5 +80,5 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
             auto_number = form._meta.auto_number
         if auto_number:
             for index, fld in enumerate(form.base_fields.iteritems()):
-                fld[WIDGET].label = '{0}. {1}'.format(index, fld[WIDGET].label)
+                fld[WIDGET].label = '{0}. {1}'.format(index + 1, fld[WIDGET].label)
         return form
