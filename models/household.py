@@ -9,28 +9,12 @@ from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import EncryptedCharField, EncryptedTextField, EncryptedDecimalField
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
-# from gps_device import GpsDevice
 
 
 class Household(BaseDispatchSyncUuidModel):
 
-    """ To find duplicates for cso and gps in SQL::
-
-            # duplicate cso_number
-            select cso_number, count(*)
-            from bcpp_household where cso_number is not null
-            group by cso_number
-            having count(*) > 1;
-
-            #duplicate gps
-            select gps_point_1, gps_point_11, gps_point_2, gps_point_21, count(*)
-            from bcpp_household
-            group by gps_point_1, gps_point_11, gps_point_2, gps_point_21
-            having count(*) > 1;
-    """
-
     household_identifier = models.CharField(
-        verbose_name=_('Household Identifier'),
+        verbose_name='Household Identifier',
         max_length=25,
         unique=True,
         help_text=_("Household identifier"),
@@ -53,18 +37,14 @@ class Household(BaseDispatchSyncUuidModel):
         default=0,
         )
 
-#     gps_device = models.OneToOneField(GpsDevice,
-#         help_text=_("select your GPS device"),
-#         )
-
     gps_waypoint = models.CharField(
-        verbose_name=_('Waypoint'),
+        verbose_name='Waypoint',
         max_length=25,
         help_text=_("the waypoint number is taken from the GPS reading"),
         )
 
     gps_datetime = models.DateTimeField(
-        verbose_name=_('GPS Date/Time'),
+        verbose_name='GPS Date/Time',
         help_text=_("Date format YYYY-MM-DD, Time format is 24hr time HH:MM"),
         )
 
@@ -107,12 +87,6 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=_("provide the CSO number or leave BLANK."),
         )
 
-#     village = EncryptedCharField(
-#         verbose_name=_("Village"),
-#         editable=False,
-#         db_index=True,
-#         )
-
     ward_section = models.CharField(
         max_length=25,
         null=True,
@@ -124,9 +98,9 @@ class Household(BaseDispatchSyncUuidModel):
         max_length=25,
         db_index=True,
         )
-    # this is a flag for follow-up / missing data
+
     was_surveyed_previously = models.CharField(
-        verbose_name=_("Was this household surveyed previously?"),
+        verbose_name="Was this household surveyed previously?",
         max_length=10,
         choices=YES_NO,
         default='No',
@@ -209,15 +183,6 @@ class Household(BaseDispatchSyncUuidModel):
     # We can't call a method from a template so wrap the method within a property
     lat = property(gps_lat)
     lon = property(gps_lon)
-
-    def get_absolute_url(self):
-        return "/bcpp_household/household/{0}/".format(self.id)
-
-    def calendar_datetime(self):
-        return self.created
-
-    def calendar_label(self):
-        return self.__unicode__()
 
     def is_dispatch_container_model(self):
         return True

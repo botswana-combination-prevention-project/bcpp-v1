@@ -17,7 +17,6 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household":
             kwargs["queryset"] = Household.objects.filter(id__exact=request.GET.get('household', 0))
-
         return super(HouseholdStructureAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = (

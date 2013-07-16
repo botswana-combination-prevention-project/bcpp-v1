@@ -1,8 +1,9 @@
 from django import forms
+from bhp_base_form.forms import BaseModelForm
 from bcpp_household.models import Household
 
 
-class HouseholdForm(forms.ModelForm):
+class HouseholdForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data

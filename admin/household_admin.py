@@ -9,7 +9,6 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     form = HouseholdForm
     date_hierarchy = 'modified'
-
     list_per_page = 15
     list_max_show_all = 1000
 
@@ -26,10 +25,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
         'comment')
 
     radio_fields = {
-#        'village': admin.VERTICAL,
         'was_surveyed_previously': admin.VERTICAL, }
-
-#    filter_horizontal = ('ward',)
 
     list_display = ('household_identifier', 'cso_number', 'ward', 'ward_section', 'created')
 

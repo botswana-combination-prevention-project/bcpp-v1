@@ -1,11 +1,11 @@
 from datetime import datetime
 from django import forms
 from django.conf import settings
-#from bhp_dispatch.helpers import is_dispatched
+from bhp_base_form.forms import BaseModelForm
 from bcpp_household.models import HouseholdStructure
 
 
-class HouseholdStructureForm(forms.ModelForm):
+class HouseholdStructureForm(BaseModelForm):
 
     def clean(self):
 
