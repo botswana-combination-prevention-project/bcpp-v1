@@ -24,3 +24,4 @@ from access_to_care_admin import AccessToCareAdmin
 from labour_market_wages_admin import LabourMarketWagesAdmin, GrantInlineAdmin
 from enrolment_checklist_admin import EnrolmentChecklistAdmin
 from grant_admin import GrantAdmin
+from reproductive_health_admin import ReproductiveHealthAdmin
