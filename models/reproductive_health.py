@@ -1,7 +1,9 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
-from bhp_common.choices import YES_NO
+from bhp_common.choices import YES_NO, YES_NO_UNSURE
+from bhp_base_model.fields import OtherCharField
+from bcpp_list.models import FamilyPlanning
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -16,8 +18,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
                       " early in pregnancy (prior to 20 weeks)."),
         max_length=2,
         default=0,
-        help_text=("Note: If participant does not want to answer, please record 0. "
-                   "If no children, skip questions 84-87."),
+        help_text="",
         )
     
     menopause = models.CharField(
@@ -27,7 +28,24 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         help_text="this also refers to pre-menopause",
         )
     
-    
+    family_planning = models.ManyToManyField(FamilyPlanning,
+        verbose_name=("In the past 12 months, have you used any methods to prevent"
+                      " pregnancy ?"),
+        null=True,
+        blank=True,
+        help_text="check all that apply",
+        )
+    family_planning_other = OtherCharField()
+
+    currently_pregnant = models.CharField(
+        verbose_name="Are you currently pregnant?",
+        null=True,
+        blank=True,
+        max_length=25,
+        choices=YES_NO_UNSURE,
+        help_text="",
+        )
+
     history = AuditTrail()
 
     def get_absolute_url(self):
