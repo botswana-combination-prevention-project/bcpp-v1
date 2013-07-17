@@ -122,7 +122,7 @@ USE_I18N = True
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
-USE_L10N = False
+USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -242,7 +242,9 @@ INSTALLED_APPS = (
     'bhp_data_manager',
     'bhp_base_admin',
     'bhp_base_form',
+    'bhp_supplemental_fields',
     'bhp_variables',
+    'bhp_site_edc',
     'bhp_research_protocol',
     'bhp_sync',
     'bhp_device',
@@ -287,6 +289,7 @@ INSTALLED_APPS = (
 #     'bhp_list',
     'bhp_context',
 #     'bhp_statistics',
+    'bhp_birt_reports',
     'bhp_using',
     'bhp_contact',
     'bhp_dashboard',
@@ -357,11 +360,16 @@ APPOINTMENTS_DAYS_FORWARD = 15
 SUBJECT_APP_LIST = ['bcpp_subject']
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
+#Reports settings
+REPORTS_TEMPLATES_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/'
+REPORTS_JAR_PATH = '~/Documents/birtreport_generator.jar'
+REPORTS_OUTPUT_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/bhp_birt_reports/templates/' 
+
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
-#KEY_PATH = os.path.join(DIRNAME, 'keys')
-KEY_PATH = '/Volumes/bhp066/keys'
+KEY_PATH = os.path.join(DIRNAME, 'keys')
+# KEY_PATH = '/Volumes/bhp066/keys'
 #FIELD_MAX_LENGTH='default'
 FIELD_MAX_LENGTH = 'migration'
 
