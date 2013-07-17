@@ -172,7 +172,7 @@ class FemaleReproductiveRuleGroup(RuleGroup):
             predicate=('gender', 'equals', 'm'),
             consequence='not_required',
             alternative='new'),
-        target_model=['reproductivehealth', 'pregnancy'])
+        target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -186,10 +186,25 @@ class ReproductiveRuleGroup(RuleGroup):
 
     menopause = ScheduledDataRule(
         logic=Logic(
-            predicate=('menopause', 'equals', 'No'),
+            predicate=('menopause', 'equals', 'Yes'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['pregnancy'])
+    
+    currently_pregnant = ScheduledDataRule(
+        logic=Logic(
+            predicate=('currently_pregnant', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['pregnancy'])
+    
+    pregnant = ScheduledDataRule(
+        logic=Logic(
+            predicate=('currently_pregnant', 'equals', 'No'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['nonpregnancy'])
+    
 
     class Meta:
         app_label = 'bcpp_subject'
