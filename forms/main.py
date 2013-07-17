@@ -6,7 +6,7 @@ from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  CeaEnrolmentChecklist, EnrolmentChecklist,
                                  CommunityEngagement, Education,
                                  HivMedicalCare, Circumcision, Circumcised,
-                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack,
+                                 MedicalDiagnoses, HeartAttack,
                                  Cancer, Tubercolosis, SubstanceUse, Stigma, 
                                  StigmaOpinion, PositiveParticipant, 
                                  HivResultDocumentation)
@@ -121,12 +121,6 @@ class CircumcisedForm (BaseSubjectModelForm):
 
     class Meta:
         model = Circumcised
-
-
-class ReproductiveHealthForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = ReproductiveHealth
 
 
 class MedicalDiagnosesForm (BaseSubjectModelForm):
