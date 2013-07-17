@@ -290,23 +290,6 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
 admin.site.register(Circumcised, CircumcisedAdmin)
 
 
-class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
-
-    form = ReproductiveHealthForm
-    fields = (
-        "subject_visit",
-        "number_children",
-        "menopause",
-        )
-    radio_fields = {
-        "menopause": admin.VERTICAL,}
-    required_instructions = ("Note to Interviewer: This section is to be"
-                             " completed by female participants. SKIP for male participants."
-                             "Read to Participant: I am now going to ask you questions"
-                             " about reproductive health and pregnancy.")
-admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)
-
-
 class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
 
     form = MedicalDiagnosesForm
