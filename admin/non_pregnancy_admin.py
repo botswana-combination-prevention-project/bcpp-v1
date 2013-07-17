@@ -16,7 +16,6 @@ class NonPregnancyAdmin(SubjectVisitModelAdmin):
         'preg_arv',)
     radio_fields = {
         "more_children": admin.VERTICAL,
-        "anc_reg": admin.VERTICAL,
         "anc_last_pregnancy": admin.VERTICAL,
         "hiv_last_pregnancy": admin.VERTICAL,
         "preg_arv": admin.VERTICAL, }
