@@ -17,6 +17,7 @@ class FutureHivTesting (BaseScheduledVisitModel):
     prefer_hivtest = models.CharField(
         verbose_name="In the future, where would you prefer to get tested for HIV?",
         max_length=70,
+        null=True,
         choices=HIVTESTPREFERENCE_CHOICE,
         help_text="supplemental",
         )
@@ -26,10 +27,12 @@ class FutureHivTesting (BaseScheduledVisitModel):
                       " you would prefer to receive your next HIV test ?"),
         max_length=35,
         choices=HIVTEST_PREFEREDTIME,
+        null=True,
         help_text="supplemental",
         )
     hiv_test_time_other = OtherCharField(
         verbose_name="If yes, specify:",
+        null=True,
         )
 
     hiv_test_week = models.CharField(
@@ -37,10 +40,12 @@ class FutureHivTesting (BaseScheduledVisitModel):
                       " that you would prefer to receive your next HIV test ?"),
         max_length=35,
         choices=HIVTEST_PREFEREDWEEK,
+        null=True,
         help_text="supplemental",
         )
     hiv_test_week_other = OtherCharField(
         verbose_name="If yes, specify:",
+        null=True,
         )
 
     hiv_test_year = models.CharField(
@@ -48,10 +53,12 @@ class FutureHivTesting (BaseScheduledVisitModel):
                       " you would prefer to receive your next HIV test?"),
         max_length=25,
         choices=HIVTEST_PREFEREDYEAR,
+        null=True,
         help_text="supplemental",
         )
     hiv_test_year_other = OtherCharField(
         verbose_name="If yes, specify:",
+        null=True,
         )
     
     history = AuditTrail()

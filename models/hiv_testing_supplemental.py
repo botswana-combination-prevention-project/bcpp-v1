@@ -13,6 +13,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
                       " HIV with pills called antiretroviral therapy or ARVs [or HAART]?"),
         max_length=25,
         choices=YES_NO_UNSURE,
+        null=True,
         help_text="supplemental",
         )
 
@@ -22,7 +23,6 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
                       " to live longer?"),
         max_length=25,
         null=True,
-        blank=True,
         choices=YES_NO_UNSURE,
         help_text="supplemental",
         )

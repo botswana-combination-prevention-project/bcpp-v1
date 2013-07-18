@@ -19,10 +19,10 @@ class ResidencyMobility (BaseScheduledVisitModel):
         )
 
     forteen_nights = models.CharField(
-        verbose_name=_("In the past 12 months, have you typically spent 14 or more nights per month"
+        verbose_name=_(("In the past 12 months, have you typically spent 14 or more nights per month"
                       " in this community? [If moved into the community in the past 12 months, "
                       "then since moving in have you typically spent 14 or more nights per month"
-                      " in this community?]"),
+                      " in this community?]")),
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
         help_text="",

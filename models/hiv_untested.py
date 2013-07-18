@@ -2,7 +2,6 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import WHYNOHIVTESTING_CHOICE
-# from base_scheduled_visit_model import BaseScheduledVisitModel
 from hiv_testing_supplemental import HivTestingSupplemental
 
 
@@ -15,7 +14,6 @@ class HivUntested (HivTestingSupplemental):
                       " to today, what is the main reason why not?"),
         max_length=55,
         null=True,
-        blank=True,
         choices=WHYNOHIVTESTING_CHOICE,
         help_text="supplemental",
         )

@@ -60,3 +60,7 @@ from subject_absentee import *
 from subject_absentee_entry import SubjectAbsenteeEntry
 from subject_moved import SubjectMoved
 #from household_composition import HouseholdComposition, Respondent
+
+
+from pima import Pima
+from blood_draw import BloodDraw

@@ -92,7 +92,14 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         max_length=25,
         choices=FIRSTPARTNERHIV_CHOICE,
         null=True,
-        help_text="supplemental",
+        help_text="",
+        )
+    
+    partner_hiv_test = models.CharField(
+        verbose_name="Has your partner been tested for HIV in last 12 months",
+        choices=YES_NO_UNSURE,
+        max_length=15,
+        help_text="",
         )
 
     first_haart = models.CharField(

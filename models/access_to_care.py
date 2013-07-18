@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp.choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
@@ -11,7 +12,7 @@ class AccessToCare (BaseScheduledVisitModel):
     """CS002"""
 
     access_care = models.CharField(
-        verbose_name=("In the past year, where do you MOST OFTEN get"
+        verbose_name=_("In the past year, where do you MOST OFTEN get"
                       " medical care or treatment when you or someone in your family is sick or hurt?"),
         max_length=50,
         choices=WHEREACCESS_CHOICE,
@@ -23,7 +24,7 @@ class AccessToCare (BaseScheduledVisitModel):
         )
 
     medical_care_access = models.ManyToManyField(MedicalCareAccess,
-        verbose_name=("In the past year, where else have you obtained"
+        verbose_name=_("In the past year, where else have you obtained"
                       " medical care or treatment when you or someone in your family"
                       " is sick or hurt? (check all that apply)"),
         null=True,
@@ -34,7 +35,7 @@ class AccessToCare (BaseScheduledVisitModel):
         )
 
     overall_access = models.CharField(
-        verbose_name=("If I need medical care, I can get seen by an"
+        verbose_name=_("If I need medical care, I can get seen by an"
                         " appropriate health professional without any trouble."),
         max_length=25,
         choices=AGREE_STRONGLY,
@@ -43,7 +44,7 @@ class AccessToCare (BaseScheduledVisitModel):
         )
 
     emergency_access = models.CharField(
-        verbose_name="It is hard for me to get medical care in an emergency",
+        verbose_name=_("It is hard for me to get medical care in an emergency"),
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
@@ -51,7 +52,7 @@ class AccessToCare (BaseScheduledVisitModel):
         )
 
     expensive_access = models.CharField(
-        verbose_name=("Sometimes I go without the medical care I need because"
+        verbose_name=_("Sometimes I go without the medical care I need because"
                       " it is too expensive."),
         max_length=25,
         choices=AGREE_STRONGLY,
@@ -60,7 +61,7 @@ class AccessToCare (BaseScheduledVisitModel):
         )
 
     convenient_access = models.CharField(
-        verbose_name="Places where I can get medical care are very conveniently located.",
+        verbose_name=_("Places where I can get medical care are very conveniently located."),
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
@@ -68,7 +69,7 @@ class AccessToCare (BaseScheduledVisitModel):
         )
 
     whenever_access = models.CharField(
-        verbose_name="I am able to get medical care whenever I need it.",
+        verbose_name=_("I am able to get medical care whenever I need it."),
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
@@ -76,7 +77,7 @@ class AccessToCare (BaseScheduledVisitModel):
         )
     
     local_hiv_care = models.CharField(
-        verbose_name=("Would you be willing to come to the clinic within your "
+        verbose_name=_("Would you be willing to come to the clinic within your "
                       "community to receive HIV care and treatment, if " 
                       "available locally?"),
         max_length=25,
