@@ -3,7 +3,8 @@ from django.db import models
 from django.conf import settings
 from django.contrib import admin
 from bhp_common.utils import convert_from_camel
-from bhp_crypto.fields import EncryptedTextField, EncryptedDecimalField, EncryptedCharField, EncryptedAesCharField, EncryptedFirstnameField, EncryptedLastnameField, EncryptedOtherCharField, EncryptedIdentityField
+from bhp_crypto.fields import EncryptedTextField, EncryptedIntegerField, EncryptedDecimalField, EncryptedCharField, EncryptedAesCharField, EncryptedFirstnameField, EncryptedLastnameField, EncryptedOtherCharField, EncryptedIdentityField
+from bhp_visit_tracking.models import BaseVisitTracking
 
 
 admin.autodiscover()
@@ -43,6 +44,10 @@ def _add_field_to_factory(field):
     if not field.null == True and field.name not in ['id', 'subject_visit', 'user_created', 'user_modified', 'created', 'modified', 'hostname_created', 'hostname_modified']:
         if isinstance(field, (models.DecimalField, EncryptedDecimalField)):
             add = '2.5'
+        elif isinstance(field, (models.IntegerField, EncryptedIntegerField)):
+            add = '2'
+        elif isinstance(field, (models.FloatField, )):
+            add = '2.1234567'
         elif isinstance(field, (models.CharField, models.TextField, EncryptedTextField, EncryptedCharField, EncryptedAesCharField, EncryptedFirstnameField, EncryptedLastnameField, EncryptedOtherCharField, EncryptedIdentityField)):
             if field.choices:
                 add = '{0}[0][0]'.format(field.choices)
@@ -66,7 +71,19 @@ def _add_field_to_factory(field):
     return (add_field, add_import)
 
 
-def _create_file(fname, model_admin):
+def _create_file_for_uuid_model(fname, model_admin):
+    app_label = model_admin._meta.app_label
+    model_name = model_admin._meta.object_name
+    import_content = ('import factory\n'
+             'from datetime import date, datetime\n'
+             'from bhp_base_model.tests.factories import BaseUuidModelFactory\n'
+             'from {app_label}.models import {model_name}').format(app_label=app_label, model_name=model_name)
+    class_content = ('\n\nclass {model_name}Factory(BaseUuidModelFactory):\n'
+             '    FACTORY_FOR = {model_name}').format(app_label=app_label, model_name=model_name)
+    return import_content, class_content
+
+
+def _create_file_for_scheduled_model(fname, model_admin):
     app_label = model_admin._meta.app_label
     model_name = model_admin._meta.object_name
     import_content = ('import factory\n'
@@ -77,6 +94,25 @@ def _create_file(fname, model_admin):
     class_content = ('\n\nclass {model_name}Factory(BaseScheduledModelFactory):\n'
              '    FACTORY_FOR = {model_name}\n\n'
              '    subject_visit = factory.SubFactory(SubjectVisitFactory)').format(app_label=app_label, model_name=model_name)
+    return import_content, class_content
+
+
+def _create_file(fname, model_admin, uuid=False, scheduled=False):
+    app_label = model_admin._meta.app_label
+    model_name = model_admin._meta.object_name
+    if not uuid and not scheduled:
+        for field in models.get_model(app_label, model_name)._meta.fields:
+            if isinstance(field, BaseVisitTracking):
+                scheduled = True
+                break
+        if not scheduled:
+            uuid = True
+    if uuid:
+        import_content, class_content = _create_file_for_uuid_model(fname, model_admin)
+    elif scheduled:
+        import_content, class_content = _create_file_for_scheduled_model(fname, model_admin)
+    else:
+        raise
     field_content = ''
     for field in model_admin._meta.fields:
         add_content = _add_field_to_factory(field)
