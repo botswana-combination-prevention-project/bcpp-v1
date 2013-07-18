@@ -1,0 +1,442 @@
+# -*- coding: utf-8 -*-
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
+
+
+class Migration(SchemaMigration):
+
+    def forwards(self, orm):
+        # Deleting field 'HouseholdAudit.gps_point_21'
+        db.delete_column('bcpp_household_household_audit', 'gps_point_21')
+
+        # Deleting field 'HouseholdAudit.gps_point_1'
+        db.delete_column('bcpp_household_household_audit', 'gps_point_1')
+
+        # Deleting field 'HouseholdAudit.gps_point_2'
+        db.delete_column('bcpp_household_household_audit', 'gps_point_2')
+
+        # Deleting field 'HouseholdAudit.gps_point_11'
+        db.delete_column('bcpp_household_household_audit', 'gps_point_11')
+
+        # Adding field 'HouseholdAudit.gps_degrees_s'
+        db.add_column('bcpp_household_household_audit', 'gps_degrees_s',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_minutes_s'
+        db.add_column('bcpp_household_household_audit', 'gps_minutes_s',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_degrees_e'
+        db.add_column('bcpp_household_household_audit', 'gps_degrees_e',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_minutes_e'
+        db.add_column('bcpp_household_household_audit', 'gps_minutes_e',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_lon'
+        db.add_column('bcpp_household_household_audit', 'gps_lon',
+                      self.gf('django.db.models.fields.FloatField')(null=True),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_lat'
+        db.add_column('bcpp_household_household_audit', 'gps_lat',
+                      self.gf('django.db.models.fields.FloatField')(null=True),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_target_lon'
+        db.add_column('bcpp_household_household_audit', 'gps_target_lon',
+                      self.gf('django.db.models.fields.FloatField')(default=1),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_target_lat'
+        db.add_column('bcpp_household_household_audit', 'gps_target_lat',
+                      self.gf('django.db.models.fields.FloatField')(default=1),
+                      keep_default=False)
+
+        # Deleting field 'Household.gps_point_21'
+        db.delete_column('bcpp_household_household', 'gps_point_21')
+
+        # Deleting field 'Household.gps_point_1'
+        db.delete_column('bcpp_household_household', 'gps_point_1')
+
+        # Deleting field 'Household.gps_point_2'
+        db.delete_column('bcpp_household_household', 'gps_point_2')
+
+        # Deleting field 'Household.gps_point_11'
+        db.delete_column('bcpp_household_household', 'gps_point_11')
+
+        # Adding field 'Household.gps_degrees_s'
+        db.add_column('bcpp_household_household', 'gps_degrees_s',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_minutes_s'
+        db.add_column('bcpp_household_household', 'gps_minutes_s',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_degrees_e'
+        db.add_column('bcpp_household_household', 'gps_degrees_e',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_minutes_e'
+        db.add_column('bcpp_household_household', 'gps_minutes_e',
+                      self.gf('django.db.models.fields.CharField')(default=1, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_lon'
+        db.add_column('bcpp_household_household', 'gps_lon',
+                      self.gf('django.db.models.fields.FloatField')(null=True),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_lat'
+        db.add_column('bcpp_household_household', 'gps_lat',
+                      self.gf('django.db.models.fields.FloatField')(null=True),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_target_lon'
+        db.add_column('bcpp_household_household', 'gps_target_lon',
+                      self.gf('django.db.models.fields.FloatField')(default=1),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_target_lat'
+        db.add_column('bcpp_household_household', 'gps_target_lat',
+                      self.gf('django.db.models.fields.FloatField')(default=1),
+                      keep_default=False)
+
+
+    def backwards(self, orm):
+
+        # User chose to not deal with backwards NULL issues for 'HouseholdAudit.gps_point_21'
+        raise RuntimeError("Cannot reverse this migration. 'HouseholdAudit.gps_point_21' and its values cannot be restored.")
+        # Adding field 'HouseholdAudit.gps_point_1'
+        db.add_column('bcpp_household_household_audit', 'gps_point_1',
+                      self.gf('django.db.models.fields.CharField')(default=24, max_length=78L, db_index=True),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.gps_point_2'
+        db.add_column('bcpp_household_household_audit', 'gps_point_2',
+                      self.gf('django.db.models.fields.CharField')(default=26, max_length=78L, db_index=True),
+                      keep_default=False)
+
+
+        # User chose to not deal with backwards NULL issues for 'HouseholdAudit.gps_point_11'
+        raise RuntimeError("Cannot reverse this migration. 'HouseholdAudit.gps_point_11' and its values cannot be restored.")
+        # Deleting field 'HouseholdAudit.gps_degrees_s'
+        db.delete_column('bcpp_household_household_audit', 'gps_degrees_s')
+
+        # Deleting field 'HouseholdAudit.gps_minutes_s'
+        db.delete_column('bcpp_household_household_audit', 'gps_minutes_s')
+
+        # Deleting field 'HouseholdAudit.gps_degrees_e'
+        db.delete_column('bcpp_household_household_audit', 'gps_degrees_e')
+
+        # Deleting field 'HouseholdAudit.gps_minutes_e'
+        db.delete_column('bcpp_household_household_audit', 'gps_minutes_e')
+
+        # Deleting field 'HouseholdAudit.gps_lon'
+        db.delete_column('bcpp_household_household_audit', 'gps_lon')
+
+        # Deleting field 'HouseholdAudit.gps_lat'
+        db.delete_column('bcpp_household_household_audit', 'gps_lat')
+
+        # Deleting field 'HouseholdAudit.gps_target_lon'
+        db.delete_column('bcpp_household_household_audit', 'gps_target_lon')
+
+        # Deleting field 'HouseholdAudit.gps_target_lat'
+        db.delete_column('bcpp_household_household_audit', 'gps_target_lat')
+
+
+        # User chose to not deal with backwards NULL issues for 'Household.gps_point_21'
+        raise RuntimeError("Cannot reverse this migration. 'Household.gps_point_21' and its values cannot be restored.")
+        # Adding field 'Household.gps_point_1'
+        db.add_column('bcpp_household_household', 'gps_point_1',
+                      self.gf('django.db.models.fields.CharField')(default=24, max_length=78L, db_index=True),
+                      keep_default=False)
+
+        # Adding field 'Household.gps_point_2'
+        db.add_column('bcpp_household_household', 'gps_point_2',
+                      self.gf('django.db.models.fields.CharField')(default=26, max_length=78L, db_index=True),
+                      keep_default=False)
+
+
+        # User chose to not deal with backwards NULL issues for 'Household.gps_point_11'
+        raise RuntimeError("Cannot reverse this migration. 'Household.gps_point_11' and its values cannot be restored.")
+        # Deleting field 'Household.gps_degrees_s'
+        db.delete_column('bcpp_household_household', 'gps_degrees_s')
+
+        # Deleting field 'Household.gps_minutes_s'
+        db.delete_column('bcpp_household_household', 'gps_minutes_s')
+
+        # Deleting field 'Household.gps_degrees_e'
+        db.delete_column('bcpp_household_household', 'gps_degrees_e')
+
+        # Deleting field 'Household.gps_minutes_e'
+        db.delete_column('bcpp_household_household', 'gps_minutes_e')
+
+        # Deleting field 'Household.gps_lon'
+        db.delete_column('bcpp_household_household', 'gps_lon')
+
+        # Deleting field 'Household.gps_lat'
+        db.delete_column('bcpp_household_household', 'gps_lat')
+
+        # Deleting field 'Household.gps_target_lon'
+        db.delete_column('bcpp_household_household', 'gps_target_lon')
+
+        # Deleting field 'Household.gps_target_lat'
+        db.delete_column('bcpp_household_household', 'gps_target_lat')
+
+
+    models = {
+        'bcpp_household.contactlog': {
+            'Meta': {'object_name': 'ContactLog'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.contactlogitem': {
+            'Meta': {'object_name': 'ContactLogItem'},
+            'appointment_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'comment': ('django.db.models.fields.TextField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'contact_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'contact_log': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.ContactLog']"}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'information_provider': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'is_contacted': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'subject_status': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'try_again': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.gpsdevice': {
+            'Meta': {'object_name': 'GpsDevice'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
+            'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'gps_make': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'gps_model': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'gps_purchase_date': ('django.db.models.fields.DateField', [], {}),
+            'gps_purchase_price': ('django.db.models.fields.DecimalField', [], {'max_digits': '10', 'decimal_places': '2'}),
+            'gps_serial_number': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
+            'short_name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '35'})
+        },
+        'bcpp_household.household': {
+            'Meta': {'ordering': "['-household_identifier']", 'object_name': 'Household'},
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
+            'community': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'cso_number': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'device_id': ('django.db.models.fields.CharField', [], {'max_length': '2', 'null': 'True'}),
+            'gps_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'gps_degrees_e': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_degrees_s': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_lat': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
+            'gps_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
+            'gps_minutes_e': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_minutes_s': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_target_lat': ('django.db.models.fields.FloatField', [], {}),
+            'gps_target_lon': ('django.db.models.fields.FloatField', [], {}),
+            'gps_waypoint': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'hh_int': ('django.db.models.fields.IntegerField', [], {}),
+            'hh_seed': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25', 'db_index': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'section': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'sub_section': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'target': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'uploaded_map': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'was_surveyed_previously': ('django.db.models.fields.CharField', [], {'default': "'No'", 'max_length': '10'})
+        },
+        'bcpp_household.householdaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdAudit', 'db_table': "'bcpp_household_household_audit'"},
+            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
+            'community': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'cso_number': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'device_id': ('django.db.models.fields.CharField', [], {'max_length': '2', 'null': 'True'}),
+            'gps_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'gps_degrees_e': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_degrees_s': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_lat': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
+            'gps_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
+            'gps_minutes_e': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_minutes_s': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gps_target_lat': ('django.db.models.fields.FloatField', [], {}),
+            'gps_target_lon': ('django.db.models.fields.FloatField', [], {}),
+            'gps_waypoint': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'hh_int': ('django.db.models.fields.IntegerField', [], {}),
+            'hh_seed': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'section': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'sub_section': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'target': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'uploaded_map': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'was_surveyed_previously': ('django.db.models.fields.CharField', [], {'default': "'No'", 'max_length': '10'})
+        },
+        'bcpp_household.householdidentifier': {
+            'Meta': {'object_name': 'HouseholdIdentifier'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'device_id': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '36'}),
+            'is_derived': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'padding': ('django.db.models.fields.IntegerField', [], {'default': '4'}),
+            'sequence_app_label': ('django.db.models.fields.CharField', [], {'default': "'bhp_identifier'", 'max_length': '50'}),
+            'sequence_model_name': ('django.db.models.fields.CharField', [], {'default': "'sequence'", 'max_length': '50'}),
+            'sequence_number': ('django.db.models.fields.IntegerField', [], {}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.householdlog': {
+            'Meta': {'unique_together': "(('household', 'survey'),)", 'object_name': 'HouseholdLog'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.Household']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'survey': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_survey.Survey']"}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.householdlogaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogAudit', 'db_table': "'bcpp_household_householdlog_audit'"},
+            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdlog'", 'to': "orm['bcpp_household.Household']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'survey': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdlog'", 'to': "orm['bcpp_survey.Survey']"}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.householdlogentry': {
+            'Meta': {'unique_together': "(('household_log', 'report_datetime'),)", 'object_name': 'HouseholdLogEntry'},
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hbc': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_log': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.HouseholdLog']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'next_appt_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'next_appt_datetime_source': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.householdlogentryaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogEntryAudit', 'db_table': "'bcpp_household_householdlogentry_audit'"},
+            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hbc': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_log': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdlogentry'", 'to': "orm['bcpp_household.HouseholdLog']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'next_appt_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'next_appt_datetime_source': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.householdstructure': {
+            'Meta': {'unique_together': "(('household', 'survey'),)", 'object_name': 'HouseholdStructure'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.Household']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'member_count': ('django.db.models.fields.IntegerField', [], {}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'note': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
+            'survey': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_survey.Survey']"}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_household.householdstructureaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdStructureAudit', 'db_table': "'bcpp_household_householdstructure_audit'"},
+            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdstructure'", 'to': "orm['bcpp_household.Household']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
+            'member_count': ('django.db.models.fields.IntegerField', [], {}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'note': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
+            'survey': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdstructure'", 'to': "orm['bcpp_survey.Survey']"}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_survey.survey': {
+            'Meta': {'ordering': "['survey_name']", 'object_name': 'Survey'},
+            'chronological_order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'datetime_end': ('django.db.models.fields.DateTimeField', [], {}),
+            'datetime_start': ('django.db.models.fields.DateTimeField', [], {}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'survey_description': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '15', 'null': 'True', 'blank': 'True'}),
+            'survey_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15', 'db_index': 'True'}),
+            'survey_slug': ('django.db.models.fields.SlugField', [], {'max_length': '40'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        }
+    }
+
+    complete_apps = ['bcpp_household']

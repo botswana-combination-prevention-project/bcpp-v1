@@ -1,9 +1,33 @@
 from django import forms
+from django.conf import settings
+from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 from bhp_base_form.forms import BaseModelForm
+from bhp_map.classes import site_mapper
 from bcpp_household.models import Household
+site_mapper.autodiscover()
+
+
+def get_mapper():
+    mapper = site_mapper.get(settings.CURRENT_COMMUNITY)
+    return mapper()
 
 
 class HouseholdForm(BaseModelForm):
+
+    community = forms.ChoiceField(
+        label='Community',
+        initial=get_mapper().get_map_area(),
+        help_text="",
+        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer),
+        )
+
+    section = forms.ChoiceField(
+        label='Section',
+        choices=[choice for choice in get_mapper().get_sections_as_tuple()],
+        help_text="",
+        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer),
+        )
+
 
     def clean(self):
         cleaned_data = self.cleaned_data

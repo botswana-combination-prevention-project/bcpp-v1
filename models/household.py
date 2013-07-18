@@ -6,7 +6,8 @@ from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_common.choices import YES_NO
 from bhp_device.classes import Device
 from bhp_identifier.exceptions import IdentifierError
-from bhp_crypto.fields import EncryptedCharField, EncryptedTextField, EncryptedDecimalField
+from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField,
+                               EncryptedIntegerField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
 
@@ -48,55 +49,65 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=_("Date format YYYY-MM-DD, Time format is 24hr time HH:MM"),
         )
 
-    gps_point_1 = EncryptedDecimalField(
-        verbose_name='GPS S',
-        max_digits=10,
-        decimal_places=4,
-        default=24,
-        db_index=True,
+    gps_degrees_s = EncryptedIntegerField(
+        verbose_name='GPS Degrees S',
         )
 
-    gps_point_11 = EncryptedDecimalField(
-        verbose_name='Longitude',
+    gps_minutes_s = EncryptedDecimalField(
+        verbose_name='GPS Minutes S',
         max_digits=10,
         decimal_places=4,
-        db_index=True,
         )
 
-    gps_point_2 = EncryptedDecimalField(
-        verbose_name='GPS E',
-        max_digits=10,
-        decimal_places=4,
-        default=26,
-        db_index=True,
+    gps_degrees_e = EncryptedIntegerField(
+        verbose_name='GPS Degrees E',
         )
 
-    gps_point_21 = EncryptedDecimalField(
-        verbose_name='Latitude',
+    gps_minutes_e = EncryptedDecimalField(
+        verbose_name='GPS Minutes E',
         max_digits=10,
         decimal_places=4,
-        db_index=True,
+        )
+
+    gps_lon = models.FloatField(
+        verbose_name='longitude',
+        null=True,
+        editable=False,
+        )
+
+    gps_lat = models.FloatField(
+        verbose_name='latitude',
+        null=True,
+        editable=False,
+        )
+
+    gps_target_lon = models.FloatField(
+        verbose_name='target waypoint longitude',
+        editable=False,
+        )
+
+    gps_target_lat = models.FloatField(
+        verbose_name='target waypoint latitude',
+        editable=False,
         )
 
     cso_number = EncryptedCharField(
         verbose_name="CSO Number",
         blank=True,
         null=True,
-        # unique=True,
         db_index=True,
         help_text=_("provide the CSO number or leave BLANK."),
         )
 
-    ward_section = models.CharField(
+    community = models.CharField(
+        max_length=25)
+
+    section = models.CharField(
         max_length=25,
-        null=True,
-        blank=True,
         )
 
-    ward = models.CharField(
-        verbose_name="Ward",
+    sub_section = models.CharField(
         max_length=25,
-        db_index=True,
         )
 
     was_surveyed_previously = models.CharField(
@@ -140,7 +151,6 @@ class Household(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            #self.village = self.ward.village_name
             device = Device()
             identifier = Identifier()
             self.household_identifier = identifier.get_identifier()
@@ -148,6 +158,8 @@ class Household(BaseDispatchSyncUuidModel):
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
+        self.gps_lat = self.get_gps_lat()
+        self.gps_lon = self.get_gps_lon()
         super(Household, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -157,38 +169,30 @@ class Household(BaseDispatchSyncUuidModel):
         return self.household_identifier
 
     def gps(self):
-        return "S0{0} {1} E0{2} {3}".format(self.gps_point_1,
-                                        self.gps_point_11,
-                                        self.gps_point_2,
-                                        self.gps_point_21
-                                        )
+        return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
-    def gps_lat(self):
-        x = self.gps_point_2
-        y = self.gps_point_21
+    def get_gps_lat(self):
+        x = self.gps_degrees_s
+        y = self.gps_minutes_s
         if x and y:
             x = float(x)
             y = float(y)
-        return round((x) + (y / 60), 5)
+            return round((x) + (y / 60), 5)
+        return None
 
-    def gps_lon(self):
-        x = self.gps_point_1
-        y = self.gps_point_11
+    def get_gps_lon(self):
+        x = self.gps_degrees_e
+        y = self.gps_minutes_e
         if x and y:
             x = float(x)
             y = float(y)
             return -1 * round((x) + (y / 60), 5)
         return None
 
-    # We can't call a method from a template so wrap the method within a property
-    lat = property(gps_lat)
-    lon = property(gps_lon)
-
     def is_dispatch_container_model(self):
         return True
 
     def dispatched_as_container_identifier_attr(self):
-        """Return the field attrname of the identifier used for dispatch."""
         return 'household_identifier'
 
     def dispatch_container_lookup(self):

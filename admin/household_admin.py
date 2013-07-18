@@ -21,17 +21,19 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
         'gps_point_21',
         'was_surveyed_previously',
         'cso_number',
-        'ward',
+        'community',
+        'section',
+        'sub_section',
         'comment')
 
     radio_fields = {
         'was_surveyed_previously': admin.VERTICAL, }
 
-    list_display = ('household_identifier', 'cso_number', 'ward', 'ward_section', 'created')
+    list_display = ('household_identifier', 'cso_number', 'community', 'section', 'created')
 
-    list_filter = ('was_surveyed_previously', 'created', 'target', 'ward_section', 'ward')
+    list_filter = ('was_surveyed_previously', 'created', 'target', 'community', 'section',)
 
-    search_fields = ('household_identifier', 'cso_number', 'ward', 'ward_section', 'id')
+    search_fields = ('household_identifier', 'cso_number', 'community', 'section', 'id')
 
     readonly_fields = ('household_identifier',)
 
