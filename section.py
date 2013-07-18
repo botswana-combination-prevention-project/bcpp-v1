@@ -13,7 +13,7 @@ class SectionHouseholdView(BaseSectionView):
     section_name = 'household'
     section_display_name = 'Households'
     section_display_index = 10
-    section_template = 'section_household.html'
+    section_template = 'household_dashboard.html'
     add_model = Household
 
     def contribute_to_context(self, context):

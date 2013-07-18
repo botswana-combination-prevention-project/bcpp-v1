@@ -49,8 +49,10 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=_("Date format YYYY-MM-DD, Time format is 24hr time HH:MM"),
         )
 
-    gps_degrees_s = EncryptedIntegerField(
+    gps_degrees_s = EncryptedDecimalField(
         verbose_name='GPS Degrees S',
+        max_digits=10,
+        decimal_places=4,
         )
 
     gps_minutes_s = EncryptedDecimalField(
@@ -59,8 +61,10 @@ class Household(BaseDispatchSyncUuidModel):
         decimal_places=4,
         )
 
-    gps_degrees_e = EncryptedIntegerField(
+    gps_degrees_e = EncryptedDecimalField(
         verbose_name='GPS Degrees E',
+        max_digits=10,
+        decimal_places=4,
         )
 
     gps_minutes_e = EncryptedDecimalField(
