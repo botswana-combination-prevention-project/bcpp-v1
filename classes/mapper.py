@@ -231,6 +231,9 @@ class Mapper(object):
             self.set_sections()
         return self._sections
 
+    def get_sections_as_tuple(self):
+        return self.get_sections()
+
     def set_landmarks(self, tpl=None):
         if tpl:
             if not issubclass(tpl, (tuple, list)):
