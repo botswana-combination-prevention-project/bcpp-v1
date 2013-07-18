@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext_lazy as _
 
 YES_NO_DONT_ANSWER = (
         ('Yes','Yes'),
@@ -37,11 +38,11 @@ LASTSEX_CHOICE = (
 )
 
 LENGTHRESIDENCE_CHOICE = (
-        ('Less than 6 months','Less than 6 months'),
-        ('6 months to 12 months','6 months to 12 months'),
-        ('1 to 5 years','1 to 5 years'),
-        ('More than 5 years','More than 5 years'),
-        ('Don\'t want to answer','Don\'t want to answer'),
+        ('Less than 6 months',_('Less than 6 months')),
+        ('6 months to 12 months',_('6 months to 12 months')),
+        ('1 to 5 years',_('1 to 5 years')),
+        ('More than 5 years',_('More than 5 years')),
+        ('Don\'t want to answer',_('Don\'t want to answer')),
     )
 
 NIGHTSAWAY_CHOICE = (
