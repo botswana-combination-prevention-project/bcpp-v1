@@ -1,5 +1,4 @@
 import copy
-from datetime import datetime
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from bhp_consent.models import BaseConsentedUuidModel
@@ -121,7 +120,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     objects = BaseVisitTrackingManager()
 
     def save(self, *args, **kwargs):
-        self.subject_identifier = self.appointment.registered_subject.subject_identifier
+        self.subject_identifier = self.get_subject_identifier()
         super(BaseVisitTracking, self).save(*args, **kwargs)
 
     def get_visit_reason_no_follow_up_choices(self):
