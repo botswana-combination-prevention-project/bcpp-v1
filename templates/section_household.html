@@ -5,7 +5,22 @@
 {% block section_tiles %}
 
 <div id="tile_wrapper">
-   
+    {% block selection_tile%}
+     <div style="clear:left;">
+     {% if current_survey %}
+        Current survey is {{ current_survey }}
+     {% else %}
+        {{ survey_form }}
+     {% endif %}
+     {% if current_community %}
+        Current community is {{ current_community }}
+     {% else %}
+        {{ community_form }}
+     {% endif %}
+    </div>
+    {% endblock%}
+    
+    {% if current_survey and current_community%}
     {% block add_model_tile %}
         <div id="add_model_tile">
         <form method="GET" action="{% url add_model_opts|admin_urlname:'add' %}">
@@ -15,11 +30,8 @@
         <input type="submit" value="Add {{ add_model_name }}"  />
         </form></div>
     {% endblock %}
-    
-    {% block selection_tile%}
-    {{ community_form }}
-    {% endblock%}
-
+    {% endif %}
+ 
     {% block search_tile %}
         <div id="search_tile">
         <form method="POST" action="{% url 'section_search_url' section_name search_type %}">
