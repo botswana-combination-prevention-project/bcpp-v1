@@ -112,7 +112,7 @@ TIME_ZONE = 'Africa/Gaborone'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'tn'
 
 SITE_ID = 1
 
@@ -174,6 +174,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -193,6 +194,16 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(DIRNAME, 'bhp_templates'),
 )
+
+#langauage setting
+ugettext = lambda s:s
+LANGUAGES = (
+    ('tn', ugettext('Setswana')),
+)
+
+LOCALE_PATHS = (
+    '/Users/melissa/Documents/source/bhp066/locale/',)
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',
