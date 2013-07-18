@@ -45,6 +45,7 @@ from medical_diagnoses import MedicalDiagnoses
 from heart_attack import HeartAttack
 from cancer import Cancer
 from tubercolosis import Tubercolosis
+from sti import Sti
 from substance_use import SubstanceUse
 from stigma import Stigma
 from stigma_opinion import StigmaOpinion

@@ -4,10 +4,10 @@ from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
                                  HospitalAdmission, HivHealthCareCosts, CeaEnrolmentChecklist,
                                  CommunityEngagement, Education,
-                                 HivMedicalCare, Circumcision, Circumcised,
-                                 ReproductiveHealth, MedicalDiagnoses, HeartAttack,
-                                 Cancer, Tubercolosis,
-                                 SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, FutureHivTesting,
+                                 HivMedicalCare, Circumcision, Circumcised, 
+                                 MedicalDiagnoses, HeartAttack,Cancer, Sti,
+                                 Tubercolosis, SubstanceUse, Stigma, 
+                                 StigmaOpinion, PositiveParticipant, FutureHivTesting,
                                  HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
@@ -15,8 +15,8 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 CeaEnrolmentChecklistForm, CommunityEngagementForm,
                                 EducationForm, HivMedicalCareForm,
                                 CircumcisionForm, CircumcisedForm,
-                                ReproductiveHealthForm, MedicalDiagnosesForm,
-                                HeartAttackForm, CancerForm,
+                                MedicalDiagnosesForm,
+                                HeartAttackForm, CancerForm, StiForm,
                                 TubercolosisForm, SubstanceUseForm, StigmaForm,
                                 StigmaOpinionForm, PositiveParticipantForm,
                                 FutureHivTestingForm, HivResultDocumentationForm)
@@ -298,12 +298,12 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
        'diagnoses',
        'heart_attack_record',
        'cancer_record',
-       'sti',
+       'sti_record',
        'tb_record',)
     radio_fields = {
         "heart_attack_record": admin.VERTICAL,
         "cancer_record": admin.VERTICAL,
-        "sti": admin.VERTICAL,
+        "sti_record": admin.VERTICAL,
         "tb_record": admin.VERTICAL, }
     filter_horizontal = ('diagnoses',)
     required_instructions = ("Read to Participant: I am now going to ask you"
@@ -348,6 +348,20 @@ class TubercolosisAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         "dx_tb": admin.VERTICAL, }
 admin.site.register(Tubercolosis, TubercolosisAdmin)
+
+
+
+class StiAdmin(SubjectVisitModelAdmin):
+
+    form = StiForm
+    fields = (
+        "subject_visit",
+       "sti_date",
+       'sti_dx',
+       'comments',)
+    radio_fields = {'sti_dx': admin.VERTICAL, }
+admin.site.register(Sti, StiAdmin)
+
 
 
 class SubstanceUseAdmin(SubjectVisitModelAdmin):

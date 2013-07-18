@@ -7,7 +7,7 @@ from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  CommunityEngagement, Education,
                                  HivMedicalCare, Circumcision, Circumcised,
                                  MedicalDiagnoses, HeartAttack,
-                                 Cancer, Tubercolosis, SubstanceUse, Stigma, 
+                                 Cancer, Tubercolosis, Sti, SubstanceUse, Stigma, 
                                  StigmaOpinion, PositiveParticipant, 
                                  HivResultDocumentation)
 
@@ -195,6 +195,12 @@ class TubercolosisForm (BaseSubjectModelForm):
         model = Tubercolosis
 
 
+class StiForm (BaseSubjectModelForm):
+
+    class Meta:
+        model = Sti
+        
+        
 class HivResultDocumentationForm (BaseSubjectModelForm):
 
     class Meta:

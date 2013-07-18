@@ -458,3 +458,13 @@ YES_NO_RECORD_REFUSAL = (
         ('Don\'t want to answer','Don\'t want to answer'),
         ('record refusal', 'Participant does not want to provide record'),
     )
+
+STI_DX = (
+    ('wasting', 'Severe weight loss (wasting) - more than 10% of body weight'),
+    ('diarrhoea', 'Unexplained diarrhoea for one month'),
+    ('yeast infection', 'Yeast infection of mouth or oesophagus'),
+    ('pneumonia', 'Severe pneumonia or meningitis or sepsis'),
+    ('PCP', 'PCP (Pneumocystis pneumonia)'),
+    ('herpes', 'Herpes infection for more than one month'),
+    ('OTHER', 'Other'),   
+    )

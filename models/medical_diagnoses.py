@@ -35,13 +35,13 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
 
-    sti = models.CharField(
-        verbose_name=("In the past 12 months, have you been treated for discharge from the "
-                       "penis/vagina or for a sore in the genitals or sexually transmitted infection?"),
+    sti_record = models.CharField(
+        verbose_name='Is a record (OPD card, discharge summary) of a sti diagnosis available to review?',
         max_length=25,
+        null=True,
+        blank=True,
         choices=YES_NO_UNSURE,
-        help_text=("Note:Common terminology includes vaginal or penile discharge, ulcer or other"
-                   " sore on the genitals/anus"),
+        help_text="",
         )
 
     tb_record = models.CharField(
