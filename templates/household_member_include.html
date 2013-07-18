@@ -1,0 +1,71 @@
+{% load dispatch_tags %}
+<div class="results">
+      <table cellspacing="0" id="result_list">
+        <thead><tr>
+        <th>Dashboard</th>  
+        <th>House</th>
+        <th>Survey</th>
+         {% comment %}<th>Subject Consent</th> {% endcomment %}
+        <th>First Name</th>
+        <th>Age</th>
+        <th>Created</th>
+        <th>Modified</th>               
+        <th>User Created</th>
+        <th>User Modified</th>
+        <th>Host</th>                                                         
+        </thead>
+        <tbody>
+      {% for hm in search_results.object_list %}
+        <tr class="{% cycle 'row2' 'row1' %}">
+            <td>
+            {% if hm.household_structure.household|is_dispatched %}
+                Dispatched
+            {% else %}
+                <A href="{% url dashboard_url dashboard_type='household' household_identifier=hm.household_structure.household.household_identifier survey=hm.survey.survey_slug %}">structure</A>&nbsp;           
+                    {% if hm.registered_subject.subject_identifier %}
+                        <A href="{% url dashboard_url dashboard_type='subject' household_structure_member=hm.pk survey=hm.survey.survey_slug  %}">subject</A>
+                    {% endif %}
+            {% endif %}
+            </td>                    
+            <td>{{ hm.household_structure }}</td>
+            <td>{{ hm.survey.survey_slug }}</td>
+            {% comment %}
+            <td>
+            {% if hm.household_structure.household|is_dispatched %}
+                Dispatched
+            {% else %}
+                {% if hm.consent %}
+                    <a href="{{ hm.consent.get_absolute_url }}">{{ hm.consent.subject_identifier }}</A>
+                {% else %} 
+                    {% if hm.subjectrefusal %}                    
+                        <a href="/admin{{ hm.subjectrefusal.get_absolute_url }}">refused</A>           
+                    {% else %} 
+                        {% if hm.subjectabsentee %}
+                            <a href="/admin{{ hm.subjectabsentee.get_absolute_url }}">absent</A>
+                        {% else %}
+                            {% if not hm.is_eligible %}
+                                <i>not eligible</i>
+                            {% else %}    
+                                <div class="warning">??????</div>
+                            {% endif %}                            
+                        {% endif %}  
+                    {% endif %}
+               {% endif %}
+            {% endif %}
+            </td>
+               {% endcomment %}
+            <td>{{hm.first_name}} ({{hm.initials}})</td>
+            <td>{{hm.age_in_years}}{{ hm.gender }} {{hm.hiv_status}}</td>
+          <td>{{ hm.created|date:"Y-m-d H:i" }}</td>
+          <td>{{ hm.modified|date:"Y-m-d H:i" }}</td>
+          <td>{{ hm.user_created }}</td>
+          <td>{{ hm.user_modified }}</td>
+          <td>{{ hm.hostname_created }}</td>             
+
+            </tr>
+      {% endfor %}
+        <tr><td colspan="9">{{ search_results.object_list.count }} household structure member{{ search_results.object_list|pluralize }} found.</td></tr>            
+      </tbody>
+
+      </table>
+      </div>
