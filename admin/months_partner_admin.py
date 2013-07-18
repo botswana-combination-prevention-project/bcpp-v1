@@ -9,8 +9,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsRecentPartnerForm
     supplemental_fields = SupplementalFields(
-        ('first_partner_hiv',
-        'first_haart',
+        ('first_haart',
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp'), p=0.1, group='SH')
@@ -28,6 +27,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         'goods_exchange',
         'first_sex_freq',
         'first_partner_hiv',
+        'partner_hiv_test',
         'first_haart',
         'first_disclose',
         'first_condom_freq',
@@ -40,6 +40,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         "concurrent": admin.VERTICAL,
         "goods_exchange": admin.VERTICAL,
         "first_partner_hiv": admin.VERTICAL,
+        'partner_hiv_test': admin.VERTICAL,
         "first_haart": admin.VERTICAL,
         "first_disclose": admin.VERTICAL,
         "first_condom_freq": admin.VERTICAL,
@@ -61,8 +62,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsSecondPartnerForm
     supplemental_fields = SupplementalFields(
-        ('first_partner_hiv',
-        'first_haart',
+        ('first_haart',
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp'), p=0.1, group='SH')
@@ -80,6 +80,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         'goods_exchange',
         'first_sex_freq',
         'first_partner_hiv',
+        'partner_hiv_test',
         'first_haart',
         'first_disclose',
         'first_condom_freq',
@@ -92,6 +93,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         "concurrent": admin.VERTICAL,
         "goods_exchange": admin.VERTICAL,
         "first_partner_hiv": admin.VERTICAL,
+        'partner_hiv_test': admin.VERTICAL,
         "first_haart": admin.VERTICAL,
         "first_disclose": admin.VERTICAL,
         "first_condom_freq": admin.VERTICAL,
@@ -116,8 +118,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsThirdPartnerForm
     supplemental_fields = SupplementalFields(
-        ('first_partner_hiv',
-        'first_haart',
+        ('first_haart',
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp'), p=0.1, group='SH')
@@ -135,6 +136,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         'goods_exchange',
         'first_sex_freq',
         'first_partner_hiv',
+        'partner_hiv_test',
         'first_haart',
         'first_disclose',
         'first_condom_freq',
@@ -147,6 +149,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         "concurrent": admin.VERTICAL,
         "goods_exchange": admin.VERTICAL,
         "first_partner_hiv": admin.VERTICAL,
+        'partner_hiv_test': admin.VERTICAL,
         "first_haart": admin.VERTICAL,
         "first_disclose": admin.VERTICAL,
         "first_condom_freq": admin.VERTICAL,

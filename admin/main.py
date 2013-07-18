@@ -7,7 +7,7 @@ from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientC
                                  HivMedicalCare, Circumcision, Circumcised, 
                                  MedicalDiagnoses, HeartAttack,Cancer, Sti,
                                  Tubercolosis, SubstanceUse, Stigma, 
-                                 StigmaOpinion, PositiveParticipant, FutureHivTesting,
+                                 StigmaOpinion, PositiveParticipant,
                                  HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
@@ -19,7 +19,7 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 HeartAttackForm, CancerForm, StiForm,
                                 TubercolosisForm, SubstanceUseForm, StigmaForm,
                                 StigmaOpinionForm, PositiveParticipantForm,
-                                FutureHivTestingForm, HivResultDocumentationForm)
+                                HivResultDocumentationForm)
 
 
 class QualityOfLifeAdmin(SubjectVisitModelAdmin):
@@ -204,31 +204,6 @@ class EducationAdmin(SubjectVisitModelAdmin):
                               " questions about what education and work you"
                               " may have done or are currently doing.")
 admin.site.register(Education, EducationAdmin)
-
-
-class FutureHivTestingAdmin(SubjectVisitModelAdmin):
-
-    form = FutureHivTestingForm
-    fields = (
-        "subject_visit",
-        'prefer_hivtest',
-        'hiv_test_time',
-        'hiv_test_time_other',
-        'hiv_test_week',
-        'hiv_test_week_other',
-        'hiv_test_year',
-        'hiv_test_year_other')
-    radio_fields = {
-        'prefer_hivtest': admin.VERTICAL,
-        "hiv_test_time": admin.VERTICAL,
-        "hiv_test_week": admin.VERTICAL,
-        "hiv_test_year": admin.VERTICAL, }
-    required_instructions = ("Note to Interviewer: If participant is known"
-                              " to be HIV-infected (tested positive today or"
-                              " previously), skip to the next section. "
-                              "Read to Participant: The following questions are"
-                              " about how you would like to have HIV testing in the future.")
-admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
 
 
 class HivMedicalCareAdmin(SubjectVisitModelAdmin):
