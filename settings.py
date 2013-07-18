@@ -201,8 +201,7 @@ LANGUAGES = (
     ('tn', ugettext('Setswana')),
 )
 
-LOCALE_PATHS = (
-    '/Users/melissa/Documents/source/bhp066/locale/',)
+LOCALE_PATHS = (os.path.join(DIRNAME, 'locale'), )
 
 
 INSTALLED_APPS = (
