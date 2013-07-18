@@ -1,15 +1,13 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import ReproductiveHealth
 
 
-class ReproductiveHealthFactory(BaseScheduledModelFactory):
+class ReproductiveHealthFactory(BaseUuidModelFactory):
     FACTORY_FOR = ReproductiveHealth
 
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
-
     report_datetime = datetime.today()
-    number_children = 1
+    number_children = 2
     menopause = (('Yes', 'Yes'), ('No', 'No'))[0][0]
+    family_planning_other = factory.Sequence(lambda n: 'family_planning_other{0}'.format(n))

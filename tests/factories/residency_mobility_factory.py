@@ -1,14 +1,11 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import ResidencyMobility
 
 
-class ResidencyMobilityFactory(BaseScheduledModelFactory):
+class ResidencyMobilityFactory(BaseUuidModelFactory):
     FACTORY_FOR = ResidencyMobility
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
     length_residence = (('Less than 6 months', 'Less than 6 months'), ('6 months to 12 months', '6 months to 12 months'), ('1 to 5 years', '1 to 5 years'), ('More than 5 years', 'More than 5 years'), ("Don't want to answer", "Don't want to answer"))[0][0]

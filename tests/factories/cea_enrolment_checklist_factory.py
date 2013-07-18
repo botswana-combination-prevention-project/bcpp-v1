@@ -1,15 +1,12 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import CeaEnrolmentChecklist
 from bhp_registration.tests.factories import RegisteredSubjectFactory
 
 
-class CeaEnrolmentChecklistFactory(BaseScheduledModelFactory):
+class CeaEnrolmentChecklistFactory(BaseUuidModelFactory):
     FACTORY_FOR = CeaEnrolmentChecklist
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)
     mental_capacity = (('Yes', 'Yes'), ('No', 'No'))[0][0]

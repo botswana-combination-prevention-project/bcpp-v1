@@ -127,7 +127,7 @@ class FormsTests(TestCase):
                             print('    instantiate the factory {0}'.format(factory))
                             factory(**{convert_from_camel(model_instance._meta.object_name): model_instance, 'subject_visit': model_instance.subject_visit})
                             factory(**{convert_from_camel(model_instance._meta.object_name): model_instance, 'subject_visit': model_instance.subject_visit})
-
                     #print('  post url')
-                    #response = self.client.post(url, )
+                    #response = self.client.post(url, model_instance.__dict__)
+                    #self.assertEqual(response.status_code, 200)
         print('tested {0} forms'.format(n))

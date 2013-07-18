@@ -1,14 +1,11 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import HivCareAdherence
 
 
-class HivCareAdherenceFactory(BaseScheduledModelFactory):
+class HivCareAdherenceFactory(BaseUuidModelFactory):
     FACTORY_FOR = HivCareAdherence
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
     medical_care = (('Yes', 'Yes'), ('No', 'No'), ("Don't want to answer", "Don't want to answer"))[0][0]

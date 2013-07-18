@@ -1,14 +1,11 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import QualityOfLife
 
 
-class QualityOfLifeFactory(BaseScheduledModelFactory):
+class QualityOfLifeFactory(BaseUuidModelFactory):
     FACTORY_FOR = QualityOfLife
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
     mobility = (('no problems', 'I have no problems in walking about'), ('slight problems', 'I have slight problems in walking about'), ('moderate problems', 'I have moderate problems in walking about'), ('severe problems', 'I have severe problems in walking about'), ('unable to walk', 'I am unable to walk about'), ("Don't want to answer", "Don't want to answer"))[0][0]

@@ -1,14 +1,11 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import Education
 
 
-class EducationFactory(BaseScheduledModelFactory):
+class EducationFactory(BaseUuidModelFactory):
     FACTORY_FOR = Education
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
     education = (('None', 'None'), ('Non formal', 'Non formal'), ('Primary', 'Primary'), ('Junior Secondary', 'Junior Secondary'), ('Senior Secondary', 'Senior Secondary'), ('Higher than senior secondary (university, diploma, etc.)', 'Higher than senior secondary (university, diploma, etc.)'), ("Don't want to answer", "Don't want to answer"))[0][0]

@@ -1,14 +1,11 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import OutpatientCare
 
 
-class OutpatientCareFactory(BaseScheduledModelFactory):
+class OutpatientCareFactory(BaseUuidModelFactory):
     FACTORY_FOR = OutpatientCare
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
     govt_health_care = (('Yes', 'Yes'), ('No', 'No'), ('REF', 'Refused to answer'))[0][0]

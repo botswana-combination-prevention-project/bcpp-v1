@@ -1,14 +1,11 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import BaselineHouseholdSurvey
 
 
-class BaselineHouseholdSurveyFactory(BaseScheduledModelFactory):
+class BaselineHouseholdSurveyFactory(BaseUuidModelFactory):
     FACTORY_FOR = BaselineHouseholdSurvey
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
     flooring_type = (('Dirt/earth', 'Dirt/earth '), ('Wood, plank', 'Wood, plank'), ('Parquet/lino', 'Parquet/lino'), ('Cement', 'Cement'), ('Tile flooring', 'Tile flooring'), ('OTHER', 'Other, specify:'), ("Don't want to answer", "Don't want to answer"))[0][0]

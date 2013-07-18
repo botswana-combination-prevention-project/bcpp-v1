@@ -1,13 +1,10 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import Circumcised
 
 
-class CircumcisedFactory(BaseScheduledModelFactory):
+class CircumcisedFactory(BaseUuidModelFactory):
     FACTORY_FOR = Circumcised
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()

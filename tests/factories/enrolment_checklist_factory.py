@@ -1,5 +1,5 @@
 import factory
-from datetime import datetime
+from datetime import date, datetime
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import EnrolmentChecklist
 from bhp_registration.tests.factories import RegisteredSubjectFactory
@@ -7,6 +7,7 @@ from bhp_registration.tests.factories import RegisteredSubjectFactory
 
 class EnrolmentChecklistFactory(BaseUuidModelFactory):
     FACTORY_FOR = EnrolmentChecklist
+
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)
     registration_datetime = datetime.today()
     census_number = factory.Sequence(lambda n: 'census_number{0}'.format(n))

@@ -1,14 +1,11 @@
 import factory
 from datetime import date, datetime
-from bcpp_subject.tests.factories import SubjectVisitFactory
-from base_scheduled_model_factory import BaseScheduledModelFactory
+from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import Demographics
 
 
-class DemographicsFactory(BaseScheduledModelFactory):
+class DemographicsFactory(BaseUuidModelFactory):
     FACTORY_FOR = Demographics
-
-    subject_visit = factory.SubFactory(SubjectVisitFactory)
 
     report_datetime = datetime.today()
     religion_other = factory.Sequence(lambda n: 'religion_other{0}'.format(n))
