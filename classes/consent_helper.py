@@ -38,10 +38,7 @@ class ConsentHelper(object):
         self._set_subject_instance(subject_instance)
 
     def _set_exception_cls(self, cls=None):
-        if cls:
-            self._exception_cls = cls
-        else:
-            self._exception_cls = ValidationError
+        self._exception_cls = cls or ValidationError
 
     def _get_exception_cls(self):
         return self._exception_cls
@@ -119,10 +116,10 @@ class ConsentHelper(object):
     def _set_subject_identifier(self):
         """Gets the subject_identifier from the instance."""
         self._subject_identifier = None
-        if 'subject_identifier' in dir(self.get_subject_instance()):
-            self._subject_identifier = self.get_subject_instance().subject_identifier
-        elif 'get_subject_identifier' in dir(self.get_subject_instance()):
+        if 'get_subject_identifier' in dir(self.get_subject_instance()):
             self._subject_identifier = self.get_subject_instance().get_subject_identifier()
+        elif 'subject_identifier' in dir(self.get_subject_instance()):
+            self._subject_identifier = self.get_subject_instance().subject_identifier
         elif 'get_visit' in dir(self.get_subject_instance()):
             self._subject_identifier = self.get_subject_instance().get_visit().get_subject_identifier()
         else:
