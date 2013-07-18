@@ -397,3 +397,5 @@ else:
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
 LOGGING = logger.LOGGING
+CURRENT_COMMUNITY = 'otse'
+CURRENT_SURVEY = 'baseline'
