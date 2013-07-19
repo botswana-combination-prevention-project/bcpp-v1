@@ -14,6 +14,7 @@ from household_survey_status import HouseholdSurveyStatus
 
 from subject_absentee_reason import SubjectAbsenteeReason
 from subject_moved_reason import SubjectMovedReason
+from subject_undecided_reason import SubjectUndecidedReason
 
 from partner_residency import PartnerResidency
 from heart_disease import HeartDisease
