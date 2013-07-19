@@ -450,6 +450,13 @@ UNDECIDED_REASON = (
     ('OTHER', _('Other...')),
 )
 
+
+REFERRAL_REASONS = (
+    ('receive', _('Referred to receive HIV result in clinic')),
+    ('test', _('Referred to test in clinic')),
+    ('protocol', _('Referred as per protocol')),
+    )
+
 RELATION = (
     ('spouse', _('spouse')),
     ('parent', _('parent')),
