@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import get_model
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
+#from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.db.models import signals
@@ -37,18 +37,18 @@ class Appointment(BaseAppointment):
         blank=False)
 
     visit_definition = models.ForeignKey(VisitDefinition, related_name='+',
-        verbose_name=_("Visit"),
-        help_text=_("For tracking within the window period of a visit, use the decimal convention. "
+        verbose_name=("Visit"),
+        help_text=("For tracking within the window period of a visit, use the decimal convention. "
                     "Format is NNNN.N. e.g 1000.0, 1000.1, 1000.2, etc)"))
     visit_instance = models.CharField(
         max_length=1,
-        verbose_name=_("Instance"),
+        verbose_name=("Instance"),
         validators=[RegexValidator(r'[0-9]', 'Must be a number from 0-9')],
         default='0',
         null=True,
         blank=True,
         db_index=True,
-        help_text=_("A decimal to represent an additional report to be included with the original "
+        help_text=("A decimal to represent an additional report to be included with the original "
                     "visit report. (NNNN.0)"))
     dashboard_type = models.CharField(
         max_length=25,
