@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
@@ -11,7 +12,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
     """CS002"""
     
     ever_sex = models.CharField(
-        verbose_name=("In your lifetime, have you ever had sex with anyone"
+        verbose_name=_("In your lifetime, have you ever had sex with anyone"
                       " (including your spouse, friends, or someone you have just met)?"),
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
@@ -19,7 +20,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         )
     
     lifetime_sex_partners = models.IntegerField(
-        verbose_name=("In your life time, how many different people have you had"
+        verbose_name=_("In your life time, how many different people have you had"
                       " sex with?  Please remember to include casual and once-off partners"
                       " (prostitutes and truck drivers) as well as long-term partners"
                       " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
@@ -31,7 +32,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         )
 
     last_year_partners = models.IntegerField(
-        verbose_name=("In the past 12 months, how many different people have you had"
+        verbose_name=_("In the past 12 months, how many different people have you had"
                       " sex with?  Please remember to include casual and once-off partners"
                       " (prostitutes and truck drivers) as well as long-term partners"
                       " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
@@ -43,7 +44,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         )
 
     more_sex = models.CharField(
-        verbose_name=("In the past 12 months, did you have sex with somebody"
+        verbose_name=_("In the past 12 months, did you have sex with somebody"
                       " living outside of the community?"),
         max_length=25,
         null=True, 
@@ -53,7 +54,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         )
 
     first_sex = models.IntegerField(
-        verbose_name=("How old were you when you had sex for the first time?"
+        verbose_name=_("How old were you when you had sex for the first time?"
                       " [If you can't recall the exact age, please give a best guess]"),
         max_length=2,
         null=True, 
@@ -63,7 +64,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         )
 
     condom = models.CharField(
-        verbose_name=("During the last [most recent] time you had sex, did"
+        verbose_name=_("During the last [most recent] time you had sex, did"
                       " you or your partner use a condom?"),
         max_length=25,
         null=True, 
@@ -73,7 +74,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         )
 
     alcohol_sex = models.CharField(
-        verbose_name=("During the last [most recent] time you had sex, were"
+        verbose_name=_("During the last [most recent] time you had sex, were"
                       " you or your partner drinking alcohol?"),
         max_length=25,
         null=True, 

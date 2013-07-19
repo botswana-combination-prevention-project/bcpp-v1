@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
@@ -15,7 +16,7 @@ class FutureHivTesting (BaseScheduledVisitModel):
     " to have HIV testing in the future. """
 
     prefer_hivtest = models.CharField(
-        verbose_name="In the future, where would you prefer to get tested for HIV?",
+        verbose_name=_("In the future, where would you prefer to get tested for HIV?"),
         max_length=70,
         null=True,
         choices=HIVTESTPREFERENCE_CHOICE,
@@ -23,7 +24,7 @@ class FutureHivTesting (BaseScheduledVisitModel):
         )
 
     hiv_test_time = models.CharField(
-        verbose_name=("In the future, is there a particular time of day that"
+        verbose_name=_("In the future, is there a particular time of day that"
                       " you would prefer to receive your next HIV test ?"),
         max_length=35,
         choices=HIVTEST_PREFEREDTIME,
@@ -31,12 +32,12 @@ class FutureHivTesting (BaseScheduledVisitModel):
         help_text="supplemental",
         )
     hiv_test_time_other = OtherCharField(
-        verbose_name="If yes, specify:",
+        verbose_name=_("If yes, specify:"),
         null=True,
         )
 
     hiv_test_week = models.CharField(
-        verbose_name=("In the future, is there a particular day of the week"
+        verbose_name=_("In the future, is there a particular day of the week"
                       " that you would prefer to receive your next HIV test ?"),
         max_length=35,
         choices=HIVTEST_PREFEREDWEEK,
@@ -44,12 +45,12 @@ class FutureHivTesting (BaseScheduledVisitModel):
         help_text="supplemental",
         )
     hiv_test_week_other = OtherCharField(
-        verbose_name="If yes, specify:",
+        verbose_name=_("If yes, specify:"),
         null=True,
         )
 
     hiv_test_year = models.CharField(
-        verbose_name=("In the future, is there a particular time of year that"
+        verbose_name=_("In the future, is there a particular time of year that"
                       " you would prefer to receive your next HIV test?"),
         max_length=25,
         choices=HIVTEST_PREFEREDYEAR,
@@ -57,7 +58,7 @@ class FutureHivTesting (BaseScheduledVisitModel):
         help_text="supplemental",
         )
     hiv_test_year_other = OtherCharField(
-        verbose_name="If yes, specify:",
+        verbose_name=_("If yes, specify:"),
         null=True,
         )
     

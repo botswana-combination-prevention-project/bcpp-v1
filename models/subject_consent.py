@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_registration.models import RegisteredSubject
 from bhp_common.choices import YES_NO
@@ -16,7 +17,7 @@ class SubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False, null=True)
 
     is_minor = models.CharField(
-        verbose_name="Is subject a minor?",
+        verbose_name=_("Is subject a minor?"),
         max_length=10,
         null=True,
         blank=False,

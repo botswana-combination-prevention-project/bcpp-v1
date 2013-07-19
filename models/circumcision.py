@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bcpp.choices import YES_NO_UNSURE
 from base_scheduled_visit_model import BaseScheduledVisitModel
@@ -9,7 +10,7 @@ class Circumcision (BaseScheduledVisitModel):
     """CS002"""
 
     circumcised = models.CharField(
-        verbose_name="Are you circumcised?",
+        verbose_name=_("Are you circumcised?"),
         max_length=15,
         choices=YES_NO_UNSURE,
         help_text="",

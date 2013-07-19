@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp_list.models import NeighbourhoodProblems
@@ -11,7 +12,7 @@ class CommunityEngagement (BaseScheduledVisitModel):
     """CS002"""
     
     community_engagement = models.CharField(
-        verbose_name=("CE1. How active are you in community activities such as"
+        verbose_name=_("How active are you in community activities such as"
                       " burial society, Motshelo, Syndicate, PTA, "
                       "VDC(Village Developement Committee), Mophato"
                       " and development of the community that surrounds you??"),
@@ -21,21 +22,22 @@ class CommunityEngagement (BaseScheduledVisitModel):
         )
 
     vote_engagement = models.CharField(
-        verbose_name="CE2. Did you vote in the last local government election?",
+        verbose_name=_("Did you vote in the last local government election?"),
         max_length=25,
         choices=VOTEENGAGEMENT_CHOICE,
         help_text="supplemental",
         )
 
     problems_engagement = models.ManyToManyField(NeighbourhoodProblems,
-        verbose_name="What are the major problems in this neighbourhood??",
+        verbose_name=_("What are the major problems in this neighbourhood??"),
         help_text=("supplemental. Note:Interviewer to read question but NOT the responses. Check the boxes of"
                    " any of problems mentioned."),
         )
     problems_engagement_other = OtherCharField()
 
     solve_engagement = models.CharField(
-        verbose_name="If there is a problem in this neighbourhood, do the adults work together in solving it?",
+        verbose_name=_("If there is a problem in this neighbourhood, do the"
+                       " adults work together in solving it?"),
         max_length=25,
         choices=SOLVEENGAGEMENT_CHOICE,
         help_text="supplemental",

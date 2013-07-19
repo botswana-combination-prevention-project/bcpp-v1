@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import DXTB_CHOICE   
@@ -10,12 +11,12 @@ class Tubercolosis (BaseScheduledVisitModel):
     """CS002 - Medical Diagnoses- Tubercolosis"""
     
     date_tb = models.DateField(
-        verbose_name="Date of the diagnosis of tuberculosis:",
+        verbose_name=_("Date of the diagnosis of tuberculosis:"),
         help_text="",
         )
 
     dx_tb = models.CharField(
-        verbose_name="[Interviewer:]What is the tuberculosis diagnosis as recorded?",
+        verbose_name=_("[Interviewer:]What is the tuberculosis diagnosis as recorded?"),
         max_length=50,
         choices=DXTB_CHOICE,
         help_text="",

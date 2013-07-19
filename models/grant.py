@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
 from labour_market_wages import LabourMarketWages
@@ -11,11 +12,11 @@ class Grant(BaseScheduledInlineModel):
     labour_market_wages = models.ForeignKey(LabourMarketWages)
 
     grant_number = models.IntegerField(
-        verbose_name="How many of each type of grant do you receive?",
+        verbose_name=_("How many of each type of grant do you receive?"),
         max_length=2,
         )
     grant_type = models.CharField(
-        verbose_name="Grant name",
+        verbose_name=_("Grant name"),
         choices=GRANT_TYPE,
         max_length=34,
         )

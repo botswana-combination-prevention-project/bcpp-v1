@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import WHYNOHIVTESTING_CHOICE
@@ -10,7 +11,7 @@ class HivUntested (HivTestingSupplemental):
     """CS002- for those who have NOT tested for HIV. Its branch off from Q18 - HIV testing History"""
 
     why_no_hiv_test = models.CharField(
-        verbose_name=("If you were not tested for HIV in the 12 months prior"
+        verbose_name=_("If you were not tested for HIV in the 12 months prior"
                       " to today, what is the main reason why not?"),
         max_length=55,
         null=True,

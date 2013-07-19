@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import YES_NO_UNSURE
@@ -10,7 +11,7 @@ class NonPregnancy (BasePregnancy):
     """CS002"""
 
     more_children = models.CharField(
-        verbose_name="Do you wish to have a child now or in the future?",
+        verbose_name=_("Do you wish to have a child now or in the future?"),
         max_length=25,
         choices=YES_NO_UNSURE,
         help_text="",

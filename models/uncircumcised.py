@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
@@ -9,7 +10,7 @@ from base_circumcision import BaseCircumcision
 class Uncircumcised (BaseCircumcision):
 
     reason_circ = models.CharField(
-        verbose_name="What is the main reason that you have not yet been circumcised?",
+        verbose_name=_("What is the main reason that you have not yet been circumcised?"),
         max_length=15,
         null=True,
         choices=REASONCIRC_CHOICE,
@@ -17,14 +18,14 @@ class Uncircumcised (BaseCircumcision):
         )
 
     future_circ = models.CharField(
-        verbose_name="Would you ever consider being circumcised in the future?",
+        verbose_name=_("Would you ever consider being circumcised in the future?"),
         max_length=15,
         choices=YES_NO_UNSURE,
         help_text="",
         )
 
     circumcision_day = models.CharField(
-        verbose_name=("In the future, is there a particular time of day that you"
+        verbose_name=_("In the future, is there a particular time of day that you"
                         " would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_DAY,
@@ -35,7 +36,7 @@ class Uncircumcised (BaseCircumcision):
         null=True,)
 
     circumcision_week = models.CharField(
-        verbose_name=("In the future, is there a particular day of the week that"
+        verbose_name=_("In the future, is there a particular day of the week that"
                         " you would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_WEEK,
@@ -46,7 +47,7 @@ class Uncircumcised (BaseCircumcision):
         null=True,)
 
     circumcision_year = models.CharField(
-        verbose_name=("In the future, is there a particular time of year that you"
+        verbose_name=_("In the future, is there a particular time of year that you"
                         " would prefer to be circumcised?"),
         max_length=15,
         choices=CIRCUMCISION_MONTH,
@@ -57,7 +58,7 @@ class Uncircumcised (BaseCircumcision):
         null=True,)
 
     future_reasons_smc = models.CharField(
-        verbose_name=("Which of the following might increase your willingness to"
+        verbose_name=_("Which of the following might increase your willingness to"
                         " be circumcised the most?"),
         max_length=15,
         choices=FUTUREREASONSSMC_CHOICE,
@@ -66,7 +67,7 @@ class Uncircumcised (BaseCircumcision):
         )
 
     service_facilities = models.CharField(
-        verbose_name=("Were you aware that circumcision services are provided "
+        verbose_name=_("Were you aware that circumcision services are provided "
                         "free of charge at most health facilities?"),
         max_length=15,
         choices=YES_NO_DONT_ANSWER,
@@ -75,7 +76,7 @@ class Uncircumcised (BaseCircumcision):
         )
 
     aware_free = models.CharField(
-        verbose_name=("Where did you learn that circumcision services were "
+        verbose_name=_("Where did you learn that circumcision services were "
                         "available free at most health facilities?"),
         max_length=15,
         null=True,

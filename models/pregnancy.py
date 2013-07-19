@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import ANCREG_CHOICE
@@ -10,7 +11,7 @@ class Pregnancy (BasePregnancy):
     """CS002 - Meant for women who are currently pregnant"""
 
     anc_reg = models.CharField(
-        verbose_name="Have you registered for antenatal care?",
+        verbose_name=_("Have you registered for antenatal care?"),
         max_length=55,
         null=True,
         blank=True,
@@ -19,7 +20,7 @@ class Pregnancy (BasePregnancy):
         )
 
     lnmp = models.DateField(
-        verbose_name="When was your last normal menstrual period?",
+        verbose_name=_("When was your last normal menstrual period?"),
         help_text="",
         )
 
