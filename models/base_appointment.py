@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+#from django.utils.translation import ugettext_lazy as _
 from bhp_appointment.choices import APPT_STATUS
 try:
     from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
@@ -10,29 +10,29 @@ except ImportError:
 class BaseAppointment (BaseSyncUuidModel):
     """Base class for Appointments."""
     appt_datetime = models.DateTimeField(
-        verbose_name=_("Appointment date and time"),
+        verbose_name=("Appointment date and time"),
         help_text="",
         db_index=True)
     # this is the original calculated appointment datetime
     # which the user cannot change
     timepoint_datetime = models.DateTimeField(
-        verbose_name=_("Timepoint date and time"),
+        verbose_name=("Timepoint date and time"),
         help_text="calculated appointment datetime. Do not change",
         null=True,
         editable=False)
     appt_status = models.CharField(
-        verbose_name=_("Status"),
+        verbose_name=("Status"),
         choices=APPT_STATUS,
         max_length=25,
         default='new',
         db_index=True)
     appt_reason = models.CharField(
-        verbose_name=_("Reason for appointment"),
+        verbose_name=("Reason for appointment"),
         max_length=25,
-        help_text=_("Reason for appointment"),
+        help_text=("Reason for appointment"),
         blank=True)
     contact_tel = models.CharField(
-        verbose_name=_("Contact Tel"),
+        verbose_name=("Contact Tel"),
         max_length=250,
         blank=True)
     comment = models.CharField("Comment",
