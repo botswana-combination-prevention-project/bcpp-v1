@@ -443,6 +443,13 @@ ABSENTEE_REASON = (
 )
 
 
+UNDECIDED_REASON = (
+    ('afraid_to_test', _('afraid_to_test')),
+    ('not ready to test', _('not ready to test')),
+    ('wishes to test with partner', _('wishes to test with partner')),
+    ('OTHER', _('Other...')),
+)
+
 RELATION = (
     ('spouse', _('spouse')),
     ('parent', _('parent')),
