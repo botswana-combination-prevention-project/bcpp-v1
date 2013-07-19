@@ -108,6 +108,7 @@ class PartnerResidencyForm (BaseModelForm):
 #HouseholdSurveyStatus
 #SubjectAbsenteeReason
 #SubjectMovedReason
+#SubjectUndecidedReason
 
 class HeartDiseaseForm (BaseModelForm):
 
