@@ -16,8 +16,10 @@
        {% if locator.may_follow_up.lower == 'yes' %}   
             <BR><b>Home visits?</b> {{locator.home_visit_permission }}
             <BR><i>Address:</i><BR>{{locator.physical_address|safe|encrypted}}
-            <BR><i>Tel:</i> {{locator.subject_phone|default:''|encrypted}}&nbsp;{{locator.subject_phone_alt|default:''|encrypted}}
-            <BR><i>Cell:</i> {{locator.subject_cell|default:''|encrypted}}&nbsp;{{locator.subject_cell_alt|default:''|encrypted}}
+            <BR><i>Tel:</i> {{locator.subject_phone|default:''|encrypted}}
+            <BR><i>Alt. Tel:</i> {{locator.subject_phone_alt|default:''|encrypted}}
+            <BR><i>Cell:</i> {{locator.subject_cell|default:''|encrypted}}
+            <BR><i>Alt. Cell:</i> {{locator.subject_cell_alt|default:''|encrypted}}
             <BR><B>Call work?</B> {{locator.may_call_work}}
             {% if locator.may_call_work.lower == 'yes' %}       
             <BR>{{locator.subject_work_place }}
