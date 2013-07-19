@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-18 11:16+0200\n"
-"PO-Revision-Date: 2013-07-18 13:26+0200\n"
+"POT-Creation-Date: 2013-07-19 15:53+0200\n"
+"PO-Revision-Date: 2013-07-19 16:38+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -18,19 +18,24 @@ msgstr ""
 "X-Generator: Poedit 1.5.7\n"
 
 #: settings.py:201
+msgid "English"
+msgstr "Sekgoa"
+
+#: settings.py:202
 msgid "Setswana"
-msgstr ""
+msgstr "Setswana"
 
 #: bcpp/choices.py:4 bcpp/choices.py:11 bcpp/choices.py:122
 #: bcpp/choices.py:130 bcpp/choices.py:372 bcpp/choices.py:413
 #: bcpp/choices.py:453 bcpp/choices.py:628 bcpp/choices.py:639
-#: bcpp_subject/choices.py:459 lab_requisition/filters.py:24
+#: bcpp_subject/choices.py:473 bhp_common/choices.py:249
+#: lab_requisition/filters.py:24
 msgid "Yes"
 msgstr "Ee"
 
 #: bcpp/choices.py:5 bcpp/choices.py:12 bcpp/choices.py:123
 #: bcpp/choices.py:131 bcpp/choices.py:373 bcpp/choices.py:414
-#: bcpp/choices.py:454 bcpp_subject/choices.py:460
+#: bcpp/choices.py:454 bcpp_subject/choices.py:474 bhp_common/choices.py:250
 #: lab_requisition/filters.py:25
 msgid "No"
 msgstr "Nnya"
@@ -76,7 +81,7 @@ msgstr "Nnya"
 #: bcpp_subject/choices.py:313 bcpp_subject/choices.py:324
 #: bcpp_subject/choices.py:338 bcpp_subject/choices.py:350
 #: bcpp_subject/choices.py:365 bcpp_subject/choices.py:374
-#: bcpp_subject/choices.py:461
+#: bcpp_subject/choices.py:475
 msgid "Don't want to answer"
 msgstr "Ga ke batle go araba"
 
@@ -103,7 +108,7 @@ msgstr "Ga ke dumalane"
 
 #: bcpp/choices.py:20 bcpp/choices.py:707
 msgid "Uncertain"
-msgstr ""
+msgstr "Ke a etsaetsega"
 
 #: bcpp/choices.py:21 bcpp/choices.py:708
 msgid "Agree"
@@ -143,7 +148,7 @@ msgstr "Go feta ngwaga tse tlhano"
 
 #: bcpp/choices.py:49
 msgid "Zero nights"
-msgstr ""
+msgstr "Ga gona"
 
 #: bcpp/choices.py:50
 msgid "1-6 nights"
@@ -187,123 +192,123 @@ msgstr "Motse o sele, tlhalosa"
 
 #: bcpp/choices.py:70
 msgid "Bokaa"
-msgstr ""
+msgstr "Bokaa"
 
 #: bcpp/choices.py:71
 msgid "Digawana"
-msgstr ""
+msgstr "Digawana"
 
 #: bcpp/choices.py:72
 msgid "Gumare"
-msgstr ""
+msgstr "Gumare"
 
 #: bcpp/choices.py:73
 msgid "Gweta"
-msgstr ""
+msgstr "Gweta"
 
 #: bcpp/choices.py:74
 msgid "Lentsweletau"
-msgstr ""
+msgstr "Lentsweletau"
 
 #: bcpp/choices.py:75
 msgid "Lerala"
-msgstr ""
+msgstr "Lerala"
 
 #: bcpp/choices.py:76
 msgid "Letlhakeng"
-msgstr ""
+msgstr "Letlhakeng"
 
 #: bcpp/choices.py:77
 msgid "Mandunyane"
-msgstr ""
+msgstr "Mandunyane"
 
 #: bcpp/choices.py:78
 msgid "Mankgodi"
-msgstr ""
+msgstr "Mankgodi"
 
 #: bcpp/choices.py:79
 msgid "Mmadinare"
-msgstr ""
+msgstr "Mmadinare"
 
 #: bcpp/choices.py:80
 msgid "Mmathethe"
-msgstr ""
+msgstr "Mmathethe"
 
 #: bcpp/choices.py:81
 msgid "Masunga"
-msgstr ""
+msgstr "Masunga"
 
 #: bcpp/choices.py:82
 msgid "Maunatlala"
-msgstr ""
+msgstr "Maunatlala"
 
 #: bcpp/choices.py:83
 msgid "Mathangwane"
-msgstr ""
+msgstr "Mathangwane"
 
 #: bcpp/choices.py:84
 msgid "Metsimotlhabe"
-msgstr ""
+msgstr "Metsimotlhabe"
 
 #: bcpp/choices.py:85
 msgid "Molapowabojang"
-msgstr ""
+msgstr "Molapowabojang"
 
 #: bcpp/choices.py:86
 msgid "Nata"
-msgstr ""
+msgstr "Nata"
 
 #: bcpp/choices.py:87
 msgid "Nkange"
-msgstr ""
+msgstr "Nkange"
 
 #: bcpp/choices.py:88
 msgid "Oodi"
-msgstr ""
+msgstr "Oodi"
 
 #: bcpp/choices.py:89
 msgid "Otse"
-msgstr ""
+msgstr "Otse"
 
 #: bcpp/choices.py:90
 msgid "Raikops"
-msgstr ""
+msgstr "Raikops"
 
 #: bcpp/choices.py:91
 msgid "Ramokgonami"
-msgstr ""
+msgstr "Ramokgonami"
 
 #: bcpp/choices.py:92
 msgid "Ranaka"
-msgstr ""
+msgstr "Ranaka"
 
 #: bcpp/choices.py:93
 msgid "Sebina"
-msgstr ""
+msgstr "Sebina"
 
 #: bcpp/choices.py:94
 msgid "Sefare"
-msgstr ""
+msgstr "Sefare"
 
 #: bcpp/choices.py:95
 msgid "Sefophe"
-msgstr ""
+msgstr "Sefophe"
 
 #: bcpp/choices.py:96
 msgid "Shakawe"
-msgstr ""
+msgstr "Shakawe"
 
 #: bcpp/choices.py:97
 msgid "Shoshong"
-msgstr ""
+msgstr "Shoshong"
 
 #: bcpp/choices.py:98
 msgid "Tati Siding"
-msgstr ""
+msgstr "Tati Siding"
 
 #: bcpp/choices.py:99
 msgid "Tsetsebjwe"
-msgstr ""
+msgstr "Tsetsebjwe"
 
 #: bcpp/choices.py:114
 msgid "Very active"
@@ -383,7 +388,7 @@ msgstr ""
 #: bcpp/choices.py:800 bcpp_subject/choices.py:111 bcpp_subject/choices.py:185
 #: bcpp_subject/choices.py:218 bcpp_subject/choices.py:251
 #: bcpp_subject/choices.py:404 bcpp_subject/choices.py:418
-#: bcpp_subject/choices.py:472
+#: bcpp_subject/choices.py:486
 msgid "Other"
 msgstr ""
 
@@ -922,39 +927,39 @@ msgstr ""
 
 #: bcpp/choices.py:531
 msgid "One day"
-msgstr ""
+msgstr "Letsatsi le lengwe"
 
 #: bcpp/choices.py:532
 msgid "Two days"
-msgstr ""
+msgstr "Malatsi a mabedi"
 
 #: bcpp/choices.py:533
 msgid "Three days"
-msgstr ""
+msgstr "Malatsi a mararo"
 
 #: bcpp/choices.py:534
 msgid "Four days"
-msgstr ""
+msgstr "Malatsi a mane"
 
 #: bcpp/choices.py:539
 msgid "Very poor"
-msgstr ""
+msgstr "Go maswe thata/ Very poor"
 
 #: bcpp/choices.py:540
 msgid "Poor"
-msgstr ""
+msgstr "Go maswe/ Poor"
 
 #: bcpp/choices.py:541
 msgid "Fair"
-msgstr ""
+msgstr "Ga go maswemaswe/ Fair"
 
 #: bcpp/choices.py:542
 msgid "Good"
-msgstr ""
+msgstr "Go gontle/ Good"
 
 #: bcpp/choices.py:543
 msgid "Very good"
-msgstr ""
+msgstr "Go gontle thata/ Very good"
 
 #: bcpp/choices.py:549
 msgid "Circumcision never offered to me"
@@ -1228,15 +1233,15 @@ msgstr ""
 
 #: bcpp/choices.py:688
 msgid "Once a week"
-msgstr ""
+msgstr "Gangwe ka beke"
 
 #: bcpp/choices.py:689
 msgid "2 to 3 times a week"
-msgstr ""
+msgstr "Gabedi go ya gararo mo bekeng"
 
 #: bcpp/choices.py:690
 msgid "more than 3 times a week"
-msgstr ""
+msgstr "Go feta ga raro mo bekeng"
 
 #: bcpp/choices.py:695
 msgid "Traditional, faith, or religious healer/doctor"
@@ -1761,23 +1766,23 @@ msgstr ""
 msgid "I am afraid my information will not be private"
 msgstr ""
 
-#: bcpp_household/models/household.py:20
+#: bcpp_household/models/household.py:21
 msgid "Household identifier"
 msgstr ""
 
-#: bcpp_household/models/household.py:43
+#: bcpp_household/models/household.py:44
 msgid "the waypoint number is taken from the GPS reading"
 msgstr ""
 
-#: bcpp_household/models/household.py:48
+#: bcpp_household/models/household.py:49
 msgid "Date format YYYY-MM-DD, Time format is 24hr time HH:MM"
 msgstr ""
 
-#: bcpp_household/models/household.py:87
+#: bcpp_household/models/household.py:103
 msgid "provide the CSO number or leave BLANK."
 msgstr ""
 
-#: bcpp_household/models/household.py:112
+#: bcpp_household/models/household.py:127
 msgid "You may provide a comment here or leave BLANK."
 msgstr ""
 
@@ -1797,7 +1802,7 @@ msgstr ""
 msgid "Longterm partner (>2 years) or spouse"
 msgstr ""
 
-#: bcpp_subject/choices.py:18 bcpp_subject/choices.py:454
+#: bcpp_subject/choices.py:18 bcpp_subject/choices.py:468
 msgid "Other, specify"
 msgstr "Tse dingwe, tlhalosa"
 
@@ -1823,7 +1828,7 @@ msgstr ""
 
 #: bcpp_subject/choices.py:179
 msgid "Seasonal employment"
-msgstr ""
+msgstr "Go bereka ga nakwana"
 
 #: bcpp_subject/choices.py:180
 msgid "Formal wage employment (full-time)"
@@ -1835,15 +1840,15 @@ msgstr ""
 
 #: bcpp_subject/choices.py:182
 msgid "Self-employed in agriculture"
-msgstr ""
+msgstr "Ke ipereka mo go tsa temo"
 
 #: bcpp_subject/choices.py:183
 msgid "Self-employed making money, full time"
-msgstr ""
+msgstr "Ke a ipereka ke dira madi, nako yotlhe"
 
 #: bcpp_subject/choices.py:184
 msgid "Self-employed making money, part time"
-msgstr ""
+msgstr "Ke a ipereka ke dira madi, nako tse dingwe"
 
 #: bcpp_subject/choices.py:211
 msgid "Waiting to continue agricultural work"
@@ -1851,19 +1856,20 @@ msgstr ""
 
 #: bcpp_subject/choices.py:212
 msgid "Unemployed (looking for work)"
-msgstr ""
+msgstr "Ga ke bereke (Ke batla tiro)"
 
 #: bcpp_subject/choices.py:213
 msgid "Unemployed (waiting to start new work)"
-msgstr ""
+msgstr "Ga ke bereke (Ke letile go simolola tiro a nngwe)"
 
 #: bcpp_subject/choices.py:214
 msgid "Unable to work (permanently sick or injured)"
 msgstr ""
+"Ga ke kgone go bereka(Ke na le bolwetsi jo bo sa holeng or ke golagetse)"
 
 #: bcpp_subject/choices.py:215
 msgid "Student/ Apprentice/ Volunteer"
-msgstr ""
+msgstr "Moithuti/ Moithaopi"
 
 #: bcpp_subject/choices.py:216
 msgid "Housewife/ Homemaker (not looking for work)"
@@ -1875,7 +1881,7 @@ msgstr ""
 
 #: bcpp_subject/choices.py:219
 msgid "Not looking for work"
-msgstr ""
+msgstr "Ga ke senke/ batle tiro"
 
 #: bcpp_subject/choices.py:234
 msgid "Farm work on employers land"
@@ -1927,7 +1933,7 @@ msgstr ""
 
 #: bcpp_subject/choices.py:256
 msgid "1-199 pula"
-msgstr ""
+msgstr "1-99 pula"
 
 #: bcpp_subject/choices.py:299
 msgid "Tebelopele"
@@ -2179,11 +2185,11 @@ msgstr ""
 
 #: bcpp_subject/choices.py:422
 msgid "Within Village"
-msgstr ""
+msgstr "Mo gae"
 
 #: bcpp_subject/choices.py:423
 msgid "Outside Village"
-msgstr ""
+msgstr "E seng mo gae"
 
 #: bcpp_subject/choices.py:424
 msgid "Within the Survey Ward"
@@ -2191,7 +2197,7 @@ msgstr ""
 
 #: bcpp_subject/choices.py:429
 msgid "Gone visiting"
-msgstr ""
+msgstr "O etile"
 
 #: bcpp_subject/choices.py:430
 msgid "Stays at Lands/Cattlepost "
@@ -2241,66 +2247,819 @@ msgstr ""
 msgid "Schools outside village, home on weekends "
 msgstr ""
 
-#: bcpp_subject/choices.py:442
+#: bcpp_subject/choices.py:442 bcpp_subject/choices.py:450
 msgid "Other..."
 msgstr ""
 
 #: bcpp_subject/choices.py:447
-msgid "spouse"
+msgid "afraid_to_test"
 msgstr ""
 
 #: bcpp_subject/choices.py:448
-msgid "parent"
+msgid "not ready to test"
 msgstr ""
 
 #: bcpp_subject/choices.py:449
-msgid "sibling"
+msgid "wishes to test with partner"
 msgstr ""
 
-#: bcpp_subject/choices.py:450
-msgid "child"
-msgstr "ngwanake"
-
-#: bcpp_subject/choices.py:451
-msgid "aunt/uncle"
+#: bcpp_subject/choices.py:455
+msgid "Referred to receive HIV result in clinic"
 msgstr ""
 
-#: bcpp_subject/choices.py:452
-msgid "cousin"
-msgstr "ntsalake"
+#: bcpp_subject/choices.py:456
+msgid "Referred to test in clinic"
+msgstr ""
 
-#: bcpp_subject/choices.py:453
-msgid "partner/boyfriend/girlfriend"
+#: bcpp_subject/choices.py:457
+msgid "Referred as per protocol"
+msgstr ""
+
+#: bcpp_subject/choices.py:461
+msgid "spouse"
 msgstr ""
 
 #: bcpp_subject/choices.py:462
-msgid "Participant does not want to provide record"
+msgid "parent"
+msgstr ""
+
+#: bcpp_subject/choices.py:463
+msgid "sibling"
+msgstr ""
+
+#: bcpp_subject/choices.py:464
+msgid "child"
+msgstr "ngwanake"
+
+#: bcpp_subject/choices.py:465
+msgid "aunt/uncle"
 msgstr ""
 
 #: bcpp_subject/choices.py:466
+msgid "cousin"
+msgstr "ntsalake"
+
+#: bcpp_subject/choices.py:467
+msgid "partner/boyfriend/girlfriend"
+msgstr ""
+
+#: bcpp_subject/choices.py:476
+msgid "Participant does not want to provide record"
+msgstr ""
+
+#: bcpp_subject/choices.py:480
 #, python-format
 msgid "Severe weight loss (wasting) - more than 10% of body weight"
 msgstr ""
 
-#: bcpp_subject/choices.py:467
+#: bcpp_subject/choices.py:481
 msgid "Unexplained diarrhoea for one month"
 msgstr ""
 
-#: bcpp_subject/choices.py:468
+#: bcpp_subject/choices.py:482
 msgid "Yeast infection of mouth or oesophagus"
 msgstr ""
 
-#: bcpp_subject/choices.py:469
+#: bcpp_subject/choices.py:483
 msgid "Severe pneumonia or meningitis or sepsis"
 msgstr ""
 
-#: bcpp_subject/choices.py:470
+#: bcpp_subject/choices.py:484
 msgid "PCP (Pneumocystis pneumonia)"
 msgstr ""
 
-#: bcpp_subject/choices.py:471
+#: bcpp_subject/choices.py:485
 msgid "Herpes infection for more than one month"
 msgstr ""
+
+#: bcpp_subject/models/access_to_care.py:15
+msgid ""
+"In the past year, where do you MOST OFTEN get medical care or treatment when "
+"you or someone in your family is sick or hurt?"
+msgstr ""
+"Mo lebakeng la ngwaga le le fetileng, gantsi o ne o bona tlhokomelo kgotsa "
+"kalafi ya bongaka kae fa wena kgotsa mongwe mo lwapeng a lwala kgotsa a sa "
+"tsoga sentle?"
+
+#: bcpp_subject/models/access_to_care.py:27
+msgid ""
+"In the past year, where else have you obtained medical care or treatment "
+"when you or someone in your family is sick or hurt? (check all that apply)"
+msgstr ""
+"Mo lebakeng la ngwaga le le fetileng, ke ko kae gape ko o boneng/ o tsereng "
+"tlhokomelo kgotsa kalafi ya bongaka fa wena kgotsa mongwe mo lwapeng a lwala "
+"kgotsa a sa tsoga sentle (supa tsotlhe tse di lebaneng)?"
+
+#: bcpp_subject/models/access_to_care.py:38
+msgid ""
+"If I need medical care, I can get seen by an appropriate health professional "
+"without any trouble."
+msgstr ""
+"Fa ke tlhoka tlhokomelo ya bongaka, ke bonwa sentle ke modiri wa botsogo yo "
+"o lebaneng kwantle ga mathata ape."
+
+#: bcpp_subject/models/access_to_care.py:47
+msgid "It is hard for me to get medical care in an emergency"
+msgstr "Go thata gore ke bone tlhokomelo ya bongaka ka nako ya tshoganyetso"
+
+#: bcpp_subject/models/access_to_care.py:55
+msgid ""
+"Sometimes I go without the medical care I need because it is too expensive."
+msgstr ""
+"Fa gongwe ga ke kgone go bona tlhokomelo ya bongaka e ke e tlhokang ka gore "
+"go tura thata."
+
+#: bcpp_subject/models/access_to_care.py:64
+msgid "Places where I can get medical care are very conveniently located."
+msgstr ""
+"Mafelo a ke ka bonang tlhokomelo ya bongaka teng a mo lefelong le le "
+"ntshiametseng/ le le gaufi lenna."
+
+#: bcpp_subject/models/access_to_care.py:72
+msgid "I am able to get medical care whenever I need it."
+msgstr ""
+"Ke kgona go bona tlhokomelo ya bongaka nako nngwe le nngwe fa ke e tlhoka."
+
+#: bcpp_subject/models/access_to_care.py:80
+msgid ""
+"Would you be willing to come to the clinic within your community to receive "
+"HIV care and treatment, if available locally?"
+msgstr ""
+
+#: bcpp_subject/models/base_circumcision.py:11
+msgid "Do you believe that male circumcision has any health benefits for you?"
+msgstr ""
+"A o dumela gore go rupisiwa ga borre go na le dipoelo tsa botsogo mo go wena?"
+
+#: bcpp_subject/models/base_circumcision.py:20
+msgid ""
+"What do you believe are the health benefits of male circumcision? (Indicate "
+"all that apply.)"
+msgstr ""
+"Ke di fe dipoelo tsa botsogo tse o dumelang gore diteng ka go rupa ga borre? "
+"Supa tsotlhe tse o akanyang gore ke tsone"
+
+#: bcpp_subject/models/base_pregnancy.py:12
+msgid "When did you last (most recently) give birth?"
+msgstr ""
+
+#: bcpp_subject/models/base_pregnancy.py:17
+msgid ""
+"During your last pregnancy (not current pregnancy) did you go for antenatal "
+"care?"
+msgstr ""
+
+#: bcpp_subject/models/base_pregnancy.py:24
+msgid ""
+"During your last pregnancy (not current pregnancy) were you tested for HIV?"
+msgstr ""
+
+#: bcpp_subject/models/base_pregnancy.py:32
+msgid "Were you given antiretroviral medications to protect the baby?"
+msgstr ""
+
+#: bcpp_subject/models/base_sexual_partner.py:14
+msgid ""
+"Over the past 12 months, where has this sexual partner lived to the best of "
+"your knowledge?"
+msgstr ""
+"Go ya ka kitso ya gago, mo kgweding tse di lesome le bobedi tse di fetileng "
+"mokapelo wa gago o ne a nna kae?"
+
+#: bcpp_subject/models/base_sexual_partner.py:20
+msgid ""
+"When was the last [most recent] time you had sex with this person (how long "
+"ago)?"
+msgstr ""
+"O tlhakanetse dikobo leng la bofelo le mokapelo yo wa gago( ke lebaka le le "
+"kae le le fetileng)?"
+
+#: bcpp_subject/models/base_sexual_partner.py:27
+msgid "Give the number of days/ months since last had sex."
+msgstr ""
+
+#: bcpp_subject/models/base_sexual_partner.py:33
+msgid "When was the first time you had sex with this person [how long ago]?"
+msgstr ""
+"O tlhakanetse dikobo leng lantlha le mokapelo yo wa gago( ke lebaka le le "
+"kae le le fetileng?"
+
+#: bcpp_subject/models/base_sexual_partner.py:39
+msgid "Give the number of days/ months since first had sex."
+msgstr ""
+
+#: bcpp_subject/models/base_sexual_partner.py:45
+msgid "Do you expect to have sex with this person again?"
+msgstr "A o solofela go tlhakanela dikobo le motho yo gape?"
+
+#: bcpp_subject/models/base_sexual_partner.py:52
+#: bcpp_subject/models/detailed_sexual_history.py:14
+msgid "What type of relationship do you have with this person?"
+msgstr "Botsalano jo o nang najo le motho yo ke jwa mofuta mang?"
+
+#: bcpp_subject/models/base_sexual_partner.py:59
+msgid "To the best of your knowledge, how old is this person?"
+msgstr "Go ya ka kitso ya gago, motho yo o dingwaga di kae?"
+
+#: bcpp_subject/models/base_sexual_partner.py:69
+msgid ""
+"Over the past 12 months, during the time you were having a sexual "
+"relationship with this person, did YOU have sex with other people (including "
+"husband/wife)?"
+msgstr ""
+"Mo lebakeng la kgwedi tse di lesome le bobedi tse di fetileng tse o neng o "
+"na le botsalano ja tlhakanelo dikobo le mokapelo yo, a O KILE wa tlhakanela "
+"dikobo le batho ba ba ngwe (go akaretsa monna kgotsa mosadi wa gago)?"
+
+#: bcpp_subject/models/base_sexual_partner.py:77
+msgid ""
+"Have you received money, transport, food/drink, or other goods in exchange "
+"for sex from this partner?"
+msgstr ""
+"A o kile wa amogela madi, sepalamo, dijo/dino, kgotsa dithoto dingwe go tswa "
+"mo mokapelong yo go tlhakanela dikobo?"
+
+#: bcpp_subject/models/base_sexual_partner.py:85
+msgid ""
+"During the last 3 months [of your relationship, if it has ended] how many "
+"times did you have sex with this partner?"
+msgstr ""
+"Mo kgweding tse tharo tse di fetileng(tsa botsalano jwa lona, fa e le gore "
+"bofedile) le tlhakanetse dikobo go ka nna kae?"
+
+#: bcpp_subject/models/base_sexual_partner.py:92
+msgid "What is this partner's HIV status?"
+msgstr "Seemo sa mogare wa HIV sa mokapelo ke sefe?"
+
+#: bcpp_subject/models/base_sexual_partner.py:100
+msgid "Has your partner been tested for HIV in last 12 months"
+msgstr ""
+"A mokapelo wa gago o itlhatlhobetse mogare wa HIV mo dikgweding tse di "
+"lesome le bobedi tse di fitileng?"
+
+#: bcpp_subject/models/base_sexual_partner.py:107
+msgid "Is this partner taking antiretroviral treatment?"
+msgstr "A mokapelo yo o tsaya dipilisi tsa diritibatsi(di-ARV)?"
+
+#: bcpp_subject/models/base_sexual_partner.py:116
+msgid "Have you told this partner your HIV status?"
+msgstr "A o boleletse mokapelo yo seemo sa gago sa HIV?"
+
+#: bcpp_subject/models/base_sexual_partner.py:124
+msgid ""
+"When you have [had] sex with this partner, how often do you or your partner "
+"use a condom?"
+msgstr ""
+"Fa le/ fa le ne le tlhakanela dikobo le mokapelo yo, le dirisa sekausu ga "
+"kae?"
+
+#: bcpp_subject/models/base_sexual_partner.py:133
+#: bcpp_subject/models/detailed_sexual_history.py:103
+msgid ""
+"To the best of your knowledge, did he/she ever have other sex partners while "
+"you two were having a sexual relationship?"
+msgstr ""
+"Go ya ka fa o itseng ka teng, a mokapelo wa gago o kile a nna le bakapelo ba "
+"bangwe ba tlhakanela dikobo fa wena le ene le santse le le mo botsalanong "
+"jwa tlhakanelo dikobo?"
+
+#: bcpp_subject/models/circumcised.py:12
+msgid "At what age were you circumcised?"
+msgstr "O rupisitswe o le dingwaga di kae?"
+
+#: bcpp_subject/models/circumcised.py:16
+msgid "Note:Leave blank if participant does not want to respond."
+msgstr ""
+
+#: bcpp_subject/models/circumcised.py:20
+msgid "Where were you circumcised?"
+msgstr "O rupiseditswe kae?"
+
+#: bcpp_subject/models/circumcised.py:31
+msgid "What was the main reason why you were circumcised?"
+msgstr "Lebaka legolo la gore o bo o rupile ke lefe?"
+
+#: bcpp_subject/models/circumcision.py:13
+msgid "Are you circumcised?"
+msgstr "A o rupile/rupisitswe?"
+
+#: bcpp_subject/models/community_engagement.py:15
+msgid ""
+"How active are you in community activities such as burial society, Motshelo, "
+"Syndicate, PTA, VDC(Village Developement Committee), Mophato and development "
+"of the community that surrounds you??"
+msgstr ""
+
+#: bcpp_subject/models/community_engagement.py:25
+msgid "Did you vote in the last local government election?"
+msgstr "A one wa tlhopha mo ditlhophong tse di fetileng tsa selegae/khansele?"
+
+#: bcpp_subject/models/community_engagement.py:32
+msgid "What are the major problems in this neighbourhood??"
+msgstr "Mathata a matona mo tikologong ya lona ke afe?"
+
+#: bcpp_subject/models/community_engagement.py:39
+msgid ""
+"If there is a problem in this neighbourhood, do the adults work together in "
+"solving it?"
+msgstr ""
+"Fa go na le mathata mo tikologong e, a bagolo ba dira mmogo go rarabolola "
+"bothata jo?"
+
+#: bcpp_subject/models/demographics.py:15
+msgid "What is your religion affiliation?"
+msgstr "O amana le tumelo efe?"
+
+#: bcpp_subject/models/demographics.py:21
+msgid "What is your ethnic group?"
+msgstr "O wa morafe o fe?"
+
+#: bcpp_subject/models/demographics.py:29
+msgid "What is your current marital status?"
+msgstr "Seemo sa gago sa nyalo ke eng mo bogompienong?"
+
+#: bcpp_subject/models/demographics.py:36
+msgid ""
+"How many wives does your husband have (including traditional marriage), "
+"including yourself?"
+msgstr ""
+
+#: bcpp_subject/models/demographics.py:44
+msgid "How many wives do you have, including traditional marriage?"
+msgstr ""
+
+#: bcpp_subject/models/demographics.py:52
+msgid "Who do you currently live with ?"
+msgstr "O nna le mang mo bo gompienong(kaya tsotlhe tse di lebaneng)?"
+
+#: bcpp_subject/models/detailed_sexual_history.py:22
+msgid "To the best of your knowledge, where does you main sexual partner live?"
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:28
+msgid "How old is this sexual partner?"
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:33
+msgid "Is this partner male or female? "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:39
+msgid ""
+"When was the last (most recent) time you had sex with this person (how long "
+"ago)? "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:45
+#: bcpp_subject/models/detailed_sexual_history.py:53
+msgid "Record if number is in days/months/years"
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:48
+msgid "When was the first time you had sex with this person (how long ago)? "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:56
+msgid ""
+"During the last 3 months (of your relationship if it has ended) how many "
+"times a month (on average) did you have sex?"
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:62
+#: bcpp_subject/models/detailed_sexual_history.py:69
+msgid "Are you still having sex with this person? "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:75
+msgid ""
+"Last time you had sex with this partner, did you drink alcohol before sex? "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:81
+msgid "Have you learned this partner's HIV status? "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:87
+msgid "Is this partner taking antiretroviral treatment?  "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:95
+msgid "Have you disclosed your HIV status to this partner? "
+msgstr ""
+
+#: bcpp_subject/models/detailed_sexual_history.py:112
+msgid "Can you tell me what type of sex you had with this sex partner?  "
+msgstr ""
+
+#: bcpp_subject/models/education.py:15
+msgid "What is your highest level of education attainment?"
+msgstr "O tsene sekolo go fitlha fa kae?"
+
+#: bcpp_subject/models/education.py:22
+msgid "Are you currently working?"
+msgstr "A o a bereka?"
+
+#: bcpp_subject/models/education.py:29
+msgid "In your main job what type of work do you do?"
+msgstr "Mo tirong ya gago, o bereka go dira eng?"
+
+#: bcpp_subject/models/education.py:36
+msgid "What is the reason why you are not working?"
+msgstr ""
+
+#: bcpp_subject/models/education.py:45
+msgid ""
+"Describe the work that you do or did in your most recent job. If you have "
+"more than one profession, choose the one you spend the most time doing."
+msgstr ""
+
+#: bcpp_subject/models/education.py:54
+msgid ""
+"In the past month, how much money did you earn from work you did or received "
+"in payment [retirement benefits child maintenance, food basket, etc]?"
+msgstr ""
+
+#: bcpp_subject/models/future_hiv_testing.py:19
+msgid "In the future, where would you prefer to get tested for HIV?"
+msgstr "Mo nakong e e tlang o tla batla go tlhatlhobelwa HIV kae?"
+
+#: bcpp_subject/models/future_hiv_testing.py:27
+msgid ""
+"In the future, is there a particular time of day that you would prefer to "
+"receive your next HIV test ?"
+msgstr ""
+"Mo nakong e e tlang, a go na le nako e e rileng mo letsatsing e o tla ratang "
+"go tlhatlhobela HIV ka yone ?"
+
+#: bcpp_subject/models/future_hiv_testing.py:35
+#: bcpp_subject/models/future_hiv_testing.py:48
+#: bcpp_subject/models/future_hiv_testing.py:61
+msgid "If yes, specify:"
+msgstr "Ee, tlhalosa:"
+
+#: bcpp_subject/models/future_hiv_testing.py:40
+msgid ""
+"In the future, is there a particular day of the week that you would prefer "
+"to receive your next HIV test ?"
+msgstr ""
+"Mo nakong e e tlang, a go na le letsatsi la beke le le rileng le o tla "
+"ratang go tlhatlhobelwa HIV ka lone?"
+
+#: bcpp_subject/models/future_hiv_testing.py:53
+msgid ""
+"In the future, is there a particular time of year that you would prefer to "
+"receive your next HIV test?"
+msgstr ""
+"Mo nakong e e tlang, a go na le nako e e rileng mo ngwageng e o tla ratang "
+"go tlhatlhobelwa HIV ka yone?"
+
+#: bcpp_subject/models/grant.py:15
+msgid "How many of each type of grant do you receive?"
+msgstr ""
+
+#: bcpp_subject/models/grant.py:19
+#, fuzzy
+msgid "Grant name"
+msgstr "Sefane sa gago"
+
+#: bcpp_subject/models/heart_attack.py:14
+msgid ""
+"Note: Record date of first day of hospital admission or date the diagnosis "
+"was documented in the OPD record. If report not available, then record "
+"participant's best knowledge. If participant does not want to answer,leave "
+"blank. If unable to estimate date, leave blank"
+msgstr ""
+
+#: bcpp_subject/models/heart_attack.py:22
+msgid ""
+"Note: If record of diagnosis is not available, record the participant's best "
+"knowledge. (tick all that apply)"
+msgstr ""
+
+#: bcpp_subject/models/hiv_care_adherence.py:16
+msgid "When was your first positive HIV test result?"
+msgstr "Maduo a gago a ntlha a gore o na le mogare wa HIV a ne a le leng?"
+
+#: bcpp_subject/models/hiv_care_adherence.py:24
+msgid ""
+"Have you ever received HIV-related medical or clinical care, for such things "
+"as a CD4 count (masole), IDCC/ PMTCT registration, additional clinic-based "
+"counseling?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_care_adherence.py:33
+#, fuzzy
+msgid ""
+"What is the main reason you have not received HIV-related medical or "
+"clinical care?"
+msgstr "Ga ke na madi a go ka bona thuso mabapi le seemo sa me sa HIV"
+
+#: bcpp_subject/models/hiv_care_adherence.py:43
+msgid ""
+"Have you ever been recommended by a doctor/nurse or other healthcare worker "
+"to start antiretroviral therapy (ARVs), a combination of medicines to treat "
+"your HIV infection? [common medicines include: combivir, truvada, atripla, "
+"nevirapine]"
+msgstr ""
+
+#: bcpp_subject/models/hiv_care_adherence.py:55
+msgid ""
+"Have you ever taken any antiretroviral therapy (ARVs) for your HIV "
+"infection? [For women: Do not include treatment that you took during "
+"pregnancy to protect your baby from HIV]"
+msgstr ""
+
+#: bcpp_subject/models/hiv_care_adherence.py:64
+msgid "What was the main reason why you have not started ARVs?"
+msgstr "Lebaka legolo ke eng o sa simolola di-ARV?"
+
+#: bcpp_subject/models/hiv_care_adherence.py:74
+msgid "When did you first start taking antiretroviral therapy (ARVs)?"
+msgstr "O simolotse go tsaya melemo ya diritibatsi(di-ARV) lantlha leng?"
+
+#: bcpp_subject/models/hiv_care_adherence.py:82
+msgid "Are you currently taking antiretroviral therapy (ARVs)?"
+msgstr "A mo bo gompienong o tsaya melemo ya diritibatsi?"
+
+#: bcpp_subject/models/hiv_care_adherence.py:88
+msgid "When did you stop taking ARV's?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_care_adherence.py:95
+msgid "What was the main reason why you stopped taking ARVs?"
+msgstr "Lebaka legolo la go bo o emisitse go tsaya di-ARV ke lefe?"
+
+#: bcpp_subject/models/hiv_care_adherence.py:105
+msgid ""
+"During the past 4 days, on how many days have you missed taking all your "
+"doses of antiretroviral therapy (ART)?"
+msgstr ""
+"Mo malatsing a mane a a fetileng, o tlodisitse go tsaya melemo ya gago "
+"malatsi a le kae?"
+
+#: bcpp_subject/models/hiv_care_adherence.py:115
+msgid ""
+"Thinking about the past 4 weeks, on average, how would you rate your ability "
+"to take all your medications as prescribed?"
+msgstr ""
+"Fa o akanya ka beke tse nne tse di fetileng, fa o akanyetsa o ka kala "
+"bokgoni jwa gago jang go tsaya melemo ya gago yotlhe jaaka o laetswe?"
+
+#: bcpp_subject/models/hiv_health_care_costs.py:16
+msgid "Have you ever received HIV related medical/clinical care? "
+msgstr "A o kile wa amogela tlhokomelo ya botsogo ya HIV?"
+
+#: bcpp_subject/models/hiv_health_care_costs.py:22
+#, fuzzy
+msgid "If you have never received HIV related medical/clinical care, why not? "
+msgstr "Ga ke na madi a go ka bona thuso mabapi le seemo sa me sa HIV"
+
+#: bcpp_subject/models/hiv_health_care_costs.py:30
+#, fuzzy
+msgid "Where do you receive most of your HIV related health care? "
+msgstr "Ga ke na madi a go ka bona thuso mabapi le seemo sa me sa HIV"
+
+#: bcpp_subject/models/hiv_health_care_costs.py:36
+msgid ""
+"In the past 3 months, how many times did you obtain HIV related health care "
+"in this location? "
+msgstr ""
+
+#: bcpp_subject/models/hiv_health_care_costs.py:43
+msgid "In the last 3 months, how often did someone take you to the doctor? "
+msgstr ""
+
+#: bcpp_subject/models/hiv_medical_care.py:12
+msgid ""
+"When did you first receive HIV-related medical care for such things as a CD4 "
+"count (masole), IDCC/ PMTCT registration, additional clinic-based counseling?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_medical_care.py:21
+msgid ""
+"When did you last (most recently) receive HIV-relatedmedical care for such "
+"things as a CD4 count (masole), IDCC/ PMTCT registration, additional clinic-"
+"based counseling?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_medical_care.py:30
+msgid "What was your lowest CD4 (masole) count that was ever measured?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_result.py:11
+msgid "Record today's HIV test result:"
+msgstr ""
+
+#: bcpp_subject/models/hiv_result.py:18
+msgid ""
+"What was the main reason why you did not want HIV testing as part of today's "
+"visit?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_result_documentation.py:14
+msgid "What is the recorded date of the HIV test?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_result_documentation.py:19
+msgid "What is the recorded HIV test result?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_result_documentation.py:26
+msgid "What is the type of document used?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_test_review.py:11
+msgid "What was the recorded date of the last HIV test?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_test_review.py:16
+msgid "What was the recorded HIV test result?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_tested.py:14
+msgid "How many times before today have you had an HIV test?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_tested.py:21
+msgid ""
+"Where were you tested for HIV, the last [most recent] time you were tested?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_tested.py:29
+msgid ""
+"Not including today's HIV test, which of the following statements best "
+"describes the reason you were tested the last [most recent] time you were "
+"tested before today?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_testing_history.py:13
+msgid "Have you ever been tested for HIV before?"
+msgstr "A o kile wa itlhatlhobela HIV mo nakong e e fetileng?"
+
+#: bcpp_subject/models/hiv_testing_history.py:20
+msgid "When was the last [most recent] time you were tested for HIV?"
+msgstr "O tlhatlhobetswe HIV leng(mo bo gaufing), la bofelo o tlhatlhoba"
+
+#: bcpp_subject/models/hiv_testing_history.py:30
+msgid ""
+"Is a record of last HIV test [OPD card, Tebelopele, other] available to "
+"review?"
+msgstr ""
+"A mokwalo wa tlhatlhobo ya HIV oteng [karata ya sepatela/clinic, karata ya , "
+"Tebelopele,kgotsa sengwe fela] go ka sekwa sekwa?"
+
+#: bcpp_subject/models/hiv_testing_history.py:40
+msgid "Please tell me the results of your last [most recent] HIV test?"
+msgstr ""
+"Ke kopa o mpolelele maduo a gago a tlhatlhobo ya gago ya HIV ya bofelo?"
+
+#: bcpp_subject/models/hiv_testing_history.py:49
+msgid "Do you have any other available documentation of an HIV result?"
+msgstr ""
+
+#: bcpp_subject/models/hiv_testing_supplemental.py:13
+msgid ""
+"Have you ever heard about treatment for HIV with pills called antiretroviral "
+"therapy or ARVs [or HAART]?"
+msgstr ""
+"A o kile wa utlwalela ka kalafi ya dipilisi tsa diritibatsi(di-ARV kgotsa "
+"HAART?"
+
+#: bcpp_subject/models/hiv_testing_supplemental.py:22
+msgid ""
+"Do you believe that treatment for HIV with antiretroviral therapy (or ARVs) "
+"can help HIV-positive people to live longer?"
+msgstr ""
+"A o dumela gore kalafi ya di-ARV e ka thusa batho go tshela lebaka le le "
+"leele?"
+
+#: bcpp_subject/models/hiv_untested.py:14
+msgid ""
+"If you were not tested for HIV in the 12 months prior to today, what is the "
+"main reason why not?"
+msgstr ""
+"If you were not tested for HIV in the 12 months prior to today, what is the "
+"main reason why not?"
+
+#: bcpp_subject/models/medical_diagnoses.py:15
+msgid ""
+"Do you recall or is there a record of having any of the following serious "
+"illnesses?"
+msgstr ""
+
+#: bcpp_subject/models/medical_diagnoses.py:21
+msgid ""
+"Is a record (OPD card, discharge summary) of a heart disease or stroke "
+"diagnosis available to review?"
+msgstr ""
+
+#: bcpp_subject/models/medical_diagnoses.py:31
+msgid ""
+"Is a record (OPD card, discharge summary) of a cancer diagnosis available to "
+"review?"
+msgstr ""
+
+#: bcpp_subject/models/medical_diagnoses.py:41
+msgid ""
+"Is a record (OPD card, discharge summary) of a sti diagnosis available to "
+"review?"
+msgstr ""
+
+#: bcpp_subject/models/medical_diagnoses.py:51
+msgid ""
+"Is a record (OPD card, discharge summary, TB card) of a tuberculosis "
+"infection available to review?"
+msgstr ""
+
+#: bcpp_subject/models/non_pregnancy.py:14
+msgid "Do you wish to have a child now or in the future?"
+msgstr "A o na le keletso ya go nna le ngwana gompieno kgotsa nako e e tlang?"
+
+#: bcpp_subject/models/pima.py:16
+msgid "What is the CD4 count of the PIMA machine?"
+msgstr ""
+
+#: bcpp_subject/models/pima.py:24
+msgid "What is the time of the PIMA machine blood draw?"
+msgstr ""
+
+#: bcpp_subject/models/pima.py:28
+msgid "Was a finger prick done today?"
+msgstr ""
+
+#: bcpp_subject/models/pima.py:34
+msgid "If no finger prick today, please explain why"
+msgstr ""
+
+#: bcpp_subject/models/positive_participant.py:17
+msgid "I think less of myself."
+msgstr "Ga ke ipone ke le motho wa sepe."
+
+#: bcpp_subject/models/positive_participant.py:24
+msgid "I have felt ashamed because of having HIV."
+msgstr "Ke ne ka ikutlwa ke tlhabiwa ke ditlhong gore ke na le HIV."
+
+#: bcpp_subject/models/positive_participant.py:31
+msgid ""
+"I fear that if I disclosed my HIV status to my friends, they would lose "
+"respect for me."
+msgstr ""
+"Ke tshoga gore fa ke ka ka bolelela ditsala tsame seemo same sa HIV, ba tla "
+"seke ba tlhole ba ntlotla"
+
+#: bcpp_subject/models/positive_participant.py:39
+msgid ""
+"I fear that if I disclosed my HIV status to my family, they would exclude me "
+"from usual family activities."
+msgstr ""
+"Ke tshoga gore fa ke ka ka bolelela ba lelwapa lame seemo same sa HIV, ba "
+"tla seke ba tlhole ba ntsenya mo ditirong tsa lelwapa tsa malatsi otlhe"
+
+#: bcpp_subject/models/positive_participant.py:47
+msgid "People have talked badly about me."
+msgstr "Batho ba ne ba bua bosula ka nna."
+
+#: bcpp_subject/models/positive_participant.py:54
+msgid "I have lost respect or standing in the community."
+msgstr "Ke latlhegetswe ke maemo kgotsa tlotlo mo motseng.."
+
+#: bcpp_subject/models/positive_participant.py:61
+msgid "I have lost a job because of having HIV."
+msgstr "Ke senyegetswe ke tiro ka lebaka la gonna le mogare wa HIV."
+
+#: bcpp_subject/models/pregnancy.py:14
+msgid "Have you registered for antenatal care?"
+msgstr "A o ikwadiseditse boimana?"
+
+#: bcpp_subject/models/pregnancy.py:23
+msgid "When was your last normal menstrual period?"
+msgstr "O bone leng setswalo se se siameng la bofelo?"
+
+#: bcpp_subject/models/reproductive_health.py:16
+msgid ""
+"How many children have you given birth to? Please include any children that "
+"may have died at (stillbirth) or after birth. Do not include any current "
+"pregnancies or miscarriages that occur early in pregnancy (prior to 20 "
+"weeks)."
+msgstr ""
+"O tshotse bana ba le kae? [Tswee-tswee akaretsa bana ba ba ka tswang ba "
+"tlhokafetse ka nako ya pelegi morago ga go belegwa, mme o seka wa tsenya "
+"boimana bope ja gompieno kgotsa go senyegelwa mo go diragalang fa boimana bo "
+"simologa(pele ga beke tse 20)]"
+
+#: bcpp_subject/models/reproductive_health.py:26
+msgid "Have you reached menopause (more than 12 months without a period)?"
+msgstr ""
+
+#: bcpp_subject/models/reproductive_health.py:33
+msgid "In the past 12 months, have you used any methods to prevent pregnancy ?"
+msgstr ""
+"Mo kgweding tse di lesome le bobedi, a okile wa dirisa mofuta mongwe go "
+"thibela boimana (supa tsotlhe tse di lebaneng)?"
+
+#: bcpp_subject/models/reproductive_health.py:42
+msgid "Are you currently pregnant?"
+msgstr "A o moimana gompieno?"
 
 #: bcpp_subject/models/residency_mobility.py:15
 msgid "How long have you lived in this community?"
@@ -2334,6 +3093,236 @@ msgstr ""
 #: bcpp_subject/models/residency_mobility.py:56
 msgid "Give the name of the community"
 msgstr "Leina la motse oo"
+
+#: bcpp_subject/models/sexual_behaviour.py:15
+msgid ""
+"In your lifetime, have you ever had sex with anyone (including your spouse, "
+"friends, or someone you have just met)?"
+msgstr ""
+"Mo botshelong jwa gago, a o kile wa tlhakanela dikobo le mongwe (go akaretsa "
+"le monna/mosadi wa gago, tsala kgotsa mongwe yo o sa tswang go kopana le "
+"ene)?"
+
+#: bcpp_subject/models/sexual_behaviour.py:23
+msgid ""
+"In your life time, how many different people have you had sex with?  Please "
+"remember to include casual and once-off partners (prostitutes and truck "
+"drivers) as well as long-term partners (spouses, boyfriends/girlfriends)[If "
+"you can't recall the exact number, please give a best guess]"
+msgstr ""
+
+#: bcpp_subject/models/sexual_behaviour.py:35
+msgid ""
+"In the past 12 months, how many different people have you had sex with?  "
+"Please remember to include casual and once-off partners (prostitutes and "
+"truck drivers) as well as long-term partners (spouses, boyfriends/"
+"girlfriends)[If you can't recall the exact number, please give a best guess]"
+msgstr ""
+"Ke palo gotlhe ya batho ba le kae ba ba farologaneng ba o tlhakanetseng "
+"dikobo le bone mo lebakeng la kgwedi tse di lesome le bobedi tse di "
+"fetileng? Tswee-tswee o akaretse bakapelo ba nakwana kgotsa ba gone foo( ba "
+"ba gwebang ka mmele le bakgweetsi ba dikoloi tsa megobagoba) ga mmogo le "
+"bakapelo ba lebaka le le leele ( monna/mosadi wa gago; boyfriend/girlfriend) "
+"[Fa o sa gakologelwe palo ka tlhomamo, akanyetsa fela]"
+
+#: bcpp_subject/models/sexual_behaviour.py:47
+msgid ""
+"In the past 12 months, did you have sex with somebody living outside of the "
+"community?"
+msgstr ""
+"Mo lebakeng la kgwedi tse di lesome tse di fetileng a okile wa tlhakanela "
+"dikobo le mongwe yo o sa nneng mo motseng o?"
+
+#: bcpp_subject/models/sexual_behaviour.py:57
+msgid ""
+"How old were you when you had sex for the first time? [If you can't recall "
+"the exact age, please give a best guess]"
+msgstr ""
+"O tlhakanetse dikobo lantlha o le dingwaga di kae [Fa o sa gakologelwe "
+"sentle, akanyetsa fela]?"
+
+#: bcpp_subject/models/sexual_behaviour.py:67
+msgid ""
+"During the last [most recent] time you had sex, did you or your partner use "
+"a condom?"
+msgstr ""
+"La bofelo le tlhakanela dikobo( mo bo gaufing) a wena le mokapelo wa gago le "
+"dirisitse sekausu/condom?"
+
+#: bcpp_subject/models/sexual_behaviour.py:77
+msgid ""
+"During the last [most recent] time you had sex, were you or your partner "
+"drinking alcohol?"
+msgstr ""
+"Ka tlhakanelo dikobo ya bofelo, a wena kgotsa mokapelo wa gago le ne le nwa "
+"bojalwa?"
+
+#: bcpp_subject/models/sti.py:14
+msgid "Date of the diagnosis of the STI (Sexually transmitted infection):"
+msgstr ""
+
+#: bcpp_subject/models/sti.py:19
+msgid "[Interviewer:] What is the STI diagnosed as recorded?"
+msgstr ""
+
+#: bcpp_subject/models/sti.py:26
+msgid "Comments"
+msgstr ""
+
+#: bcpp_subject/models/stigma.py:15
+msgid ""
+"Would you be, or have you ever been, hesitant to take an HIV test due to "
+"fear of people's reaction if you tested positive for HIV."
+msgstr ""
+
+#: bcpp_subject/models/stigma.py:24
+msgid "I would be ashamed if someone in my family had HIV."
+msgstr "Ke kwa swaba fa mongwe mo lwapeng larona a ka nna le HIV."
+
+#: bcpp_subject/models/stigma.py:31
+msgid ""
+"I fear that I could contract HIV if I come into contact with the saliva of a "
+"person living with HIV."
+msgstr ""
+"Ke tshaba gore ke ka tsenwa ke mogare wa HIV fa ke ka amana le mathe a motho "
+"yo o tshelang le HIV"
+
+#: bcpp_subject/models/stigma.py:39
+msgid ""
+"I think that if a female teacher is living with HIV but is not sick, she "
+"should be allowed to continue teaching in the school."
+msgstr ""
+"Ke akanya gore fa morutabana wa mosadi a tshela le HIV mme a sa lwale, a "
+"letlelelwe go tswelela a ruta mo sekolong."
+
+#: bcpp_subject/models/stigma.py:47
+msgid ""
+"Children living with HIV should be able to attend school with children who "
+"are HIV negative."
+msgstr ""
+"Bana ba ba tshelang le HIV ba tshwanetse go tsena sekolo le bana ba ba "
+"senang HIV"
+
+#: bcpp_subject/models/stigma_opinion.py:15
+msgid ""
+"People are hesitant to take an HIV test due to fear of people's reaction if "
+"the test result is positive for HIV."
+msgstr ""
+"Batho ba tshaba go tlhatlhobela HIV ka go poifo ya gore batho ba tlaa reng "
+"fa maduo a ka supa ba na le mogare wa HIV."
+
+#: bcpp_subject/models/stigma_opinion.py:23
+msgid ""
+"People talk badly about people living with or thought to be living with HIV "
+"to others."
+msgstr ""
+"Batho ba bua le ba bangwe bomaswe ka batho ba ba nang le HIV kgotsa ba go "
+"akanngwang ba na le HIV"
+
+#: bcpp_subject/models/stigma_opinion.py:31
+msgid ""
+"People living with or thought to be living with HIV lose respect or standing."
+msgstr ""
+"Batho ba ba tshelang le HIV kgotsa ba go akanngwang ba na le HIV ga ba "
+"tlotliwe kgotsa ga ba bone maemo."
+
+#: bcpp_subject/models/stigma_opinion.py:39
+msgid ""
+"People living with or thought to be living with HIV are verbally insulted, "
+"harassed and/or threatened."
+msgstr ""
+"Batho ba ba tshelang le HIV kgotsa ba go akanngwang ba na le HIV ba a rogwa, "
+"thorontshiwa kgotsa ba a tshosediwa ka dipuo."
+
+#: bcpp_subject/models/stigma_opinion.py:47
+msgid ""
+"People living with or thought to be living with HIV are sometimes physically "
+"assaulted."
+msgstr ""
+"Batho ba ba tshelang le HIV kgotsa go akanngwa ba na le HIV fa gongwe ba "
+"kgokgontshiwa ka go itewa/ go betswa."
+
+#: bcpp_subject/models/stigma_opinion.py:55
+msgid ""
+"People living with or thought to be living with HIV are now more accepted by "
+"others as there is now an effective treatment available."
+msgstr ""
+"Batho ba ba tshelang le mogare wa HIV kgotsa go akanngwa gore ba na le "
+"mogare wa HIV ba a amogelesega mo go ba bangwe ka gompieno go na le kalafi"
+
+#: bcpp_subject/models/stigma_opinion.py:64
+msgid ""
+"People living with HIV are less able to financially support themselves and "
+"their families."
+msgstr ""
+"Batho ba ba nang le mogare wa HIV ba na le bothata ja madi go ka itlhokomela "
+"kgotsa go tlhokomela ba malapa a bone"
+
+#: bcpp_subject/models/subject_consent.py:20
+msgid "Is subject a minor?"
+msgstr ""
+
+#: bcpp_subject/models/substance_use.py:11
+msgid "In the past month, how often did you consume alcohol?"
+msgstr ""
+
+#: bcpp_subject/models/substance_use.py:18
+msgid ""
+"Do you currently smoke any tobacco products, such as cigarettes, cigars, or "
+"pipes?"
+msgstr ""
+
+#: bcpp_subject/models/tubercolosis.py:14
+msgid "Date of the diagnosis of tuberculosis:"
+msgstr ""
+
+#: bcpp_subject/models/tubercolosis.py:19
+msgid "[Interviewer:]What is the tuberculosis diagnosis as recorded?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:13
+msgid "What is the main reason that you have not yet been circumcised?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:21
+msgid "Would you ever consider being circumcised in the future?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:28
+msgid ""
+"In the future, is there a particular time of day that you would prefer to be "
+"circumcised?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:39
+msgid ""
+"In the future, is there a particular day of the week that you would prefer "
+"to be circumcised?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:50
+msgid ""
+"In the future, is there a particular time of year that you would prefer to "
+"be circumcised?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:61
+msgid ""
+"Which of the following might increase your willingness to be circumcised the "
+"most?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:70
+msgid ""
+"Were you aware that circumcision services are provided free of charge at "
+"most health facilities?"
+msgstr ""
+
+#: bcpp_subject/models/uncircumcised.py:79
+msgid ""
+"Where did you learn that circumcision services were available free at most "
+"health facilities?"
+msgstr ""
 
 #: bhp_adverse/models/simple_adverse_event.py:42
 msgid "1. Which type of report is this?"
