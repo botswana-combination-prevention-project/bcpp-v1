@@ -6,7 +6,8 @@ from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
                               HouseholdSurveyReason, HouseholdSurveySource, 
                               SurveyGroup, HouseholdStructureRelation, 
                               HouseholdSurveyStatus, SubjectAbsenteeReason, 
-                              SubjectMovedReason, PartnerResidency, HeartDisease,
+                              SubjectMovedReason, SubjectUndecidedReason, 
+                              PartnerResidency, HeartDisease,
                               Diagnoses, Religion)
 
 
@@ -83,6 +84,11 @@ admin.site.register(SubjectAbsenteeReason, SubjectAbsenteeReasonAdmin)
 class SubjectMovedReasonAdmin(BaseModelAdmin):
     pass
 admin.site.register(SubjectMovedReason, SubjectMovedReasonAdmin)
+
+
+class SubjectUndecidedReasonAdmin(BaseModelAdmin):
+    pass
+admin.site.register(SubjectUndecidedReason, SubjectUndecidedReasonAdmin)
 
 
 class PartnerResidencyAdmin(BaseModelAdmin):
