@@ -59,6 +59,8 @@ from subject_refusal import SubjectRefusal
 from subject_absentee import *
 from subject_absentee_entry import SubjectAbsenteeEntry
 from subject_moved import SubjectMoved
+from subject_undecided import SubjectUndecided
+from subject_undecided_entry import SubjectUndecidedEntry
 #from household_composition import HouseholdComposition, Respondent
 
 
