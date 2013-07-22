@@ -37,10 +37,10 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     natural_key.dependencies = ['bcpp_survey.survey', 'bcpp_household.household', ]
 
     def gps_point(self):
-        return "LON:%s LAT:%s" % (self.household.gps_point_11, self.household.gps_point_21)
+        return "LON:{0} LAT:{1}".format(self.household.gps_point_11, self.household.gps_point_21)
 
     def get_absolute_url(self):
-        return "/admin/bcpp_household/householdstructure/%s/" % self.id
+        return "/admin/bcpp_household/householdstructure/{0}/".format(self.id)
 
     def calendar_datetime(self):
         return self.created

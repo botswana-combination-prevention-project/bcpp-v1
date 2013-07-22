@@ -1,8 +1,8 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from bhp_crypto.fields import EncryptedCharField
-from bcpp_household.choices import NEXT_APPOINTMENT_SOURCE
+from bhp_crypto.fields import EncryptedTextField
+from bcpp_household.choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdLogManager, HouseholdLogEntryManager
 from household import Household
@@ -46,7 +46,11 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         verbose_name='HBC/CLO Name',
         max_length=25,
         )
-
+    status = models.CharField(
+        verbose_name='Household Attempt Status',
+        max_length=25,
+        choices=HOUSEHOLD_STATUS
+        )
     next_appt_datetime = models.DateTimeField(
         verbose_name="Re-Visit On",
         help_text="The date and time to revisit household",
@@ -63,7 +67,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         blank=False
         )
 
-    comment = EncryptedCharField(
+    comment = EncryptedTextField(
         null=True,
         blank=True,
         )
