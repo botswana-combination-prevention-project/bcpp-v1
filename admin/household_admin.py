@@ -13,25 +13,20 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     list_max_show_all = 1000
 
     fields = (
-        'gps_waypoint',
-        'gps_datetime',
+        'report_datetime',
         'gps_degrees_s',
         'gps_minutes_s',
         'gps_degrees_e',
         'gps_minutes_e',
-        'was_surveyed_previously',
         'cso_number',
         'community',
         'section',
         'sub_section',
         'comment')
 
-    radio_fields = {
-        'was_surveyed_previously': admin.VERTICAL, }
-
     list_display = ('household_identifier', 'cso_number', 'community', 'section', 'created')
 
-    list_filter = ('was_surveyed_previously', 'created', 'target', 'community', 'section',)
+    list_filter = ('created', 'target', 'community', 'section',)
 
     search_fields = ('household_identifier', 'cso_number', 'community', 'section', 'id')
 

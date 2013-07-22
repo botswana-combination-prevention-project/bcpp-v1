@@ -6,5 +6,5 @@ class HouseholdSearchByWord(BaseSearchByWord):
 
     section_name = 'household'
     search_model = Household  # , HouseholdStructure, HouseholdStructureMember)
-
+    order_by = 'household_identifier'
 site_search.register(HouseholdSearchByWord)

@@ -6,8 +6,7 @@ from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_common.choices import YES_NO
 from bhp_device.classes import Device
 from bhp_identifier.exceptions import IdentifierError
-from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField,
-                               EncryptedIntegerField)
+from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
 
@@ -38,37 +37,30 @@ class Household(BaseDispatchSyncUuidModel):
         default=0,
         )
 
-    gps_waypoint = models.CharField(
-        verbose_name='Waypoint',
-        max_length=25,
-        help_text=_("the waypoint number is taken from the GPS reading"),
-        )
-
-    gps_datetime = models.DateTimeField(
-        verbose_name='GPS Date/Time',
-        help_text=_("Date format YYYY-MM-DD, Time format is 24hr time HH:MM"),
+    report_datetime = models.DateTimeField(
+        verbose_name='Report Date/Time',
         )
 
     gps_degrees_s = EncryptedDecimalField(
-        verbose_name='GPS Degrees S',
+        verbose_name='GPS Degrees-South',
         max_digits=10,
-        decimal_places=4,
+        decimal_places=0,
         )
 
     gps_minutes_s = EncryptedDecimalField(
-        verbose_name='GPS Minutes S',
+        verbose_name='GPS Minutes-South',
         max_digits=10,
         decimal_places=4,
         )
 
     gps_degrees_e = EncryptedDecimalField(
-        verbose_name='GPS Degrees E',
+        verbose_name='GPS Degrees-East',
         max_digits=10,
-        decimal_places=4,
+        decimal_places=0,
         )
 
     gps_minutes_e = EncryptedDecimalField(
-        verbose_name='GPS Minutes E',
+        verbose_name='GPS Minutes-East',
         max_digits=10,
         decimal_places=4,
         )
@@ -87,11 +79,13 @@ class Household(BaseDispatchSyncUuidModel):
 
     gps_target_lon = models.FloatField(
         verbose_name='target waypoint longitude',
+        null=True,
         editable=False,
         )
 
     gps_target_lat = models.FloatField(
         verbose_name='target waypoint latitude',
+        null=True,
         editable=False,
         )
 
@@ -114,13 +108,13 @@ class Household(BaseDispatchSyncUuidModel):
         max_length=25,
         )
 
-    was_surveyed_previously = models.CharField(
-        verbose_name="Was this household surveyed previously?",
-        max_length=10,
-        choices=YES_NO,
-        default='No',
-        help_text="For example, you know BHP was here before but the household is not in the system."
-        )
+#     was_surveyed_previously = models.CharField(
+#         verbose_name="Was this household surveyed previously?",
+#         max_length=10,
+#         choices=YES_NO,
+#         default='No',
+#         help_text="For example, you know BHP was here before but the household is not in the system."
+#         )
 
     comment = EncryptedTextField(
         max_length=250,

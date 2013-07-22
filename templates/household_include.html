@@ -65,6 +65,6 @@
         </tr>
         
     {% endfor %}
-    <tr><td colspan="11">{{ search_results.object_list.count }} household structure{{ search_results.object_list|pluralize }} found.</td></tr>    
+    <tr><td colspan="11">{{ search_results.object_list.count|default:0 }} household structure{{ search_results.object_list|pluralize }}{% if not search_results.object_list.count%}s{%endif%} found.</td></tr>    
 </table>
 </div>
