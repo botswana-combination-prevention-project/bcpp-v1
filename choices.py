@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 YES_NO_DONT_ANSWER = (
         ('Yes', _('Yes')),
