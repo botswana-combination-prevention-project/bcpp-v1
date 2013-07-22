@@ -5,7 +5,7 @@ from bhp_map.classes import site_mapper
 from bhp_map.exceptions import MapperError
 
 
-def subject_map(request):
+def subject_map(request, **kwargs):
     """Displays map for a subject on the dashboard
 
         Show the location visually on the map of a subject from the dash by clicking the view map button
@@ -16,9 +16,9 @@ def subject_map(request):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
         m = site_mapper.get_registry(mapper_name)
-        longitude = request.POST.get('lon')
-        latitude = request.POST.get('lat')
-        identifier = request.POST.get('identifier')
+        longitude = kwargs.get('lon', None)
+        latitude = kwargs.get('lat', None)
+        identifier = kwargs.get('identifier', None)
         landmark_list = []
         landmarks = m.get_landmarks()
         for place, lon, lat in landmarks:
