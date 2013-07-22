@@ -40,10 +40,19 @@
         </form></div>
     {% endblock %}
     {% if search_result %}
-    <div id="search_result_tile">
-        {% include search_result_include_file %}  
-    </div>
+        {% block search_result %}
+            <div id="search_result_tile">
+            {% include search_result_include_file %}  
+            </div>
+        {% endblock %}
     {% endif %}
+    {% if top_result %}
+        {% block top_result %}
+            <div id="search_result_tile">
+            {% include search_result_include_file %}  
+            </div>
+        {% endblock %}
+    {% endif %}    
 </div>
 
 {% endblock %}
