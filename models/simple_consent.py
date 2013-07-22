@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from bhp_base_model.validators import date_not_future, date_is_future
 from bhp_base_model.models import BaseUuidModel
 from bhp_common.choices import YES_NO
