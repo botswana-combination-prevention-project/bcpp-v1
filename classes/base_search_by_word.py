@@ -1,8 +1,11 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.db import models
 from django.db.models import Q
+from bhp_crypto.fields import BaseEncryptedField
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsent
 from bhp_search.forms import SearchForm
+from bhp_search.exceptions import SearchError
 from base_search import BaseSearch
 
 
@@ -13,6 +16,7 @@ class BaseSearchByWord(BaseSearch):
     def __init__(self):
         super(BaseSearchByWord, self).__init__()
         self.search_helptext = 'Search by search term.'
+        self.search_result_order_by = '-modified'
         defaults = {'search_helptext': 'Search by search term.'}
         self.search_form = SearchForm
         self.context.update(**defaults)
@@ -27,11 +31,11 @@ class BaseSearchByWord(BaseSearch):
 
         """
         model = self.get_search_model_cls()
-        if not isinstance(model(), RegisteredSubject):
-            if not 'registered_subject' in dir(model()) and not isinstance(model(), BaseConsent):
-                raise ImproperlyConfigured('Search models must have a foreign key to '
-                                               'model RegisteredSubject or be a subclass of '
-                                               'BaseConsent. Got model {0}.'.format(model._meta.object_name.lower()))
+#         if not isinstance(model(), RegisteredSubject):
+#             if not 'registered_subject' in dir(model()) and not isinstance(model(), BaseConsent):
+#                 raise ImproperlyConfigured('Search models must have a foreign key to '
+#                                                'model RegisteredSubject or be a subclass of '
+#                                                'BaseConsent. Got model {0}.'.format(model._meta.object_name.lower()))
         if not self.context.get('dbname', None):
             self.update_context(dbname='default')
         # expect a single k,v pair so that we have just one search term
@@ -72,8 +76,26 @@ class BaseSearchByWord(BaseSearch):
                 Q(user_modified__icontains=search_term_or_hash.get('user_modified'))
                 )
         else:
-            raise ImproperlyConfigured('Search models must have a foreign key to model '
-                                       'RegisteredSubject or be a subclass of BaseConsent. '
-                                       'Got model {0}.'.format(model._meta.object_name.lower()))
+            qset = Q()
+            search_term_or_hash = self.hash_for_encrypted_fields(search_term, model)
+            for field in model._meta.fields:
+                if isinstance(field, BaseEncryptedField):
+                    qset.add(Q(**{'{0}__exact'.format(field.name): search_term_or_hash.get(field.name)}), Q.AND)
+                elif isinstance(field, (models.CharField, models.TextField)):
+                    qset.add(Q(**{'{0}__icontains'.format(field.name): search_term_or_hash.get(field.name)}), Q.AND)
+                elif isinstance(field, (models.IntegerField, models.FloatField, models.DecimalField)):
+                    try:
+                        x = int(search_term)
+                        qset.add(Q(**{'{0}__exact'.format(field.name): search_term_or_hash.get(field.name)}), Q.AND)
+                    except:
+                        pass
+                elif isinstance(field, (models.DateTimeField, models.DateField)):
+                    pass
+                else:
+                    raise SearchError('model contains a field type not handled. Got {0} from model {1}.'.format(field, model))
+            self.update_context(order_by=self.order_by)
+#             raise ImproperlyConfigured('Search models must have a foreign key to model '
+#                                        'RegisteredSubject or be a subclass of BaseConsent. '
+#                                        'Got model {0}.'.format(model._meta.object_name.lower()))
         search_result = model.objects.filter(qset).order_by(self.context.get('order_by'))
         return search_result

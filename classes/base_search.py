@@ -18,6 +18,7 @@ class BaseSearch(object):
     MODEL_NAME = 1
     section_name = None
     search_model = None
+    order_by = None
 
     def __init__(self):
         """
