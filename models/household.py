@@ -1,6 +1,6 @@
 import re
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_common.choices import YES_NO
