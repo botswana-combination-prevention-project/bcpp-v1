@@ -1,14 +1,14 @@
 from bhp_map.classes import site_mapper
 from base_household_mapper import BaseHouseholdMapper
-from bcpp_household.choices import OTSE_WARDS, OTSE_WARD_SECTIONS, OTSE_LANDMARKS
+from bcpp_household.choices import OTSE_SECTIONS, OTSE_SUB_SECTIONS, OTSE_LANDMARKS
 
 
 class OtseHouseholdMapper(BaseHouseholdMapper):
 
     map_area = 'otse'
 
-    regions = OTSE_WARDS
-    sections = OTSE_WARD_SECTIONS
+    regions = OTSE_SECTIONS
+    sections = OTSE_SUB_SECTIONS
 
     landmarks = OTSE_LANDMARKS
 

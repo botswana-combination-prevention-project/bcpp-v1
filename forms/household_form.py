@@ -27,7 +27,15 @@ class HouseholdForm(BaseModelForm):
 
     section = forms.ChoiceField(
         label=u'Section',
-        choices=get_mapper().get_sections_as_tuple(),
+        #initial=get_mapper().get_region(),
+        choices=get_mapper().get_regions_as_choices(),
+        help_text=u'',
+        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
+        )
+
+    sub_section = forms.ChoiceField(
+        label=u'Sub-section',
+        choices=get_mapper().get_sections_as_choices(),
         help_text=u'',
         widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
         )

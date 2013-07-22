@@ -14,6 +14,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     fields = (
         'report_datetime',
+        'status',
         'gps_degrees_s',
         'gps_minutes_s',
         'gps_degrees_e',
@@ -26,12 +27,14 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     list_display = ('household_identifier', 'cso_number', 'community', 'section', 'created')
 
-    list_filter = ('created', 'target', 'community', 'section',)
+    list_filter = ('created', 'community', 'section',)
 
     search_fields = ('household_identifier', 'cso_number', 'community', 'section', 'id')
 
     readonly_fields = ('household_identifier',)
-
+    radio_fields = {
+        'status': admin.VERTICAL,
+        }
     actions = [process_dispatch, ]
 
 admin.site.register(Household, HouseholdAdmin)

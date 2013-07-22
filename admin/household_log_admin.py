@@ -9,8 +9,8 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
     date_hierarchy = 'modified'
     list_per_page = 15
     readonly_fields = ('household_log', )
-    list_display = ('household_log', 'report_datetime', 'hbc', 'next_appt_datetime')
-    list_filter = ('report_datetime', 'hbc', 'next_appt_datetime')
+    list_display = ('household_log', 'report_datetime', 'next_appt_datetime')
+    list_filter = ('report_datetime', 'next_appt_datetime')
 admin.site.register(HouseholdLogEntry, HouseholdLogEntryAdmin)
 
 

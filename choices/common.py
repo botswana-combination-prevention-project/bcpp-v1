@@ -39,6 +39,18 @@ INFO_PROVIDER = (
     ('NEXT_OF_KIN', 'Kin'),
     ('OTHER', 'Other'))
 
+HOUSEHOLD_STATUS = (
+    ('occupied', 'Occupied'),
+    ('vacant', 'Vacant'),
+    ('invalid', 'Not a household'),
+    )
+
+HOUSEHOLD_COMPLETION_STATUS = (
+    ('complete', 'Complete'),
+    ('incomplete', 'Incomplete'),
+    )
+
+
 STATUS = (
     ('WITHIN_BCPP_AREA', 'In BCPP Village'),
     ('MOVED', 'No longer lives here'),

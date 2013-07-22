@@ -9,6 +9,7 @@ from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
+from bcpp_household.choices import HOUSEHOLD_STATUS
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -39,22 +40,33 @@ class Household(BaseDispatchSyncUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name='Report Date/Time',
+        null=True,
+        )
+
+    status = models.CharField(
+        verbose_name='Household status',
+        max_length=15,
+        null=True,
+        choices=HOUSEHOLD_STATUS,
         )
 
     gps_degrees_s = EncryptedDecimalField(
         verbose_name='GPS Degrees-South',
         max_digits=10,
+        null=True,
         decimal_places=0,
         )
 
     gps_minutes_s = EncryptedDecimalField(
         verbose_name='GPS Minutes-South',
         max_digits=10,
+        null=True,
         decimal_places=4,
         )
 
     gps_degrees_e = EncryptedDecimalField(
         verbose_name='GPS Degrees-East',
+        null=True,
         max_digits=10,
         decimal_places=0,
         )
@@ -62,6 +74,7 @@ class Household(BaseDispatchSyncUuidModel):
     gps_minutes_e = EncryptedDecimalField(
         verbose_name='GPS Minutes-East',
         max_digits=10,
+        null=True,
         decimal_places=4,
         )
 
@@ -130,7 +143,11 @@ class Household(BaseDispatchSyncUuidModel):
         blank=True,
         )
 
-    target = models.IntegerField(default=0)
+    action = models.CharField(
+        max_length=25,
+        null=True,
+        default='unconfirmed',
+        editable=False)
 
     objects = HouseholdManager()
     history = AuditTrail()
@@ -158,10 +175,22 @@ class Household(BaseDispatchSyncUuidModel):
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
         self.gps_lat = self.get_gps_lat()
         self.gps_lon = self.get_gps_lon()
+        self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.household_identifier
+
+    def get_action(self):
+        if not self.gps_lon and not self.gps_lat:
+            retval = 'unconfirmed'
+        elif self.status == 'occupied':
+            retval = 'valid'
+        elif self.status == 'vacant' or self.status == 'invalid':
+            retval = 'invalid'
+        else:
+            retval = 'unconfirmed'
+        return retval
 
     def get_subject_identifier(self):
         return self.household_identifier
