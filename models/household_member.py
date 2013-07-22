@@ -11,15 +11,15 @@ from bhp_registration.models import RegisteredSubject
 from bhp_lab_tracker.classes import lab_tracker
 from bcpp_dashboard.forms.main import ParticipationForm
 from bcpp_survey.models import Survey
-from bcpp_household.managers import HouseholdStructureMemberManager
+from bcpp_household.managers import HouseholdMemberManager
 from bcpp_household.choices import RELATIONS
-from base_uuid_model import BaseUuidModel
+from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from contact_log import ContactLog
 from household import Household
 from household_structure import HouseholdStructure
 
 
-class HouseholdStructureMember(BaseUuidModel):
+class HouseholdMember(BaseDispatchSyncUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True)  # will always be set in post_save()
     household_structure = models.ForeignKey(HouseholdStructure,
@@ -92,7 +92,7 @@ class HouseholdStructureMember(BaseUuidModel):
 
     history = AuditTrail()
 
-    objects = HouseholdStructureMemberManager()
+    objects = HouseholdMemberManager()
 
     def natural_key(self):
         if not self.household_structure:
@@ -150,7 +150,7 @@ class HouseholdStructureMember(BaseUuidModel):
             else:
                 self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
         self.is_eligible_member = self.is_eligible()
-        super(HouseholdStructureMember, self).save(*args, **kwargs)
+        super(HouseholdMember, self).save(*args, **kwargs)
 
     def deserialize_prep(self):
         Signal.disconnect(post_save, None, weak=False, dispatch_uid="household_structure_member_on_post_save")
@@ -160,10 +160,10 @@ class HouseholdStructureMember(BaseUuidModel):
 
     @property
     def is_consented(self):
-        from bcpp_subject.models import BaseSubjectConsent
+        from bhp_consent.models import BaseConsent
         retval = False
         for model in models.get_models():
-            if issubclass(model, BaseSubjectConsent):
+            if issubclass(model, BaseConsent):
                 if model.objects.filter(household_structure_member=self, survey=self.survey):
                     retval = True
                     break
@@ -409,8 +409,8 @@ class HouseholdStructureMember(BaseUuidModel):
             if subject_identifier:
                 registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
                 if registered_subject:
-                    if HouseholdStructureMember.objects.filter(pk=registered_subject.registration_identifier).exists():
-                        retval = HouseholdStructureMember.objects.get(pk=registered_subject.registration_identifier).household_structure
+                    if HouseholdMember.objects.filter(pk=registered_subject.registration_identifier).exists():
+                        retval = HouseholdMember.objects.get(pk=registered_subject.registration_identifier).household_structure
         return retval
 
     class Meta:
