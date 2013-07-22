@@ -1,6 +1,6 @@
 from household_manager import HouseholdManager
 from household_structure_manager import HouseholdStructureManager
-from household_structure_member_manager import HouseholdStructureMemberManager
+from household_member_manager import HouseholdMemberManager
 from gps_device_manager import GpsDeviceManager
 from ward_manager import WardManager
 from household_survey_manager import HouseholdSurveyManager

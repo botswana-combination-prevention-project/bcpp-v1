@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import get_model
 
 
-class HouseholdStructureMemberManager(models.Manager):
+class HouseholdMemberManager(models.Manager):
 
     def get_by_natural_key(self, household_identifier, survey_name, subject_identifier_as_pk):
         HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
