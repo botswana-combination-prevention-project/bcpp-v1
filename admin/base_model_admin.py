@@ -1,3 +1,4 @@
+import re
 from django.contrib import admin
 from bhp_base_admin.mixin import SiteMixin
 from bhp_supplemental_fields.models import Excluded
@@ -64,7 +65,7 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
                     self.form._meta.exclude = exclude_supplemental_fields
         form = super(BaseModelAdmin, self).get_form(request, obj, **kwargs)
         form = self.auto_number(form)
-        form = self.insert_translation_help_text(form)
+        #form = self.insert_translation_help_text(form)
         return form
 
     def insert_translation_help_text(self, form):
@@ -80,5 +81,6 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
             auto_number = form._meta.auto_number
         if auto_number:
             for index, fld in enumerate(form.base_fields.iteritems()):
-                fld[WIDGET].label = '{0}. {1}'.format(index + 1, fld[WIDGET].label)
+                if not re.match(r'^\d+\.', fld[WIDGET].label):
+                    fld[WIDGET].label = '{0}. {1}'.format(unicode(index + 1), unicode(fld[WIDGET].label))
         return form
