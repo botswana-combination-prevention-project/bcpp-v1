@@ -8,5 +8,5 @@ class SubstanceUseFactory(BaseUuidModelFactory):
     FACTORY_FOR = SubstanceUse
 
     report_datetime = datetime.today()
-    alcohol = (('Never', 'Never'), ('Less then once a week', 'Less then once a week'), ('Once a week', 'Once a week'), ('2 to 3 times a week', '2 to 3 times a week'), ('more than 3 times a week', 'more than 3 times a week'), ("Don't want to answer", "Don't want to answer"))[0][0]
-    smoke = (('Yes', 'Yes'), ('No', 'No'), ("Don't want to answer", "Don't want to answer"))[0][0]
+    alcohol = (('Never', <django.utils.functional.__proxy__ object at 0x103afafd0>), ('Less then once a week', <django.utils.functional.__proxy__ object at 0x103afb090>), ('Once a week', <django.utils.functional.__proxy__ object at 0x103afb110>), ('2 to 3 times a week', <django.utils.functional.__proxy__ object at 0x103afb190>), ('more than 3 times a week', <django.utils.functional.__proxy__ object at 0x103afb210>), ("Don't want to answer", <django.utils.functional.__proxy__ object at 0x103afb290>))[0][0]
+    smoke = (('Yes', <django.utils.functional.__proxy__ object at 0x103ae2a10>), ('No', <django.utils.functional.__proxy__ object at 0x103ae2ad0>), ("Don't want to answer", <django.utils.functional.__proxy__ object at 0x103ae2b50>))[0][0]

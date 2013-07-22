@@ -13,8 +13,8 @@ class SubjectMovedFactory(BaseUuidModelFactory):
     report_datetime = datetime.today()
     survey = factory.SubFactory(SurveyFactory)
     moved_date = date.today()
-    moved_reason = (('TRANSFER', 'Job Transfer'), ('MARRIAGE', 'Marriage'), ('INDEPENDENT', 'Independence'), ('OTHER', 'Other'))[0][0]
+    moved_reason = (('TRANSFER', <django.utils.functional.__proxy__ object at 0x103a23d50>), ('MARRIAGE', <django.utils.functional.__proxy__ object at 0x103a23dd0>), ('INDEPENDENT', <django.utils.functional.__proxy__ object at 0x103a23e50>), ('OTHER', <django.utils.functional.__proxy__ object at 0x103a23ed0>))[0][0]
     moved_reason_other = factory.Sequence(lambda n: 'moved_reason_other{0}'.format(n))
-    place_moved = (('IN_VILLAGE', 'Within Village'), ('OUT_VILLAGE', 'Outside Village'), ('IN_WARD', 'Within the Survey Ward'))[0][0]
+    place_moved = (('IN_VILLAGE', <django.utils.functional.__proxy__ object at 0x103a23f50>), ('OUT_VILLAGE', <django.utils.functional.__proxy__ object at 0x103a23fd0>), ('IN_WARD', <django.utils.functional.__proxy__ object at 0x103a25090>))[0][0]
     area_moved = factory.Sequence(lambda n: 'area_moved{0}'.format(n))
     comment = factory.Sequence(lambda n: 'comment{0}'.format(n))

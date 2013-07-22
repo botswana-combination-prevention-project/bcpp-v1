@@ -12,7 +12,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
     """CS002"""
     
     length_residence = models.CharField(
-        verbose_name=_("How long have you lived in this community?"),
+        verbose_name=_('How long have you lived in this community?'),
         max_length=25,
         choices=LENGTHRESIDENCE_CHOICE,
         help_text="",
@@ -28,7 +28,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         help_text="",
         )
 
-    intend_residency  = models.CharField(
+    intend_residency = models.CharField(
         verbose_name=_("Do you intend to stay in this community for the next year?"),
         max_length=25,
         choices=YES_NO_UNSURE,
@@ -58,7 +58,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         choices=COMMUNITIES,
         null=True, 
         blank=True,
-        help_text="Other community, specify",  
+        help_text="Other community, specify",
         )
     
     history = AuditTrail()

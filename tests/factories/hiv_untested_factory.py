@@ -8,4 +8,3 @@ class HivUntestedFactory(BaseUuidModelFactory):
     FACTORY_FOR = HivUntested
 
     report_datetime = datetime.today()
-    hiv_pills = (('Yes', 'Yes'), ('No', 'No'), ('not sure', 'I am not sure'), ("Don't want to answer", "Don't want to answer"))[0][0]
