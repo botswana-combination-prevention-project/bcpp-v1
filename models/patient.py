@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from bhp_common.choices import GENDER, ART_STATUS_UNKNOWN, POS_NEG_UNKNOWN
 from bhp_base_model.models import BaseUuidModel
 from bhp_base_model.fields import InitialsField, IsDateEstimatedField
