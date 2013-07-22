@@ -1,4 +1,4 @@
-{% extends "base_site_mochudi_survey.html" %}
+{% extends "base_bhp_map.html" %}
 
 {% block extrahead %}
 <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=geometry"></script>
@@ -12,12 +12,19 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 var map;
 var landpoints = new Array();
+var r_points = new Array();
 var x = 0;
 {% for place, lon, lat in landmarks %}
 	landpoints.push(["{{ place }}", {{ lon }}, {{ lat }}, x+1]);
 {% endfor %}
 
-var point = new google.maps.LatLng({{ longitude }}, {{ latitude }});
+
+{% for x, y in gps_coordinates %}
+	r_points.push([{{ y }}, {{ x }}]);
+{% endfor %}
+
+
+var point = new google.maps.LatLng(-24.377355, 26.150869);
 
 //function called Initialize the map when loading the browser
 function initialize() {
@@ -30,12 +37,20 @@ function initialize() {
     });
     geocoder = new google.maps.Geocoder();
     
-    var marker = new google.maps.Marker({
-			position: point,
-			title: "click for labels information",
-			animation: google.maps.Animation.BOUNCE,
-			map: map,			
-		});
+    for (var i=0;i<r_points.length;i++)
+    {
+    	for (var l=0;r_points[i].length;l++){
+    		var marker = new google.maps.Marker({
+    			position: new google.maps.LatLng(r_points[l][1], r_points[l][0]),
+    			title: "click for labels information",
+    			animation: google.maps.Animation.BOUNCE,
+    			map: map,			
+    		});
+    	}
+    	
+    }
+    
+    
 	
 	// add control
 	var snapOpts = {
@@ -44,8 +59,8 @@ function initialize() {
 	var snapShotControl = new SnapShotControl(snapOpts);
 	
 		
-	setMarkers(map, landpoints);
-	map.setCenter(point);
+	//setMarkers(map, landpoints);
+	//map.setCenter(point);
 	
 } //initialze
 

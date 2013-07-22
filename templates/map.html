@@ -10,7 +10,7 @@
 				</script>
 			{% endif %}
 		{% endif %}
-	
+
 	    <table align="center">
 		    <tr><td rowspan="3">{% include "cart_include.html" %}</td></tr>
 		    <tr><td><div align="center" id="map"></div></td></tr>
@@ -67,27 +67,28 @@
 			    </td>
 		    </tr>
 	      </table>
+		
 	{% endif %}
 	{% if show_map == 0 %}
 		{% if message %}
 			<script language="javascript" type="text/javascript" defer> alert('{{ message }}'); </script>
 		{% endif %}
-	    <table align="center">
-		    <tr><td rowspan="3">{% include "cart_include.html" %}</td></tr>
-	    	<tr>
-		    	<td>
-		    		<p>Success! Your dispatch cart now contains these {{mapper_item_label}}s: {{ cart }}.</p>
-		    		Click the continue button to select more {{mapper_item_label}}s or click the checkout button
-		    		to finish this session.
-		    	</td>
-			</tr>
-			<tr align="center">
-				<td>
-				<input type="button" value="Checkout" onclick="window.location='{% url "map_checkout_cart_url" mapper_name %}'" /> 
-				<input type="button" value="Continue" onclick="window.location='{% url "selected_map_index_url" mapper_name %}'" />
-				</td>
-			</tr>
-		</table>
+		    <table align="center">
+			    <tr><td rowspan="3">{% include "cart_include.html" %}</td></tr>
+		    	<tr>
+			    	<td>
+			    		<p>Success! Your dispatch cart now contains these {{mapper_item_label}}s: {{ cart }}.</p>
+			    		Click the continue button to select more {{mapper_item_label}}s or click the checkout button
+			    		to finish this session.
+			    	</td>
+				</tr>
+				<tr align="center">
+					<td>
+					<input type="button" value="Checkout" onclick="window.location='{% url "map_checkout_cart_url" mapper_name %}'" /> 
+					<input type="button" value="Continue" onclick="window.location='{% url "selected_map_index_url" mapper_name %}'" />
+					</td>
+				</tr>
+			</table>
 		
 	{% endif %}
 

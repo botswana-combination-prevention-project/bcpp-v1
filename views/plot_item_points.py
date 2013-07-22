@@ -60,7 +60,7 @@ def plot_item_points(request, **kwargs):
             section_color_code_list.append([key_color[:-1], sec_value])
         if payload:
             has_items = True
-            
+        
         landmark_list = []
         landmarks = m.get_landmarks()
         for place, lon, lat in landmarks:
@@ -79,6 +79,8 @@ def plot_item_points(request, **kwargs):
                 'selected_icon': request.session['icon'],
                 'icons': m.get_icons(),
                 'option': 'plot',
+                'gps_center_lat': m.get_gps_center_lat(),
+                'gps_center_lon': m.get_gps_center_lon(),
                 'show_map': 1,
                 'identifiers': identifiers,
                 'landmarks': landmark_list,
