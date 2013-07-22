@@ -37,6 +37,8 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
             * Need to be sure that the same conditional and/or supplemental choice is given on GET and POST for both
               add and change.
         """
+        exclude_conditional_fields = None
+        exclude_supplemental_fields = None
         if not request.method == 'POST':
             exclude_conditional_fields = None
             exclude_supplemental_fields = None
@@ -81,6 +83,6 @@ class BaseModelAdmin (SiteMixin, admin.ModelAdmin):
             auto_number = form._meta.auto_number
         if auto_number:
             for index, fld in enumerate(form.base_fields.iteritems()):
-                if not re.match(r'^\d+\.', fld[WIDGET].label):
+                if not re.match(r'^\d+\.', unicode(fld[WIDGET].label)):
                     fld[WIDGET].label = '{0}. {1}'.format(unicode(index + 1), unicode(fld[WIDGET].label))
         return form
