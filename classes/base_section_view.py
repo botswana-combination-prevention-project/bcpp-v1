@@ -6,7 +6,6 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from bhp_appointment.models import Appointment
-#from bhp_data_manager.models import ActionItem
 from bhp_search.classes import site_search
 from bhp_section.exceptions import SectionError
 
@@ -33,13 +32,16 @@ class BaseSectionView(object):
 
     @property
     def context(self):
+        """Returns the template context."""
         return self._context
 
     def update_context(self, **kwargs):
+        """Updates the template context."""
         for k, v in kwargs.iteritems():
             self._context[k] = v
 
     def set_section_list(self, value=None):
+        """Sets the section list."""
         if self.section_list:
             # class variable set in urls
             self._section_list = self.section_list
@@ -49,11 +51,13 @@ class BaseSectionView(object):
             self._section_list = value
 
     def get_section_list(self):
+        """Returns the section list."""
         if not self._section_list:
             self.set_section_list()
         return self._section_list
 
     def set_section_name(self, value=None):
+        """Sets the name for this section."""
         if self.section_name:
             self._section_name = self.section_name
         else:
@@ -61,36 +65,47 @@ class BaseSectionView(object):
         self._set_template()
 
     def get_section_name(self):
+        """Returns the name for this section."""
         if not self._section_name:
             self.set_section_name()
         return self._section_name
 
     def _set_add_model_cls(self, value=None):
+        """Sets the model class used for the 'Add' button."""
         if self.add_model:
             self._add_model_cls = self.add_model
         else:
             self._add_model_cls = value
 
     def get_add_model_cls(self):
+        """Returns the 'Add' model class."""
         if not self._add_model_cls:
             self._set_add_model_cls()
         return self._add_model_cls
 
     def get_add_model_name(self):
+        """Returns the name of the 'Add' model class."""
         if self.get_add_model_cls():
             return self.get_add_model_cls()._meta.verbose_name
         return None
 
     def get_add_model_opts(self):
+        """Returns the model Meta class options."""
         if self.get_add_model_cls():
             return self.get_add_model_cls()._meta
         return None
 
     def set_search_type(self, section_name, search_type=None):
+        """Sets the search type.
+
+        If the `section name` is listed as a search type, the :func:`view` method
+        will get the search class from the `site_search` global and try to search against
+        the search class' search model."""
         if search_type:
             self._search_type.update({section_name: search_type})
 
     def get_search_type(self, section_name):
+        """Returns the search type for this section."""
         if not section_name in self._search_type:
             self.set_search_type(section_name)
         if section_name in self._search_type:
@@ -98,10 +113,13 @@ class BaseSectionView(object):
         return None
 
     def set_search_name(self, section_name, search_name=None):
+        """Sets the search name to associate a search class with this section.
+        """
         if search_name:
             self._search_name.update({section_name: search_name})
 
     def get_search_name(self, section_name):
+        """Returns the search name."""
         if not section_name in self._search_name:
             self.set_search_name(section_name)
         if section_name in self._search_name:
@@ -121,6 +139,7 @@ class BaseSectionView(object):
             self._sections_using_search.append(section_name)
 
     def _set_template(self, template=None):
+        """Sets the template for this section."""
         if template:
             self._template = template
         elif self.section_template:
@@ -129,6 +148,7 @@ class BaseSectionView(object):
             self._template = self._get_default_template()
 
     def get_template(self):
+        """Returns the template set for this section."""
         if not self._template:
             self._set_template()
         return self._template
@@ -137,16 +157,16 @@ class BaseSectionView(object):
         return 'section_{0}.html'.format(self.get_section_name())
 
     def urlpatterns(self, view=None):
-        """ Generates a urlpattern for the view of this subclass."""
+        """ Generates urlpatterns for the view of this section.
+
+        If this section is associated with a search class registered with `site_search` global, patterns for search
+        will also be generated."""
         if not site_search.is_autodiscovered:
             raise SectionError('Search register not ready. Call search.autodiscover() first.')
-        #self.urlpattern_prepared = True
         if view is None:
             view = self._view
         urlpattern_first = []
         urlpattern_last = []
-        #for section_name in section_index_view.get_section_name_list():
-        #    # try to match this section to a search class
         section_name = self.get_section_name()
         for search_type, search_cls in site_search.get_registry().iteritems():
             # for each type of search, look for an association with this section_name
@@ -168,6 +188,7 @@ class BaseSectionView(object):
         return urlpattern_first + urlpattern_last
 
     def get_appointment_tile(self):
+        """Not used."""
         appointments = Appointment.objects.filter().order_by(appt_datetime__lt=datetime.datetime(date.today().year, date.today().month, date.today().day + 1))[0:10]
         return appointments
 
@@ -177,14 +198,36 @@ class BaseSectionView(object):
 #            self._view(request, *args, **kwargs)
 
     def _contribute_to_context(self, context):
+        """Wraps :func:`contribute_to_context`."""
         context = self.contribute_to_context(context)
         return context
 
     def contribute_to_context(self, context):
-        """Users may override to add context key, value for the template."""
+        """Users may override to update the template context with {key, value} pairs."""
         return context
 
     def view(self, request, *args, **kwargs):
+        """Default view for this section called by :func:`_view`.
+
+        .. note:: Instead of overriding, try adding to the context using :func:`contribute_to_context`.
+
+        Default context includes::
+            * app_name: settings.APP_NAME,
+            * installed_apps: settings.INSTALLED_APPS,
+            * selected_section: from :func:`get_section_name`,
+            * sections: from :func:`get_section_list`,
+            * section_name: from :func:`get_section_name`,
+            * search_name: from :func:`get_search_name` for this section name,
+            * sections_using_search: from :func:`get_sections_using_search`,
+            * search_type: from :func:`get_search_type` for this section name,
+            * add_model: from :func:`get_add_model_cls`,
+            * add_model_opts: from :func:`get_add_model_opts`,
+            * add_model_name: from :func:`get_add_model_name`,
+            * search_model_admin_url: 'url',
+            * search_result: search_result,
+            * search_result_include_file: search_result_include_file,
+
+        """
         self.set_section_name(kwargs.get('section_name'))
         self.set_search_type(self.get_section_name(), kwargs.get('search_type'))
         search_result = None
@@ -219,6 +262,7 @@ class BaseSectionView(object):
         return render_to_response(self.get_template(), context, context_instance=RequestContext(request))
 
     def _view(self, request, *args, **kwargs):
+        """Wraps :func:`view` method to force login and treat this like a class based view."""
         @login_required
         def view(request, *args, **kwargs):
             return self.view(request, *args, **kwargs)

@@ -52,16 +52,19 @@ class BaseSectionIndexView(object):
         self._section_display_name_list = [tpl[self.DISPLAY_NAME] for tpl in self._section_list]
 
     def get_section_list(self):
+        """Returns a list of sections."""
         if not self._section_list:
             self._set_section_list()
         return self._section_list
 
     def get_section_name_list(self):
+        """Returns a list of section names."""
         if not self._section_name_list:
             self._set_section_lists()
         return self._section_name_list
 
     def get_section_display_name_list(self):
+        """Returns a list of section names to display."""
         #if not self._section_display_name_list:
         #    self._set_section_lists()
         return self._section_display_name_list
