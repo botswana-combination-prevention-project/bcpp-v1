@@ -112,6 +112,15 @@ TIME_ZONE = 'Africa/Gaborone'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
+#langauage setting
+ugettext = lambda s: s
+LANGUAGES = (
+    ('en', 'English'),
+    ('tn', 'Setswana'),
+)
+
+LOCALE_PATHS = (os.path.join(DIRNAME, 'locale'), )
+
 LANGUAGE_CODE = 'tn'
 
 SITE_ID = 1
@@ -169,12 +178,12 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -194,15 +203,6 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(DIRNAME, 'bhp_templates'),
 )
-
-#langauage setting
-ugettext = lambda s:s
-LANGUAGES = (
-    ('tn', ugettext('Setswana')),
-)
-
-LOCALE_PATHS = (os.path.join(DIRNAME, 'locale'), )
-
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -378,8 +378,8 @@ REPORTS_OUTPUT_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/bhp_birt_
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
-KEY_PATH = os.path.join(DIRNAME, 'keys')
-# KEY_PATH = '/Volumes/bhp066/keys'
+#KEY_PATH = os.path.join(DIRNAME, 'keys')
+KEY_PATH = '/Volumes/bhp066/keys'
 #FIELD_MAX_LENGTH='default'
 FIELD_MAX_LENGTH = 'migration'
 

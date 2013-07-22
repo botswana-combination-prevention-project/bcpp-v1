@@ -6,6 +6,7 @@ from django.db.models import get_models
 from django.views.generic import RedirectView
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from bhp_map.classes import site_mapper
 from bhp_entry_rules.classes import rule_groups
 from dajaxice.core import dajaxice_autodiscover
 from bhp_lab_tracker.classes import lab_tracker
@@ -15,6 +16,7 @@ dajaxice_autodiscover()
 rule_groups.autodiscover()
 lab_tracker.autodiscover()
 data_manager.prepare()
+site_mapper.autodiscover()
 admin.autodiscover()
 
 APP_NAME = settings.APP_NAME
