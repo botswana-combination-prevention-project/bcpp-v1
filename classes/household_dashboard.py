@@ -73,11 +73,11 @@ class HouseholdDashboard(Dashboard):
                     if not RegisteredSubject.objects.filter(registration_identifier=household_member.internal_identifier):
                         raise ValueError('{0} expects all household_members to have '
                                          'an entry in RegisterSubject. Got None for {1}.'.format(self, household_member,))
-                if not HouseholdLog.objects.filter(household=self.household, survey=self.survey):
-                    household_log = HouseholdLog.objects.create(household=self.household, survey=self.survey)
+                if not HouseholdLog.objects.filter(household_structure=self.household_structure):
+                    household_log = HouseholdLog.objects.create(household_structure=self.household_structure)
                 else:
-                    household_log = HouseholdLog.objects.get(household=self.household, survey=self.survey)
-                household_log_entries = HouseholdLogEntry.objects.filter(household_log__household=self.household, household_log__survey=self.survey)
+                    household_log = HouseholdLog.objects.get(household_structure=self.household_structure)
+                household_log_entries = HouseholdLogEntry.objects.filter(household_log__household_structure=self.household_structure)
                 self.current_member_count = self.household_members.count()
         self.surveys = Survey.objects.all().order_by('survey_name')
 
@@ -109,40 +109,40 @@ class HouseholdDashboard(Dashboard):
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/(?P<gender>\w+)/(?P<initials>\w+)/(?P<household_member>{pk})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/(?P<registered_subject>{pk})/(?P<household_member>{pk})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_member>{pk})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household>{pk})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household>{pk})/(?P<household_identifier>{household_identifier})/(?P<survey>{pk})/$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household_structure>{pk})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
               'dashboard',
-                name="dashboard_url"
+                name="household_dashboard_url"
                 ),
             )
         return self.urlpatterns
