@@ -25,7 +25,7 @@
             <div class="warning">Locked</div>{{ household.action }}
           {% else %}
             {% if household.action == 'valid'%}
-                <A name="dashboard-{{household.household_identifier}}" href="{% url dashboard_url dashboard_type='household' household_identifier=household.household_identifier %}">Add/Update Members</A>
+                <A name="dashboard-{{household.household_identifier}}" href="{% url household_dashboard_url dashboard_type='household' household_identifier=household.household_identifier %}">Add/Update Members</A>
             {% else %}
                 {{ household.action }}
             {% endif %}
@@ -35,7 +35,7 @@
         <td>{% if household|is_dispatched %}
         		<div class="warning">{{household.household_identifier}}</div>
         	{% else %}
-        		<A href="{{ household.get_absolute_url }}?next=dashboard_url&dashboard_type=household&household_identifier={{household.household_identifier}}">{{ household }}</A>
+        		<A href="{{ household.get_absolute_url }}?next=household_dashboard_url&dashboard_type=household&household_identifier={{household.household_identifier}}">{{ household }}</A>
         	{% endif %}
         	</td>
           <td>{{ household.get_status_display }}</td>

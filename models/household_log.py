@@ -27,6 +27,11 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
         return self.household_structure.natural_key()
     natural_key.dependencies = ['bcpp_household.household_structure', ]
 
+    def structure(self):
+        url = '/admin/{0}/householdstructure/?q={1}'.format(self._meta.app_label, self.household_structure.pk)
+        return """<a href="{url}" />structure</a>""".format(url=url)
+    structure.allow_tags = True
+
     class Meta:
         app_label = 'bcpp_household'
 

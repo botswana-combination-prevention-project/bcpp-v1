@@ -93,6 +93,16 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         return """<a href="{url}" />household</a>""".format(url=url)
     house.allow_tags = True
 
+    def members(self):
+        url = '/admin/bcpp_household_member/householdmember/?q={0}'.format(self.pk)
+        return """<a href="{url}" />members</a>""".format(url=url)
+    members.allow_tags = True
+
+    def logs(self):
+        url = '/admin/{0}/householdlog/?q={1}'.format(self._meta.app_label, self.pk)
+        return """<a href="{url}" />logs</a>""".format(url=url)
+    logs.allow_tags = True
+
     def dashboard(self):
         url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'household_identifier': self.household.household_identifier, 'household_structure': self.pk})
         return """<a href="{url}" />dashboard</a>""".format(url=url)

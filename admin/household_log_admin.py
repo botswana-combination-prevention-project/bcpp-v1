@@ -25,7 +25,8 @@ class HouseholdLogAdmin(BaseModelAdmin):
     inlines = [HouseholdLogEntryInline, ]
     date_hierarchy = 'modified'
     list_per_page = 15
+    list_display = ('household_structure', 'structure', 'modified', 'user_modified', 'hostname_modified')
     readonly_fields = ('household_structure', )
-    search_fields = ('household_structure__household__household_identifier',)
+    search_fields = ('household_structure__household__household_identifier', 'household_structure__pk')
     list_filter = ('household_structure__survey', 'hostname_created', 'created')
 admin.site.register(HouseholdLog, HouseholdLogAdmin)

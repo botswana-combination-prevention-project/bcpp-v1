@@ -29,6 +29,8 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'survey',
         'house',
         'dashboard',
+        'members',
+        'logs',
         'progress',
         'member_count',
         'modified',
