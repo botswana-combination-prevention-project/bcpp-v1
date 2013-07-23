@@ -1,6 +1,6 @@
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from household_member import HouseholdStructure
+from household_structure import HouseholdStructure
 
 @receiver(post_save, weak=False, dispatch_uid="household_structure_on_post_save")
 def household_structure_on_post_save(sender, instance, **kwargs):
