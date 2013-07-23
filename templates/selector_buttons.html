@@ -8,7 +8,7 @@
     </td>
     {% if app_label %}
     <td class="field">
-    <form action="{% url audit_trail_url app_label %}" method="POST">
+    <form action="{% url audit_trail_url app_label as the_url%}" method="POST">
     <div style='display:none'>{% csrf_token %}</div>
     <input type="submit" value="List models for {{app_label}}" class="default" name="m" /></td>
     <input type="hidden" name="app_label" value="{{ app_label }}">    
