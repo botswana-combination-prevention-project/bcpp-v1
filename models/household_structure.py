@@ -16,8 +16,16 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     survey = models.ForeignKey(Survey)
 
+    progress = models.CharField(
+        verbose_name='Current Progress',
+        max_length=25,
+        default='Not Started',
+        null=True,
+        editable=False)
+
     member_count = models.IntegerField(
         verbose_name="How many members in this household?",
+        default=0,
         validators=[
             MinValueValidator(0),
             MaxValueValidator(50), ],
@@ -57,6 +65,11 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         #subject_identifier = self.household.household_identifier
         return self.household.household_identifier
+
+    def create_household_log_on_post_save(self, **kwargs):
+        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        if not HouseholdLog.objects.filter(household_structure=self):
+            HouseholdLog.objects.create(household_structure=self)
 
     def fetch_and_count_members_on_post_save(self, **kwargs):
         """Fetches members from the previous survey, if new, and checks the number of members."""

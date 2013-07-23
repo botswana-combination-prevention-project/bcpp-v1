@@ -1,6 +1,7 @@
 import re
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ImproperlyConfigured
 from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_common.choices import YES_NO
@@ -177,6 +178,22 @@ class Household(BaseDispatchSyncUuidModel):
         self.gps_lon = self.get_gps_lon()
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
+
+    def check_for_survey_on_pre_save(self, **kwargs):
+        Survey = models.get_model('bcpp_survey', 'Survey')
+        if Survey.objects.all().count() == 0:
+            raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before Household.')
+
+    def create_household_structure_on_post_save(self, **kwargs):
+        """Creates, for each defined survey, a household structure(s) for this household."""
+        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+        Survey = models.get_model('bcpp_survey', 'Survey')
+        if Survey.objects.all().count() == 0:
+            raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before Household.')
+        # create a household_structure for each survey
+        for survey in Survey.objects.all():
+            if not HouseholdStructure.objects.filter(household=self, survey=survey):
+                HouseholdStructure.objects.create(household=self, survey=survey)
 
     def __unicode__(self):
         return self.household_identifier

@@ -3,35 +3,32 @@ from audit_trail.audit import AuditTrail
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_crypto.fields import EncryptedTextField
 from bcpp_household.choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
-from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdLogManager, HouseholdLogEntryManager
+from household_structure import HouseholdStructure
 from household import Household
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 
 
 class HouseholdLog(BaseDispatchSyncUuidModel):
 
-    household = models.ForeignKey(Household)
-
-    survey = models.ForeignKey(Survey)
+    household_structure = models.OneToOneField(HouseholdStructure)
 
     history = AuditTrail()
 
     objects = HouseholdLogManager()
 
     def __unicode__(self):
-        return '{0}-{1}'.format(self.household, self.survey)
+        return unicode(self.household_structure)
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household__household_identifier')
+        return (Household, 'household_structure__household__household_identifier')
 
     def natural_key(self):
-        return self.household.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_survey.survey', 'bcpp_household.household', ]
+        return self.household_structure.natural_key()
+    natural_key.dependencies = ['bcpp_household.household_structure', ]
 
     class Meta:
         app_label = 'bcpp_household'
-        unique_together = ('household', 'survey')
 
 
 class HouseholdLogEntry(BaseDispatchSyncUuidModel):
@@ -42,13 +39,10 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         validators=[datetime_not_before_study_start, datetime_not_future],
         )
 
-    hbc = models.CharField(
-        verbose_name='HBC/CLO Name',
-        max_length=25,
-        )
     status = models.CharField(
-        verbose_name='Household Attempt Status',
+        verbose_name='Household Status',
         max_length=25,
+        default='unknown',
         choices=HOUSEHOLD_STATUS
         )
     next_appt_datetime = models.DateTimeField(
@@ -80,7 +74,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household_log__household__household_identifier')
+        return (Household, 'household_log__household_structure__household__household_identifier')
 
     class Meta:
         app_label = 'bcpp_household'

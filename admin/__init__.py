@@ -1,4 +1,4 @@
-from main import *
+from gps_device_admin import GpsDeviceAdmin
 from household_admin import HouseholdAdmin
-from household_log_admin import *
+from household_log_admin import HouseholdLogAdmin, HouseholdLogEntryAdmin
 from household_structure_admin import HouseholdStructureAdmin

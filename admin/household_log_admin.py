@@ -10,7 +10,7 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
     list_per_page = 15
     readonly_fields = ('household_log', )
     list_display = ('household_log', 'report_datetime', 'next_appt_datetime')
-    list_filter = ('report_datetime', 'next_appt_datetime')
+    list_filter = ('household_log__household_structure__survey', 'report_datetime', 'next_appt_datetime')
 admin.site.register(HouseholdLogEntry, HouseholdLogEntryAdmin)
 
 
@@ -25,7 +25,7 @@ class HouseholdLogAdmin(BaseModelAdmin):
     inlines = [HouseholdLogEntryInline, ]
     date_hierarchy = 'modified'
     list_per_page = 15
-    readonly_fields = ('household', 'survey')
-    search_fields = ('household__household_identifier',)
-    list_filter = ('survey', 'hostname_created', 'created')
+    readonly_fields = ('household_structure', )
+    search_fields = ('household_structure__household__household_identifier',)
+    list_filter = ('household_structure__survey', 'hostname_created', 'created')
 admin.site.register(HouseholdLog, HouseholdLogAdmin)

@@ -15,19 +15,18 @@ class HouseholdStructureManager(models.Manager):
         """ Prepares a householdstructure for a new survey by fetching a list of the
         householdstructure members for a given householdstructure from the most recent
         survey and add them to the new survey """
-        household_structure_member_model = household_structure.householdstructuremember_set.model
+        household_member_model = household_structure.householdmember_set.model
         #get previous survey
         surveys = Survey.objects.using(using).filter(
-            survey_group=household_structure.survey.survey_group,
             chronological_order__lt=household_structure.survey.chronological_order,
             ).order_by('-chronological_order')
         if surveys:
             previous_survey = surveys[0]
             # add members from most recent previous survey to current survey
-            for hsm in  household_structure_member_model.objects.using(using).filter(
+            for hsm in  household_member_model.objects.using(using).filter(
                             household_structure__household=household_structure.household,
                             household_structure__survey=previous_survey):
-                if not household_structure_member_model.objects.using(using).filter(
+                if not household_member_model.objects.using(using).filter(
                            household_structure=household_structure,
                            internal_identifier=hsm.internal_identifier):
                     # note internal_identifier is carried over from the hsm instance from the previous survey
@@ -48,7 +47,7 @@ class HouseholdStructureManager(models.Manager):
                         'present': '-',
                         'lives_in_household': '-',
                         'member_status': None}
-                    household_structure_member, created = household_structure_member_model.objects.using(using).get_or_create(
+                    household_member, created = household_member_model.objects.using(using).get_or_create(
                         household_structure=household_structure,
                         internal_identifier=hsm.internal_identifier,
                         defaults=options
