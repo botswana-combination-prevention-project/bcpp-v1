@@ -88,6 +88,11 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             # count has changed or was incorrect, so update
             self.save(using=using)
 
+    def house(self):
+        url = '/admin/{0}/household/?q={1}'.format(self._meta.app_label, self.household.household_identifier)
+        return """<a href="{url}" />household</a>""".format(url=url)
+    house.allow_tags = True
+
     def dashboard(self):
         url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'household_identifier': self.household.household_identifier, 'household_structure': self.pk})
         return """<a href="{url}" />dashboard</a>""".format(url=url)

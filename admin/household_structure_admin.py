@@ -27,6 +27,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
     list_display = (
         'household',
         'survey',
+        'house',
         'dashboard',
         'progress',
         'member_count',
