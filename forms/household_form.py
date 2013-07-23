@@ -17,28 +17,28 @@ def get_mapper():
 
 class HouseholdForm(BaseModelForm):
 
-    community = forms.ChoiceField(
-        label=u'Community',
-        initial=get_mapper().get_map_area(),
-        choices=((get_mapper().get_map_area(), get_mapper().get_map_area()), ),
-        help_text=u'If the community is incorrect, please contact the DMC immediately.',
-        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
-        )
+#    community = forms.ChoiceField(
+#        label=u'Community',
+#        initial=get_mapper().get_map_area(),
+#        choices=((get_mapper().get_map_area(), get_mapper().get_map_area()), ),
+#        help_text=u'If the community is incorrect, please contact the DMC immediately.',
+#        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
+#        )
 
-    section = forms.ChoiceField(
-        label=u'Section',
-        #initial=get_mapper().get_region(),
-        choices=get_mapper().get_regions_as_choices(),
-        help_text=u'',
-        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
-        )
-
-    sub_section = forms.ChoiceField(
-        label=u'Sub-section',
-        choices=get_mapper().get_sections_as_choices(),
-        help_text=u'',
-        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
-        )
+#    section = forms.ChoiceField(
+#        label=u'Section',
+#        #initial=get_mapper().get_region(),
+#        choices=get_mapper().get_regions_as_choices(),
+#        help_text=u'',
+#        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
+#        )
+#
+#    sub_section = forms.ChoiceField(
+#        label=u'Sub-section',
+#        choices=get_mapper().get_sections_as_choices(),
+#        help_text=u'',
+#        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer, attrs={'class': 'radiolist'}),
+#        )
 
     def clean(self):
         cleaned_data = self.cleaned_data

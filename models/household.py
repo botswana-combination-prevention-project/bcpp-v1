@@ -1,16 +1,16 @@
 import re
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ImproperlyConfigured
 from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
-from bhp_common.choices import YES_NO
 from bhp_device.classes import Device
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
-from bcpp_household.choices import HOUSEHOLD_STATUS
+from bcpp_household.choices import HOUSEHOLD_STATUS, SECTIONS, SUB_SECTIONS
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -112,14 +112,22 @@ class Household(BaseDispatchSyncUuidModel):
         )
 
     community = models.CharField(
-        max_length=25)
+        max_length=25,
+        help_text='If the community is incorrect, please contact the DMC immediately.',
+        default=settings.COMMUNITY
+        )
 
     section = models.CharField(
         max_length=25,
+        verbose_name='Section',
+        choices=SECTIONS,
         )
 
     sub_section = models.CharField(
         max_length=25,
+        verbose_name='Sub-section',
+        choices=SUB_SECTIONS,
+        help_text=u'',
         )
 
 #     was_surveyed_previously = models.CharField(
