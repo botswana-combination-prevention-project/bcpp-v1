@@ -114,7 +114,7 @@ class Household(BaseDispatchSyncUuidModel):
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
-        default=settings.COMMUNITY
+        default=settings.CURRENT_COMMUNITY
         )
 
     section = models.CharField(
