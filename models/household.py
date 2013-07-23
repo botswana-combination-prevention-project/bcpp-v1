@@ -182,7 +182,7 @@ class Household(BaseDispatchSyncUuidModel):
     def check_for_survey_on_pre_save(self, **kwargs):
         Survey = models.get_model('bcpp_survey', 'Survey')
         if Survey.objects.all().count() == 0:
-            raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before Household.')
+            raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before creating a Household.')
 
     def create_household_structure_on_post_save(self, **kwargs):
         """Creates, for each defined survey, a household structure(s) for this household."""
