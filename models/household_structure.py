@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from audit_trail.audit import AuditTrail
@@ -17,19 +18,19 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     survey = models.ForeignKey(Survey)
 
     progress = models.CharField(
-        verbose_name='Current Progress',
+        verbose_name='Progress',
         max_length=25,
         default='Not Started',
         null=True,
         editable=False)
 
     member_count = models.IntegerField(
-        verbose_name="How many members in this household?",
+        verbose_name="Members",
         default=0,
         validators=[
             MinValueValidator(0),
             MaxValueValidator(50), ],
-        help_text="This is the total number of members in the household. You may change this later.",
+        help_text="Indicate the total number of members in the household. You may change this later.",
             )
     note = models.CharField("Note", max_length=250, blank=True)
 
@@ -86,6 +87,11 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             self.member_count = current_member_count
             # count has changed or was incorrect, so update
             self.save(using=using)
+
+    def dashboard(self):
+        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'household_identifier': self.household.household_identifier, 'household_structure': self.pk})
+        return """<a href="{url}" />dashboard</a>""".format(url=url)
+    dashboard.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_household'

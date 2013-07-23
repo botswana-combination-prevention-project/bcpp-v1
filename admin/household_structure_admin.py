@@ -27,14 +27,19 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
     list_display = (
         'household',
         'survey',
+        'dashboard',
+        'progress',
         'member_count',
-        'created',
-        'hostname_created')
+        'modified',
+        'user_modified',
+        'hostname_modified')
     list_filter = (
         'survey',
+        'progress',
         'member_count',
-        'created',
-        'hostname_created',
+        'modified',
+        'user_modified',
+        'hostname_modified',
         'household__section',
         'household__sub_section')
     search_fields = (
@@ -45,5 +50,6 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
     radio_fields = {
         'survey': admin.VERTICAL,
         }
+    readonly_fields = ('survey', )
     list_per_page = 15
 admin.site.register(HouseholdStructure, HouseholdStructureAdmin)

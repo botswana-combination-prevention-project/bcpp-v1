@@ -25,7 +25,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
         'sub_section',
         'comment')
 
-    list_display = ('household_identifier', 'status', 'cso_number', 'community', 'section', 'created')
+    list_display = ('household_identifier', 'structure', 'status', 'cso_number', 'community', 'section', 'created')
 
     list_filter = ('status', 'created', 'community', 'section',)
 
