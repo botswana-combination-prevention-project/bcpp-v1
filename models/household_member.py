@@ -116,16 +116,16 @@ class HouseholdMember(BaseHouseholdMember):
     def deserialize_post(self):
         Signal.connect(post_save, None, weak=False, dispatch_uid="member_on_post_save")
 
-    @property
-    def is_consented(self):
-        from bcpp_subject.models import BaseSubjectConsent
-        retval = False
-        for model in models.get_models():
-            if issubclass(model, BaseSubjectConsent):
-                if model.objects.filter(member=self, survey=self.survey):
-                    retval = True
-                    break
-        return retval
+#     @property
+#     def is_consented(self):
+#         from bcpp_subject.models import BaseSubjectConsent
+#         retval = False
+#         for model in models.get_models():
+#             if issubclass(model, BaseSubjectConsent):
+#                 if model.objects.filter(member=self, survey=self.survey):
+#                     retval = True
+#                     break
+#         return retval
 
     @property
     def is_moved(self):
