@@ -42,7 +42,8 @@
     {% if search_result %}
         {% block search_result %}
             <div id="search_result_tile">
-            {% include search_result_include_file %}  
+            {% include search_result_include_file %}
+            <small><small>{{ search_result_include_file }}</small></small>
             </div>
         {% endblock %}
     {% endif %}
