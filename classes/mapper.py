@@ -383,13 +383,13 @@ class Mapper(object):
 
         The community_radius, community_center_lat and community_center_lon are from the Mapper class of each community.
         """
-        community_center_lat = community_center_lat or self.get_gps_center_lat()
-        community_center_lon = community_center_lon or self.get_gps_center_lon()
-        community_radius = community_radius or self.get_radius()
-        pt1 = geopy.Point(community_center_lat, community_center_lon)
+        center_lat = community_center_lat or self.get_gps_center_lat()
+        center_lon = community_center_lon or self.get_gps_center_lon()
+        radius = community_radius or self.get_radius()
+        pt1 = geopy.Point(center_lat, center_lon)
         pt2 = geopy.Point(lat, lon)
         dist = geopy.distance.distance(pt1, pt2).km
-        if dist > community_radius:
+        if dist > radius:
             return False
         return True
 
