@@ -1,12 +1,12 @@
 from django.conf import settings
 from bhp_section.classes import BaseSectionView, site_sections
-from bhp_map.classes import site_mapper
+from bhp_map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
 from models import Household
 from forms import CommunityForm
 
 
-site_mapper.autodiscover()
+site_mappers.autodiscover()
 
 
 class SectionHouseholdView(BaseSectionView):
