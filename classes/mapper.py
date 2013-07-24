@@ -374,7 +374,7 @@ class Mapper(object):
             payload.append([item.lon, item.lat, identifier_label, icon, other_identifier_label])
         return payload
 
-    def gps_validator(self, lat, lon, community_center_lat=None, community_center_lon=None, community_radius=None):
+    def gps_validator(self, lat, lon, center_lat=None, center_lon=None, community_radius=None):
         """Check if a GPS point is within the boundaries of a community
 
         This method uses geopy.distance and geopy.Point libraries to calculate the distance betweeen two points
@@ -383,8 +383,8 @@ class Mapper(object):
 
         The community_radius, community_center_lat and community_center_lon are from the Mapper class of each community.
         """
-        center_lat = community_center_lat or self.get_gps_center_lat()
-        center_lon = community_center_lon or self.get_gps_center_lon()
+        center_lat = center_lat or self.get_gps_center_lat()
+        center_lon = center_lon or self.get_gps_center_lon()
         radius = community_radius or self.get_radius()
         pt1 = geopy.Point(center_lat, center_lon)
         pt2 = geopy.Point(lat, lon)
