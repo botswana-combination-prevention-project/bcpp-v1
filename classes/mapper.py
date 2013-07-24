@@ -391,7 +391,6 @@ class Mapper(object):
         dist = geopy.distance.distance(pt1, pt2).km
         if dist > community_radius:
             return False
-            #raise MapperError('The point you are udating is not withing the village boundaries.')
         return True
 
     def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
