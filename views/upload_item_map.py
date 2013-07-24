@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.db.models import Q
-from bhp_map.classes import site_mapper
+from bhp_map.classes import site_mappers
 from bhp_map.exceptions import MapperError
 
 
@@ -28,10 +28,10 @@ def upload_item_map(request, **kwargs):
     identifier = request.POST.get('identifier')
     mapper_item_label = kwargs.get('mapper_item_label', '')
     mapper_name = kwargs.get('mapper_name', '')
-    if not site_mapper.get_registry(mapper_name):
+    if not site_mappers.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_item_label))
     else:
-        m = site_mapper.get_registry(mapper_name)()
+        m = site_mappers.get_registry(mapper_name)()
         filename = handle_uploaded_file(request.FILES['file'], identifier)
         if filename:
             item = m.get_item_model_cls().objects.get(Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifier}))

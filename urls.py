@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, url
-from bhp_map.classes import site_mapper
+from bhp_map.classes import site_mappers
 
 
 urlpatterns = patterns('bhp_map.views',
@@ -21,7 +21,7 @@ urlpatterns = patterns('bhp_map.views',
     url(r'^gps_point_update/(?P<mapper_name>\w+)/', 'db_update_index', name='map_gps_point_update_url'),
 )
 
-for mapper_name in site_mapper.get_registry().iterkeys():
+for mapper_name in site_mappers.get_registry().iterkeys():
     urlpatterns += patterns('bhp_map.views', url(r'^(?P<mapper_name>{0})/$'.format(mapper_name), 'map_index', name='selected_map_index_url'))
 
 urlpatterns += patterns('bhp_map.views', url(r'^', 'map_index', name='map_index_url'))

@@ -52,10 +52,10 @@ class Controller(object):
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             try:
-                before_import_registry = copy.copy(site_mapper._registry)
+                before_import_registry = copy.copy(site_mappers._registry)
                 import_module('%s.mappers' % app)
             except:
-                site_mapper._registry = before_import_registry
+                site_mappers._registry = before_import_registry
                 if module_has_submodule(mod, 'mappers'):
                     raise
-site_mapper = Controller()
+site_mappers = Controller()

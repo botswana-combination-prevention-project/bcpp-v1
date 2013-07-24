@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from bhp_map.classes import Mapper, site_mapper
+from bhp_map.classes import Mapper, site_mappers
 from bhp_map.exceptions import MapperError
 
 
@@ -14,13 +14,13 @@ def map_index(request, **kwargs):
     mapper_names = []
     m = None
     if not mapper_name:
-        mapper_names = [mname for mname in site_mapper.get_registry()]
+        mapper_names = [mname for mname in site_mappers.get_registry()]
     else:
-        m = site_mapper.get_registry(mapper_name)
+        m = site_mappers.get_registry(mapper_name)
     if m:
         if not issubclass(m, Mapper):
             raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
-        m = site_mapper.get_registry(mapper_name)()
+        m = site_mappers.get_registry(mapper_name)()
         cart_size = 0
         identifiers = []
         icon = request.session.get('icon', None)

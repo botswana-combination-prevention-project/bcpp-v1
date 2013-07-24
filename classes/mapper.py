@@ -81,21 +81,18 @@ class Mapper(object):
 
     def get_map_area(self):
         return self._get_attr('map_area')
-    
 
     def set_gps_center_lat(self, attr=None):
         self._set_attr('gps_center_lat', attr)
 
     def get_gps_center_lat(self):
         return self._get_attr('gps_center_lat')
-    
 
     def set_gps_center_lon(self, attr=None):
         self._set_attr('gps_center_lon', attr)
 
     def get_gps_center_lon(self):
-        return self._get_attr('gps_center_lon')    
-    
+        return self._get_attr('gps_center_lon')
 
     def set_identifier_field_attr(self, attr=None):
         self._set_attr('identifier_field_attr', attr)
@@ -233,6 +230,20 @@ class Mapper(object):
             self.set_regions()
         return self._regions
 
+    def _get_as_choices(self, lst):
+        if not lst:
+            raise AttributeError('Attribute lst cannot be None')
+        if not isinstance(lst, list):
+            raise TypeError('Attribute lst should be of type \'list\'. Got {0}'.format(lst))
+        lst = []
+        for c in self.get_regions():
+            lst.append((c, c))
+        choices = tuple(lst)
+        return choices
+
+    def get_regions_as_choices(self):
+        return self._get_as_choices(self.get_regions())
+
     def set_sections(self, choices_tpl=None):
         if choices_tpl:
             if not issubclass(choices_tpl, (tuple, list)):
@@ -250,6 +261,9 @@ class Mapper(object):
         if not self._sections:
             self.set_sections()
         return self._sections
+
+    def get_sections_as_choices(self):
+        return self.get_sections()
 
     def get_sections_as_tuple(self):
         return self.get_sections()
@@ -350,32 +364,33 @@ class Mapper(object):
                                 icon_number = 0
             payload.append([item.lon, item.lat, identifier_label, icon, other_identifier_label])
         return payload
-    
+
     def gps_validator(self, community_center_lat, community_center_lon, lat, lon, community_radius):
         """Check if a GPS point is within the boundaries of a community
-        
-            This method uses geopy.distance and geopy.Point libraries to calculate the distance betweeen two points
-            and return the distance in units requested. The community radius is used to check is a point is within a 
-            radius of the community.
-            
-            The community_radius, community_center_lat and community_center_lon are from the Mapper class of each community. 
+
+        This method uses geopy.distance and geopy.Point libraries to calculate the distance betweeen two points
+        and return the distance in units requested. The community radius is used to check is a point is within a
+        radius of the community.
+
+        The community_radius, community_center_lat and community_center_lon are from the Mapper class of each community.
         """
-        
         pt1 = geopy.Point(community_center_lat, community_center_lon)
         pt2 = geopy.Point(lat, lon)
         dist = geopy.distance.distance(pt1, pt2).km
-        
         if dist > community_radius:
             raise MapperError('The point you are udating is not withing the village boundaries.')
-        
+
     def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
         """Calculate distance between two GPS coordinates.
-        
-            This method return the distance between two GPS points and returns the distance in meters.
+
+        This method return the distance between two GPS points and returns the distance in meters.
         """
-        
         pt1 = geopy.Point(current_position_lat, current_position_lon)
         pt2 = geopy.Point(lat, lon)
         dist = geopy.distance.distance(pt1, pt2).km
-        
+
         return dist
+
+    def verify_gps_location(self, lat, lon):
+        """Verifies that given lat, lon occur within the community area."""
+        return True

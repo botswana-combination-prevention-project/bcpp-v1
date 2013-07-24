@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 #from bhp_mapping.choices import ICONS
 #from bhp_mapping.helpers import session_to_string, prepare_map_points
-from bhp_map.classes import site_mapper
+from bhp_map.classes import site_mappers
 from bhp_map.exceptions import MapperError
 
 
@@ -14,10 +14,10 @@ def add_to_cart(request, **kwargs):
     """
     template = 'map.html'
     mapper_name = kwargs.get('mapper_name', '')
-    if not site_mapper.get_registry(mapper_name):
+    if not site_mappers.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
-        m = site_mapper.get_registry(mapper_name)()
+        m = site_mappers.get_registry(mapper_name)()
         additional_item_identifiers = request.GET.get('identifiers', [])
         message = ""
         is_error = False
