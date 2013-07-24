@@ -411,7 +411,6 @@ class Mapper(object):
         """Convert a lat or lon into degree minute gps format
         
         """
-        
         d = int(deg)
         md = (deg - d) * 60
         m = round(md, 3)
