@@ -53,6 +53,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
     search_fields = [
         'first_name',
+        'household_structure__id',
         'household_structure__household__household_identifier',
         'household_structure__household__id',
         'household_structure__household__cso_number',
