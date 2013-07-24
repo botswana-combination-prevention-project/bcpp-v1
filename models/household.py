@@ -190,6 +190,7 @@ class Household(BaseDispatchSyncUuidModel):
         self.gps_lat = self.get_gps_lat()
         self.gps_lon = self.get_gps_lon()
         self.verify_gps_location(self.gps_lat, self.gps_lon, self.community)
+        self.verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.community)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
@@ -199,7 +200,16 @@ class Household(BaseDispatchSyncUuidModel):
         Call this from the form to catch the validation error before save."""
         from bhp_map.classes import site_mappers
         mapper = site_mappers.get_registry(community_name)
-        mapper().verify_gps_location(lat, lon)
+        if not mapper().verify_gps_location(lat, lon):
+            raise ValidationError('The location (GPS {0} {1}) does not fall within this community.'.format(lat, lon))
+
+    def verify_gps_to_target(self, lat, lon, community_name):
+        """Verifies the gps lat, lon occur within a radius of the target lat/lon."""
+        from bhp_map.classes import site_mappers
+        mapper = site_mappers.get_registry(community_name)
+        radius = .001  # km
+        if not mapper().verify_gps_location(lat, lon, center_lat=self.gps_target_lat, center_lon=self.gps_target_lon, radius=radius):
+            raise ValidationError('GPS {0} {1} is more than {2} meters from the target location.'.format(lat, lon, radius * 1000))
 
     def check_for_survey_on_pre_save(self, **kwargs):
         Survey = models.get_model('bcpp_survey', 'Survey')
