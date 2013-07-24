@@ -11,6 +11,7 @@ class Mapper(object):
 
     def __init__(self, *args, **kwargs):
         self._map_area = None
+        self._radius
         self._item_model_cls = None
         self._item_label = None
         self._regions = None
@@ -32,6 +33,8 @@ class Mapper(object):
         # item_model_cls
         if 'map_area' in kwargs:
             self.set_map_area(kwargs.get('map_area'))
+        #if 'radius' in kwargs:
+        #    self.set_radius(kwargs.get('radius'))
         if 'item_model' in kwargs:
             self.set_item_model_cls(kwargs.get('item_model'))
         if 'regions' in kwargs:
@@ -81,6 +84,12 @@ class Mapper(object):
 
     def get_map_area(self):
         return self._get_attr('map_area')
+
+    def set_radius(self, attr=None):
+        self._set_attr('radius', attr)
+
+    def get_radius(self):
+        return self._get_attr('radius')
 
     def set_gps_center_lat(self, attr=None):
         self._set_attr('gps_center_lat', attr)
@@ -365,7 +374,7 @@ class Mapper(object):
             payload.append([item.lon, item.lat, identifier_label, icon, other_identifier_label])
         return payload
 
-    def gps_validator(self, community_center_lat, community_center_lon, lat, lon, community_radius):
+    def gps_validator(self, lat, lon, community_center_lat=None, community_center_lon=None, community_radius=None):
         """Check if a GPS point is within the boundaries of a community
 
         This method uses geopy.distance and geopy.Point libraries to calculate the distance betweeen two points
@@ -374,6 +383,9 @@ class Mapper(object):
 
         The community_radius, community_center_lat and community_center_lon are from the Mapper class of each community.
         """
+        community_center_lat = community_center_lat or self.get_gps_center_lat()
+        community_center_lon = community_center_lon or self.get_gps_center_lon()
+        community_radius = community_radius or self.get_radius()
         pt1 = geopy.Point(community_center_lat, community_center_lon)
         pt2 = geopy.Point(lat, lon)
         dist = geopy.distance.distance(pt1, pt2).km
