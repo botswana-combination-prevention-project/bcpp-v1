@@ -1,4 +1,4 @@
-from bhp_map.classes import site_mapper
+from bhp_map.classes import site_mappers
 from base_household_mapper import BaseHouseholdMapper
 from bcpp_household.choices import OTSE_SECTIONS, OTSE_SUB_SECTIONS, OTSE_LANDMARKS
 
@@ -16,4 +16,4 @@ class OtseHouseholdMapper(BaseHouseholdMapper):
     gps_center_lon = 26.152276
     gps_radius = 8.699197
 
-site_mapper.register(OtseHouseholdMapper)
+site_mappers.register(OtseHouseholdMapper)
