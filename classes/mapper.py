@@ -1,5 +1,4 @@
 import geopy
-import geopy.distance
 from datetime import date, timedelta
 from django.utils.encoding import smart_str
 from bhp_base_model.models import BaseUuidModel
