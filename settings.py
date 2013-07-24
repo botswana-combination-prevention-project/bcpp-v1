@@ -373,7 +373,7 @@ DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member'
 #Reports settings
 REPORTS_TEMPLATES_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/'
 REPORTS_JAR_PATH = '~/Documents/birtreport_generator.jar'
-REPORTS_OUTPUT_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/bhp_birt_reports/templates/' 
+REPORTS_OUTPUT_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/bhp_birt_reports/templates/'
 
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
