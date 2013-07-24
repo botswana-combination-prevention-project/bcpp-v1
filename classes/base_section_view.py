@@ -175,16 +175,22 @@ class BaseSectionView(object):
                 self.set_search_name(section_name, search_cls().name)
                 urlpattern_first += url_patterns(
                     '',
+                    url(r'^(?P<section_name>{section_name})/(?P<search_type>{search_type})/(?P<search_term>\w+)/$'.format(section_name=section_name, search_type=search_type),
+                        self._view,
+                        name="section_search_url"),
                     url(r'^(?P<section_name>{section_name})/(?P<search_type>{search_type})/$'.format(section_name=section_name, search_type=search_type),
-                    self._view,
-                    name="section_search_url"))
+                        self._view,
+                        name="section_search_url"))
                 self.add_to_sections_using_search(section_name)
         # create a urlpattern for the section_name
         urlpattern_last += url_patterns(
             '',
+            url(r'^(?P<section_name>{section_name})/(?P<search_term>\w+)/$'.format(section_name=section_name),
+                self._view,
+                name="section_url"),
             url(r'^(?P<section_name>{section_name})/$'.format(section_name=section_name),
-            self._view,
-            name="section_url".format(section_name)))
+                self._view,
+                name="section_url"))
         return urlpattern_first + urlpattern_last
 
     def get_appointment_tile(self):
@@ -233,15 +239,15 @@ class BaseSectionView(object):
         search_result = None
         search_result_include_file = None
         if self.get_search_type(self.get_section_name()):
-            search_cls = site_search.get(self.get_search_type(self.get_section_name()))
-            search_instance = search_cls()
-            search_result_include_file = search_instance.get_include_template_file()
-            search_instance.prepare(request, **kwargs)
+            searcher_cls = site_search.get(self.get_search_type(self.get_section_name()))
+            searcher = searcher_cls()
+            search_result_include_file = searcher.get_include_template_file()
+            searcher.prepare(request, **kwargs)
             page = request.GET.get('page', '1')
-            if search_instance.form_is_valid:
-                search_result = search_instance.search(request, page)
-            else:
-                search_result = search_instance.get_most_recent(page)
+            if searcher.form_is_valid:
+                search_result = searcher.search(request, page)
+            if not search_result:
+                search_result = searcher.get_most_recent(page)
         default_context = {
             'app_name': settings.APP_NAME,
             'installed_apps': settings.INSTALLED_APPS,

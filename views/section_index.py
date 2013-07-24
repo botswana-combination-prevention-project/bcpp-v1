@@ -8,6 +8,7 @@ from bhp_search.classes import site_search
 
 @login_required
 def section_index(request, **kwargs):
+    raise TypeError('view not used, see class view')
 
     section_name = kwargs.get('section_name')
     search_name = kwargs.get('search_name')

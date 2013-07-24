@@ -44,6 +44,12 @@ class Controller(object):
     def get_section_names(self):
         return self.get_registry().keys()
 
+    def get_section_list(self):
+        lst = []
+        for cls in self.get_registry().itervalues():
+            lst.append((cls.section_name, cls.section_display_name, cls.section_display_index))
+        return lst
+
     def register(self, section_view_cls):
         if not section_view_cls.section_name:
             raise AttributeError('Attribute section_name cannot be None')
