@@ -1,8 +1,7 @@
 import re
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_device.classes import Device
@@ -11,6 +10,12 @@ from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, Encrypted
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
 from bcpp_household.choices import HOUSEHOLD_STATUS, SECTIONS, SUB_SECTIONS
+from community import Community
+
+
+def is_valid_community(value):
+    if not Community.objects.filter(name__iexact=value).exists():
+        raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -114,7 +119,7 @@ class Household(BaseDispatchSyncUuidModel):
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
-        default=settings.CURRENT_COMMUNITY
+        validators=[is_valid_community, ],
         )
 
     section = models.CharField(
@@ -184,8 +189,17 @@ class Household(BaseDispatchSyncUuidModel):
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
         self.gps_lat = self.get_gps_lat()
         self.gps_lon = self.get_gps_lon()
+        self.verify_gps_location(self.gps_lat, self.gps_lon, self.community)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
+
+    def verify_gps_location(self, lat, lon, community_name):
+        """Verifies the gps lat, lon occur within the given community.
+
+        Call this from the form to catch the validation error before save."""
+        from bhp_map.classes import site_mappers
+        mapper = site_mappers.get_registry(community_name)
+        mapper().verify_gps_location(lat, lon)
 
     def check_for_survey_on_pre_save(self, **kwargs):
         Survey = models.get_model('bcpp_survey', 'Survey')
@@ -223,22 +237,22 @@ class Household(BaseDispatchSyncUuidModel):
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
-    def get_gps_lat(self):
-        x = self.gps_degrees_s
-        y = self.gps_minutes_s
-        if x and y:
-            x = float(x)
-            y = float(y)
-            return round((x) + (y / 60), 5)
+    def get_gps_lat(self, d=None, m=None):
+        d = d or self.gps_degrees_s
+        m = m or self.gps_minutes_s
+        if d and m:
+            d = float(d)
+            m = float(m)
+            return round((d) + (m / 60), 5)
         return None
 
-    def get_gps_lon(self):
-        x = self.gps_degrees_e
-        y = self.gps_minutes_e
-        if x and y:
-            x = float(x)
-            y = float(y)
-            return -1 * round((x) + (y / 60), 5)
+    def get_gps_lon(self, d=None, m=None):
+        d = d or self.gps_degrees_e
+        m = m or self.gps_minutes_e
+        if d and m:
+            d = float(d)
+            m = float(m)
+            return -1 * round((d) + (m / 60), 5)
         return None
 
     def is_dispatch_container_model(self):

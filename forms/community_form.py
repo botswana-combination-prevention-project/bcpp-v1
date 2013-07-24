@@ -1,6 +1,5 @@
 from django import forms
 from bhp_map.classes import site_mappers
-site_mappers.autodiscover()
 
 
 class CommunityForm(forms.Form):

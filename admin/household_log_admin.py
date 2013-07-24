@@ -16,7 +16,7 @@ admin.site.register(HouseholdLogEntry, HouseholdLogEntryAdmin)
 
 class HouseholdLogEntryInline(admin.TabularInline):
     model = HouseholdLogEntry
-    extra = 1
+    extra = 0
     max_num = 5
 
 
