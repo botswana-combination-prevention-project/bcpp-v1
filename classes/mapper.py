@@ -390,7 +390,9 @@ class Mapper(object):
         pt2 = geopy.Point(lat, lon)
         dist = geopy.distance.distance(pt1, pt2).km
         if dist > community_radius:
-            raise MapperError('The point you are udating is not withing the village boundaries.')
+            return False
+            #raise MapperError('The point you are udating is not withing the village boundaries.')
+        return True
 
     def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
         """Calculate distance between two GPS coordinates.
@@ -400,9 +402,8 @@ class Mapper(object):
         pt1 = geopy.Point(current_position_lat, current_position_lon)
         pt2 = geopy.Point(lat, lon)
         dist = geopy.distance.distance(pt1, pt2).km
-
         return dist
 
     def verify_gps_location(self, lat, lon):
         """Verifies that given lat, lon occur within the community area."""
-        return True
+        return self.gps_validator(lat, lon)
