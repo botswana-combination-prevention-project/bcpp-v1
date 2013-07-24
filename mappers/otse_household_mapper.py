@@ -14,6 +14,6 @@ class OtseHouseholdMapper(BaseHouseholdMapper):
 
     gps_center_lat = -24.376534
     gps_center_lon = 26.152276
-    gps_radius = 8.699197
+    radius = 8.699197
 
 site_mappers.register(OtseHouseholdMapper)
