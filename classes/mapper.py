@@ -414,9 +414,7 @@ class Mapper(object):
         d = int(deg)
         md = (deg - d) * 60
         m = round(md, 3)
-        direction = 'E'
         if d < 0 and m < 0:
             d = -d
             m = -m
-            direction = 'S'
-        return [direction, d, m]
+        return [d, m]
