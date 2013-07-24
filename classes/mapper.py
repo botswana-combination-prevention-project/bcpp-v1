@@ -1,4 +1,5 @@
 import geopy
+import geopy.distance
 from datetime import date, timedelta
 from django.utils.encoding import smart_str
 from bhp_base_model.models import BaseUuidModel
@@ -323,7 +324,6 @@ class Mapper(object):
         val = ""
         delim = ", "
         if identifiers:
-            # TODO:
             for identifier in identifiers:
                 val = val + identifier + delim
         return val
