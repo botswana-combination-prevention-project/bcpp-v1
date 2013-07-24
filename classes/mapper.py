@@ -10,7 +10,7 @@ class Mapper(object):
 
     def __init__(self, *args, **kwargs):
         self._map_area = None
-        self._radius
+        self._radius = None
         self._item_model_cls = None
         self._item_label = None
         self._regions = None
@@ -395,6 +395,7 @@ class Mapper(object):
         """Calculate distance between two GPS coordinates.
 
         This method return the distance between two GPS points and returns the distance in meters.
+            Make sure geopy is installed.
         """
         pt1 = geopy.Point(current_position_lat, current_position_lon)
         pt2 = geopy.Point(lat, lon)
@@ -404,3 +405,17 @@ class Mapper(object):
     def verify_gps_location(self, lat, lon):
         """Verifies that given lat, lon occur within the community area."""
         return self.gps_validator(lat, lon)
+    
+    
+    def deg_to_dms(self, deg):
+        """Convert a lat or lon into degree minute gps format
+        
+        """
+        
+        d = int(deg)
+        md = (deg - d) * 60
+        m = round(md, 3)
+        if d < 0 and m < 0:
+            d = -d
+            m = -m
+        return [d, m]
