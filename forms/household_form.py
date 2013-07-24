@@ -2,14 +2,14 @@ from django import forms
 from django.conf import settings
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 from bhp_base_form.forms import BaseModelForm
-from bhp_map.classes import site_mapper
+from bhp_map.classes import site_mappers
 from bhp_map.exceptions import MapperError
 from bcpp_household.models import Household
 #site_mapper.autodiscover()
 
 
 def get_mapper():
-    mapper = site_mapper.get(settings.CURRENT_COMMUNITY)
+    mapper = site_mappers.get(settings.CURRENT_COMMUNITY)
     if not mapper:
         raise MapperError('Mapper not registered for community {0}.'.format(settings.CURRENT_COMMUNITY))
     return mapper()
