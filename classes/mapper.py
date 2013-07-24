@@ -3,6 +3,9 @@ from django.utils.encoding import smart_str
 from bhp_base_model.models import BaseUuidModel
 from bhp_map.exceptions import MapperError
 
+import geopy
+import geopy.distance
+
 
 class Mapper(object):
 
@@ -347,3 +350,32 @@ class Mapper(object):
                                 icon_number = 0
             payload.append([item.lon, item.lat, identifier_label, icon, other_identifier_label])
         return payload
+    
+    def gps_validator(self, community_center_lat, community_center_lon, lat, lon, community_radius):
+        """Check if a GPS point is within the boundaries of a community
+        
+            This method uses geopy.distance and geopy.Point libraries to calculate the distance betweeen two points
+            and return the distance in units requested. The community radius is used to check is a point is within a 
+            radius of the community.
+            
+            The community_radius, community_center_lat and community_center_lon are from the Mapper class of each community. 
+        """
+        
+        pt1 = geopy.Point(community_center_lat, community_center_lon)
+        pt2 = geopy.Point(lat, lon)
+        dist = geopy.distance.distance(pt1, pt2).km
+        
+        if dist > community_radius:
+            raise MapperError('The point you are udating is not withing the village boundaries.')
+        
+    def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
+        """Calculate distance between two GPS coordinates.
+        
+            This method return the distance between two GPS points and returns the distance in meters.
+        """
+        
+        pt1 = geopy.Point(current_position_lat, current_position_lon)
+        pt2 = geopy.Point(lat, lon)
+        dist = geopy.distance.distance(pt1, pt2).km
+        
+        return dist
