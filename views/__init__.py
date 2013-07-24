@@ -1,2 +1,3 @@
+from household_dashboard import household_dashboard
 from dashboard import dashboard
 from participation import participation

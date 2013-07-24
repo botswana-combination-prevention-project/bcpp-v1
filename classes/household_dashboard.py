@@ -29,6 +29,8 @@ class HouseholdDashboard(Dashboard):
             household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_ACTION],
             membership_forms={'ABSENT': get_model('bcpp_subject', 'subjectabsentee')},
             title='Household Dashboard',
+            household_member_meta=HouseholdMember._meta,
+            household_structure_meta=HouseholdStructure._meta,
             )
 
     def create(self, **kwargs):
@@ -108,40 +110,40 @@ class HouseholdDashboard(Dashboard):
         self.urlpatterns = patterns(view,
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/(?P<gender>\w+)/(?P<initials>\w+)/(?P<household_member>{pk})/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/(?P<registered_subject>{pk})/(?P<household_member>{pk})/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_member>{pk})/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household>{pk})/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/$'.format(**regex),
-              'dashboard',
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household>{pk})/(?P<household_structure>{pk})/$'.format(**regex),
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household_structure>{pk})/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
 
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
-              'dashboard',
+              'household_dashboard',
                 name="household_dashboard_url"
                 ),
             )
