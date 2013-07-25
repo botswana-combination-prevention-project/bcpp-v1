@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from bcpp_dashboard.views import household_dashboard
-from bcpp_dashboard.forms import ParticipationForm
+from bcpp_household_member.forms import ParticipationForm
 from bcpp_household_member.models import HouseholdMember
 from bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry
 
