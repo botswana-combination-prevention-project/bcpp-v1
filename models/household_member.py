@@ -11,22 +11,23 @@ from bhp_common.choices import YES_NO, GENDER
 from bhp_registration.models import RegisteredSubject
 from bhp_lab_tracker.classes import lab_tracker
 from bhp_household_member.models import BaseHouseholdMember
-from bcpp_dashboard.forms.main import ParticipationForm
 from bcpp_survey.models import Survey
-from bcpp_household_member.managers import HouseholdMemberManager
 from bcpp_household.choices import RELATIONS
 from bcpp_household.models import Household
 from bcpp_household.models import HouseholdStructure
+from bcpp_household_member.forms import ParticipationForm
+from bcpp_household_member.managers import HouseholdMemberManager
+
 from contact_log import ContactLog
 
 
 class HouseholdMember(BaseHouseholdMember):
 
-    household_structure = models.ForeignKey(HouseholdStructure,
+    household_structure = models.OneToOneField(HouseholdStructure,
         null=True,
         blank=True)
 
-    survey = models.ForeignKey(Survey, editable=False)
+    survey = models.OneToOneField(Survey, editable=False)
 
     relation = models.CharField(
         verbose_name="Relation to head of household",
@@ -107,7 +108,6 @@ class HouseholdMember(BaseHouseholdMember):
                 self.survey = self.household_structure.survey
             else:
                 self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
-        self.is_eligible_member = self.is_eligible()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def deserialize_prep(self):
@@ -115,17 +115,6 @@ class HouseholdMember(BaseHouseholdMember):
 
     def deserialize_post(self):
         Signal.connect(post_save, None, weak=False, dispatch_uid="member_on_post_save")
-
-#     @property
-#     def is_consented(self):
-#         from bcpp_subject.models import BaseSubjectConsent
-#         retval = False
-#         for model in models.get_models():
-#             if issubclass(model, BaseSubjectConsent):
-#                 if model.objects.filter(member=self, survey=self.survey):
-#                     retval = True
-#                     break
-#         return retval
 
     @property
     def is_moved(self):
