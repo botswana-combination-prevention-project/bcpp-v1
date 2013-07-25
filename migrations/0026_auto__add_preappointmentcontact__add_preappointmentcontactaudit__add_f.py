@@ -9,6 +9,44 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'PreAppointmentContact'
+        db.create_table('bhp_appointment_preappointmentcontact', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('contact_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('is_contacted', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('information_provider', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
+            ('appointment', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_appointment.Appointment'])),
+            ('is_confirmed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal('bhp_appointment', ['PreAppointmentContact'])
+
+        # Adding model 'PreAppointmentContactAudit'
+        db.create_table('bhp_appointment_preappointmentcontact_audit', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
+            ('_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+            ('contact_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('is_contacted', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('information_provider', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
+            ('appointment', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_preappointmentcontact', to=orm['bhp_appointment.Appointment'])),
+            ('is_confirmed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
+            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
+        ))
+        db.send_create_signal('bhp_appointment', ['PreAppointmentContactAudit'])
 
         # Adding field 'AppointmentAudit.appt_close_datetime'
         db.add_column('bhp_appointment_appointment_audit', 'appt_close_datetime',
