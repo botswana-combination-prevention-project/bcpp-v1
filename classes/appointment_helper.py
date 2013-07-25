@@ -1,11 +1,10 @@
-import inspect
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model, Max
 from bhp_visit.models import VisitDefinition, ScheduleGroup
-#from bhp_visit.classes import VisitDefinitionHelper
 from appointment_date_helper import AppointmentDateHelper
 from bhp_subject_config.models import SubjectConfiguration
 from bhp_appointment.models import Configuration
+from bhp_appointment.exceptions import AppointmentStatusError
 
 
 class AppointmentHelper(object):
@@ -119,6 +118,57 @@ class AppointmentHelper(object):
                     visit_definition=appointment.visit_definition,
                     visit_instance=str(next_visit_instance),
                     appt_datetime=appt_datetime)
+
+    def check_appt_status(self, appointment, using):
+        """Checks the appt_status relative to the visit tracking form and ScheduledEntryBucket.
+        """
+        from bhp_entry.classes import ScheduledEntry
+
+        # for an existing appointment, check if there is a visit tracking form already on file
+        if not appointment.visit_definition.visit_tracking_content_type_map:
+            raise ImproperlyConfigured('Unable to determine the visit tracking model. Update bhp_visit.visit_definition {0} and select the correct visit model.'.format(appointment.visit_definition))
+        if not appointment.visit_definition.visit_tracking_content_type_map.model_class().objects.filter(appointment=appointment):
+            # no visit tracking, can only be New or Cqncelled
+            if appointment.appt_status not in ['new', 'cancelled']:
+                appointment.appt_status = 'new'
+        else:
+            # have visit tracking, can only be Done, Incomplete, In Progress
+            visit_model_instance = appointment.visit_definition.visit_tracking_content_type_map.model_class().objects.get(appointment=appointment)
+            #if visit_model_instance.reason in visit_model_instance.get_visit_reason_no_follow_up_choices():
+            if not ScheduledEntry().show_scheduled_entries(appointment.registered_subject, visit_model_instance=visit_model_instance):
+                # visit reason implies no data will be collected, so set appointment to Done
+                appointment.appt_status = 'done'
+            else:
+                ScheduledEntryBucket = get_model('bhp_entry', 'ScheduledEntryBucket')
+                # set to in progress, if not already set
+                if appointment.appt_status in ['done', 'incomplete']:
+                    # test if Done or Incomplete
+                    if ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='NEW').exists():
+                        #objs = ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='NEW')
+                        appointment.appt_status = 'incomplete'
+                    else:
+                        appointment.appt_status = 'done'
+                elif appointment.appt_status in ['new', 'cancelled', 'in_progress']:
+                    appointment.appt_status = 'in_progress'
+                    # only one appointment can be "in_progress", so look for any others in progress and change
+                    # to Done or Incomplete, depending on ScheduledEntryBucket (if any NEW => incomplete)
+                    ScheduledEntryBucket = get_model('bhp_entry', 'ScheduledEntryBucket')
+                    for appt in appointment.__class__.objects.filter(registered_subject=appointment.registered_subject, appt_status='in_progress').exclude(pk=appointment.pk):
+                        if ScheduledEntryBucket.objects.filter(appointment=appt, entry_status='NEW').exists():
+                            # there are NEW forms
+                            if appt.appt_status != 'incomplete':
+                                appt.appt_status = 'incomplete'
+                                # call raw_save to avoid coming back to this method.
+                                appt.raw_save(using)
+                        else:
+                            # all forms are KEYED or NOT REQUIRED
+                            if appt.appt_status != 'done':
+                                appt.appt_status = 'done'
+                                # call raw_save to avoid coming back to this method.
+                                appt.raw_save(using)
+                else:
+                    raise AppointmentStatusError('Did not expect appt_status == \'{0}\''.format(appointment.appt_status))
+        return appointment
 
     def _get_default_appt_type(self, registered_subject):
         default_appt_type = None
