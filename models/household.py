@@ -189,8 +189,8 @@ class Household(BaseDispatchSyncUuidModel):
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
         self.gps_lat = self.get_gps_lat()
         self.gps_lon = self.get_gps_lon()
-        self.verify_gps_location(self.gps_lat, self.gps_lon, self.community)
-        self.verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.community)
+        #self.verify_gps_location(self.gps_lat, self.gps_lon, self.community)
+        #self.verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.community)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 

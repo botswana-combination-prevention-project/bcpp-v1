@@ -116,9 +116,11 @@ RELATIONS = (
 
 HOUSEHOLD_MEMBER_ACTION = [
     ('NOT_REPORTED', '<not reported>'),
-    ('CONSENTING', 'Consenting'),
+    ('CONSENTING', 'Research Cohort Consent'),
+    ('BLOOD_ONLY', 'Blood Draw Only Consent'),
     ('ABSENT', 'Absentee'),
     ('REFUSED', 'Refusal'),
+    ('HTC_ONLY', 'HTC Only'),
     ('OTHER', 'Other'),
 ]
 
