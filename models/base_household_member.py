@@ -10,7 +10,6 @@ from bhp_crypto.utils import mask_encrypted
 from bhp_common.choices import YES_NO, GENDER
 from bhp_registration.models import RegisteredSubject
 from bhp_lab_tracker.classes import lab_tracker
-from bcpp_dashboard.forms.main import ParticipationForm
 
 
 class BaseHouseholdMember(BaseDispatchSyncUuidModel):
@@ -65,7 +64,6 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
     hiv_history = models.CharField(max_length=25, null=True, editable=False)
     is_eligible_member = models.BooleanField(default=False, db_index=True)
     target = models.IntegerField(default=0)
-
     history = AuditTrail()
 
     def __unicode__(self):
@@ -81,12 +79,6 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
         self.hiv_history = self.get_hiv_history()
 
     def save(self, *args, **kwargs):
-        using = kwargs.get('using', None)
-        if not self.survey_id:
-            if self.household_structure:
-                self.survey = self.household_structure.survey
-            else:
-                self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
         self.is_eligible_member = self.is_eligible()
         super(BaseHouseholdMember, self).save(*args, **kwargs)
 
@@ -98,13 +90,14 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def is_consented(self):
-        from bcpp_subject.models import BaseSubjectConsent
+        from bhp_consent.models import BaseConsent
         retval = False
         for model in models.get_models():
-            if issubclass(model, BaseSubjectConsent):
-                if model.objects.filter(household_member=self, survey=self.survey):
-                    retval = True
-                    break
+            if issubclass(model, BaseConsent):
+                if 'household_member' in dir(model):
+                    if model.objects.filter(household_member=self, household_member__household_structure__survey=self.survey):
+                        retval = True
+                        break
         return retval
 
     @property
@@ -115,15 +108,15 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
             retval = True
         return retval
 
-    @property
-    def participation_form(self):
-        """Returns a form object for the household survey dashboard."""
-        if not self.member_status:
-            self.member_status = 'NOT_REPORTED'
-        return ParticipationForm(initial={'status': self.member_status,
-                                          'household_member': self.pk,
-                                          'survey': self.survey,
-                                          'dashboard_type': 'household'})
+#     @property
+#     def participation_form(self):
+#         """Returns a form object for the household survey dashboard."""
+#         if not self.member_status:
+#             self.member_status = 'NOT_REPORTED'
+#         return ParticipationForm(initial={'status': self.member_status,
+#                                           'household_member': self.pk,
+#                                           'survey': self.survey,
+#                                           'dashboard_type': 'household'})
 
     @property
     def absentee_form_url(self):
@@ -325,28 +318,28 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
     def calendar_label(self):
         return self.__unicode__()
 
-    def deserialize_on_duplicate(self):
-        """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
-        retval = False
-        if (self.present.lower() == 'yes' or self.present.lower() == 'no'):
-            if self.is_eligible_member and self.member_status:
-                retval = True
-            elif not self.is_eligible_member:
-                retval = True
-            else:
-                pass
-        return retval
-
-    def deserialize_get_missing_fk(self, attrname):
-        retval = None
-        if attrname == 'household_structure' and self.registered_subject:
-            subject_identifier = self.registered_subject.subject_identifier
-            if subject_identifier:
-                registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
-                if registered_subject:
-                    if HouseholdMember.objects.filter(pk=registered_subject.registration_identifier).exists():
-                        retval = HouseholdMember.objects.get(pk=registered_subject.registration_identifier).household_structure
-        return retval
+#     def deserialize_on_duplicate(self):
+#         """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
+#         retval = False
+#         if (self.present.lower() == 'yes' or self.present.lower() == 'no'):
+#             if self.is_eligible_member and self.member_status:
+#                 retval = True
+#             elif not self.is_eligible_member:
+#                 retval = True
+#             else:
+#                 pass
+#         return retval
+# 
+#     def deserialize_get_missing_fk(self, attrname):
+#         retval = None
+#         if attrname == 'household_structure' and self.registered_subject:
+#             subject_identifier = self.registered_subject.subject_identifier
+#             if subject_identifier:
+#                 registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
+#                 if registered_subject:
+#                     if HouseholdMember.objects.filter(pk=registered_subject.registration_identifier).exists():
+#                         retval = HouseholdMember.objects.get(pk=registered_subject.registration_identifier).household_structure
+#         return retval
 
     class Meta:
         abstract = True
