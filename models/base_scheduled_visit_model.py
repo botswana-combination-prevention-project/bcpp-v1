@@ -3,6 +3,7 @@ from django.db import models
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_consent.models import BaseConsentedUuidModel
 from bcpp_household.models import Household
+from bcpp_subject.managers import ScheduledModelManager
 from subject_visit import SubjectVisit
 
 
@@ -18,6 +19,8 @@ class BaseScheduledVisitModel(BaseConsentedUuidModel):
             datetime_not_future, ],
         default=datetime.today(),
         )
+
+    objects = ScheduledModelManager()
 
     def __unicode__(self):
         return unicode(self.subject_visit)

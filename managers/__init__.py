@@ -1,6 +1,5 @@
 from base_household_member_model_manager import BaseHouseholdMemberModelManager
 from base_registered_household_member_model_manager import BaseRegisteredHouseholdMemberModelManager
-from subject_managers import *
-from subject_visit_manager import *
 from subject_absentee_entry_manager import SubjectAbsenteeEntryManager
 from subject_undecided_entry_manager import SubjectUndecidedEntryManager
+from scheduled_model_manager import ScheduledModelManager
