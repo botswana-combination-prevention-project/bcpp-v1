@@ -1,5 +1,4 @@
 from django.core.exceptions import FieldError
-#from bhp_visit_tracking.models import BaseVisitTracking
 from base_entry import BaseEntry
 
 

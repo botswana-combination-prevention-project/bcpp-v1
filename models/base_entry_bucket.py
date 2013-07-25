@@ -1,7 +1,4 @@
 from django.db import models
-#try:
-    #from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseUuidModel
-#except ImportError:
 from bhp_base_model.models import BaseUuidModel
 from bhp_registration.models import RegisteredSubject
 from bhp_entry.choices import ENTRY_STATUS

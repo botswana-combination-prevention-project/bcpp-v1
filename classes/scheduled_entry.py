@@ -1,9 +1,7 @@
-import copy
 from datetime import datetime, date
 from django.db.models import get_model
-from django.core.exceptions import ImproperlyConfigured
 from bhp_entry.models import Entry
-from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_CHOICES, VISIT_REASON_NO_FOLLOW_UP_CHOICES
+from bhp_visit_tracking.settings import VISIT_REASON_NO_FOLLOW_UP_CHOICES
 from base_scheduled_entry import BaseScheduledEntry
 
 

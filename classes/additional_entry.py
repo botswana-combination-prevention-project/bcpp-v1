@@ -1,6 +1,5 @@
 from datetime import datetime
 from django.core.exceptions import FieldError
-
 from bhp_entry.models import AdditionalEntryBucket
 from base_registered_subject_entry import BaseRegisteredSubjectEntry
 
