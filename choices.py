@@ -8,12 +8,12 @@ ENTRY_CATEGORY = (
 ENTRY_STATUS = (
     ('NEW', 'New'),
     ('KEYED', 'Keyed'),
-    ('CHECKED', 'Checked'),
+    #('CHECKED', 'Checked'),
     ('MISSED', 'Missed'),
     ('NOT_REQUIRED', 'Not required'),
-    ('QUERY', 'Query?'),
-    ('PENDING', 'Pending'),
-    ('OPTIONAL', 'Optional'),
+    #('QUERY', 'Query?'),
+    #('PENDING', 'Pending'),
+    #('OPTIONAL', 'Optional'),
     )
 
 ENTRY_WINDOW = (

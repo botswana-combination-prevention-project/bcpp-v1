@@ -1,16 +1,18 @@
 import copy
 from datetime import datetime, date
+from django.db.models import get_model
 from django.core.exceptions import ImproperlyConfigured
 from bhp_entry.models import Entry
 from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_CHOICES, VISIT_REASON_NO_FOLLOW_UP_CHOICES
-from bhp_entry.models import ScheduledEntryBucket
 from base_scheduled_entry import BaseScheduledEntry
 
 
 class ScheduledEntry(BaseScheduledEntry):
 
     def set_bucket_model_cls(self):
-        self._bucket_model_cls = ScheduledEntryBucket
+        self._bucket_model_cls = get_model('bhp_entry', 'ScheduledEntryBucket')
+        if not self._bucket_model_cls:
+            raise TypeError('Unable to get model bhp_entry.ScheduledEntryBucket.')
 
     def set_filter_fieldname(self, filter_field_name=None):
         """Returns the field name for the foreignkey that points to the visit model."""
@@ -85,16 +87,16 @@ class ScheduledEntry(BaseScheduledEntry):
 #         #        raise ImproperlyConfigured('Visit model attribute \'reason\' value \'{1}\' is invalid. Must be \'{0}\'. The words {2} are reserved, as is, for the reason choices tuple. Check your visit model\'s field or form field definition.'.format(word, visit_model_instance.reason.lower(), required_reasons))
 #         return visit_reason_choices
 
-    def show_scheduled_entries(self, registered_subject):
-        visit_model_instance = self.get_visit_model_instance()
+    def show_scheduled_entries(self, registered_subject, visit_model_instance=None):
+        visit_model_instance = visit_model_instance or self.get_visit_model_instance()
         if 'get_visit_reason_no_follow_up_choices' in dir(visit_model_instance):
             visit_reason_no_follow_up_choices = visit_model_instance.get_visit_reason_no_follow_up_choices()
         else:
             visit_reason_no_follow_up_choices = VISIT_REASON_NO_FOLLOW_UP_CHOICES
-        show_scheduled_entries = self.get_visit_model_instance().reason.lower() in [x.lower() for x in visit_reason_no_follow_up_choices.itervalues()]
+        show_scheduled_entries = visit_model_instance.reason.lower() not in [x.lower() for x in visit_reason_no_follow_up_choices.itervalues()]
         # possible conditions that override above
         # subject is at the off study visit (lost)
-        if visit_model_instance.get_off_study_reason().lower() == self.get_visit_model_instance().reason.lower():
+        if visit_model_instance.reason.lower() in visit_model_instance.get_off_study_reason():
             visit_date = date(visit_model_instance.report_datetime.year, visit_model_instance.report_datetime.month, visit_model_instance.report_datetime.day)
             if visit_model_instance.get_off_study_cls().objects.filter(registered_subject=registered_subject, offstudy_date=visit_date):
                 # has an off study form completed on same day as visit
@@ -114,7 +116,7 @@ class ScheduledEntry(BaseScheduledEntry):
         self.set_filter_model_instance(self.get_visit_model_instance())
         registered_subject = visit_model_instance.appointment.registered_subject
         show_scheduled_entries = self.show_scheduled_entries(registered_subject)
-        visit_reason_choices = visit_model_instance._get_visit_reason_choices()
+        #visit_reason_choices = visit_model_instance._get_visit_reason_choices()
 
         # scheduled entries are only added if visit instance is 0
         if self.get_visit_model_instance().appointment.visit_instance == '0':
@@ -133,13 +135,13 @@ class ScheduledEntry(BaseScheduledEntry):
                            'due_datetime': due_datetime,
                            'report_datetime': report_datetime,
                            'entry_status': entry_status}
-                if show_scheduled_entries:
+                if not show_scheduled_entries:
                     # is missed, lost or death, so delete NEW forms
                     self.get_bucket_model_cls().objects.filter(
                             registered_subject=registered_subject,
                             appointment=self.get_visit_model_instance().appointment,
                             entry=entry,
-                            entry_status='NEW'
+                            entry_status__in=['NEW', 'NOT_REQUIRED'],
                             ).delete()
                 else:
                     # is a scheduled/unscheduled visit, so get_or_create forms for entry
