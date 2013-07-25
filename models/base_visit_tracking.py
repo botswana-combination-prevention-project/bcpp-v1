@@ -8,7 +8,6 @@ from bhp_appointment.models import Appointment
 from bhp_visit_tracking.managers import BaseVisitTrackingManager
 from bhp_visit_tracking.choices import VISIT_REASON
 from bhp_visit_tracking.settings import VISIT_REASON_REQUIRED_CHOICES, VISIT_REASON_NO_FOLLOW_UP_CHOICES, VISIT_REASON_FOLLOW_UP_CHOICES
-from bhp_entry.models import ScheduledEntryBucket
 
 
 class BaseVisitTracking (BaseConsentedUuidModel):
@@ -131,7 +130,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         return dct
 
     def get_off_study_reason(self):
-        return 'lost'
+        return ('lost', 'death')
 
     def get_visit_reason_follow_up_choices(self):
         """Returns visit reasons that imply data is being collected; that is, subject is present."""
@@ -208,6 +207,7 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         return visit_reason_choices
 
     def post_save_check_in_progress(self):
+        ScheduledEntryBucket = models.get_model('bhp_entry', 'ScheduledEntryBucket')
         dirty = False
         if self.reason in self.get_visit_reason_no_follow_up_choices():
             self.appointment.appt_status = 'done'
