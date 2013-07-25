@@ -48,6 +48,8 @@ class SiteMixin (object):
         """
 
         http_response_redirect = super(SiteMixin, self).response_add(request, obj, post_url_continue)
+        if '_savenext' in request.POST:
+            raise TypeError('Save next button is not currently in use. Click Save')
         if not '_addanother' in request.POST and not '_continue' in request.POST:
             if request.GET.get('next'):
                 try:
@@ -76,6 +78,8 @@ class SiteMixin (object):
 
         See comment for response_add() above"""
         http_response_redirect = super(SiteMixin, self).response_add(request, obj, post_url_continue)
+        if '_savenext' in request.POST:
+            raise TypeError('Save next button is not currently in use. Click Save')
         if not '_addanother' in request.POST and not '_continue' in request.POST:
             # look for session variable "filtered" set in change_view
             if request.session.get('filtered', None):
