@@ -1,1 +1,0 @@
-from participation_form import ParticipationForm
