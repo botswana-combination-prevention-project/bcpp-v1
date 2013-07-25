@@ -1,6 +1,7 @@
+import re
 from datetime import datetime, date
 #from django.views.base import View  # for 1.5
-from django.conf.urls.defaults import patterns as url_patterns, url
+from django.conf.urls.defaults import patterns, url
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -173,9 +174,9 @@ class BaseSectionView(object):
             if search_cls().get_section_name() == section_name:
                 self.set_search_type(section_name, search_type)
                 self.set_search_name(section_name, search_cls().name)
-                urlpattern_first += url_patterns(
+                urlpattern_first += patterns(
                     '',
-                    url(r'^(?P<section_name>{section_name})/(?P<search_type>{search_type})/(?P<search_term>\w+)/$'.format(section_name=section_name, search_type=search_type),
+                    url(re.compile('^(?P<section_name>{section_name})/(?P<search_type>{search_type})/(?P<search_term>[A-Za-z0-9\-]+)/$'.format(section_name=section_name, search_type=search_type)),
                         self._view,
                         name="section_search_url"),
                     url(r'^(?P<section_name>{section_name})/(?P<search_type>{search_type})/$'.format(section_name=section_name, search_type=search_type),
@@ -183,9 +184,9 @@ class BaseSectionView(object):
                         name="section_search_url"))
                 self.add_to_sections_using_search(section_name)
         # create a urlpattern for the section_name
-        urlpattern_last += url_patterns(
+        urlpattern_last += patterns(
             '',
-            url(r'^(?P<section_name>{section_name})/(?P<search_term>\w+)/$'.format(section_name=section_name),
+            url(r'^(?P<section_name>{section_name})/(?P<search_term>[A-Za-z0-9\-]+)/$'.format(section_name=section_name),
                 self._view,
                 name="section_url"),
             url(r'^(?P<section_name>{section_name})/$'.format(section_name=section_name),
@@ -235,6 +236,7 @@ class BaseSectionView(object):
 
         """
         self.set_section_name(kwargs.get('section_name'))
+        search_term = kwargs.get('search_term', '')
         self.set_search_type(self.get_section_name(), kwargs.get('search_type'))
         search_result = None
         search_result_include_file = None
@@ -255,6 +257,7 @@ class BaseSectionView(object):
             'sections': self.get_section_list(),
             'section_name': self.get_section_name(),
             'search_name': self.get_search_name(self.get_section_name()),
+            'search_term': search_term,
             'sections_using_search': self.get_sections_using_search(),
             'search_type': self.get_search_type(self.get_section_name()),
             'add_model': self.get_add_model_cls(),
