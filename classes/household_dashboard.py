@@ -14,10 +14,9 @@ from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 class HouseholdDashboard(Dashboard):
 
     def __init__(self, **kwargs):
-
-        super(HouseholdDashboard, self).__init__(**kwargs)
-        self.subject_type = 'household'  # yuk
         self.dashboard_type = 'household'
+        self.subject_type = 'household'  # yuk
+        super(HouseholdDashboard, self).__init__(**kwargs)
         self.household_structure = None
         self.household_members = None
         self.current_member_count = None
@@ -29,6 +28,7 @@ class HouseholdDashboard(Dashboard):
             household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_ACTION],
             membership_forms={'ABSENT': get_model('bcpp_subject', 'subjectabsentee')},
             title='Household Dashboard',
+            household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
             household_structure_meta=HouseholdStructure._meta,
             )

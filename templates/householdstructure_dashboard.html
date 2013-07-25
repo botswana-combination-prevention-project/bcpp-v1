@@ -50,11 +50,11 @@
 	            {% if household|is_dispatched %}
 	            	{{ household.household_identifier }}
 	            {% else %}
-	            	<A title="change household description" href="/admin{{ household.get_absolute_url }}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}">{{ household.household_identifier }}</A>
+	            	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}">{{ household.household_identifier }}</A>
 	            {% endif %}
             </td>
-            <td><b>Ward:</b> {{ household.ward|encrypted }}</td>
-            {% if household.cso_number %}<td><b>CSO:</b> {{ household.cso_number|encrypted }}</td>{% endif %}
+            <td><b>Section:</b> {{ household.section|encrypted }}-{{ household.sub_section|encrypted }}</td>
+            <td><b>CSO:</b> {{ household.cso_number|encrypted|default:'?' }}</td>
             {% if household_structure %}
                 <td><b>Members:&nbsp;</b>
                 {% if household|is_dispatched %}
@@ -64,10 +64,11 @@
                 {% endif %}
                 </td>
             {% endif %}
-            <td><B>{{ survey.survey_name }}</B></td>
-            {% for household_structure_member in household_structure_members %}
+            
+            {% comment %}Update progress indicator for members{% endcomment%}
+            {% for household_member in household_members %}
                  <td
-                {% if not household_structure_member.present == 'Yes' and not household_structure_member.present == 'No'%}
+                {% if not household_member.present == 'Yes' and not household_member.present == 'No'%}
                     style="background-color:red">?
                 {% else %}                     
                     style="background-color:lightyellow">*
@@ -75,15 +76,18 @@
                 </td>                
             {% endfor %}    
             
-                <td>
+            {% comment %}Link to google map or saved map {% endcomment%}
+            <td>
                 {% if household.uploaded_map %}
-    				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">view saved map</a>
+    				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">Saved Map</a>
                 {% else %}
-    				<a href="/bcpp_map/subject_map/?lon={{ household_structure.household.lon }}&lat={{ household_structure.household.lat }}&identifier={{ household_structure.household.household_identifier }}">view google map</a>
+    				<a href="/bcpp_map/subject_map/?lon={{ household_structure.household.lon }}&lat={{ household_structure.household.lat }}&identifier={{ household_structure.household.household_identifier }}">Google Map</a>
     			{% endif %}
-    			</td>
+    		</td>
             </tr>
             </table>
+            
+            
             <table>
             <tr>
                 {% if not household|is_dispatched %}
@@ -106,7 +110,6 @@
     {% endblock %}
 
     {% if survey %}
-        
         {% if household_structure %}
             {% include "householdmember_dashboard_include.html" %}
             {% if allow_edit_members %}

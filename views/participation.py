@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from bcpp_dashboard.views import dashboard
+from bcpp_dashboard.views import household_dashboard
 from bcpp_dashboard.forms import ParticipationForm
 from bcpp_household_member.models import HouseholdMember
 from bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry
@@ -53,8 +53,7 @@ def participation(request, **kwargs):
 #                     subject_undecided = SubjectUndecided.objects.get(household_member=household_member)
 #                     if not SubjectUndecidedEntry.objects.filter(subject_undecided=subject_undecided):
 #                         subject_undecided.report_datetime = household_member.modified
-    return dashboard(request,
-        dashboard_type='household',
+    return household_dashboard(request,
         household_identifier=household_identifier,
         household_member=household_member,
         survey=survey,

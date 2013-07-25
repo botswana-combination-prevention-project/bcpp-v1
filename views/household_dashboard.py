@@ -12,13 +12,13 @@ from bcpp_subject.models import SubjectVisit
 
 @login_required
 def household_dashboard(request, **kwargs):
-    dashboard_type = kwargs.get('dashboard_type', None)
-    if dashboard_type != 'household':
-        raise TypeError('Expected dashboard_type to be \'household\'. Got {0}'.format(dashboard_type))
+    #dashboard_type = kwargs.get('dashboard_type', None)
+    #if dashboard_type != 'household':
+    #    raise TypeError('Expected dashboard_type to be \'household\'. Got {0}'.format(dashboard_type))
     if kwargs.get('household_identifier'):
         household_identifier = kwargs.get('household_identifier')
-    elif kwargs.get('pk'):
-        household_identifier = Household.objects.get(pk=kwargs.get('pk')).household_identifier
+    #elif kwargs.get('pk'):
+    #    household_identifier = Household.objects.get(pk=kwargs.get('pk')).household_identifier
     else:
         household_identifier = None
     survey = kwargs.get('survey')

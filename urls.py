@@ -45,4 +45,4 @@ household_dashboard = HouseholdDashboard()
 urlpatterns += household_dashboard.get_urlpatterns('bcpp_dashboard.views', regex,)
 
 urlpatterns += patterns('bcpp_dashboard.views',
-    url(r'participation/', 'participation',))
+    url(r'participation/', 'participation', name='participation_url'))

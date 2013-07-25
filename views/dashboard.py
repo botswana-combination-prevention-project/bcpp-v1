@@ -12,7 +12,7 @@ from bcpp_subject.models import SubjectVisit
 
 @login_required
 def dashboard(request, **kwargs):
-    raise TypeError('bcpp_dashboard.views.dashboard view Not in use.')
+    raise TypeError('bcpp_dashboard.views.dashboard view NOT in use.')
     if kwargs.get('dashboard_type') == 'subject':
         if kwargs.get('household_member'):
             household_member = HouseholdMember.objects.get(pk=kwargs.get('household_member'))
