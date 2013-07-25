@@ -5,8 +5,11 @@ from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 
 class ParticipationForm(forms.Form):
 
+    """
+    """
+
     status = forms.ChoiceField(choices=HOUSEHOLD_MEMBER_ACTION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
-    household_structure_member = forms.CharField(widget=forms.HiddenInput())
+    household_member = forms.CharField(widget=forms.HiddenInput())
     dashboard_type = forms.CharField(widget=forms.HiddenInput())
     survey = forms.CharField(widget=forms.HiddenInput())
 

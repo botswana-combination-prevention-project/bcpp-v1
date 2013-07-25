@@ -15,7 +15,6 @@ from bcpp_survey.models import Survey
 from bcpp_household.choices import RELATIONS
 from bcpp_household.models import Household
 from bcpp_household.models import HouseholdStructure
-from bcpp_household_member.forms import ParticipationForm
 from bcpp_household_member.managers import HouseholdMemberManager
 
 from contact_log import ContactLog
@@ -127,6 +126,7 @@ class HouseholdMember(BaseHouseholdMember):
     @property
     def participation_form(self):
         """Returns a form object for the household survey dashboard."""
+        from bcpp_household_member.forms import ParticipationForm
         if not self.member_status:
             self.member_status = 'NOT_REPORTED'
         return ParticipationForm(initial={'status': self.member_status,
@@ -219,15 +219,6 @@ class HouseholdMember(BaseHouseholdMember):
     @property
     def moved_form_label(self):
         return self.get_form_label('SubjectMoved')
-
-    def ward(self):
-        return self.household_structure.household.ward
-    
-    def village(self):
-        return self.household_structure.household.village
-
-    def ward_section(self):
-        return self.household_structure.household.ward_section
 
     def cso(self):
         return self.household_structure.household.cso_number
