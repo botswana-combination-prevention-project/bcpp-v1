@@ -1,4 +1,7 @@
 import geopy
+import math
+import re
+
 import geopy.distance
 from datetime import date, timedelta
 from django.utils.encoding import smart_str
@@ -394,7 +397,7 @@ class Mapper(object):
     def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
         """Calculate distance between two GPS coordinates.
 
-        This method return the distance between two GPS points and returns the distance in meters.
+        This method return the distance between two GPS points and returns the distance in kilometers.
             Make sure geopy is installed.
         """
         pt1 = geopy.Point(current_position_lat, current_position_lon)
@@ -408,8 +411,7 @@ class Mapper(object):
     
     
     def deg_to_dms(self, deg):
-        """Convert a lat or lon into degree minute gps format
-        
+        """Convert a latitude or longitude into degree minute GPS format
         """
         d = int(deg)
         md = (deg - d) * 60
@@ -418,3 +420,27 @@ class Mapper(object):
             d = -d
             m = -m
         return [d, m]
+    
+    def get_cardinal_point_direction(self, start_lat, start_lon, end_lat, end_lon):
+        """Calculate the angle/Bearing of direction between two points on the earth.
+        
+        This method is for the initial bearing which if followed in a straight line
+            along a great-circle arc will take you from the start point to the end point.
+        """
+        dist = self.distance_between_points(start_lat, start_lon, end_lat, end_lon)
+        dlon = math.radians(end_lon - start_lon)
+        start_lat = math.radians(start_lat)
+        end_lat = math.radians(end_lat)
+        
+        y = math.sin(dlon) * math.cos(end_lat)
+        x = math.cos(start_lat) * math.sin(end_lat) - math.sin(start_lat) * math.cos(end_lat) * math.cos(dlon)
+        brng = math.degrees(math.atan2(y, x))
+        
+        bearings = ["NE", "E", "SE", "S", "SW", "W", "NW", "N"]
+        index = brng - 22.5
+        if (index < 0):
+            index += 360
+        index = int(index / 45)
+        
+        return(round(dist, 3), bearings[index])     #Returns the distance between two points and the cardinal points direction
+        
