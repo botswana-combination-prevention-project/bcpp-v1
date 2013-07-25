@@ -1,0 +1,39 @@
+<VirtualHost *:80>
+
+	#Redirect / http://192.168.1.50/bcpp_offline.html?
+
+        ServerAdmin webmaster@localhost
+
+        ErrorLog /var/log/apache2/django-bcpp-error.log
+
+        LogLevel warn
+
+        CustomLog /var/log/apache2/django-bcpp-access.log combined
+
+        Alias /media/ /home/django/source/bcpp/media/
+        <Directory "/home/django/source/bcpp/media/" >
+          Order deny,allow
+          Allow from all
+        </Directory>
+
+        Alias /sitestatic/ /home/django/source/bcpp/sitestatic/        
+        <Directory "/home/django/source/bcpp/sitestatic/" >
+          Order deny,allow
+          Allow from all
+        </Directory>
+
+        Alias /static/ /home/django/source/bcpp/static/
+        <Directory "/home/django/source/bcpp/static/" >
+          Order deny,allow
+          Allow from all
+        </Directory>
+
+        WSGIScriptAlias / /home/django/source/bcpp/apache/django.wsgi
+
+        <Directory "/home/django/source/bcpp/apache/" >
+          Order deny,allow
+          Allow from all
+        </Directory>
+
+</VirtualHost>
+
