@@ -80,13 +80,13 @@ class BaseSearchByWord(BaseSearch):
             search_term_or_hash = self.hash_for_encrypted_fields(search_term, model)
             for field in model._meta.fields:
                 if isinstance(field, BaseEncryptedField):
-                    qset.add(Q(**{'{0}__exact'.format(field.name): search_term_or_hash.get(field.name)}), Q.AND)
+                    qset.add(Q(**{'{0}__exact'.format(field.name): search_term_or_hash.get(field.name)}), Q.OR)
                 elif isinstance(field, (models.CharField, models.TextField)):
-                    qset.add(Q(**{'{0}__icontains'.format(field.name): search_term_or_hash.get(field.name)}), Q.AND)
+                    qset.add(Q(**{'{0}__icontains'.format(field.name): search_term_or_hash.get(field.name)}), Q.OR)
                 elif isinstance(field, (models.IntegerField, models.FloatField, models.DecimalField)):
                     try:
                         x = int(search_term)
-                        qset.add(Q(**{'{0}__exact'.format(field.name): search_term_or_hash.get(field.name)}), Q.AND)
+                        qset.add(Q(**{'{0}__exact'.format(field.name): search_term_or_hash.get(field.name)}), Q.OR)
                     except:
                         pass
                 elif isinstance(field, (models.DateTimeField, models.DateField)):
