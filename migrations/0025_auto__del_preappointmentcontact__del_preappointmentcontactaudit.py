@@ -8,7 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        pass
+        
         # Adding index on 'AppointmentAudit', fields ['_audit_subject_identifier']
         db.create_index('bhp_appointment_appointment_audit', ['_audit_subject_identifier'])
         
