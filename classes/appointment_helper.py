@@ -123,7 +123,6 @@ class AppointmentHelper(object):
         """Checks the appt_status relative to the visit tracking form and ScheduledEntryBucket.
         """
         from bhp_entry.classes import ScheduledEntry
-
         # for an existing appointment, check if there is a visit tracking form already on file
         if not appointment.visit_definition.visit_tracking_content_type_map:
             raise ImproperlyConfigured('Unable to determine the visit tracking model. Update bhp_visit.visit_definition {0} and select the correct visit model.'.format(appointment.visit_definition))

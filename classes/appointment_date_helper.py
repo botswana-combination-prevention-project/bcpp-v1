@@ -1,12 +1,10 @@
 import copy
 from datetime import datetime, timedelta
 from django.conf import settings
-#from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from bhp_visit.classes import WindowPeriod
 from bhp_visit.models import VisitDefinition
-#from bhp_appointment.models import Holiday, Configuration
 
 
 class AppointmentDateHelper(object):
