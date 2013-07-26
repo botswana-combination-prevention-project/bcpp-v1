@@ -41,7 +41,7 @@ function initialize() {
     //create map object
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 14,
-        center: new google.maps.LatLng({{ gps_center_lat }}, {{ gps_center_lon }}),
+        center: new google.maps.LatLng(-24.377355, 26.150869),
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
     geocoder = new google.maps.Geocoder();
@@ -356,30 +356,33 @@ function initialize() {
         var arr = new Array();
         var arrr = new Array();
         
-        //var poly_points = polygon.getPath().getArray();
+        var poly_points = polygon.getPath().getArray();
+        {% if has_items %}
+        window.location.replace("{% url "get_polygon_array_url" mapper_name %}?polygon=" + poly_points);
+        {% endif %}
         
-
-        //check in the payload to see which points are withing a polygon then push their identifiers into an array
-        {% for lon, lat, label, icon in payload %}
-            var point = new google.maps.LatLng({{ lon }}, {{ lat }});
-                
-            if (polygon.containsLatLng(point)) {
-
-                   arr.push("{{ label }}");
+        {% if payload %}
+	        //check in the payload to see which points are withing a polygon then push their identifiers into an array
+	        {% for lon, lat, label, icon in payload %}
+	            var point = new google.maps.LatLng({{ lon }}, {{ lat }});
+	                
+	            if (polygon.containsLatLng(point)) {
+	
+	                   arr.push("{{ label }}");
+				}
+	        {% endfor %}
+	
+	
+	        var sec = document.getElementById("sec").value;
+	        {% comment %} e.g. region_field_attr='ward', section_field_attr='ward_section', ...{% endcomment %}
+	        if (sec=="yes"){
+				window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr + "&{{ section_field_attr }}=" + document.getElementById("{{ section_field_attr }}").value + "&{{ region_field_attr }}=" + document.getElementById("{{ region_field_attr }}").value);
 			}
-        {% endfor %}
-
-
-        var sec = document.getElementById("sec").value;
-        {% comment %} e.g. region_field_attr='ward', section_field_attr='ward_section', ...{% endcomment %}
-        if (sec=="yes"){
-			window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr + "&{{ section_field_attr }}=" + document.getElementById("{{ section_field_attr }}").value + "&{{ region_field_attr }}=" + document.getElementById("{{ region_field_attr }}").value);
-		}
-		else{
-			// example or result produced by the line below: locations/save/?item_identifiers="H99101-02,H992302-4"
-			window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr);			
-		}
-
+			else{
+				// example or result produced by the line below: locations/save/?item_identifiers="H99101-02,H992302-4"
+				window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr);			
+			}
+         {% endif %}
         
     });
 

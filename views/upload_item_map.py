@@ -23,6 +23,8 @@ def handle_uploaded_file(f, identifier):
 
 @login_required
 @csrf_protect
+
+
 def upload_item_map(request, **kwargs):
     """Uploads item map saved on disk as an images e.g google map screenshot."""
     identifier = request.POST.get('identifier')
