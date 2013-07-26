@@ -41,7 +41,7 @@ function initialize() {
     //create map object
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 14,
-        center: new google.maps.LatLng(-24.377355, 26.150869),
+        center: new google.maps.LatLng({{ gps_center_lat }}, {{ gps_center_lon }}),
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
     geocoder = new google.maps.Geocoder();

@@ -33,19 +33,12 @@ def get_polygon_array(request, **kwargs):
             point_tuple = ()
             for pnts in polygon_array:
                 point_tuple = point_tuple + (pnts,)
-        poly_array = ()
-        for poly_point in point_tuple:
-            poly_point = poly_point.split(",")
-            poly_array = poly_array + (geo.LatLon(float(poly_point[0]), float(poly_point[1])),)
         
-        
-        #polygon = Polygon(*poly_array)
-        #assert polygon.contains(point)
         
         return render_to_response(
                 template, {
                     'mapper_name': mapper_name,
-                    'polygon_array': polygon_array,
+                    'point_tuple': point_tuple,
                     'map_area': m.get_map_area()
                     },
                 context_instance=RequestContext(request)
