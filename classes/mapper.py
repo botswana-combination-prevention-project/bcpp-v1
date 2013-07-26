@@ -1,5 +1,5 @@
-from vtown import geo                   #pip install geo-utils
-from vtown.geo.polygon import Polygon   #pip install geo-utils
+from vtown import geo                   #pip install geo-utils or download at https://pypi.python.org/pypi/geo-utils
+from vtown.geo.polygon import Polygon   #pip install geo-utils or download at https://pypi.python.org/pypi/geo-utils
 import math
 
 import geopy.distance
