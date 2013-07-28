@@ -28,7 +28,7 @@ class ScheduledEntryBucket(BaseEntryBucket):
         return self.appointment.natural_key() + self.entry.natural_key()
 
     def __unicode__(self):
-        return '%s: %s' % (self.registered_subject.subject_identifier, self.entry)
+        return '{0}: {1}'.format(self.registered_subject.subject_identifier, self.entry)
 
     class Meta:
         app_label = 'bhp_entry'

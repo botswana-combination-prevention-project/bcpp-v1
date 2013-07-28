@@ -30,7 +30,7 @@ class AdditionalEntryBucket(BaseEntryBucket):
         return reverse('admin:bhp_entry_additionalentrybucket_change', args=(self.id,))
 
     def __unicode__(self):
-        return '%s: %s' % (self.registered_subject.subject_identifier, self.content_type_map)
+        return '{0}: {1}' % (self.registered_subject.subject_identifier, self.content_type_map)
 
     def is_keyed(self):
         """ Confirm if model instance exists / is_keyed. """
