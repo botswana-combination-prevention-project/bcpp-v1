@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from django.db.models import get_model
 from bcpp_survey.models import Survey
  
 
@@ -15,7 +16,8 @@ class HouseholdStructureManager(models.Manager):
         """ Prepares a householdstructure for a new survey by fetching a list of the
         householdstructure members for a given householdstructure from the most recent
         survey and add them to the new survey """
-        household_member_model = household_structure.householdmember_set.model
+        household_member_model = get_model('bcpp_household_member', 'HouseholdMember')
+        #household_member_model = household_structure.householdmember_set.model
         #get previous survey
         surveys = Survey.objects.using(using).filter(
             chronological_order__lt=household_structure.survey.chronological_order,
