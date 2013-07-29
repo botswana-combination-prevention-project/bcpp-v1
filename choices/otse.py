@@ -9,5 +9,6 @@ OTSE_SUB_SECTIONS = (
 
 
 OTSE_LANDMARKS = (
-    ('landmark_name', -24.376534, 26.152276), #structure of the land marks
+    ('Otse center', -25.033194, 25.747132),
+    ('Otse Stadium', -25.026117, 25.746608)
 )
