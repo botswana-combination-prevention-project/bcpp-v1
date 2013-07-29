@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, url
 from bhp_map.classes import site_mappers
-
+site_mappers.autodiscover()
 
 urlpatterns = patterns('bhp_map.views',
     url(r'^add_cart/(?P<mapper_name>\w+)/', 'add_to_cart', name='map_add_cart_url'),

@@ -20,6 +20,7 @@ class Controller(object):
 
     def __init__(self):
         self._registry = {}
+        self.autodiscovered = False
 
     def set_registry(self, mapper_cls):
         if not issubclass(mapper_cls, Mapper):
@@ -40,22 +41,27 @@ class Controller(object):
                 raise MapperError('{0} is not a valid mapper name in {1}.'.format(name, self._registry))
         return self._registry
 
-    def get_mapper_as_tuple(self):
+    def get_as_list(self):
         lst = [k for k in self._registry]
         lst.sort()
-        return [(l, l) for l in lst]
+        return lst
+
+    def get_mapper_as_tuple(self):
+        return [(l, l) for l in self.get_as_list()]
 
     def register(self, mapper_cls):
         self.set_registry(mapper_cls)
 
     def autodiscover(self):
-        for app in settings.INSTALLED_APPS:
-            mod = import_module(app)
-            try:
-                before_import_registry = copy.copy(site_mappers._registry)
-                import_module('%s.mappers' % app)
-            except:
-                site_mappers._registry = before_import_registry
-                if module_has_submodule(mod, 'mappers'):
-                    raise
+        if not self.autodiscovered:
+            for app in settings.INSTALLED_APPS:
+                mod = import_module(app)
+                try:
+                    before_import_registry = copy.copy(site_mappers._registry)
+                    import_module('%s.mappers' % app)
+                except:
+                    site_mappers._registry = before_import_registry
+                    if module_has_submodule(mod, 'mappers'):
+                        raise
+            self.autodiscovered = True
 site_mappers = Controller()
