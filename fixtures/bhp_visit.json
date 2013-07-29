@@ -1,0 +1,60 @@
+[
+{
+  "pk": "39083dc2-f7a6-11e2-ad1f-24b6fdf82a22", 
+  "model": "bhp_visit.membershipform", 
+  "fields": {
+    "category": "subject", 
+    "hostname_created": "s030", 
+    "created": "2013-07-28T18:53:26", 
+    "user_modified": "", 
+    "modified": "2013-07-28T18:53:26", 
+    "hostname_modified": "s030", 
+    "content_type_map": 72, 
+    "visible": true, 
+    "user_created": "pmotshegwa"
+  }
+},
+{
+  "pk": "3a5b01fa-f7a6-11e2-af59-24b6fdf82a22", 
+  "model": "bhp_visit.schedulegroup", 
+  "fields": {
+    "comment": "", 
+    "hostname_created": "s030", 
+    "created": "2013-07-28T18:53:29", 
+    "grouping_key": "", 
+    "user_modified": "", 
+    "modified": "2013-07-28T18:53:29", 
+    "hostname_modified": "s030", 
+    "group_name": "Subject Enrolment", 
+    "membership_form": "39083dc2-f7a6-11e2-ad1f-24b6fdf82a22", 
+    "user_created": "pmotshegwa"
+  }
+},
+{
+  "pk": "eb9f38dc-f7a6-11e2-87f9-24b6fdf82a22", 
+  "model": "bhp_visit.visitdefinition", 
+  "fields": {
+    "hostname_created": "s030", 
+    "code": "TO", 
+    "base_interval": 0, 
+    "lower_window_unit": "D", 
+    "created": "2013-07-28T18:58:26", 
+    "instruction": "", 
+    "title": "Baseline", 
+    "user_modified": "pmotshegwa", 
+    "modified": "2013-07-28T19:13:58", 
+    "hostname_modified": "s030", 
+    "upper_window": 0, 
+    "base_interval_unit": "D", 
+    "time_point": 0, 
+    "user_created": "pmotshegwa", 
+    "visit_tracking_content_type_map": 277, 
+    "lower_window": 0, 
+    "schedule_group": [
+      "3a5b01fa-f7a6-11e2-af59-24b6fdf82a22"
+    ], 
+    "upper_window_unit": "D", 
+    "grouping": ""
+  }
+}
+]
