@@ -23,31 +23,9 @@ from bhp_data_manager.models import ActionItem
 from bhp_subject_config.models import SubjectConfiguration
 
 
-class RegisteredSubjectDescriptor(object):
-    """ For a registered_subject instance only. """
-    def __init__(self):
-        self.value = RegisteredSubject.objects.none()
-
-    def __get__(self, instance, owner):
-        return self.value
-
-    def __set__(self, instance, value):
-        if value:
-            if isinstance(value, RegisteredSubject):
-                self.value = value
-            else:
-                raise AttributeError('Can\'t set attribute \'registered_subject\'. '
-                                     'Must be an instance of RegisteredSubject. '
-                                     'Got {0}.'.format(type(self.registered_subject)))
-        else:
-            raise AttributeError('Can\'t set attribute registered_subject. Got none.')
-
-
 class RegisteredSubjectDashboard(Dashboard):
 
     """ Create and add to a default clinic 'registered subject' dashboard context and render_to_response from a view in shell. """
-
-    registered_subject = RegisteredSubjectDescriptor()
 
     def __init__(self, **kwargs):
 
@@ -57,6 +35,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.visit_instance = None  # this is not a model instance!!
         self.visit_model = None
         self.visit_messages = None
+        self._registered_subject = None
         self._subject_identifier = None
         self._subject_hiv_status = None
         self._subject_type = None
@@ -70,31 +49,29 @@ class RegisteredSubjectDashboard(Dashboard):
         self.scheduled_entry_bucket_rules = []
 
     def create(self, **kwargs):
+
         super(RegisteredSubjectDashboard, self).create(**kwargs)
+
         if not self.appointment_row_template:
             self.appointment_row_template = 'appointment_row.html'
             self.context.add(appointment_row_template=self.appointment_row_template)
-        self.registered_subject = kwargs.get('registered_subject', self.registered_subject)
-        if self.registered_subject:
-            #self.is_dispatched, self.dispatch_producer = is_dispatched_registered_subject(self.registered_subject)
+        self._set_registered_subject(kwargs.get('registered_subject', None))
+        if self.get_registered_subject():
             self.set_subject_type(kwargs.get('subject_type'))
-            # subject identifier is almost always available
-            self.set_subject_identifier(self.registered_subject.subject_identifier)
+            self.set_subject_identifier(self.get_registered_subject().subject_identifier)
             self.dashboard_identifier = self.get_subject_identifier()
-            
             if not self.get_subject_identifier():
-                # but if not, check for registration_identifier
-                self.set_subject_identifier(self.registered_subject.registration_identifier)
-                self.dashboard_identifier = ('{0} [{1}] {2}'.format(self.registered_subject.first_name,
-                                                                    self.registered_subject.initials,
-                                                                    self.registered_subject.gender,))
+                self.set_subject_identifier(self.get_registered_subject().registration_identifier)
+                self.dashboard_identifier = ('{0} [{1}] {2}'.format(self.get_registered_subject().first_name,
+                                                                    self.get_registered_subject().initials,
+                                                                    self.get_registered_subject().gender,))
             if not self.get_subject_identifier():
                 raise AttributeError('RegisteredSubjectDashboard requires a subject_identifier. '
                                      'RegisteredSubject has no identifier for this subject.')
-            subject_hiv_status=lab_tracker.get_current_value('HIV', self.registered_subject.subject_identifier)[0]
-            subject_hiv_history=lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier)
+            subject_hiv_status = lab_tracker.get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
+            subject_hiv_history = lab_tracker.get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
             self.context.add(
-                registered_subject=self.registered_subject,
+                registered_subject=self.get_registered_subject(),
                 subject_identifier=self.get_subject_identifier(),
                 subject_type=self.get_subject_type(),
                 subject_hiv_history=subject_hiv_history,
@@ -126,6 +103,23 @@ class RegisteredSubjectDashboard(Dashboard):
         membership_form_category = kwargs.pop('membership_form_category', None)
         self._prepare(visit_model, visit_code, visit_instance, membership_form_category, **kwargs)
 
+    def set_registered_subject(self, registered_subject):
+        """Sets the registered_subject instance, may be overridden by users."""
+        self._registered_subject = registered_subject
+
+    def _set_registered_subject(self, registered_subject=None):
+        self.set_registered_subject(registered_subject)
+        if self._registered_subject:
+            if not isinstance(self._registered_subject, RegisteredSubject):
+                raise TypeError('Expected instance of RegisteredSubject.')
+        else:
+            self._registered_subject = []
+
+    def get_registered_subject(self):
+        if not self._registered_subject:
+            self.set_registered_subject()
+        return self._registered_subject
+
     def _prepare(self, visit_model, visit_code, visit_instance, membership_form_category, **kwargs):
         self._prepare_membership_forms(membership_form_category)
         self._set_appointments(visit_code, visit_instance, **kwargs)
@@ -152,9 +146,9 @@ class RegisteredSubjectDashboard(Dashboard):
                 ScheduledLabEntryBucket.objects.add_for_visit(
                     visit_model_instance=visit_model_instance,
                     requisition_model=self.requisition_model)
-        if self.registered_subject:
+        if self.get_registered_subject():
             additional_entry = AdditionalEntry()
-            additional_entry.update_for_registered_subject(self.registered_subject)
+            additional_entry.update_for_registered_subject(self.get_registered_subject())
 
     def _run_rule_groups(self, subject_identifier, visit_code, visit_model_instance):
         """ Runs rules in any rule groups if visit_code is known and update entries as (new, not required) when the visit dashboard is refreshed.
@@ -186,7 +180,7 @@ class RegisteredSubjectDashboard(Dashboard):
     def _set_appointment_map(self, visit_code):
         """Create a dictionary of appointment instances for this subject and visit_code using visit_instance(0,1,2,3...) as a key."""
         self.appointment_map = {}
-        for appointment in Appointment.objects.filter(registered_subject=self.registered_subject, visit_definition__code=visit_code):
+        for appointment in Appointment.objects.filter(registered_subject=self.get_registered_subject(), visit_definition__code=visit_code):
             self.appointment_map[appointment.visit_instance] = appointment
 
     def _get_appointment_map(self, visit_code, visit_instance=None):
@@ -220,7 +214,7 @@ class RegisteredSubjectDashboard(Dashboard):
         scheduled_lab_bucket = None
         if visit_code:
             scheduled_lab_bucket = ScheduledLabEntryBucket.objects.get_scheduled_labs_for(
-                                            registered_subject=self.registered_subject,
+                                            registered_subject=self.get_registered_subject(),
                                             appointment=self._get_appointment_map(visit_code, '0'),
                                             visit_code=visit_code)
         self.context.add(scheduled_lab_bucket=scheduled_lab_bucket)
@@ -230,7 +224,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """ Gets the additional lab bucket entries using the appointment with instance=0 and adds to context ."""
         additional_lab_bucket = None
         if visit_code:
-            additional_lab_bucket = AdditionalLabEntryBucket.objects.get_labs_for(registered_subject=self.registered_subject,
+            additional_lab_bucket = AdditionalLabEntryBucket.objects.get_labs_for(registered_subject=self.get_registered_subject(),
                                                                                   appointment=self._get_appointment_map(visit_code, '0'))
         self.context.add(additional_lab_bucket=additional_lab_bucket)
         return additional_lab_bucket
@@ -255,7 +249,7 @@ class RegisteredSubjectDashboard(Dashboard):
             # schedule_group__membership_form
             codes = MembershipForm.objects.codes_for_category(membership_form_category=self._get_membership_form_category())
             appointments = Appointment.objects.filter(
-                registered_subject=self.registered_subject,
+                registered_subject=self.get_registered_subject(),
                 visit_definition__code__in=codes).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
         self.context.add(appointments=appointments)
 
@@ -286,13 +280,13 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def _prepare_additional_entry_bucket(self):
         # get additional crfs
-        additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.registered_subject)
+        additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.get_registered_subject())
         self.context.add(additional_entry_bucket=additional_entry_bucket)
         return additional_entry_bucket
 
     def set_subject_type(self, value=None):
         if not value:
-            self._subject_type = self.registered_subject.subject_type
+            self._subject_type = self.get_registered_subject().subject_type
         else:
             self._subject_type = value
 
@@ -356,7 +350,7 @@ class RegisteredSubjectDashboard(Dashboard):
         # these are the KEYED, UNKEYED schedule group membership forms
         self._set_membership_form_category(membership_form_category)
         membership_forms = ScheduleGroup.objects.get_membership_forms_for(
-            self.registered_subject,
+            self.get_registered_subject(),
             self._get_membership_form_category(),
             exclude_others_if_keyed_model_name=self.exclude_others_if_keyed_model_name,
             include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed)
@@ -386,7 +380,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 registered_subject: if locator information for the current registered subject is collected
                     on another. For example, with mother/infant pairs.
         """
-        source_registered_subject = kwargs.get('registered_subject', self.registered_subject)
+        source_registered_subject = kwargs.get('registered_subject', self.get_registered_subject())
         if isinstance(locator_cls, models.Model) or locator_cls is None:
             raise TypeError('Expected first parameter to be a Locator model class. Got an instance. Please correct in local dashboard view.')
         if locator_cls is None:
@@ -412,7 +406,7 @@ class RegisteredSubjectDashboard(Dashboard):
             locator_instance = None
 
         return render_to_string(template, {'locator': locator_instance,
-                                           'registered_subject': self.registered_subject,
+                                           'registered_subject': self.get_registered_subject(),
                                            'subject_identifier': self.get_subject_identifier(),
                                            'dashboard_type': self.dashboard_type,
                                            'visit_code': visit_code,
@@ -422,7 +416,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def render_action_item(self, action_item_cls=None, template=None, **kwargs):
         """Renders to string the action_items for the current registered subject."""
-        source_registered_subject = kwargs.get('registered_subject', self.registered_subject)
+        source_registered_subject = kwargs.get('registered_subject', self.get_registered_subject())
         action_item_cls = action_item_cls or ActionItem
         if isinstance(action_item_cls, models.Model):
             raise TypeError('Expected first parameter to be a Action Item model class. Got an instance. Please correct in local dashboard view.')
@@ -450,7 +444,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(action_item_message=None)
 
         rendered_action_items = render_to_string(template, {'action_items': action_item_instances,
-                                           'registered_subject': self.registered_subject,
+                                           'registered_subject': self.get_registered_subject(),
                                            'subject_identifier': self.get_subject_identifier(),
                                            'dashboard_type': self.dashboard_type,
                                            'visit_code': visit_code,
