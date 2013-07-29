@@ -25,4 +25,4 @@ class MochudiHouseholdMapper(BaseHouseholdMapper):
                         [-24.354056003216844, 26.182308197021484], [-24.34714566073864, 26.161934705225462], [-24.349755314471462, 26.13776206970215],
                         [-24.36573872359394, 26.122189151045745], [-24.390254188712102, 26.131668090820312])
     
-site_mappers.register(OtseHouseholdMapper)
+site_mappers.register(MochudiHouseholdMapper)

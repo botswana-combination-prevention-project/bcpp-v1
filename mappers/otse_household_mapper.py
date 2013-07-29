@@ -12,8 +12,10 @@ class OtseHouseholdMapper(BaseHouseholdMapper):
 
     landmarks = OTSE_LANDMARKS
 
-    gps_center_lat = -25.033194
-    gps_center_lon = 25.747132
+    #gps_center_lat = -25.033194
+    #gps_center_lon = 25.747132
+    gps_center_lat = -24.390254
+    gps_center_lon = 26.158733
     radius = 5.5
     location_boundary = ([-25.011679818754537, 25.756838464932116], [-25.02619515335593, 25.753326416015625], 
                          [-25.03381661473165, 25.755643844604492], [-25.029801706428938, 25.767637448965274],
