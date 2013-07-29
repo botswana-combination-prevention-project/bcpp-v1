@@ -15,11 +15,11 @@ class EnrolmentChecklist (BaseRegisteredSubjectModel):
             datetime_not_before_study_start,
             datetime_not_future, ])
 
-    census_number = models.CharField(
-        verbose_name="[Interviewer] Household number: ",
-        max_length=5,
-        help_text="if 'Not a census enumerated household,' STOP participant cannot be enrolled",
-        )
+    #census_number = models.CharField(
+    #    verbose_name="[Interviewer] CSO number: ",
+    #    max_length=5,
+    #    help_text="if 'Not a census enumerated household,' STOP participant cannot be enrolled",
+    #    )
 
     mental_capacity = models.CharField(
         verbose_name=("[Interviewer] Does the prospective participant have sufficient"

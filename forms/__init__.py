@@ -5,7 +5,7 @@ from subject_absentee_form import SubjectAbsenteeForm, SubjectAbsenteeEntryForm
 from subject_undecided_form import SubjectUndecidedForm, SubjectUndecidedEntryForm
 from subject_moved_form import SubjectMovedForm
 from subject_referral_form import SubjectReferralForm
-
+from subject_visit_form import SubjectVisitForm
 from residency_mobility_form import ResidencyMobilityForm
 from hiv_testing_history_form import HivTestingHistoryForm
 from pregnancy_form import PregnancyForm

@@ -6,7 +6,7 @@ from subject_absentee_admin import *
 from subject_undecided_admin import *
 from subject_moved_admin import SubjectMovedAdmin
 from subject_referral_admin import SubjectReferralAdmin
-
+from subject_visit_admin import SubjectVisitAdmin
 from subject_death_admin import SubjectDeathAdmin
 from partner_admin import RecentPartnerAdmin, SecondPartnerAdmin, ThirdPartnerAdmin
 from residency_mobility_admin import ResidencyMobilityAdmin

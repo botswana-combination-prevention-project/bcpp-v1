@@ -1,5 +1,18 @@
 from django.utils.translation import ugettext as _
 
+VISIT_INFO_SOURCE = [
+    ('subject', '1. Subject'),
+    ('other_member', '2. Other household member'),
+    ('OTHER', '9. Other'),
+    ]
+
+VISIT_REASON = [
+    ('consent', '1. Consent and Survey with subject'),
+    ('absent', '2. Absentee'),
+    ('undecided', '3. Undecided (with subject)'),
+    ('refuse', '4. Refusal (with subject)'),
+    ]
+
 
 VISIT_UNSCHEDULED_REASON = (
     ('Routine oncology', _('Routine oncology clinic visit (i.e. planned chemo, follow-up)')),

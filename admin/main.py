@@ -4,9 +4,9 @@ from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
                                  HospitalAdmission, HivHealthCareCosts, CeaEnrolmentChecklist,
                                  CommunityEngagement, Education,
-                                 HivMedicalCare, Circumcision, Circumcised, 
-                                 MedicalDiagnoses, HeartAttack,Cancer, Sti,
-                                 Tubercolosis, SubstanceUse, Stigma, 
+                                 HivMedicalCare, Circumcision, Circumcised,
+                                 MedicalDiagnoses, HeartAttack, Cancer, Sti,
+                                 Tubercolosis, SubstanceUse, Stigma,
                                  StigmaOpinion, PositiveParticipant,
                                  HivResultDocumentation)
 from registered_subject_model_admin import RegisteredSubjectModelAdmin

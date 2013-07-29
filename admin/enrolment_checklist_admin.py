@@ -10,7 +10,6 @@ class EnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
     fields = (
         "registered_subject",
         "registration_datetime",
-        "census_number",
         "mental_capacity",
         "incarceration",
         "citizen",
