@@ -83,6 +83,9 @@ class EnrolmentChecklist (BaseRegisteredSubjectModel):
 
     history = AuditTrail()
 
+    def get_report_datetime(self):
+        return self.get_registration_datetime()
+
     def get_registration_datetime(self):
         return self.registration_datetime
 
