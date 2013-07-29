@@ -25,7 +25,7 @@
             <div class="warning">Locked</div>{{ household.action }}
           {% else %}
             {% if household.action == 'valid'%}
-                <A name="dashboard-{{household.household_identifier}}" href="{% url household_dashboard_url dashboard_type='household' household_identifier=household.household_identifier %}">Add/Update Members</A>
+                <A name="dashboard-{{household.household_identifier}}" href="{% url 'household_dashboard_url' dashboard_type='household' household_identifier=household.household_identifier %}">Add/Update Members</A>
             {% else %}
                 {{ household.action }}
             {% endif %}
