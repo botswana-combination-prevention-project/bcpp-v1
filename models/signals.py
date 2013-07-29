@@ -15,3 +15,4 @@ def household_member_on_post_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdMember):
             instance.update_registered_subject_on_post_save(**kwargs)
+            instance.update_household_member_count_on_post_save(**kwargs)

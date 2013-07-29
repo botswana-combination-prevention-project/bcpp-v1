@@ -73,6 +73,11 @@ class HouseholdMember(BaseHouseholdMember):
         """Updates from lab_tracker."""
         self.hiv_history = self.get_hiv_history()
 
+    def update_household_member_count_on_post_save(self, **kwargs):
+        using = kwargs.get('using', None)
+        self.household_structure.member_count = self.__class__.objects.filter(household_structure=self.household_structure).count()
+        self.household_structure.save(using=using)
+
     def update_registered_subject_on_post_save(self, **kwargs):
         using = kwargs.get('using', None)
         if not self.internal_identifier:
