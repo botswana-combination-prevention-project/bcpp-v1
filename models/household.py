@@ -5,16 +5,17 @@ from django.core.exceptions import ImproperlyConfigured, ValidationError
 from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_device.classes import Device
+from bhp_map.classes import site_mappers
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
 from bcpp_household.choices import HOUSEHOLD_STATUS, SECTIONS, SUB_SECTIONS
-from community import Community
 
 
 def is_valid_community(value):
-    if not Community.objects.filter(name__iexact=value).exists():
+    """Validates the community string against a list of site_mappers map_areas."""
+    if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
         raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
