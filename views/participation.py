@@ -16,9 +16,9 @@ def participation(request, **kwargs):
         form = ParticipationForm(request.POST)
         if form.is_valid():
             survey = form.cleaned_data.get('survey')
+            household_identifier = form.cleaned_data.get('household_identifier')
             pk = form.cleaned_data.get('household_member')
             household_member = HouseholdMember.objects.get(pk=pk)
-            household_identifier = household_member.household_structure.household.household_identifier
             status = form.cleaned_data.get('status', None)
             if household_member.is_consented:
                 status = 'CONSENTED'

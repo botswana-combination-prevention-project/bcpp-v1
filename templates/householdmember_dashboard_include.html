@@ -42,6 +42,14 @@
     
     {% comment%} particpation {% endcomment %}
     <td>
+        <ul>
+        <li>member_status={{ household_member.member_status }}
+        <li>is_eligible={{ household_member.is_eligible }}
+        <li>is_consented={{ household_member.is_consented }}
+        <li>present={{household_member.present}}
+        <li>is_dispatched={{ household_member.household_structure.household.household_identifier|is_dispatched  }}
+        </ul>
+    
         {% if household_member.is_eligible and not household_member.is_consented %}
             <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="post">
                 {% csrf_token %}
@@ -66,28 +74,28 @@
         <td></td>
     {% else %}
         {% if household_member.present == 'Yes' or household_member.present == 'No'%}        
-            {% if household_member.member_status == 'CONSENTED' %}
+            {% if 'CONSENT' in household_member.member_status %}
+                {% comment%} show a link to the dashboard of this household is not dispatched and subject is consented {% endcomment %}
             	{% if household_member.household_structure.household.household_identifier|is_dispatched %}
-            		subject dashboard/{{household_member.get_hiv_history}}
+            		<td>subject dashboard/{{household_member.get_hiv_history}}</td>
             	{% else %}
-             		<td><A name="consented-{{household_member.pk}}" href="dashboard_url dashboard_url dashboard_type='subject' household_member=household_member.pk survey=household_structure.survey.survey_slug %}">subject dashboard/{{household_member.get_hiv_history}}</a></td>
+             		<td><A name="consented-{{household_member.pk}}" href="{% url 'subject_dashboard_url' dashboard_type='subject' household_member=household_member.pk survey=household_structure.survey.survey_slug %}">subject dashboard/{{household_member.get_hiv_history}}</a></td>
             	{% endif %}
             
-            {% elif household_member.member_status != 'CONSENTED' and household_member.member_status in household_member_actions %}
+            {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
                <td>
                {% if household_member.member_status == 'ABSENT' %}
                Absentee log (attempts to contact)
-                    <A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_form_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}"><ol>{% for label in household_member.absentee_form_label%}<li>{{ label }}{% endfor %}</ol></A>
+                    <A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_form_url }}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}"><ol>{% for label in household_member.absentee_form_label%}<li>{{ label }}{% endfor %}</ol></A>
                {% elif household_member.member_status == 'REFUSED' %}
-                    <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?household_member={{household_member.pk}}&registered_subject={{ household_member.registered_subject.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_member.refused_form_label }}</A>
+                    <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?household_member={{household_member.pk}}&registered_subject={{ household_member.registered_subject.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_member.refused_form_label }}</A>
                {% elif household_member.member_status == 'MOVED' %}
-                    <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?household_member={{household_member.pk}}&registered_subject={{ household_member.registered_subject.pk }}&next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_member.moved_form_label }}</A>
-
+                    <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?household_member={{household_member.pk}}&registered_subject={{ household_member.registered_subject.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_member.moved_form_label }}</A>
                {% endif %}
                </td>
             {% else %}
                 <td>
-                    <A href="{% url 'dashboard_url' dashboard_type='subject' household_member=household_member.pk survey=household_structure.survey.survey_slug %}">dashboard</A>
+                    <A href="{% url 'subject_dashboard_url' dashboard_type='subject' household_member=household_member.pk survey=household_structure.survey.survey_slug %}">dashboard</A>
                 </td>
             {% endif %}                
         {% else %}
