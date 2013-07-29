@@ -180,7 +180,7 @@ class HouseholdDashboard(Dashboard):
 
     def allow_edit_members(self):
         allow_edit_members = False
-        if hasattr(settings, 'ALLOW_CHANGES_OTHER_SUVERYS') and settings.ALLOW_CHANGES_OTHER_SUVERYS:
+        if hasattr(settings, 'ALLOW_CHANGES_OTHER_SURVEYS') and settings.ALLOW_CHANGES_OTHER_SURVEYS:
             allow_edit_members = True
         else:
             if self.get_survey():

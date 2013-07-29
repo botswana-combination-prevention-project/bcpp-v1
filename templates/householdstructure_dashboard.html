@@ -56,13 +56,7 @@
             <td><b>Section:</b> {{ household.section|encrypted }}-{{ household.sub_section|encrypted }}</td>
             <td><b>CSO:</b> {{ household.cso_number|encrypted|default:'?' }}</td>
             {% if household_structure %}
-                <td><b>Members:&nbsp;</b>
-                {% if household|is_dispatched %}
-                	{{current_member_count}}/{{ household_structure.member_count }}
-                {% else %}
-                	<A title="change number of members" {% if allow_edit_members %} href="{{ household_structure.get_absolute_url }}?household={{ household_structure.household.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}&household_structure={{ household_structure.pk}}" {% endif %}>{{current_member_count}}/{{ household_structure.member_count }}</A>
-                {% endif %}
-                </td>
+                <td><b>Members:&nbsp;</b>{{ household_structure.member_count }}</td>
             {% endif %}
             
             {% comment %}Update progress indicator for members{% endcomment%}
@@ -91,15 +85,10 @@
             <table>
             <tr>
                 {% if not household|is_dispatched %}
-	                {% if household_structure %}
-	                    {% if allow_edit_members %}
-	                        <td><A href="{{ household_structure.get_absolute_url }}?household={{ household_structure.household.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}&household_structure={{ household_structure.pk }}">change number of members</A></td>
-	                        {% if household_structure.member_count > current_member_count %}
-	                        <td>|&nbsp;<A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></td>
-	                        {% endif %}
-	                    {% endif %}                        
-	                {% else %}
-	                    {% if allow_edit_members %}
+                    {% if allow_edit_members %}
+	                    {% if household_structure %}
+	                        <td><A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></td>
+    	                {% else %}
 	                        <td><A name="add-householdstructure-{{survey.survey_name}}" href="{% url household_structure_meta|admin_urlname:'add' %}?household={{household.pk}}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}">add household structure for {{survey.survey_name}}</A></td>        
 	                    {% endif %}                        
 	                {% endif %}
@@ -113,10 +102,10 @@
         {% if household_structure %}
             {% include "householdmember_dashboard_include.html" %}
             {% if allow_edit_members %}
-                {% if household_structure.member_count > current_member_count %}
-                    <p>&nbsp;<A name="add-another-householdmember" href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></p>
-                {% endif %}
+                    <table><tr><td><A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></td></tr></table>
             {% endif %}
+            
+            
             <ol>
             <li>Present on day of survey visit
             <li>Must be between 16 and 64 years old. 16 and 17 year olds are minors to be accompanied by a guardian during the consent process.
@@ -135,13 +124,13 @@
 
        {% include "householdmember_contacts_include.html" %}
     
-            <H4>Surveys</H4>    
+            <H4>Surveys for this Household</H4>    
             <table>
             {% for s in surveys %}
                 {% if s == survey %}
-                    <tr><td>{{s.survey_name}}</td><td><span style="color:green"><small>selected</small></span></td><td>{{ s.datetime_start}}</td><td>{{ s.datetime_end}}</td></tr>
+                    <tr><td>{{ forloop.counter }}.&nbsp;{{s.survey_name}}</td><td><span style="color:green"><small>selected</small></span></td><td>{{ s.datetime_start}}</td><td>{{ s.datetime_end}}</td></tr>
                 {% else %}
-                    <tr><td><A href="{% url 'household_dashboard_url' dashboard_type=dashboard_type household_identifier=household.household_identifier household_structure=household_structure.pk %}">{{s.survey_name}}</A></td><td></td></tr>                             
+                    <tr><td>{{ forloop.counter }}.&nbsp;<A href="{% url 'household_dashboard_url' dashboard_type=dashboard_type household_identifier=household.household_identifier household_structure=household_structure.pk %}">{{s.survey_name}}</A></td><td></td></tr>                             
                 {% endif %}
             {% endfor %}
             </table>

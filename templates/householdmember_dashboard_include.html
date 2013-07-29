@@ -27,7 +27,7 @@
     	{% if household_member.household_structure.household.household_identifier|is_dispatched %}
     		{{ household_member.first_name|encrypted }}
     	{% else %}
-        	<A href="{% url household_member_meta|admin_urlname:'change' household_member.pk %}?next=dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}&survey={{household_structure.survey.survey_slug}}">{{ household_member.first_name|encrypted }}</A>
+        	<A href="{% url household_member_meta|admin_urlname:'change' household_member.pk %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}">{{ household_member.first_name|encrypted }}</A>
         {% endif %}
     {% else %}            
         {{ household_member.first_name|encrypted }}        
@@ -42,14 +42,6 @@
     
     {% comment%} particpation {% endcomment %}
     <td>
-        <ul>
-        <li>member_status={{ household_member.member_status }}
-        <li>is_eligible={{ household_member.is_eligible }}
-        <li>is_consented={{ household_member.is_consented }}
-        <li>present={{household_member.present}}
-        <li>is_dispatched={{ household_member.household_structure.household.household_identifier|is_dispatched  }}
-        </ul>
-    
         {% if household_member.is_eligible and not household_member.is_consented %}
             <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="post">
                 {% csrf_token %}
