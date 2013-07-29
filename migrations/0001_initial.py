@@ -9,27 +9,27 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'Community'
-        db.create_table(u'bcpp_household_community', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        db.create_table('bcpp_household_community', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=25)),
             ('is_current', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal('bcpp_household', ['Community'])
 
         # Adding model 'HouseholdAudit'
-        db.create_table(u'bcpp_household_household_audit', (
+        db.create_table('bcpp_household_household_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
             ('household_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, db_index=True)),
             ('device_id', self.gf('django.db.models.fields.CharField')(max_length=2, null=True)),
@@ -59,13 +59,13 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['HouseholdAudit'])
 
         # Adding model 'Household'
-        db.create_table(u'bcpp_household_household', (
+        db.create_table('bcpp_household_household', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('household_identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=25, db_index=True)),
             ('device_id', self.gf('django.db.models.fields.CharField')(max_length=2, null=True)),
@@ -92,13 +92,13 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['Household'])
 
         # Adding model 'HouseholdIdentifier'
-        db.create_table(u'bcpp_household_householdidentifier', (
+        db.create_table('bcpp_household_householdidentifier', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=36)),
             ('padding', self.gf('django.db.models.fields.IntegerField')(default=4)),
@@ -111,14 +111,14 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['HouseholdIdentifier'])
 
         # Adding model 'GpsDevice'
-        db.create_table(u'bcpp_household_gpsdevice', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        db.create_table('bcpp_household_gpsdevice', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=250, unique=True, null=True, db_index=True)),
             ('short_name', self.gf('django.db.models.fields.CharField')(max_length=250, unique=True, null=True, db_index=True)),
             ('display_index', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
@@ -133,13 +133,13 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['GpsDevice'])
 
         # Adding model 'HouseholdStructureAudit'
-        db.create_table(u'bcpp_household_householdstructure_audit', (
+        db.create_table('bcpp_household_householdstructure_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
             ('household', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_householdstructure', to=orm['bcpp_household.Household'])),
             ('survey', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_householdstructure', to=orm['bcpp_survey.Survey'])),
@@ -153,13 +153,13 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['HouseholdStructureAudit'])
 
         # Adding model 'HouseholdStructure'
-        db.create_table(u'bcpp_household_householdstructure', (
+        db.create_table('bcpp_household_householdstructure', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('household', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household.Household'])),
             ('survey', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_survey.Survey'])),
@@ -170,16 +170,16 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['HouseholdStructure'])
 
         # Adding unique constraint on 'HouseholdStructure', fields ['household', 'survey']
-        db.create_unique(u'bcpp_household_householdstructure', ['household_id', 'survey_id'])
+        db.create_unique('bcpp_household_householdstructure', ['household_id', 'survey_id'])
 
         # Adding model 'HouseholdLogAudit'
-        db.create_table(u'bcpp_household_householdlog_audit', (
+        db.create_table('bcpp_household_householdlog_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
             ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
@@ -189,26 +189,26 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['HouseholdLogAudit'])
 
         # Adding model 'HouseholdLog'
-        db.create_table(u'bcpp_household_householdlog', (
+        db.create_table('bcpp_household_householdlog', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('household_structure', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['bcpp_household.HouseholdStructure'], unique=True)),
         ))
         db.send_create_signal('bcpp_household', ['HouseholdLog'])
 
         # Adding model 'HouseholdLogEntryAudit'
-        db.create_table(u'bcpp_household_householdlogentry_audit', (
+        db.create_table('bcpp_household_householdlogentry_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
             ('household_log', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_householdlogentry', to=orm['bcpp_household.HouseholdLog'])),
             ('report_datetime', self.gf('django.db.models.fields.DateTimeField')()),
@@ -223,13 +223,13 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['HouseholdLogEntryAudit'])
 
         # Adding model 'HouseholdLogEntry'
-        db.create_table(u'bcpp_household_householdlogentry', (
+        db.create_table('bcpp_household_householdlogentry', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('household_log', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household.HouseholdLog'])),
             ('report_datetime', self.gf('django.db.models.fields.DateTimeField')()),
@@ -241,28 +241,28 @@ class Migration(SchemaMigration):
         db.send_create_signal('bcpp_household', ['HouseholdLogEntry'])
 
         # Adding unique constraint on 'HouseholdLogEntry', fields ['household_log', 'report_datetime']
-        db.create_unique(u'bcpp_household_householdlogentry', ['household_log_id', 'report_datetime'])
+        db.create_unique('bcpp_household_householdlogentry', ['household_log_id', 'report_datetime'])
 
         # Adding model 'ContactLog'
-        db.create_table(u'bcpp_household_contactlog', (
+        db.create_table('bcpp_household_contactlog', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
         ))
         db.send_create_signal('bcpp_household', ['ContactLog'])
 
         # Adding model 'ContactLogItem'
-        db.create_table(u'bcpp_household_contactlogitem', (
+        db.create_table('bcpp_household_contactlogitem', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='s030', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('contact_log', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household.ContactLog'])),
             ('contact_datetime', self.gf('django.db.models.fields.DateTimeField')()),
@@ -278,58 +278,58 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Removing unique constraint on 'HouseholdLogEntry', fields ['household_log', 'report_datetime']
-        db.delete_unique(u'bcpp_household_householdlogentry', ['household_log_id', 'report_datetime'])
+        db.delete_unique('bcpp_household_householdlogentry', ['household_log_id', 'report_datetime'])
 
         # Removing unique constraint on 'HouseholdStructure', fields ['household', 'survey']
-        db.delete_unique(u'bcpp_household_householdstructure', ['household_id', 'survey_id'])
+        db.delete_unique('bcpp_household_householdstructure', ['household_id', 'survey_id'])
 
         # Deleting model 'Community'
-        db.delete_table(u'bcpp_household_community')
+        db.delete_table('bcpp_household_community')
 
         # Deleting model 'HouseholdAudit'
-        db.delete_table(u'bcpp_household_household_audit')
+        db.delete_table('bcpp_household_household_audit')
 
         # Deleting model 'Household'
-        db.delete_table(u'bcpp_household_household')
+        db.delete_table('bcpp_household_household')
 
         # Deleting model 'HouseholdIdentifier'
-        db.delete_table(u'bcpp_household_householdidentifier')
+        db.delete_table('bcpp_household_householdidentifier')
 
         # Deleting model 'GpsDevice'
-        db.delete_table(u'bcpp_household_gpsdevice')
+        db.delete_table('bcpp_household_gpsdevice')
 
         # Deleting model 'HouseholdStructureAudit'
-        db.delete_table(u'bcpp_household_householdstructure_audit')
+        db.delete_table('bcpp_household_householdstructure_audit')
 
         # Deleting model 'HouseholdStructure'
-        db.delete_table(u'bcpp_household_householdstructure')
+        db.delete_table('bcpp_household_householdstructure')
 
         # Deleting model 'HouseholdLogAudit'
-        db.delete_table(u'bcpp_household_householdlog_audit')
+        db.delete_table('bcpp_household_householdlog_audit')
 
         # Deleting model 'HouseholdLog'
-        db.delete_table(u'bcpp_household_householdlog')
+        db.delete_table('bcpp_household_householdlog')
 
         # Deleting model 'HouseholdLogEntryAudit'
-        db.delete_table(u'bcpp_household_householdlogentry_audit')
+        db.delete_table('bcpp_household_householdlogentry_audit')
 
         # Deleting model 'HouseholdLogEntry'
-        db.delete_table(u'bcpp_household_householdlogentry')
+        db.delete_table('bcpp_household_householdlogentry')
 
         # Deleting model 'ContactLog'
-        db.delete_table(u'bcpp_household_contactlog')
+        db.delete_table('bcpp_household_contactlog')
 
         # Deleting model 'ContactLogItem'
-        db.delete_table(u'bcpp_household_contactlogitem')
+        db.delete_table('bcpp_household_contactlogitem')
 
 
     models = {
         'bcpp_household.community': {
             'Meta': {'object_name': 'Community'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_current': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -339,8 +339,8 @@ class Migration(SchemaMigration):
         'bcpp_household.contactlog': {
             'Meta': {'object_name': 'ContactLog'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -353,8 +353,8 @@ class Migration(SchemaMigration):
             'contact_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'contact_log': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.ContactLog']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'information_provider': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'is_contacted': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
@@ -374,9 +374,9 @@ class Migration(SchemaMigration):
             'gps_purchase_date': ('django.db.models.fields.DateField', [], {}),
             'gps_purchase_price': ('django.db.models.fields.DecimalField', [], {'max_digits': '10', 'decimal_places': '2'}),
             'gps_serial_number': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
@@ -402,8 +402,8 @@ class Migration(SchemaMigration):
             'gps_target_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'hh_int': ('django.db.models.fields.IntegerField', [], {}),
             'hh_seed': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25', 'db_index': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -416,7 +416,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdAudit', 'db_table': "u'bcpp_household_household_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdAudit', 'db_table': "'bcpp_household_household_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -436,8 +436,8 @@ class Migration(SchemaMigration):
             'gps_target_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'hh_int': ('django.db.models.fields.IntegerField', [], {}),
             'hh_seed': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -453,8 +453,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'HouseholdIdentifier'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'device_id': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '36'}),
             'is_derived': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -469,8 +469,8 @@ class Migration(SchemaMigration):
         'bcpp_household.householdlog': {
             'Meta': {'object_name': 'HouseholdLog'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_structure': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_household.HouseholdStructure']", 'unique': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -478,13 +478,13 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdlogaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogAudit', 'db_table': "u'bcpp_household_householdlog_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogAudit', 'db_table': "'bcpp_household_householdlog_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_structure': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdlog'", 'to': "orm['bcpp_household.HouseholdStructure']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -495,8 +495,8 @@ class Migration(SchemaMigration):
             'Meta': {'unique_together': "(('household_log', 'report_datetime'),)", 'object_name': 'HouseholdLogEntry'},
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_log': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.HouseholdLog']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -508,14 +508,14 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdlogentryaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogEntryAudit', 'db_table': "u'bcpp_household_householdlogentry_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogEntryAudit', 'db_table': "'bcpp_household_householdlogentry_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_log': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdlogentry'", 'to': "orm['bcpp_household.HouseholdLog']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -529,8 +529,8 @@ class Migration(SchemaMigration):
         'bcpp_household.householdstructure': {
             'Meta': {'unique_together': "(('household', 'survey'),)", 'object_name': 'HouseholdStructure'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.Household']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'member_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
@@ -542,13 +542,13 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdstructureaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdStructureAudit', 'db_table': "u'bcpp_household_householdstructure_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdStructureAudit', 'db_table': "'bcpp_household_householdstructure_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdstructure'", 'to': "orm['bcpp_household.Household']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'member_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
@@ -565,8 +565,8 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'datetime_end': ('django.db.models.fields.DateTimeField', [], {}),
             'datetime_start': ('django.db.models.fields.DateTimeField', [], {}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'s030'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'survey_description': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '15', 'null': 'True', 'blank': 'True'}),
