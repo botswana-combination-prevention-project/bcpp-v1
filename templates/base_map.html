@@ -9,7 +9,6 @@
 <script type="text/javascript">
 	document.write('<script type="text/javascript" src="{{ STATIC_URL }}/js/snapshotcontrol' + (document.location.search.indexOf('packed') > -1 ? '_packed' : '') + '.js"><' + '/script>');
 </script>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/map.css" />
 <script type="text/javascript">
 var map, marker, locationByID = {}, currentObject, geocoder;
 var pointArray = new Array();
@@ -17,11 +16,10 @@ var landpoints = new Array();
 var x = 0;
 {% for lon, lat, label, icon, cso in payload %}       	
     	pointArray.push(["{{ label }}", {{ lon }}, {{ lat }}, "{{ STATIC_URL }}img/{{ icon }}.png", x+1, "{{ cso }}"]);
-
 {% endfor %}
 
-{% for place, lon, lat in landmarks %}
-	landpoints.push(["{{ place }}", {{ lon }}, {{ lat }}, x+1]);
+{% for place, lat, lon in landmarks %}
+	landpoints.push(["{{ place }}", {{ lat }}, {{ lon }}, x+1]);
 {% endfor %}
 
 //adding information to markers when clicked

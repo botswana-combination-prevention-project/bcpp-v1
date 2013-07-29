@@ -21,6 +21,8 @@ urlpatterns = patterns('bhp_map.views',
     url(r'^gps_point_update/(?P<mapper_name>\w+)/', 'db_update_index', name='map_gps_point_update_url'),
     url(r'draw_site_polygon/(?P<mapper_name>\w+)/', 'draw_site_polygon', name='draw_site_polygon_url'),
     url(r'get_polygon_array/(?P<mapper_name>\w+)/', 'get_polygon_array', name='get_polygon_array_url'),
+    url(r'coordinates_to_gps/(?P<mapper_name>\w+)/', 'coordinates_to_gps', name='coordinates_to_gps_url'),
+    url(r'select_gps_dir/(?P<mapper_name>\w+)/', 'select_gps_dir', name='select_gps_dir_url'),
 )
 
 for mapper_name in site_mappers.get_registry().iterkeys():
