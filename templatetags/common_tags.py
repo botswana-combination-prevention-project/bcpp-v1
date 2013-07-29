@@ -79,6 +79,11 @@ def add_nbsp(value):
     return ''
 
 
+@register.filter(name='mask_pk')
+def mask(value, mask):
+    return '<{0}>'.format(mask)
+
+
 @register.filter(name='admin_url_from_contenttype')
 def admin_url_from_contenttype(contenttype):
     view = 'admin:%s_%s_add' % (contenttype.app_label, contenttype.model)
