@@ -12,6 +12,7 @@ class ParticipationForm(forms.Form):
     household_member = forms.CharField(widget=forms.HiddenInput())
     dashboard_type = forms.CharField(widget=forms.HiddenInput())
     survey = forms.CharField(widget=forms.HiddenInput())
+    household_identifier = forms.CharField(widget=forms.HiddenInput())
 
     def as_table(self):
         "Returns this form rendered as HTML <tr>s -- excluding the <table></table>."

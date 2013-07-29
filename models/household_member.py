@@ -1,13 +1,9 @@
 from django.db import models
-from django.core.validators import MinLengthValidator, MaxLengthValidator
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.urlresolvers import reverse
 from django.db.models.signals import Signal, post_save
 from audit_trail.audit import AuditTrail
-from bhp_dispatch.models import BaseDispatchSyncUuidModel
-from bhp_crypto.fields import EncryptedFirstnameField
 from bhp_crypto.utils import mask_encrypted
-from bhp_common.choices import YES_NO, GENDER
 from bhp_registration.models import RegisteredSubject
 from bhp_lab_tracker.classes import lab_tracker
 from bhp_household_member.models import BaseHouseholdMember
@@ -26,7 +22,9 @@ class HouseholdMember(BaseHouseholdMember):
         null=True,
         blank=True)
 
-    survey = models.ForeignKey(Survey, editable=False)
+    household = models.OneToOneField(Household, null=True, editable=False)
+
+    survey = models.OneToOneField(Survey, editable=False)
 
     relation = models.CharField(
         verbose_name="Relation to head of household",
@@ -107,6 +105,8 @@ class HouseholdMember(BaseHouseholdMember):
                 self.survey = self.household_structure.survey
             else:
                 self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
+        if not self.household:
+            self.household = self.household_structure.household
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def deserialize_prep(self):
@@ -130,8 +130,9 @@ class HouseholdMember(BaseHouseholdMember):
         if not self.member_status:
             self.member_status = 'NOT_REPORTED'
         return ParticipationForm(initial={'status': self.member_status,
-                                          'member': self.pk,
+                                          'household_member': self.pk,
                                           'survey': self.survey,
+                                          'household_identifier': self.household.household_identifier,
                                           'dashboard_type': 'household'})
 
     @property
@@ -295,8 +296,8 @@ class HouseholdMember(BaseHouseholdMember):
         # search models
         consent_instance = None
         for consent_model in consent_models:
-            if consent_model.objects.filter(member=self):
-                consent_instance = consent_model.objects.get(member=self)
+            if consent_model.objects.filter(household_member=self):
+                consent_instance = consent_model.objects.get(household_member=self.pk)
                 break
         return consent_instance
 
