@@ -19,6 +19,7 @@ class Controller(object):
 
     def __init__(self):
         self._registry = {}
+        self.autodiscovered = False
 
     def set_registry(self, section_view_cls):
         if not issubclass(section_view_cls, BaseSectionView):
@@ -56,13 +57,16 @@ class Controller(object):
         self.set_registry(section_view_cls)
 
     def autodiscover(self):
-        for app in settings.INSTALLED_APPS:
-            mod = import_module(app)
-            try:
-                before_import_registry = copy.copy(site_sections._registry)
-                import_module('%s.section' % app)
-            except:
-                site_sections._registry = before_import_registry
-                if module_has_submodule(mod, 'section'):
-                    raise
+        if not self.autodiscovered:
+            for app in settings.INSTALLED_APPS:
+                mod = import_module(app)
+                try:
+                    before_import_registry = copy.copy(site_sections._registry)
+                    import_module('%s.section' % app)
+                except:
+                    site_sections._registry = before_import_registry
+                    if module_has_submodule(mod, 'section'):
+                        raise
+            self.autodiscovered = True
+
 site_sections = Controller()

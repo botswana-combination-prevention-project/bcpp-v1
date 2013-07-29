@@ -3,9 +3,12 @@
 {% load admin_urls %}
 {% load url from future %}
 
+{% block content_title %}{% if title %}<h4>{{ title }}</h4>{% endif %}{% endblock %}
+
 {% block content %}
 
 {% block section_navigation %}
+{% if sections %}
 <div id="section_navbar">
 <ul>
 {% for section in sections %}
@@ -13,8 +16,9 @@
     <A name="{{section.0}}" href="{% url 'section_index_url' section.0 %}">{{section.1}}</A>
     </li>
 {% endfor %}
-<ul>
+</ul>
 </div>
+{% endif %}
 {% endblock section_navigation %}
 
 {% block warnings %}

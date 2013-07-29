@@ -24,7 +24,6 @@ class BaseSectionIndexView(object):
         self.is_setup = False
 
     def setup(self):
-        """Adds sections to the Section model if they do not exist."""
         if not self.is_setup:
             site_sections.autodiscover()
             self._set_section_list()
