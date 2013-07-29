@@ -1,8 +1,5 @@
 from datetime import datetime
-
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
-
 from lab_barcode.exceptions import PrinterException
 from lab_export.classes import ExportDmis
 
