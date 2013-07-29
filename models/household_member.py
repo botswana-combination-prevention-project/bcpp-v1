@@ -22,11 +22,11 @@ from contact_log import ContactLog
 
 class HouseholdMember(BaseHouseholdMember):
 
-    household_structure = models.OneToOneField(HouseholdStructure,
+    household_structure = models.ForeignKey(HouseholdStructure,
         null=True,
         blank=True)
 
-    survey = models.OneToOneField(Survey, editable=False)
+    survey = models.ForeignKey(Survey, editable=False)
 
     relation = models.CharField(
         verbose_name="Relation to head of household",
