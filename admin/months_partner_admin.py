@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_supplemental_fields.classes import SupplementalFields
+# from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
 from bcpp_subject.forms import MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm
@@ -8,11 +8,11 @@ from bcpp_subject.forms import MonthsRecentPartnerForm, MonthsSecondPartnerForm,
 class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsRecentPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.1, group='SH')
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.1, group='SH')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -61,11 +61,11 @@ admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsSecondPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.1, group='SH')
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.1, group='SH')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -117,11 +117,11 @@ admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsThirdPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.1, group='SH')
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.1, group='SH')
     fields = (
         "subject_visit",
         'first_partner_live',
