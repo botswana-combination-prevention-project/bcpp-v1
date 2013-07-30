@@ -60,7 +60,8 @@ class SignalManager(object):
     def disconnect_audit_trail_signals(self, obj):
         self.set_audit_trail_signals_for_model(obj)
         for audit_signal in self.audit_signals:
-            signals.post_save.receivers.remove(audit_signal)
+            if audit_signal in signals.post_save.receivers:
+                signals.post_save.receivers.remove(audit_signal)
 
     def reconnect_audit_trail_signals(self):
         for audit_signal in self.audit_signals:
