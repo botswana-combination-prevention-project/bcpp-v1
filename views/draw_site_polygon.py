@@ -57,8 +57,9 @@ def draw_site_polygon(request, **kwargs):
             
         landmark_list = []
         landmarks = m.get_landmarks()
-        for place, lon, lat in landmarks:
-            landmark_list.append([place, lon, lat])
+        for place, lat, lon in landmarks:
+            landmark_list.append([place, lat, lon])
+            #print (place, lat, lon)
         return render_to_response(
             template, {
                 'region_field_attr': m.get_region_field_attr(),
