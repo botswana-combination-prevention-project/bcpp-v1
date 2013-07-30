@@ -6,7 +6,7 @@ from django.db.models import get_model
 from bhp_dashboard.classes import Dashboard
 from bhp_registration.models import RegisteredSubject
 from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
-from bcpp_household_member.models import HouseholdMember
+from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist
 from bcpp_survey.models import Survey
 from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 from bhp_section.classes import site_sections
@@ -21,6 +21,7 @@ class HouseholdDashboard(Dashboard):
         self._household_structure = None
         self._household_log = None
         self._current_member_count = None
+        self._enrolment_checklist = None
         self._survey = None
         # TODO: section/search stuff should move to base class
         section = site_sections.get('household')
@@ -31,10 +32,11 @@ class HouseholdDashboard(Dashboard):
             search_name='household',
             household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_ACTION],
             membership_forms={'ABSENT': get_model('bcpp_subject', 'subjectabsentee')},
-            title='Household Dashboard',
+            title='A. Household Composition',
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
             household_structure_meta=HouseholdStructure._meta,
+            enrolment_checklist_meta=EnrolmentChecklist._meta,
             )
 
     def create(self, **kwargs):
