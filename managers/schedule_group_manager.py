@@ -60,6 +60,8 @@ class ScheduleGroupManager(models.Manager):
         #get KEYED schedule group membership forms
         for schedule_group in super(ScheduleGroupManager, self).filter(membership_form__category__iexact=membership_form_category):
             membership_form_model = schedule_group.membership_form.content_type_map.model_class()
+            if not membership_form_model:
+                raise DashboardError('Cannot get the membership_form model class from content_type_map for schedule group \'{0}\' using \'{1}\'. Update content_type_map?'.format(schedule_group, schedule_group.membership_form))
             try:
                 if membership_form_model.objects.filter(registered_subject_id=registered_subject.pk):
                     # append grouping key for schedule groups
