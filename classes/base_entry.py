@@ -77,7 +77,7 @@ class BaseEntry(object):
             else:
                 pass
         if not self._visit_model_fieldname:
-            raise AttributeError('Attribute _visit_model_fieldname cannot be None.')
+            raise AttributeError('Attribute _visit_model_fieldname cannot be None. Check the models listed in your visit definition.')
 
     def get_visit_model_fieldname(self):
         if not self._visit_model_fieldname:
