@@ -12,7 +12,7 @@ def coordinates_to_gps(request, **kwargs):
     
     fname: is an already existing file
     """
-    FNAME = 'Current.gpx'
+    FNAME = '/Users/ckgathi/source/bhp066/Current.gpx'
     file_to_gps = '/Volumes/GARMIN/GPX/Current.gpx'
     
     f = open(FNAME, 'r')
@@ -39,16 +39,14 @@ def coordinates_to_gps(request, **kwargs):
         
         #This values need to come from the edc   
         items = m.get_item_model_cls().objects.all()
-        li = [1, 2, 3, 4,5]
-        for i in li:
-            identifier_name = items[i].get_identifier_field_attr()
-            lat = items[i].lat 
-            lon = items[i].lon
+        print str(getattr(items[0], m.get_identifier_field_attr()))
+        for item in items:
+            identifier_name = str(getattr(item, m.get_identifier_field_attr()))
+            lat = item.lat 
+            lon = item.lon
             ele = 0.0
-            city_village = items[i].get_map_area()
-        
-            str_from_edc = '<name>' + identifier_name +'</name><sym>Waypoint</sym><extensions><gpxx:WaypointExtension><gpxx:Categories><gpxx:Category>Map Points and Coordinates</gpxx:Category></gpxx:Categories><gpxx:Address><gpxx:City>'
-            + city_village + '</gpxx:City><gpxx:State>South Eastern</gpxx:State></gpxx:Address></gpxx:WaypointExtension></extensions>' + '</wpt>' + '<wpt lat="' + lat + '" lon="' + lon + '"><ele>' + ele + '</ele>'
+            city_village = m.get_map_area()
+            str_from_edc = '<name>' + str(identifier_name) + '</name><sym>Waypoint</sym><extensions><gpxx:WaypointExtension><gpxx:Categories><gpxx:Category>Map Points and Coordinates</gpxx:Category></gpxx:Categories><gpxx:Address><gpxx:City>' + str(city_village) + '</gpxx:City><gpxx:State>South Eastern</gpxx:State></gpxx:Address></gpxx:WaypointExtension></extensions>' + '</wpt>' + '<wpt lat="' + str(lat) + '" lon="' + str(lon) + '"><ele>' + str(ele) + '</ele>'
             
             #write to gps file from database
             wf.write(str_from_edc)
