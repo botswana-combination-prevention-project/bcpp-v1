@@ -1,4 +1,6 @@
 {% extends "base_dashboard.html" %}
+{% load admin_urls %}
+{% load url from future %}
 
 {% block dashboard_main %}
 
@@ -11,7 +13,6 @@
         $('.results').html( '<I>Contacting lab for results, please wait...<I>' ).load("Dajaxice.lab_clinic_api.update_result_status(Dajax.process,{'subject_identifier':'{{subject_identifier}}'});");
         });
 </script>
-
 
 
 <table border=1 width=100%>
@@ -30,7 +31,7 @@
                 <tr name="top left">
                     <td>
                         <H5>Appointments</H5>
-                        <A href="{% url admin:bhp_appointment_appointment_add %}?next=dashboard_url&dashboard_type={{dashboard_type}}&registered_subject={{registered_subject.pk}}">add continuation appointment</A>
+                        {% block appointment_continuation %}<A href="{% url appointment_meta|admin_urlname:'add' %}?next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{dashboard_type}}&registered_subject={{registered_subject.pk}}">add continuation appointment</A>{% endblock%}
                         
                         {% block appointments %}
 
@@ -121,13 +122,13 @@
                        {% if visit_code and visit_instance %}
                             <A href="{{ subject_configuration.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">settings</A>
                        {% else %}
-                           <A href="{{ subject_configuration.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
+                           <A href="{{ subject_configuration.get_absolute_url }}?next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
                        {% endif %}
                     {% else %}
                        {% if visit_code and visit_instance %}
                             <A href="/admin/bhp_subject_config/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">settings</A>
                        {% else %}
-                           <A href="/admin/bhp_subject_config/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
+                           <A href="/admin/bhp_subject_config/subjectconfiguration/add/?subject_identifier={{subject_identifier}}&next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">settings</A>
                        {% endif %}
                     {% endif %}
                     {% endblock subject_configuration %}

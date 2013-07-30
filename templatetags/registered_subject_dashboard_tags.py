@@ -8,12 +8,15 @@ from bhp_visit_tracking.classes import VisitModelHelper
 register = template.Library()
 
 
-def appointment_row(context, appointment):
+def render_appointment_row(context, appointment):
 
     """Given an apointment instance, render to template an appointment/visit report row for the clinic dashboard."""
 
     my_context = {}
     my_context['appointment'] = appointment
+    my_context['subject_dashboard_url'] = context['subject_dashboard_url']
+    my_context['subject_dashboard_visit_url'] = context['subject_dashboard_visit_url']
+    my_context['appointment_meta'] = context['appointment_meta']
     my_context['visit_model_instance'] = None
     my_context['visit_code'] = context['visit_code']
     my_context['visit_instance'] = context['visit_instance']
@@ -23,6 +26,7 @@ def appointment_row(context, appointment):
     my_context['registered_subject'] = context['registered_subject']
     my_context['app_label'] = context['app_label']
     my_context['visit_model'] = context['visit_model']
+    my_context['visit_model_meta'] = context['visit_model_meta']
     my_context['visit_model_add_url'] = context['visit_model_add_url']
     my_context['extra_url_context'] = context['extra_url_context']
 
@@ -32,7 +36,7 @@ def appointment_row(context, appointment):
         my_context['appointment_visit_report'] = True
 
     return my_context
-register.inclusion_tag('appointment_row.html', takes_context=True)(appointment_row)
+register.inclusion_tag('appointment_row.html', takes_context=True)(render_appointment_row)
 
 
 class ModelPk(template.Node):
