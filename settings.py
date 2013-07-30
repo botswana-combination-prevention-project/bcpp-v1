@@ -380,6 +380,7 @@ IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 #KEY_PATH = os.path.join(DIRNAME, 'keys')
 KEY_PATH = '/Volumes/bhp066/keys'
+GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
 #FIELD_MAX_LENGTH='default'
 FIELD_MAX_LENGTH = 'migration'
 
@@ -396,5 +397,5 @@ else:
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
 LOGGING = logger.LOGGING
-CURRENT_COMMUNITY = 'otse'
+CURRENT_COMMUNITY = 'mochudi'
 CURRENT_SURVEY = 'baseline'
