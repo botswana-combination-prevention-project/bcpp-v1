@@ -10,7 +10,7 @@
     <div class="breadcrumbs">
         <a href="/{{ home }}">Home</a>
         &rsaquo; <a href="{% url 'section_url' section_name='household'%}">Household</a>
-        &rsaquo; <a href="{% url 'household_dashboard_url' dashboard_type='household' household_identifier=household.household_identifier household_structure=household_structure.pk %}">{{ household_structure }} {{ survey.survey_slug|capfirst }}</a>        
+        &rsaquo; <a href="{% url household_dashboard_url dashboard_type='household' household_identifier=household.household_identifier household_structure=household_structure.pk %}">{{ household_structure }} {{ survey.survey_slug|capfirst }}</a>        
         &rsaquo; {{ subject_identifier|mask_pk:'subject identifier pending' }}
     </div>
     
@@ -60,16 +60,16 @@
          Forms locked! because this {{ household_member.first_name|encrypted }} is in household that is currently dispatched to a netbook.
     {% else %}
 	    {% for keyed_model_name, keyed_model in keyed_membership_forms.iteritems %}
-	        <A href="{{ keyed_model.get_absolute_url }}?next={{ dashboard_type }}_dashboard_url&dashboard_type={{ dashboard_type }}&registered_subject={{ registered_subject.pk }}&household_member={{ household_member.pk }}">{{ keyed_model_name }} (Complete)</A> |
+	        <A href="{{ keyed_model.get_absolute_url }}?next={{ subject_dashboard_url }}&dashboard_type={{ dashboard_type }}&registered_subject={{ registered_subject.pk }}&household_member={{ household_member.pk }}">{{ keyed_model_name }} (Complete)</A> |
 	    {% endfor %}   
 	
 	    {% for unkeyed_membership_form in unkeyed_membership_forms %}
-	        <A href="{{ unkeyed_membership_form|admin_url_from_contenttype }}?next={{ dashboard_type }}_dashboard_url&dashboard_type={{ dashboard_type }}&registered_subject={{ registered_subject.pk }}&household_member={{ household_member.pk }}">{{ unkeyed_membership_form }} (New)</A> |
+	        <A href="{{ unkeyed_membership_form|admin_url_from_contenttype }}?next={{ subject_dashboard_url }}&dashboard_type={{ dashboard_type }}&registered_subject={{ registered_subject.pk }}&household_member={{ household_member.pk }}">{{ unkeyed_membership_form }} (New)</A> |
 	    {% endfor %}  
 	{% endif %}
 {% endblock %}
 
-
+{% block appointment_continuation %}{% endblock %}
 
 {% block side_bar_right_1 %}
     {% if not household %}    
@@ -77,7 +77,7 @@
         Household unknown
     {% else %}
         <tr name="top right"><td>
-        <B>Household <A title="go to household" href="{% url 'household_dashboard_url' dashboard_type='household' household_identifier=household.household_identifier household_structure=household_structure.pk %}">{{ household.household_identifier }}</A></B>
+        <B>Household <A title="go to household" href="{% url household_dashboard_url dashboard_type='household' household_identifier=household.household_identifier household_structure=household_structure.pk %}">{{ household.household_identifier }}</A></B>
         <table>
             <tr><td>{{ survey.survey_name }}</td><td colspan="2">CSO {{ household.cso_number|encrypted }}</td></tr>
 
@@ -86,7 +86,7 @@
                 <tr {% if hsm.first_name == household_member.first_name%}style="background:lightyellow;"{% else %}class="row1"{% endif %}>
                 <td>
                 {% if hsm.is_eligible and not hsm.present == '-' %}
-                    {{ forloop.counter }}.&nbsp;<A href="{% url 'subject_dashboard_url' dashboard_type='subject' household_member=hsm.pk survey=survey.survey_slug %}">{% if hsm.first_name == household_member.first_name%}<B>{% endif %}{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}&nbsp;{{ hsm.hiv_status }}</A>{% if hsm.first_name == household_member.first_name%}</B>{% endif %}
+                    {{ forloop.counter }}.&nbsp;<A href="{% url subject_dashboard_url dashboard_type='subject' household_member=hsm.pk survey=survey.survey_slug %}">{% if hsm.first_name == household_member.first_name%}<B>{% endif %}{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}&nbsp;{{ hsm.hiv_status }}</A>{% if hsm.first_name == household_member.first_name%}</B>{% endif %}
                 {% else%}                
                     {{ forloop.counter }}.&nbsp;{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}            
                 {% endif %}

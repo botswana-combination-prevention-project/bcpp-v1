@@ -31,13 +31,17 @@ class SubjectDashboard(RegisteredSubjectDashboard):
             requisition_model=SubjectRequisition,
             visit_model=self.visit_model,
             visit_model_app_label=self.visit_model_app_label,
+            visit_model_meta=self.visit_model._meta,
             subject_type=self.subject_type,
             home='bcpp_survey',
             search_name='subject',
+            household_dashboard_url='household_dashboard_url',
+            subject_dashboard_url='subject_dashboard_url',
+            subject_dashboard_visit_url='subject_dashboard_visit_url',
             )
 
     def create(self, **kwargs):
-        self.set_household_member(kwargs.get('household_member', None) or kwargs.get('pk'))
+        self.set_household_member(kwargs.get('household_member', None) or kwargs.get('pk'), visit_model_pk=kwargs.get('visit_model_pk', None))
         self.set_registered_subject()
         self.dashboard_identifier = self.get_subject_identifier()
         self.set_appointment(kwargs.get('appointment', None))
@@ -56,7 +60,7 @@ class SubjectDashboard(RegisteredSubjectDashboard):
             title='Subject Dashboard',
             household_members=self.get_household_members(),
             household_structure=self.get_household_member().household_structure,
-            extra_url_context='&household_member={0}&survey={1}'.format(self.get_household_member().pk, self.get_survey().survey_slug),
+            extra_url_context='&household_member={0}'.format(self.get_household_member().pk),
             appointment=self.get_appointment(),
             )
 
@@ -84,11 +88,15 @@ class SubjectDashboard(RegisteredSubjectDashboard):
             self.set_appointment(appointment)
         return self._appointment
 
-    def set_household_member(self, pk):
+    def set_household_member(self, pk, visit_model_pk=None):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        if not pk:
-            raise TypeError('Expected pk for the household member. Got None.')
-        self._household_member = HouseholdMember.objects.get(pk=pk)
+        if re_pk.match(visit_model_pk or ''):
+            # get the household member from the visit model
+            self._household_member = self.visit_model.objects.get(pk=visit_model_pk).household_member
+        else:
+            if not pk:
+                raise TypeError('Expected pk for the household member. Got None.')
+            self._household_member = HouseholdMember.objects.get(pk=pk)
 
     def get_household_member(self):
         if not self._household_member:
@@ -110,7 +118,7 @@ class SubjectDashboard(RegisteredSubjectDashboard):
         if re_pk.match(str(value)):
             self._registered_subject = RegisteredSubject.objects.get(pk=value)
         elif self.get_appointment():
-            self._registered_subject = self.get_appointment()
+            self._registered_subject = self.get_appointment().registered_subject
         elif RegisteredSubject.objects.filter(registration_identifier=self.get_household_member().internal_identifier).exists():
             self._registered_subject = RegisteredSubject.objects.get(registration_identifier=self.get_household_member().internal_identifier)
         else:
@@ -165,7 +173,7 @@ class SubjectDashboard(RegisteredSubjectDashboard):
                     ),
                 url(r'^(?P<subject_visit>{pk})/(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<household_member>{pk})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<survey>{survey_slug})/$'.format(**regex),
                     'subject_dashboard',
-                    name="subject_dashboard_visit_add_url"
+                    name="dashboard_visit_add_url"
                     ),
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<household_member>{pk})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<survey>{survey_slug})/(?P<content_type_map>{content_type_map})/$'.format(**regex),
                     'subject_dashboard',
@@ -177,13 +185,17 @@ class SubjectDashboard(RegisteredSubjectDashboard):
                     ),
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_visit>{pk})/(?P<subject_identifier>{subject_identifier})/(?P<household_member>{pk})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<survey>{survey_slug})/(?P<panel>{panel})/$'.format(**regex),
                     'subject_dashboard',
-                    name="subject_dashboard_visit_add_url"
+                    name="dashboard_visit_add_url"
                     ),
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<household_member>{pk})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<survey>{survey_slug})/$'.format(**regex),
                     'subject_dashboard',
                     name="subject_dashboard_visit_url"
                     ),
 
+                url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<visit_model_pk>{pk})/$'.format(**regex),
+                    'subject_dashboard',
+                    name="subject_dashboard_visit_url"
+                    ),
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_member>{pk})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<survey>{survey_slug})/$'.format(**regex),
                     'subject_dashboard',
                     name="subject_dashboard_visit_url"

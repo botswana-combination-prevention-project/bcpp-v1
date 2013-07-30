@@ -10,8 +10,8 @@
 <th>Sex</th>
 <th>Age</th>
 <th>Relation</th>   
-<th>Eligibility</th>
-<th>Participation</th> 
+<th>Participation</th>
+<th>Eligibility</th> 
 <th>Dashboard</th>
 </thead>
 <tbody>
@@ -36,17 +36,6 @@
     <td>{{ household_member.gender }}</td>
     <td>{{ household_member.age_in_years }}</td>
     <td>{{ household_member.relation }}</td>
-    <td>
-    {% if not household_member.enrolment_checklist %}
-         <A title='Add an enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}">Enrolment Checklist</A>
-    {% else %}
-        {% if not household_member.consent %}
-            <A title="Edit the enrolment checklist if not yet consented" href="{% url enrolment_checklist_meta|admin_urlname:'change' household_member.enrolment_checklist.pk %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}">{{ household_member.enrolment_checklist }}</A>{% if not household_member.enrolment_checklist.eligible %}&nbsp;<i>(Not eligible)</i>{%endif%}
-        {% else %}
-            {{ household_member.enrolment_checklist }}            
-        {% endif %}
-    {% endif %}
-    </td>
     {% comment%} particpation {% endcomment %}
     <td>
         {% if household_member.is_eligible and not household_member.is_consented %}
@@ -66,6 +55,24 @@
             {% endif %}            
         {% endif %}
     </td>
+
+    {% comment %}eligibility / enrolment checklist{% endcomment %}
+    <td>
+    {% if 'CONSENT' not in household_member.member_status %}
+     ----
+    {% else %}
+     {% if not household_member.enrolment_checklist %}
+        Complete <A title="Add an enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}">Enrolment Checklist</A>
+     {% else %}
+        {% if not household_member.consent %}
+            <A title="Edit the enrolment checklist if not yet consented" href="{% url enrolment_checklist_meta|admin_urlname:'change' household_member.enrolment_checklist.pk %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}">{{ household_member.enrolment_checklist }}</A>{% if not household_member.enrolment_checklist.eligible %}&nbsp;<i>(Not eligible)</i>{%endif%}
+        {% else %}
+            {{ household_member.enrolment_checklist }}            
+        {% endif %}
+     {% endif %}
+    {% endif %}
+    </td>
+
  
     {% comment%} dashboard {% endcomment %}
     <td>
