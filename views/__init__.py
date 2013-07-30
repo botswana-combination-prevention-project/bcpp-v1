@@ -17,4 +17,3 @@ from db_update_index import db_update_index
 from draw_site_polygon import draw_site_polygon  
 from get_polygon_array import get_polygon_array
 from coordinates_to_gps import coordinates_to_gps
-from select_gps_dir import select_gps_dir
