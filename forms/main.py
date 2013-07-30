@@ -1,14 +1,13 @@
-from django import forms
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife, 
+from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
-                                 CeaEnrolmentChecklist, EnrolmentChecklist,
+                                 CeaEnrolmentChecklist,
                                  CommunityEngagement, Education,
                                  HivMedicalCare, Circumcision, Circumcised,
                                  MedicalDiagnoses, HeartAttack,
-                                 Cancer, Tubercolosis, Sti, SubstanceUse, Stigma, 
-                                 StigmaOpinion, PositiveParticipant, 
+                                 Cancer, Tubercolosis, Sti, SubstanceUse, Stigma,
+                                 StigmaOpinion, PositiveParticipant,
                                  HivResultDocumentation)
 
 
@@ -70,12 +69,6 @@ class CeaEnrolmentChecklistForm (BaseSubjectModelForm):
 
     class Meta:
         model = CeaEnrolmentChecklist
-
-
-class EnrolmentChecklistForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = EnrolmentChecklist
 
 
 class CommunityEngagementForm (BaseSubjectModelForm):
@@ -199,8 +192,8 @@ class StiForm (BaseSubjectModelForm):
 
     class Meta:
         model = Sti
-        
-        
+
+
 class HivResultDocumentationForm (BaseSubjectModelForm):
 
     class Meta:

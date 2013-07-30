@@ -19,9 +19,6 @@ from grant import Grant
 from baseline_household_survey import BaselineHouseholdSurvey
 #CE003
 from cea_enrolment_checklist import CeaEnrolmentChecklist
-#CS008
-from enrolment_checklist import EnrolmentChecklist
-#CS002
 from residency_mobility import ResidencyMobility
 from demographics import Demographics
 from community_engagement import CommunityEngagement
