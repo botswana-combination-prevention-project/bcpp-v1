@@ -171,7 +171,7 @@ class SubjectDashboard(RegisteredSubjectDashboard):
                     'subject_dashboard',
                     name="subject_dashboard_visit_url"
                     ),
-                url(r'^(?P<subject_visit>{pk})/(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<household_member>{pk})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<survey>{survey_slug})/$'.format(**regex),
+                url(r'^(?P<subject_visit>{pk})/(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<household_member>{pk})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/$'.format(**regex),
                     'subject_dashboard',
                     name="dashboard_visit_add_url"
                     ),
