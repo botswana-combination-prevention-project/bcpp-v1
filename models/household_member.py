@@ -312,6 +312,13 @@ class HouseholdMember(BaseHouseholdMember):
     def is_adult(self):
         return (self.age_in_years >= 18 and self.age_in_years <= 64)
 
+    def enrolment_checklist(self):
+        EnrolmentChecklist = models.get_model('bcpp_household_member', 'EnrolmentChecklist')
+        self.enrolment_checklist = []
+        if EnrolmentChecklist.objects.filter(household_member=self):
+            self.enrolment_checklist = EnrolmentChecklist.objects.get(household_member=self)
+        return self.enrolment_checklist
+
     def is_eligible(self):
         "Returns if the subject is eligible or ineligible based on age"
         if self.is_minor():
