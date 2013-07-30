@@ -9,7 +9,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     form = HouseholdForm
     date_hierarchy = 'modified'
-    list_per_page = 15
+    list_per_page = 30
     list_max_show_all = 1000
 
     fields = (
