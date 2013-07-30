@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 from django.db.models import get_model, Model
 from bhp_content_type_map.models import ContentTypeMap
@@ -121,7 +122,12 @@ class BaseRule(object):
         return True
 
     def get_operator_from_word(self, word, a, b):
-        """Returns the operator from the 'word' used in the predicate, for example 'equals' returns '=='."""
+        """Returns the operator from the 'word' used in the predicate, for example 'equals' returns '=='.
+
+            Args:
+                a = field_value
+                b = comparative_value
+        """
         operator = None
         if word.lower() == 'equals' or word.lower() == 'eq':
             if b is None:
@@ -147,6 +153,13 @@ class BaseRule(object):
             operator = word.lower()
         if not operator:
             raise TypeError('Unrecognized operator in rule predicate. Valid options are equals, eq, gt, gte, lt, lte, ne, in, not in. Options are not case sensitive')
+        if a is None and word in ('equals', 'eq', 'ne', 'gt', 'gte', 'lt', 'lte'):
+            try:
+                # set a to 0 if b is an integer
+                int(b)
+                a = 0
+            except:
+                pass
         if (a is None or b is None) and word not in ('equals', 'eq', 'ne'):
             raise TypeError('Invalid predicate operator in rule for value None. Must be (equals, ea or ne). Got \'{0}\'.'.format(word))
         return operator
@@ -169,7 +182,7 @@ class BaseRule(object):
             self._field_value = getattr(instance, attr_name)
         if self._field_value:
             if isinstance(self._field_value, basestring):
-                self._field_value = self._field_value.lower()
+                self._field_value = re.escape(self._field_value).lower()
 
     def _get_predicate_field_value(self):
         return self._field_value
@@ -181,7 +194,7 @@ class BaseRule(object):
         self._comparitive_value = value
         if self._comparitive_value:
             if isinstance(self._comparitive_value, basestring):
-                self._comparitive_value = self._comparitive_value.lower()
+                self._comparitive_value = re.escape(self._comparitive_value).lower()
 
     def _get_predicate_comparitive_value(self):
         return self._comparitive_value
