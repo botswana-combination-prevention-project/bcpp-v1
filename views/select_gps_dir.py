@@ -7,7 +7,7 @@ def select_gps_dir(request, **kwargs):
     """
     """
     
-    dir_list = os.popen('ls /Volumes').read().split('\\')
+    dir_list = os.popen('ls /Volumes').read().split('\n')
     template = 'select_gps_dir.html'
     mapper_name = kwargs.get('mapper_name', '')
         
