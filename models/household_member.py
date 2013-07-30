@@ -22,9 +22,9 @@ class HouseholdMember(BaseHouseholdMember):
         null=True,
         blank=True)
 
-    household = models.OneToOneField(Household, null=True, editable=False)
+    household = models.ForeignKey(Household, null=True, editable=False)
 
-    survey = models.OneToOneField(Survey, editable=False)
+    survey = models.ForeignKey(Survey, editable=False)
 
     relation = models.CharField(
         verbose_name="Relation to head of household",
