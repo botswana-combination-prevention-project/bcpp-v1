@@ -5,9 +5,10 @@ from bhp_consent.models import BaseConsentedUuidModel
 from bcpp_household.models import Household
 from bcpp_subject.managers import ScheduledModelManager
 from subject_visit import SubjectVisit
+from subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class BaseScheduledVisitModel(BaseConsentedUuidModel):
+class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
