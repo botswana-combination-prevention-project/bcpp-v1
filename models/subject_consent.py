@@ -7,9 +7,10 @@ from bhp_botswana.models import BaseBwConsent
 from bcpp_household_member.models import HouseholdMember
 from bcpp_survey.models import Survey
 from subject_off_study_mixin import SubjectOffStudyMixin
+from bhp_appointment_helper.models import BaseAppointmentMixin
 
 
-class SubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
+class SubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
 
     household_member = models.OneToOneField(HouseholdMember)
     survey = models.OneToOneField(Survey)
@@ -38,6 +39,7 @@ class SubjectConsent(SubjectOffStudyMixin, BaseBwConsent):
 
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey
+        self.registered_subject = self.household_member.registered_subject
         super(SubjectConsent, self).save(*args, **kwargs)
 
     def post_save_update_hsm_status(self, **kwargs):

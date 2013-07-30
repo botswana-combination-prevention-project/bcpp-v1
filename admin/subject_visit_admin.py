@@ -36,6 +36,7 @@ class SubjectVisitAdmin(BaseAppointmentModelAdmin):
         )
 
     fields = (
+        'household_member',
         "appointment",
         "report_datetime",
         "info_source",
