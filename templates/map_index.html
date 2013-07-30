@@ -14,10 +14,10 @@
     <H5>Dispatch by {{ mapper_name }} Map</H5>
     <div id="section_navbar">
     <ul>
-    <li><A href="{% url "map_section_url" mapper_name %}">Manage {{ section_label }}s</A>
-    <li><A href="{% url "map_gps_point_update_url" mapper_name %}">Update GPS</A>
-    <li><A href="{% url "select_gps_dir_url" mapper_name %}">Dispatch to GPS</A>
-    <li><A href="{% url "draw_site_polygon_url" mapper_name %}">Site Polygon</A>
+    <li><A href="{% url "map_section_url" mapper_name %}">Manage {{ section_label }}s</A></li>
+    <li><A href="{% url "map_gps_point_update_url" mapper_name %}">Update GPS</A></li>
+    <li><A href="{% url "dispatch_to_gps_index_url" mapper_name %}">Dispatch to GPS</A></li>
+    <li><A href="{% url "draw_site_polygon_url" mapper_name %}">Site Polygon</A></li>
     </ul>
     </div>
 
