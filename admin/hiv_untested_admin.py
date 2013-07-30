@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_supplemental_fields.classes import SupplementalFields
+# from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import HivUntested
 from bcpp_subject.forms import HivUntestedForm
@@ -8,10 +8,10 @@ from bcpp_subject.forms import HivUntestedForm
 class HivUntestedAdmin(SubjectVisitModelAdmin):
 
     form = HivUntestedForm
-    supplemental_fields = SupplementalFields(
-        ('why_no_hiv_test',
-        'hiv_pills',
-        'arvs_hiv_test'), p=0.09, group='HT')
+#     supplemental_fields = SupplementalFields(
+#         ('why_no_hiv_test',
+#         'hiv_pills',
+#         'arvs_hiv_test'), p=0.09, group='HT')
     fields = (
         "subject_visit",
         'why_no_hiv_test',
