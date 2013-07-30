@@ -13,15 +13,10 @@
     
     <H5>Dispatch To GPS receiver</H5>
 
-    <div id="selection_box">  
-    <form action="{% url "coordinates_to_gps_url" mapper_name %}" method="post">
-    {% csrf_token %}
-	{% for dir in dir_list %}
-	    <option value="{{ dir }}">{{ dir }}</option>
-	{% endfor %}
-	</select>
-	<input type="submit" value="submit">
-	</form>
+    <div id="section_navbar">
+    	<ul>  
+    		<li><a href="{% url "coordinates_to_gps_url" mapper_name %}">Dispatch coordinates</a></li>
+    	</ul>
     </div>
 
 	{% endif %}	

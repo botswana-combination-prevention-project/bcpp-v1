@@ -39,12 +39,13 @@ def coordinates_to_gps(request, **kwargs):
         
         #This values need to come from the edc   
         items = m.get_item_model_cls().objects.all()
-        for item in item:
-            identifier_name = item.get_identifier_field_attr()
-            lat = item.lat 
-            lon = item.lon
+        li = [1, 2, 3, 4,5]
+        for i in li:
+            identifier_name = items[i].get_identifier_field_attr()
+            lat = items[i].lat 
+            lon = items[i].lon
             ele = 0.0
-            city_village = item.get_map_area()
+            city_village = items[i].get_map_area()
         
             str_from_edc = '<name>' + identifier_name +'</name><sym>Waypoint</sym><extensions><gpxx:WaypointExtension><gpxx:Categories><gpxx:Category>Map Points and Coordinates</gpxx:Category></gpxx:Categories><gpxx:Address><gpxx:City>'
             + city_village + '</gpxx:City><gpxx:State>South Eastern</gpxx:State></gpxx:Address></gpxx:WaypointExtension></extensions>' + '</wpt>' + '<wpt lat="' + lat + '" lon="' + lon + '"><ele>' + ele + '</ele>'
