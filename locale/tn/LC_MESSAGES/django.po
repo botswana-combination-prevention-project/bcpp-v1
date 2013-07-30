@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 12:24+0200\n"
-"PO-Revision-Date: 2013-07-30 12:27+0200\n"
+"POT-Creation-Date: 2013-07-30 14:45+0200\n"
+"PO-Revision-Date: 2013-07-30 14:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -21,14 +21,20 @@ msgstr ""
 #: bcpp/choices.py:130 bcpp/choices.py:372 bcpp/choices.py:413
 #: bcpp/choices.py:453 bcpp/choices.py:628 bcpp/choices.py:639
 #: bcpp_subject/choices.py:486 bhp_common/choices.py:249
-#: bhp_common/choices.py:260 lab_requisition/filters.py:24
+#: bhp_common/choices.py:260 bhp_common/choices.py:303
+#: bhp_common/choices.py:309 bhp_common/choices.py:316
+#: bhp_common/choices.py:322 bhp_common/choices.py:329
+#: lab_requisition/filters.py:24
 msgid "Yes"
 msgstr "Ee"
 
 #: bcpp/choices.py:5 bcpp/choices.py:12 bcpp/choices.py:123
 #: bcpp/choices.py:131 bcpp/choices.py:373 bcpp/choices.py:414
 #: bcpp/choices.py:454 bcpp_subject/choices.py:487 bhp_common/choices.py:250
-#: bhp_common/choices.py:261 lab_requisition/filters.py:25
+#: bhp_common/choices.py:261 bhp_common/choices.py:304
+#: bhp_common/choices.py:310 bhp_common/choices.py:317
+#: bhp_common/choices.py:323 bhp_common/choices.py:330
+#: lab_requisition/filters.py:25
 msgid "No"
 msgstr "Nnya"
 
@@ -166,7 +172,7 @@ msgstr "Kgwedi tse nne go ya ko go tse thataro"
 msgid "more than 6 months"
 msgstr "Go feta kgwedi tse thataro"
 
-#: bcpp/choices.py:61
+#: bcpp/choices.py:61 bhp_common/choices.py:325
 msgid "Not Applicable"
 msgstr "Ga go kgonege"
 
@@ -549,7 +555,7 @@ msgstr "Go tlogela tiro ka bogodi"
 
 #: bcpp/choices.py:211 bcpp/choices.py:233 bcpp/choices.py:249
 msgid "HIV Positive (Reactive)"
-msgstr "Positive"
+msgstr "O na le mogare (positive)"
 
 #: bcpp/choices.py:212 bcpp/choices.py:234 bcpp/choices.py:250
 msgid "HIV Negative (Non-reactive)"
@@ -777,11 +783,11 @@ msgstr "Modiri yo gwebang ka mmele"
 
 #: bcpp/choices.py:364 bcpp/choices.py:405 bcpp/choices.py:446
 msgid "HIV-positive"
-msgstr "HIV positive"
+msgstr "O na le mogare (positive)"
 
 #: bcpp/choices.py:365 bcpp/choices.py:406 bcpp/choices.py:447
 msgid "HIV-negative"
-msgstr "HIV negative"
+msgstr "Ga o na mogare (negative)"
 
 #: bcpp/choices.py:366 bcpp/choices.py:407 bcpp/choices.py:448
 msgid "I am not sure HIV status"
@@ -3689,13 +3695,26 @@ msgstr "O na le mogare (positive)"
 msgid "Negative"
 msgstr "Ga a na mogare (negative)"
 
-#: bhp_common/choices.py:190
+#: bhp_common/choices.py:190 bhp_common/choices.py:305
+#: bhp_common/choices.py:311
 msgid "Unknown"
 msgstr "Ga go itsiwe (unknown)"
 
 #: bhp_common/choices.py:262
 msgid "Refused to answer"
 msgstr "Ga a eletse go araba"
+
+#: bhp_common/choices.py:312
+msgid "Not applicable"
+msgstr "Ga go kgonege (Ga gona karabo)"
+
+#: bhp_common/choices.py:318 bhp_common/choices.py:324
+msgid "Not Sure"
+msgstr "Ga ke tlhomamise"
+
+#: bhp_common/choices.py:331
+msgid "Do not Know"
+msgstr "Ga ke itse"
 
 #: bhp_consent/models/base_consent.py:34
 #: bhp_consent/models/base_consent_update.py:46
