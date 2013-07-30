@@ -1,3 +1,6 @@
+from django.utils.translation import ugettext_lazy as _
+
+
 # choices
 BLANK_CHOICE_DASH = [('', '---------')]
 
@@ -120,14 +123,14 @@ FEEDING = (
 )
 
 GENDER = (
-    ('M', 'Male'),
-    ('F', 'Female'),
+    ('M', _('Male')),
+    ('F', _('Female')),
 )
 
 GENDER_UNDETERMINED = (
-    ('M', 'Male'),
-    ('F', 'Female'),
-    ('U', 'Undetermined'),
+    ('M', _('Male')),
+    ('F', _('Female')),
+    ('U', _('Undetermined')),
 )
 
 """do not change without inspecting implication to check_omang_field() in utils.py"""
@@ -177,14 +180,14 @@ POS_NEG_ANY = (
 )
 
 POS_NEG_ONLY = (
-    ('POS', 'Positive'),
-    ('NEG', 'Negative'),
+    ('POS', _('Positive')),
+    ('NEG', _('Negative')),
 )
 
 POS_NEG_UNKNOWN = (
-    ('POS', 'Positive'),
-    ('NEG', 'Negative'),
-    ('UNKNOWN', 'Unknown'),
+    ('POS', _('Positive')),
+    ('NEG', _('Negative')),
+    ('UNKNOWN', _('Unknown')),
 )
 
 POS_NEG_ACU = (
@@ -243,8 +246,8 @@ WILL_DECL = (
 )
 
 YES_NO = (
-    ('Yes', 'Yes'),
-    ('No', 'No'),
+    ('Yes', _('Yes')),
+    ('No', _('No')),
 )
 
 YES_NO_OPTIONAL = (
@@ -254,9 +257,9 @@ YES_NO_OPTIONAL = (
 )
 
 YES_NO_REFUSED = (
-    ('Yes', 'Yes'),
-    ('No', 'No'),
-    ('REF', 'Refused to answer'),
+    ('Yes', _('Yes')),
+    ('No', _('No')),
+    ('REF', _('Refused to answer')),
 )
 
 YES_NO_NA_SPECIFY = (
