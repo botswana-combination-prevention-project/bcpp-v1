@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_supplemental_fields.classes import SupplementalFields
+# from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
                                  HospitalAdmission, HivHealthCareCosts, CeaEnrolmentChecklist,
@@ -241,13 +241,13 @@ admin.site.register(Circumcision, CircumcisionAdmin)
 class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
-    supplemental_fields = SupplementalFields(
-        ("circumcised",
-        "health_benefits_smc",
-        'where_circ', 
-        'where_circ_other',
-        'why_circ', 
-        'why_circ_other'), p=0.18, group='MC')
+#     supplemental_fields = SupplementalFields(
+#         ("circumcised",
+#         "health_benefits_smc",
+#         'where_circ', 
+#         'where_circ_other',
+#         'why_circ', 
+#         'why_circ_other'), p=0.18, group='MC')
     fields = (
         "subject_visit",
         "circumcised",
