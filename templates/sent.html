@@ -11,7 +11,9 @@
         </div>
     {% else %}
     
-    	<H1>file_to_gps</H1>
-
+    	<H1>file_to_gps Coordinates dispatched to GPS receiver</H1>
+    	<div id="section_navbar">
+    		<li><a href="{% url "selected_map_index_url" mapper_name %}">{{ mapper_name }} maps</a></li>
+		</div>
 	{% endif %}	
 {% endblock content %}
