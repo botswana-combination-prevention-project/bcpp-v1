@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_supplemental_fields.classes import SupplementalFields
+# from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import Uncircumcised
 from bcpp_subject.forms import UncircumcisedForm
@@ -8,19 +8,19 @@ from bcpp_subject.forms import UncircumcisedForm
 class UncircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = UncircumcisedForm
-    supplemental_fields = SupplementalFields(
-        ("circumcised",
-        "health_benefits_smc",
-        'reason_circ',
-        'circumcision_day',
-        'circumcision_day_other',
-        'circumcision_week',
-        'circumcision_week_other',
-        'circumcision_year',
-        'circumcision_year_other',
-        'future_reasons_smc',
-        'service_facilities',
-        'aware_free'), p=0.18, group='MC')
+#     supplemental_fields = SupplementalFields(
+#         ("circumcised",
+#         "health_benefits_smc",
+#         'reason_circ',
+#         'circumcision_day',
+#         'circumcision_day_other',
+#         'circumcision_week',
+#         'circumcision_week_other',
+#         'circumcision_year',
+#         'circumcision_year_other',
+#         'future_reasons_smc',
+#         'service_facilities',
+#         'aware_free'), p=0.18, group='MC')
     fields = (
         "subject_visit",
         "circumcised",
