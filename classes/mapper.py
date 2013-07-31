@@ -450,15 +450,16 @@ class Mapper(object):
             raise TypeError('Direction must be one of {0}. Got {1}.'.format(dct.keys(), direction))
         d = float(degrees)
         m = float(minutes)
-        return dct[direction] * round((d) + (m / 60), 5)
+        retval = dct[direction] * round((d) + (m / 60), 5)
+        return retval
 
     def get_gps_lat(self, d=None, m=None):
         """Converts degree/minutes S to latitude."""
-        self._get_gps('s', d, m)
+        return self._get_gps('s', d, m)
 
     def get_gps_lon(self, d=None, m=None):
         """Converts degree/minutes E to longitude."""
-        self._get_gps('e', d, m)
+        return self._get_gps('e', d, m)
 
     def verify_gps_location(self, lat, lon, exception_cls):
         """Verifies that given lat, lon occur within the community area and raises an exception if not.
