@@ -49,7 +49,6 @@ class SectionHouseholdView(BaseSectionView):
                 mapper = site_mappers.get(community)()
                 lat = mapper.get_gps_lat(degrees_s, minutes_s)
                 lon = mapper.get_gps_lat(degrees_e, minutes_e)
-                radius = .025
                 search_result = []
                 lst = []
                 dct = {}

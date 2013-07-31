@@ -194,8 +194,8 @@ class Household(BaseDispatchSyncUuidModel):
         mapper = mapper_cls()
         #mapper().verify_gps_location(self.gps_lat, self.gps_lon, ValidationError)
         #mapper().verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, ValidationError)
-        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
-        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
+        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s or 0, float('.{0}'.format(str(self.gps_minutes_s or 0))))
+        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, float('.{0}'.format(str(self.gps_minutes_e or 0))))
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
