@@ -32,6 +32,8 @@
     {% endblock %}
     {% endif %}
  
+    {% block gps_search %}{% endblock %}
+ 
     {% block search_tile %}
         <div id="search_tile">
         <form method="POST" action="{% url 'section_search_url' section_name search_type %}">
