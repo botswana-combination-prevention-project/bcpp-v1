@@ -190,11 +190,12 @@ class Household(BaseDispatchSyncUuidModel):
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
-        mapper = site_mappers.get_registry(self.community)
+        mapper_cls = site_mappers.get_registry(self.community)
+        mapper = mapper_cls()
         #mapper().verify_gps_location(self.gps_lat, self.gps_lon, ValidationError)
         #mapper().verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, ValidationError)
-        self.gps_lat = mapper().get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
-        self.gps_lon = mapper().get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
+        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
+        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
@@ -221,9 +222,9 @@ class Household(BaseDispatchSyncUuidModel):
         if not self.gps_lon and not self.gps_lat:
             retval = 'unconfirmed'
         elif self.status == 'occupied':
-            retval = 'valid'
+            retval = 'confirmed'
         elif self.status == 'vacant' or self.status == 'invalid':
-            retval = 'invalid'
+            retval = 'confirmed'
         else:
             retval = 'unconfirmed'
         return retval
