@@ -13,7 +13,7 @@ from bhp_appointment_helper.models import BaseAppointmentMixin
 class SubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
 
     household_member = models.OneToOneField(HouseholdMember)
-    survey = models.OneToOneField(Survey)
+    survey = models.ForeignKey(Survey)
     is_signed = models.BooleanField(default=False)
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False, null=True)
 
