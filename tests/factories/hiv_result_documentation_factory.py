@@ -9,5 +9,5 @@ class HivResultDocumentationFactory(BaseUuidModelFactory):
 
     report_datetime = datetime.today()
     result_date = date.today()
-    result_recorded = (('POS', <django.utils.functional.__proxy__ object at 0x103aea910>), ('NEG', <django.utils.functional.__proxy__ object at 0x103aea990>), ('IND', <django.utils.functional.__proxy__ object at 0x103aeaa10>), ('No result recorded', <django.utils.functional.__proxy__ object at 0x103aeaa90>))[0][0]
-    result_doc_type = (('Tebelopele', <django.utils.functional.__proxy__ object at 0x103a20850>), ('Lab result form', <django.utils.functional.__proxy__ object at 0x103a208d0>), ('ART Prescription', <django.utils.functional.__proxy__ object at 0x103a20950>), ('PMTCT Prescription', <django.utils.functional.__proxy__ object at 0x103a209d0>), ('Record of CD4 count', <django.utils.functional.__proxy__ object at 0x103a20a50>), ('OTHER', <django.utils.functional.__proxy__ object at 0x103a20ad0>))[0][0]
+    result_recorded = (('POS', u'HIV Positive (Reactive)'), ('NEG', u'HIV Negative (Non-reactive)'), ('IND', u'Indeterminate'), ('No result recorded', u'No result recorded'))[0][0]
+    result_doc_type = (('Tebelopele', u'Tebelopele'), ('Lab result form', u'Lab result form'), ('ART Prescription', u'ART Prescription'), ('PMTCT Prescription', u'PMTCT Prescription'), ('Record of CD4 count', u'Record of CD4 count'), ('OTHER', u'Other OPD card or ANC card documentation'))[0][0]

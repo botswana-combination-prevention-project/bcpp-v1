@@ -9,5 +9,5 @@ class NonPregnancyFactory(BaseUuidModelFactory):
 
     report_datetime = datetime.today()
     last_birth = date.today()
-    anc_last_pregnancy = (('Yes', 'Yes'), ('No', 'No'), ("Don't want to answer", "Don't want to answer"))[0][0]
-    more_children = (('Yes', 'Yes'), ('No', 'No'), ('not sure', 'I am not sure'), ("Don't want to answer", "Don't want to answer"))[0][0]
+    anc_last_pregnancy = (('Yes', u'Yes'), ('No', u'No'), ("Don't want to answer", u"Don't want to answer"))[0][0]
+    more_children = (('Yes', u'Yes'), ('No', u'No'), ('not sure', u'I am not sure'), ("Don't want to answer", u"Don't want to answer"))[0][0]

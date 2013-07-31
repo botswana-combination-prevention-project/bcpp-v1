@@ -9,4 +9,4 @@ class BloodDrawFactory(BaseUuidModelFactory):
 
     report_datetime = datetime.today()
     draw_date = datetime.today()
-    is_blood_drawn = (('Yes', 'Yes'), ('No', 'No'))[0][0]
+    is_blood_drawn = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]

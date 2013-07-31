@@ -9,8 +9,8 @@ class SubjectLocatorFactory(BaseUuidModelFactory):
 
     report_datetime = datetime.today()
     date_signed = date.today()
-    home_visit_permission = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    may_follow_up = (('Yes', 'Yes'), ('No', 'No'))[0][0]
+    home_visit_permission = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]
+    may_follow_up = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]
     may_call_work = (('Yes', 'Yes'), ('No', 'No'), ('Doesnt_work', 'Doesnt Work'))[0][0]
-    may_contact_someone = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    has_alt_contact = (('Yes', 'Yes'), ('No', 'No'))[0][0]
+    may_contact_someone = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]
+    has_alt_contact = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]

@@ -9,4 +9,4 @@ class HivTestReviewFactory(BaseUuidModelFactory):
 
     report_datetime = datetime.today()
     hiv_test_date = date.today()
-    recorded_hiv_result = (('POS', 'HIV Positive (Reactive)'), ('NEG', 'HIV Negative (Non-reactive)'), ('IND', 'Indeterminate'), ('No result recorded', 'No result recorded'))[0][0]
+    recorded_hiv_result = (('POS', u'HIV Positive (Reactive)'), ('NEG', u'HIV Negative (Non-reactive)'), ('IND', u'Indeterminate'), ('No result recorded', u'No result recorded'))[0][0]

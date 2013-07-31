@@ -8,4 +8,4 @@ class CircumcisionFactory(BaseUuidModelFactory):
     FACTORY_FOR = Circumcision
 
     report_datetime = datetime.today()
-    circumcised = (('Yes', 'Yes'), ('No', 'No'), ('not sure', 'I am not sure'), ("Don't want to answer", "Don't want to answer"))[0][0]
+    circumcised = (('Yes', u'Yes'), ('No', u'No'), ('not sure', u'I am not sure'), ("Don't want to answer", u"Don't want to answer"))[0][0]

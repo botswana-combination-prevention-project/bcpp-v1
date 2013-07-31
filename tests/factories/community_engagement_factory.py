@@ -8,7 +8,7 @@ class CommunityEngagementFactory(BaseUuidModelFactory):
     FACTORY_FOR = CommunityEngagement
 
     report_datetime = datetime.today()
-    community_engagement = (('Very active', <django.utils.functional.__proxy__ object at 0x103ae5d50>), ('Somewhat active', <django.utils.functional.__proxy__ object at 0x103ae5dd0>), ('Not active at all', <django.utils.functional.__proxy__ object at 0x103ae5e50>), ("Don't want to answer", <django.utils.functional.__proxy__ object at 0x103ae5ed0>))[0][0]
-    vote_engagement = (('Yes', <django.utils.functional.__proxy__ object at 0x103ae5f50>), ('No', <django.utils.functional.__proxy__ object at 0x103ae5fd0>), ("Not applicable (no election, can't vote)", <django.utils.functional.__proxy__ object at 0x103ae7090>), ("Don't want to answer", <django.utils.functional.__proxy__ object at 0x103ae7110>))[0][0]
+    community_engagement = (('Very active', u'Very active'), ('Somewhat active', u'Somewhat active'), ('Not active at all', u'Not active at all'), ("Don't want to answer", u"Don't want to answer"))[0][0]
+    vote_engagement = (('Yes', u'Yes'), ('No', u'No'), ("Not applicable (no election, can't vote)", u"Not applicable (no election, can't vote)"), ("Don't want to answer", u"Don't want to answer"))[0][0]
     problems_engagement_other = factory.Sequence(lambda n: 'problems_engagement_other{0}'.format(n))
-    solve_engagement = (('Yes', <django.utils.functional.__proxy__ object at 0x103ae7190>), ('No', <django.utils.functional.__proxy__ object at 0x103ae7210>), ("Don't know", <django.utils.functional.__proxy__ object at 0x103ae7290>), ("Don't want to answer", <django.utils.functional.__proxy__ object at 0x103ae7310>), ('None', <django.utils.functional.__proxy__ object at 0x103ae7390>))[0][0]
+    solve_engagement = (('Yes', u'Yes'), ('No', u'No'), ("Don't know", u"Don't know"), ("Don't want to answer", u"Don't want to answer"), ('None', u'No problems'))[0][0]

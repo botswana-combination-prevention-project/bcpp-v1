@@ -9,13 +9,13 @@ class CeaEnrolmentChecklistFactory(BaseUuidModelFactory):
     FACTORY_FOR = CeaEnrolmentChecklist
 
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)
-    mental_capacity = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    incarceration = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    citizen = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    community_resident = (('Yes', 'Yes'), ('No', 'No'), ('REF', 'Refused to answer'))[0][0]
-    enrolment_reason = (('CD4 < 50', <django.utils.functional.__proxy__ object at 0x103a23350>), ('CD4 50-100', <django.utils.functional.__proxy__ object at 0x103a233d0>), ('AIDS opportunistic infection/condition', <django.utils.functional.__proxy__ object at 0x103a23450>))[0][0]
+    mental_capacity = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]
+    incarceration = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]
+    citizen = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48e50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48ed0>))[0][0]
+    community_resident = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48f50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48fd0>), ('REF', <django.utils.functional.__proxy__ object at 0x101d52090>))[0][0]
+    enrolment_reason = (('CD4 < 50', u'Most recent (within past 3 months) CD4 < 50'), ('CD4 50-100', u'Most recent (within past 3 months) CD4 50-100'), ('AIDS opportunistic infection/condition', u'Current AIDS opportunistic infection/condition'))[0][0]
     cd4_date = date.today()
     cd4_count = 2.5
-    opportunistic_illness = (('Tuberculosis', <django.utils.functional.__proxy__ object at 0x103a234d0>), ('Wasting', <django.utils.functional.__proxy__ object at 0x103a23550>), ('Cryptococcosis', <django.utils.functional.__proxy__ object at 0x103a235d0>), ('severe bacterial pneumonia', <django.utils.functional.__proxy__ object at 0x103a23650>), ('Esophageal candidiasis', <django.utils.functional.__proxy__ object at 0x103a236d0>), ('Pneumocystis pneumonia', <django.utils.functional.__proxy__ object at 0x103a23750>), ("Kaposi's sarcoma", <django.utils.functional.__proxy__ object at 0x103a237d0>), ('Cervical cancer', <django.utils.functional.__proxy__ object at 0x103a23850>), ("Non-Hodgkin's lymphoma", <django.utils.functional.__proxy__ object at 0x103a238d0>), ('Other, record', <django.utils.functional.__proxy__ object at 0x103a23950>), ('No current AIDS opportunistic illness', <django.utils.functional.__proxy__ object at 0x103a239d0>))[0][0]
+    opportunistic_illness = (('Tuberculosis', u'Tuberculosis'), ('Wasting', u'Wasting'), ('Cryptococcosis', u'Cryptococcosis'), ('severe bacterial pneumonia', u'Recurrent severe bacterial pneumonia'), ('Esophageal candidiasis', u'Esophageal candidiasis'), ('Pneumocystis pneumonia', u'Pneumocystis pneumonia'), ("Kaposi's sarcoma", u"Kaposi's sarcoma"), ('Cervical cancer', u'Cervical cancer'), ("Non-Hodgkin's lymphoma", u"Non-Hodgkin's lymphoma"), ('Other, record', u'Other, record'), ('No current AIDS opportunistic illness', u'No current AIDS opportunistic illness'))[0][0]
     diagnosis_date = date.today()
     date_signed = datetime.today()

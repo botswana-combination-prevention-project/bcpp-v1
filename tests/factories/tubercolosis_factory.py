@@ -9,4 +9,4 @@ class TubercolosisFactory(BaseUuidModelFactory):
 
     report_datetime = datetime.today()
     date_tb = date.today()
-    dx_tb = (('Pulmonary tuberculosis', 'Pulmonary tuberculosis'), ('Extrapulmonary (outside the lungs) tuberculosis', 'Extrapulmonary (outside the lungs) tuberculosis'), ('Other', 'Other, specify:'), ("Don't want to answer", "Don't want to answer"))[0][0]
+    dx_tb = (('Pulmonary tuberculosis', u'Pulmonary tuberculosis'), ('Extrapulmonary (outside the lungs) tuberculosis', u'Extrapulmonary (outside the lungs) tuberculosis'), ('Other', u'Other, specify:'), ("Don't want to answer", u"Don't want to answer"))[0][0]

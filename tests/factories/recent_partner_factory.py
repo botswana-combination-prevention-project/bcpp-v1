@@ -8,16 +8,16 @@ class RecentPartnerFactory(BaseUuidModelFactory):
     FACTORY_FOR = RecentPartner
 
     report_datetime = datetime.today()
-    rel_type = (('Longterm partner', <django.utils.functional.__proxy__ object at 0x103a167d0>), ('Boyfriend/Girlfriend', <django.utils.functional.__proxy__ object at 0x103a16810>), ('Casual', <django.utils.functional.__proxy__ object at 0x103a16850>), ('One time partner', <django.utils.functional.__proxy__ object at 0x103a168d0>), ('Commercial sex worker', <django.utils.functional.__proxy__ object at 0x103a16950>), ('Other, specify', <django.utils.functional.__proxy__ object at 0x103a169d0>))[0][0]
+    rel_type = (('Longterm partner', u'Longterm partner (>2 years) or spouse'), ('Boyfriend/Girlfriend', u'Boyfriend/Girlfriend'), ('Casual', u'Casual (known) partner'), ('One time partner', u'One time partner (previously unknown)'), ('Commercial sex worker', u'Commercial sex worker'), ('Other, specify', u'Other, specify'))[0][0]
     rel_type_other = factory.Sequence(lambda n: 'rel_type_other{0}'.format(n))
-    partner_residency = (('In this community', <django.utils.functional.__proxy__ object at 0x103a16a50>), ('On farm/cattle post', <django.utils.functional.__proxy__ object at 0x103a16ad0>), ('Outside this community', <django.utils.functional.__proxy__ object at 0x103a16b50>), ("Don't want to answer", <django.utils.functional.__proxy__ object at 0x103a16bd0>))[0][0]
+    partner_residency = (('In this community', u'In this community'), ('On farm/cattle post', u'On farm/cattle post'), ('Outside this community', u'Outside this community'), ("Don't want to answer", u"Don't want to answer"))[0][0]
     partner_age = 2
-    partner_gender = (('M', 'Male'), ('F', 'Female'))[0][0]
+    partner_gender = (('M', <django.utils.functional.__proxy__ object at 0x101d48910>), ('F', <django.utils.functional.__proxy__ object at 0x101d489d0>))[0][0]
     last_sex_contact = 2
     last_sex_contact_other = factory.Sequence(lambda n: 'last_sex_contact_other{0}'.format(n))
     first_sex_contact = 2
     first_sex_contact_other = factory.Sequence(lambda n: 'first_sex_contact_other{0}'.format(n))
     regular_sex = 2
-    having_sex_reg = (('All of the time', <django.utils.functional.__proxy__ object at 0x103a16c50>), ('Sometimes', <django.utils.functional.__proxy__ object at 0x103a16cd0>), ('Never', <django.utils.functional.__proxy__ object at 0x103a16d50>))[0][0]
-    alcohol_before_sex = (('Yes', 'Yes'), ('No', 'No'), ('REF', 'Refused to answer'))[0][0]
-    partner_status = (('POS', 'Positive'), ('NEG', 'Negative'), ('UNKNOWN', 'Unknown'))[0][0]
+    having_sex_reg = (('All of the time', u'All of the time'), ('Sometimes', u'Sometimes'), ('Never', u'Never'))[0][0]
+    alcohol_before_sex = (('Yes', <django.utils.functional.__proxy__ object at 0x101d48f50>), ('No', <django.utils.functional.__proxy__ object at 0x101d48fd0>), ('REF', <django.utils.functional.__proxy__ object at 0x101d52090>))[0][0]
+    partner_status = (('POS', <django.utils.functional.__proxy__ object at 0x101d48cd0>), ('NEG', <django.utils.functional.__proxy__ object at 0x101d48d50>), ('UNKNOWN', <django.utils.functional.__proxy__ object at 0x101d48dd0>))[0][0]

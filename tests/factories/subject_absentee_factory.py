@@ -12,4 +12,4 @@ class SubjectAbsenteeFactory(BaseUuidModelFactory):
     household_member = factory.SubFactory(HouseholdMemberFactory)
     report_datetime = datetime.today()
     survey = factory.SubFactory(SurveyFactory)
-    subject_absentee_status = (('ABSENT', 'Absent'), ('NOT_ABSENT', 'No longer absent'))[0][0]
+    subject_absentee_status = (('ABSENT', u'Absent'), ('NOT_ABSENT', u'No longer absent'))[0][0]
