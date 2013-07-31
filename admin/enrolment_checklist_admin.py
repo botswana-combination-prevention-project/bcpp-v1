@@ -21,6 +21,8 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "community_resident")
 
     radio_fields = {
+        "is_dob_estimated": admin.VERTICAL,
+        "gender": admin.VERTICAL,
         "mental_capacity": admin.VERTICAL,
         "incarceration": admin.VERTICAL,
         "citizen": admin.VERTICAL,
