@@ -6,9 +6,10 @@ from bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
 from bhp_crypto.fields import EncryptedCharField
 from bcpp_subject.models import SubjectVisit
 from bcpp_subject.managers import ScheduledModelManager
+from subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class SubjectLocator(BaseLocator):
+class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
     
