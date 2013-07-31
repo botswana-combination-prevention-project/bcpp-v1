@@ -137,6 +137,19 @@ margin: 0 0.15em;
     margin:5px;
     border-radius:5px;
 }
+
+#gps_search_tile {
+    float:left;
+    width:auto;
+    background:#FFFFEC;
+    border: 1px solid #EEEEAA;
+    padding: 2px;
+    height:30px;
+    margin:5px;
+    border-radius:5px;
+}
+
+
 #search_tile {
     float:right;
     width:auto;

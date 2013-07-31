@@ -204,12 +204,12 @@ class BaseSectionView(object):
 # 1.5    def get(self, request, *args, **kwargs):
 #            self._view(request, *args, **kwargs)
 
-    def _contribute_to_context(self, context):
+    def _contribute_to_context(self, context, request, *args, **kwargs):
         """Wraps :func:`contribute_to_context`."""
-        context = self.contribute_to_context(context)
+        context = self.contribute_to_context(context, request, *args, **kwargs)
         return context
 
-    def contribute_to_context(self, context):
+    def contribute_to_context(self, context, request, *args, **kwargs):
         """Users may override to update the template context with {key, value} pairs."""
         return context
 
@@ -267,7 +267,7 @@ class BaseSectionView(object):
             'search_result': search_result,
             'search_result_include_file': search_result_include_file,
             }
-        context = self._contribute_to_context(default_context)
+        context = self._contribute_to_context(default_context, request, **kwargs)
         return render_to_response(self.get_template(), context, context_instance=RequestContext(request))
 
     def _view(self, request, *args, **kwargs):
