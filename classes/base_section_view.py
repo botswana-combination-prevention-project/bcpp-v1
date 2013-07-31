@@ -228,7 +228,8 @@ class BaseSectionView(object):
         """Returns the template that displays the section\'s search_result.
 
         Users may override"""
-        return None
+        searcher_cls = site_search.get(self.get_search_type(self.get_section_name()))
+        return searcher_cls().get_search_result_include_template()
 
     def _get_search_result(self, request, **kwargs):
         """Wraps the user method :func:`get_search_result` to return a search result or calls the default method :func:`get_default_search_result`."""
@@ -316,6 +317,7 @@ class BaseSectionView(object):
             'search_result': self._paginate(self._get_search_result(request, **kwargs), page),
             'search_result_include_file': self._get_search_result_include_template(),
             }
+        # add extra values to the context dictionary
         context = self._contribute_to_context(default_context, request, **kwargs)
         return render_to_response(self.get_template(), context, context_instance=RequestContext(request))
 
