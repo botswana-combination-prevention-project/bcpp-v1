@@ -2,7 +2,8 @@ from vtown import geo                   # pip install geo-utils or download at h
 from vtown.geo.polygon import Polygon   # pip install geo-utils or download at https://pypi.python.org/pypi/geo-utils
 import math
 
-import geopy.distance
+from geopy import distance
+from geopy import Point
 from datetime import date, timedelta
 from django.utils.encoding import smart_str
 from bhp_base_model.models import BaseUuidModel
@@ -375,7 +376,7 @@ class Mapper(object):
             payload.append([item.lon, item.lat, identifier_label, icon, other_identifier_label])
         return payload
 
-    def gps_validator(self, lat, lon, center_lat=None, center_lon=None, radius=None, location_boundary=None):
+    def gps_validator(self, lat, lon, center_lat=None, center_lon=None, radius=None):
         """Check if a GPS point is within the boundaries of a community
 
         This method uses geopy.distance and geopy.Point libraries to calculate the distance betweeen two points
@@ -387,15 +388,9 @@ class Mapper(object):
         center_lat = center_lat or self.get_gps_center_lat()
         center_lon = center_lon or self.get_gps_center_lon()
         radius = radius or self.get_radius()
-        location_boundary = location_boundary or self.location_boundary
-        pt1 = geopy.Point(center_lat, center_lon)
-        pt2 = geopy.Point(lat, lon)
-        dist = geopy.distance.distance(pt1, pt2).km
-        polygon_array = ()
-        for point in location_boundary:
-            polygon_array = polygon_array + (geo.LatLon(float(point[0]), float(point[1])),)
-        polygon = Polygon(*polygon_array)
-        assert polygon.contains(pt2)
+        dist = self.distance_between_points(lat, lon, center_lat, center_lon)
+        if dist > radius:
+            raise MapperError('Your GPS coordinate is not within the boundary its supposed to be, please check your GPS points again')
         return dist
 
     def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
@@ -404,9 +399,9 @@ class Mapper(object):
         This method return the distance between two GPS points and returns the distance in kilometers.
             Make sure geopy is installed.
         """
-        pt1 = geopy.Point(current_position_lat, current_position_lon)
-        pt2 = geopy.Point(lat, lon)
-        dist = geopy.distance.distance(pt1, pt2).km
+        pt1 = Point(float(current_position_lat), float(current_position_lon))
+        pt2 = Point(float(lat), float(lon))
+        dist = distance.distance(pt1, pt2).km
         return dist
 
     def deg_to_dms(self, deg):
