@@ -3,15 +3,21 @@ from django.core.urlresolvers import reverse
 from bhp_common.choices import YES_NO
 from bcpp_household.choices import INFO_PROVIDER, STATUS
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
+from bcpp_household_member.managers import ContactLogManager, ContactLogItemManager
 
 
 class ContactLog(BaseDispatchSyncUuidModel):
+    
+    objects = ContactLogManager()
 
+    def natural_key(self):
+        return (self.id)
+    
     def get_absolute_url(self):
         return reverse('admin:bcpp_household_contactlog_change', args=(self.id, ))
 
     class Meta:
-        app_label = 'bcpp_household'
+        app_label = 'bcpp_household_member'
 
 
 class ContactLogItem(BaseDispatchSyncUuidModel):
@@ -53,5 +59,10 @@ class ContactLogItem(BaseDispatchSyncUuidModel):
         null=True,
         )
 
+    objects = ContactLogItemManager()
+
+    def natural_key(self):
+        return (self.contact_datetime, ) + self.contact_log.natural_key()
+    
     class Meta:
-        app_label = 'bcpp_household'
+        app_label = 'bcpp_household_member'
