@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from bhp_sync.models import BaseSyncUuidModel
 from base_sequence import BaseSequence
+from bhp_identifier.managers import IdentifierManager
 
 
 class BaseIdentifierModel(BaseSyncUuidModel):
@@ -45,6 +46,11 @@ class BaseIdentifierModel(BaseSyncUuidModel):
             return ''
         return str(self.sequence_number).rjust(self.padding, '0')
 
+    objects = IdentifierManager()
+    
+    def natural_key(self):
+        return (self.identifier, self.device_id, )
+    
     def __unicode__(self):
         return self.identifier
 
