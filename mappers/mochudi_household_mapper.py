@@ -1,6 +1,6 @@
 from bhp_map.classes import site_mappers
 from base_household_mapper import BaseHouseholdMapper
-from bcpp_household.choices import MOCHUDI_SECTIONS, MOCHUDI_SUB_SECTIONS, MOCHUDI_LANDMARKS
+from mochudi_choices import MOCHUDI_SECTIONS, MOCHUDI_SUB_SECTIONS, MOCHUDI_LANDMARKS
 
 
 class MochudiHouseholdMapper(BaseHouseholdMapper):
@@ -24,5 +24,5 @@ class MochudiHouseholdMapper(BaseHouseholdMapper):
                         [-24.381264245888335, 26.184968948364258], [-24.363641549074845, 26.20018543518802], [-24.35898206714331, 26.197586059570312],
                         [-24.354056003216844, 26.182308197021484], [-24.34714566073864, 26.161934705225462], [-24.349755314471462, 26.13776206970215],
                         [-24.36573872359394, 26.122189151045745], [-24.390254188712102, 26.131668090820312])
-    
+
 site_mappers.register(MochudiHouseholdMapper)
