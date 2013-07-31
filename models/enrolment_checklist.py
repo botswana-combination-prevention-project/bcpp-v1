@@ -1,5 +1,6 @@
 from uuid import uuid4
 from django.db import models
+from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.validators import eligible_if_yes, eligible_if_no
 from bhp_common.choices import YES_NO, YES_NO_REFUSED
@@ -135,6 +136,11 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Household, 'household_member__household_structure__household__household_identifier')
+
+    def composition(self):
+        url = reverse('household_dashboard_url', args=('household', self.household_member.household_structure.pk))
+        return """<a href="{url}" />composition</a>""".format(url=url)
+    composition.allow_tags = True
 
     class Meta:
         app_label = "bcpp_household_member"

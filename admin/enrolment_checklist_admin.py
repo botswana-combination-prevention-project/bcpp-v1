@@ -20,6 +20,18 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "citizen",
         "community_resident")
 
+    list_display = (
+        'household_member',
+        'composition',
+        "report_datetime",
+        'eligible',
+        )
+
+    list_filter = [
+        'eligible',
+        "report_datetime",
+        ]
+
     radio_fields = {
         "is_dob_estimated": admin.VERTICAL,
         "gender": admin.VERTICAL,
