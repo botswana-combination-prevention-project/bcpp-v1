@@ -38,4 +38,8 @@ class SectionHouseholdView(BaseSectionView):
         #context.add({'search_result': search_result})
         return context
 
+    def get_search_result(self, request, **kwargs):
+        """Users may override to return an iterable search result."""
+        return []
+
 site_sections.register(SectionHouseholdView)
