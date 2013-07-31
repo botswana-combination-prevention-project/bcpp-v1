@@ -1,5 +1,5 @@
-from vtown import geo                   #pip install geo-utils or download at https://pypi.python.org/pypi/geo-utils
-from vtown.geo.polygon import Polygon   #pip install geo-utils or download at https://pypi.python.org/pypi/geo-utils
+from vtown import geo                   # pip install geo-utils or download at https://pypi.python.org/pypi/geo-utils
+from vtown.geo.polygon import Polygon   # pip install geo-utils or download at https://pypi.python.org/pypi/geo-utils
 import math
 
 import geopy.distance
@@ -384,7 +384,6 @@ class Mapper(object):
 
         The community_radius, community_center_lat and community_center_lon are from the Mapper class of each community.
         """
-        
         center_lat = center_lat or self.get_gps_center_lat()
         center_lon = center_lon or self.get_gps_center_lon()
         radius = radius or self.get_radius()
@@ -411,11 +410,6 @@ class Mapper(object):
         dist = geopy.distance.distance(pt1, pt2).km
         return dist
 
-    def verify_gps_location(self, lat, lon):
-        """Verifies that given lat, lon occur within the community area."""
-        return self.gps_validator(lat, lon)
-    
-    
     def deg_to_dms(self, deg):
         """Convert a latitude or longitude into degree minute GPS format
         """
@@ -426,27 +420,61 @@ class Mapper(object):
             d = -d
             m = -m
         return [d, m]
-    
+
     def get_cardinal_point_direction(self, start_lat, start_lon, end_lat, end_lon):
-        """Calculate the angle/Bearing of direction between two points on the earth.
-        
+        """Calculates the angle/Bearing of direction between two points on the earth and returns the distance between two points and the cardinal points direction.
+
         This method is for the initial bearing which if followed in a straight line
-            along a great-circle arc will take you from the start point to the end point.
+        along a great-circle arc will take you from the start point to the end point.
         """
         dist = self.distance_between_points(start_lat, start_lon, end_lat, end_lon)
         dlon = math.radians(end_lon - start_lon)
         start_lat = math.radians(start_lat)
         end_lat = math.radians(end_lat)
-        
         y = math.sin(dlon) * math.cos(end_lat)
         x = math.cos(start_lat) * math.sin(end_lat) - math.sin(start_lat) * math.cos(end_lat) * math.cos(dlon)
         brng = math.degrees(math.atan2(y, x))
-        
         bearings = ["NE", "E", "SE", "S", "SW", "W", "NW", "N"]
         index = brng - 22.5
         if (index < 0):
             index += 360
         index = int(index / 45)
-        
-        return(round(dist, 3), bearings[index])     #Returns the distance between two points and the cardinal points direction
-        
+
+        return(round(dist, 3), bearings[index])
+
+    def _get_gps(self, direction, d=None, m=None):
+        """Converts GPS degree/minutes to latitude or longitude."""
+        dct = {'s': 1, 'e': -1}
+        if direction not in dct.keys():
+            raise TypeError('Direction must be one of {0}. Got {1}.'.format(dct.keys(), direction))
+        d = d or self.gps_degrees_s
+        m = m or self.gps_minutes_s
+        if d and m:
+            d = float(d)
+            m = float(m)
+            return dct[direction] * round((d) + (m / 60), 5)
+        return None
+
+    def get_gps_lat(self, d=None, m=None):
+        """Converts degree/minutes S to latitude."""
+        self._get_gps('s', d, m)
+
+    def get_gps_lon(self, d=None, m=None):
+        """Converts degree/minutes E to longitude."""
+        self._get_gps('e', d, m)
+
+    def verify_gps_location(self, lat, lon, exception_cls):
+        """Verifies that given lat, lon occur within the community area and raises an exception if not.
+
+        Wrapper for :func:`gps_validator`"""
+        if not self.gps_validator(lat, lon):
+            raise exception_cls('The location (GPS {0} {1}) does not fall within this community.'.format(lat, lon))
+        return True
+
+    def verify_gps_to_target(self, lat, lon, center_lat, center_lon, radius, exception_cls):
+        """Verifies the gps lat, lon occur within a radius of the target lat/lon and raises an exception if not.
+
+        Wrapper for :func:`gps_validator`"""
+        if not self.gps_validator(lat, lon, center_lat, center_lon, radius):
+            raise exception_cls('GPS {0} {1} is more than {2} meters from the target location.'.format(lat, lon, radius * 1000))
+        return True
