@@ -42,8 +42,8 @@ class SectionHouseholdView(BaseSectionView):
             if gps_form.is_valid():
                 degrees_s = gps_form.cleaned_data.get('degrees_s')
                 degrees_e = gps_form.cleaned_data.get('degrees_e')
-                minutes_s = gps_form.cleaned_data.get('minutes_s')
-                minutes_e = gps_form.cleaned_data.get('minutes_e')
+                minutes_s = float('.{0}'.format(gps_form.cleaned_data.get('minutes_s')))
+                minutes_e = float('.{0}'.format(gps_form.cleaned_data.get('minutes_e')))
                 radius = gps_form.cleaned_data.get('radius') / 1000
                 community = gps_form.cleaned_data.get('community')
                 mapper = site_mappers.get(community)()
