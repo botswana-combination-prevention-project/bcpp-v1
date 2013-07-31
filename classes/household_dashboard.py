@@ -156,7 +156,7 @@ class HouseholdDashboard(Dashboard):
         self._household_members = HouseholdMember.objects.filter(
             household_structure__household=self.get_household(),
             household_structure__survey=self.get_survey(),
-            ).order_by('household_structure', 'first_name')
+            ).order_by('first_name')
 
     def get_household_members(self):
         if not self._household_members:
