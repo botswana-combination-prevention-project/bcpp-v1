@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 14:45+0200\n"
-"PO-Revision-Date: 2013-07-30 14:48+0200\n"
+"POT-Creation-Date: 2013-07-31 17:23+0200\n"
+"PO-Revision-Date: 2013-07-30 15:03+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -559,7 +559,7 @@ msgstr "O na le mogare (positive)"
 
 #: bcpp/choices.py:212 bcpp/choices.py:234 bcpp/choices.py:250
 msgid "HIV Negative (Non-reactive)"
-msgstr "Negative"
+msgstr "Ga o na mogare (negative)"
 
 #: bcpp/choices.py:213 bcpp/choices.py:235 bcpp/choices.py:251
 msgid "Indeterminate"
@@ -999,8 +999,8 @@ msgstr "Go tsaya lebaka le le leele go fola"
 #: bcpp/choices.py:558
 msgid "It will be hard to not have sex or masturbate for 6 weeks"
 msgstr ""
-"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora bonna"
-"( masturbate) beke tse thatataro"
+"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora "
+"bonna( masturbate) beke tse thatataro"
 
 #: bcpp/choices.py:559
 msgid "Sex might not feel the same"
@@ -1302,8 +1302,8 @@ msgstr "Ke na le bothatanyana bo se kae le go itlhapisa kgotsa go ikapesa"
 #: bcpp/choices.py:726 bcpp_subject/choices.py:71
 msgid "I have moderate problems washing or dressing myself"
 msgstr ""
-"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go ikapesa"
-"(moderate)"
+"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go "
+"ikapesa(moderate)"
 
 #: bcpp/choices.py:727 bcpp_subject/choices.py:72
 msgid "I have severe problems washing or dressing myself"
@@ -1773,11 +1773,11 @@ msgstr "Ke na le letshogo la go gore e tla seke e nne sephiri"
 msgid "Household identifier"
 msgstr "Household identifier"
 
-#: bcpp_household/models/household.py:117
+#: bcpp_household/models/household.py:119
 msgid "provide the CSO number or leave BLANK."
 msgstr "provide the CSO number or leave BLANK."
 
-#: bcpp_household/models/household.py:149
+#: bcpp_household/models/household.py:151
 msgid "You may provide a comment here or leave BLANK."
 msgstr "You may provide a comment here or leave BLANK."
 
@@ -2783,11 +2783,11 @@ msgstr ""
 "tswa mo tirong e o e dirileng kgotsa tuelo e o e amogetseng[ madi a go "
 "tlogela tiro, madi a tlhokomelo ya bana, dijo tsa mophako]"
 
-#: bcpp_subject/models/future_hiv_testing.py:19
+#: bcpp_subject/models/future_hiv_testing.py:20
 msgid "In the future, where would you prefer to get tested for HIV?"
 msgstr "Mo nakong e e tlang o tla batla go tlhatlhobelwa HIV kae?"
 
-#: bcpp_subject/models/future_hiv_testing.py:27
+#: bcpp_subject/models/future_hiv_testing.py:28
 msgid ""
 "In the future, is there a particular time of day that you would prefer to "
 "receive your next HIV test ?"
@@ -2795,13 +2795,13 @@ msgstr ""
 "Mo nakong e e tlang, a go na le nako e e rileng mo letsatsing e o tla ratang "
 "go tlhatlhobela HIV ka yone ?"
 
-#: bcpp_subject/models/future_hiv_testing.py:35
-#: bcpp_subject/models/future_hiv_testing.py:48
-#: bcpp_subject/models/future_hiv_testing.py:61
+#: bcpp_subject/models/future_hiv_testing.py:36
+#: bcpp_subject/models/future_hiv_testing.py:49
+#: bcpp_subject/models/future_hiv_testing.py:62
 msgid "If yes, specify:"
 msgstr "Ee, tlhalosa:"
 
-#: bcpp_subject/models/future_hiv_testing.py:40
+#: bcpp_subject/models/future_hiv_testing.py:41
 msgid ""
 "In the future, is there a particular day of the week that you would prefer "
 "to receive your next HIV test ?"
@@ -2809,7 +2809,7 @@ msgstr ""
 "Mo nakong e e tlang, a go na le letsatsi la beke le le rileng le o tla "
 "ratang go tlhatlhobelwa HIV ka lone?"
 
-#: bcpp_subject/models/future_hiv_testing.py:53
+#: bcpp_subject/models/future_hiv_testing.py:54
 msgid ""
 "In the future, is there a particular time of year that you would prefer to "
 "receive your next HIV test?"
@@ -2817,11 +2817,11 @@ msgstr ""
 "Mo nakong e e tlang, a go na le nako e e rileng mo ngwageng e o tla ratang "
 "go tlhatlhobelwa HIV ka yone?"
 
-#: bcpp_subject/models/grant.py:15
+#: bcpp_subject/models/grant.py:16
 msgid "How many of each type of grant do you receive?"
 msgstr "Mo lenaneong lengwe le lengwe o amogela di le kae?"
 
-#: bcpp_subject/models/grant.py:19
+#: bcpp_subject/models/grant.py:20
 msgid "Grant name"
 msgstr "Leina la lenaneo"
 
@@ -3069,8 +3069,8 @@ msgid ""
 "If you were not tested for HIV in the 12 months prior to today, what is the "
 "main reason why not?"
 msgstr ""
-"If you were not tested for HIV in the 12 months prior to today, what is the "
-"main reason why not?"
+"Fa o ne o sa tlhatlhobelwa HIV mo dikgweding tse di lesome le bobedi pele fa tsatsi"
+"jeno, lebaka ke eng?"
 
 #: bcpp_subject/models/medical_diagnoses.py:15
 msgid ""
@@ -3427,7 +3427,7 @@ msgstr ""
 "Batho ba ba nang le mogare wa HIV ba na le bothata ja madi go ka itlhokomela "
 "kgotsa go tlhokomela ba malapa a bone"
 
-#: bcpp_subject/models/subject_consent.py:20
+#: bcpp_subject/models/subject_consent.py:21
 msgid "Is subject a minor?"
 msgstr "Is subject a minor?"
 
