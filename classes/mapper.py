@@ -376,7 +376,7 @@ class Mapper(object):
             payload.append([item.lon, item.lat, identifier_label, icon, other_identifier_label])
         return payload
 
-    def gps_validator(self, lat, lon, center_lat=None, center_lon=None, radius=None):
+    def gps_distance_between_points(self, lat, lon, center_lat=None, center_lon=None, radius=None):
         """Check if a GPS point is within the boundaries of a community
 
         This method uses geopy.distance and geopy.Point libraries to calculate the distance betweeen two points
@@ -388,19 +388,8 @@ class Mapper(object):
         center_lat = center_lat or self.get_gps_center_lat()
         center_lon = center_lon or self.get_gps_center_lon()
         radius = radius or self.get_radius()
-        dist = self.distance_between_points(lat, lon, center_lat, center_lon)
-        if dist > radius:
-            raise MapperError('Your GPS coordinate is not within the boundary its supposed to be, please check your GPS points again')
-        return dist
-
-    def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
-        """Calculate distance between two GPS coordinates.
-
-        This method return the distance between two GPS points and returns the distance in kilometers.
-            Make sure geopy is installed.
-        """
-        pt1 = Point(float(current_position_lat), float(current_position_lon))
-        pt2 = Point(float(lat), float(lon))
+        pt1 = Point(float(lat), float(lon))
+        pt2 = Point(float(center_lat), float(center_lon))
         dist = distance.distance(pt1, pt2).km
         return dist
 
@@ -457,7 +446,7 @@ class Mapper(object):
         """Verifies that given lat, lon occur within the community area and raises an exception if not.
 
         Wrapper for :func:`gps_validator`"""
-        if not self.gps_validator(lat, lon):
+        if not self.gps_distance_between_points(lat, lon):
             raise exception_cls('The location (GPS {0} {1}) does not fall within this community.'.format(lat, lon))
         return True
 
@@ -465,7 +454,7 @@ class Mapper(object):
         """Verifies the gps lat, lon occur within a radius of the target lat/lon and raises an exception if not.
 
         Wrapper for :func:`gps_validator`"""
-        dist = self.gps_validator(lat, lon, center_lat, center_lon, radius)
+        dist = self.gps_distance_between_points(lat, lon, center_lat, center_lon, radius)
         if dist > radius:
             raise exception_cls('GPS {0} {1} is more than {2} meters from the target location.'.format(lat, lon, radius * 1000))
         return True
