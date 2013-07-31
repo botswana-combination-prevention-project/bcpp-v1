@@ -130,11 +130,10 @@ class BaseSearch(object):
             if 'MOST_RECENT_LIMIT' in dir(settings):
                 limit = settings.MOST_RECENT_LIMIT
             else:
-                limit = 10
+                limit = 15
         if limit > 0:
             model_cls = self.get_search_model_cls()
-            search_result = model_cls.objects.all().order_by('-created')[0:limit]
-            return self._paginate(search_result, page)
+            return model_cls.objects.all().order_by('-created')[0:limit]
         return None
 
     def search(self, request, page=1, results_per_page=None):
@@ -146,17 +145,19 @@ class BaseSearch(object):
         """
         search_result = self._get_search_result(request)
         if search_result:
+            # TODO: this does not make it to section (updated context etc.)
             count = search_result.count()
-            search_result = self._paginate(search_result, page, results_per_page)
+            paged_search_result = self._paginate(search_result, page, results_per_page)
             # Make sure page request is an int. If not, deliver first page.
             self.update_context(page=page)
             # If page request (9999) is out of range, deliver last page of results.
-            self.update_context(search_result=search_result)
+            self.update_context(search_result=paged_search_result)
             self.update_context(count=count)
             # remove page= from GET url
             self.context.update({'magic_url': re.sub('\&page=\d+|\?page=\d+\&', '',
                                                  self.context.get('magic_url'))})
         else:
+            # TODO: this does not make it to section (updated context etc.)
             self.update_context(search_result=None)
             self.update_context(search_result_title='No matching records')
             self.update_context(count=0)
