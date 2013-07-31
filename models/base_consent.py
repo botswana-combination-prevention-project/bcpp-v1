@@ -1,5 +1,6 @@
 import re
 from django.db import models
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
@@ -133,6 +134,14 @@ class BaseConsent(BaseSubject):
         blank=True,
         #default='Yes',
         help_text="If no, INELIGIBLE",
+        )
+
+    language = models.CharField(
+        verbose_name='Language of consent',
+        max_length=25,
+        choices=settings.LANGUAGES,
+        default='not specified',
+        help_text='The language used for the consent process will also be used during data collection.'
         )
 
     is_verified = models.BooleanField(default=False, editable=False)

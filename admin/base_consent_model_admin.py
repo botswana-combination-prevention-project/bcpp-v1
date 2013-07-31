@@ -16,6 +16,7 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
         self.list_filter = [
             'gender',
             'is_verified',
+            'language',
             'may_store_samples',
             'study_site',
             'is_literate',
@@ -30,6 +31,7 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'first_name',
             'last_name',
             'initials',
+            'language',
             'is_literate',
             'witness_name',
             'consent_datetime',
@@ -50,6 +52,7 @@ class BaseConsentModelAdmin(BaseCryptorModelAdmin):
             'consent_copy']
 
         self.radio_fields = {
+            "language": admin.VERTICAL,
             "gender": admin.VERTICAL,
             "study_site": admin.VERTICAL,
             "is_dob_estimated": admin.VERTICAL,
