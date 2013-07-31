@@ -2,5 +2,9 @@
 
 {% block gps_search %}
 <div id="gps_search_tile">
-put gps search here
-</div>{% endblock %}
+	<form action="" method="get">
+		{{ gps_form }}
+		<input type="submit" value="gps_search">
+	</form>
+</div>
+{% endblock %}

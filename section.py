@@ -4,6 +4,7 @@ from bhp_map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
 from models import Household
 from forms import CommunityForm
+from bcpp_household.forms.current_gps_form import CurrentGpsForm
 
 
 site_mappers.autodiscover()
@@ -30,7 +31,8 @@ class SectionHouseholdView(BaseSectionView):
             community_form = None
         else:
             community_form = CommunityForm()
-        context.update({'community_form': community_form, 'current_community': current_community})
+        gps_form = CurrentGpsForm()
+        context.update({'community_form': community_form, 'current_community': current_community, 'gps_form': gps_form})
 
         # handle gps search
         # search_result = 
@@ -40,6 +42,7 @@ class SectionHouseholdView(BaseSectionView):
 
     def get_search_result(self, request, **kwargs):
         """Users may override to return an iterable search result."""
+        print "request after form submission %s" % request
         return []
 
 site_sections.register(SectionHouseholdView)
