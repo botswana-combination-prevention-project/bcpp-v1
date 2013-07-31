@@ -2,6 +2,7 @@ import re
 from datetime import datetime, date
 #from django.views.base import View  # for 1.5
 from django.conf.urls.defaults import patterns, url
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -213,6 +214,57 @@ class BaseSectionView(object):
         """Users may override to update the template context with {key, value} pairs."""
         return context
 
+    def get_search_result_include_template(self):
+        """Returns the template that displays the section\'s search_result.
+
+        Users may override"""
+        searcher_cls = site_search.get(self.get_search_type(self.get_section_name()))
+        return searcher_cls().get_include_template_file()
+
+    def _get_search_result(self, request, **kwargs):
+        """Wraps the user method :func:`get_search_result` to return a search result or calls the default method :func:`get_default_search_result`."""
+        search_result = self.get_search_result(request, **kwargs)
+        if not search_result:
+            search_result = self.get_default_search_result(request, **kwargs)
+        return search_result
+
+    def get_search_result(self, request, **kwargs):
+        """Users may override to return an iterable search result."""
+        return []
+
+    def get_default_search_result(self, request, **kwargs):
+        """Returns a default search result if :func:`get_search_result` returns None."""
+        search_result = None
+        if self.get_search_type(self.get_section_name()):
+            searcher_cls = site_search.get(self.get_search_type(self.get_section_name()))
+            searcher = searcher_cls()
+            searcher.prepare(request, **kwargs)
+            page = request.GET.get('page', '1')
+            if searcher.form_is_valid:
+                search_result = searcher.search(request, page)
+            if not search_result:
+                search_result = searcher.get_most_recent(page)
+        return search_result
+
+    def _paginate(self, search_result, page=1, results_per_page=None):
+        """Paginates the search result queryset after which templates
+        access search_result.object_list.
+
+        Also sets the 'magic_url' for previous/next paging urls
+
+        Keyword Arguments:
+            results_per_page: (default: 25)
+        """
+        if not results_per_page:
+            results_per_page = 25
+        if search_result:
+            paginator = Paginator(search_result, results_per_page)
+            try:
+                search_result = paginator.page(page)
+            except (EmptyPage, InvalidPage):
+                search_result = paginator.page(paginator.num_pages)
+        return search_result
+
     def view(self, request, *args, **kwargs):
         """Default view for this section called by :func:`_view`.
 
@@ -237,19 +289,8 @@ class BaseSectionView(object):
         """
         self.set_section_name(kwargs.get('section_name'))
         search_term = kwargs.get('search_term', '')
-        self.set_search_type(self.get_section_name(), kwargs.get('search_type'))
-        search_result = None
-        search_result_include_file = None
-        if self.get_search_type(self.get_section_name()):
-            searcher_cls = site_search.get(self.get_search_type(self.get_section_name()))
-            searcher = searcher_cls()
-            search_result_include_file = searcher.get_include_template_file()
-            searcher.prepare(request, **kwargs)
-            page = request.GET.get('page', '1')
-            if searcher.form_is_valid:
-                search_result = searcher.search(request, page)
-            if not search_result:
-                search_result = searcher.get_most_recent(page)
+        self._get_search_result(request, **kwargs)
+        page = kwargs.get('page', 1)
         default_context = {
             'app_name': settings.APP_NAME,
             'installed_apps': settings.INSTALLED_APPS,
@@ -264,8 +305,8 @@ class BaseSectionView(object):
             'add_model_opts': self.get_add_model_opts(),
             'add_model_name': self.get_add_model_name(),
             'search_model_admin_url': 'url',
-            'search_result': search_result,
-            'search_result_include_file': search_result_include_file,
+            'search_result': self._paginate(self._get_search_result(request, **kwargs), page),
+            'search_result_include_file': self.get_search_result_include_template(),
             }
         context = self._contribute_to_context(default_context, request, **kwargs)
         return render_to_response(self.get_template(), context, context_instance=RequestContext(request))
