@@ -49,7 +49,8 @@ class SiteMixin (object):
 
         http_response_redirect = super(SiteMixin, self).response_add(request, obj, post_url_continue)
         if '_savenext' in request.POST:
-            raise TypeError('Save next button is not currently in use. Click Save')
+            pass
+            #raise TypeError('Save next button is not currently in use. Click Save')
         if not '_addanother' in request.POST and not '_continue' in request.POST:
             if request.GET.get('next'):
                 try:
@@ -67,6 +68,7 @@ class SiteMixin (object):
                         del kwargs['csrfmiddlewaretoken']
                     http_response_redirect = HttpResponseRedirect(reverse(request.GET.get('next'), kwargs=kwargs))
                 except NoReverseMatch:
+                    raise NoReverseMatch('response_add failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs))
                     logger.warning('Warning: response_add failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs))
                     pass
                 except:
