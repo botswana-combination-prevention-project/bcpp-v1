@@ -1,6 +1,6 @@
 from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
 from bhp_registration.models import RegisteredSubject
-from models import (SubjectVisit, ResourceUtilization, HivTestingHistory, 
+from models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision, 
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses)
 
@@ -57,6 +57,27 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivresultdocumentation'])
+    
+    verbal_hiv_result = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
+ 
+    verbal_response = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'NEG'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['futurehivtesting','stigma', 'stigmaopinion'])
+    
+    other_response = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'or')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
 
 
     class Meta:
@@ -64,6 +85,36 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = HivTestingHistory
 rule_groups.register(HivTestingHistoryRuleGroup)
+
+
+class HivTestReviewRuleGroup(RuleGroup):
+
+    recorded_hiv_result = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivcareadherence','positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
+
+    recorded_hivresult = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'equals', 'NEG'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['futurehivtesting','stigma', 'stigmaopinion'])
+    
+    other_responses = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'or')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivTestReview
+rule_groups.register(HivTestReviewRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
@@ -85,16 +136,16 @@ class SexualBehaviourRuleGroup(RuleGroup):
     partners = ScheduledDataRule(
         logic=Logic(
             predicate=('last_year_partners', 'equals', 1),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['monthssecondpartner', 'monthsthirdpartner'])
+            consequence='new',
+            alternative='not_required'),
+        target_model=['monthsrecentpartner'])
     
     last_year_partners = ScheduledDataRule(
         logic=Logic(
             predicate=('last_year_partners', 'equals', 2),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['monthsthirdpartner'])
+            consequence='new',
+            alternative='not_required'),
+        target_model=['monthsrecentpartner', 'monthssecondpartner'])
     
     more_partners = ScheduledDataRule(
         logic=Logic(
@@ -181,7 +232,6 @@ class FemaleReproductiveRuleGroup(RuleGroup):
 rule_groups.register(FemaleReproductiveRuleGroup)
 
 
-
 class ReproductiveRuleGroup(RuleGroup):
 
     menopause = ScheduledDataRule(
@@ -211,68 +261,6 @@ class ReproductiveRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = ReproductiveHealth
 rule_groups.register(ReproductiveRuleGroup)
-
-
-
-class StigmaPositiveARuleGroup(RuleGroup):
-
-    hiv_result = ScheduledDataRule(
-        logic=Logic(
-            predicate=('hiv_result', 'equals', 'Positive'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
-
-    HH_hivtest = ScheduledDataRule(
-        logic=Logic(
-            predicate=('hiv_result', 'equals', 'Negative'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['futurehivtesting','stigma', 'stigmaopinion'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
-        source_model = HivTestingHistory
-rule_groups.register(StigmaPositiveARuleGroup)
-
-
-class StigmaPositiveBRuleGroup(RuleGroup):
-
-    recorded_hiv_result = ScheduledDataRule(
-        logic=Logic(
-            predicate=('recorded_hiv_result', 'equals', 'HIV-Positive'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivcareadherence','positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
-    
-    verbal_hiv_result = ScheduledDataRule(
-        logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'HIV-Positive'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
-
-    recorded_hivresult = ScheduledDataRule(
-        logic=Logic(
-            predicate=('recorded_hiv_result', 'equals', 'HIV-Negative'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['futurehivtesting','stigma', 'stigmaopinion'])
-
-    verbal_hivresult = ScheduledDataRule(
-        logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'HIV-Negative'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['futurehivtesting','stigma', 'stigmaopinion'])
-
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
-        source_model = HivTestReview
-rule_groups.register(StigmaPositiveBRuleGroup)
 
 
 class MedicalDiagnosesRuleGroup(RuleGroup):
@@ -310,4 +298,3 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = MedicalDiagnoses
 rule_groups.register(MedicalDiagnosesRuleGroup)
-
