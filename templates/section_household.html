@@ -38,7 +38,7 @@
         <div id="search_tile">
         <form method="POST" action="{% url 'section_search_url' section_name search_type %}">
         {% csrf_token %}
-        <input type="text" name="search_term" value="{{ search_term }}">&nbsp;<input type="submit" value="Search">
+        <input class="search_form" type="text" name="search_term" value="{{ search_term }}">&nbsp;<input type="submit" value="Search">
         </form></div>
     {% endblock %}
     {% if search_result %}
