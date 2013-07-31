@@ -5,6 +5,7 @@ from bhp_common.choices import YES_NO
 from bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
 from bhp_crypto.fields import EncryptedCharField
 from bcpp_subject.models import SubjectVisit
+from bcpp_subject.managers import ScheduledModelManager
 
 
 class SubjectLocator(BaseLocator):
@@ -72,7 +73,7 @@ class SubjectLocator(BaseLocator):
 
     history = AuditTrail()
 
-    objects = models.Manager()
+    objects = ScheduledModelManager()
 
     def save(self, *args, **kwargs):
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
@@ -81,6 +82,9 @@ class SubjectLocator(BaseLocator):
                 self.registered_subject = self.registered_subject = self.subject_visit.appointment.registered_subject
         super(SubjectLocator, self).save(*args, **kwargs)
 
+    def natural_key(self):
+        return self.subject_visit.natural_key()
+    
     def get_visit(self):
         return self.subject_visit
 

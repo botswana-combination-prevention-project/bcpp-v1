@@ -5,6 +5,7 @@ from audit_trail.audit import AuditTrail
 from labour_market_wages import LabourMarketWages
 from bcpp_subject.choices import GRANT_TYPE
 from base_scheduled_inline_model import BaseScheduledInlineModel
+from bcpp_subject.managers import GrantManager
 
 
 class Grant(BaseScheduledInlineModel):
@@ -24,8 +25,15 @@ class Grant(BaseScheduledInlineModel):
 
     history = AuditTrail()
 
+    objects = GrantManager()
+    
     def inline_parent(self):
         return self.labour_market_wages
+
+    def natural_key(self):
+        return (self.report_datetime, ) + self.labour_market_wages.natural_key()
+    natural_key.dependencies = ['bcpp_subject.labourmarketwages', ]
+
 
     class Meta:
         app_label = 'bcpp_subject'

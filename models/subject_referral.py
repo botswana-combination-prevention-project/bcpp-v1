@@ -45,8 +45,6 @@ class SubjectReferral(BaseRegisteredHouseholdMemberModel, BaseAppointmentMixin):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment')
         )
-    
-    objects = models.Manager()
 
     history = AuditTrail()
     
