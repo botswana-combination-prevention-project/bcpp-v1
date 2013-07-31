@@ -1,2 +1,3 @@
 from household_member_manager import HouseholdMemberManager
 from enrolment_checklist_manager import EnrolmentChecklistManager
+from contact_log_manager import ContactLogManager, ContactLogItemManager
