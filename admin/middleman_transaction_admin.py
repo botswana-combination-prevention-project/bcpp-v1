@@ -1,10 +1,10 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
-from bhp_sync.models import OutgoingTransaction
+from bhp_sync.models import MiddleManTransaction
 from bhp_sync.actions import reset_outgoing_transaction_middle_as_consumed, reset_outgoing_transaction_middle_as_not_consumed, reset_outgoing_transaction_server_as_consumed, reset_outgoing_transaction_server_as_not_consumed
 
 
-class OutgoingTransactionAdmin (BaseModelAdmin):
+class MiddleManTransactionAdmin (BaseModelAdmin):
 
     list_display = ('tx_name', 'producer', 'is_consumed_middleman' ,'is_consumed_server' , 'is_error', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
 
@@ -14,4 +14,4 @@ class OutgoingTransactionAdmin (BaseModelAdmin):
 
     actions = [reset_outgoing_transaction_middle_as_consumed, reset_outgoing_transaction_middle_as_not_consumed, reset_outgoing_transaction_server_as_consumed, reset_outgoing_transaction_server_as_not_consumed]
 
-admin.site.register(OutgoingTransaction, OutgoingTransactionAdmin)
+admin.site.register(MiddleManTransaction, MiddleManTransactionAdmin)

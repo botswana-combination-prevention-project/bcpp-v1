@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.template import RequestContext
-from bhp_sync.models import Producer, RequestLog, IncomingTransaction, OutgoingTransaction
+from bhp_sync.models import Producer, RequestLog, IncomingTransaction, OutgoingTransaction, MiddleManTransaction
 from bhp_sync.classes import TransactionProducer
 
 
@@ -24,6 +24,12 @@ def consume_transactions(request, **kwargs):
     if not 'ALLOW_MODEL_SERIALIZATION' in dir(settings):
         messages.add_message(request, messages.ERROR, 'ALLOW_MODEL_SERIALIZATION global boolean not found in settings.')
     producer = None
+    middle_man = None
+    remote_is_middleman = False
+    if 'MIDDLE_MAN' in dir(settings) and settings.MIDDLE_MAN:
+        middle_man = True
+    else:
+        middle_man = False
     if request.user:
         if not 'api_key' in dir(request.user):
             raise ValueError('ApiKey does not exist for user %s. Check if tastypie was added to installed apps or Perhaps run create_api_key().' % (request.user,))
@@ -41,9 +47,22 @@ def consume_transactions(request, **kwargs):
                     else:
                         producer = Producer.objects.get(name__iexact=kwargs.get('producer'))
                 if producer:
+                    if 'MIDDLE_MAN_LIST' in dir(settings):
+                        for middle_man_name in settings.MIDDLE_MAN_LIST:
+                            if producer.name == middle_man_name:
+                                remote_is_middleman = True
+                                break
+                    else:
+                        remote_is_middleman = False
                     # url to producer, add in the producer, username and api_key of the current user
                     data = {'host': producer.url, 'producer': producer.name, 'limit': producer.json_limit, 'username': request.user.username, 'api_key': request.user.api_key.key}
-                    url = '{host}bhp_sync/api/outgoingtransaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
+                    if remote_is_middleman:
+                        #We are pulling from a MiddleMan, we dont care who the original producer was, just grab all eligible tansanctions in MiddleManTransaction table
+                        url = '{host}bhp_sync/api_mmtr/middlemantransaction/?format=json&limit={limit}&username={username}&api_key={api_key}'.format(**data)                    
+                    else:
+                        #We are pulling from a netbook, irregardless of who we are, just grab all eligible transactions from OutgoingTransactions table
+                        #however pass the producer for filtering on the other side.
+                        url = '{host}bhp_sync/api_otr/outgoingtransaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
                     request_log = RequestLog()
                     request_log.producer = producer
                     request_log.save()
@@ -103,22 +122,58 @@ def consume_transactions(request, **kwargs):
                                     for outgoing_transaction in json_response['objects']:
                                         # save to IncomingTransaction.
                                         # this will trigger the post_save signal to deserialize tx
-                                        if not IncomingTransaction.objects.filter(pk=outgoing_transaction['id']).exists():
-                                            IncomingTransaction.objects.create(
-                                                pk=outgoing_transaction['id'],
-                                                tx_name=outgoing_transaction['tx_name'],
-                                                tx_pk=outgoing_transaction['tx_pk'],
-                                                tx=outgoing_transaction['tx'],
-                                                timestamp=outgoing_transaction['timestamp'],
-                                                producer=outgoing_transaction['producer'],
-                                                action=outgoing_transaction['action'])
+                                        #transanction_model = None
+                                        if middle_man:
+                                            #Read from Netbook's outgoing and create MiddleMan locally.
+                                            #transanction_model = MiddleManTransaction
+                                            if not MiddleManTransaction.objects.filter(pk=outgoing_transaction['id']).exists():
+                                                MiddleManTransaction.objects.create(
+                                                    pk=outgoing_transaction['id'],
+                                                    tx_name=outgoing_transaction['tx_name'],
+                                                    tx_pk=outgoing_transaction['tx_pk'],
+                                                    tx=outgoing_transaction['tx'],
+                                                    timestamp=outgoing_transaction['timestamp'],
+                                                    producer=outgoing_transaction['producer'],
+                                                    action=outgoing_transaction['action'])
+                                            else:
+                                                #transanction already exixts in the MiddleMan. This a highly unlikely outcome
+                                                #(NOTE:MiddleMan only consumes from netbook.)but if it occurs then mark it as 
+                                                #not consumed by the Server
+                                                middle_man_transaction = MiddleManTransaction.objects.get(pk=outgoing_transaction['id'])
+                                                middle_man_transaction.is_consumed_server = False
+                                                middle_man_transaction.is_error = False
+                                                middle_man_transaction.save()
                                         else:
-                                            incoming_transaction = IncomingTransaction.objects.get(pk=outgoing_transaction['id'])
-                                            incoming_transaction.is_consumed = False
-                                            incoming_transaction.is_error = False
-                                            incoming_transaction.save()
+                                            #Then i must be a SERVER
+                                            if not IncomingTransaction.objects.filter(pk=outgoing_transaction['id']).exists():
+                                                IncomingTransaction.objects.create(
+                                                    pk=outgoing_transaction['id'],
+                                                    tx_name=outgoing_transaction['tx_name'],
+                                                    tx_pk=outgoing_transaction['tx_pk'],
+                                                    tx=outgoing_transaction['tx'],
+                                                    timestamp=outgoing_transaction['timestamp'],
+                                                    producer=outgoing_transaction['producer'],
+                                                    action=outgoing_transaction['action'])
+                                            else:
+                                                #START HERE
+                                                #a little tricky cause it could be from Middleman or Netbook, depending on which was synced first
+                                                #but either way, what we want to do is ignore the tranction that already exists in the server,
+                                                #irregardles of where it comes from, it should exactly be the same transanction.
+                                                
+                                                #incoming_transaction = IncomingTransaction.objects.get(pk=outgoing_transaction['id'])
+                                                #incoming_transaction.is_consumed = False
+                                                #incoming_transaction.is_error = False
+                                                #incoming_transaction.save()
+                                                pass
                                         # POST success back to to the producer
-                                        outgoing_transaction['is_consumed'] = True
+                                        if middle_man:
+                                            outgoing_transaction['is_consumed_middleman'] = True
+                                            outgoing_transaction['is_consumed_server'] = False
+                                        else:
+                                            if not outgoing_transaction['is_consumed_middleman']:
+                                                #transanction was consumed straight in the Server, MiddleMan bypassed
+                                                outgoing_transaction['is_consumed_middleman'] = False
+                                            outgoing_transaction['is_consumed_server'] = True
                                         outgoing_transaction['consumer'] = str(TransactionProducer())
                                         req = urllib2.Request(url, json.dumps(outgoing_transaction, cls=DjangoJSONEncoder), {'Content-Type': 'application/json'})
                                         f = urllib2.urlopen(req)

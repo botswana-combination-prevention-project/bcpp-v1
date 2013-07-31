@@ -7,9 +7,9 @@ from bhp_sync.actions import reset_transaction_as_not_consumed, reset_transactio
 
 class TransactionAdmin (BaseModelAdmin):
 
-    list_display = ('tx_name', 'producer', 'is_consumed', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
+    list_display = ('tx_name', 'producer', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
 
-    list_filter = ('is_consumed', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name', 'hostname_modified')
+    list_filter = ('consumer', 'consumed_datetime', 'producer', 'action', 'tx_name', 'hostname_modified')
 
     search_fields = ('tx_pk', 'tx', 'timestamp',)
 

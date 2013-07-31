@@ -1,5 +1,5 @@
 # requires django-extensions 0.7
-from datetime import datetime
+# from datetime import datetime
 from django.db import models
 from bhp_base_model.models import BaseUuidModel
 from bhp_sync.classes import TransactionProducer
@@ -40,10 +40,10 @@ class BaseTransaction(BaseUuidModel):
         db_index=True,
         )
 
-    is_consumed = models.BooleanField(
-        default=False,
-        db_index=True,
-        )
+#     is_consumed = models.BooleanField(
+#         default=False,
+#         db_index=True,
+#         )
 
     consumed_datetime = models.DateTimeField(
         null=True,
@@ -85,8 +85,8 @@ class BaseTransaction(BaseUuidModel):
         return '{0} {1} {2}'.format(self.tx_name, self.producer, self.action)
 
     def save(self, *args, **kwargs):
-        if self.is_consumed and not self.consumed_datetime:
-            self.consumed_datetime = datetime.today()
+#         if self.is_consumed and not self.consumed_datetime:
+#             self.consumed_datetime = datetime.today()
         super(BaseTransaction, self).save(*args, **kwargs)
 
     class Meta:

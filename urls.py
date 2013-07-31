@@ -1,12 +1,16 @@
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib import admin
-from api import OutgoingTransactionResource
+from api import OutgoingTransactionResource, MiddleManTransactionResource
 
 admin.autodiscover()
+#outgoing_transaction_middle_man_resource = OutgoingTransactionMiddleManResource()
 outgoing_transaction_resource = OutgoingTransactionResource()
+middle_man_transaction_resource = MiddleManTransactionResource()
 
 urlpatterns = patterns('',
-    (r'^api/', include(outgoing_transaction_resource.urls)),
+    #(r'^api_otmr/', include(outgoing_transaction_middle_man_resource.urls)),
+    (r'^api_otr/', include(outgoing_transaction_resource.urls)),
+    (r'^api_mmtr/', include(middle_man_transaction_resource.urls)),
     )
 
 urlpatterns += patterns('bhp_sync.views',
