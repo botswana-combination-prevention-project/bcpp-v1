@@ -54,7 +54,7 @@ class SectionHouseholdView(BaseSectionView):
                 lst = []
                 dct = {}
                 for household in Household.objects.filter(community=community):
-                    dist = mapper.gps_validator(lat, lon, household.gps_lat, household.gps_lon, radius)
+                    dist = mapper.gps_distance_between_points(lat, lon, household.gps_lat, household.gps_lon, radius)
                     if dist <= radius:
                         household.relative_distance = dist * 1000
                         while dist in lst:
