@@ -396,9 +396,7 @@ class Mapper(object):
             polygon_array = polygon_array + (geo.LatLon(float(point[0]), float(point[1])),)
         polygon = Polygon(*polygon_array)
         assert polygon.contains(pt2)
-        if dist > radius:
-            return False
-        return True
+        return dist
 
     def distance_between_points(self, current_position_lat, current_position_lon, lat, lon):
         """Calculate distance between two GPS coordinates.
@@ -450,8 +448,7 @@ class Mapper(object):
             raise TypeError('Direction must be one of {0}. Got {1}.'.format(dct.keys(), direction))
         d = float(degrees)
         m = float(minutes)
-        retval = dct[direction] * round((d) + (m / 60), 5)
-        return retval
+        return dct[direction] * round((d) + (m / 60), 5)
 
     def get_gps_lat(self, d=None, m=None):
         """Converts degree/minutes S to latitude."""
@@ -473,6 +470,7 @@ class Mapper(object):
         """Verifies the gps lat, lon occur within a radius of the target lat/lon and raises an exception if not.
 
         Wrapper for :func:`gps_validator`"""
-        if not self.gps_validator(lat, lon, center_lat, center_lon, radius):
+        dist = self.gps_validator(lat, lon, center_lat, center_lon, radius)
+        if dist > radius:
             raise exception_cls('GPS {0} {1} is more than {2} meters from the target location.'.format(lat, lon, radius * 1000))
         return True
