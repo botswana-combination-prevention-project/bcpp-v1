@@ -8,13 +8,11 @@ class SexualBehaviourForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-        #if respondent has had sex, answer all following questions on form
-        if cleaned_data.get('last_sex') == 'Days' and not cleaned_data.get('last_sex_calc'):
-            raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of days')
-        if cleaned_data.get('last_sex') == 'Months' and not cleaned_data.get('last_sex_calc'):
-            raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of months')
-        if cleaned_data.get('last_sex') == 'Years' and not cleaned_data.get('last_sex_calc'):
-            raise forms.ValidationError('If participant has had sex, and indicated a time point when last had sex, provide number of years')
+        #validating having had sex and no sex
+        if cleaned_data.get('ever_sex') == 'No' and cleaned_data.get('lifetime_sex_partners') and cleaned_data.get('last_year_partners'):
+            raise forms.ValidationError('If participant has NEVER had sex, do not provide details about sexual partners')
+        if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('lifetime_sex_partners') and not cleaned_data.get('last_year_partners'):
+            raise forms.ValidationError('If participant has had sex at some point in their life, give details about sexual partners')
 
         cleaned_data = super(SexualBehaviourForm, self).clean()
         return cleaned_data
