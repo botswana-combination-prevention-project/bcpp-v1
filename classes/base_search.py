@@ -35,6 +35,7 @@ class BaseSearch(object):
         self._section_name = None
         self._search_model_cls = None
         self._context = {}
+        self._search_result_template = None
         self.pattern = patterns
         if 'name' not in dir(self):
             self.name = 'SEARCH'
@@ -118,8 +119,18 @@ class BaseSearch(object):
     def get_most_recent_model(self):
         return None
 
-    def get_include_template_file(self):
-        return '{0}_include.html'.format(self.get_search_model_cls()._meta.object_name.lower())
+    def set_search_result_include_template(self, template=None):
+        if template:
+            self._search_result_template = template
+        elif self.template:
+            self._search_result_template = self.template
+        else:
+            self._search_result_template = '{0}_include.html'.format(self.get_search_model_cls()._meta.object_name.lower())
+
+    def get_search_result_include_template(self):
+        if not self._search_result_template:
+            self.set_search_result_include_template()
+        return self._search_result_template
 
     def get_most_recent(self, page=1, limit=None):
         """Returns a queryset of the top most recent instances of the search model.
