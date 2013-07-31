@@ -45,7 +45,7 @@ class HouseholdDashboard(Dashboard):
         .. note:: the participation form is a property on the HouseholdMember model so there is no need
                   to import and pass it to the template context here."""
         self.set_survey(kwargs.get('survey'))
-        self.set_household(kwargs.get('household_identifier'))
+        self.set_household(**kwargs)
         self.dashboard_identifier = self.get_household().household_identifier
 
         super(HouseholdDashboard, self).create(**kwargs)
@@ -75,35 +75,46 @@ class HouseholdDashboard(Dashboard):
 
         self.urlpatterns = patterns(view,
 
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/(?P<gender>\w+)/(?P<initials>\w+)/(?P<household_member>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/(?P<registered_subject>{pk})/(?P<household_member>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_member>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/(?P<gender>\w+)/(?P<initials>\w+)/(?P<household_member>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/(?P<registered_subject>{pk})/(?P<household_member>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_member>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household>{pk})/(?P<household_structure>{pk})/$'.format(**regex),
               'household_dashboard',
                 name="household_dashboard_url"
                 ),
+
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_member>{pk})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
+              'household_dashboard',
+                name="household_dashboard_url"
+                ),
+
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household_structure>{pk})/$'.format(**regex),
+              'household_dashboard',
+                name="household_dashboard_url"
+                ),
+
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_structure>{pk})/$'.format(**regex),
               'household_dashboard',
                 name="household_dashboard_url"
                 ),
@@ -140,7 +151,12 @@ class HouseholdDashboard(Dashboard):
         except:
             self._current_member_count = 0
 
-    def set_household(self, household_identifier):
+    def set_household(self, **kwargs):
+        household_identifier = kwargs.get('household_identifier', None)
+        if not household_identifier:
+            pk = kwargs.get('household_structure', None)
+            if HouseholdStructure.objects.filter(pk=pk):
+                household_identifier = HouseholdStructure.objects.get(pk=pk).household.household_identifier
         if not household_identifier:
             raise TypeError('Household identifier is required for the dashboard. Got None.')
         if not Household.objects.filter(household_identifier=household_identifier):
@@ -149,7 +165,7 @@ class HouseholdDashboard(Dashboard):
 
     def get_household(self):
         if not self._household:
-            raise TypeError('Dashboard attribute _household may not be null.')
+            raise TypeError('Dashboard attribute _household may not be null. Set this from kwargs in method create.')
         return self._household
 
     def set_household_members(self):
