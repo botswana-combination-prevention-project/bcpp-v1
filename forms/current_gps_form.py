@@ -1,8 +1,11 @@
 from django import forms
 
+
 class CurrentGpsForm(forms.Form):
-    
-    deg_south = forms.IntegerField(label='DS')
-    min_south = forms.FloatField(label='MS')
-    deg_east  = forms.IntegerField(label='DE')
-    min_east  = forms.FloatField(label='ME')
+
+    degrees_s = forms.IntegerField(label='DS')
+    minutes_s = forms.FloatField(label='MS')
+    degrees_e = forms.IntegerField(label='DE')
+    minutes_e = forms.FloatField(label='ME')
+    radius = forms.DecimalField(label='R (m)')
+    community = forms.CharField(widget=forms.HiddenInput())

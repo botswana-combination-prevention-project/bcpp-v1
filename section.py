@@ -31,18 +31,31 @@ class SectionHouseholdView(BaseSectionView):
             community_form = None
         else:
             community_form = CommunityForm()
-        gps_form = CurrentGpsForm()
-        context.update({'community_form': community_form, 'current_community': current_community, 'gps_form': gps_form})
-
-        # handle gps search
-        # search_result = 
-        #search_result = self._paginate(search_result)
-        #context.add({'search_result': search_result})
+        gps_search_form = CurrentGpsForm(initial={'community': current_community, 'radius': 100})
+        context.update({'community_form': community_form, 'current_community': current_community, 'gps_search_form': gps_search_form})
         return context
 
     def get_search_result(self, request, **kwargs):
-        """Users may override to return an iterable search result."""
-        print "request after form submission %s" % request
-        return []
+        search_result = None
+        if request.method == 'POST':
+            gps_form = CurrentGpsForm(request.POST)
+            if gps_form.is_valid():
+                degrees_s = gps_form.cleaned_data.get('degrees_s')
+                degrees_e = gps_form.cleaned_data.get('degrees_e')
+                minutes_s = gps_form.cleaned_data.get('minutes_s')
+                minutes_e = gps_form.cleaned_data.get('minutes_e')
+                radius = gps_form.cleaned_data.get('radius') / 1000
+                community = gps_form.cleaned_data.get('community')
+                mapper = site_mappers.get(community)()
+                lat = mapper.get_gps_lat(degrees_s, minutes_s)
+                lon = mapper.get_gps_lat(degrees_e, minutes_e)
+                radius = .025
+                search_result = []
+                for household in Household.objects.filter(community=community):
+                    #dist = mapper.gps_validator(lat, lon, household.gps_lat, household.gps_lon, radius)
+                    #if dist <= radius:
+                    if True:
+                        search_result.append(household)
+        return search_result
 
 site_sections.register(SectionHouseholdView)

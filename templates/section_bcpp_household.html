@@ -2,9 +2,9 @@
 
 {% block gps_search %}
 <div id="gps_search_tile">
-	<form action="" method="get">
-		{{ gps_form }}
-		<input type="submit" value="gps_search">
+	<form class="gps_search_form" action="" method="post">
+		{{ gps_search_form }} {% csrf_token %}
+		<input type="submit" value="Search by GPS">
 	</form>
 </div>
 {% endblock %}
