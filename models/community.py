@@ -1,5 +1,6 @@
 from django.db import models
 from bhp_base_model.models import BaseModel
+from bcpp_household.managers import CommunityManager
 
 
 class Community(BaseModel):
@@ -7,8 +8,11 @@ class Community(BaseModel):
     name = models.CharField("Name", max_length=25)
     is_current = models.BooleanField(default=False)
 
-    objects = models.Manager()
+    objects = CommunityManager()
 
+    def natural_key(self):
+        return (self.name, )
+    
     def __unicode__(self):
         return self.name
 
