@@ -13,6 +13,7 @@
 	<th>Community</th>
 	<th>Section</th>
     <th>Sub-section</th>
+    <th>m</th>
 	<th>Modified</th>    	    	
 	<th>Host</th> 
 	<th>Map</th>    	    	    		    	    	    	
@@ -45,6 +46,7 @@
      	  <td>{{ household.community|encrypted}}</td>
      	  <td>{{ household.section|encrypted }}</td>     	  
           <td>{{ household.sub_section|encrypted }}</td>          
+      	  <td>{{ household.relative_distance }}</td>
       	  <td>{{ household.modified|default:household.created|date:"Y-m-d" }}</td>
        	  <td>{{ household.user_modified }}</td>
        	  <td>

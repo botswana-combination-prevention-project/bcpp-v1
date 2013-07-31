@@ -51,11 +51,19 @@ class SectionHouseholdView(BaseSectionView):
                 lon = mapper.get_gps_lat(degrees_e, minutes_e)
                 radius = .025
                 search_result = []
+                lst = []
+                dct = {}
                 for household in Household.objects.filter(community=community):
-                    #dist = mapper.gps_validator(lat, lon, household.gps_lat, household.gps_lon, radius)
-                    #if dist <= radius:
-                    if True:
-                        search_result.append(household)
+                    dist = mapper.gps_validator(lat, lon, household.gps_lat, household.gps_lon, radius)
+                    if dist <= radius:
+                        household.relative_distance = dist * 1000
+                        while dist in lst:
+                            dist += .0001
+                        lst.append(dist)
+                        dct.update({dist: household})
+                lst.sort()
+                for dist in lst:
+                    search_result.append(dct[dist])
         return search_result
 
 site_sections.register(SectionHouseholdView)
