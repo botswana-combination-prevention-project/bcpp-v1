@@ -387,6 +387,7 @@ class Mapper(object):
         center_lat = center_lat or self.get_gps_center_lat()
         center_lon = center_lon or self.get_gps_center_lon()
         radius = radius or self.get_radius()
+        location_boundary = location_boundary or self.location_boundary
         pt1 = geopy.Point(center_lat, center_lon)
         pt2 = geopy.Point(lat, lon)
         dist = geopy.distance.distance(pt1, pt2).km
@@ -442,18 +443,14 @@ class Mapper(object):
 
         return(round(dist, 3), bearings[index])
 
-    def _get_gps(self, direction, d=None, m=None):
+    def _get_gps(self, direction, degrees, minutes):
         """Converts GPS degree/minutes to latitude or longitude."""
         dct = {'s': 1, 'e': -1}
         if direction not in dct.keys():
             raise TypeError('Direction must be one of {0}. Got {1}.'.format(dct.keys(), direction))
-        d = d or self.gps_degrees_s
-        m = m or self.gps_minutes_s
-        if d and m:
-            d = float(d)
-            m = float(m)
-            return dct[direction] * round((d) + (m / 60), 5)
-        return None
+        d = float(degrees)
+        m = float(minutes)
+        return dct[direction] * round((d) + (m / 60), 5)
 
     def get_gps_lat(self, d=None, m=None):
         """Converts degree/minutes S to latitude."""
