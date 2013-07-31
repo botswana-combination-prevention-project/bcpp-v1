@@ -48,6 +48,8 @@ class HivTestingHistory (BaseScheduledVisitModel):
     other_record = models.CharField(
         verbose_name=_("Do you have any other available documentation of an HIV result?"),
         max_length=3,
+        null=True,
+        blank=True,
         choices=YES_NO,
         help_text="",
         )
