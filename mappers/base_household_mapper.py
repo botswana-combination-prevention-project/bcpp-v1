@@ -8,10 +8,10 @@ class BaseHouseholdMapper(Mapper):
     item_model = Household
     item_label = 'Household'
 
-    region_field_attr = 'ward'
-    region_label = 'Ward'
-    section_field_attr = 'ward_section'
-    section_label = 'Ward Section'
+    region_field_attr = 'section'
+    region_label = 'Section'
+    section_field_attr = 'sub_section'
+    section_label = 'Sub Section'
     icons = ICONS
     other_icons = OTHER_ICONS
 
@@ -22,7 +22,7 @@ class BaseHouseholdMapper(Mapper):
 
     item_target_field = 'target'
 
-    gps_e_field_attr = 'gps_point_1'
-    gps_s_field_attr = 'gps_point_2'
-    gps_latitude_field_attr = 'gps_point_11'
-    gps_longitude_field_attr = 'gps_point_21'
+    gps_degrees_s_field_attr = 'gps_degrees_s'
+    gps_degrees_e_field_attr = 'gps_degrees_e'
+    gps_minutes_s_field_attr = 'gps_minutes_s'
+    gps_minutes_e_field_attr = 'gps_minutes_e'

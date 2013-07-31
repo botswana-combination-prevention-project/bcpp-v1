@@ -109,6 +109,8 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
+    target_radius = models.FloatField(default=.025, help_text='km', editable=False)
+
     cso_number = EncryptedCharField(
         verbose_name="CSO Number",
         blank=True,
@@ -188,29 +190,14 @@ class Household(BaseDispatchSyncUuidModel):
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
-        self.gps_lat = self.get_gps_lat()
-        self.gps_lon = self.get_gps_lon()
-        #self.verify_gps_location(self.gps_lat, self.gps_lon, self.community)
-        #self.verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.community)
+
+        mapper = site_mappers.get_registry(self.community_name)
+        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
+        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
+        mapper.verify_gps_location(self.gps_lat, self.gps_lon, ValidationError)
+        mapper.verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, ValidationError)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
-
-    def verify_gps_location(self, lat, lon, community_name):
-        """Verifies the gps lat, lon occur within the given community.
-
-        Call this from the form to catch the validation error before save."""
-        from bhp_map.classes import site_mappers
-        mapper = site_mappers.get_registry(community_name)
-        if not mapper().verify_gps_location(lat, lon):
-            raise ValidationError('The location (GPS {0} {1}) does not fall within this community.'.format(lat, lon))
-
-    def verify_gps_to_target(self, lat, lon, community_name):
-        """Verifies the gps lat, lon occur within a radius of the target lat/lon."""
-        from bhp_map.classes import site_mappers
-        mapper = site_mappers.get_registry(community_name)
-        radius = .001  # km
-        if not mapper().verify_gps_location(lat, lon, center_lat=self.gps_target_lat, center_lon=self.gps_target_lon, radius=radius):
-            raise ValidationError('GPS {0} {1} is more than {2} meters from the target location.'.format(lat, lon, radius * 1000))
 
     def check_for_survey_on_pre_save(self, **kwargs):
         Survey = models.get_model('bcpp_survey', 'Survey')
@@ -247,24 +234,6 @@ class Household(BaseDispatchSyncUuidModel):
 
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
-
-    def get_gps_lat(self, d=None, m=None):
-        d = d or self.gps_degrees_s
-        m = m or self.gps_minutes_s
-        if d and m:
-            d = float(d)
-            m = float(m)
-            return round((d) + (m / 60), 5)
-        return None
-
-    def get_gps_lon(self, d=None, m=None):
-        d = d or self.gps_degrees_e
-        m = m or self.gps_minutes_e
-        if d and m:
-            d = float(d)
-            m = float(m)
-            return -1 * round((d) + (m / 60), 5)
-        return None
 
     def is_dispatch_container_model(self):
         return True
