@@ -434,11 +434,11 @@ class Mapper(object):
         m = float(minutes)
         return dct[direction] * round((d) + (m / 60), 5)
 
-    def get_gps_lat(self, d=None, m=None):
+    def get_gps_lat(self, d, m):
         """Converts degree/minutes S to latitude."""
         return self._get_gps('s', d, m)
 
-    def get_gps_lon(self, d=None, m=None):
+    def get_gps_lon(self, d, m):
         """Converts degree/minutes E to longitude."""
         return self._get_gps('e', d, m)
 
