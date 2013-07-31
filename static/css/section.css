@@ -149,9 +149,12 @@ margin: 0 0.15em;
     border-radius:5px;
 }
 
+.gps_search_form input[type=text] {
+width: 30px;
+}
 
 #search_tile {
-    float:right;
+    float:left;
     width:auto;
     background:#FFFFEC;
     border: 1px solid #EEEEAA;
@@ -159,6 +162,10 @@ margin: 0 0.15em;
     height:30px;
     margin:5px;
     border-radius:5px;
+}
+
+.search_form {
+width: 50px;
 }
 
 #search_result_tile {
