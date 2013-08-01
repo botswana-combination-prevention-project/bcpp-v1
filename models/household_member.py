@@ -124,7 +124,7 @@ class HouseholdMember(BaseHouseholdMember):
     def is_moved(self):
         from bcpp_subject.models import SubjectMoved
         retval = False
-        if SubjectMoved.objects.filter(member=self, survey=self.survey):
+        if SubjectMoved.objects.filter(household_member=self, survey=self.survey):
             retval = True
         return retval
 
@@ -140,39 +140,38 @@ class HouseholdMember(BaseHouseholdMember):
                                           'household_identifier': self.household.household_identifier,
                                           'dashboard_type': 'household'})
 
+    def _get_form_url(self, model_name):
+        url = ''
+        pk = None
+        app_label = 'bcpp_subject'
+        if not self.registered_subject:
+            self.save()
+        Model = models.get_model(app_label, model_name)
+        if Model.objects.filter(household_member=self):
+            pk = Model.objects.get(household_member=self).pk
+        if pk:
+            url = reverse('admin:{0}_{1}_change'.format(app_label, model_name), args=(pk, ))
+        else:
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
+        return url
+
     @property
     def absentee_form_url(self):
         """Returns a url to the subjectabsentee if an instance exists."""
-        url = ''
-        subject_absentee = None
-        if not self.registered_subject:
-            self.save()
-        SubjectAbsentee = models.get_model('bcpp_subject', 'subjectabsentee')
-        if SubjectAbsentee.objects.filter(member=self):
-            subject_absentee = SubjectAbsentee.objects.get(member=self)
-        if subject_absentee:
-            url = subject_absentee.get_absolute_url()
-        return url
+        return self._get_form_url('subjectabsentee')
 
     @property
     def absentee_form_label(self):
         SubjectAbsentee = models.get_model('bcpp_subject', 'subjectabsentee')
         SubjectAbsenteeEntry = models.get_model('bcpp_subject', 'subjectabsenteeentry')
         report_datetime = []
-        if SubjectAbsentee.objects.filter(member=self):
-            subject_absentee = SubjectAbsentee.objects.get(member=self)
+        if SubjectAbsentee.objects.filter(household_member=self):
+            subject_absentee = SubjectAbsentee.objects.get(household_member=self)
             for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
                 report_datetime.append(subject_absentee_entry.report_datetime.strftime('%Y-%m-%d'))
         if not report_datetime:
             report_datetime.append('add new entry')
         return report_datetime
-
-    def get_form_url(self, model_name):
-        model = models.get_model('bcpp_subject', model_name)
-        if model.objects.filter(member=self):
-            return model.objects.get(member=self).get_absolute_url()
-        else:
-            return model().get_absolute_url()
 
 #     @property
 #     def undecided_form_url(self):
@@ -182,8 +181,8 @@ class HouseholdMember(BaseHouseholdMember):
 #         if not self.registered_subject:
 #             self.save()
 #         SubjectUndecided = models.get_model('bcpp_subject', 'subjectundecided')
-#         if SubjectUndecided.objects.filter(member=self):
-#             subject_undecided = SubjectUndecided.objects.get(member=self)
+#         if SubjectUndecided.objects.filter(household_member=self):
+#             subject_undecided = SubjectUndecided.objects.get(household_member=self)
 #         if subject_undecided:
 #             url = subject_undecided.get_absolute_url()
 #         else:
@@ -195,8 +194,8 @@ class HouseholdMember(BaseHouseholdMember):
 #         SubjectUndecided = models.get_model('bcpp_subject', 'subjectundecided')
 #         SubjectUndecidedEntry = models.get_model('bcpp_subject', 'subjectundecidedentry')
 #         report_datetime = []
-#         if SubjectUndecided.objects.filter(member=self):
-#             subject_undecided = SubjectUndecided.objects.get(member=self)
+#         if SubjectUndecided.objects.filter(household_member=self):
+#             subject_undecided = SubjectUndecided.objects.get(household_member=self)
 #             for subject_undecided_entry in SubjectUndecidedEntry.objects.filter(subject_undecided=subject_undecided).order_by('report_datetime'):
 #                 report_datetime.append(subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'))
 #         if not report_datetime:
@@ -205,16 +204,16 @@ class HouseholdMember(BaseHouseholdMember):
 
     @property
     def refused_form_url(self):
-        return self.get_form_url('subjectrefusal')
+        return self._get_form_url('subjectrefusal')
 
     @property
     def moved_form_url(self):
-        return self.get_form_url('subjectmoved')
+        return self._get_form_url('subjectmoved')
 
     def get_form_label(self, model_name):
         model = models.get_model('bcpp_subject', model_name)
-        if model.objects.filter(member=self):
-            return model.objects.get(member=self)
+        if model.objects.filter(household_member=self):
+            return model.objects.get(household_member=self)
         else:
             return 'Add "{0}" report'.format(model_name)
 
@@ -356,8 +355,8 @@ class HouseholdMember(BaseHouseholdMember):
     def visit_date(self):
         SubjectVisit = models.get_model('bcpp_subject', 'subjectvisit')
         retval = None
-        if SubjectVisit.objects.filter(member=self):
-            subject_visit = SubjectVisit.objects.filter(member=self)
+        if SubjectVisit.objects.filter(household_member=self):
+            subject_visit = SubjectVisit.objects.filter(household_member=self)
             retval = subject_visit.report_datetime
         return retval
 
