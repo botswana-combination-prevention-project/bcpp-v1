@@ -8,31 +8,29 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'MiddleManTransaction.outgoingtransaction_ptr'
-#         db.delete_table('bhp_sync_middlemantransaction')
-#         
-#         db.create_table('bhp_sync_middlemantransaction', (
-#             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-#             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-#             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-#             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-#             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, db_index=True, blank=True)),
-#             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, db_index=True, blank=True)),
-#             ('id', self.gf('django.db.models.fields.CharField')(default='', max_length=36, primary_key=True)),
-#             ('tx_name', self.gf('django.db.models.fields.CharField')(default=2, max_length=64, db_index=True)),
-#             ('tx_pk', self.gf('django.db.models.fields.CharField')(default=2, max_length=36)),
-#             ('tx', self.gf('django.db.models.fields.TextField')(default=2)),
-#             ('producer', self.gf('django.db.models.fields.CharField')(default='one.local-bhp066', max_length=50, db_index=True)),
-#             ('action', self.gf('django.db.models.fields.CharField')(default='I', max_length=1)),
-#             ('timestamp', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, db_index=True)),
-#             ('is_consumed_middleman', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
-#             ('is_consumed_server', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
-#             ('consumed_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-#             ('consumer', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=25, null=True, blank=True)),
-#             ('batch_seq', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-#             ('batch_id', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-#          ))
-#         db.send_create_signal('bhp_sync', ['MiddleManTransaction'])
+         
+        db.create_table('bhp_sync_middlemantransaction', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(default='', max_length=36, primary_key=True)),
+            ('tx_name', self.gf('django.db.models.fields.CharField')(default=2, max_length=64, db_index=True)),
+            ('tx_pk', self.gf('django.db.models.fields.CharField')(default=2, max_length=36)),
+            ('tx', self.gf('django.db.models.fields.TextField')(default=2)),
+            ('producer', self.gf('django.db.models.fields.CharField')(default='one.local-bhp066', max_length=50, db_index=True)),
+            ('action', self.gf('django.db.models.fields.CharField')(default='I', max_length=1)),
+            ('timestamp', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, db_index=True)),
+            ('is_consumed_middleman', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('is_consumed_server', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
+            ('consumed_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('consumer', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=25, null=True, blank=True)),
+            ('batch_seq', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
+            ('batch_id', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
+         ))
+        db.send_create_signal('bhp_sync', ['MiddleManTransaction'])
         
         db.add_column('bhp_sync_middlemantransaction', 'is_error', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True), keep_default=False)
 
