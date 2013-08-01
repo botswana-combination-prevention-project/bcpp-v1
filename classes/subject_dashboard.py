@@ -41,7 +41,7 @@ class SubjectDashboard(RegisteredSubjectDashboard):
             )
 
     def create(self, **kwargs):
-        self.set_household_member(kwargs.get('household_member', None) or kwargs.get('pk'), visit_model_pk=kwargs.get('visit_model_pk', None))
+        self.set_household_member(kwargs.get('household_member', None) or kwargs.get('pk'), visit_model_pk=kwargs.get('visit_model_pk', None), appointment_pk=kwargs.get('appointment', None))
         self.set_registered_subject()
         self.dashboard_identifier = self.get_subject_identifier()
         self.set_appointment(kwargs.get('appointment', None))
@@ -88,11 +88,13 @@ class SubjectDashboard(RegisteredSubjectDashboard):
             self.set_appointment(appointment)
         return self._appointment
 
-    def set_household_member(self, pk, visit_model_pk=None):
+    def set_household_member(self, pk, visit_model_pk=None, appointment_pk=None):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         if re_pk.match(visit_model_pk or ''):
             # get the household member from the visit model
             self._household_member = self.visit_model.objects.get(pk=visit_model_pk).household_member
+        elif re_pk.match(appointment_pk or ''):
+            self._household_member = HouseholdMember.objects.get(registered_subject=Appointment.objects.get(pk=appointment_pk).registered_subject)
         else:
             if not pk:
                 raise TypeError('Expected pk for the household member. Got None.')
@@ -211,6 +213,10 @@ class SubjectDashboard(RegisteredSubjectDashboard):
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<survey>{survey_slug})/(?P<subject_identifier>{pk})/(?P<registered_subject>{pk})/(?P<household_member>{pk})/$'.format(**regex),
                   'subject_dashboard',
                     name="subject_dashboard_url"
+                    ),
+                url(r'^(?P<dashboard_type>{dashboard_type})/(?P<appointment>{pk})/(?P<subject_identifier>{subject_identifier})/$'.format(**regex),
+                    'subject_dashboard',
+                    name="dashboard_url"
                     ),
                 url(r'^(?P<dashboard_type>{dashboard_type})/(?P<survey>{survey_slug})/(?P<household_member>{pk})/$'.format(**regex),
                   'subject_dashboard',
