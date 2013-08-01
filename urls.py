@@ -1,15 +1,15 @@
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib import admin
-from api import OutgoingTransactionResource, MiddleManTransactionResource
+from api import OutgoingTransactionMiddleManResource, OutgoingTransactionServerResource, MiddleManTransactionResource
 
 admin.autodiscover()
-#outgoing_transaction_middle_man_resource = OutgoingTransactionMiddleManResource()
-outgoing_transaction_resource = OutgoingTransactionResource()
+outgoing_transaction_middle_man_resource = OutgoingTransactionMiddleManResource()
+outgoing_transaction_server_resource = OutgoingTransactionServerResource()
 middle_man_transaction_resource = MiddleManTransactionResource()
 
 urlpatterns = patterns('',
-    #(r'^api_otmr/', include(outgoing_transaction_middle_man_resource.urls)),
-    (r'^api_otr/', include(outgoing_transaction_resource.urls)),
+    (r'^api_otmr/', include(outgoing_transaction_middle_man_resource.urls)),
+    (r'^api_otsr/', include(outgoing_transaction_server_resource.urls)),
     (r'^api_mmtr/', include(middle_man_transaction_resource.urls)),
     )
 

@@ -40,35 +40,33 @@ api_key.save()
 """
 
 
-# class OutgoingTransactionMiddleManResource(ModelResource):
-# 
-#     """ APi resource based on model OutgoingTransaction filtered on is_consumed_middleman=False. 
-#         i.e Serve me all OutgoingTransaction in netbook not yet synced by MiddleMan"""
-# 
-#     class Meta:
-#         #Table OutgoingTransanctions{in netbook} in the case that it is accessed by Middleman
-#         #We give transanctions that are not consumed by by MiddleMan, we do not care whether consumed by Server or not
-#         #queryset = OutgoingTransaction.objects.filter(is_consumed_server=False).order_by('timestamp')
-#         queryset = OutgoingTransaction.objects.filter(is_consumed_server=False).order_by('timestamp')
-#         resource_name = 'outgoingtransaction'
-#         authentication = ApiKeyAuthentication()
-#         authorization = DjangoAuthorization()
-#         allowed_methods = ['get', 'post', 'put', ]
-#         filtering = {
-#             'producer': ['exact', ],
-#         }
-#         serializer = Serializer()
+class OutgoingTransactionMiddleManResource(ModelResource):
+ 
+    """ APi resource based on model OutgoingTransaction filtered on is_consumed_middleman=False and is_consumed_server=False. 
+        i.e Serve me all OutgoingTransaction in netbook not yet synced by the Server and any MiddleMan"""
+ 
+    class Meta:
+        #Table OutgoingTransanctions{in netbook} in the case that it is accessed by Middleman
+        #We give transanctions that are not consumed by the Server and MiddleMan
+        queryset = OutgoingTransaction.objects.filter(is_consumed_server=False, is_consumed_middleman=False).order_by('timestamp')
+        resource_name = 'outgoingtransaction'
+        authentication = ApiKeyAuthentication()
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get', 'post', 'put', ]
+        filtering = {
+            'producer': ['exact', ],
+        }
+        serializer = Serializer()
 #http://localhost:8000/bhp_sync/api/outgoingtransaction/?format=json&username=django&api_key=1af87bd7d0c7763e7b11590c9398740f0de7678b
-class OutgoingTransactionResource(ModelResource):
+class OutgoingTransactionServerResource(ModelResource):
 
     """ APi resource based on model OutgoingTransaction filtered on is_consumed_server=False. 
-        i.e Serve me all OutgoingTransaction in netbook not yet synced by the Server
-        irregardles of whether i am a server or middleman"""
+        i.e Serve me all OutgoingTransaction in netbook not yet synced by the Server and
+            we do not care if MiddleMan has synced them yet or not."""
 
     class Meta:
         #Table OutgoingTransanctions{in netbook} in the case that it is accessed by Server
         #We give transanctions that are not consumed by Server, we do not care whether consumed by MiddleMan or not
-        #queryset = OutgoingTransaction.objects.filter(is_consumed_server=False).order_by('timestamp')
         queryset = OutgoingTransaction.objects.filter(is_consumed_server=False).order_by('timestamp')
         resource_name = 'outgoingtransaction'
         authentication = ApiKeyAuthentication()
