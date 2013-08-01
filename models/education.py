@@ -24,14 +24,14 @@ class Education (BaseScheduledVisitModel):
         max_length=3,
         help_text="",
         )
-    
+
     job_type = models.CharField(
         verbose_name=_("In your main job what type of work do you do?"),
         max_length=45,
         choices=JOB_TYPE,
         help_text="",
         )
-    
+
     reason_unemployed = models.CharField(
         verbose_name=_("What is the reason why you are not working?"),
         max_length=65,
@@ -40,7 +40,7 @@ class Education (BaseScheduledVisitModel):
         choices=REASON_UNEMPLOYED,
         help_text="",
         )
-    
+
     job_description = models.CharField(
         verbose_name=_("Describe the work that you do or did in your most recent"
                       " job. If you have more than one profession, choose the"

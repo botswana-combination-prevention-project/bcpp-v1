@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp.choices import HIVTEST_PREFEREDWEEK, HIVTEST_PREFEREDYEAR, HIVTEST_PREFEREDTIME, HIVTESTPREFERENCE_CHOICE
@@ -9,8 +8,9 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class FutureHivTesting (BaseScheduledVisitModel):
-    
-    """CS002 - 
+
+    """CS002.
+
     Note to Interviewer: If participant is known to be HIV-infected"
     " (tested positive today or previously), skip to the next section. "
     "Read to Participant: The following questions are about how you would like"
@@ -62,11 +62,8 @@ class FutureHivTesting (BaseScheduledVisitModel):
         verbose_name=_("If yes, specify:"),
         null=True,
         )
-    
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_futurehivtesting_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

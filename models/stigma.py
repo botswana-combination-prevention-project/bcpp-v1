@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import AGREE_STRONGLY
 from base_scheduled_visit_model import BaseScheduledVisitModel
@@ -52,9 +51,6 @@ class Stigma (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_stigma_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

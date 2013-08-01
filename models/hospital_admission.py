@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO_REFUSED
 from bcpp_subject.choices import CARE_REASON, TRAVEL_HOURS
@@ -64,9 +63,6 @@ class HospitalAdmission (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_hospitaladmission_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

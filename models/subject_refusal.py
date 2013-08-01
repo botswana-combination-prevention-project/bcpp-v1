@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bhp_base_model.validators import date_not_future, date_not_before_study_start
@@ -76,12 +75,6 @@ class SubjectRefusal (BaseMemberStatusModel):
                    'information in this comment'))
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        if self.id:
-            return reverse('admin:bcpp_subject_subjectrefusal_change', args=(self.id,))
-        else:
-            return reverse('admin:bcpp_subject_subjectrefusal_add')
 
     def get_registration_datetime(self):
         return self.report_datetime

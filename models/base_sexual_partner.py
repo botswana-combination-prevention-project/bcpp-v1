@@ -95,7 +95,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         null=True,
         help_text="",
         )
-    
+
     partner_hiv_test = models.CharField(
         verbose_name=_("Has your partner been tested for HIV in last 12 months"),
         choices=YES_NO_UNSURE,

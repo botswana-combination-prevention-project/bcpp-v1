@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp_list.models import Diagnoses
 from bcpp.choices import YES_NO_UNSURE, YES_NO_DONT_ANSWER
@@ -58,9 +57,6 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_medicaldiagnoses_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

@@ -10,7 +10,7 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 class CommunityEngagement (BaseScheduledVisitModel):
 
     """CS002"""
-    
+
     community_engagement = models.CharField(
         verbose_name=_("How active are you in community activities such as"
                       " burial society, Motshelo, Syndicate, PTA, "

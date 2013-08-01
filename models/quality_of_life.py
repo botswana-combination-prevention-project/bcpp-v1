@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 from audit_trail.audit import AuditTrail
 from base_scheduled_visit_model import BaseScheduledVisitModel
@@ -7,9 +6,9 @@ from bcpp_subject.choices import MOBILITY, SELF_CARE, ACTIVITIES, PAIN, ANXIETY
 
 
 class QualityOfLife (BaseScheduledVisitModel):
-    
+
     """CE001"""
-    
+
     mobility = models.CharField(
         verbose_name="Mobility",
         max_length=45,
@@ -52,11 +51,8 @@ class QualityOfLife (BaseScheduledVisitModel):
         help_text=("Note:Interviewer, please record corresponding number in the boxes."
                    " If participant does not want to answer, leave blank"),
         )
-    
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_qualityoflife_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

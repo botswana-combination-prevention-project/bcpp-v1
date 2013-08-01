@@ -105,9 +105,6 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
 
     history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_baselinehouseholdsurvey_change', args=(self.id,))
-
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = "Household Survey Baseline"

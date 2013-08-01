@@ -12,7 +12,7 @@ from subject_off_study_mixin import SubjectOffStudyMixin
 class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
-    
+
     alt_contact_cell_number = EncryptedCharField(
         max_length=8,
         verbose_name="Cell number (alternate)",
@@ -85,7 +85,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     def natural_key(self):
         return self.subject_visit.natural_key()
-    
+
     def get_visit(self):
         return self.subject_visit
 

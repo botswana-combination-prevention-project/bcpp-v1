@@ -9,8 +9,6 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 class AccessToCare (BaseScheduledVisitModel):
 
-    """CS002"""
-
     access_care = models.CharField(
         verbose_name=_("In the past year, where do you MOST OFTEN get"
                       " medical care or treatment when you or someone in your family is sick or hurt?"),
@@ -75,7 +73,7 @@ class AccessToCare (BaseScheduledVisitModel):
         null=True,
         help_text="supplemental",
         )
-    
+
     local_hiv_care = models.CharField(
         verbose_name=_("Would you be willing to come to the clinic within your "
                       "community to receive HIV care and treatment, if " 

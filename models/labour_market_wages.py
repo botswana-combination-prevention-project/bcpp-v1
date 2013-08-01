@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO_REFUSED
@@ -112,9 +111,6 @@ class LabourMarketWages (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_labourmarketwages_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

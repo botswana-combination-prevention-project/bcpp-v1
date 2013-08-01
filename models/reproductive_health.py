@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO, YES_NO_UNSURE
 from bhp_base_model.fields import OtherCharField
@@ -9,9 +8,9 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class ReproductiveHealth (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     number_children = models.IntegerField(
         verbose_name=_("How many children have you given birth to? Please include any"
                       " children that may have died at (stillbirth) or after birth. "
@@ -21,14 +20,14 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         default=0,
         help_text="",
         )
-    
+
     menopause = models.CharField(
         verbose_name=_("Have you reached menopause (more than 12 months without a period)?"),
         max_length=3,
         choices=YES_NO,
         help_text="this also refers to pre-menopause",
         )
-    
+
     family_planning = models.ManyToManyField(FamilyPlanning,
         verbose_name=_("In the past 12 months, have you used any methods to prevent"
                       " pregnancy ?"),
@@ -48,9 +47,6 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_reproductivehealth_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

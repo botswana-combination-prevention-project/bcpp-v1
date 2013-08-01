@@ -24,16 +24,16 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
     objects = ScheduledModelManager()
 
     def natural_key(self):
-        return self.subject_visit.natural_key()
-    
+        return self.get_visit().natural_key()
+
     def __unicode__(self):
-        return unicode(self.subject_visit)
+        return unicode(self.get_visit())
 
     def get_report_datetime(self):
-        return self.subject_visit.report_datetime
+        return self.get_visit().report_datetime
 
     def get_subject_identifier(self):
-        return self.subject_visit.get_subject_identifier()
+        return self.get_visit().get_subject_identifier()
 
     def get_visit(self):
         return self.subject_visit

@@ -1,16 +1,15 @@
 # coding: utf-8
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
-from bcpp.choices import LENGTHRESIDENCE_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES 
+from bcpp.choices import LENGTHRESIDENCE_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class ResidencyMobility (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     length_residence = models.CharField(
         verbose_name=_('How long have you lived in this community?'),
         max_length=25,
@@ -56,16 +55,13 @@ class ResidencyMobility (BaseScheduledVisitModel):
         verbose_name=_("Give the name of the community"),
         max_length=65,
         choices=COMMUNITIES,
-        null=True, 
+        null=True,
         blank=True,
         help_text="Other community, specify",
         )
-    
+
     history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_residencymobility_change', args=(self.id,))
-    
     def __unicode__(self):
         return unicode(self.subject_visit)
 

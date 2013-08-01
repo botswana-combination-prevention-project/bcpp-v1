@@ -1,13 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
-from bcpp_subject.choices import STI_DX  
+from bcpp_subject.choices import STI_DX
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Sti (BaseScheduledVisitModel):
-    
+
     """CS002 - Medical Diagnoses - Sti"""
 
     sti_date = models.DateField(
@@ -21,7 +20,7 @@ class Sti (BaseScheduledVisitModel):
         choices=STI_DX,
         help_text="",
         )
-    
+
     comments = models.CharField(
         verbose_name=_("Comments"),
         max_length=250,
@@ -29,11 +28,8 @@ class Sti (BaseScheduledVisitModel):
         blank=True,
         help_text="",
         )
-    
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_sti_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

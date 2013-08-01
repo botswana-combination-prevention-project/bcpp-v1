@@ -33,7 +33,7 @@ class SubjectDeath(BaseBaseDeath):
     document_community_other = models.CharField(
         verbose_name="If yes, record community",
         max_length=30,
-        null=True, 
+        null=True,
         blank=True,
         )
     death_year = models.DateField(
@@ -61,7 +61,7 @@ class SubjectDeath(BaseBaseDeath):
         )
     decedent_haart_start = models.DateField(
         verbose_name="When did the decedent start antiretroviral therapy? ",
-        null=True, 
+        null=True,
         blank=True,
         help_text="",
         )
@@ -74,7 +74,7 @@ class SubjectDeath(BaseBaseDeath):
     days_decedent_hospitalized = models.IntegerField(
         verbose_name=("How many nights did the decedent spend in the hospital during the 30 days before"
                       " his/her death? "),
-        null=True, 
+        null=True,
         blank=True,
         help_text=("For hospitalization that begin prior to 30 days before death, only nights"
                    " within the 30 day window preceding death should be included"),
@@ -86,16 +86,15 @@ class SubjectDeath(BaseBaseDeath):
         )
     doctor_evaluation = models.IntegerField(
         verbose_name="How many of these visits included an evaluation or counselling by a doctor?",
-        null=True, 
+        null=True,
         blank=True,
         help_text="",
         )
 
-    
     history = AuditTrail()
 
     def __unicode__(self):
-        return '%s ' % (self.registered_subject)
+        return unicode(self.registered_subject)
 
     def get_report_datetime(self):
         return datetime.combine(self.death_date, time(0, 0))

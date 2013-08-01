@@ -25,34 +25,40 @@ class SubjectReferral(BaseScheduledVisitModel):
     who_staging = models.IntegerField()
 
     is_wasting = models.CharField(
-     choices=YES_NO_UNSURE,
-     )
+        max_length=10,
+        choices=YES_NO_UNSURE,
+        )
 
     tb = models.CharField(
-     choices=YES_NO_UNSURE,
-     )
+        max_length=10,
+        choices=YES_NO_UNSURE,
+        )
 
     in_hospital = models.CharField(
-     choices=YES_NO_UNSURE,
-     )
+        max_length=10,
+        choices=YES_NO_UNSURE,
+        )
 
     diahorrea = models.CharField(
-     choices=YES_NO_UNSURE,
-     )
+        max_length=10,
+        choices=YES_NO_UNSURE,
+        )
 
     pneumonia = models.CharField(
-     choices=YES_NO_UNSURE,
-     )
+        max_length=10,
+        choices=YES_NO_UNSURE,
+        )
 
     preferred_clinic = models.CharField(
-     choices=MOH_CLINICS,
-     )
+        max_length=50,
+        choices=MOH_CLINICS,
+        )
 
     reason = models.CharField(
         verbose_name=_("Reason for referral"),
         max_length=25,
         choices=REFERRAL_REASONS,
-        default='test',
+        default='unknown',
         editable=False,
         help_text="",
         )

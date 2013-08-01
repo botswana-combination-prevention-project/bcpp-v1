@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bhp_base_model.validators import datetime_is_future
@@ -10,7 +9,7 @@ from base_registered_household_member_model import BaseRegisteredHouseholdMember
 
 
 class SubjectReferral(BaseRegisteredHouseholdMemberModel, BaseAppointmentMixin):
-    
+
     subject_referral_reason = models.CharField(
         verbose_name="Reason for referral",
         max_length=40,
@@ -18,7 +17,7 @@ class SubjectReferral(BaseRegisteredHouseholdMemberModel, BaseAppointmentMixin):
         help_text=""
         )
     subject_referral_reason_other = OtherCharField()
-    
+
     next_appt_datetime = models.DateTimeField(
         verbose_name="Clinic appointment date and time",
         validators=[datetime_is_future, ],
@@ -47,16 +46,13 @@ class SubjectReferral(BaseRegisteredHouseholdMemberModel, BaseAppointmentMixin):
         )
 
     history = AuditTrail()
-    
+
     def __unicode__(self):
         return unicode(self.household_member)
 
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey
         super(SubjectReferral, self).save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_subjectreferral_change', args=(self.id,))
 
     class Meta:
         ordering = ['household_member']

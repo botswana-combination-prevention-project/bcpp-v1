@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bcpp.choices import REASONCIRC_CHOICE, YES_NO_UNSURE, CIRCUMCISION_DAY, CIRCUMCISION_WEEK, CIRCUMCISION_MONTH, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE, YES_NO_DONT_ANSWER
@@ -86,9 +85,6 @@ class Uncircumcised (BaseCircumcision):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_uncircumcised_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

@@ -1,16 +1,15 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
-from bcpp.choices import YES_NO_DONT_ANSWER, ALCOHOL_SEX, LASTSEX_CHOICE
+from bcpp.choices import YES_NO_DONT_ANSWER, ALCOHOL_SEX
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class SexualBehaviour (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     ever_sex = models.CharField(
         verbose_name=_("In your lifetime, have you ever had sex with anyone"
                       " (including your spouse, friends, or someone you have just met)?"),
@@ -18,7 +17,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         choices=YES_NO_DONT_ANSWER,
         help_text="",
         )
-    
+
     lifetime_sex_partners = models.IntegerField(
         verbose_name=_("In your life time, how many different people have you had"
                       " sex with?  Please remember to include casual and once-off partners"
@@ -26,7 +25,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
                       " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
                       "number, please give a best guess]"),
         max_length=3,
-        null=True, 
+        null=True,
         blank=True,
         help_text="",
         )
@@ -38,7 +37,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
                       " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
                       "number, please give a best guess]"),
         max_length=2,
-        null=True, 
+        null=True,
         blank=True,
         help_text="Note:Leave blank if participant does not want to respond. ",
         )
@@ -47,7 +46,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         verbose_name=_("In the past 12 months, did you have sex with somebody"
                       " living outside of the community?"),
         max_length=25,
-        null=True, 
+        null=True,
         blank=True,
         choices=YES_NO_DONT_ANSWER,
         help_text="",
@@ -57,7 +56,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         verbose_name=_("How old were you when you had sex for the first time?"
                       " [If you can't recall the exact age, please give a best guess]"),
         max_length=2,
-        null=True, 
+        null=True,
         blank=True,
         validators=[MinValueValidator(10), MaxValueValidator(64)],
         help_text="Note:leave blank if participant does not want to respond.",
@@ -67,7 +66,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         verbose_name=_("During the last [most recent] time you had sex, did"
                       " you or your partner use a condom?"),
         max_length=25,
-        null=True, 
+        null=True,
         blank=True,
         choices=YES_NO_DONT_ANSWER,
         help_text="",
@@ -77,16 +76,13 @@ class SexualBehaviour (BaseScheduledVisitModel):
         verbose_name=_("During the last [most recent] time you had sex, were"
                       " you or your partner drinking alcohol?"),
         max_length=25,
-        null=True, 
+        null=True,
         blank=True,
         choices=ALCOHOL_SEX,
         help_text="",
         )
-    
-    history = AuditTrail()
 
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_sexualbehaviour_change', args=(self.id,))
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

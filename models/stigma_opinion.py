@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bcpp.choices import AGREE_STRONGLY
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class StigmaOpinion (BaseScheduledVisitModel):
-    
+
     """CS002"""
-    
+
     test_community_stigma = models.CharField(
         verbose_name=_("People are hesitant to take an HIV test due to"
                       " fear of people\'s reaction if the test result is positive for HIV."),
@@ -69,9 +68,6 @@ class StigmaOpinion (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_stigmaopinion_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'
