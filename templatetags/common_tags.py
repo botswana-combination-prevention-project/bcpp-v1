@@ -1,3 +1,4 @@
+import re
 import socket
 from math import ceil
 from datetime import date
@@ -82,6 +83,20 @@ def add_nbsp(value):
 @register.filter(name='mask_pk')
 def mask(value, mask):
     return '<{0}>'.format(mask)
+
+
+@register.filter(name='subject_identifier')
+def subject_identifier(value, mask=None):
+    retval = ''
+    if value:
+        pattern = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+        if not 'subject_identifier' in dir(value):
+            retval = ''
+        elif pattern.match(value.subject_identifier):
+            retval = '{0}'.format(mask or 'subject_identifier not set')
+        else:
+            retval = value.subject_identifier
+    return retval
 
 
 @register.filter(name='admin_url_from_contenttype')
