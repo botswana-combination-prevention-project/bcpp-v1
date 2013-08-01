@@ -89,6 +89,7 @@ class RegisteredSubjectDashboard(Dashboard):
             visit_code=visit_code,
             extra_url_context=self.extra_url_context,
             appointment_meta=Appointment._meta,
+            subject_configuration_meta=SubjectConfiguration._meta,
             visit_model_meta=visit_model._meta,
             )
         if not self.requisition_model:
