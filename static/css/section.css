@@ -151,6 +151,8 @@ margin: 0 0.15em;
 
 .gps_search_form input[type=text] {
 width: 30px;
+margin-left: 2px;
+margin-right: 1px;
 }
 
 #search_tile {
