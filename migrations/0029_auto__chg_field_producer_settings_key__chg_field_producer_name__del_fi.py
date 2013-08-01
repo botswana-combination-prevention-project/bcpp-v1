@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Producer.settings_key'
-        #db.alter_column('bhp_sync_producer', 'settings_key', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50))
+        db.alter_column('bhp_sync_producer', 'settings_key', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50))
 
         # Changing field 'Producer.name'
         #db.alter_column('bhp_sync_producer', 'name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50))
