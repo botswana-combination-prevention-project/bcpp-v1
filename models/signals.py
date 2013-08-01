@@ -11,6 +11,6 @@ def bcpp_subject_on_post_save(sender, instance, **kwargs):
     #if isinstance(instance, SubjectVisit):
     #    instance.post_save_update_appt_status()
     if isinstance(instance, (BaseConsent, BaseMemberStatusModel)):
-        instance.post_save_update_hsm_status()
+        instance.post_save_update_hm_status()
     if isinstance(instance, BaseRegisteredHouseholdMemberModel):
         instance.confirm_registered_subject_pk_on_post_save()
