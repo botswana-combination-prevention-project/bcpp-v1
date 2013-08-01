@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from audit_trail.audit import AuditTrail
 from bhp_base_model.validators import datetime_is_future
 from bhp_crypto.fields import EncryptedCharField
@@ -7,7 +6,6 @@ from bhp_base_model.fields import OtherCharField
 from bcpp_list.models import SubjectAbsenteeReason
 from bcpp_subject.choices import NEXT_APPOINTMENT_SOURCE, ABSENTEE_STATUS
 from base_member_status_model import BaseMemberStatusModel
-# from base_subject_visit_model import BaseSubjectVisitModel
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -24,12 +22,6 @@ class SubjectAbsentee(BaseMemberStatusModel):
         )
 
     history = AuditTrail()
-
-    def get_absolute_url(self):
-        if self.id:
-            return reverse('admin:bcpp_subject_subjectabsentee_change', args=(self.id,))
-        else:
-            return reverse('admin:bcpp_subject_subjectabsentee_add')
 
     def member_status_string(self):
         return 'ABSENT'
@@ -98,9 +90,6 @@ class SubjectAbsenteeReport(BaseScheduledVisitModel):
 
     def __unicode__(self):
         return unicode(self.subject_visit)
-
-    def get_absolute_url(self):
-        return reverse('admin:bcpp_subject_subjectabsenteereport_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'

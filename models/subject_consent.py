@@ -42,7 +42,7 @@ class SubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
         self.registered_subject = self.household_member.registered_subject
         super(SubjectConsent, self).save(*args, **kwargs)
 
-    def post_save_update_hsm_status(self, **kwargs):
+    def post_save_update_hm_status(self, **kwargs):
         using = kwargs.get('using', None)
         self.household_member.member_status = 'consented'
         self.household_member.save(using=using)
