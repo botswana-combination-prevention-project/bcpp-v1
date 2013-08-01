@@ -17,4 +17,4 @@ class TransactionHelper(object):
         return IncomingTransaction.objects.using(using).filter(tx_name__in=models, is_consumed=False).exists()
 
     def has_outgoing(self, using=None):
-        return OutgoingTransaction.objects.using(using).filter(is_consumed=False).exists()
+        return OutgoingTransaction.objects.using(using).filter(is_consumed_server=False).exists()
