@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
 from base_scheduled_visit_model import BaseScheduledVisitModel

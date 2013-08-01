@@ -76,7 +76,7 @@ class AccessToCare (BaseScheduledVisitModel):
 
     local_hiv_care = models.CharField(
         verbose_name=_("Would you be willing to come to the clinic within your "
-                      "community to receive HIV care and treatment, if " 
+                      "community to receive HIV care and treatment, if "
                       "available locally?"),
         max_length=25,
         choices=AGREE_STRONGLY,

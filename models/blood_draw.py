@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.urlresolvers import reverse
 from bhp_base_model.validators import datetime_not_future
 from bhp_base_model.validators import datetime_not_before_study_start
 from audit_trail.audit import AuditTrail
