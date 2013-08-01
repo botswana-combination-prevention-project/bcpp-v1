@@ -188,14 +188,11 @@ class Appointment(BaseAppointment):
             if self.registered_subject.subject_identifier:
                 url = reverse('dashboard_url',
                               kwargs={'dashboard_type': self.registered_subject.subject_type.lower(),
-                                                       'subject_identifier': self.registered_subject.subject_identifier,
-                                                       'appointment': self.pk})
+                                      'subject_identifier': self.registered_subject.subject_identifier,
+                                      'appointment': self.pk})
                 ret = """<a href="{url}" />dashboard</a>""".format(url=url)
         return ret
     dashboard.allow_tags = True
-
-    def get_absolute_url(self):
-        return reverse('admin:bhp_appointment_appointment_change', args=(self.id,))
 
     def get_subject_identifier(self):
         return self.registered_subject.subject_identifier
