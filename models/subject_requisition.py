@@ -11,10 +11,22 @@ class SubjectRequisition(BaseRequisition):
 
     packing_list = models.ForeignKey(PackingList, null=True, blank=True)
 
+    subject_identifier = models.CharField(
+        max_length=25,
+        null=True,
+        editable=False)
+
     history = AuditTrail()
 
+    def save(self, *args, **kwargs):
+        self.subject_identifier = self.get_visit().get_subject_identifier()
+        super(SubjectRequisition, self).save(*args, **kwargs)
+
     def get_visit(self):
-        return self.patient_visit
+        return self.subject_visit
+
+    def get_subject_identifier(self):
+        return self.get_visit().subject_identifier
 
     class Meta:
         app_label = 'bcpp_lab'
