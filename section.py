@@ -63,6 +63,8 @@ class SectionHouseholdView(BaseSectionView):
                 lst.sort()
                 for dist in lst:
                     search_result.append(dct[dist])
+            else:
+                self.context.update({'gps_search_form': gps_form})
         return search_result
 
 site_sections.register(SectionHouseholdView)

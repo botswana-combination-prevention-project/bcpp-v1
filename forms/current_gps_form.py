@@ -9,3 +9,9 @@ class CurrentGpsForm(forms.Form):
     minutes_e = forms.IntegerField(label='.', required=True)
     radius = forms.DecimalField(label='R (m)', required=True)
     community = forms.CharField(widget=forms.HiddenInput())
+
+    def clean_degree_s(self):
+        degrees_s = self.cleaned_data['degrees_s']
+        if degrees_s is None:
+            raise forms.ValidationError("S is required")
+        return degrees_s
