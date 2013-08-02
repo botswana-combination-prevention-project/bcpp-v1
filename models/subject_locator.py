@@ -7,6 +7,7 @@ from bhp_crypto.fields import EncryptedCharField
 from bcpp_subject.models import SubjectVisit
 from bcpp_subject.managers import ScheduledModelManager
 from subject_off_study_mixin import SubjectOffStudyMixin
+from bcpp_household.models  import Household
 
 
 class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
@@ -75,6 +76,9 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
     history = AuditTrail()
 
     objects = ScheduledModelManager()
+
+    def dispatch_container_lookup(self, using=None):
+        return (Household, 'subject_visit__household_member__household_structure__household__household_identifier')
 
     def save(self, *args, **kwargs):
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
