@@ -14,6 +14,19 @@ YES_NO_UNSURE = (
         ('Don\'t want to answer', _('Don\'t want to answer')),
     )
 
+#for some reason translations not reading this yes no though translation is available.
+YES_NO = (
+        ('Yes', _('Yes')),
+        ('No', _('No')),
+    )
+
+
+YES_NO_REFUSED = (
+    ('Yes', _('Yes')),
+    ('No', _('No')),
+    ('REF', _('Refused to answer')),
+)
+
 AGREE_STRONGLY = (
         ('Strongly disagree', _('Strongly disagree')),
         ('Disagree', _('Disagree')),
