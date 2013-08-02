@@ -35,8 +35,8 @@ class Stigma (BaseScheduledVisitModel):
         )
 
     teacher_stigma = models.CharField(
-        verbose_name=_("I think that if a female teacher is living with HIV but"
-                      " is not sick, she should be allowed to continue teaching in the school."),
+        verbose_name=_("I think that if a teacher is living with HIV but"
+                      " is not sick, he/she should be allowed to continue teaching in the school."),
         max_length=25,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
