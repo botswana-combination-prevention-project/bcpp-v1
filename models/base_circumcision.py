@@ -19,7 +19,6 @@ class BaseCircumcision (BaseScheduledVisitModel):
     health_benefits_smc = models.ManyToManyField(CircumcisionBenefits,
         verbose_name=_("What do you believe are the health"
                       " benefits of male circumcision? (Indicate all that apply.)"),
-        max_length=25,
         null=True,
         help_text="supplemental",
         )

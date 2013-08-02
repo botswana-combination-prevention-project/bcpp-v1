@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
 from base_scheduled_visit_model import BaseScheduledVisitModel
@@ -11,7 +12,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     """CS001"""
 
     flooring_type = models.CharField(
-        verbose_name="What is the main type of flooring for this household?",
+        verbose_name=_("What is the main type of flooring for this household?"),
         max_length=25,
         choices=FLOORING_TYPE,
         help_text="",
@@ -19,7 +20,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     flooring_type_other = OtherCharField()
 
     living_rooms = models.IntegerField(
-        verbose_name=("How many living rooms are there in this household unit"
+        verbose_name=_("How many living rooms are there in this household unit"
                       " (exclude garage, bathroom, kitchen, store-room, etc if not used as living room )? "),
         max_length=2,
         null=True,
@@ -28,7 +29,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
                    " want to answer, leave blank"),
         )
     water_source = models.CharField(
-        verbose_name="What is the main source of drinking water for this household? ",
+        verbose_name=_("What is the main source of drinking water for this household? "),
         max_length=35,
         choices=WATER_SOURCE,
         help_text="",
@@ -36,7 +37,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     water_source_other = OtherCharField()
 
     energy_source = models.CharField(
-        verbose_name="What is the main source of energy used for cooking? ",
+        verbose_name=_("What is the main source of energy used for cooking? "),
         max_length=35,
         choices=ENERGY_SOURCE,
         help_text="",
@@ -44,7 +45,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     energy_source_other = OtherCharField()
 
     toilet_facility = models.CharField(
-        verbose_name="What is the main toilet facility used in this household? ",
+        verbose_name=_("What is the main toilet facility used in this household? "),
         max_length=35,
         choices=TOILET_FACILITY,
         help_text="",
@@ -52,7 +53,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
     toilet_facility_other = OtherCharField()
 
     electrical_appliances = models.ManyToManyField(ElectricalAppliances,
-        verbose_name=("Does any member of this household have any of the following that are"
+        verbose_name=_("Does any member of this household have any of the following that are"
                       " currently working? (check all that apply)."),
         null=True,
         blank=True,
@@ -60,7 +61,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
                    "If participant does not want to answer, leave blank."),
         )
     transport_mode = models.ManyToManyField(TransportMode,
-        verbose_name=("Does any member of this household (excluding visitors) own any of the"
+        verbose_name=_("Does any member of this household (excluding visitors) own any of the"
                       " following forms of transport in working condition? (check all that apply)."),
         null=True,
         blank=True,
@@ -68,7 +69,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
                    "If participant does not want to answer, leave blank."),
         )
     goats_owned = models.IntegerField(
-        verbose_name=("How many goats are owned by the members of this household?"
+        verbose_name=_("How many goats are owned by the members of this household?"
                       " [If unsure of exact number, give your best guess] "),
         max_length=3,
         null=True,
@@ -77,7 +78,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
                    " or helping estimate. If resident does not want to answer, leave blank."),
         )
     sheep_owned = models.IntegerField(
-        verbose_name=("How many sheep are owned by the members of this household?"
+        verbose_name=_("How many sheep are owned by the members of this household?"
                       " [If unsure of exact number, give your best guess] "),
         max_length=3,
         null=True,
@@ -86,7 +87,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
                    " or helping estimate. If resident does not want to answer, leave blank."),
         )
     cattle_owned = models.IntegerField(
-        verbose_name=("How many head of cattle (cows and bulls) are owned by the members"
+        verbose_name=_("How many head of cattle (cows and bulls) are owned by the members"
                       " of this household? [If unsure of exact number, give your best guess] "),
         max_length=3,
         null=True,
@@ -95,7 +96,7 @@ class BaselineHouseholdSurvey (BaseScheduledVisitModel):
                    " or helping estimate. If resident does not want to answer, leave blank."),
         )
     smaller_meals = models.CharField(
-        verbose_name=("In the past 4 weeks, did you or any household member have to eat a"
+        verbose_name=_("In the past 4 weeks, did you or any household member have to eat a"
                       " smaller meal than you felt you needed because there was not enough food? "),
         max_length=25,
         choices=SMALLER_MEALS,

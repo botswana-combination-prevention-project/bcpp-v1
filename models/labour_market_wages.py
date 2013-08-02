@@ -1,7 +1,8 @@
 from django.db import models
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
-from bhp_common.choices import YES_NO_REFUSED
+# from bhp_common.choices import YES_NO_REFUSED
+from bcpp.choices import YES_NO_REFUSED
 from bcpp_subject.choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION
 from base_scheduled_visit_model import BaseScheduledVisitModel
 

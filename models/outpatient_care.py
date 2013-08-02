@@ -1,7 +1,8 @@
 from django.db import models
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
-from bhp_common.choices import YES_NO_REFUSED
+# from bhp_common.choices import YES_NO_REFUSED
+from bcpp.choices import YES_NO_REFUSED
 from bcpp_subject.choices import CARE_FACILITIES, CARE_REASON, TRAVEL_HOURS
 from base_scheduled_visit_model import BaseScheduledVisitModel
 

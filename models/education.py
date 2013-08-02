@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
-from bhp_common.choices import YES_NO
-from bcpp.choices import EDUCATION_CHOICE
+# from bhp_common.choices import YES_NO
+from bcpp.choices import EDUCATION_CHOICE, YES_NO
 from bcpp_subject.choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
