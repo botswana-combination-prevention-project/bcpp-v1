@@ -24,6 +24,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
                       " to live longer?"),
         max_length=25,
         null=True,
+        blank=True,
         choices=YES_NO_UNSURE,
         help_text="supplemental",
         )
