@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 from base_transaction import BaseTransaction
 
 
@@ -16,7 +17,12 @@ class OutgoingTransaction(BaseTransaction):
         )
     
     objects = models.Manager()
-
+    
+    def save(self, *args, **kwargs):
+        if self.is_consumed_server and not self.consumed_datetime:
+                self.consumed_datetime = datetime.today()
+        super(OutgoingTransaction, self).save(*args, **kwargs)
+        
     class Meta:
         app_label = 'bhp_sync'
         ordering = ['timestamp']
