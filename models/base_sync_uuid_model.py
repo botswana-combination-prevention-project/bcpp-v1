@@ -44,6 +44,10 @@ class BaseSyncUuidModel(BaseUuidModel):
         """Override to return a foreignkey object for 'attrname', if possible, using criteria in self, otherwise return None"""
         raise ImproperlyConfigured('Method deserialize_get_missing_fk() must be overridden on model class {0}'.format(self._meta.object_name))
 
+    def save_to_inspector(self, model_instance):
+        """Override in concrete class"""
+        return False
+    
     def delete(self, *args, **kwargs):
         """Creates a delete transaction on delete"""
         transaction_producer = TransactionProducer()
