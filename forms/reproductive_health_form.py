@@ -12,7 +12,6 @@ class ReproductiveHealthForm (BaseSubjectModelForm):
             raise forms.ValidationError('if participant has reached menopause, you should not be giving details about family planning')
         if cleaned_data.get('menopause') == 'No' and not cleaned_data.get('family_planning'): 
             raise forms.ValidationError('if participant has not reached menopause, provide the family planning details')
-        # if no, don't answer next question
         if cleaned_data.get('menopause') == 'Yes' and  cleaned_data.get('current_pregnant'):
             raise forms.ValidationError('If participant has reached menopause, do not give details about current pregnancy')
         if cleaned_data.get('menopause') == 'No' and  not cleaned_data.get('current_pregnant'):
