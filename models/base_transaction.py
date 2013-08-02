@@ -83,7 +83,8 @@ class BaseTransaction(BaseUuidModel):
 
     def __unicode__(self):
         return '{0} {1} {2}'.format(self.tx_name, self.producer, self.action)
-
+        
+    
     def save(self, *args, **kwargs):
 #         if self.is_consumed and not self.consumed_datetime:
 #             self.consumed_datetime = datetime.today()
