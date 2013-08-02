@@ -122,5 +122,55 @@ LOGGING = {
             'level': 'WARNING',
             #'filters': ['special']
         },
+       'bhp_sync.classes.base_sync_model': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            #'filters': ['special']
+        },
+       'bhp_dispatch.classes.prepare_device': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            #'filters': ['special']
+        },
+       'bhp_dispatch.classes.base': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            #'filters': ['special']
+        },
+       'bhp_dispatch.classes.dispatch_controller': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            #'filters': ['special']
+        },
+       'bhp_dispatch.classes.base_dispatch_controller': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            #'filters': ['special']
+        },
+       'bcpp_dispatch.classes.bcpp_prepare_netbook': {
+            'handlers': ['console', ],
+            'level': 'WARNING',
+            #'filters': ['special']
+        },
+       'bcpp_dispatch.management.commands.prepare_netbook': {
+            'handlers': ['console', ],
+            'level': 'WARNING',
+            #'filters': ['special']
+        },
+       'bhp_dispatch.management.commands.update_crypt': {
+            'handlers': ['console', ],
+            'level': 'WARNING',
+            #'filters': ['special']
+        },
+       'bcpp_dispatch.classes.bcpp_dispatch_controller': {
+            'handlers': ['console', ],
+            'level': 'WARNING',
+            #'filters': ['special']
+        },
+       'bcpp_dispatch.classes.bcpp_dispatch_controller': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            #'filters': ['special']
+        },
     }
 }
