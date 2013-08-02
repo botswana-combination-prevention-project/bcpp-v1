@@ -127,12 +127,14 @@ class Household(BaseDispatchSyncUuidModel):
 
     section = models.CharField(
         max_length=25,
+        null=True,
         verbose_name='Section',
         choices=SECTIONS,
         )
 
     sub_section = models.CharField(
         max_length=25,
+        null=True,
         verbose_name='Sub-section',
         choices=SUB_SECTIONS,
         help_text=u'',
