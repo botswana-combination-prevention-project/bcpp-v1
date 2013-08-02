@@ -8,7 +8,12 @@ from transaction_producer import TransactionProducer
 
 
 class DeserializeFromTransaction(object):
-
+    
+    def deserialize_and_not_save(self, incoming_transaction):
+        for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)):
+            return obj.object
+        return None
+    
     def deserialize(self, incoming_transaction, using, **kwargs):
         # may bypass this check for for testing ...
         check_hostname = kwargs.get('check_hostname', True)
