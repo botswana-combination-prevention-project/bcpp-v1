@@ -40,6 +40,13 @@
 </ul>
 {% endif %}
 
+{% if 'bhp_inspector' in installed_apps %}
+<H5>Node Inspection Of Synced Trasanctions</H5>
+<ul>
+<li><A href="admin/{{app_name}}">Inspect Models</A></li>
+</ul>
+{% endif %}
+
 {% if 'lab_clinic_api' in installed_apps %}
 <H5>Lab</H5>
 <ul>
