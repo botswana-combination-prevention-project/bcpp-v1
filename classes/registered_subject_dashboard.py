@@ -1,21 +1,27 @@
+import re
 from textwrap import wrap
-from datetime import datetime
 from django.db import models
 from django.db.models import TextField
-#from django.core.exceptions import NoReverseMatch
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
+from bhp_common.utils import convert_from_camel
+from bhp_base_model.models import BaseModel
 from bhp_crypto.fields import EncryptedTextField
-from bhp_entry.models import AdditionalEntryBucket
+from bhp_entry.models import AdditionalEntryBucket, ScheduledEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_entry_rules.classes import rule_groups
 from bhp_appointment.models import Appointment
-from bhp_visit.models import ScheduleGroup, MembershipForm
+from bhp_visit.models import MembershipForm
+from bhp_visit.classes import MembershipFormHelper
+from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_registration.models import RegisteredSubject
 from bhp_dashboard.classes import Dashboard
 from bhp_subject_summary.models import Link
 from lab_clinic_api.classes import EdcLab
+from lab_requisition.models import BaseBaseRequisition
+from lab_packing.models import BasePackingList
 from bhp_entry.classes import ScheduledEntry, AdditionalEntry
 from bhp_locator.models import BaseLocator
 from bhp_lab_tracker.classes import lab_tracker
@@ -30,44 +36,54 @@ class RegisteredSubjectDashboard(Dashboard):
     def __init__(self, **kwargs):
 
         super(RegisteredSubjectDashboard, self).__init__(**kwargs)
-        self.selected_visit = None
-        self.visit_code = None
-        self.visit_instance = None  # this is not a model instance!!
-        self.visit_model = None
-        self.visit_messages = None
+        #self._subject_dashboard_url = None
+        self._dashboard_id = None
+        self._dashboard_identifier = None
+        self._dashboard_model = None
+        self._dashboard_model_key = None
+        self._dashboard_model_instance = None
+        self._dashboard_model_reference = None
         self._registered_subject = None
         self._subject_identifier = None
-        self._subject_hiv_status = None
         self._subject_type = None
+        self._appointment_row_template = None
+        self._appointment = None
+        self._appointment_zero = None
+        self._appointments = None
+        self._appointment_code = None
+        self._appointment_continuation_count = None
+        self._visit_model = None
+        self._requisition_model = None
+        self._packing_list_model = None
+        self._visit_model_instance = None
         self._subject_configuration = None
-        self.requisition_model = None
+        self._extra_url_context = None
+        self._show = None
+        self._scheduled_entry_bucket = None
+        self._scheduled_lab_bucket = None
+        self._additional_entry_bucket = None
+        self._additional_lab_bucket = None
+        self._membership_models = None
+        self._visit_messages = []
+
+        self.selected_visit = None
+        self._subject_hiv_status = None
         self.is_dispatched, self.dispatch_producer = False, None
-        self.appointment_row_template = 'appointment_row.html'
-        self.appointment_map = {}
-        self.exclude_others_if_keyed_model_name = ''  # this is a form name or regex pattern
-        self.include_after_exclusion_model_keyed = []
-        self.scheduled_entry_bucket_rules = []
+        self.exclude_others_if_keyed_model_name = ''
 
     def create(self, **kwargs):
-
         super(RegisteredSubjectDashboard, self).create(**kwargs)
-
-        if not self.appointment_row_template:
-            self.appointment_row_template = 'appointment_row.html'
-            self.context.add(appointment_row_template=self.appointment_row_template)
+        # values coming from kwargs
+        self.set_show(kwargs.get('show'))
+        #self.set_subject_dashboard_url(kwargs.get('subject_dashboard_url', None))
+        self.set_dashboard_id(kwargs.get('dashboard_id'))
+        self.set_dashboard_model_key(kwargs.get('dashboard_model'))
+        self.set_subject_type(kwargs.get('subject_type') or kwargs.get('dashboard_type'))
+        self._set_membership_form_category(kwargs.get('membership_form_category', None))
         self._set_registered_subject(kwargs.get('registered_subject', None))
+        self.set_dashboard_model()
+        #self.visit_model_app_label = self.get_visit_model()._meta.app_label
         if self.get_registered_subject():
-            self.set_subject_type(kwargs.get('subject_type'))
-            self.set_subject_identifier(self.get_registered_subject().subject_identifier)
-            self.dashboard_identifier = self.get_subject_identifier()
-            if not self.get_subject_identifier():
-                self.set_subject_identifier(self.get_registered_subject().registration_identifier)
-                self.dashboard_identifier = ('{0} [{1}] {2}'.format(self.get_registered_subject().first_name,
-                                                                    self.get_registered_subject().initials,
-                                                                    self.get_registered_subject().gender,))
-            if not self.get_subject_identifier():
-                raise AttributeError('RegisteredSubjectDashboard requires a subject_identifier. '
-                                     'RegisteredSubject has no identifier for this subject.')
             subject_hiv_status = lab_tracker.get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
             subject_hiv_history = lab_tracker.get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
             self.context.add(
@@ -78,40 +94,173 @@ class RegisteredSubjectDashboard(Dashboard):
                 subject_hiv_status=subject_hiv_status,
                 subject_configuration=self.get_subject_configuration(),
                 )
-        visit_code = kwargs.pop('visit_code', self.visit_code)
-        visit_instance = kwargs.pop("visit_instance", self.visit_instance)
-        visit_model = kwargs.pop('visit_model', self.visit_model)
-        if self.extra_url_context == {}:
-            self.extra_url_context = ''
         self.context.add(
-            visit_model=visit_model,
-            visit_instance=visit_instance,
-            visit_code=visit_code,
-            extra_url_context=self.extra_url_context,
+            show=self.get_show(),
+            #subject_dashboard_url=self.get_subject_dashboard_url(),
+            dashboard_type=self.get_dashboard_type(),
+            dashboard_id=self.get_dashboard_id(),
+            dashboard_model=self.get_dashboard_model_key(),
+            dashboard_identifier=self.get_dashboard_identifier(),
             appointment_meta=Appointment._meta,
             subject_configuration_meta=SubjectConfiguration._meta,
-            visit_model_meta=visit_model._meta,
+            extra_url_context=self.get_extra_url_context(),
+            appointment_row_template=self.get_appointment_row_template(),
+            appointment=self.get_appointment(),
+            appointments=self.get_appointments(),
+            appointment_visit_attr=self.get_visit_model()._meta.object_name.lower(),
+            visit_attr=convert_from_camel(self.get_visit_model()._meta.object_name),
+            visit_model=self.get_visit_model(),
+            visit_model_instance=self.get_visit_model_instance(),
+            visit_instance=self.get_appointment_continuation_count(),
+            visit_code=self.get_appointment_code(),
+            #visit_model_app_label=self.visit_model_app_label,  # TODO: needed??
+            visit_model_meta=self.get_visit_model()._meta,
+            visit_messages=self.get_visit_messages(),
             )
-        if not self.requisition_model:
-            self.requisition_model = kwargs.get('requisition_model', None)
-        if not self.requisition_model:
-            raise AttributeError('RegisteredSubjectDashboard.create() requires attribute '
-                                 '\'requisition_model\'. Got none.')
-        if not visit_model:
-            raise AttributeError('RegisteredSubjectDashboard.create() requires attribute '
-                                 '\'visit_model\'. Got none.')
-        else:
-            self.context.add(visit_model_add_url=self._get_visit_model_url(visit_model))
-        # if 'membership_form_category' not provided in kwargs, eventually comes from registered_subject.subject_type
-        membership_form_category = kwargs.pop('membership_form_category', None)
-        self._prepare(visit_model, visit_code, visit_instance, membership_form_category, **kwargs)
+        self.context.add(
+            membership_forms=self.get_membership_models(),
+            keyed_membership_forms=self.get_keyed_membership_models(),
+            unkeyed_membership_forms=self.get_unkeyed_membership_models()
+            )
+        if self.get_show() == 'forms':
+            self._add_or_update_entry_buckets()
+            self._run_rule_groups()
+            self.context.add(
+                scheduled_entry_bucket_meta=ScheduledEntryBucket._meta,
+                scheduled_entry_bucket=self.get_scheduled_entry_bucket(),
+                scheduled_lab_bucket=self.get_scheduled_lab_bucket(),
+                additional_entry_bucket=self.get_additional_entry_bucket(),
+                additional_lab_bucket=self.get_additional_lab_bucket(),
+                )
+            self.render_summary_links()
+        self.context.add(rendered_action_items=self.render_action_item())
 
-    def set_registered_subject(self, registered_subject):
+        # lab stuff
+        if self.get_packing_list_model():
+            self.context.add(packinglist_meta=self.get_packing_list_model()._meta)
+        if self.get_requisition_model():
+            self.context.add(requisition_meta=self.get_requisition_model()._meta)
+
+    def set_appointment_row_template(self, template_file=None):
+        self._appointment_row_template = template_file or 'appointment_row.html'
+
+    def get_appointment_row_template(self):
+        if not self._appointment_row_template:
+            self.set_appointment_row_template()
+        return self._appointment_row_template
+
+#     def set_subject_dashboard_url(self, value=None):
+#         self._subject_dashboard_url = value or 'subject_dashboard_url'
+# 
+#     def get_subject_dashboard_url(self):
+#         if not self._subject_dashboard_url:
+#             self.set_subject_dashboard_url()
+#         return self._subject_dashboard_url
+
+    def get_dashboard_model_reference(self):
+        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
+
+        Users should override to add more to the dictionary than the default."""
+        return {}
+
+    def _set_dashboard_model_reference(self):
+        """Sets a reference dictionary by updating the user defined dictionary with defaults for registered_subject, appointment and visit."""
+        self._dashboard_model_reference = self.get_dashboard_model_reference()
+        self._dashboard_model_reference.update({'registered_subject': RegisteredSubject})
+        self._dashboard_model_reference.update({'appointment': Appointment})
+        self._dashboard_model_reference.update({'visit': self.get_visit_model()})
+
+    def _get_dashboard_model_reference(self, model_name):
+        if not self._dashboard_model_reference:
+            self._set_dashboard_model_reference()
+        if model_name not in self._dashboard_model_reference:
+            raise TypeError(('Dashboard model name {0} is not in the user defined dictionary returned by '
+                            'method get_dashboard_model_reference(). Got {1}. Perhaps override method '
+                            'get_dashboard_model_reference() in your subclass.').format(model_name, self._dashboard_model_reference))
+        return self._dashboard_model_reference.get(model_name)
+
+    def set_dashboard_model_key(self, value):
+        self._dashboard_model_key = value
+
+    def get_dashboard_model_key(self):
+        if not self._dashboard_model_key:
+            self.set_dashboard_model_key()
+        return self._dashboard_model_key
+
+    def set_dashboard_model(self):
+        """Sets the model class given by the dashboard URL."""
+        model_name = self.get_dashboard_model_key()
+        if isinstance(self._get_dashboard_model_reference(model_name), tuple):
+            app_label, model_name = self._get_dashboard_model_reference(model_name)
+            self._dashboard_model = models.get_model(app_label, model_name)
+        elif issubclass(self._get_dashboard_model_reference(model_name), BaseModel):
+            self._dashboard_model = self._get_dashboard_model_reference(model_name)
+        else:
+            raise TypeError('Dashboard model reference must return a tuple (app_label, model_name) or a model class. Got neither for {0}'.format(model_name))
+        if not self._dashboard_model:
+            raise TypeError('Dashboard model may not be None')
+
+    def get_dashboard_model(self):
+        if not self._dashboard_model:
+            self.set_dashboard_model()
+        return self._dashboard_model
+
+    def set_dashboard_model_instance(self):
+        """Sets the model instance using the model class and pk from the dashboard URL."""
+        self._dashboard_model_instance = self.get_dashboard_model().objects.get(pk=self.get_dashboard_id())
+
+    def get_dashboard_model_instance(self):
+        if not self._dashboard_model_instance:
+            self.self.set_dashboard_model_instance()
+        return self._dashboard_model_instance
+
+    def set_dashboard_id(self, pk):
+        """Sets the pk of the dashboard model class given by the dashboard URL."""
+        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+        if not re_pk.match(pk or ''):
+            raise TypeError('Dashboard id must be a uuid (pk)')
+        self._dashboard_id = pk
+
+    def get_dashboard_id(self):
+        if not self._dashboard_id:
+            self.set_dashboard_id()
+        return self._dashboard_id
+
+    def set_dashboard_identifier(self):
+        #TODO: what is this used for?
+        self._dashboard_identifier = None
+        if self.get_registered_subject():
+            self._dashboard_identifier = ('{0} [{1}] {2}'
+                ).format(
+                     self.get_registered_subject().first_name,
+                     self.get_registered_subject().initials,
+                     self.get_registered_subject().gender)
+        else:
+            self._dashboard_identifier = self.get_subject_identifier()
+
+    def get_dashboard_identifier(self):
+        if not self._dashboard_identifier:
+            self.set_dashboard_identifier()
+        return self._dashboard_identifier
+
+    def set_registered_subject(self, registered_subject=None, pk=None):
         """Sets the registered_subject instance, may be overridden by users."""
         self._registered_subject = registered_subject
+        if not self._registered_subject:
+            self._registered_subject = RegisteredSubject.objects.get(pk=pk)
+        if not self._registered_subject:
+            if self.get_dashboard_model_key() == 'registered_subject':
+                # may have more than on, so take most recent
+                self._registered_subject = RegisteredSubject.objects.filter(registered_subject=self.get_dashboard_id()).order_by('-created')[0]
 
     def _set_registered_subject(self, registered_subject=None):
         self.set_registered_subject(registered_subject)
+        if not self._registered_subject:
+            re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+            if re_pk.match(str(registered_subject)):
+                self._registered_subject = RegisteredSubject.objects.get(pk=registered_subject)
+            elif self.get_appointment():
+                    self._registered_subject = self.get_appointment().registered_subject
         if self._registered_subject:
             if not isinstance(self._registered_subject, RegisteredSubject):
                 raise TypeError('Expected instance of RegisteredSubject.')
@@ -120,122 +269,85 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def get_registered_subject(self):
         if not self._registered_subject:
-            self.set_registered_subject()
+            self._set_registered_subject()
         return self._registered_subject
 
-    def _prepare(self, visit_model, visit_code, visit_instance, membership_form_category, **kwargs):
-        self._prepare_membership_forms(membership_form_category)
-        self._set_appointments(visit_code, visit_instance, **kwargs)
-        self._set_current_appointment(visit_code, visit_instance)
-        visit_model_instance = self._set_current_visit(visit_model, self._get_current_appointment())
-        self._add_or_update_entry_buckets(visit_model_instance)
-        self._run_rule_groups(self.get_subject_identifier(), visit_code, visit_model_instance)
-        self._prepare_additional_entry_bucket()
-        self._prepare_visit_messages(visit_code)
-        self._prepare_scheduled_entry_bucket(visit_code)
-        self._prepare_scheduled_lab_bucket(visit_code)
-        self._prepare_additional_lab_bucket(visit_code)
-        #self._prepare_dispatch_subject()
-        self.render_summary_links()
-        self.render_action_item()
+    def set_appointment(self, appointment=None, appointment_code=None, appointment_continuation_count=None):
+        """Sets the appointment that has focus using either appointment_code or both appointment_code and appointment_continuation_count.
 
-    def _add_or_update_entry_buckets(self, visit_model_instance):
-        """ Adds missing bucket entries and flags added and existing entries as keyed or not keyed (only)."""
-        if visit_model_instance:
-            scheduled_entry = ScheduledEntry()
-            scheduled_entry.add_or_update_for_visit(visit_model_instance)
-            # if requisition_model has been defined, assume scheduled labs otherwise pass
-            if hasattr(self, 'requisition_model'):
-                ScheduledLabEntryBucket.objects.add_for_visit(
-                    visit_model_instance=visit_model_instance,
-                    requisition_model=self.requisition_model)
-        if self.get_registered_subject():
-            additional_entry = AdditionalEntry()
-            additional_entry.update_for_registered_subject(self.get_registered_subject())
+        self._appointment is allowed to be None if no appointment has focus.
 
-    def _run_rule_groups(self, subject_identifier, visit_code, visit_model_instance):
-        """ Runs rules in any rule groups if visit_code is known and update entries as (new, not required) when the visit dashboard is refreshed.
+        Users may override."""
+        self._appointment = None
 
-        If status is 'keyed' and the form is actually keyed, do nothing."""
-        if not subject_identifier:
-            raise AttributeError('set value of subject_identifier before calling dashboard create() when scheduled_entry_bucket_rules exist')
-        # run rules if visit_code is known -- user selected, that is user clicked to see list of
-        # scheduled entries for a given visit.
-        if visit_code:
-            # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
-            if visit_model_instance:
-                rule_groups.update_all(visit_model_instance)
+    def _set_appointment(self, appointment=None, appointment_code=None, appointment_continuation_count=None):
+        self._appointment = None
+        appointment_code = appointment_code or self.get_appointment_code()
+        appointment_continuation_count = appointment_continuation_count or self.get_appointment_continuation_count() or 0
+        self.set_appointment(appointment, appointment_code, appointment_continuation_count)
+        if not self._appointment:
+            if appointment:
+                if isinstance(appointment, Appointment):
+                    self._appointment = appointment
+                elif isinstance(appointment, basestring):
+                    if Appointment.objects.filter(pk=appointment):
+                        self._appointment = Appointment.objects.get(pk=appointment)
+                else:
+                    raise AttributeError('Unable to determine appointment for SubjectDashboard {0} using parameter \'appointment\'. Got {1}'.format(self.__class__, appointment))
+            if appointment_code:
+                if Appointment.objects.filter(registered_subject=self.get_registered_subject(), visit_definition__code=appointment_code, visit_instance=appointment_continuation_count):
+                    self._appointment = Appointment.objects.get(registered_subject=self.get_registered_subject(), visit_definition__code=appointment_code, visit_instance=appointment_continuation_count)
+        if not self._appointment:
+            if self.get_dashboard_model_key() == 'appointment':
+                self._appointment = Appointment.objects.get(pk=self.get_dashboard_id())
+            elif self.get_dashboard_model_key() == 'visit':
+                self._appointment = self.get_visit_model_instance().appointment
+        if self._appointment:
+            self.set_appointment_code(self._appointment.visit_definition.code)
+            self.set_appointment_continuation_count(self._appointment.visit_instance)
 
-    def _get_visit_model_url(self, visit_model):
-        model_name = visit_model._meta.module_name
-        app_label = visit_model._meta.app_label
-        self.context.add(visit_model_app_label=app_label)
-        #try:
-            # if this fails, confirm the model has been registered with admin!
-        url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
-        #except NoReverseMatch:
-            # model must be registered in admin
-        #    raise ValueError('NoReverseMatch: Reverse for \'{0}_{1}_add\'. Check model is '
-        #                         'registered in admin'.format(app_label, model_name))
-        self.context.add(visit_model_name=model_name)
-        return url
+    def get_appointment(self):
+        if not self._appointment:
+            self._set_appointment()
+        return self._appointment
 
-    def _set_appointment_map(self, visit_code):
-        """Create a dictionary of appointment instances for this subject and visit_code using visit_instance(0,1,2,3...) as a key."""
-        self.appointment_map = {}
-        for appointment in Appointment.objects.filter(registered_subject=self.get_registered_subject(), visit_definition__code=visit_code):
-            self.appointment_map[appointment.visit_instance] = appointment
+    def set_appointment_zero(self):
+        self._appointment_zero = None
+        if self.get_appointment():
+            if self.get_appointment().visit_instance == 0:
+                self._appointment_zero = self.get_appointment()
+            else:
+                self._appointment_zero = Appointment.objects.get(registered_subject=self.get_appointment().registered_subject, visit_definition=self.get_appointment().visit_definition, visit_instance=0)
 
-    def _get_appointment_map(self, visit_code, visit_instance=None):
-        if not self.appointment_map:
-            self._set_appointment_map(visit_code)
-        if visit_instance:
-            return self.appointment_map.get(visit_instance, None)
-        else:
-            return self.appointment_map
+    def get_appointment_zero(self):
+        if not self._appointment_zero:
+            self.set_appointment_zero()
+        return self._appointment_zero
 
-    def add_visit_message(self, message):
-        self.visit_messages.append(message)
+    def set_appointment_code(self, value=None):
+        self._appointment_code = value
+        #if not self._appointment_code:
+        #    if self.get_visit_model_instance():
+        #        self._appointment_code = self.get_visit_model_instance().appointment.visit_definition.code
 
-    def _prepare_visit_messages(self, visit_code):
-        self.context.add(visit_messages=self.visit_messages)
-        return self.visit_messages
+    def get_appointment_code(self):
+        if not self._appointment_code:
+            self.set_appointment_code()
+        return self._appointment_code
 
-    def _prepare_scheduled_entry_bucket(self, visit_code):
-        """ Gets the scheduled bucket entries using the appointment with instance=0 and adds to context ."""
-        scheduled_entry_buckets = None
-        if visit_code:
-            scheduled_entry = ScheduledEntry()
-            scheduled_entry_buckets = scheduled_entry.get_entries_for(
-                appointment=self._get_appointment_map(visit_code, '0'),
-                entry_category='clinic')
-        self.context.add(scheduled_entry_bucket=scheduled_entry_buckets)
-        return scheduled_entry_buckets
+    def set_appointment_continuation_count(self, value=None):
+        self._appointment_continuation_count = value
+        #if not self._appointment_continuation_count:
+        #    if self.get_visit_model_instance():
+        #        self._appointment_continuation_count = self.get_visit_model_instance().appointment.visit_instance
 
-    def _prepare_scheduled_lab_bucket(self, visit_code):
-        """ Gets the scheduled lab bucket entries using the appointment with instance=0 and adds to context ."""
-        scheduled_lab_bucket = None
-        if visit_code:
-            scheduled_lab_bucket = ScheduledLabEntryBucket.objects.get_scheduled_labs_for(
-                                            registered_subject=self.get_registered_subject(),
-                                            appointment=self._get_appointment_map(visit_code, '0'),
-                                            visit_code=visit_code)
-        self.context.add(scheduled_lab_bucket=scheduled_lab_bucket)
-        return scheduled_lab_bucket
+    def get_appointment_continuation_count(self):
+        if not self._appointment_continuation_count:
+            self.set_appointment_continuation_count()
+        return self._appointment_continuation_count
 
-    def _prepare_additional_lab_bucket(self, visit_code):
-        """ Gets the additional lab bucket entries using the appointment with instance=0 and adds to context ."""
-        additional_lab_bucket = None
-        if visit_code:
-            additional_lab_bucket = AdditionalLabEntryBucket.objects.get_labs_for(registered_subject=self.get_registered_subject(),
-                                                                                  appointment=self._get_appointment_map(visit_code, '0'))
-        self.context.add(additional_lab_bucket=additional_lab_bucket)
-        return additional_lab_bucket
-
-    def _set_appointments(self, visit_code=None, visit_instance=None, **kwargs):
-        """Returns all appointments for this registered_subject or just one (if given a visit_code and visit_instance).
-
-        Note: visit_instance does not refer to a model instance. It is an integer 0,1,2,3...
+    def set_appointments(self):
+        """Returns all appointments for this registered_subject or just one (if given a appointment_code and appointment_continuation_count).
 
         Could show
             one
@@ -244,48 +356,192 @@ class RegisteredSubjectDashboard(Dashboard):
             only those for a given membership form
             only those for a visit definition grouping
             """
-        appointments = None
-        if visit_code and visit_instance:
-            appointments = [self._get_appointment_map(visit_code, visit_instance)]
+        self._appointments = None
+        if self.get_appointment_code() and self.get_appointment_continuation_count():
+            self._appointments = [self.get_appointment()]
         else:
             # or filter appointments for the current membership category
             # schedule_group__membership_form
-            codes = MembershipForm.objects.codes_for_category(membership_form_category=self._get_membership_form_category())
-            appointments = Appointment.objects.filter(
+            codes = MembershipForm.objects.codes_for_category(membership_form_category=self.get_membership_form_category())
+            self._appointments = Appointment.objects.filter(
                 registered_subject=self.get_registered_subject(),
                 visit_definition__code__in=codes).order_by('visit_definition__code', 'visit_instance', 'appt_datetime')
-        self.context.add(appointments=appointments)
 
-    def _set_current_visit(self, visit_model, appointment=None):
-        if appointment:
-            # set the visit
-            if visit_model:
-                visit = visit_model.objects.get(appointment=appointment)
-            else:
-                raise AttributeError('Cannot determine attribute \'visit_model\' in RegisteredSubjectDashboard. Got none. Either pass as a attribute or add_to_context')
+    def get_appointments(self):
+        if not self._appointments:
+            self.set_appointments()
+        return self._appointments
+
+    def set_visit_model(self, subject_type=None, visit_model=None):
+        """Sets the attribute self._visit model (visit model class) if one is not provided as a parameter when calling :func:`_set_visit_model`.
+
+        Users must override if this is called.
+
+        For example::
+            def set_visit_model(self):
+                if self.get_dashboard_type() == 'subject':
+                    self._visit_model = SubjectVisit
+
+        """
+        self._visit_model = visit_model
+        if not self._visit_model:
+            raise ImproperlyConfigured('Override method set_visit_model() if you wish to get a visit model class not returned by the view.')
+
+    def _set_visit_model(self):
+        self.set_visit_model()
+        if not self._visit_model:
+            raise TypeError('Attribute _visit_model_class may not be None')
+        if not issubclass(self._visit_model, BaseVisitTracking):
+            raise TypeError('Expected visit model class to be a subclass of BaseVisitTracking. Got {0}'.format(self._visit_model))
+
+    def get_visit_model(self):
+        """Returns the visit model class."""
+        if not self._visit_model:
+            self._set_visit_model()
+        return self._visit_model
+
+    def set_visit_model_instance(self, model_inst=None, pk=None, appointment=None):
+        """Sets the visit model instance but may be None."""
+        self._visit_model_instance = None
+        if model_inst:
+            self._visit_model_instance = model_inst
+        elif pk:
+            self._visit_model_instance = self.get_visit_model().objects.get(pk=pk)
+        elif appointment:
+            self._visit_model_instance = self.get_visit_model().objects.get(appointment=appointment)
+        elif self.get_dashboard_model_key() == 'visit':
+            self._visit_model_instance = self.get_visit_model().objects.get(pk=self.get_dashboard_id())
+        elif self.get_dashboard_model_key() == 'appointment':
+            # warning, this assumes the subject visit attribute is based on the model name SubjectVisit (which it should be!).
+            try:
+                self._visit_model_instance = getattr(self.get_appointment(), self.get_visit_model()._meta.object_name.lower())
+            except self.get_visit_model().DoesNotExist:
+                pass
         else:
-            visit = visit_model.objects.none()
-        self.context.add(visit=visit)
-        return visit
+            pass
+        if self._visit_model_instance:
+            if not isinstance(self._visit_model_instance, self.get_visit_model()):
+                raise TypeError('Expected an instance of visit model class {0} using (model_inst={1}, pk={2}, appointment={3} and self.get_dashboard_model_key()={4}).'.format(self.get_visit_model(), model_inst, pk, appointment, self.get_dashboard_model_key()))
 
-    def _set_current_appointment(self, visit_code=None, visit_instance=None):
-        self._appointment = Appointment.objects.none()
-        # get the appointment that has focus based on visit_code
-        if visit_code:
-            # get visit associated with this appointment (in progress) and visit code and instance
-            self._appointment = self._get_appointment_map(visit_code, visit_instance)
-        self.context.add(appointment=self._appointment)
+    def get_visit_model_instance(self):
+        if not self._visit_model_instance:
+            self.set_visit_model_instance()
+        return self._visit_model_instance
 
-    def _get_current_appointment(self, visit_code=None, visit_instance=None):
-        if not self._appointment:
-            self._set_current_appointment(visit_code, visit_instance)
-        return self._appointment
+    def set_requisition_model(self):
+        """Users must override if requisitions are used to specify the requisition model."""
+        self._requisition_model = None
 
-    def _prepare_additional_entry_bucket(self):
-        # get additional crfs
-        additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.get_registered_subject())
-        self.context.add(additional_entry_bucket=additional_entry_bucket)
-        return additional_entry_bucket
+    def _set_requisition_model(self):
+        self._requisition_model = None
+        self.set_requisition_model()
+        if not issubclass(self._requisition_model, BaseBaseRequisition):
+            raise TypeError('Expected a subclass of BaseBaseRequisition. Got {0}.'.format(self._requisition_model))
+
+    def get_requisition_model(self):
+        if not self._requisition_model:
+            self._set_requisition_model()
+        return self._requisition_model
+
+    def set_packing_list_model(self):
+        """Users must override if requisitions are used to specify the requisition model."""
+        self._packing_list_model = None
+
+    def _set_packing_list_model(self):
+        self._packing_list_model = None
+        self.set_packing_list_model()
+        if not issubclass(self._packing_list_model, BasePackingList):
+            raise TypeError('Expected a subclass of BasePackingList. Got {0}.'.format(self._packing_list_model))
+
+    def get_packing_list_model(self):
+        if not self._packing_list_model:
+            self._set_packing_list_model()
+        return self._packing_list_model
+
+    def set_membership_form_category(self, value=None):
+        """Users may override."""
+        return None
+
+    def _set_membership_form_category(self, value=None):
+        """Sets the membership_form_category, otherwise just uses subject type."""
+        self.set_membership_form_category()
+        if not self._membership_form_category:
+            self._membership_form_category = value or self.get_subject_type()
+        if not self._membership_form_category:
+            raise AttributeError('Attribute \'_membership_form_category\' cannot be None')
+
+    def get_membership_form_category(self):
+        if not self._membership_form_category:
+            self._set_membership_form_category()
+        return self._membership_form_category
+
+    def _add_or_update_entry_buckets(self):
+        """ Adds missing bucket entries and flags added and existing entries as keyed or not keyed (only)."""
+        if self.get_visit_model_instance():
+            scheduled_entry = ScheduledEntry()
+            scheduled_entry.add_or_update_for_visit(self.get_visit_model_instance())
+            # if requisition_model has been defined, assume scheduled labs otherwise pass
+            if self.get_requisition_model():
+                ScheduledLabEntryBucket.objects.add_for_visit(
+                    visit_model_instance=self.get_visit_model_instance(),
+                    requisition_model=self.get_requisition_model())
+        if self.get_registered_subject():
+            additional_entry = AdditionalEntry()
+            additional_entry.update_for_registered_subject(self.get_registered_subject())
+
+    def add_visit_message(self, message):
+        self._visit_messages.append(message)
+
+    def get_visit_messages(self):
+        return self._visit_messages
+
+    def set_scheduled_entry_bucket(self):
+        """ Sets the scheduled bucket entries using the appointment with instance=0 and adds to context ."""
+        self._scheduled_entry_bucket = None
+        if self.get_appointment():
+            self._scheduled_entry_bucket = ScheduledEntry().get_entries_for(
+                appointment=self.get_appointment_zero(),
+                entry_category='clinic',
+                registered_subject=self.get_registered_subject())
+
+    def get_scheduled_entry_bucket(self):
+        if not self._scheduled_entry_bucket:
+            self.set_scheduled_entry_bucket()
+        return self._scheduled_entry_bucket
+
+    def set_scheduled_lab_bucket(self):
+        """ Sets the scheduled lab bucket entries using the appointment with instance=0 and adds to context ."""
+        self._scheduled_lab_bucket = None
+        if self.get_appointment():
+            self._scheduled_lab_bucket = ScheduledLabEntryBucket.objects.get_scheduled_labs_for(
+                                            registered_subject=self.get_registered_subject(),
+                                            appointment=self.get_appointment_zero(),
+                                            visit_code=self.get_appointment().visit_definition.code)
+
+    def get_scheduled_lab_bucket(self):
+        if not self._scheduled_lab_bucket:
+            self.set_scheduled_lab_bucket()
+        return self._scheduled_lab_bucket
+
+    def set_additional_lab_bucket(self):
+        """ Gets the additional lab bucket entries using the appointment with instance=0 and adds to context ."""
+        self._additional_lab_bucket = None
+        if self.get_appointment():
+            self._additional_lab_bucket = AdditionalLabEntryBucket.objects.get_labs_for(registered_subject=self.get_registered_subject(),
+                                                                                  appointment=self.get_appointment_zero())
+
+    def get_additional_lab_bucket(self):
+        if not self._additional_lab_bucket:
+            self.set_additional_lab_bucket()
+        return self._additional_lab_bucket
+
+    def set_additional_entry_bucket(self):
+        self._additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.get_registered_subject())
+
+    def get_additional_entry_bucket(self):
+        if not self._additional_entry_bucket:
+            self.set_additional_entry_bucket()
+        return self._additional_entry_bucket
 
     def set_subject_type(self, value=None):
         if not value:
@@ -300,6 +556,15 @@ class RegisteredSubjectDashboard(Dashboard):
         self._subject_identifier = None
         if value:
             self._subject_identifier = value
+        else:
+            if self.get_registered_subject():
+                self._subject_identifier = self.get_registered_subject().get_subject_identifier()
+        if self.get_registered_subject() and self._subject_identifier:
+            if self.get_registered_subject().get_subject_identifier() != self._subject_identifier:
+                raise TypeError(('Subject identifier on registered subject {0} not the same as '
+                                 'subject identifier on dashboard {1}!').format(self.get_registered_subject().get_subject_identifier(), self._subject_identifier))
+        if not self._subject_identifier:
+            raise TypeError('attribute subject_identifier may not be None')
 
     def get_subject_identifier(self):
         if not self._subject_identifier:
@@ -317,6 +582,24 @@ class RegisteredSubjectDashboard(Dashboard):
             self._set_subject_configuration()
         return self._subject_configuration
 
+    def set_extra_url_context(self, value=None):
+        self._extra_url_context = value or ''
+#         if self._extra_url_context == {}:
+#             self._extra_url_context = ''
+
+    def get_extra_url_context(self):
+        if not self._extra_url_context:
+            self.set_extra_url_context()
+        return self._extra_url_context
+
+    def set_show(self, value):
+        self._show = value or 'appointments'
+
+    def get_show(self):
+        if not self._show:
+            self.set_show()
+        return self._show
+
     def _set_subject_hiv_status(self):
         """Sets the hiv_status to the value from bhp_lab_tracker history model."""
         RESULT = 0
@@ -333,41 +616,61 @@ class RegisteredSubjectDashboard(Dashboard):
             self._set_subject_hiv_status()
         return self._subject_hiv_status
 
-    def _set_membership_form_category(self, membership_form_category=None):
-        """Sets the membership_form_category, otherwise just uses subject type."""
-        if membership_form_category:
-            self._membership_form_category = membership_form_category
-        else:
-            # this comes from registered_subject.subject_type
-            self._membership_form_category = self.get_subject_type()
+    def set_membership_models(self):
+        """Sets to a dictionary of membership "models" that are keyed model instances and unkeyed model classes.
 
-    def _get_membership_form_category(self):
-        if not self._membership_form_category:
-            raise AttributeError('Attribute \'_membership_form_category\' cannot be None')
-            #self._set_membership_form_category()
-        return self._membership_form_category
-
-    def _prepare_membership_forms(self, membership_form_category=None):
-        # membership forms can also be proxy models ... see mochudi_subject.models
-        # add membership forms for this registered_subject and subject_type
-        # these are the KEYED, UNKEYED schedule group membership forms
-        self._set_membership_form_category(membership_form_category)
-        membership_forms = ScheduleGroup.objects.get_membership_forms_for(
+        Membership forms can also be proxy models ... see mochudi_subject.models."""
+        self._membership_models = MembershipFormHelper().get_membership_models_for(
             self.get_registered_subject(),
-            self._get_membership_form_category(),
-            exclude_others_if_keyed_model_name=self.exclude_others_if_keyed_model_name,
-            include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed)
-        self.context.add(
-            membership_forms=membership_forms,
-            keyed_membership_forms=membership_forms['keyed'],
-            unkeyed_membership_forms=membership_forms['unkeyed'])
+            self.get_membership_form_category(),
+            extra_grouping_key=self.exclude_others_if_keyed_model_name)
+            #include_after_exclusion_model_keyed=self.include_after_exclusion_model_keyed)
+
+    def get_membership_models(self, key=None):
+        if not self._membership_models:
+            self.set_membership_models()
+        return self._membership_models
+
+    def get_keyed_membership_models(self):
+        return self.get_membership_models().get('keyed', [])
+
+    def get_unkeyed_membership_models(self):
+        return self.get_membership_models().get('unkeyed', [])
+
+    def _run_rule_groups(self):
+        """ Runs rules in any rule groups if visit_code is known and update entries as (new, not required) when the visit dashboard is refreshed.
+
+        If status is 'keyed' and the form is actually keyed, do nothing."""
+        if not self.get_subject_identifier():
+            raise AttributeError('set value of subject_identifier before calling dashboard create() when scheduled_entry_bucket_rules exist')
+        # run rules if visit_code is known -- user selected, that is user clicked to see list of
+        # scheduled entries for a given visit.
+
+        # TODO: on data entry, is the visit_model_instance always 0 or the actual instance 0,1,2, etc
+        if self.get_visit_model_instance():
+            rule_groups.update_all(self.get_visit_model_instance())
+
+    def next_url_in_scheduled_entry_bucket(self, obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model):
+        if not visit_attr or not entry_order:
+            return (None, None, None)
+        self.set_show('forms')
+        self.set_dashboard_type(dashboard_type)
+        self.set_dashboard_id(dashboard_id)
+        self.set_dashboard_model_key(dashboard_model)
+        visit = getattr(obj, visit_attr)
+        self.set_visit_model(visit_model=visit.__class__)
+        self.set_visit_model_instance(visit)
+        self._run_rule_groups()
+        scheduled_entry_bucket = ScheduledEntry().get_next_entry_for(entry_order, self.get_appointment(), self.get_registered_subject())
+        url = reverse('admin:{0}_{1}_add'.format(scheduled_entry_bucket.entry.content_type_map.app_label, scheduled_entry_bucket.entry.content_type_map.module_name))
+        return url, self.get_visit_model_instance(), scheduled_entry_bucket.entry.entry_order
 
     def render_summary_links(self, template_filename=None):
         """Renders the side bar template for subject summaries."""
         if not template_filename:
             template_filename = 'summary_side_bar.html'
         summary_links = render_to_string(template_filename, {
-                'links': Link.objects.filter(dashboard_type=self.dashboard_type),
+                'links': Link.objects.filter(dashboard_type=self.get_dashboard_type()),
                 'subject_identifier': self.get_subject_identifier()})
         self.context.add(summary_links=summary_links)
 
@@ -390,8 +693,6 @@ class RegisteredSubjectDashboard(Dashboard):
             raise TypeError('Expected first parameter to be a Locator model class. Got None. Please correct in local dashboard view.')
         if not issubclass(locator_cls, BaseLocator):
             raise TypeError('Expected first parameter to be a subclass of BaseLocator model class. Please correct in local dashboard view.')
-        visit_code = None
-        visit_instance = None
         locator_add_url = reverse('admin:' + locator_cls._meta.app_label + '_' + locator_cls._meta.module_name + '_add')
         if not template:
             template = 'locator_include.html'
@@ -402,19 +703,14 @@ class RegisteredSubjectDashboard(Dashboard):
                     value = getattr(locator_instance, field.name)
                     if value:
                         setattr(locator_instance, field.name, '<BR>'.join(wrap(value, 25)))
-            if self._appointment:
-                visit_code = self._appointment.visit_definition.code
-                visit_instance = self._appointment.visit_instance
         else:
             locator_instance = None
-
         return render_to_string(template, {'locator': locator_instance,
-                                           'registered_subject': self.get_registered_subject(),
-                                           'subject_identifier': self.get_subject_identifier(),
-                                           'dashboard_type': self.dashboard_type,
-                                           'visit_code': visit_code,
-                                           'visit_instance': visit_instance,
-                                           'appointment': self._appointment,
+                                           'subject_dashboard_url': self.get_subject_dashboard_url(),
+                                           'dashboard_type': self.get_dashboard_type(),
+                                           'dashboard_model': self.get_dashboard_model_key(),
+                                           'dashboard_id': self.get_dashboard_id(),
+                                           'show': self.get_show(),
                                            'locator_add_url': locator_add_url})
 
     def render_action_item(self, action_item_cls=None, template=None, **kwargs):
@@ -423,9 +719,7 @@ class RegisteredSubjectDashboard(Dashboard):
         action_item_cls = action_item_cls or ActionItem
         if isinstance(action_item_cls, models.Model):
             raise TypeError('Expected first parameter to be a Action Item model class. Got an instance. Please correct in local dashboard view.')
-        visit_code = None
-        visit_instance = None
-        action_item_add_url = reverse('admin:' + action_item_cls._meta.app_label + '_' + action_item_cls._meta.module_name + '_add')
+        #action_item_add_url = reverse('admin:' + action_item_cls._meta.app_label + '_' + action_item_cls._meta.module_name + '_add')
         if not template:
             template = 'action_item_include.html'
         action_items = action_item_cls.objects.filter(registered_subject=source_registered_subject, display_on_dashboard=True, status='Open')
@@ -437,136 +731,41 @@ class RegisteredSubjectDashboard(Dashboard):
                         value = getattr(action_item, field.name)
                         if value:
                             setattr(action_item, field.name, '<BR>'.join(wrap(value, 25)))
-                if self._appointment:
-                    visit_code = self._appointment.visit_definition.code
-                    visit_instance = self._appointment.visit_instance
                 action_item_instances.append(action_item)
         if action_item_instances:
             self.context.add(action_item_message='Action items exist for this subject. Please review and resolve if possible.')
         else:
             self.context.add(action_item_message=None)
-
-        rendered_action_items = render_to_string(template, {'action_items': action_item_instances,
-                                           'registered_subject': self.get_registered_subject(),
-                                           'subject_identifier': self.get_subject_identifier(),
-                                           'dashboard_type': self.dashboard_type,
-                                           'visit_code': visit_code,
-                                           'visit_instance': visit_instance,
-                                           'appointment': self._appointment,
-                                           'action_item_add_url': action_item_add_url})
-        self.context.add(rendered_action_items=rendered_action_items)
+        rendered_action_items = render_to_string(template, {
+            'action_items': action_item_instances,
+            'registered_subject': self.get_registered_subject(),
+            'dashboard_type': self.get_dashboard_type(),
+            'dashboard_model': self.get_dashboard_model_key(),
+            'dashboard_id': self.get_dashboard_id(),
+            'show': self.get_show(),
+            'action_item_meta': action_item_cls._meta})
         return rendered_action_items
 
     def get_urlpatterns(self, view, regex, **kwargs):
+        """Gets the url_patterns for the dashboard view.
 
-        """ Generates dashboard urls.
-
-        Add this to your urls.py of your local dashboard app.
-            regex = {}
-            regex['dashboard_type'] = 'subject'
-            regex['subject_identifier'] = 'S[0-9]{6}\-[0-9]{2}\-[A-Z]{3}[0-9]{2}'
-            regex['visit_code'] = '\w+'
-            regex['visit_instance'] = '[0-9]{1}'
-            subject_dashboard = SubjectDashboard()
-            urlpatterns = subject_dashboard.get_urlpatterns('mochudi_survey_dashboard.views', regex, visit_field_names=['subject_visit',])"""
-
+        Called in the urls.py"""
         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
-        regex['content_type_map'] = '\w+'
-        visit_field_names = kwargs.get('visit_field_names', ['visit'])
-        if 'registration_identifier' not in regex.keys():
-            regex['registration_identifier'] = '[A-Z0-9]{6,8}'
+        if regex.get('dashboard_model', None):
+            regex['dashboard_model'] += '|visit|appointment|registered_subject'
+        else:
+            regex.update({'dashboard_model': 'visit|appointment|registered_subject'})
+        if not regex.get('dashboard_type', None):
+            regex.update({'dashboard_type': 'subject'})
+        regex.update({'show': 'appointments|forms'})
+        #regex['panel'] = '\d+'
+        #regex['content_type_map'] = '[a-z0-9]+'
+        #if 'registration_identifier' not in regex.keys():
+        #    regex['registration_identifier'] = '[A-Z0-9]{6,8}'
+
         urlpatterns = patterns(view,
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<panel>\d+)/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<panel>\d+)/(?P<current_entry_title>[\w\s\(\)]+)/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<appointment>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<registered_subject>{pk})/(?P<appointment>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<content_type_map>{content_type_map})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<appointment>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_visit_url"
-                ))
-
-        for visit_field_name in visit_field_names:
-            regex['visit_field_name'] = visit_field_name
-            urlpatterns += patterns(view,
-                url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<{visit_field_name}>{pk})/(?P<panel>\d+)/$'.format(**regex),
-                    'dashboard',
-                    name="dashboard_visit_add_url"
-                    ),
-                url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<visit_instance>{visit_instance})/(?P<{visit_field_name}>{pk})/$'.format(**regex),
-                    'dashboard',
-                    name="dashboard_visit_add_url"
-                    ),
-                url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<visit_code>{visit_code})/(?P<{visit_field_name}>{pk})/$'.format(**regex),
-                    'dashboard',
-                    name="dashboard_visit_add_url"
-                    ))
-
-        urlpatterns += patterns(view,
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registered_subject>{pk})/(?P<visit_definition>{pk})/(?P<visit_instance>{visit_instance})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})(?P<appointment>{pk})/(?P<subject_identifier>{subject_identifier})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registration_identifier>{registration_identifier})/(?P<registered_subject>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<registered_subject>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registered_subject>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registration_identifier>{registration_identifier})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registered_subject>{pk})/(?P<visit_definition>{pk})/(?P<visit_instance>{visit_instance})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<subject_identifier>{subject_identifier})/(?P<registered_subject>{pk})/(?P<subject_consent>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<registered_subject>{pk})/$'.format(**regex),
-                'dashboard',
-                name="dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<pk>{pk})/$'.format(**regex),
-                'dashboard',
-                name="pk_dashboard_url"
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>{show})/$'.format(**regex),
+              'subject_dashboard',
+                name="subject_dashboard_url"
                 ))
         return urlpatterns
