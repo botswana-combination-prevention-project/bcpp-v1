@@ -37,9 +37,11 @@ class ActionItem(BaseModel):
         ret = None
         if self.registered_subject:
             if self.registered_subject.subject_identifier:
-                url = reverse('dashboard_url',
+                url = reverse('subject_dashboard_url',
                               kwargs={'dashboard_type': self.registered_subject.subject_type.lower(),
-                                                       'subject_identifier': self.registered_subject.subject_identifier})
+                                      'dashboard_model': 'registered_subject',
+                                      'dashboard_id': self.registered_subject.pk,
+                                      'show': 'appointments'})
                 ret = """<a href="{url}" />dashboard</a>""".format(url=url)
         return ret
     dashboard.allow_tags = True
