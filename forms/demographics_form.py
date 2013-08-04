@@ -15,9 +15,9 @@ class DemographicsForm (BaseSubjectModelForm):
         if cleaned_data.get('ethnic') == 'Other' and not cleaned_data.get('other'):
             raise forms.ValidationError('If participant ethnic group not given in list-of-options, specify the ethnic group.')
         #validating marital status
-        if cleaned_data.get('marital_status') == 'Married' and not cleaned_data.get('num_wives'):
-            raise forms.ValidationError('If participant is married, give number of wives')
-        cleaned_data = super(DemographicsForm, self).clean()
+#         if cleaned_data.get('marital_status') == 'Married' and not cleaned_data.get('num_wives'):
+#             raise forms.ValidationError('If participant is married, give number of wives')
+#         cleaned_data = super(DemographicsForm, self).clean()
         return cleaned_data
 
     class Meta:

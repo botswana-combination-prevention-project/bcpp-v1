@@ -13,7 +13,6 @@ from cancer_factory import CancerFactory
 from sexual_behaviour_factory import SexualBehaviourFactory
 from future_hiv_testing_factory import FutureHivTestingFactory
 #from pima_factory import PimaFactory
-from subject_visit_factory import SubjectVisitFactory
 #from hiv_health_care_costs_factory import HivHealthCareCostsFactory
 from stigma_factory import StigmaFactory
 #from outpatient_care_factory import OutpatientCareFactory
@@ -37,7 +36,6 @@ from hiv_medical_care_factory import HivMedicalCareFactory
 from hiv_result_factory import HivResultFactory
 #from education_factory import EducationFactory
 from heart_attack_factory import HeartAttackFactory
-from subject_consent_factory import SubjectConsentFactory
 from months_third_partner_factory import MonthsThirdPartnerFactory
 #from cea_enrolment_checklist_factory import CeaEnrolmentChecklistFactory
 from stigma_opinion_factory import StigmaOpinionFactory

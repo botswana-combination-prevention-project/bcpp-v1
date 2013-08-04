@@ -23,7 +23,7 @@ class CommunityEngagement (BaseScheduledVisitModel):
 
     vote_engagement = models.CharField(
         verbose_name=_("Did you vote in the last local government election?"),
-        max_length=25,
+        max_length=50,
         choices=VOTEENGAGEMENT_CHOICE,
         help_text="supplemental",
         )

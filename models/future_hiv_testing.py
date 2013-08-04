@@ -26,7 +26,7 @@ class FutureHivTesting (BaseScheduledVisitModel):
 
     hiv_test_time = models.CharField(
         verbose_name=_("In the future, is there a particular time of day that"
-                      " you would prefer to receive your next HIV test ?"),
+                      " you would prefer to receive your next HIV test?"),
         max_length=35,
         choices=HIVTEST_PREFEREDTIME,
         null=True,
@@ -39,7 +39,7 @@ class FutureHivTesting (BaseScheduledVisitModel):
 
     hiv_test_week = models.CharField(
         verbose_name=_("In the future, is there a particular day of the week"
-                      " that you would prefer to receive your next HIV test ?"),
+                      " that you would prefer to receive your next HIV test?"),
         max_length=35,
         choices=HIVTEST_PREFEREDWEEK,
         null=True,

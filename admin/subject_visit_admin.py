@@ -39,10 +39,6 @@ class SubjectVisitAdmin(BaseAppointmentModelAdmin):
         'household_member',
         "appointment",
         "report_datetime",
-        "info_source",
-        "info_source_other",
-        "reason",
-        "reason_missed",
         "comments"
         )
 

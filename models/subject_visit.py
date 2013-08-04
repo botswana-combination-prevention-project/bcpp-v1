@@ -20,6 +20,11 @@ class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
 
     history = AuditTrail()
 
+    def save(self, *args, **kwargs):
+        self.info_source = 'subject'
+        self.reason = 'consent'
+        super(SubjectVisit, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return unicode(self.appointment)
 
