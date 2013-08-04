@@ -3,15 +3,15 @@ from django.utils.translation import ugettext as _
 YES_NO_DONT_ANSWER = (
         ('Yes', _('Yes')),
         ('No', _('No')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
 YES_NO_UNSURE = (
         ('Yes', _('Yes')),
         ('No', _('No')),
-        ('not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 #for some reason translations not reading this yes no though translation is available.
@@ -24,7 +24,7 @@ YES_NO = (
 YES_NO_REFUSED = (
     ('Yes', _('Yes')),
     ('No', _('No')),
-    ('REF', _('Refused to answer')),
+    ('Refuse', _('Refused to answer')),
 )
 
 AGREE_STRONGLY = (
@@ -33,13 +33,13 @@ AGREE_STRONGLY = (
         ('Uncertain', _('Uncertain')),
         ('Agree', _('Agree')),
         ('Strongly agree', _('Strongly agree')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 SEXDAYS_CHOICE = (
         ('Days', _('Days')),
         ('Months', _('Months')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
 )
 
 
@@ -47,7 +47,7 @@ LASTSEX_CHOICE = (
         ('Days', _('Days')),
         ('Months', _('Months')),
         ('Years', _('Years')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
 )
 
 LENGTHRESIDENCE_CHOICE = (
@@ -55,7 +55,7 @@ LENGTHRESIDENCE_CHOICE = (
         ('6 months to 12 months', _('6 months to 12 months')),
         ('1 to 5 years', _('1 to 5 years')),
         ('More than 5 years', _('More than 5 years')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 NIGHTSAWAY_CHOICE = (
@@ -66,8 +66,8 @@ NIGHTSAWAY_CHOICE = (
         ('1-3 months', _('1-3 months')),
         ('4-6 months', _('4-6 months')),
         ('more than 6 months', _('more than 6 months')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 CATTLEPOSTLANDS_CHOICE = (
@@ -75,7 +75,7 @@ CATTLEPOSTLANDS_CHOICE = (
         ('Farm/lands', _('Farm/lands')),
         ('Cattle post', _('Cattle post')),
         ('Other community', _('Other community, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -119,7 +119,7 @@ COMMUNITIES = (
 #         ('Education', _('Education')),
 #         ('family/social events (wedding, funerals, holidays)', _('family/social events (wedding, funerals, holidays)')),
 #         ('Other', _('Other')),
-#         ('Don\'t want to answer', _('Don\'t want to answer')),
+#         ('not_answering', _('Don\'t want to answer')),
 #     )
 
 
@@ -127,23 +127,23 @@ COMMUNITYENGAGEMENT_CHOICE = (
         ('Very active', _('Very active')),
         ('Somewhat active', _('Somewhat active')),
         ('Not active at all', _('Not active at all')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
 VOTEENGAGEMENT_CHOICE = (
         ('Yes', _('Yes')),
         ('No', _('No')),
-        ('Not applicable (no election, can\'t vote)', _('Not applicable (no election, can\'t vote)')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('Not applicable', _('Not applicable (no election, can\'t vote)')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
 SOLVEENGAGEMENT_CHOICE = (
         ('Yes', _('Yes')),
         ('No', _('No')),
-        ('Don\'t know', _('Don\'t know')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('dont_know', _('Don\'t know')),
+        ('not_answering', _('Don\'t want to answer')),
         ('None', _('No problems')),
     )
 
@@ -161,7 +161,7 @@ RELIGION_CHOICE = (
         ('Islam', _('Islam')),
         ('None', _('None')),
         ('Other', _('Other')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 ETHNIC_CHOICE = (
@@ -184,8 +184,8 @@ ETHNIC_CHOICE = (
         ('White African', _('White African')),
         ('Indian African', _('Indian African')),
         ('Asian', _('Asian')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 MARITALSTATUS_CHOICE = (
@@ -193,7 +193,7 @@ MARITALSTATUS_CHOICE = (
         ('Married', _('Married (common law/civil or customary/traditional)')),
         ('Divorced/separated', _('Divorced or formally separated')),
         ('Widowed', _('Widowed')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -204,7 +204,7 @@ EDUCATION_CHOICE = (
             ('Junior Secondary', _('Junior Secondary')),
             ('Senior Secondary', _('Senior Secondary')),
             ('Higher than senior secondary (university, diploma, etc.)', _('Higher than senior secondary (university, diploma, etc.)')),
-            ('Don\'t want to answer', _('Don\'t want to answer')),
+            ('not_answering', _('Don\'t want to answer')),
         )
 
 EMPLOYMENT_CHOICE = (
@@ -217,7 +217,7 @@ EMPLOYMENT_CHOICE = (
         ('Informal self-employment', _('Informal self-employment')),
         ('Student', _('Student')),
         ('Pensioner', _('Pensioner (retired)')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIV_RESULT = (
@@ -238,8 +238,8 @@ WHYNOHIVTESTING_CHOICE = (
         ('I didn\'t have time due to work', _('I didn\'t have time due to work')),
         ('I didn\'t have time due to family obligations', _('I didn\'t have time due to family obligations')),
         ('My sexual partner did not want me to get an HIV test', _('My sexual partner did not want me to get an HIV test')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 RECORDEDHIVRESULT_CHOICE = (
@@ -254,16 +254,16 @@ WHENHIVTEST_CHOICE = (
         ('1 to 5 months ago', _('1 to 5 months ago')),
         ('6 to 12 months ago', _('6 to 12 months ago')),
         ('more than 12 months ago', _('more than 12 months ago')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 VERBALHIVRESULT_CHOICE = (
         ('POS', _('HIV Positive (Reactive)')),
         ('NEG', _('HIV Negative (Non-reactive)')),
         ('IND', _('Indeterminate')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WHEREHIVTEST_CHOICE = (
@@ -272,9 +272,9 @@ WHEREHIVTEST_CHOICE = (
         ('Other (not antenatal care) at healthcare facility', _('Other (not antenatal care) at healthcare facility (including private clinics)')),
         ('In my house as part of door-to-door services', _('In my house as part of door-to-door services')),
         ('In a mobile tent or vehicle in my neighborhood', _('In a mobile tent or vehicle in my neighborhood')),
-        ('Other, specify:', _('Other, specify:')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WHYHIVTEST_CHOICE = (
@@ -283,28 +283,28 @@ WHYHIVTEST_CHOICE = (
         ('I was at a health facility where the doctor/nurse recommended I get tested for HIV during the same visit', _('I was at a health facility where the doctor/nurse recommended I get tested for HIV during the same visit')),
         ('I read information on a brochure/flier that it is important for me to get tested for HIV', _('I read information on a brochure/flier that it is important for me to get tested for HIV')),
         ('Other', _('Other')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIVTEST_PREFEREDTIME= (
         ('Yes, specify', _('Yes, specify:')),
         ('No, any time of day is fine', _('No, any time of day is fine')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIVTEST_PREFEREDWEEK= (
         ('Yes, specify', _('Yes, specify:')),
         ('No, any day of the week is fine', _('No, any day of the week is fine')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 HIVTEST_PREFEREDYEAR= (
         ('Yes, specify', _('Yes, specify:')),
         ('No, any month is fine', _('No, any month is fine')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIVTESTPREFERENCE_CHOICE = (
@@ -312,29 +312,29 @@ HIVTESTPREFERENCE_CHOICE = (
         ('At a mobile testing tent or vehicle in my neighborhood', _('At a mobile testing tent or vehicle in my neighborhood')),
         ('At a health facility in my community', _('At a health facility in my community')),
         ('At a health facility or mobile testing unit outside of my community', _('At a health facility or mobile testing unit outside of my community')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 CIRCUMCISION_DAY = (
         ('Yes, specify:', _('Yes, specify:')),
         ('No, any time of day is fine', _('No, any time of day is fine')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 CIRCUMCISION_WEEK = (
         ('Yes, specify:', _('Yes, specify:')),
         ('No, any day of the week is fine', _('No, any day of the week is fine')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 CIRCUMCISION_MONTH = (
         ('Yes, specify:', _('Yes, specify:')),
         ('No, any month is fine', _('No, any month is fine')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 ALCOHOL_SEX = (
@@ -342,14 +342,14 @@ ALCOHOL_SEX = (
         ('My partner', _('My partner')),
         ('Myself', _('Myself')),
         ('Both of us', _('Both of us')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 LASTSEX_CHOICE = (
         ('Days', _('Days')),
         ('Months', _('Months')),
         ('Years', _('Years')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
 )
 
 FIRSTPARTNERLIVE_CHOICE = (
@@ -357,7 +357,7 @@ FIRSTPARTNERLIVE_CHOICE = (
         ('On farm/cattle post', _('On farm/cattle post that is part of this community')),
         ('Outside this community', _('Outside this community')),
         ('Both in this community and outside this community', _('Both in this community and outside this community')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -368,16 +368,16 @@ FIRSTRELATIONSHIP_CHOICE = (
         ('Casual (known) partner', _('Casual (known) partner')),
         ('One time partner (previously unknown)', _('One time partner (previously unknown)')),
         ('Commercial sex worker', _('Commercial sex worker')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
 FIRSTPARTNERHIV_CHOICE = (
         ('positive', _('HIV-positive')),
         ('negative', _('HIV-negative')),
-        ('I am not sure', _('I am not sure HIV status')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure HIV status')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -385,14 +385,14 @@ FIRSTDISCLOSE_CHOICE = (
         ('Yes', _('Yes')),
         ('No', _('No')),
         ('Did not know my HIV status', _('Did not know my HIV status')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 FIRSTCONDOMFREQ_CHOICE = (
         ('All of the time', _('All of the time')),
         ('Sometimes', _('Sometimes')),
         ('Never', _('Never')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 SECONDPARTNERLIVE_CHOICE = (
@@ -400,7 +400,7 @@ SECONDPARTNERLIVE_CHOICE = (
         ('On farm/cattle post that is part of this community', _('On farm/cattle post that is part of this community')),
         ('Outside this community', _('Outside this community')),
         ('Both in this community and outside this community', _('Both in this community and outside this community')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 SECONDRELATIONSHIP_CHOICE = (
@@ -409,8 +409,8 @@ SECONDRELATIONSHIP_CHOICE = (
         ('Casual (known) partner', _('Casual (known) partner')),
         ('One time partner (previously unknown)', _('One time partner (previously unknown)')),
         ('Commercial sex worker', _('Commercial sex worker')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
     
@@ -418,7 +418,7 @@ SECONDPARTNERHIV_CHOICE = (
         ('HIV-positive', _('HIV-positive')),
         ('HIV-negative', _('HIV-negative')),
         ('I am not sure HIV status', _('I am not sure HIV status')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -426,14 +426,14 @@ SECONDDISCLOSE_CHOICE = (
         ('Yes', _('Yes')),
         ('No', _('No')),
         ('Did not know my HIV status', _('Did not know my HIV status')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 SECONDCONDOMFREQ_CHOICE = (
         ('All of the time', _('All of the time')),
         ('Sometimes', _('Sometimes')),
         ('Never', _('Never')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 THIRDPARTNERLIVE_CHOICE = (
@@ -441,7 +441,7 @@ THIRDPARTNERLIVE_CHOICE = (
         ('On farm/cattle post that is part of this community', _('On farm/cattle post that is part of this community')),
         ('Outside this community', _('Outside this community')),
         ('Both in this community and outside this community', _('Both in this community and outside this community')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -451,29 +451,29 @@ THIRDRELATIONSHIP_CHOICE = (
         ('Casual (known) partner', _('Casual (known) partner')),
         ('One time partner (previously unknown)', _('One time partner (previously unknown)')),
         ('Commercial sex worker', _('Commercial sex worker')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 THIRDPARTNERHIV_CHOICE = (
         ('HIV-positive', _('HIV-positive')),
         ('HIV-negative', _('HIV-negative')),
         ('I am not sure HIV status', _('I am not sure HIV status')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 THIRDDISCLOSE_CHOICE = (
         ('Yes', _('Yes')),
         ('No', _('No')),
         ('I did not know my HIV status', _('I did not know my HIV status')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 THIRDCONDOMFREQ_CHOICE = (
         ('All of the time', _('All of the time')),
         ('Sometimes', _('Sometimes')),
         ('Never', _('Never')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 LOWESTCD4_CHOICE = (
@@ -483,8 +483,8 @@ LOWESTCD4_CHOICE = (
         ('200-349', _('200-349')),
         ('350-499', _('350-499')),
         ('500 or more', _('500 or more')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 NO_MEDICAL_CARE = (
@@ -497,9 +497,9 @@ NO_MEDICAL_CARE = (
         ('Traditional healer advised against going', _('Traditional healer advised against going')),
         ('Religious beliefs', _('Religious beliefs')),
         ('Cultural beliefs', _('Cultural beliefs')),
-        ('Other, specify:', _('Other, specify:')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WHYNOARV_CHOICE = (
@@ -516,8 +516,8 @@ WHYNOARV_CHOICE = (
         ('Religious beliefs', _('Religious beliefs')),
         ('Cultural beliefs', _('Cultural beliefs')),
         ('Other', _('Other, specify:')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WHYARVSTOP_CHOICE = (
@@ -535,8 +535,8 @@ WHYARVSTOP_CHOICE = (
         ('Religious beliefs', _('Religious beliefs')),
         ('Cultural beliefs', _('Cultural beliefs')),
         ('Other', _('Other, specify:')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 ADHERENCE4DAY_CHOICE = (
@@ -545,7 +545,7 @@ ADHERENCE4DAY_CHOICE = (
         ('Two days', _('Two days')),
         ('Three days', _('Three days')),
         ('Four days', _('Four days')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 ADHERENCE4WK_CHOICE = (
@@ -554,7 +554,7 @@ ADHERENCE4WK_CHOICE = (
         ('Fair', _('Fair')),
         ('Good', _('Good')),
         ('Very good', _('Very good')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -573,16 +573,16 @@ REASONCIRC_CHOICE = (
         ('I may not like the way my penis looks', _('I may not like the way my penis looks')),
         ('I may not like the way my penis feels', _('I may not like the way my penis feels')),
         ('I could die from the procedure', _('I could die from the procedure')),
-        ('Other, specify:', _('Other, specify:')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WHYNOHIVTEST_CHOICE = (
         ('Yes, specify:', _('Yes, specify:')),
         ('No, any month is fine', _('No, any month is fine')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 FUTUREREASONSSMC_CHOICE = (
@@ -595,8 +595,8 @@ FUTUREREASONSSMC_CHOICE = (
         ('If my sexual partner encouraged me', _('If my sexual partner encouraged me')),
         ('If one or both of my parents encouraged me', _('If one or both of my parents encouraged me')),
         ('If my friends encouraged me', _('If my friends encouraged me')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 AWAREFREE_CHOICE = (
@@ -610,8 +610,8 @@ AWAREFREE_CHOICE = (
         ('I read a brochure delivered to my home', _('I read a brochure delivered to my home')),
         ('I read it in the newspaper', _('I read it in the newspaper')),
         ('Heard it at a community event', _('Heard it at a community event')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 PLACE_CIRC = (
@@ -619,9 +619,9 @@ PLACE_CIRC = (
         ('Traditional location (Bogerwa)', _('Traditional location (Bogerwa)')),
         ('Outreach site (mobile or temporary center)', _('Outreach site (mobile or temporary center)')),
         ('Private practitioner', _('Private practitioner')),
-        ('I am not sure', _('I am not sure')),
+        ('not_sure', _('I am not sure')),
         ('Other', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WHYCIRC_CHOICE = (
@@ -632,9 +632,9 @@ WHYCIRC_CHOICE = (
         ('Cultural tradition and/or religion', _('Cultural tradition and/or religion')),
         ('Acceptance by sexual partner(s)', _('Acceptance by sexual partner(s)')),
         ('Acceptance by family, friends, and/or community', _('Acceptance by family, friends, and/or community')),
-        ('I am not sure', _('I am not sure')),
+        ('not_sure', _('I am not sure')),
         ('Other', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WHERECIRC_CHOICE = (
@@ -643,8 +643,8 @@ WHERECIRC_CHOICE = (
         ('No, prior surgical sterilization', _('No, prior surgical sterilization')),
         ('No, partner(s) surgically sterilized', _('No, partner(s) surgically sterilized')),
         ('No, post-menopause', _('No, post-menopause (at least 24 consecutive months without a period)')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -652,15 +652,15 @@ ANCREG_CHOICE = (
         ('Yes', _('Yes')),
         ('No, but I will go for antenatal care', _('No, but I will go for antenatal care')),
         ('No and I am not planning on going for antenatal care', _('No and I am not planning on going for antenatal care')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
 PREGARV_CHOICE = (
         ('Yes, AZT (single drug, twice a day)', _('Yes, AZT (single drug, twice a day)')),
         ('Yes, HAART ', _('Yes, HAART [multiple drugs like Atripla, Truvada, or Combivir taken once or twice a day]')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
         ('No', _('No ARV\'s')),
     )
 
@@ -670,7 +670,7 @@ DXHEARTATTACK_CHOICE = (
         ('Congestive cardiac failure', _('Congestive cardiac failure')),
         ('Stroke (cerebrovascular accident, CVA)', _('Stroke (cerebrovascular accident, CVA)')),
         ('Other', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -684,7 +684,7 @@ DXCANCER_CHOICE = (
         ('Cancer of mouth, throat, voice box (larynx)', _('Cancer of mouth, throat, voice box (larynx)')),
         ('Cancer of oesophagus', _('Cancer of oesophagus')),
         ('Other', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -692,7 +692,7 @@ DXTB_CHOICE = (
         ('Pulmonary tuberculosis', _('Pulmonary tuberculosis')),
         ('Extrapulmonary (outside the lungs) tuberculosis', _('Extrapulmonary (outside the lungs) tuberculosis')),
         ('Other', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 ALCOHOL_CHOICE = (
@@ -701,7 +701,7 @@ ALCOHOL_CHOICE = (
         ('Once a week', _('Once a week')),
         ('2 to 3 times a week', _('2 to 3 times a week')),
         ('more than 3 times a week', _('more than 3 times a week')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
   
 WHEREACCESS_CHOICE = (
@@ -711,7 +711,7 @@ WHEREACCESS_CHOICE = (
         ('Private health facility', _('Private health facility or clinic')),
         ('Community health worker', _('Community health worker')),
         ('OTHER', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 OVERALLACCESS_CHOICE = (
@@ -720,7 +720,7 @@ OVERALLACCESS_CHOICE = (
         ('Uncertain', _('Uncertain')),
         ('Agree', _('Agree')),
         ('Strongly agree', _('Strongly agree')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -730,7 +730,7 @@ MOBILTYQOL_CHOICE = (
         ('I have moderate problems in walking about', _('I have moderate problems in walking about')),
         ('I have severe problems in walking about', _('I have severe problems in walking about')),
         ('I am unable to walk about', _('I am unable to walk about')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 SELFCAREQOL_CHOICE = (
@@ -739,7 +739,7 @@ SELFCAREQOL_CHOICE = (
         ('I have moderate problems washing or dressing myself', _('I have moderate problems washing or dressing myself')),
         ('I have severe problems washing or dressing myself', _('I have severe problems washing or dressing myself')),
         ('I am unable to wash or dress myself', _('I am unable to wash or dress myself')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 ACTIVITIESQOL_CHOICE = (
@@ -748,7 +748,7 @@ ACTIVITIESQOL_CHOICE = (
         ('I have moderate problems doing my usual activities', _('I have moderate problems doing my usual activities')),
         ('I have severe problems doing my usual activities', _('I have severe problems doing my usual activities')),
         ('I am unable to do my usual activities', _('I am unable to do my usual activities')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 PAINQOL_CHOICE = (
         ('I have no pain or discomfort', _('I have no pain or discomfort')),
@@ -756,7 +756,7 @@ PAINQOL_CHOICE = (
         ('I have moderate pain or discomfort', _('I have moderate pain or discomfort')),
         ('I have severe pain or discomfort', _('I have severe pain or discomfort')),
         ('I have extreme pain or discomfort', _('I have extreme pain or discomfort')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 ANXIETYQOL_CHOICE = (
         ('I am not anxious or depressed', _('I am not anxious or depressed')),
@@ -764,7 +764,7 @@ ANXIETYQOL_CHOICE = (
         ('I am moderately anxious or depressed', _('I am moderately anxious or depressed')),
         ('I am severely anxious or depressed', _('I am severely anxious or depressed')),
         ('I am extremely anxious or depressed', _('I am extremely anxious or depressed')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -775,7 +775,7 @@ RECENTVISIT_CHOICE = (
         ('Private Doctor', _('Private Doctor')),
         ('Traditional or Faith Healer', _('Traditional or Faith Healer')),
         ('No visit in past 3 months', _('No visit in past 3 months')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 REVISIT3MO_CHOICE = (
@@ -784,7 +784,7 @@ REVISIT3MO_CHOICE = (
         ('Injuries or accidents', _('Injuries or accidents')),
         ('Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness', _('Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
         ('Other', _('Other')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 TIMETOCLINIC3MO_CHOICE = (
@@ -793,7 +793,7 @@ TIMETOCLINIC3MO_CHOICE = (
         ('1 to under 2 hours', _('1 to under 2 hours')),
         ('2 to under 3 hours', _('2 to under 3 hours')),
         ('More than 3 hours', _('More than 3 hours')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WAITCOSTS_CHOICE = (
@@ -802,7 +802,7 @@ WAITCOSTS_CHOICE = (
         ('1 to under 2 hours', _('1 to under 2 hours')),
         ('2 to under 3 hours', _('2 to under 3 hours')),
         ('3 or more hours', _('3 or more hours')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 REHOSPMO_CHOICE = (
@@ -811,7 +811,7 @@ REHOSPMO_CHOICE = (
         ('Injuries or accidents', _('Injuries or accidents')),
         ('Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness', _('Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
         ('Other', _('Other')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 TIMETOHOSP3MO_CHOICE = (
@@ -820,7 +820,7 @@ TIMETOHOSP3MO_CHOICE = (
         ('1 to under 2 hours', _('1 to under 2 hours')),
         ('2 to under 3 hours', _('2 to under 3 hours')),
         ('More than 3 hours', _('More than 3 hours')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIVNOCARECOSTS_CHOICE = (
@@ -832,7 +832,7 @@ HIVNOCARECOSTS_CHOICE = (
         ('I have an appointment for HIV related medical/clinical care for my HIV infection but have not been for it yet', _('I have an appointment for HIV related medical/clinical care for my HIV infection but have not been for it yet')),
         ('I don\'t know where to go for HIV related medical/clinical care', _('I don\'t know where to go for HIV related medical/clinical care')),
         ('I do not have the money for HIV related medical/clinical care', _('I do not have the money for HIV related medical/clinical care')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIVCARELOCATIONCOSTS_CHOICE = (
@@ -846,7 +846,7 @@ HIVCARELOCATIONCOSTS_CHOICE = (
         ('Mobile services', _('Mobile services')),
         ('Plantation health center', _('Plantation health center')),
         ('NGO clinic', _('NGO clinic')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIVCARETIMESCOSTS_CHOICE = (
@@ -858,7 +858,7 @@ HIVCARETIMESCOSTS_CHOICE = (
         ('5 times', _('5 times')),
         ('6-10 times', _('6-10 times')),
         ('More than 10 times', _('More than 10 times')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HIVACCOMPANYCOSTS_CHOICE = (
@@ -867,7 +867,7 @@ HIVACCOMPANYCOSTS_CHOICE = (
         ('Some of the time (sometimes)', _('Some of the time (sometimes)')),
         ('Almost none of the time (rarely)', _('Almost none of the time (rarely)')),
         ('None of the time (never)', _('None of the time (never)')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 EMPLOYEDCOSTS_CHOICE = (
@@ -876,7 +876,7 @@ EMPLOYEDCOSTS_CHOICE = (
         ('Yes, self-employed working on my own', _('Yes, self-employed working on my own')),
         ('Yes, self-employed with own employees', _('Yes, self-employed with own employees')),
         ('No, not working', _('No, not working')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 OCCUPATIONCOSTS_CHOICE = (
@@ -896,8 +896,8 @@ OCCUPATIONCOSTS_CHOICE = (
         ('Professional', _('Professional')),
         ('Fishing', _('Fishing')),
         ('Uniformed services', _('Uniformed services')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -909,14 +909,14 @@ WORKINCOMECOSTS_CHOICE = (
         ('1000-4999 pula', _('1000-4999 pula')),
         ('5000-10,000 pula', _('5000-10,000 pula')),
         ('More than 10,000 pula', _('More than 10,000 pula')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 WORKPAIDCOSTS_CHOICE = (
         ('Fixed salary', _('Fixed salary')),
         ('Paid daily', _('Paid daily')),
         ('Paid hourly', _('Paid hourly')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 HOUSEHOLDINCOMECOSTS_CHOICE = (
@@ -928,8 +928,8 @@ HOUSEHOLDINCOMECOSTS_CHOICE = (
         ('5000-10,000 pula', _('5000-10,000 pula')),
         ('10,0000-20,000 pula', _('10,0000-20,000 pula')),
         ('More than 20,000 pula', _('More than 20,000 pula')),
-        ('I am not sure', _('I am not sure')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 NONWORKACTIVITIESCOSTS_CHOICE = (
@@ -940,8 +940,8 @@ NONWORKACTIVITIESCOSTS_CHOICE = (
         ('Retired/old age', _('Retired/old age')),
         ('Pregnant or recently pregnant', _('Pregnant or recently pregnant')),
         ('Sick or injured', _('Sick or injured')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
 
 
@@ -950,7 +950,7 @@ WHYNOPARTICIPATE_CHOICE = (
         ('I don\'t want to answer the questions', _('I don\'t want to answer the questions')),
         ('I don\'t want to have the blood drawn', _('I don\'t want to have the blood drawn')),
         ('I am afraid my information will not be private', _('I am afraid my information will not be private')),
-        ('I am not sure', _('I am not sure')),
-        ('Other, specify:', _('Other, specify:')),
-        ('Don\'t want to answer', _('Don\'t want to answer')),
+        ('not_sure', _('I am not sure')),
+        ('OTHER', _('Other, specify:')),
+        ('not_answering', _('Don\'t want to answer')),
     )
