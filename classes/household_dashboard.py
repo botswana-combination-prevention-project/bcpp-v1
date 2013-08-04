@@ -67,65 +67,6 @@ class HouseholdDashboard(Dashboard):
             allow_edit_members=self.allow_edit_members(),
             )
 
-    def get_urlpatterns(self, view, regex, **kwargs):
-
-        regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
-        regex['survey_slug'] = 'bcpp\-year\-[0-9]{1}|mobile\-year\-[0-9]{1}'
-        regex['content_type_map'] = '\w+'
-
-        self.urlpatterns = patterns(view,
-
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/(?P<gender>\w+)/(?P<initials>\w+)/(?P<household_member>{pk})/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ),
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_structure>{pk})/(?P<registered_subject>{pk})/(?P<household_member>{pk})/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ),
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<first_name>\w+)/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ),
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household_member>{pk})/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ),
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ),
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<survey>{survey_slug})/(?P<household>{pk})/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household>{pk})/(?P<household_structure>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_member>{pk})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household_structure>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_structure>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            )
-        return self.urlpatterns
-
     def set_survey(self, survey):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         re_survey_slug = re.compile('bcpp\-year\-[0-9]{1}')
@@ -214,3 +155,30 @@ class HouseholdDashboard(Dashboard):
 
     def get_household_log_entries(self):
         return HouseholdLogEntry.objects.filter(household_log__household_structure=self.get_household_structure())
+
+    def get_urlpatterns(self, view, regex, **kwargs):
+        regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
+        regex['survey_slug'] = 'bcpp\-year\-[0-9]{1}|mobile\-year\-[0-9]{1}'
+        regex['content_type_map'] = '\w+'
+        return patterns(view,
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household>{pk})/(?P<household_structure>{pk})/$'.format(**regex),
+              'household_dashboard',
+                name="household_dashboard_url"
+                ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_member>{pk})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
+              'household_dashboard',
+                name="household_dashboard_url"
+                ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household_structure>{pk})/$'.format(**regex),
+              'household_dashboard',
+                name="household_dashboard_url"
+                ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_structure>{pk})/$'.format(**regex),
+              'household_dashboard',
+                name="household_dashboard_url"
+                ),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
+              'household_dashboard',
+                name="household_dashboard_url"
+                ),
+            )

@@ -86,7 +86,7 @@
             	{% if household_member.household_structure.household.household_identifier|is_dispatched %}
             		dashboard{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{%endif%}
             	{% else %}
-             		<A name="consented-{{household_member.pk}}" href="{% url 'subject_dashboard_url' dashboard_type='subject' household_member=household_member.pk survey=household_structure.survey.survey_slug %}">{{ household_member.registered_subject|subject_identifier:'go to consent on dashboard' }}{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{%endif%}</a>
+             		<A name="consented-{{household_member.pk}}" href="{% url 'subject_dashboard_url' dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier:'go to consent on dashboard' }}{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{%endif%}</a>
             	{% endif %}
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
                {% if household_member.member_status == 'ABSENT' %}
@@ -98,7 +98,7 @@
                     <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household_structure.household.household_identifier }}&household_structure={{household_structure.pk}}">{{ household_member.moved_form_label }}</A>
                {% endif %}
             {% else %}
-                    <A href="{% url 'subject_dashboard_url' dashboard_type='subject' household_member=household_member.pk %}">{{ household_member.registered_subject|subject_identifier:'go to consent on dashboard' }}</A>
+                    <A href="{% url 'subject_dashboard_url' dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier:'go to consent on dashboard' }}</A>
             {% endif %}                
             <br>
           {% else %}
