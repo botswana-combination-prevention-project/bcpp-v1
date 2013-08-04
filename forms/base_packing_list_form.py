@@ -35,16 +35,18 @@ class BasePackingListForm(BaseRequisitionForm):
             raise forms.ValidationError('Class attribute requisition cannot be None. Was it not defined in the local \'..._lab\' forms.py app?')
         if not isinstance(self.requisition, list):
             self.requisition = [self.requisition, ]
-        for specimen_identifier in cleaned_data.get('list_items').replace('\r', '').split('\n'):
-            if specimen_identifier:
-                found = False
-                for requisition in self.requisition:
-                    if requisition.objects.filter(specimen_identifier=specimen_identifier):
-                        found = True
-                        break
-                if not found:
-                    raise forms.ValidationError('%s specimen identifier \'%s\' not found' % (requisition._meta.verbose_name, specimen_identifier,))
-
+        if not cleaned_data.get('list_items'):
+            raise forms.ValidationError('Please indicate at least one specimen identifier to add to the packing list')
+        else:
+            for specimen_identifier in cleaned_data.get('list_items').replace('\r', '').split('\n'):
+                if specimen_identifier:
+                    found = False
+                    for requisition in self.requisition:
+                        if requisition.objects.filter(specimen_identifier=specimen_identifier):
+                            found = True
+                            break
+                    if not found:
+                        raise forms.ValidationError('%s specimen identifier \'%s\' not found' % (requisition._meta.verbose_name, specimen_identifier,))
         return cleaned_data
 
 
