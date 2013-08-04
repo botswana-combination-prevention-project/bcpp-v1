@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from django.db.models import get_model
 from bhp_entry.models import Entry
+from bhp_registration.models import RegisteredSubject
 from bhp_visit_tracking.settings import VISIT_REASON_NO_FOLLOW_UP_CHOICES
 from base_scheduled_entry import BaseScheduledEntry
 
@@ -172,17 +173,34 @@ class ScheduledEntry(BaseScheduledEntry):
         self.set_bucket_model_instance_with_id(scheduled_entry_bucket_id)
         self.update_bucket(action, visit_model_instance.report_datetime, comment)
 
-    def get_entries_for(self, appointment, entry_category):
+    def get_next_entry_for(self, entry_order, appointment, registered_subject):
+        next_bucket_instance = None
+        options = {
+           'registered_subject_id': registered_subject.pk,
+           'appointment_id': appointment.pk,
+           #'entry__entry_category': entry_category,
+            'entry_status': 'NEW',
+            'entry__entry_order__gt': entry_order}
+        if self.get_bucket_model_cls().objects.filter(**options):
+            next_bucket_instance = self.get_bucket_model_cls().objects.filter(**options)[0]
+        return next_bucket_instance
+
+    def get_entries_for(self, appointment, entry_category, registered_subject=None, entry_status=None):
         """Returns a list of Bucket instance for the given subject and zero instance appointment."""
-        if appointment.visit_instance != '0':
+        if str(appointment.visit_instance) != str('0'):
             raise TypeError('Appointment must be a 0 instance appointment.')
-        registered_subject_id = appointment.registered_subject.pk
-        bucket_instance_list = []
+        if not registered_subject:
+            registered_subject = appointment.registered_subject
+        if not isinstance(registered_subject, RegisteredSubject):
+            raise TypeError('Expected an instance of RegisteredSubject.')
+        bucket_instances = []
         if appointment:
-            for  bucket_instance in self.get_bucket_model_cls().objects.values('pk').filter(
-                registered_subject_id=registered_subject_id,
-                appointment_id=appointment.pk,
-                entry__entry_category=entry_category,
-                ).order_by('entry__entry_order'):
-                bucket_instance_list.append(self.get_bucket_model_cls().objects.select_related().get(pk=bucket_instance.get('pk')))
-        return bucket_instance_list
+            options = {
+               'registered_subject_id': registered_subject.pk,
+               'appointment_id': appointment.pk,
+               'entry__entry_category': entry_category,
+               }
+            if entry_status:
+                options.update({'entry_status': entry_status})
+            bucket_instances = self.get_bucket_model_cls().objects.filter(**options).order_by('entry__entry_order')
+        return bucket_instances
