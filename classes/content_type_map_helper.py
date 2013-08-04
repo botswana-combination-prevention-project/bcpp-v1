@@ -26,7 +26,8 @@ class ContentTypeMapHelper(object):
                         content_type=content_type,
                         app_label=content_type.app_label,
                         name=verbose_name,
-                        model=content_type.model)
+                        model=content_type.model,
+                        module_name=content_type.model)
                 except:
                     pass
 #        # make sure content_type_map_model_cls has as many records as djangos

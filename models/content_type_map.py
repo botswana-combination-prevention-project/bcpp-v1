@@ -30,7 +30,16 @@ class ContentTypeMap(BaseModel):
         db_index=True,
         )
 
+    module_name = models.CharField(
+        max_length=50,
+        null=True,
+        )
+
     objects = ContentTypeMapManager()
+
+    def save(self, *args, **kwargs):
+        self.module_name = self.model
+        super(ContentTypeMap, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.content_type.natural_key()
@@ -48,6 +57,5 @@ class ContentTypeMap(BaseModel):
 
     class Meta:
         app_label = 'bhp_content_type_map'
-        db_table = 'bhp_common_contenttypemap'
         unique_together = ['app_label', 'model', ]
         ordering = ['name', ]
