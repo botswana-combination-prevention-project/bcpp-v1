@@ -8,7 +8,7 @@ from bcpp_household_member.models import HouseholdMember
 
 class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
 
-    household_member = models.OneToOneField(HouseholdMember)
+    household_member = models.ForeignKey(HouseholdMember)
 
     reason_unscheduled = models.CharField(
         verbose_name="If 'Unscheduled' above, provide reason for the unscheduled visit",
