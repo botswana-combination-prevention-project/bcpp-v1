@@ -154,6 +154,29 @@ def dob_or_dob_estimated(dob, is_dob_estimated):
         return dob.strftime('%Y-%m-%d')
 
 
+@register.filter(name='get_field')
+def get_field(obj, field_attr):
+    try:
+        return getattr(obj, field_attr)
+    except:
+        pass
+    return None
+
+
+@register.filter(name='get_meta')
+def get_meta(obj):
+    try:
+        return obj._meta
+    except:
+        pass
+    return None
+
+
+@register.filter(name='get_verbose_name')
+def get_verbose_name(obj):
+    return obj._meta.verbose_name
+
+
 @register.filter(name='gender')
 def gender(value):
     if value.lower() == 'f':
