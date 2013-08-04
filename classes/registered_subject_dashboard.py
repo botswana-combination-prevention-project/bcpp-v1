@@ -357,7 +357,8 @@ class RegisteredSubjectDashboard(Dashboard):
             only those for a visit definition grouping
             """
         self._appointments = None
-        if self.get_appointment_code() and self.get_appointment_continuation_count():
+        #if self.get_appointment_code() and self.get_appointment_continuation_count():
+        if self.get_show() == 'forms':
             self._appointments = [self.get_appointment()]
         else:
             # or filter appointments for the current membership category
