@@ -187,7 +187,7 @@ class BaseSectionView(object):
         # create a urlpattern for the section_name
         urlpattern_last += patterns(
             '',
-            url(r'^(?P<section_name>{section_name})/(?P<search_term>[A-Za-z0-9\-]+)/$'.format(section_name=section_name),
+            url(r'^(?P<section_name>{section_name})/(?P<search_term>[A-Za-z0-9\-\[\]]+)/$'.format(section_name=section_name),
                 self._view,
                 name="section_url"),
             url(r'^(?P<section_name>{section_name})/$'.format(section_name=section_name),
