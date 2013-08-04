@@ -1,38 +1,24 @@
+from django.core.exceptions import ImproperlyConfigured
 from bhp_context.classes import BaseContext
 
 
 class Dashboard(object):
 
     context = BaseContext()
-    dashboard_type = None
-    template = None
     dashboard_identifier = None
-    extra_url_context = None
 
     def __init__(self, **kwargs):
 
         self.search_name = None
+        self._dashboard_type = None
+        self._template = None
 
     def create(self, **kwargs):
-
-        if not self.dashboard_type:
-            self.dashboard_type = kwargs.get('dashboard_type')
-            if not self.dashboard_type:
-                raise ValueError('%s requires a value for attribute dashboard_type.' % (self,))
-        if not self.dashboard_identifier:
-            self.dashboard_identifier = kwargs.get('dashboard_identifier')
-            if not self.dashboard_identifier:
-                raise ValueError('%s requires a value for attribute dashboard_identifier. Perhaps set this in the view.' % (self,))
-        if not self.template:
-            self.template = kwargs.get('template', '%s_dashboard.html' % self.dashboard_type)
-        if not self.extra_url_context:
-            self.extra_url_context = kwargs.get('extra_url_context', {})
+        self.set_dashboard_type(kwargs.get('dashboard_type'))
         self.context.add(
             search_name=self.search_name,
-            template=self.template,
-            dashboard_type=self.dashboard_type,
-            dashboard_identifier=self.dashboard_identifier,
-            extra_url_context=self.extra_url_context,
+            template=self.get_template(),
+            dashboard_type=self.get_dashboard_type(),
             )
 
     def get_context_prep(self, **kwargs):
@@ -46,3 +32,27 @@ class Dashboard(object):
 
     def get_context(self):
         return self.context.values
+
+    def set_dashboard_type(self, value=None):
+        self._dashboard_type = value
+
+    def get_dashboard_type(self):
+        if not self._dashboard_type:
+            self.set_dashboard_type()
+        return self._dashboard_type
+
+    def set_template(self, value=None):
+        self._template = value
+        if not self._template and self.get_dashboard_type():
+            self._template = '{0}_dashboard.html'.format(self.get_dashboard_type())
+        if not self._template:
+            raise TypeError('Attribute _template cannot be None.')
+
+    def get_template(self):
+        if not self._template:
+            self.set_template()
+        return self._template
+
+    def get_url_patterns(self, view, regex, **kwargs):
+        """Users must override."""
+        raise ImproperlyConfigured('You need to define some dashboard urls.')
