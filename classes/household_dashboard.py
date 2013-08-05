@@ -16,7 +16,6 @@ class HouseholdDashboard(Dashboard):
 
     def __init__(self):
         super(HouseholdDashboard, self).__init__()
-        self.dashboard_type = 'household'
         self._household_members = None
         self._household_structure = None
         self._household_log = None
@@ -44,6 +43,7 @@ class HouseholdDashboard(Dashboard):
 
         .. note:: the participation form is a property on the HouseholdMember model so there is no need
                   to import and pass it to the template context here."""
+        self.set_dashboard_type('household')
         self.set_survey(kwargs.get('survey'))
         self.set_household(**kwargs)
         self.dashboard_identifier = self.get_household().household_identifier
