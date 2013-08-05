@@ -5,7 +5,7 @@ register = template.Library()
 
 
 @register.inclusion_tag('admin/submit_line.html', takes_context=True)
-def submit_row(context):
+def bhp_submit_row(context):
     ctx = original_submit_row(context)
     is_popup = context['is_popup']
     ctx.update({
