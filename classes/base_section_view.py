@@ -215,7 +215,7 @@ class BaseSectionView(object):
         return context
 
     def _get_search_result_include_template(self):
-        """Wraps the user method :func:`get_search_result_include_template` and 
+        """Wraps the user method :func:`get_search_result_include_template` and
         returns the template that displays the section\'s search_result."""
         template = self.get_search_result_include_template()
         if not template:
@@ -228,8 +228,7 @@ class BaseSectionView(object):
         """Returns the template that displays the section\'s search_result.
 
         Users may override"""
-        searcher_cls = site_search.get(self.get_search_type(self.get_section_name()))
-        return searcher_cls().get_search_result_include_template()
+        return None
 
     def _get_search_result(self, request, **kwargs):
         """Wraps the user method :func:`get_search_result` to return a search result or calls the default method :func:`get_default_search_result`."""
