@@ -10,6 +10,11 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 class Pima (BaseScheduledVisitModel):
 
     """CS002 - Used for PIMA cd4 count recording"""
+    
+    pima_id = models.CharField(
+        verbose_name="What is the pima ID?", 
+        max_length=9,
+        help_text="type this id directly from the machine as labeled")
 
     cd4_value = models.DecimalField(
         verbose_name=_("What is the CD4 count of the PIMA machine?"),
