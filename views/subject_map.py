@@ -11,13 +11,17 @@ def subject_map(request, **kwargs):
         Show the location visually on the map of a subject from the dash by clicking the view map button
         on the dashboard
     """
-    mapper_name = request.GET.get('mapper_name', '')
+    mapper_name = kwargs.get('mapper_name', '')
     if not site_mappers.get_registry(mapper_name):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
-        m = site_mappers.get_registry(mapper_name)
-        longitude = kwargs.get('lon', None)
-        latitude = kwargs.get('lat', None)
+        m = site_mappers.get_registry(mapper_name)()
+        longitude = request.GET.get('lon', None)
+        latitude = request.GET.get.get('lat', None)
+        if not longitude:
+            raise MapperError('Attribute longitude may not be None. Got {0}'.format(kwargs))
+        if not latitude:
+            raise MapperError('Attribute latitude may not be None. Got {0}'.format(kwargs))
         identifier = kwargs.get('identifier', None)
         landmark_list = []
         landmarks = m.get_landmarks()

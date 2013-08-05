@@ -37,6 +37,7 @@ def coordinates_to_gps(request, **kwargs):
                 pass
             wf = open(settings.GPS_FILE_PATH, 'a')
             wf.write(line)
+            GPS_FILE_PATH = 'home'
             
             #This values need to come from the edc   
             items = m.get_item_model_cls().objects.filter(comunity='gaborone')
@@ -48,8 +49,6 @@ def coordinates_to_gps(request, **kwargs):
                 ele = 0.0
                 city_village = m.get_map_area()
                 str_from_edc = '<wpt lat="' + str(lat) + '" lon="' + str(lon) + '"><ele>' + str(ele) + '</ele>' + '<name>' + str(identifier_name) + '</name><sym>Waypoint</sym><extensions><gpxx:WaypointExtension><gpxx:Categories><gpxx:Category>Map Points and Coordinates</gpxx:Category></gpxx:Categories><gpxx:Address><gpxx:City>' + str(city_village) + '</gpxx:City><gpxx:State>South Eastern</gpxx:State></gpxx:Address></gpxx:WaypointExtension></extensions>' + '</wpt>'
-                
-                #write to gps file from database
                 wf.write(str_from_edc)
             wf.write(lines)
             wf.close()
