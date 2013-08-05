@@ -10,7 +10,6 @@ from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist
 from bcpp_survey.models import Survey
 from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 from bhp_section.classes import site_sections
-from bhp_map.classes import site_mappers
 
 
 class HouseholdDashboard(Dashboard):
@@ -74,7 +73,7 @@ class HouseholdDashboard(Dashboard):
         self._mapper_name = value
         if not self._mapper_name:
             if self.get_household():
-                if not 'mapper_name' in self.get_household():
+                if not 'mapper_name' in dir(self.get_household()):
                     raise AttributeError('Expected model Household to have attribute \'mapper_name\'.')
                 self._mapper_name = self.get_household().mapper_name
 
