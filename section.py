@@ -32,7 +32,10 @@ class SectionHouseholdView(BaseSectionView):
         else:
             community_form = CommunityForm()
         gps_search_form = CurrentGpsForm(initial={'community': current_community, 'radius': 100})
-        context.update({'community_form': community_form, 'current_community': current_community, 'gps_search_form': gps_search_form})
+        context.update({'community_form': community_form,
+                        'current_community': current_community,
+                        'mapper_name': current_community,
+                        'gps_search_form': gps_search_form})
         return context
 
     def get_search_result(self, request, **kwargs):
