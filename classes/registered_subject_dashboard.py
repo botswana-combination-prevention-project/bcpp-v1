@@ -246,7 +246,7 @@ class RegisteredSubjectDashboard(Dashboard):
     def set_registered_subject(self, registered_subject=None, pk=None):
         """Sets the registered_subject instance, may be overridden by users."""
         self._registered_subject = registered_subject
-        if not self._registered_subject:
+        if not self._registered_subject and pk:
             self._registered_subject = RegisteredSubject.objects.get(pk=pk)
         if not self._registered_subject:
             if self.get_dashboard_model_key() == 'registered_subject':

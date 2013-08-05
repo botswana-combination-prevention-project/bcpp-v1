@@ -30,7 +30,7 @@
         {% if f.entry_status == 'NEW' and appointment.appt_status == 'in_progress' %}            
             <A href="{% url f.entry.content_type_map|admin_urlname:'add'%}?next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{ dashboard_type }}&dashboard_model={{ dashboard_model }}&dashboard_id={{ dashboard_id }}&{{visit_attr}}={{ visit_model_instance.pk }}&visit_attr={{visit_attr}}&entry_order={{ f.entry.entry_order }}{{extra_url_context}}">{{ f.current_entry_title }}</A>
         {% elif f.entry_status == 'KEYED' and appointment.appt_status == 'in_progress' %}            
-            <A href="{% model_admin_url f.entry.content_type_map.content_type visit_attr subject_dashboard_url dashboard_type dashboard_model dashboard_id extra_url_context %}">{{ f.current_entry_title }}</A>
+            <A href="{% model_admin_url f.entry.content_type_map.content_type visit_attr subject_dashboard_url dashboard_type dashboard_model dashboard_id 'forms' extra_url_context %}">{{ f.current_entry_title }}</A>
         {% else %}                
             {{ f.current_entry_title }}
         {% endif %}

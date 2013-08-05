@@ -92,12 +92,13 @@ class ModelAdminUrl(template.Node):
 
     """return a reverse url to admin + '?dashboard-specific querystring' for 'change' or 'add' for a given contenttype model name"""
 
-    def __init__(self, contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dashboard_id, extra_url_context):
+    def __init__(self, contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dashboard_id, show, extra_url_context):
         self.unresolved_contenttype = template.Variable(contenttype)
         self.unresolved_next_url = template.Variable(next_url)
         self.unresolved_dashboard_type = template.Variable(dashboard_type)
         self.unresolved_dashboard_model = template.Variable(dashboard_model)
         self.unresolved_dashboard_id = template.Variable(dashboard_id)
+        self.unresolved_show = template.Variable(show)
         self.unresolved_extra_url_context = template.Variable(extra_url_context)
         self.unresolved_visit_attr = template.Variable(visit_attr)
 
@@ -107,6 +108,7 @@ class ModelAdminUrl(template.Node):
         self.dashboard_type = self.unresolved_dashboard_type.resolve(context)
         self.dashboard_model = self.unresolved_dashboard_model.resolve(context)
         self.dashboard_id = self.unresolved_dashboard_id.resolve(context)
+        self.show = self.unresolved_show.resolve(context)
         self.extra_url_context = self.unresolved_extra_url_context.resolve(context)
         self.visit_attr = self.unresolved_visit_attr.resolve(context)
         if not self.extra_url_context:
@@ -133,7 +135,7 @@ class ModelAdminUrl(template.Node):
         if model_instance:
             #the link is for a change
             url = reverse('admin:{app_label}_{model_name}_change'.format(app_label=model_cls._meta.app_label, model_name=model_cls._meta.object_name.lower()), args=(model_instance.pk,))
-            rev_url = ('{url}?next={next}&dashboard_type={dashboard_type}&dashboard_model={dashboard_model}&dashboard_id={dashboard_id}'
+            rev_url = ('{url}?next={next}&dashboard_type={dashboard_type}&dashboard_model={dashboard_model}&dashboard_id={dashboard_id}&show={show}'
                        '{extra_url_context}'
                 ).format(
                     url=url,
@@ -141,13 +143,14 @@ class ModelAdminUrl(template.Node):
                     dashboard_type=self.dashboard_type,
                     dashboard_model=self.dashboard_model,
                     dashboard_id=self.dashboard_id,
+                    show=self.show,
                     extra_url_context=self.extra_url_context)
         else:
             # the link is for an add
             try:
                 url = reverse('admin:%s_%s_add' % (self.contenttype.app_label, self.contenttype.model))
                 rev_url = ('{url}?'
-                           '&next={next}&dashboard_type={dashboard_type}&dashboard_model={dashboard_model}&dashboard_id={dashboard_id}'
+                           '&next={next}&dashboard_type={dashboard_type}&dashboard_model={dashboard_model}&dashboard_id={dashboard_id}&show={show}'
                            '{extra_url_context}'
                            ).format(
                                 url=url,
@@ -155,6 +158,7 @@ class ModelAdminUrl(template.Node):
                                 dashboard_type=self.dashboard_type,
                                 dashboard_model=self.dashboard_model,
                                 dashboard_id=self.dashboard_id,
+                                show=self.show,
                                 extra_url_context=self.extra_url_context)
             except:
                 raise TypeError('NoReverseMatch while rendering reverse for %s_%s in admin_url_from_contenttype. Is model registered in admin?' % (self.contenttype.app_label, self.contenttype.model))
@@ -165,10 +169,10 @@ class ModelAdminUrl(template.Node):
 def model_admin_url(parser, token):
     """Compilation function for renderer ModelAdminUrl"""
     try:
-        tag_name, contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dabsboard_id, extra_url_context = token.split_contents()
+        tag_name, contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dashboard_id, show, extra_url_context = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError("%r tag requires exactly 7 arguments (contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dabsboard_id, extra_url_context)" % token.contents.split()[0])
-    return ModelAdminUrl(contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dabsboard_id, extra_url_context)
+        raise template.TemplateSyntaxError("%r tag requires exactly 8 arguments (contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dashboard_id, show, extra_url_context)" % token.contents.split()[0])
+    return ModelAdminUrl(contenttype, visit_attr, next_url, dashboard_type, dashboard_model, dashboard_id, show, extra_url_context)
 
 
 class ModelAdminUrlFromRegisteredSubject(template.Node):
