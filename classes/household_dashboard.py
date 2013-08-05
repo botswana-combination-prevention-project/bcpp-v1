@@ -10,6 +10,7 @@ from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist
 from bcpp_survey.models import Survey
 from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 from bhp_section.classes import site_sections
+from bhp_map.classes import site_mappers
 
 
 class HouseholdDashboard(Dashboard):
@@ -66,6 +67,21 @@ class HouseholdDashboard(Dashboard):
             surveys=Survey.objects.all().order_by('survey_name'),
             allow_edit_members=self.allow_edit_members(),
             )
+        self.set_mapper_name(kwargs.get('mapper_name'))
+        self.context.add(mapper_name=self.get_mapper_name())
+
+    def set_mapper_name(self, value=None):
+        self._mapper_name = value
+        if not self._mapper_name:
+            if self.get_household():
+                if not 'mapper_name' in self.get_household():
+                    raise AttributeError('Expected model Household to have attribute \'mapper_name\'.')
+                self._mapper_name = self.get_household().mapper_name
+
+    def get_mapper_name(self):
+        if not self._mapper_name:
+            self.set_mapper_name()
+        return self._mapper_name
 
     def set_survey(self, survey):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
