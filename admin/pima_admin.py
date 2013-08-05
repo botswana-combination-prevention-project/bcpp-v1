@@ -9,6 +9,7 @@ class PimaAdmin(SubjectVisitModelAdmin):
     form = PimaForm
     fields = (
         "subject_visit",
+        'pima_id',
         'cd4_value',
         'draw_time',
         'is_drawn',
