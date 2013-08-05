@@ -172,6 +172,10 @@ class Household(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     @property
+    def mapper_name(self):
+        return self.community
+
+    @property
     def producer_dispatched_to(self):
         container = self.dispatch_container_lookup()
         if container:
