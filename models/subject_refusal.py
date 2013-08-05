@@ -16,15 +16,16 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text="",
         )
 
-    age = models.CharField(
+    age = models.IntegerField(
         verbose_name="What is your age?",
-        max_length=15,
-        help_text="Note:If participant does not want to answer, record -8.",
+        null=True,
+        blank=True,
+        help_text="Leave blank If participant does not want to answer.",
         )
 
     length_residence = models.CharField(
         verbose_name="How long have your lived in this community?",
-        max_length=15,
+        max_length=25,
         choices=LENGTHRESIDENCE_CHOICE,
         help_text="",
         )
@@ -36,7 +37,7 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     why_no_participate = models.CharField(
         verbose_name="What was the main reason you do not want to participate in the study?",
-        max_length=15,
+        max_length=25,
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
         )
@@ -59,7 +60,7 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     why_no_hivtest = models.CharField(
         verbose_name="What was the main reason why you did not want HIV testing as part of today's visit?",
-        max_length=15,
+        max_length=25,
         null=True,
         blank=True,
         choices=WHYNOHIVTESTING_CHOICE,
