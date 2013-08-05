@@ -11,7 +11,7 @@
         <a href="/{{ home }}">Home</a>
         &rsaquo; <a href="{% url 'section_url' section_name='household'%}">Household</a>
         &rsaquo; <a href="{% url household_dashboard_url dashboard_type='household' household_identifier=household.household_identifier household_structure=household_structure.pk %}">{{ household_structure }} {{ survey.survey_slug|capfirst }}</a>        
-        &rsaquo; {{ subject_identifier|mask_pk:'subject identifier pending' }}
+        &rsaquo; {{ registered_subject.subject_identifier|mask_pk:'subject identifier pending' }}
     </div>
     
 {% endblock %}
