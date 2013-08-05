@@ -31,7 +31,7 @@ class HouseholdDashboard(Dashboard):
             search_name='household',
             household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_ACTION],
             membership_forms={'ABSENT': get_model('bcpp_subject', 'subjectabsentee')},
-            title='A. Household Composition',
+            title='',  # 'A. Household Composition',
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
             household_structure_meta=HouseholdStructure._meta,
