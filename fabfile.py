@@ -43,26 +43,32 @@ def checkout_repo():
 
 
 def syncdb():
+    print "syncdb started ..."
     run('python manage.py syncdb')
 
 
 def fake_migrate():
+    print "fake migration started.."
     run('python manage.py migrate --fake')
 
 
 def clean_pyc():
+    print "clean_pyc started"
     run('python manage clean_pyc')
 
 
 def uncomment_south():
+    print "uncommented south started .."
     put('settings_south_on.py, settings.py')
 
 
 def svn_checkout(repo):
+    print "checking out a repository '%s'" % repo
     run('svn co http://192.168.1.50/svn/%s' % repo)
 
 
 def svn_update(item):
+    print "svn update of '%s'" % item
     run('svn update %s' % item)
 
 
@@ -79,3 +85,4 @@ def provision():
         syncdb()
         fake_migrate()
         svn_update('settings.py')
+        print "finished provisioning!! Yep!"
