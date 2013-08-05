@@ -55,8 +55,8 @@
                 {% else %}
                 	<form action="{% url 'subject_map_url' mapper_name %}" method="post">
 					   	{% csrf_token %}
-					   	<input type="hidden" value="{{ household.lat }}" id="lat" name="lat">
-					   	<input type="hidden" value="{{ household.lon }}" id="lon" name="lon">
+					   	<input type="hidden" value="{{ household.gps_lat|default:household.gps_target_lat }}" id="lat" name="lat">
+					   	<input type="hidden" value="{{ household.gps_lon|default:household.gps_target_lon }}" id="lon" name="lon">
 					   	<input type="hidden" value="{{ household.household_identifier }}" id="identifier" name="identifier">
 						<p><input type="submit" value="view google map"></p>
 					</form>	
