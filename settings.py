@@ -99,6 +99,28 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
+        'mpp78': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.93',
+            'PORT': '3306',
+        },
+        'mpp83': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.22',
+            'PORT': '3306',
+        },
     }
 
 # Local time zone for this installation. Choices can be found here:
@@ -115,14 +137,13 @@ TIME_ZONE = 'Africa/Gaborone'
 #langauage setting
 ugettext = lambda s: s
 LANGUAGES = (
-    ('en', 'English'),
     ('tn', 'Setswana'),
+    ('en', 'English'),   
 )
 
 LOCALE_PATHS = (os.path.join(DIRNAME, 'locale'), )
 
 LANGUAGE_CODE = 'tn'
-
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -179,8 +200,9 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    #'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    #'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -213,7 +235,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'databrowse',
     'django_extensions',
     'dajaxice',
     'dajax',
@@ -312,6 +333,7 @@ INSTALLED_APPS = (
     'bhp_netbook',
     'bhp_household',
     'bhp_household_member',
+    'bhp_inspector',
 #     'ph_dispenser',
     'bcpp',
     'bcpp_lab',
@@ -322,6 +344,8 @@ INSTALLED_APPS = (
     'bcpp_household',
     'bcpp_household_member',
     'bcpp_survey',
+    'bcpp_inspector',
+    'tastypie',
 #     'bcpp_survey_dashboard',
 #     'bcpp_survey_lab',
 )
@@ -371,15 +395,15 @@ SUBJECT_APP_LIST = ['bcpp_subject']
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
 #Reports settings
-REPORTS_TEMPLATES_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/'
-REPORTS_JAR_PATH = '~/Documents/birtreport_generator.jar'
-REPORTS_OUTPUT_PATH = '/Users/sirone/Documents/workspace/bhp041_survey/bhp_birt_reports/templates/'
+REPORTS_TEMPLATES_PATH = os.path.join(DIRNAME)
+REPORTS_JAR_PATH = os.path.join(DIRNAME,'birtreport_generator.jar')
+REPORTS_OUTPUT_PATH = os.path.join(DIRNAME,'bhp_birt_reports/templates/')
 
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
-#KEY_PATH = os.path.join(DIRNAME, 'keys')
-KEY_PATH = '/Volumes/bhp066/keys'
+KEY_PATH = os.path.join(DIRNAME, 'keys')
+#KEY_PATH = '/Volumes/bhp066/keys'
 GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
 #FIELD_MAX_LENGTH='default'
 FIELD_MAX_LENGTH = 'migration'
@@ -399,3 +423,7 @@ VAR_ROOT = '/var'
 LOGGING = logger.LOGGING
 CURRENT_COMMUNITY = 'mochudi'
 CURRENT_SURVEY = 'baseline'
+
+#Middleman/node machine configurations
+#MIDDLE_MAN = True
+#MIDDLE_MAN_LIST = ['mpp78']
