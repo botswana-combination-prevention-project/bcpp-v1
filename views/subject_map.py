@@ -16,12 +16,13 @@ def subject_map(request, **kwargs):
         raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
     else:
         m = site_mappers.get_registry(mapper_name)()
-        longitude = request.GET.get('lon', None)
-        latitude = request.GET.get.get('lat', None)
+        longitude = kwargs.get('lon', None)
+        latitude = kwargs.get('lat', None)
         if not longitude:
             raise MapperError('Attribute longitude may not be None. Got {0}'.format(kwargs))
         if not latitude:
             raise MapperError('Attribute latitude may not be None. Got {0}'.format(kwargs))
+       
         identifier = kwargs.get('identifier', None)
         landmark_list = []
         landmarks = m.get_landmarks()

@@ -18,19 +18,25 @@ var x = 0;
 
 
 
-var point = new google.maps.LatLng(-24.377355, 26.150869);
+var point = new google.maps.LatLng({{ latitude }}, {{ longitude }});
 
 //function called Initialize the map when loading the browser
 function initialize() {
 		
     //create map object
-    alert("{{ longitude }}");
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15,
         center: point,
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
     geocoder = new google.maps.Geocoder();
+    
+    var marker = new google.maps.Marker({
+    			position: point,
+    			title: "click for labels information",
+    			animation: google.maps.Animation.BOUNCE,
+    			map: map,			
+    		});
    
     setLandMarks(map, landpoints);
     
