@@ -37,6 +37,12 @@ class SubjectDashboard(RegisteredSubjectDashboard):
             household_structure=self.get_household_member().household_structure,
             )
 
+    def set_dashboard_model_reference(self):
+        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
+
+        Users should override to add more to the dictionary than the default."""
+        return {'household_member': HouseholdMember}
+
     def set_extra_url_context(self, value=None):
         self._extra_url_context = '&household_member={0}'.format(self.get_household_member().pk)
 

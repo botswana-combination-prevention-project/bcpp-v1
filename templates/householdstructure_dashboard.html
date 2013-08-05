@@ -57,7 +57,7 @@
 	            {% if household|is_dispatched %}
 	            	{{ household.household_identifier }}
 	            {% else %}
-	            	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&household_identifier={{ household.household_identifier }}">{{ household.household_identifier }}</A>
+	            	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next=household_dashboard_url&dashboard_type={{ dashboard_type }}&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
 	            {% endif %}
                 <b>Section:</b> {{ household.section|encrypted }}-{{ household.sub_section|encrypted }}
                 <b>CSO:</b> {{ household.cso_number|encrypted|default:'?' }}

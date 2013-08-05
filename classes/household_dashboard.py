@@ -44,11 +44,13 @@ class HouseholdDashboard(Dashboard):
         .. note:: the participation form is a property on the HouseholdMember model so there is no need
                   to import and pass it to the template context here."""
         self.set_dashboard_type('household')
-        self.set_survey(kwargs.get('survey'))
-        self.set_household(**kwargs)
-        self.dashboard_identifier = self.get_household().household_identifier
-
+        self.set_dashboard_model_key('household')
+        self.set_dashboard_id(kwargs.get('dashboard_id'))
         super(HouseholdDashboard, self).create(**kwargs)
+
+        self.set_survey(kwargs.get('survey'))
+        self.set_household()
+        #self.dashboard_identifier = self.get_household().household_identifier
 
         # TODO: is this still necessary?
         self.check_members_have_registered_subject()
@@ -68,6 +70,12 @@ class HouseholdDashboard(Dashboard):
             )
         self.set_mapper_name(kwargs.get('mapper_name'))
         self.context.add(mapper_name=self.get_mapper_name())
+
+    def set_dashboard_model_reference(self):
+        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
+
+        Users should override to add more to the dictionary than the default."""
+        return {'household': Household, 'household_structure': HouseholdStructure}
 
     def set_mapper_name(self, value=None):
         self._mapper_name = value
@@ -107,17 +115,40 @@ class HouseholdDashboard(Dashboard):
         except:
             self._current_member_count = 0
 
-    def set_household(self, **kwargs):
-        household_identifier = kwargs.get('household_identifier', None)
-        if not household_identifier:
-            pk = kwargs.get('household_structure', None)
+    def set_household_structure(self, value=None, pk=None):
+        self._household_structure = value
+        if not self._household_structure:
+            if issubclass(self.get_dashboard_model(), HouseholdStructure):
+                self._household_structure = self.get_dashboard_model()
             if HouseholdStructure.objects.filter(pk=pk):
-                household_identifier = HouseholdStructure.objects.get(pk=pk).household.household_identifier
-        if not household_identifier:
-            raise TypeError('Household identifier is required for the dashboard. Got None.')
-        if not Household.objects.filter(household_identifier=household_identifier):
-            raise TypeError('Cannot set Household for given identifier. Got {0}'.format(household_identifier))
-        self._household = Household.objects.get(household_identifier=household_identifier)
+                self._household_structure = HouseholdStructure.objects.get(pk=pk)
+        if not self._household_structure:
+            raise TypeError('Household_structure cannot be None. Using {0}.'.format((value, pk)))
+
+    def get_household_structure(self):
+        if not self._household_structure:
+            self.set_household_structure()
+        return self._household_structure
+
+    def set_household(self, pk=None, household_identifier=None, household_structure=None):
+        """Sets the household instance using household attributes pk or household_identifier or household_strcuture."""
+        self._household = None
+        if isinstance(self.get_dashboard_model_instance(), Household):
+            self._household = self.get_dashboard_model_instance()
+        if isinstance(self.get_dashboard_model_instance(), HouseholdStructure):
+            self._household = self.get_dashboard_model_instance().household
+        if household_identifier and not self._household:
+            if not Household.objects.filter(household_identifier=household_identifier):
+                raise TypeError('Cannot set Household using the household_identifier. Got {0}'.format(household_identifier))
+            self._household = Household.objects.get(household_identifier=household_identifier)
+        if pk and not self._household:
+            if not Household.objects.filter(pk=pk):
+                raise TypeError('Cannot set Household using the pk. Got {0}'.format(pk))
+            self._household = Household.objects.get(pk=pk)
+        if household_structure and not self._household:
+            self._household = household_structure.household
+        if not self._household:
+            raise TypeError('Household cannot be None. Using {0}'.format(pk, household_identifier, household_structure))
 
     def get_household(self):
         if not self._household:
@@ -172,28 +203,47 @@ class HouseholdDashboard(Dashboard):
         return HouseholdLogEntry.objects.filter(household_log__household_structure=self.get_household_structure())
 
     def get_urlpatterns(self, view, regex, **kwargs):
+        """Gets the url_patterns for the dashboard view.
+
+        Called in the urls.py"""
         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
-        regex['survey_slug'] = 'bcpp\-year\-[0-9]{1}|mobile\-year\-[0-9]{1}'
-        regex['content_type_map'] = '\w+'
-        return patterns(view,
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household>{pk})/(?P<household_structure>{pk})/$'.format(**regex),
+        regex['dashboard_model'] = '|household|household_structure|registered_subject'
+        regex.update({'dashboard_type': 'household'})
+        urlpatterns = patterns(view,
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>any)$'.format(**regex),
               'household_dashboard',
                 name="household_dashboard_url"
                 ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_member>{pk})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/$'.format(**regex),
               'household_dashboard',
                 name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household_structure>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_structure>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            )
+                ))
+        return urlpatterns
+
+
+#     def get_urlpatterns(self, view, regex, **kwargs):
+#         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
+#         regex['survey_slug'] = 'bcpp\-year\-[0-9]{1}|mobile\-year\-[0-9]{1}'
+#         regex['content_type_map'] = '\w+'
+#         return patterns(view,
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household>{pk})/(?P<household_structure>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_member>{pk})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/(?P<household_structure>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_structure>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<household_identifier>{household_identifier})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             )
