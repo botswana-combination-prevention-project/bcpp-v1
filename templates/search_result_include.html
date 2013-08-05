@@ -56,7 +56,6 @@
                 {% else %}
                 	<form action="{% url "subject_map_url2" mapper_name household.household_identifier household.gps_lon|default:household.gps_target_lon household.gps_lat|default:household.gps_target_lat %}" method="post">
 					   	{% csrf_token %}
-
 						<p><input type="submit" value="view google map"></p>
 					</form>	
 				{% endif %}
