@@ -60,7 +60,7 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     why_no_hivtest = models.CharField(
         verbose_name="What was the main reason why you did not want HIV testing as part of today's visit?",
-        max_length=25,
+        max_length=50,
         null=True,
         blank=True,
         choices=WHYNOHIVTESTING_CHOICE,
