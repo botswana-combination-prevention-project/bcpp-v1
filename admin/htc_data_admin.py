@@ -19,7 +19,7 @@ class HtcDataAdmin(BaseModelAdmin):
         'religion',
         'religion_other',
         'ethnic',
-        'ethnic_other',
+        'other',
         'marital_status',
         'num_wives',
         'husband_wives',
@@ -28,7 +28,7 @@ class HtcDataAdmin(BaseModelAdmin):
 
     list_display = (
         'household_member',
-        'composition',
+#         'composition',
         "report_datetime",
         )
 
@@ -42,7 +42,7 @@ class HtcDataAdmin(BaseModelAdmin):
         "hiv_result": admin.VERTICAL,
         "why_not_tested": admin.VERTICAL,}
     
-    filter_horizontal = ('religion')
+    filter_horizontal = ('religion',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
