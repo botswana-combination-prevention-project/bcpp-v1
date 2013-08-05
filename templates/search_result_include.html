@@ -53,7 +53,7 @@
        	        {% if household.uploaded_map %}
     				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">view saved map</a>
                 {% else %}
-                	<form action="/bcpp_map/subject_map/" method="post">
+                	<form action="{% url 'subject_map_url' mapper_name %}" method="post">
 					   	{% csrf_token %}
 					   	<input type="hidden" value="{{ household.lat }}" id="lat" name="lat">
 					   	<input type="hidden" value="{{ household.lon }}" id="lon" name="lon">
