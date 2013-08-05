@@ -84,7 +84,7 @@ class BaseModelAdmin (admin.ModelAdmin):
                 dashboard_type = request.GET.get('dashboard_type')
                 entry_order = request.GET.get('entry_order')
                 visit_attr = request.GET.get('visit_attr')
-                show = request.GET.get('show')
+                show = request.GET.get('show', 'any')
                 if '_savenext' in request.POST:
                     # go to the next form
                     next_url, visit_model_instance, entry_order = RegisteredSubjectDashboard().next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model)
@@ -198,7 +198,7 @@ class BaseModelAdmin (admin.ModelAdmin):
                       'dashboard_type': request.GET.get('dashboard_type', ''),
                       'dashboard_model': request.GET.get('dashboard_model', ''),
                       'dashboard_id': request.GET.get('dashboard_id', ''),
-                      'show': request.GET.get('show')}
+                      'show': request.GET.get('show', 'any')}
 
     def reverse_next_to_dashboard(self, request, obj, **kwargs):
         url = ''
@@ -206,7 +206,7 @@ class BaseModelAdmin (admin.ModelAdmin):
             url = reverse(request.GET.get('next'), kwargs={'dashboard_id': request.GET.get('dashboard_id'),
                                                            'dashboard_model': request.GET.get('dashboard_model'),
                                                            'dashboard_type': request.GET.get('dashboard_type'),
-                                                           'show': request.GET.get('show')})
+                                                           'show': request.GET.get('show', 'any')})
         else:
             # normally you should not be here.
             try:
