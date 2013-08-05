@@ -54,11 +54,9 @@
        	        {% if household.uploaded_map %}
     				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">view saved map</a>
                 {% else %}
-                	<form action="{% url 'subject_map_url' mapper_name %}" method="post">
+                	<form action="{% url "subject_map_url2" mapper_name household.household_identifier household.gps_lon|default:household.gps_target_lon household.gps_lat|default:household.gps_target_lat %}" method="post">
 					   	{% csrf_token %}
-					   	<input type="hidden" value="{{ household.gps_lat|default:household.gps_target_lat }}" id="lat" name="lat">
-					   	<input type="hidden" value="{{ household.gps_lon|default:household.gps_target_lon }}" id="lon" name="lon">
-					   	<input type="hidden" value="{{ household.household_identifier }}" id="identifier" name="identifier">
+
 						<p><input type="submit" value="view google map"></p>
 					</form>	
 				{% endif %}
