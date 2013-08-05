@@ -7,7 +7,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
 from bhp_common.utils import convert_from_camel
-from bhp_base_model.models import BaseModel
 from bhp_crypto.fields import EncryptedTextField
 from bhp_entry.models import AdditionalEntryBucket, ScheduledEntryBucket
 from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
@@ -37,12 +36,12 @@ class RegisteredSubjectDashboard(Dashboard):
 
         super(RegisteredSubjectDashboard, self).__init__(**kwargs)
         #self._subject_dashboard_url = None
-        self._dashboard_id = None
-        self._dashboard_identifier = None
-        self._dashboard_model = None
-        self._dashboard_model_key = None
-        self._dashboard_model_instance = None
-        self._dashboard_model_reference = None
+#         self._dashboard_id = None
+#         self._dashboard_identifier = None
+#         self._dashboard_model = None
+#         self._dashboard_model_key = None
+#         self._dashboard_model_instance = None
+#         self._dashboard_model_reference = None
         self._registered_subject = None
         self._subject_identifier = None
         self._subject_type = None
@@ -72,12 +71,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self.exclude_others_if_keyed_model_name = ''
 
     def create(self, **kwargs):
-        super(RegisteredSubjectDashboard, self).create(**kwargs)
-        # values coming from kwargs
         self.set_show(kwargs.get('show'))
-        #self.set_subject_dashboard_url(kwargs.get('subject_dashboard_url', None))
-        self.set_dashboard_id(kwargs.get('dashboard_id'))
-        self.set_dashboard_model_key(kwargs.get('dashboard_model'))
+        super(RegisteredSubjectDashboard, self).create(**kwargs)
         self.set_subject_type(kwargs.get('subject_type') or kwargs.get('dashboard_type'))
         self._set_membership_form_category(kwargs.get('membership_form_category', None))
         self._set_registered_subject(kwargs.get('registered_subject', None))
@@ -96,11 +91,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 )
         self.context.add(
             show=self.get_show(),
-            #subject_dashboard_url=self.get_subject_dashboard_url(),
-            dashboard_type=self.get_dashboard_type(),
-            dashboard_id=self.get_dashboard_id(),
-            dashboard_model=self.get_dashboard_model_key(),
-            dashboard_identifier=self.get_dashboard_identifier(),
+#             dashboard_identifier=self.get_dashboard_identifier(),
             appointment_meta=Appointment._meta,
             subject_configuration_meta=SubjectConfiguration._meta,
             extra_url_context=self.get_extra_url_context(),
@@ -149,99 +140,28 @@ class RegisteredSubjectDashboard(Dashboard):
             self.set_appointment_row_template()
         return self._appointment_row_template
 
-#     def set_subject_dashboard_url(self, value=None):
-#         self._subject_dashboard_url = value or 'subject_dashboard_url'
-# 
-#     def get_subject_dashboard_url(self):
-#         if not self._subject_dashboard_url:
-#             self.set_subject_dashboard_url()
-#         return self._subject_dashboard_url
-
-    def get_dashboard_model_reference(self):
+    def set_dashboard_model_reference(self):
         """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
 
         Users should override to add more to the dictionary than the default."""
-        return {}
+        return {'appointment': Appointment, 'visit': self.get_visit_model()}
 
-    def _set_dashboard_model_reference(self):
-        """Sets a reference dictionary by updating the user defined dictionary with defaults for registered_subject, appointment and visit."""
-        self._dashboard_model_reference = self.get_dashboard_model_reference()
-        self._dashboard_model_reference.update({'registered_subject': RegisteredSubject})
-        self._dashboard_model_reference.update({'appointment': Appointment})
-        self._dashboard_model_reference.update({'visit': self.get_visit_model()})
-
-    def _get_dashboard_model_reference(self, model_name):
-        if not self._dashboard_model_reference:
-            self._set_dashboard_model_reference()
-        if model_name not in self._dashboard_model_reference:
-            raise TypeError(('Dashboard model name {0} is not in the user defined dictionary returned by '
-                            'method get_dashboard_model_reference(). Got {1}. Perhaps override method '
-                            'get_dashboard_model_reference() in your subclass.').format(model_name, self._dashboard_model_reference))
-        return self._dashboard_model_reference.get(model_name)
-
-    def set_dashboard_model_key(self, value):
-        self._dashboard_model_key = value
-
-    def get_dashboard_model_key(self):
-        if not self._dashboard_model_key:
-            self.set_dashboard_model_key()
-        return self._dashboard_model_key
-
-    def set_dashboard_model(self):
-        """Sets the model class given by the dashboard URL."""
-        model_name = self.get_dashboard_model_key()
-        if isinstance(self._get_dashboard_model_reference(model_name), tuple):
-            app_label, model_name = self._get_dashboard_model_reference(model_name)
-            self._dashboard_model = models.get_model(app_label, model_name)
-        elif issubclass(self._get_dashboard_model_reference(model_name), BaseModel):
-            self._dashboard_model = self._get_dashboard_model_reference(model_name)
-        else:
-            raise TypeError('Dashboard model reference must return a tuple (app_label, model_name) or a model class. Got neither for {0}'.format(model_name))
-        if not self._dashboard_model:
-            raise TypeError('Dashboard model may not be None')
-
-    def get_dashboard_model(self):
-        if not self._dashboard_model:
-            self.set_dashboard_model()
-        return self._dashboard_model
-
-    def set_dashboard_model_instance(self):
-        """Sets the model instance using the model class and pk from the dashboard URL."""
-        self._dashboard_model_instance = self.get_dashboard_model().objects.get(pk=self.get_dashboard_id())
-
-    def get_dashboard_model_instance(self):
-        if not self._dashboard_model_instance:
-            self.self.set_dashboard_model_instance()
-        return self._dashboard_model_instance
-
-    def set_dashboard_id(self, pk):
-        """Sets the pk of the dashboard model class given by the dashboard URL."""
-        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        if not re_pk.match(pk or ''):
-            raise TypeError('Dashboard id must be a uuid (pk)')
-        self._dashboard_id = pk
-
-    def get_dashboard_id(self):
-        if not self._dashboard_id:
-            self.set_dashboard_id()
-        return self._dashboard_id
-
-    def set_dashboard_identifier(self):
-        #TODO: what is this used for?
-        self._dashboard_identifier = None
-        if self.get_registered_subject():
-            self._dashboard_identifier = ('{0} [{1}] {2}'
-                ).format(
-                     self.get_registered_subject().first_name,
-                     self.get_registered_subject().initials,
-                     self.get_registered_subject().gender)
-        else:
-            self._dashboard_identifier = self.get_subject_identifier()
-
-    def get_dashboard_identifier(self):
-        if not self._dashboard_identifier:
-            self.set_dashboard_identifier()
-        return self._dashboard_identifier
+#     def set_dashboard_identifier(self):
+#         #TODO: what is this used for?
+#         self._dashboard_identifier = None
+#         if self.get_registered_subject():
+#             self._dashboard_identifier = ('{0} [{1}] {2}'
+#                 ).format(
+#                      self.get_registered_subject().first_name,
+#                      self.get_registered_subject().initials,
+#                      self.get_registered_subject().gender)
+#         else:
+#             self._dashboard_identifier = self.get_subject_identifier()
+# 
+#     def get_dashboard_identifier(self):
+#         if not self._dashboard_identifier:
+#             self.set_dashboard_identifier()
+#         return self._dashboard_identifier
 
     def set_registered_subject(self, registered_subject=None, pk=None):
         """Sets the registered_subject instance, may be overridden by users."""
