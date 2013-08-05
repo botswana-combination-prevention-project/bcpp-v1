@@ -2,6 +2,7 @@
 {% load dispatch_tags %}
 {% load admin_urls %}
 {% load url from future %}
+{% load common_tags %}
 
 <div class="results">
     <table  cellspacing="0" id="result_list">
@@ -28,7 +29,7 @@
             <div class="warning">Locked</div>{{ household.action }}
           {% else %}
             {% if household.action == 'confirmed'%}
-                <A name="dashboard-{{household.household_identifier}}" href="{% url 'household_dashboard_url' dashboard_type='household' household_identifier=household.household_identifier %}">Composition</A>
+                <A name="dashboard-{{household.household_identifier}}" href="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household' dashboard_id=household.pk %}">Composition</A>
             {% else %}
                 {{ household.action }}
             {% endif %}
@@ -38,7 +39,7 @@
         <td>{% if household|is_dispatched %}
         		<div class="warning">{{household.household_identifier}}</div>
         	{% else %}
-        		<A href="{{ household.get_absolute_url }}?next=household_dashboard_url&dashboard_type=household&household_identifier={{household.household_identifier}}">{{ household }}</A>
+        		<A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household }}</A>
         	{% endif %}
         	</td>
           <td>{{ household.get_status_display }}</td>
