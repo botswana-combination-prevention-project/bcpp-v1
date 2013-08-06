@@ -33,15 +33,7 @@ class RegisteredSubjectDashboard(Dashboard):
     """ Create and add to a default clinic 'registered subject' dashboard context and render_to_response from a view in shell. """
 
     def __init__(self, **kwargs):
-
         super(RegisteredSubjectDashboard, self).__init__(**kwargs)
-        #self._subject_dashboard_url = None
-#         self._dashboard_id = None
-#         self._dashboard_identifier = None
-#         self._dashboard_model = None
-#         self._dashboard_model_key = None
-#         self._dashboard_model_instance = None
-#         self._dashboard_model_reference = None
         self._registered_subject = None
         self._subject_identifier = None
         self._subject_type = None
@@ -69,15 +61,16 @@ class RegisteredSubjectDashboard(Dashboard):
         self._subject_hiv_status = None
         self.is_dispatched, self.dispatch_producer = False, None
         self.exclude_others_if_keyed_model_name = ''
+        self.add_to_dashboard_model_reference({'appointment': Appointment})
 
     def create(self, **kwargs):
         self.set_show(kwargs.get('show'))
+        self.add_to_dashboard_model_reference({'visit': self.get_visit_model})
         super(RegisteredSubjectDashboard, self).create(**kwargs)
         self.set_subject_type(kwargs.get('subject_type') or kwargs.get('dashboard_type'))
         self._set_membership_form_category(kwargs.get('membership_form_category', None))
         self._set_registered_subject(kwargs.get('registered_subject', None))
         self.set_dashboard_model()
-        #self.visit_model_app_label = self.get_visit_model()._meta.app_label
         if self.get_registered_subject():
             subject_hiv_status = lab_tracker.get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
             subject_hiv_history = lab_tracker.get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
@@ -91,7 +84,6 @@ class RegisteredSubjectDashboard(Dashboard):
                 )
         self.context.add(
             show=self.get_show(),
-#             dashboard_identifier=self.get_dashboard_identifier(),
             appointment_meta=Appointment._meta,
             subject_configuration_meta=SubjectConfiguration._meta,
             extra_url_context=self.get_extra_url_context(),
@@ -139,12 +131,6 @@ class RegisteredSubjectDashboard(Dashboard):
         if not self._appointment_row_template:
             self.set_appointment_row_template()
         return self._appointment_row_template
-
-    def set_dashboard_model_reference(self):
-        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
-
-        Users should override to add more to the dictionary than the default."""
-        self._dashboard_model_reference.update({'appointment': Appointment, 'visit': self.get_visit_model()})
 
 #     def set_dashboard_identifier(self):
 #         #TODO: what is this used for?
