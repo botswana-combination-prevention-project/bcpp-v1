@@ -37,7 +37,7 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     why_no_participate = models.CharField(
         verbose_name="What was the main reason you do not want to participate in the study?",
-        max_length=25,
+        max_length=50,
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
         )
@@ -45,7 +45,7 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     subject_refusal_status = models.CharField(
         verbose_name="Refusal status",
-        max_length=25,
+        max_length=50,
         help_text=("Change the refusal status from 'refused' to 'no longer refusing' if and"
                    " when the subject changes their mind"),
         default='REFUSED',
