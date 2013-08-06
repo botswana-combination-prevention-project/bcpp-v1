@@ -11,7 +11,6 @@ class BaselineHouseholdSurveyAdmin(BaseModelAdmin):
     form = BaselineHouseholdSurveyForm
     fields = (
         "household_member",
-#         "registered_subject",
         "flooring_type",
         "flooring_type_other",
         "living_rooms",

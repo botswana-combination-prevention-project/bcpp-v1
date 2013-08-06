@@ -41,7 +41,7 @@ class HtcDataAdmin(BaseModelAdmin):
         "marital_status": admin.VERTICAL, 
         "hiv_result": admin.VERTICAL,
         "why_not_tested": admin.VERTICAL,}
-    
+
     filter_horizontal = ('rel',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
