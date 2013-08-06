@@ -275,6 +275,14 @@ rule_groups.register(ReproductiveRuleGroup)
 
 
 class MedicalDiagnosesRuleGroup(RuleGroup):
+    
+    #to cancel all related illnesses if diagnoses is equal to none
+    diagnoses = ScheduledDataRule(
+        logic=Logic(
+            predicate=('diagnoses', 'equals', 'none'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['heartattack', 'cancer', 'tubercolosis', 'sti', ])
 
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
