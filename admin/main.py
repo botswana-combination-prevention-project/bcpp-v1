@@ -3,8 +3,7 @@ from django.contrib import admin
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
                                  HospitalAdmission, HivHealthCareCosts, CeaEnrolmentChecklist,
-                                 CommunityEngagement, Education,
-                                 HivMedicalCare, Circumcision, Circumcised,
+                                 CommunityEngagement, HivMedicalCare, Circumcision, Circumcised,
                                  MedicalDiagnoses, HeartAttack, Cancer, Sti,
                                  Tubercolosis, SubstanceUse, Stigma,
                                  StigmaOpinion, PositiveParticipant,
@@ -13,7 +12,7 @@ from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
                                 HospitalAdmissionForm, HivHealthCareCostsForm,
                                 CeaEnrolmentChecklistForm, CommunityEngagementForm,
-                                EducationForm, HivMedicalCareForm,
+                                HivMedicalCareForm,
                                 CircumcisionForm, CircumcisedForm,
                                 MedicalDiagnosesForm,
                                 HeartAttackForm, CancerForm, StiForm,
@@ -180,30 +179,6 @@ class CommunityEngagementAdmin(SubjectVisitModelAdmin):
         "solve_engagement": admin.VERTICAL, }
     filter_horizontal = ('problems_engagement',)
 admin.site.register(CommunityEngagement, CommunityEngagementAdmin)
-
-
-class EducationAdmin(SubjectVisitModelAdmin):
-
-    form = EducationForm
-    fields = (
-        "subject_visit",
-        'education',
-        'working',
-        'job_type',
-        'reason_unemployed',
-        'job_description',
-        'monthly_income',)
-    radio_fields = {
-        "education": admin.VERTICAL,
-        "working": admin.VERTICAL,
-        'job_type': admin.VERTICAL,
-        'reason_unemployed': admin.VERTICAL,
-        'job_description': admin.VERTICAL,
-        "monthly_income": admin.VERTICAL, }
-    required_instructions = ("Read to Participant: Next, I will ask you some"
-                              " questions about what education and work you"
-                              " may have done or are currently doing.")
-admin.site.register(Education, EducationAdmin)
 
 
 class HivMedicalCareAdmin(SubjectVisitModelAdmin):
