@@ -71,7 +71,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
     opportunistic_illness = models.CharField(
         verbose_name=("[Interviewer] Does the patient currently have AIDS opportunistic"
                       " illness (refer to SOP for list of eligible conditions)? "),
-        max_length=3,
+        max_length=50,
         choices=OPPORTUNISTIC_ILLNESSES,
         help_text="",
         )
