@@ -10,13 +10,9 @@ from bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry
 def participation(request, **kwargs):
     """Updates the member status and redirects to the household dashboard."""
     household_member = None
-    household_identifier = None
-    survey = None
     if request.method == 'POST':
         form = ParticipationForm(request.POST)
         if form.is_valid():
-            survey = form.cleaned_data.get('survey')
-            household_identifier = form.cleaned_data.get('household_identifier')
             pk = form.cleaned_data.get('household_member')
             household_member = HouseholdMember.objects.get(pk=pk)
             status = form.cleaned_data.get('status', None)
@@ -54,7 +50,8 @@ def participation(request, **kwargs):
 #                     if not SubjectUndecidedEntry.objects.filter(subject_undecided=subject_undecided):
 #                         subject_undecided.report_datetime = household_member.modified
     return household_dashboard(request,
-        household_identifier=household_identifier,
-        household_member=household_member,
-        survey=survey,
+        dashboard_type='household',
+        dashboard_model='household_structure',
+        dashboard_id=household_member.household_structure.pk,
+        #household_member=household_member,
         )
