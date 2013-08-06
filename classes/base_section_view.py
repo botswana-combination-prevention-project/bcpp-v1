@@ -216,12 +216,15 @@ class BaseSectionView(object):
 
     def _get_search_result_include_template(self):
         """Wraps the user method :func:`get_search_result_include_template` and
-        returns the template that displays the section\'s search_result."""
+        returns the template that displays the section\'s search_result.
+
+        If there is no search class for the section, returns None"""
         template = self.get_search_result_include_template()
         if not template:
-            # return a default template
-            searcher_cls = site_search.get(self.get_search_type(self.get_section_name()))
-            template = searcher_cls().get_include_template_file()
+            # return a default template, if there is a search class for this section
+            search_cls = site_search.get(self.get_search_type(self.get_section_name()))
+            if search_cls:
+                template = search_cls().get_search_result_include_template()
         return template
 
     def get_search_result_include_template(self):
