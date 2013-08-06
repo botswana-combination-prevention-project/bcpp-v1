@@ -403,6 +403,7 @@ REPORTS_OUTPUT_PATH = os.path.join(DIRNAME,'bhp_birt_reports/templates/')
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 KEY_PATH = os.path.join(DIRNAME, 'keys')
+MAP_DIR = os.path.join(DIRNAME, 'static/images/')
 #KEY_PATH = '/Volumes/bhp066/keys'
 GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
 #FIELD_MAX_LENGTH='default'
