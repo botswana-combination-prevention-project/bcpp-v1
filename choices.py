@@ -195,6 +195,7 @@ JOB_TYPE = (
     ('agric', _('Self-employed in agriculture')),
     ('self full-time', _('Self-employed making money, full time')),
     ('self part-time', _('Self-employed making money, part time')),
+    ('not working', _('Not working')),
     ('OTHER', _('Other')),
 )
 
