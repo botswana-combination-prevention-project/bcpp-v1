@@ -160,7 +160,6 @@ class HouseholdMember(BaseHouseholdMember):
         """Returns a url to the subjectabsentee if an instance exists."""
         return self._get_form_url('subjectabsentee')
 
-    @property
     def absentee_form_label(self):
         SubjectAbsentee = models.get_model('bcpp_subject', 'subjectabsentee')
         SubjectAbsenteeEntry = models.get_model('bcpp_subject', 'subjectabsenteeentry')
@@ -172,6 +171,7 @@ class HouseholdMember(BaseHouseholdMember):
         if not report_datetime:
             report_datetime.append('add new entry')
         return report_datetime
+    absentee_form_label.allow_tags = True
 
 #     @property
 #     def undecided_form_url(self):
@@ -217,13 +217,13 @@ class HouseholdMember(BaseHouseholdMember):
         else:
             return 'Add "{0}" report'.format(model_name)
 
-    @property
     def refused_form_label(self):
         return self.get_form_label('SubjectRefusal')
+    refused_form_label.allow_tags = True
 
-    @property
     def moved_form_label(self):
         return self.get_form_label('SubjectMoved')
+    moved_form_label.allow_tags = True
 
     def cso(self):
         return self.household_structure.household.cso_number
