@@ -1,6 +1,6 @@
 from django import forms
 from bhp_base_form.forms import BaseModelForm
-from bcpp_subject.models import BaselineHouseholdSurvey
+from bcpp_household_member.models import BaselineHouseholdSurvey
 
 
 class BaselineHouseholdSurveyForm (BaseModelForm):
