@@ -1,4 +1,5 @@
 import re
+import inspect
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from bhp_context.classes import BaseContext
@@ -58,11 +59,11 @@ class Dashboard(object):
     def set_dashboard_model(self):
         """Sets the model class given by the dashboard URL."""
         model_name = self.get_dashboard_model_key()
-        if isinstance(self._get_dashboard_model_reference(model_name), tuple):
-            app_label, model_name = self._get_dashboard_model_reference(model_name)
+        if isinstance(self.get_dashboard_model_reference(model_name), tuple):
+            app_label, model_name = self.get_dashboard_model_reference(model_name)
             self._dashboard_model = models.get_model(app_label, model_name)
-        elif issubclass(self._get_dashboard_model_reference(model_name), BaseModel):
-            self._dashboard_model = self._get_dashboard_model_reference(model_name)
+        elif issubclass(self.get_dashboard_model_reference(model_name), BaseModel):
+            self._dashboard_model = self.get_dashboard_model_reference(model_name)
         else:
             raise TypeError('Dashboard model reference must return a tuple (app_label, model_name) or a model class. Got neither for {0}'.format(model_name))
         if not self._dashboard_model:
@@ -94,27 +95,39 @@ class Dashboard(object):
             self.set_dashboard_id()
         return self._dashboard_id
 
-    def set_dashboard_model_reference(self):
-        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
+    def add_to_dashboard_model_reference(self, value):
+        """Adds additional items to the dictionary.
 
-        Users should override to add more to the dictionary than the default."""
-        pass
-
-    def _set_dashboard_model_reference(self):
-        """Sets a reference dictionary by updating the user defined dictionary with defaults for registered_subject, appointment and visit."""
+        This dictionary is used to verify the dashboard_model_key
+        coming from the url. We only want ones that we expect."""
+        if not isinstance(value, dict):
+            raise TypeError('Parameter \'value\' must be a dictionary.')
+        for v in value.itervalues():
+            if inspect.ismethod(v) and v.__name__ == 'get_visit_model':
+                pass
+            elif not issubclass(v, BaseModel):
+                raise TypeError('Dictionary of {{k, v}} must have value attribute v of base class BaseModel. Got {0} for {1}'.format(type(v), value))
         if not self._dashboard_model_reference:
             self._dashboard_model_reference = {}
-        self.set_dashboard_model_reference()
-        self._dashboard_model_reference.update({'registered_subject': RegisteredSubject})
+        self._dashboard_model_reference.update(value)
 
-    def _get_dashboard_model_reference(self, model_name):
+    def set_dashboard_model_reference(self):
+        """Sets a reference dictionary by updating the user defined dictionary with a default for registered_subject."""
         if not self._dashboard_model_reference:
-            self._set_dashboard_model_reference()
+            self._dashboard_model_reference = {}
+        self.add_to_dashboard_model_reference({'registered_subject': RegisteredSubject})
+
+    def get_dashboard_model_reference(self, model_name):
+        if not self._dashboard_model_reference:
+            self.set_dashboard_model_reference()
         if model_name not in self._dashboard_model_reference:
             raise TypeError(('Dashboard model name {0} is not in the user defined dictionary returned by '
-                            'method get_dashboard_model_reference(). Got {1}. Perhaps override method '
-                            'get_dashboard_model_reference() in your subclass.').format(model_name, self._dashboard_model_reference))
-        return self._dashboard_model_reference.get(model_name)
+                            'method get_dashboard_model_reference(). Got {1}. Perhaps add this model '
+                            'with add_dashboard_model_reference() in your subclass.').format(model_name, self._dashboard_model_reference))
+        value = self._dashboard_model_reference.get(model_name)
+        if inspect.ismethod(value) and value.__name__ == 'get_visit_model':
+            value = value()
+        return value
 
     def set_dashboard_model_key(self, value):
         self._dashboard_model_key = value
