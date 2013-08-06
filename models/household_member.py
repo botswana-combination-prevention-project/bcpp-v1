@@ -136,8 +136,8 @@ class HouseholdMember(BaseHouseholdMember):
             self.member_status = 'NOT_REPORTED'
         return ParticipationForm(initial={'status': self.member_status,
                                           'household_member': self.pk,
-                                          'survey': self.survey,
-                                          'household_identifier': self.household.household_identifier,
+                                          'dashboard_id': self.pk,
+                                          'dashboard_model': 'household_structure',
                                           'dashboard_type': 'household'})
 
     def _get_form_url(self, model_name):

@@ -11,8 +11,10 @@ class ParticipationForm(forms.Form):
     status = forms.ChoiceField(choices=HOUSEHOLD_MEMBER_ACTION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
     household_member = forms.CharField(widget=forms.HiddenInput())
     dashboard_type = forms.CharField(widget=forms.HiddenInput())
-    survey = forms.CharField(widget=forms.HiddenInput())
-    household_identifier = forms.CharField(widget=forms.HiddenInput())
+    dashboard_id = forms.CharField(widget=forms.HiddenInput())
+    dashboard_model = forms.CharField(widget=forms.HiddenInput())
+    #survey = forms.CharField(widget=forms.HiddenInput())
+    #household_identifier = forms.CharField(widget=forms.HiddenInput())
 
     def as_table(self):
         "Returns this form rendered as HTML <tr>s -- excluding the <table></table>."
