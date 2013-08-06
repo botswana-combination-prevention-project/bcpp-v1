@@ -16,7 +16,7 @@ class SubjectDashboard(RegisteredSubjectDashboard):
         self._household = None
 
         self.exclude_others_if_keyed_model_name = 'subjectconsent'
-
+        self.add_to_dashboard_model_reference({'household_member': HouseholdMember})
         self.context.add(
             home='bcpp_survey',
             search_name='subject',
@@ -37,13 +37,6 @@ class SubjectDashboard(RegisteredSubjectDashboard):
             household_structure=self.get_household_member().household_structure,
             )
 
-    def set_dashboard_model_reference(self):
-        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
-
-        Users should override to add more to the dictionary than the default."""
-        super(SubjectDashboard, self).set_dashboard_model_reference()
-        self._dashboard_model_reference.update({'household_member': HouseholdMember})
-
     def set_extra_url_context(self, value=None):
         self._extra_url_context = '&household_member={0}'.format(self.get_household_member().pk)
 
@@ -61,10 +54,6 @@ class SubjectDashboard(RegisteredSubjectDashboard):
     def set_packing_list_model(self):
         if self.get_dashboard_type() == 'subject':
             self._packing_list_model = PackingList
-
-    def get_dashboard_model_reference(self):
-        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}."""
-        return {'household_member': HouseholdMember}
 
     def set_survey(self):
         self._survey = self.get_household_member().survey

@@ -24,6 +24,7 @@ class HouseholdDashboard(Dashboard):
         self._survey = None
         # TODO: section/search stuff should move to base class
         section = site_sections.get('household')
+        self.add_to_dashboard_model_reference({'household': Household, 'household_structure': HouseholdStructure})
         self.context.add(
             section_name=section().get_section_name(),
             search_type=section().get_search_type(section().get_section_name()),
@@ -51,7 +52,6 @@ class HouseholdDashboard(Dashboard):
 
         self.set_survey(kwargs.get('survey'))
         self.set_household()
-        #self.dashboard_identifier = self.get_household().household_identifier
 
         # TODO: is this still necessary?
         self.check_members_have_registered_subject()
@@ -72,13 +72,6 @@ class HouseholdDashboard(Dashboard):
             )
         self.set_mapper_name(kwargs.get('mapper_name'))
         self.context.add(mapper_name=self.get_mapper_name())
-
-    def set_dashboard_model_reference(self):
-        """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
-
-        Users should override to add more to the dictionary than the default."""
-        super(HouseholdDashboard, self).set_dashboard_model_reference()
-        self._dashboard_model_reference.update({'household': Household, 'household_structure': HouseholdStructure})
 
     def has_household_log_entry(self):
         """Confirms there is an househol_log_entry for today."""
