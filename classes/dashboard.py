@@ -98,11 +98,12 @@ class Dashboard(object):
         """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
 
         Users should override to add more to the dictionary than the default."""
-        if not self._dashboard_model_reference:
-            self._dashboard_model_reference = {}
+        pass
 
     def _set_dashboard_model_reference(self):
         """Sets a reference dictionary by updating the user defined dictionary with defaults for registered_subject, appointment and visit."""
+        if not self._dashboard_model_reference:
+            self._dashboard_model_reference = {}
         self.set_dashboard_model_reference()
         self._dashboard_model_reference.update({'registered_subject': RegisteredSubject})
 
