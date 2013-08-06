@@ -20,7 +20,7 @@
  <tbody>
  {% for household_log_entry in household_log_entries %}
      <tr class="{% cycle 'row1' 'row2' %}">
-     <td>{{ forloop.counter }}.&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'change' household_log_entry.pk %}?household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{ household_log.household_structure.pk}}"> {{ household_log_entry.report_datetime|date:"Y-m-d" }}</A></td>
+     <td>{{ forloop.counter }}.&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'change' household_log_entry.pk %}?household_log={{household_log.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"> {{ household_log_entry.report_datetime|date:"Y-m-d" }}</A></td>
      <td>{{ household_log_entry.hbc }}</td>
      <td>{{ household_log_entry.next_appt_datetime|date:"Y-m-d" }}</td>
      <td>{{ household_log_entry.next_appt_datetime_source }}</td>
@@ -31,5 +31,5 @@
  </tbody>
  </table>    
  {% endif %}
- <p>&nbsp;&nbsp;&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{ household_log.household_structure.pk}}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
+ <p>&nbsp;&nbsp;&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
 {% endif %}
