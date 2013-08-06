@@ -61,7 +61,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         verbose_name="Source",
         max_length=25,
         choices=NEXT_APPOINTMENT_SOURCE,
-        help_text='',
+        help_text='source of information for the appointment date',
         null=True,
         blank=False
         )

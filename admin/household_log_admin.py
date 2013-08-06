@@ -8,9 +8,18 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
     form = HouseholdLogEntryForm
     date_hierarchy = 'modified'
     list_per_page = 15
-    readonly_fields = ('household_log', )
     list_display = ('household_log', 'report_datetime', 'next_appt_datetime')
     list_filter = ('household_log__household_structure__survey', 'report_datetime', 'next_appt_datetime')
+    radio_fields = {
+        "status": admin.VERTICAL,
+        "next_appt_datetime_source": admin.VERTICAL,
+        }
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "household_log":
+            kwargs["queryset"] = HouseholdLog.objects.filter(id__exact=request.GET.get('household_log', 0))
+        return super(HouseholdLogEntryAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 admin.site.register(HouseholdLogEntry, HouseholdLogEntryAdmin)
 
 
