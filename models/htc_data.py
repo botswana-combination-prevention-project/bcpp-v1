@@ -24,7 +24,7 @@ class HtcData (BaseDispatchSyncUuidModel):
         verbose_name="Report Date/Time",
         validators=[datetime_not_before_study_start, datetime_not_future],
         )
-    
+
     dob = models.DateField(
         verbose_name="Date of birth",
         validators=[
@@ -56,7 +56,7 @@ class HtcData (BaseDispatchSyncUuidModel):
         unique=True,
         help_text="Use Omang, Passport number, driver's license number or Omang receipt number (Data will not be saved if ineligible)"
         )
-    
+
     citizen = models.CharField(
         verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
         max_length=3,
@@ -65,11 +65,11 @@ class HtcData (BaseDispatchSyncUuidModel):
         help_text="",
         )
 
-    religion = models.ManyToManyField(Religion,
+    rel = models.ManyToManyField(Religion,
         verbose_name=_("What is your religion affiliation?"),
         help_text="",
         )
-    religion_other = OtherCharField()
+    rel_other = OtherCharField()
 
     ethnic = models.CharField(
         verbose_name=_("What is your ethnic group?"),
