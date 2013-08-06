@@ -144,7 +144,6 @@ class RegisteredSubjectDashboard(Dashboard):
         """Returns a dictionary of format { 'model_name': ('app_label', 'model_name')} or { 'model_name': Model}.
 
         Users should override to add more to the dictionary than the default."""
-        super(RegisteredSubjectDashboard, self).set_dashboard_model_reference()
         self._dashboard_model_reference.update({'appointment': Appointment, 'visit': self.get_visit_model()})
 
 #     def set_dashboard_identifier(self):
