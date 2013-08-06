@@ -218,7 +218,7 @@ class HouseholdDashboard(Dashboard):
         regex['dashboard_model'] = '|household|household_structure|registered_subject'
         regex.update({'dashboard_type': 'household'})
         urlpatterns = patterns(view,
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>any)$'.format(**regex),
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>any)/$'.format(**regex),
               'household_dashboard',
                 name="household_dashboard_url"
                 ),
