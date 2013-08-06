@@ -31,5 +31,5 @@
  </tbody>
  </table>    
  {% endif %}
- <p>&nbsp;&nbsp;&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
+ <p>&nbsp;{% if not has_household_log_entry %}<span style="background-color:red;">&nbsp;</span>{% endif %}&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
 {% endif %}

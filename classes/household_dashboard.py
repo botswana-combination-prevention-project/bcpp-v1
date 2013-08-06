@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, date
 from django.conf.urls.defaults import patterns, url
 from django.conf import settings
 from django.db.models import get_model
@@ -68,6 +68,7 @@ class HouseholdDashboard(Dashboard):
             survey=self.get_survey(),
             surveys=Survey.objects.all().order_by('survey_name'),
             allow_edit_members=self.allow_edit_members(),
+            has_household_log_entry=self.has_household_log_entry(),
             )
         self.set_mapper_name(kwargs.get('mapper_name'))
         self.context.add(mapper_name=self.get_mapper_name())
@@ -77,6 +78,18 @@ class HouseholdDashboard(Dashboard):
 
         Users should override to add more to the dictionary than the default."""
         return {'household': Household, 'household_structure': HouseholdStructure}
+
+    def has_household_log_entry(self):
+        """Confirms there is an househol_log_entry for today."""
+        today = date.today()
+        if self.get_household_log():
+            if not HouseholdLogEntry.objects.filter(
+                household_log=self.get_household_log(),
+                report_datetime__year=today.year,
+                report_datetime__month=today.month,
+                report_datetime__day=today.day):
+                return False
+        return True
 
     def set_mapper_name(self, value=None):
         self._mapper_name = value
