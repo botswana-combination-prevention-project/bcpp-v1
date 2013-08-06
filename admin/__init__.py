@@ -13,7 +13,6 @@ from residency_mobility_admin import ResidencyMobilityAdmin
 from hiv_testing_history_admin import HivTestingHistoryAdmin
 from pregnancy_admin import PregnancyAdmin
 from non_pregnancy_admin import NonPregnancyAdmin
-from baseline_household_survey_admin import BaselineHouseholdSurveyAdmin
 from demographics_admin import DemographicsAdmin
 from sexual_behaviour_admin import SexualBehaviourAdmin
 from hiv_care_adherence_admin import HivCareAdherenceAdmin
@@ -28,6 +27,5 @@ from access_to_care_admin import AccessToCareAdmin
 from labour_market_wages_admin import LabourMarketWagesAdmin, GrantInlineAdmin
 from grant_admin import GrantAdmin
 from reproductive_health_admin import ReproductiveHealthAdmin
-
 from pima_admin import PimaAdmin
 from blood_draw_admin import BloodDrawAdmin
