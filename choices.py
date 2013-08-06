@@ -195,7 +195,7 @@ JOB_TYPE = (
     ('agric', _('Self-employed in agriculture')),
     ('self full-time', _('Self-employed making money, full time')),
     ('self part-time', _('Self-employed making money, part time')),
-    ('not working', _('Not working')),
+#     ('not working', _('Not working')),
     ('OTHER', _('Other')),
 )
 
@@ -266,7 +266,7 @@ JOB_DESCRIPTION = (
 )
 
 MONTHLY_INCOME = (
-    ('None', _('None')),
+#     ('None', _('None')),
     ('1-199 pula', _('1-199 pula')),
     ('200-499 pula', _('200-499 pula')),
     ('500-999 pula', _('500-999 pula')),
