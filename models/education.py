@@ -29,6 +29,8 @@ class Education (BaseScheduledVisitModel):
         verbose_name=_("In your main job what type of work do you do?"),
         max_length=45,
         choices=JOB_TYPE,
+        null=True, 
+        blank=True,
         help_text="",
         )
 
