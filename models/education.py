@@ -47,6 +47,8 @@ class Education (BaseScheduledVisitModel):
                       " one you spend the most time doing."),
         max_length=65,
         choices=JOB_DESCRIPTION,
+        blank=True,
+        null=True,
         help_text="",
         )
 
@@ -56,6 +58,8 @@ class Education (BaseScheduledVisitModel):
                       " child maintenance, food basket, etc]?"),
         max_length=25,
         choices=MONTHLY_INCOME,
+        blank=True,
+        null=True,
         help_text="",
         )
 
