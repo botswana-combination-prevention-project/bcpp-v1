@@ -3,6 +3,20 @@ from bhp_map.classes import site_mappers
 site_mappers.autodiscover()
 
 urlpatterns = patterns('bhp_map.views',
+    # subject_map_url
+    url(r'^subject_map/(?P<mapper_name>\w+)/(?P<identifier>[a-zA-Z0-9_-]+)/(?P<lon>[0-9\.\-]+)/(?P<lat>[0-9\.\-]+)/(?P<saved>saved)/',
+        'subject_map',
+        name='subject_map_url'),
+    url(r'^subject_map/(?P<mapper_name>\w+)/(?P<identifier>[a-zA-Z0-9_-]+)/(?P<lon>[0-9\.\-]+)/(?P<lat>[0-9\.\-]+)/',
+        'subject_map',
+        name='subject_map_url'),
+    url(r'^subject_map/(?P<mapper_name>\w+)/(?P<identifier>[a-zA-Z0-9_\-]+)/',
+        'subject_map',
+        name='subject_map_url'),
+    url(r'^subject_map/(?P<mapper_name>\w+)/',
+        'subject_map',
+        name='subject_map_url'),
+
     url(r'^add_cart/(?P<mapper_name>\w+)/', 'add_to_cart', name='map_add_cart_url'),
     url(r'^update_cart/(?P<mapper_name>\w+)/', 'update_cart', name='update_identifier_cart'),
 #     url(r'^empty_cart/(?P<mapper_name>\w+)/', 'empty_cart'),
@@ -13,9 +27,6 @@ urlpatterns = patterns('bhp_map.views',
     url(r'^sections/(?P<mapper_name>\w+)/', 'save_section', name='save_section_url'),
     url(r'^clear_section/(?P<mapper_name>\w+)/', 'clear_section', name='clear_section_url'),
     url(r'^clear_all_sections/(?P<mapper_name>\w+)/', 'clear_all_sections', name='clear_all_sections_url'),
-    url(r'^subject_map/(?P<mapper_name>\w+)/(?P<household>[A-Z0-9\-0-9]+)/(?P<lon>[0-9]{2,3}\.[0-9]{3,9})/(?P<lat>\-[0-9]{2,3}\.[0-9]{3,9})', 'subject_map', name='subject_map_url2'),
-    url(r'^subject_map/(?P<mapper_name>\w+)/', 'subject_map', name='subject_map_url'),
-    url(r'^subject_map/(?P<mapper_name>\w+)/(?P<identifier>\w+)/(?P<lon>\d+)/(?P<lat>\d+)/saved/', 'subject_map', name='subject_map_url'),
     url(r'^upload_item_map/(?P<mapper_name>\w+)/', 'upload_item_map', name='upload_item_map_url'),
     url(r'^map_section/(?P<mapper_name>\w+)/', 'map_section', name='map_section_url'),
     url(r'^db_update/(?P<mapper_name>\w+)/', 'db_update', name='map_db_update'),
@@ -23,7 +34,7 @@ urlpatterns = patterns('bhp_map.views',
     url(r'draw_site_polygon/(?P<mapper_name>\w+)/', 'draw_site_polygon', name='draw_site_polygon_url'),
     url(r'get_polygon_array/(?P<mapper_name>\w+)/', 'get_polygon_array', name='get_polygon_array_url'),
     url(r'dispatch_to_gps_index/(?P<mapper_name>\w+)/', 'dispatch_to_gps_index', name='dispatch_to_gps_index_url'),
-    url(r'coordinates_to_gps/(?P<mapper_name>\w+)/', 'coordinates_to_gps', name='coordinates_to_gps_url')
+    url(r'coordinates_to_gps/(?P<mapper_name>\w+)/', 'coordinates_to_gps', name='coordinates_to_gps_url'),
 )
 
 for mapper_name in site_mappers.get_registry().iterkeys():
