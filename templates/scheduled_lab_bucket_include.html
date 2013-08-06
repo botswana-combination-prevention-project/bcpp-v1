@@ -24,6 +24,9 @@
 <th>Audit</th>                
 </thead>
 <tbody>
+    <tr class="{% cycle 'row1' 'row2' %}"><td colspan="14">not available</td></tr>
+
+{% if 1 == 2 %}
 {% if not scheduled_lab_bucket %}
     <tr class="{% cycle 'row1' 'row2' %}"><td colspan="14"></td></tr>
 {% else %}                
@@ -33,7 +36,7 @@
         <td>{{ forloop.counter }}</td>
         {% if f.entry_status == 'NEW' or f.entry_status == 'KEYED' or f.entry_status == 'QUERY' or f.entry_status == 'OPTIONAL' %}            
             {% if appointment.appt_status == 'in_progress' %}
-             <td><A href="{% requisition_model_admin_url requisition_model f.lab_entry.panel registered_subject appointment visit_model dashboard_type %}{{extra_url_context}}">{{ f.lab_entry.panel.edc_name|title }}</A></td>
+             <td><A href="{% url requisition_model_meta|admin_urlname requisition_model.pk %} f.lab_entry.panel registered_subject appointment visit_model dashboard_type %}{{extra_url_context}}">{{ f.lab_entry.panel.edc_name|title }}</A></td>
             {% else %}                
                 <td>{{ f.lab_entry.panel.edc_name|title }}</td>
             {% endif %}                                 
@@ -56,6 +59,7 @@
                                                                                                                                                                          
         </tr>
     {% endfor %}
+{% endif %}    
 {% endif %}    
 </tbody>
 </table>
