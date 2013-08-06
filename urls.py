@@ -1,4 +1,3 @@
-import databrowse
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
@@ -23,8 +22,6 @@ site_sections.autodiscover()
 
 APP_NAME = settings.APP_NAME
 
-for model in get_models():
-    databrowse.site.register(model)
 
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -36,9 +33,6 @@ urlpatterns += patterns('',
     (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 )
 
-urlpatterns += patterns('',
-    (r'^databrowse/(.*)', login_required(databrowse.site.root)),
-)
 
 urlpatterns += patterns('',
     (r'^bhp_sync/', include('bhp_sync.urls')),

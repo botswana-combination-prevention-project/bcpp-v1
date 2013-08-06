@@ -1,4 +1,19 @@
-from fabric.api import local, run, cd, put
+from fabric.api import local, run, cd, put, env, get
+import tempfile
+from shutil import move
+import os
+
+
+repo_url = '192.168.1.50/svn'
+settings_file = 'settings.py'
+remote_proj_dir = '/Users/django/source/bhp066'
+host_ids = ['82', '138', '230', '112', '120', '127', '21', '205', '170',
+            '187', '244']
+ips = ['192.168.1.' + id for id in host_ids]
+net_id = ['92', '90', '60', '42', '83', '10', '54', '70', '78', '12', '15']
+ip_id = dict(zip(ips, net_id))
+ip_id = {'192.168.1.112': '42'}
+#env.hosts = ips
 
 
 def checkout_repo():
@@ -36,10 +51,41 @@ def checkout_repo():
 
     for repo in repos:
         print "SVN checkout of '%s' ...." % repo
-        local("svn co http://192.168.1.50/svn/%s" % repo)
+        local("svn co %s/%s" % (repo_url, repo,))
         print "finished checking out '%s'" % repo
 
     print "and we are done checking out projects! woohoo!"
+
+
+def provision():
+    print "executing provisioning for %s" % env.host
+
+    with cd(remote_proj_dir):
+        svn_update('bcpp*')
+        svn_update('bhp*')
+        svn_update('lab*')
+        svn_update(settings_file)
+        svn_update('url.py')
+        svn_checkout('bcpp_inspector')
+        svn_checkout('bhp_inspector')
+        syncdb()
+        modify_remote_settings(_uncomment_south)
+        syncdb()
+        fake_migrate()
+        svn_update(settings_file)
+
+    modify_remote_settings(_deviceid_and_keypath)
+    print "finished provisioning!! Yep!"
+
+
+def svn_checkout(repo):
+    print "checking out a repository '%s'" % repo
+    run('svn co http://192.168.1.50/svn/%s' % repo)
+
+
+def svn_update(item):
+    print "svn updating of '%s'" % item
+    run('svn update %s' % item)
 
 
 def syncdb():
@@ -57,32 +103,58 @@ def clean_pyc():
     run('python manage clean_pyc')
 
 
+def modify_remote_settings(func):
+    tmp_dir = tempfile.mkdtemp()
+    get(_path_of(remote_proj_dir, settings_file), tmp_dir)
+    file_to_modify = _path_of(tmp_dir, settings_file)
+    modified_file = process_line(file_to_modify, func)
+    put(modified_file, remote_proj_dir)
+
+
 def uncomment_south():
-    print "uncommented south started .."
-    put('settings_south_on.py, settings.py')
+    tmp_dir = tempfile.mkdtemp()
+    get(_path_of(remote_proj_dir, settings_file), tmp_dir)
+    file_to_modify = _path_of(tmp_dir, settings_file)
+    modified_file = process_line(file_to_modify, _uncomment_south)
+    put(modified_file, remote_proj_dir)
 
 
-def svn_checkout(repo):
-    print "checking out a repository '%s'" % repo
-    run('svn co http://192.168.1.50/svn/%s' % repo)
+def _uncomment_south(new_file, line):
+    trimmed_line = line.replace(" ", '')
+    if trimmed_line.startswith("#'south'"):
+        new_file.write("\t'south',\n")
+    else:
+        new_file.write(line)
 
 
-def svn_update(item):
-    print "svn update of '%s'" % item
-    run('svn update %s' % item)
+def _deviceid_and_keypath(new_file, line):
+    dev_id = ip_id.get(env.host)
+    trimmed_line = line.replace(' ', '')
+    if trimmed_line.startswith('#'):
+        new_file.write(line)
+        return
+
+    if "KEY_PATH=" in trimmed_line:
+        new_file.write("KEY_PATH = '/Volumes/keys'\n")
+    elif "DEVICE_ID=" in trimmed_line:
+        new_file.write("DEVICE_ID = '%s' \n" % dev_id)
+    else:
+        new_file.write(line)
 
 
-def provision():
-    src_dir = '/Users/django/source/bhp066'
-    with cd(src_dir):
-        svn_update('bcpp*')
-        svn_update('bhp*')
-        svn_update('lab*')
-        svn_checkout('bcpp_inspector')
-        svn_checkout('bhp_inspector')
-        syncdb()
-        uncomment_south()
-        syncdb()
-        fake_migrate()
-        svn_update('settings.py')
-        print "finished provisioning!! Yep!"
+def process_line(file_path, func):
+    fh, abs_path = tempfile.mkstemp()
+    new_file = open(abs_path, 'w')
+    old_file = open(file_path)
+    for line in old_file:
+        func(new_file, line)
+    new_file.close()
+    os.close(fh)
+    old_file.close()
+    os.remove(file_path)
+    move(abs_path, file_path)
+    return file_path
+
+
+def _path_of(dir, file):
+    return os.path.join(dir, file)

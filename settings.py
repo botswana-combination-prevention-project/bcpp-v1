@@ -238,7 +238,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'dajaxice',
     'dajax',
-    'south',
+#    'south',
     'audit_trail',
     'autocomplete',
     'bhp_templates',
