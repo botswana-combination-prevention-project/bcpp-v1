@@ -2,8 +2,7 @@ from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
-                                 CeaEnrolmentChecklist,
-                                 CommunityEngagement, Education,
+                                 CeaEnrolmentChecklist, CommunityEngagement,
                                  HivMedicalCare, Circumcision, Circumcised,
                                  MedicalDiagnoses, HeartAttack,
                                  Cancer, Tubercolosis, Sti, SubstanceUse, Stigma,
@@ -75,12 +74,6 @@ class CommunityEngagementForm (BaseSubjectModelForm):
 
     class Meta:
         model = CommunityEngagement
-
-
-class EducationForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = Education
 
 
 class HivMedicalCareForm (BaseSubjectModelForm):
