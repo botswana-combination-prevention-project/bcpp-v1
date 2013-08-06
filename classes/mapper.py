@@ -427,7 +427,7 @@ class Mapper(object):
 
     def _get_gps(self, direction, degrees, minutes):
         """Converts GPS degree/minutes to latitude or longitude."""
-        dct = {'s': 1, 'e': -1}
+        dct = {'s': -1, 'e': 1}
         if direction not in dct.keys():
             raise TypeError('Direction must be one of {0}. Got {1}.'.format(dct.keys(), direction))
         d = float(degrees)
