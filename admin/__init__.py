@@ -29,3 +29,4 @@ from grant_admin import GrantAdmin
 from reproductive_health_admin import ReproductiveHealthAdmin
 from pima_admin import PimaAdmin
 from blood_draw_admin import BloodDrawAdmin
+from education_admin import EducationAdmin
