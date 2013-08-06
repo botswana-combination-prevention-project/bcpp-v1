@@ -35,6 +35,7 @@ class HouseholdDashboard(Dashboard):
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
             household_structure_meta=HouseholdStructure._meta,
+            household_log_entry_meta=HouseholdLogEntry._meta,
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             )
 
