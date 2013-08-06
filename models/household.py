@@ -6,6 +6,7 @@ from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_device.classes import Device
 from bhp_map.classes import site_mappers
+from bhp_map.exceptions import MapperError
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
@@ -198,10 +199,10 @@ class Household(BaseDispatchSyncUuidModel):
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
-        #mapper().verify_gps_location(self.gps_lat, self.gps_lon, ValidationError)
-        #mapper().verify_gps_to_target(self, self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, ValidationError)
-        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s or 0, float('.{0}'.format(str(self.gps_minutes_s or 0))))
-        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, float('.{0}'.format(str(self.gps_minutes_e or 0))))
+        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0)
+        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)
+        mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+        mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
