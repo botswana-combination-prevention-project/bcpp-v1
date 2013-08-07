@@ -558,8 +558,9 @@ class RegisteredSubjectDashboard(Dashboard):
             rule_groups.update_all(self.get_visit_model_instance())
 
     def next_url_in_scheduled_entry_bucket(self, obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model):
+        retval = (None, None, None)
         if not visit_attr or not entry_order:
-            return (None, None, None)
+            return retval
         self.set_show('forms')
         self.set_dashboard_type(dashboard_type)
         self.set_dashboard_id(dashboard_id)
@@ -569,8 +570,10 @@ class RegisteredSubjectDashboard(Dashboard):
         self.set_visit_model_instance(visit)
         self._run_rule_groups()
         scheduled_entry_bucket = ScheduledEntry().get_next_entry_for(entry_order, self.get_appointment(), self.get_registered_subject())
-        url = reverse('admin:{0}_{1}_add'.format(scheduled_entry_bucket.entry.content_type_map.app_label, scheduled_entry_bucket.entry.content_type_map.module_name))
-        return url, self.get_visit_model_instance(), scheduled_entry_bucket.entry.entry_order
+        if scheduled_entry_bucket:
+            url = reverse('admin:{0}_{1}_add'.format(scheduled_entry_bucket.entry.content_type_map.app_label, scheduled_entry_bucket.entry.content_type_map.module_name))
+            retval = (url, self.get_visit_model_instance(), scheduled_entry_bucket.entry.entry_order)
+        return retval
 
     def render_summary_links(self, template_filename=None):
         """Renders the side bar template for subject summaries."""
