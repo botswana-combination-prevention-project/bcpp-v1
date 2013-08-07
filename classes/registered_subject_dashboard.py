@@ -558,6 +558,11 @@ class RegisteredSubjectDashboard(Dashboard):
             rule_groups.update_all(self.get_visit_model_instance())
 
     def next_url_in_scheduled_entry_bucket(self, obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model):
+        """Returns a tuple with the reverse of the admin url for the next model listed in scheduled_entry_bucket.
+
+        If there is not a "next" model, returns an empty tuple (None, None, None).
+
+        Called from response_add and response_change."""
         retval = (None, None, None)
         if not visit_attr or not entry_order:
             return retval
