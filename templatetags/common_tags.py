@@ -155,7 +155,7 @@ def dob_or_dob_estimated(dob, is_dob_estimated):
 
 
 @register.filter(name='get_field')
-def get_field(obj, field_attr):
+def get_field(obj, field_attr=None):
     try:
         return getattr(obj, field_attr)
     except:
