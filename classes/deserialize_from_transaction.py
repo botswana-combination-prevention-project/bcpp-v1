@@ -1,4 +1,5 @@
 import sys
+import json
 import socket
 from django.core import serializers
 from django.db.models import ForeignKey
@@ -9,10 +10,9 @@ from transaction_producer import TransactionProducer
 
 class DeserializeFromTransaction(object):
     
-    def deserialize_and_not_save(self, incoming_transaction):
-        for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)):
-            return obj.object
-        return None
+    def decrypt_transanction(self, incoming_transaction):
+            model_dict = FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)
+            return json.loads(model_dict)
     
     def deserialize(self, incoming_transaction, using, **kwargs):
         # may bypass this check for for testing ...
