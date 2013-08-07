@@ -62,6 +62,9 @@ urlpatterns += patterns('',
     url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('bhp_map.urls')),
 )
 
+urlpatterns += patterns('',
+    url(r'^dispatch/', include('bcpp_dispatch.urls')),
+)
 
 urlpatterns += patterns('',
     url(r'^{app_name}/login/'.format(app_name=APP_NAME),
