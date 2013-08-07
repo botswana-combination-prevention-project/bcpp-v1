@@ -8,15 +8,16 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        pass
         # Adding field 'HouseholdAudit.target_radius'
-        db.add_column('bcpp_household_household_audit', 'target_radius',
-                      self.gf('django.db.models.fields.FloatField')(default=0.025),
-                      keep_default=False)
+        #db.add_column('bcpp_household_household_audit', 'target_radius',
+                    #  self.gf('django.db.models.fields.FloatField')(default=0.025),
+                    #  keep_default=False)
 
         # Adding field 'Household.target_radius'
-        db.add_column('bcpp_household_household', 'target_radius',
-                      self.gf('django.db.models.fields.FloatField')(default=0.025),
-                      keep_default=False)
+        #db.add_column('bcpp_household_household', 'target_radius',
+                     # self.gf('django.db.models.fields.FloatField')(default=0.025),
+                     # keep_default=False)
 
 
     def backwards(self, orm):
