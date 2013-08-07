@@ -37,7 +37,7 @@ def upload_item_map(request, **kwargs):
         m = site_mappers.get_registry(mapper_name)()
         filename = handle_uploaded_file(request.FILES['file'], identifier)
         if filename:
-            item = m.get_item_model_cls().objects.get(Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifier}))
+            item = m.get_item_model_cls().objects.filter(**{m.identifier_field_attr: identifier})
             item.uploaded_map = filename
             item.save()
         return HttpResponseRedirect('{% url "section" mapper_name %}')
