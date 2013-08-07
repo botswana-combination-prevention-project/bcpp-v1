@@ -5,7 +5,6 @@ from bcpp_household_member.models import BaselineHouseholdSurvey, HouseholdMembe
 from bcpp_household_member.forms import BaselineHouseholdSurveyForm
 
 
-# BaselineHouseholdSurvey
 class BaselineHouseholdSurveyAdmin(BaseModelAdmin):
 
     form = BaselineHouseholdSurveyForm
