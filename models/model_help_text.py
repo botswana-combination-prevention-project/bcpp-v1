@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from bhp_base_model.models import BaseModel
 
 
@@ -24,6 +25,12 @@ class ModelHelpText(BaseModel):
     module_name = models.CharField(max_length=50)
     field_name = models.CharField(max_length=50)
     objects = models.Manager()
+
+    def url(self):
+        url = reverse('admin:{app_label}_{module_name}_add'.format(app_label=self.app_label, module_name=self.module_name))
+        ret = """<a href="{url}" />review form</a>""".format(url=url)
+        return ret
+    url.allow_tags = True
 
     class Meta:
         app_label = "bhp_data_manager"
