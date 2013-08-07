@@ -154,6 +154,18 @@ def dob_or_dob_estimated(dob, is_dob_estimated):
         return dob.strftime('%Y-%m-%d')
 
 
+@register.filter(name='get_item')
+def get_item(items, key):
+    if isinstance(items, dict):
+        return items.get(key, None)
+    if isinstance(items, (list, tuple)):
+        try:
+            return items[key]
+        except:
+            pass
+    return None
+
+
 @register.filter(name='get_field')
 def get_field(obj, field_attr=None):
     try:
