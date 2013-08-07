@@ -1,5 +1,5 @@
 body {font-family: sans-serif}
-#map {width: 1000px; height:500px}
+#map {width: 1000px; height:1000px}
 #locations {overflow:auto; width:500px; height:100px}
 
 /* SECTION NAVBAR */
