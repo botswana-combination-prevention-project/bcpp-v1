@@ -77,7 +77,7 @@ class Respondent (BaseDispatchSyncUuidModel):
         choices=YES_NO,
         )
     nights_outside = models.IntegerField(
-        verbose_name="Nights Outside Community",
+        verbose_name="Nights spent outside of this Community",
         max_length=2,
         )
 
