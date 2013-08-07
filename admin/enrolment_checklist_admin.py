@@ -15,8 +15,8 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         'is_dob_estimated',
         'gender',
         'omang',
-        "mental_capacity",
-        "incarceration",
+#         "mental_capacity",
+#         "incarceration",
         "citizen",
         "community_resident")
 
@@ -35,8 +35,8 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
     radio_fields = {
         "is_dob_estimated": admin.VERTICAL,
         "gender": admin.VERTICAL,
-        "mental_capacity": admin.VERTICAL,
-        "incarceration": admin.VERTICAL,
+#         "mental_capacity": admin.VERTICAL,
+#         "incarceration": admin.VERTICAL,
         "citizen": admin.VERTICAL,
         "community_resident": admin.VERTICAL, }
 
