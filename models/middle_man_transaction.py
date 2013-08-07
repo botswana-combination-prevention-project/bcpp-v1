@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import get_model
 from base_transaction import BaseTransaction
 from django.conf import settings
 from datetime import datetime
@@ -26,10 +27,14 @@ class MiddleManTransaction(BaseTransaction):
         super(MiddleManTransaction, self).save(*args, **kwargs)
         
     def deserialize_to_inspector_on_post_save(self, **kwargs):
-        object = DeserializeFromTransaction().deserialize_and_not_save(self)
-        if object and 'save_to_inspector' in dir(object):
-            object.save_to_inspector()
-            #pass
+        model_dict = DeserializeFromTransaction().decrypt_transanction(self)[0]
+        tokens = model_dict.get('model').split('.')
+        app_name = tokens[0]
+        model_name = tokens[1]
+        model = get_model(app_name,model_name)
+        if model and 'save_to_inspector' in dir(model):
+            fields = model_dict.get('fields')
+            model().save_to_inspector(fields)
             
     objects = models.Manager() 
     class Meta:
