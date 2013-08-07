@@ -143,8 +143,8 @@ class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
     fields = (
         "registered_subject",
 #         "registration_datetime",
-        "mental_capacity",
-        "incarceration",
+#         "mental_capacity",
+#         "incarceration",
         "citizen",
         "community_resident",
         "enrolment_reason",
@@ -154,8 +154,8 @@ class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "diagnosis_date",
         "date_signed",)
     radio_fields = {
-        "mental_capacity": admin.VERTICAL,
-        "incarceration": admin.VERTICAL,
+#         "mental_capacity": admin.VERTICAL,
+#         "incarceration": admin.VERTICAL,
         "citizen": admin.VERTICAL,
         "community_resident": admin.VERTICAL,
         "enrolment_reason": admin.VERTICAL,
