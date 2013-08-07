@@ -213,7 +213,7 @@ class CircumcisionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['circumcised'])
     
-    circumcised = ScheduledDataRule(
+    uncircumcised = ScheduledDataRule(
         logic=Logic(
             predicate=('circumcised', 'equals', 'No'),
             consequence='new',
