@@ -30,7 +30,7 @@
 <div id="tile_wrapper">
 
 {% include "household_log_include.html" %}
-
+{% if has_household_log_entry %}
     <H4>B. Household Composition</H4>
 	{% if household.household_identifier|is_dispatched %}
 	<div align="center"><h1>This household is currently <font color="red">dispatched</font> to a netbook. Please do not make any changes to it or it's members.</h1></div>
@@ -118,6 +118,7 @@
                 {% endif %}
             {% endfor %}
             </table>
+{% endif %}
 </div>
 {% endblock dashboard %}
 
