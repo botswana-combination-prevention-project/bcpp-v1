@@ -1,6 +1,5 @@
 from django.db import models
 from bhp_base_model.models import BaseModel
-from bhp_common.utils import convert_from_camel
 
 
 class ModelHelpText(BaseModel):
@@ -13,13 +12,12 @@ class ModelHelpText(BaseModel):
         choices=(('active', 'Active'), ('inactive', 'Inactive')),
         default='Active')
     app_label = models.CharField(max_length=50)
-    model_name = models.CharField(max_length=50, editable=False)
-    object_name = models.CharField(max_length=50)
+    module_name = models.CharField(max_length=50, editable=False)
     field_name = models.CharField(max_length=50)
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        self.model_name = convert_from_camel(self.object_name)
+        self.module_name = self.module_name.lower()
         super(ModelHelpText, self).save(*args, **kwargs)
 
     class Meta:
