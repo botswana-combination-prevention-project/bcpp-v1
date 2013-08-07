@@ -5,14 +5,14 @@ m={{model_help_text.field}}
 {{ field.field.name }}
 {% if model_help_text.field == field.field.name%}
     {% if subject_dashboard_url %}
-      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'change' model_help_text.pk %}?next=subject_dashboard_url&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&app_label={{model_help_text_meta.app_label}}&object_name={{model_help_text_meta.object_name}}&field_name={{field.field.name}}">edit help</A></p>
+      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'change' model_help_text.pk %}?next=subject_dashboard_url&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&app_label={{model_help_text.app_label}}&object_name={{model_help_text.object_name}}&field_name={{field.field.name}}">edit help</A></p>
     {% else %}
-      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'change' model_help_text.pk %}?next=changelist&app_label={{model_help_text.app_label}}&model_name={{model_help_text.object_name|lower}}">edit help</A></p>
+      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'change' model_help_text.pk %}?next=add&app_label={{opts.app_label}}&module_name={{opts.module_name}}&field_name={{field.field.name}}">edit help</A></p>
     {% endif %}
 {% else %}
     {% if subject_dashboard_url %}
-      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'add' %}?next=subject_dashboard_url&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&app_label={{model_help_text_meta.app_label}}&object_name={{model_help_text_meta.object_name}}&field_name={{field.field.name}}">add help</A></p>
+      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'add' %}?next=subject_dashboard_url&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&app_label={{model_help_text.app_label}}&object_name={{model_help_text.object_name}}&field_name={{field.field.name}}">add help</A></p>
     {% else%}
-      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'add' %}?next=changelist&app_label={{model_help_text_meta.app_label}}&object_name={{model_help_text_meta.object_name}}&field_name={{field.field.name}}&model_name={{model_help_text.object_name|lower}">add help</A></p>
+      <p class="help"><A href="{% url  model_help_text_meta|admin_urlname:'add' %}?next=add&app_label={{opts.app_label}}&module_name={{opts.module_name}}&field_name={{field.field.name}}">add help</A></p>
      {% endif %}
 {% endif %}
