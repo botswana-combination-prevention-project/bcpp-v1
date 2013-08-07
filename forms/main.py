@@ -2,7 +2,7 @@ from bhp_base_form.forms import BaseModelForm
 from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith, 
                               NeighbourhoodProblems, CircumcisionBenefits, 
                               FamilyPlanning, MedicalCareAccess, PartnerResidency, 
-                              HeartDisease, Diagnoses, Religion)
+                              HeartDisease, Diagnoses, Religion, EthnicGroups)
 
 
 # ElectricalAppliances
@@ -141,3 +141,14 @@ class ReligionForm (BaseModelForm):
 
     class Meta:
         model = Religion
+        
+
+class EthnicGroupsForm (BaseModelForm):
+
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+        return cleaned_data
+
+    class Meta:
+        model = EthnicGroups
