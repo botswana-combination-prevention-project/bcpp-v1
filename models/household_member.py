@@ -33,7 +33,7 @@ class HouseholdMember(BaseHouseholdMember):
         null=True,
         help_text="Relation to head of household")
 
-    nights_out = models.IntegerField('Nights outside bcpp area (per month)',
+    nights_out = models.IntegerField("Nights spent outside of this community (per month)",
         validators=[
             MinValueValidator(0),
             MaxValueValidator(31)],
