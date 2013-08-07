@@ -33,14 +33,14 @@ class BaseModelAdmin (admin.ModelAdmin):
             self.form._meta.exclude = None
 
     def add_view(self, request, form_url='', extra_context=None):
+        META = 0
+        DCT = 1
         extra_context = extra_context or {}
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
         extra_context.update(self.get_dashboard_context(request))
-        field_name = request.GET.get('field_name')
-        model_help_text = self.get_model_help_text(self.model._meta.app_label, self.model._meta.object_name, field_name)
-        extra_context.update(model_help_text_meta=model_help_text[0],
-                             model_help_text=model_help_text[1])
+        model_help_text = self.get_model_help_text(self.model._meta.app_label, self.model._meta.object_name)
+        extra_context.update(model_help_text_meta=model_help_text[META], model_help_text=model_help_text[DCT])
         return super(BaseModelAdmin, self).add_view(request, form_url=form_url, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -218,6 +218,11 @@ class BaseModelAdmin (admin.ModelAdmin):
                                                            'dashboard_model': request.GET.get('dashboard_model'),
                                                            'dashboard_type': request.GET.get('dashboard_type'),
                                                            'show': request.GET.get('show', 'any')})
+        elif request.GET.get('next') in ['changelist', 'add']:
+            app_label = request.GET.get('app_label')
+            module_name = request.GET.get('module_name').lower()
+            mode = request.GET.get('next')
+            url = reverse('admin:{app_label}_{module_name}_{mode}'.format(app_label=app_label, module_name=module_name, mode=mode))
         else:
             # normally you should not be here.
             try:
@@ -247,9 +252,8 @@ class BaseModelAdmin (admin.ModelAdmin):
             del kwargs['csrfmiddlewaretoken']
         return kwargs
 
-    def get_model_help_text(self, app_label=None, module_name=None, field_name=None):
-        if ModelHelpText.objects.filter(app_label=app_label, module_name=module_name, field_name=field_name):
-            model_help_text = ModelHelpText.objects.get(app_label=app_label, module_name=module_name, field_name=field_name)
-            return (ModelHelpText._meta, model_help_text)
-        else:
-            return (ModelHelpText._meta, None)
+    def get_model_help_text(self, app_label=None, module_name=None):
+        mht = {}
+        for model_help_text in ModelHelpText.objects.filter(app_label=app_label, module_name=module_name.lower()):
+            mht.update({model_help_text.field_name: model_help_text})
+        return (ModelHelpText._meta, mht)
