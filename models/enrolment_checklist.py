@@ -64,23 +64,23 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         help_text="Use Omang, Passport number, driver's license number or Omang receipt number (Data will not be saved if ineligible)"
         )
 
-    mental_capacity = models.CharField(
-        verbose_name=("[Interviewer] Does the prospective participant have sufficient"
-                      " mental capacity to provide considered informed consent? "),
-        max_length=3,
-        choices=YES_NO,
-        validators=[eligible_if_yes, ],
-        help_text=" if 'NO,' STOP participant cannot be enrolled",
-        )
-
-    incarceration = models.CharField(
-        verbose_name=("[Interviewer] Is the prospective participant currently under"
-                      " involuntary incarceration? "),
-        max_length=3,
-        choices=YES_NO,
-        validators=[eligible_if_no, ],
-        help_text=" if 'YES,' STOP participant cannot be enrolled",
-        )
+#     mental_capacity = models.CharField(
+#         verbose_name=("[Interviewer] Does the prospective participant have sufficient"
+#                       " mental capacity to provide considered informed consent? "),
+#         max_length=3,
+#         choices=YES_NO,
+#         validators=[eligible_if_yes, ],
+#         help_text=" if 'NO,' STOP participant cannot be enrolled",
+#         )
+# 
+#     incarceration = models.CharField(
+#         verbose_name=("[Interviewer] Is the prospective participant currently under"
+#                       " involuntary incarceration? "),
+#         max_length=3,
+#         choices=YES_NO,
+#         validators=[eligible_if_no, ],
+#         help_text=" if 'YES,' STOP participant cannot be enrolled",
+#         )
 
     citizen = models.CharField(
         verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
