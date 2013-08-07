@@ -2,8 +2,8 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
-from bcpp_list.models import LiveWith, Religion
-from bcpp.choices import ETHNIC_CHOICE, MARITALSTATUS_CHOICE
+from bcpp_list.models import LiveWith, Religion, EthnicGroups
+from bcpp.choices import MARITALSTATUS_CHOICE
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -17,10 +17,10 @@ class Demographics (BaseScheduledVisitModel):
         )
     religion_other = OtherCharField()
 
-    ethnic = models.CharField(
+    ethnic = models.ManyToManyField(EthnicGroups,
         verbose_name=_("What is your ethnic group?"),
-        max_length=35,
-        choices=ETHNIC_CHOICE,
+#         max_length=35,
+#         choices=ETHNIC_CHOICE,
         help_text="Ask for the original ethnic group",
         )
     other = OtherCharField()
