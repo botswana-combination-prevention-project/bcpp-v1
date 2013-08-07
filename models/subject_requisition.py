@@ -20,12 +20,12 @@ class SubjectRequisition(BaseRequisition):
 
     history = AuditTrail()
     
-    def save_to_inspector(self):
+    def save_to_inspector(self, fields):
         SubjectRequisitionInspector.objects.create(
-                subject_identifier = self.subject_identifier,
-                requisition_datetime = self.requisition_datetime,
-                requisition_identifier = self.requisition_identifier,
-                specimen_identifier = self.specimen_identifier,
+                subject_identifier = fields.get('subject_identifier'),
+                requisition_datetime = fields.get('requisition_datetime'),
+                requisition_identifier = fields.get('requisition_identifier'),
+                specimen_identifier = fields.get('specimen_identifier'),
                 device_id = settings.DEVICE_ID,
                 app_name = 'bcpp_lab',
                 model_name = 'SubjectRequisition'                
