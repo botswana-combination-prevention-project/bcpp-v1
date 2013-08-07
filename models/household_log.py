@@ -47,14 +47,15 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
     status = models.CharField(
         verbose_name='Household Status',
         max_length=25,
-        default='unknown',
-        choices=HOUSEHOLD_STATUS
+        default='occupied',
+        choices=HOUSEHOLD_STATUS,
+        editable=False,
         )
     next_appt_datetime = models.DateTimeField(
         verbose_name="Re-Visit On",
         help_text="The date and time to revisit household",
         null=True,
-        blank=False
+        blank=True
         )
 
     next_appt_datetime_source = models.CharField(
@@ -63,7 +64,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         choices=NEXT_APPOINTMENT_SOURCE,
         help_text='source of information for the appointment date',
         null=True,
-        blank=False
+        blank=True
         )
 
     comment = EncryptedTextField(
