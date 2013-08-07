@@ -17,5 +17,5 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
         'live_with',)
     radio_fields = {
         "marital_status": admin.VERTICAL, }
-    filter_horizontal = ('live_with','religion')
+    filter_horizontal = ('live_with','religion', 'ethnic')
 admin.site.register(Demographics, DemographicsAdmin)
