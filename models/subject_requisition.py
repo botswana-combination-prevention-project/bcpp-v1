@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 from django.conf import settings
 from audit_trail.audit import AuditTrail
 from lab_requisition.models import BaseRequisition
@@ -23,7 +24,7 @@ class SubjectRequisition(BaseRequisition):
     def save_to_inspector(self, fields):
         SubjectRequisitionInspector.objects.create(
                 subject_identifier = fields.get('subject_identifier'),
-                requisition_datetime = fields.get('requisition_datetime'),
+                requisition_datetime = datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0],'%Y-%m-%d'),
                 requisition_identifier = fields.get('requisition_identifier'),
                 specimen_identifier = fields.get('specimen_identifier'),
                 device_id = settings.DEVICE_ID,
