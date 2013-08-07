@@ -157,7 +157,7 @@ RELIGION_CHOICE = (
         ('St John', _('St John')),
         ('ZCC', _('ZCC')),
         ('traditionalist', _('Traditionalist')),
-        ('Hindu', _('Hindu')),
+        ('Hindu', _('Hinduism')),
         ('Islam', _('Islam')),
         ('None', _('None')),
         ('Other', _('Other')),
