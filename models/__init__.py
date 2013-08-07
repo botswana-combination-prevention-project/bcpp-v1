@@ -20,3 +20,4 @@ from partner_residency import PartnerResidency
 from heart_disease import HeartDisease
 from diagnoses import Diagnoses
 from religion import Religion
+from ethnic_groups import EthnicGroups
