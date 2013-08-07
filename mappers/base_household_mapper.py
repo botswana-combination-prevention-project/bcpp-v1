@@ -6,6 +6,7 @@ from bhp_map.choices import ICONS, OTHER_ICONS
 class BaseHouseholdMapper(Mapper):
 
     item_model = Household
+    item_model_cls = Household
     item_label = 'Household'
 
     region_field_attr = 'section'
