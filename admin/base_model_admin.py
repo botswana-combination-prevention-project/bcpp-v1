@@ -90,12 +90,13 @@ class BaseModelAdmin (admin.ModelAdmin):
                     next_url, visit_model_instance, entry_order = RegisteredSubjectDashboard().next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model)
                     if next_url:
                         url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
-                               '&dashboard_model={dashboard_model}&show=forms{visit_attr}{visit_model_instance}{entry_order}'
+                               '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}'
                                ).format(next_url=next_url,
                                         next=request.GET.get('next'),
                                         dashboard_type=dashboard_type,
                                         dashboard_id=dashboard_id,
                                         dashboard_model=dashboard_model,
+                                        show=show,
                                         visit_attr='&visit_attr={0}'.format(visit_attr),
                                         visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
                                         entry_order='&entry_order={0}'.format(entry_order))
@@ -165,7 +166,6 @@ class BaseModelAdmin (admin.ModelAdmin):
                     self.form._meta.exclude = exclude_supplemental_fields
         form = super(BaseModelAdmin, self).get_form(request, obj, **kwargs)
         form = self.auto_number(form)
-        #form = self.insert_translation_help_text(form)
         return form
 
     def update_modified_stamp(self, request, obj, change):
