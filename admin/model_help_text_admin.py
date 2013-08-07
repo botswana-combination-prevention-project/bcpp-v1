@@ -4,5 +4,6 @@ from bhp_base_admin.admin import BaseModelAdmin
 
 
 class ModelHelpTextAdmin(BaseModelAdmin):
-    pass
+    list_display = ('app_label', 'module_name', 'field_name', 'status')
+    list_filter = ('app_label', 'module_name',)
 admin.site.register(ModelHelpText, ModelHelpTextAdmin)
