@@ -125,5 +125,5 @@ class BaselineHouseholdSurvey(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household_member'
-        verbose_name = "Household Survey Baseline"
-        verbose_name_plural = "Household Survey Baseline"
+        verbose_name = "Household Survey, Baseline"
+        verbose_name_plural = "Household Survey, Baseline"
