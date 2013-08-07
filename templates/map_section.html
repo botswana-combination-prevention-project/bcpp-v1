@@ -15,11 +15,17 @@
 	   
 	   	<div id="section_navbar">
     	<ul>
-    	<li><A href="{% url "clear_all_sections_url" mapper_name %}">clear sections</A>
+    	<li><A href="{% url "clear_all_sections_url" mapper_name %}">clear {{ region_field_attr }}</A></li>
+    	<li><A href="{% url "map_sub_sections_url" mapper_name %}">{{ section_field_attr }}</A></li>
     	</ul>
     	</div>
+	   <br /><br />
+	   <ul>
+	   		<li>Select the section you would like to assign Items to</li>
+	   		<li>Click submit</li>
+	   </ul>
 	   
-	   <form action="{% url "map_plot_item_points_url" mapper_name %}" method="post">
+	   <form action="{% url "set_section_url" mapper_name %}" method="post">
 	   	{% csrf_token %}
 	    
 	    <div id="selection_box"> 
@@ -45,7 +51,7 @@
 			</tr>
 			<tr align="center">
 				<td>
-				<input type="button" value="select sections" onclick="window.location='../map_section/'" />
+				<input type="button" value="Manage sections" onclick="window.location='{% url "map_section_url" mapper_name %}'" />
 				<input type="button" value="Continue" onclick="window.location='{% url "selected_map_index_url" mapper_name %}'" />
 				</td>
 			</tr>

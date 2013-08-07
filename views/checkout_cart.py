@@ -47,6 +47,8 @@ def checkout_cart(request, **kwargs):
                 'landmarks': landmark_list,
                 'cart_size': cart_size,
                 'selected_icon': icon,
+                'gps_center_lat': m.get_gps_center_lat(),
+                'gps_center_lon': m.get_gps_center_lon(),
                 'option': option
                 },
                 context_instance=RequestContext(request)

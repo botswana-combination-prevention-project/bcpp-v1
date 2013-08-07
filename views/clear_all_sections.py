@@ -21,6 +21,7 @@ def clear_all_sections(request, **kwargs):
                     'section_label': m.get_section_label(),
                     'region_label': '{0}s'.format(m.get_region_label()),
                     'regions': m.get_regions(),
+                    'region_field_attr': m.get_region_field_attr(),
                  },
                 context_instance=RequestContext(request)
             )

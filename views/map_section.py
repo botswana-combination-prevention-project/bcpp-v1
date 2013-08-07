@@ -33,6 +33,8 @@ def map_section(request, **kwargs):
                     'session_icon': icon,
                     'cart_size': cart_size,
                     'identifiers': identifiers,
+                    'region_field_attr': m.get_region_field_attr(),
+                    'section_field_attr': m.get_section_field_attr(),
                     'show_map': 1,
                     'has_items': True,
                     'option': 'plot'

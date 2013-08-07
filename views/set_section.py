@@ -27,17 +27,14 @@ def set_section(request, **kwargs):
         action_script_url = 'save_section_url'
         cart_size = len(identifiers)
         sections = m.get_sections()
-        ward_sections = []
-        selected_ward = request.POST.get('ward')
+        selected_region = request.POST.get(m.get_region_field_attr())
+        region_field = m.get_region_field_attr()
         request.session['icon'] = request.POST.get('marker_icon')
-        if m.item_model_cls.objects.filter(ward=selected_ward, ward_section__isnull=True, target=1).exists():
+        if m.item_model_cls.objects.filter(**{m.get_region_field_attr() : None}).exists():
             has_items = True
-            items = m.item_model_cls.objects.filter(ward=selected_ward, ward_section__isnull=True, target=1)
+            items = m.item_model_cls.objects.filter(**{m.get_region_field_attr() : None})
 
         icon = str(request.session['icon'])
-        for section in sections:
-            ward_sections.append(section)
-
         payload = m.prepare_map_points(items,
             icon,
             identifiers,
@@ -52,10 +49,12 @@ def set_section(request, **kwargs):
                 'payload': payload,
                 'action_script_url': action_script_url,
                 'regions': m.get_regions(),
-                'selected_ward': selected_ward,
+                'selected_region': selected_region,
                 'selected_icon': request.session['icon'],
                 'icons': m.get_icons(),
                 'sections': m.get_sections(),
+                'gps_center_lat': m.get_gps_center_lat(),
+                'gps_center_lon': m.get_gps_center_lon(),
                 'option': 'plot',
                 'has_items': has_items,
                 'item_region_field': m.get_region_field_attr(),

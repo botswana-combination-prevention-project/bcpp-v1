@@ -41,7 +41,6 @@ def coordinates_to_gps(request, **kwargs):
             
             #This values need to come from the edc   
             items = m.get_item_model_cls().objects.filter(comunity='gaborone')
-            print str(getattr(items[0], m.get_identifier_field_attr()))
             for item in items:
                 identifier_name = str(getattr(item, m.get_identifier_field_attr()))
                 lat = item.lat 

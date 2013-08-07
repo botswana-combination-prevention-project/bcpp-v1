@@ -46,10 +46,10 @@
 			    	<button id="revert_map" disabled="disabled">Revert</button> 
 			    	<button id="clear_map">Clear</button> 
 			    	<b>Select section:</b>
-					<select id="section" name="section">
+					<select id="{{ item_region_field }}" name="{{ item_region_field }">
 					<!-- loop though the region dictionary from a view to list all sections -->
-					{% for section in sections %}
-					  <option value="{{ section }}">{{ section }}</option>
+					{% for region in regions %}
+					  <option value="{{ region }}">{{ region }}</option>
 					{% endfor %}
 					</select>
 				</td>

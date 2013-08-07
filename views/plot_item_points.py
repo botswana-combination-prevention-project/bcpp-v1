@@ -22,37 +22,43 @@ def plot_item_points(request, **kwargs):
     else:
         m = site_mappers.get_registry(mapper_name)()
         item_target_field = 'target'
-        action_script_url_name = 'map_add_cart_url'
+        action_script_url = 'map_add_cart_url'
         has_items = False
-        mapper_mapper_item_label = m.get_item_label()
         identifiers = request.session.get('identifiers', [])
-        selected_section = request.POST.get(m.get_section_field_attr())
+        selected_sub_section = request.POST.get(m.get_section_field_attr())
         cart_size = len(identifiers)
         cso_icon_dict = []
         section_color_code_list = []
         selected_region = request.POST.get(m.get_region_field_attr())
         request.session['icon'] = request.POST.get('marker_icon')
-        if selected_section == 'All':
-            items = m.get_item_model_cls().objects.filter(
-                Q(**{m.get_region_field_attr(): selected_region, item_target_field: 1}) |
-                Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers}))
+        if selected_region == 'All':
+            if selected_sub_section == 'All':
+                items = m.get_item_model_cls().objects.all()
+            else:
+                items = m.get_item_model_cls().objects.filter(
+                    Q(**{m.get_section_field_attr(): selected_sub_section}) |
+                    Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers}))
         else:
-            items = m.get_item_model_cls().objects.filter(
-                Q(**{m.get_region_field_attr(): selected_region, m.get_section_field_attr(): selected_section, item_target_field: 1}) |
-                Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers, m.get_section_field_attr(): selected_section, item_target_field: 1}))
+            if selected_sub_section == 'All':
+                items = m.get_item_model_cls().objects.filter(
+                Q(**{m.get_region_field_attr(): selected_region}) | 
+                Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers}))
+            else:
+                items = m.get_item_model_cls().objects.filter(
+                Q(**{m.get_region_field_attr(): selected_region, m.get_section_field_attr(): selected_sub_section}) | 
+                Q(**{'{0}__in'.format(m.get_identifier_field_attr()): identifiers, m.get_section_field_attr(): selected_sub_section}))
         icon = str(request.session['icon'])
         payload = m.prepare_map_points(items,
             icon,
             identifiers,
             'egg-circle',
-            'red-circle', selected_section)
-        if selected_section != "ALL":
+            'red-circle', selected_sub_section)
+        if selected_sub_section != "ALL":
             for lon, lat, identifier_label, icon, other_identifier_label in payload:
                 icon_name_length = len(icon)
                 icon_label = icon[icon_name_length - 1]
-                #print icon_label
                 cso_icon_dict.append([icon_label, other_identifier_label])
-        if selected_section == "All":
+        if selected_sub_section == "All":
             section_color_codes = m.make_dictionary(m.get_other_icons(), m.get_sections())
         else:
             section_color_codes = m.make_dictionary(m.get_icons(), m.get_sections())
@@ -67,11 +73,11 @@ def plot_item_points(request, **kwargs):
             landmark_list.append([place, lon, lat])
         return render_to_response(
             template, {
-                'region_field_attr': m.get_region_field_attr(),
+                'item_region_field': m.get_region_field_attr(),
                 'section_field_attr': m.get_section_field_attr(),
                 'mapper_name': mapper_name,
                 'payload': payload,
-                'action_script_url_name': action_script_url_name,
+                'action_script_url': action_script_url,
                 'identifier_field_attr': m.get_identifier_field_attr(),
                 'has_items': has_items,
                 'mapper_item_label': mapper_item_label,
@@ -87,7 +93,7 @@ def plot_item_points(request, **kwargs):
                 'cart_size': cart_size,
                 'cso_icon_dict': cso_icon_dict,
                 'section_color_code_list': section_color_code_list,
-                'selected_section': selected_section
+                'selected_sub_section': selected_sub_section
                 },
                 context_instance=RequestContext(request)
             )

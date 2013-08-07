@@ -1,3 +1,4 @@
+import os
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -27,7 +28,7 @@ def handle_uploaded_file(f, identifier):
 
 def upload_item_map(request, **kwargs):
     """Uploads item map saved on disk as an images e.g google map screenshot."""
-    identifier = request.POST.get('identifier')
+    identifier = request.POST.get('identifier', None)
     mapper_item_label = kwargs.get('mapper_item_label', '')
     mapper_name = kwargs.get('mapper_name', '')
     if not site_mappers.get_registry(mapper_name):

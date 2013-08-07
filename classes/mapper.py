@@ -268,6 +268,8 @@ class Mapper(object):
                 pass
         if not self._sections:
             raise MapperError('Attribute \'sections\' may not be None (see _sections) .')
+        else:
+            self._sections = sorted([choices_tpl[0] for choices_tpl in list(self._sections)])
 
     def get_sections(self):
         if not self._sections:
@@ -359,7 +361,7 @@ class Mapper(object):
                 if selected_section == "All":
                     icon = "blu-circle"
                     for key_sec, icon_value in section_color_code_dict.iteritems():
-                        if item.ward_section == key_sec:
+                        if item.section == key_sec:
                             if icon_number <= 100:
                                 icon = icon_value + str(icon_number)
                                 icon_number += 1
@@ -367,13 +369,13 @@ class Mapper(object):
                             icon_number = 0
                 else:
                     for key_sec, icon_value in section_color_code_dict.iteritems():
-                        if item.ward_section == key_sec:
+                        if item.section == key_sec:
                             if icon_number <= 25:
                                 icon = icon_value + letters[icon_number]
                                 icon_number += 1
                             if icon_number == 25:
                                 icon_number = 0
-            payload.append([item.lon, item.lat, identifier_label, icon, other_identifier_label])
+            payload.append([item.gps_target_lon, item.gps_target_lat, identifier_label, icon, other_identifier_label])
         return payload
 
     def gps_distance_between_points(self, lat, lon, center_lat=None, center_lon=None, radius=None):

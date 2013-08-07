@@ -17,7 +17,7 @@ var pointArray = new Array();
 var landpoints = new Array();
 var x = 0;
 {% for lon, lat, label, icon, cso in payload %}       	
-    	pointArray.push(["{{ label }}", {{ lon }}, {{ lat }}, "{{ STATIC_URL }}img/{{ icon }}.png", x+1, "{{ cso }}"]);
+    	pointArray.push(["{{ label }}", {{ lat }}, {{ lon }}, "{{ STATIC_URL }}img/{{ icon }}.png", x+1, "{{ cso }}"]);
 {% endfor %}
 
 {% for place, lat, lon in landmarks %}
@@ -340,7 +340,6 @@ function initialize() {
         $('#revert_map').removeAttr('disabled');
     }
 
-    
     /*
      * Save polygon, call the 'polygon.containsLatLon' function then send identifiers within the polygon
      *  to a 'save_map_selection' view in views.py
@@ -359,14 +358,12 @@ function initialize() {
         var arrr = new Array();
         
         var poly_points = polygon.getPath().getArray();
-        {% if has_items %}
-        window.location.replace("{% url "get_polygon_array_url" mapper_name %}?polygon=" + poly_points);
-        {% endif %}
+        
         
         {% if payload %}
 	        //check in the payload to see which points are withing a polygon then push their identifiers into an array
 	        {% for lon, lat, label, icon in payload %}
-	            var point = new google.maps.LatLng({{ lon }}, {{ lat }});
+	            var point = new google.maps.LatLng({{ lat }}, {{ lon }});
 	                
 	            if (polygon.containsLatLng(point)) {
 	
@@ -376,17 +373,22 @@ function initialize() {
 	
 	
 	        var sec = document.getElementById("sec").value;
-	        {% comment %} e.g. region_field_attr='ward', section_field_attr='ward_section', ...{% endcomment %}
+	        {% comment %} e.g. ='ward', section_field_attr='ward_section', ...{% endcomment %}
 	        if (sec=="yes"){
-				window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr + "&{{ section_field_attr }}=" + document.getElementById("{{ section_field_attr }}").value + "&{{ region_field_attr }}=" + document.getElementById("{{ region_field_attr }}").value);
+				window.location.replace("{% url 'save_section_url' mapper_name %}?identifiers=" + arr + "&{{ item_region_field }}=" + document.getElementById("{{ item_region_field }}").value);
 			}
+	        else if (sec=="yes2"){
+	        	
+	        	window.location.replace("{% url 'save_sub_section_url' mapper_name %}?identifiers=" + arr + "&{{ item_section_field }}=" + document.getElementById("{{ item_section_field }}").value + "&{{ item_region_field }}=" + document.getElementById("{{ item_region_field }}").value);
+	        }
 			else{
 				// example or result produced by the line below: locations/save/?item_identifiers="H99101-02,H992302-4"
-				window.location.replace("{% url "map_add_cart_url" mapper_name %}?identifiers=" + arr);			
+				window.location.replace("{% url 'map_add_cart_url' mapper_name %}?identifiers=" + arr);			
 			}
          {% endif %}
         
     });
+    
 
 	$('#revert_map').removeAttr('disabled');
 	//go back to the saved polygon
@@ -407,20 +409,6 @@ function initialize() {
 		map: map
 	};
 	var snapShotControl = new SnapShotControl(snapOpts);
-	
-	{% if gps_coordinates %}
-		{% for gps in gps_coordinates %}
-			{% for x, y in gps %}
-				alert({{ x }})
-				alert({{ y }})
-				var marker = new google.maps.Marker({
-					  position: new google.maps.LatLng({{ y }}, {{ x }}),
-					  map: map,
-					  raggable: true
-					});
-			{% endfor %}
-		{% endfor %}
-	{% endif %}
     
         
 } //initialze

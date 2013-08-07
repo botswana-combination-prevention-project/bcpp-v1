@@ -17,8 +17,8 @@ def save_section(request, **kwargs):
         raise MapperError('Mapper class \'{0}\' does is not registered.'.format(mapper_name))
     else:
         m = site_mappers.get_registry(mapper_name)()
-        selected_section = request.GET.get('section')
-        selected_region = request.GET.get('region')
+        #selected_section = request.GET.get('section')
+        selected_region = request.GET.get(m.get_region_field_attr())
         message = ""
         is_error = False
         item_identifiers = None
@@ -28,15 +28,16 @@ def save_section(request, **kwargs):
         if item_identifiers:
             item_identifiers = item_identifiers.split(",")
         items = []
+        c = m.region_field_attr
         if item_identifiers:
-            items = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.item_identifier_field_attr): item_identifiers})
+            items = m.get_item_model_cls().objects.filter(**{'{0}__in'.format(m.identifier_field_attr): item_identifiers})
             for item in items:
-                setattr(item, m.section_field_attr, selected_section)
+                setattr(item, m.region_field_attr, selected_region)
                 item.save()
             items = m.get_item_model_cls().objects.filter(**{m.region_field_attr: selected_region, '{0}__isnull'.format(m.section_field_attr): True})
         for item in items:
-            lon = get_longitude(getattr(item, m.gps_s_field_attr), getattr(item, m.gps_longitude_field_attr))
-            lat = get_latitude(getattr(item, m.gps_e_field_attr), getattr(item, m.gps_latitude_field_attr))
+            lon = item.gps_target_lon
+            lat = item.gps_target_lat
             payload.append([lon, lat, str(getattr(item, m.identifier_field_attr)), 'mark'])
         return render_to_response(
                 'map_section.html', {
@@ -44,7 +45,6 @@ def save_section(request, **kwargs):
                     'mapper_name': mapper_name,
                     'identifiers': item_identifiers,
                     'regions': m.get_regions(),
-                    'selected_section': selected_section,
                     'selected_region': selected_region,
                     'message': message,
                     'option': 'save',

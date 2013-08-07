@@ -18,3 +18,6 @@ from draw_site_polygon import draw_site_polygon
 from get_polygon_array import get_polygon_array
 from coordinates_to_gps import coordinates_to_gps
 from dispatch_to_gps_index import dispatch_to_gps_index
+from map_sub_section import map_sub_sections
+from save_sub_section import save_sub_section
+from set_sub_sections import set_sub_section
