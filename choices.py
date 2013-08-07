@@ -435,7 +435,6 @@ MOVED_REASON = (
 PLACE_SUBJECT_MOVED = (
     ('IN_VILLAGE', _('Within Village')),
     ('OUT_VILLAGE', _('Outside Village')),
-    ('IN_WARD', _('Within the Survey Ward')),
 )
 
 
