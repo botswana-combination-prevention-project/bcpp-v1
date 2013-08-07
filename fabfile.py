@@ -10,10 +10,12 @@ remote_proj_dir = '/Users/django/source/bhp066'
 host_ids = ['82', '138', '230', '112', '120', '127', '21', '205', '170',
             '187', '244']
 ips = ['192.168.1.' + id for id in host_ids]
-net_id = ['92', '90', '60', '42', '83', '10', '54', '70', '78', '12', '15']
-ip_id = dict(zip(ips, net_id))
-ip_id = {'192.168.1.112': '42'}
+netbook_id = ['92', '90', '60', '42', '83', '10', '54', '70', '78', '12', '15']
+ip_id_map = dict(zip(ips, netbook_id))
+ip_id_map = {'192.168.1.112': '42'}
 #env.hosts = ips
+env.hosts = ['django@192.168.1.112']
+env.password = 'aM+u*Z0O'
 
 
 def checkout_repo():
@@ -58,8 +60,8 @@ def checkout_repo():
 
 
 def provision():
+    """ The main task for provisioning netbook """
     print "executing provisioning for %s" % env.host
-
     with cd(remote_proj_dir):
         svn_update('bcpp*')
         svn_update('bhp*')
@@ -73,7 +75,6 @@ def provision():
         syncdb()
         fake_migrate()
         svn_update(settings_file)
-
     modify_remote_settings(_deviceid_and_keypath)
     print "finished provisioning!! Yep!"
 
@@ -111,14 +112,6 @@ def modify_remote_settings(func):
     put(modified_file, remote_proj_dir)
 
 
-def uncomment_south():
-    tmp_dir = tempfile.mkdtemp()
-    get(_path_of(remote_proj_dir, settings_file), tmp_dir)
-    file_to_modify = _path_of(tmp_dir, settings_file)
-    modified_file = process_line(file_to_modify, _uncomment_south)
-    put(modified_file, remote_proj_dir)
-
-
 def _uncomment_south(new_file, line):
     trimmed_line = line.replace(" ", '')
     if trimmed_line.startswith("#'south'"):
@@ -127,8 +120,19 @@ def _uncomment_south(new_file, line):
         new_file.write(line)
 
 
+def _comment_out_south(new_file, line):
+    trimmed_line = line.replace(' ', '')
+    if trimmed_line.startswith("'south',"):
+        new_file.write(line)
+        return
+    if "'south'" in trimmed_line:
+        new_file.write("\t#'south',\n")
+    else:
+        new_file.write(line)
+
+
 def _deviceid_and_keypath(new_file, line):
-    dev_id = ip_id.get(env.host)
+    dev_id = ip_id_map.get(env.host)
     trimmed_line = line.replace(' ', '')
     if trimmed_line.startswith('#'):
         new_file.write(line)
