@@ -10,7 +10,22 @@ from subject_off_study_mixin import SubjectOffStudyMixin
 from bhp_appointment_helper.models import BaseAppointmentMixin
 
 
-class SubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
+class BaseSubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
+    """Base class for consent.
+
+    Useful so testing outside of this module does not triggering module specific signals."""
+
+    def __unicode__(self):
+        return self.subject_identifier
+
+    def get_registration_datetime(self):
+        return self.consent_datetime
+
+    class Meta:
+        abstract = True
+
+
+class SubjectConsent(BaseSubjectConsent):
 
     household_member = models.OneToOneField(HouseholdMember)
     survey = models.ForeignKey(Survey)
@@ -30,12 +45,6 @@ class SubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
 
     def get_subject_type(self):
         return 'subject'
-
-    def __unicode__(self):
-        return self.subject_identifier
-
-    def get_registration_datetime(self):
-        return self.consent_datetime
 
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey
