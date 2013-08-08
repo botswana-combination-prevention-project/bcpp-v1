@@ -13,6 +13,7 @@ class BaseHouseholdMapper(Mapper):
     region_label = 'Section'
     section_field_attr = 'sub_section'
     section_label = 'Sub Section'
+    map_area_field_attr = 'community'
     icons = ICONS
     other_icons = OTHER_ICONS
 
