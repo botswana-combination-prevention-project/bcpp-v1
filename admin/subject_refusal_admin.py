@@ -13,23 +13,13 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'registered_subject',
         'household_member',
         'report_datetime',
-        'sex',
-#         'age',
-#         'length_residence',
         'refusal_date',
         'why_no_participate',
         'why_no_participate_other',
-#         'subject_refusal_status',
-#         'hiv_test_today',
-#         'why_no_hivtest',
         'comment')
 
     radio_fields = {
-        "sex": admin.VERTICAL,
-#         "length_residence": admin.VERTICAL,
         "why_no_participate": admin.VERTICAL,
-#         "hiv_test_today": admin.VERTICAL,
-#         "why_no_hivtest": admin.VERTICAL, 
         }
 
     list_display = (
