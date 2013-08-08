@@ -26,17 +26,17 @@ def coordinates_to_gps(request, **kwargs):
             raise MapperError('You are in the server, You can\'t dispatch the whole server data to a GPS receiver.')
         else:    
             FNAME = '/Users/django/source/bhp066/bhp_map/static/gpx/Current.gpx'
+            os.system('chmod 777 /Users/django/source/bhp066/bhp_map/static/gpx/Current.gpx')
             f = open(FNAME, 'r')
             line = f.readline()
             lines = f.read()
             f.close()
-            
-            try:
-                os.remove('/Volumes/GARMIN/GPX/Current.gpx')
-            except OSError:
-                pass
-            wf = open(FNAME, 'a')
+            os.system('chmod -R 777 /Users/django/')
+            GPS_FILE_PATH = '/Users/django/Current.gpx'
+    
+            wf = open(GPS_FILE_PATH, 'a')
             wf.write(line)
+            
             
             #This values need to come from the edc   
             items = m.get_item_model_cls().objects.filter(community='mochudi')
@@ -53,7 +53,7 @@ def coordinates_to_gps(request, **kwargs):
         return render_to_response(
                 template, {
                     'mapper_name': mapper_name,
-                    'file_to_gps': '/Volumes/GARMIN/GPX/Current.gpx'
+                    'file_to_gps': GPS_FILE_PATH
                 },
                 context_instance=RequestContext(request)
             )
