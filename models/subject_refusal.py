@@ -9,12 +9,12 @@ from base_member_status_model import BaseMemberStatusModel
 
 class SubjectRefusal (BaseMemberStatusModel):
 
-    sex = models.CharField(
-        verbose_name="[For interviewer] Resident sex?",
-        max_length=15,
-        choices=GENDER,
-        help_text="",
-        )
+#     sex = models.CharField(
+#         verbose_name="[For interviewer] Resident sex?",
+#         max_length=15,
+#         choices=GENDER,
+#         help_text="",
+#         )
 
 #     age = models.IntegerField(
 #         verbose_name="What is your age?",
