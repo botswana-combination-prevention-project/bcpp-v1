@@ -36,7 +36,7 @@ api_key.save()
 api_key = ApiKey.objects.get(user=User.objects.get(username='django'))
 api_key.key='1af87bd7d0c7763e7b11590c9398740f0de7678b'
 api_key.save()
-
+names = ['onep','ckgathi','chazha','django','erikvw','jtshikedi','rmabutho','ankhutelang']
 """
 
 
