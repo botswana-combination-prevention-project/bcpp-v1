@@ -2,8 +2,8 @@ from django.db import models
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bhp_base_model.validators import date_not_future, date_not_before_study_start
-from bhp_common.choices import GENDER, YES_NO_UNSURE
-from bcpp.choices import LENGTHRESIDENCE_CHOICE, WHYNOPARTICIPATE_CHOICE, WHYNOHIVTESTING_CHOICE
+from bhp_common.choices import GENDER
+from bcpp.choices import WHYNOPARTICIPATE_CHOICE
 from base_member_status_model import BaseMemberStatusModel
 
 
@@ -16,12 +16,12 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text="",
         )
 
-    age = models.IntegerField(
-        verbose_name="What is your age?",
-        null=True,
-        blank=True,
-        help_text="Leave blank If participant does not want to answer.",
-        )
+#     age = models.IntegerField(
+#         verbose_name="What is your age?",
+#         null=True,
+#         blank=True,
+#         help_text="Leave blank If participant does not want to answer.",
+#         )
 
 #     length_residence = models.CharField(
 #         verbose_name="How long have your lived in this community?",
@@ -36,7 +36,9 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text="Date format is YYYY-MM-DD")
 
     why_no_participate = models.CharField(
-        verbose_name="What was the main reason you do not want to participate in this study?",
+        verbose_name=("We respect your decision to decline. It would help us"
+                      " improve the study if you could tell us the main reason"
+                      " you do not want to participate in this study?"),
         max_length=50,
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="",
