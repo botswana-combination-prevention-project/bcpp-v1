@@ -12,7 +12,7 @@ site_mappers.autodiscover()
 
 class SectionHouseholdView(BaseSectionView):
     section_name = 'household'
-    section_display_name = 'Households'
+    section_display_name = 'Surveys'
     section_display_index = 10
     section_template = 'section_bcpp_household.html'
     add_model = Household

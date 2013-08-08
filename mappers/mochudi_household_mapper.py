@@ -4,7 +4,6 @@ from choices import MOCHUDI_SECTIONS, MOCHUDI_SUB_SECTIONS, MOCHUDI_LANDMARKS
 
 
 class MochudiHouseholdMapper(BaseHouseholdMapper):
-
     map_area = 'mochudi'
     regions = MOCHUDI_SECTIONS
     sections = MOCHUDI_SUB_SECTIONS
