@@ -42,9 +42,6 @@ class Dashboard(object):
     def get_create_prep(self, **kwargs):
         pass
 
-    def get_urlpatterns(self, view, regex):
-        raise ValueError("Dashboard.get_urlpatterns() must be overridden")
-
     def get_context(self):
         return self.context.values
 
@@ -149,6 +146,6 @@ class Dashboard(object):
             self.set_template()
         return self._template
 
-    def get_url_patterns(self, view, regex, **kwargs):
+    def get_urlpatterns(self, view, regex, **kwargs):
         """Users must override."""
         raise ImproperlyConfigured('You need to define some dashboard urls.')
