@@ -25,7 +25,7 @@ def coordinates_to_gps(request, **kwargs):
         if settings.DEVICE_ID == '99':
             raise MapperError('You are in the server, You can\'t dispatch the whole server data to a GPS receiver.')
         else:    
-            FNAME = os.path.abspath('bhp_map/static/gpx/Current.gpx')
+            FNAME = '/Users/django/source/bhp066/bhp_map/static/gpx/Current.gpx'
             f = open(FNAME, 'r')
             line = f.readline()
             lines = f.read()
