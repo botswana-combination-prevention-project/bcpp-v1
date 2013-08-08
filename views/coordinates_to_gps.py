@@ -32,12 +32,11 @@ def coordinates_to_gps(request, **kwargs):
             f.close()
             
             try:
-                os.remove(settings.GPS_FILE_PATH)
+                os.remove('/Volumes/GARMIN/GPX/Current.gpx')
             except OSError:
                 pass
-            wf = open(settings.GPS_FILE_PATH, 'a')
+            wf = open(FNAME, 'a')
             wf.write(line)
-            GPS_FILE_PATH = 'home'
             
             #This values need to come from the edc   
             items = m.get_item_model_cls().objects.filter(community='mochudi')
@@ -54,7 +53,7 @@ def coordinates_to_gps(request, **kwargs):
         return render_to_response(
                 template, {
                     'mapper_name': mapper_name,
-                    'file_to_gps': os.path.exists(settings.GPS_FILE_PATH)
+                    'file_to_gps': '/Volumes/GARMIN/GPX/Current.gpx'
                 },
                 context_instance=RequestContext(request)
             )
