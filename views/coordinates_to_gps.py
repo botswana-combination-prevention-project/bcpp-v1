@@ -40,7 +40,7 @@ def coordinates_to_gps(request, **kwargs):
             GPS_FILE_PATH = 'home'
             
             #This values need to come from the edc   
-            items = m.get_item_model_cls().objects.filter(**{m.map_area_field_attr: mapper_name})
+            items = m.get_item_model_cls().objects.filter(community='mochudi')
             for item in items:
                 identifier_name = str(getattr(item, m.get_identifier_field_attr()))
                 lat = item.gps_target_lat 
