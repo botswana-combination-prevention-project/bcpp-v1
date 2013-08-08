@@ -43,8 +43,8 @@ def coordinates_to_gps(request, **kwargs):
             items = m.get_item_model_cls().objects.filter(**{m.map_area_field_attr: mapper_name})
             for item in items:
                 identifier_name = str(getattr(item, m.get_identifier_field_attr()))
-                lat = item.lat 
-                lon = item.lon
+                lat = item.gps_target_lat 
+                lon = item.gps_target_lon
                 ele = 0.0
                 city_village = m.get_map_area()
                 str_from_edc = '<wpt lat="' + str(lat) + '" lon="' + str(lon) + '"><ele>' + str(ele) + '</ele>' + '<name>' + str(identifier_name) + '</name><sym>Waypoint</sym><extensions><gpxx:WaypointExtension><gpxx:Categories><gpxx:Category>Map Points and Coordinates</gpxx:Category></gpxx:Categories><gpxx:Address><gpxx:City>' + str(city_village) + '</gpxx:City><gpxx:State>South Eastern</gpxx:State></gpxx:Address></gpxx:WaypointExtension></extensions>' + '</wpt>'
