@@ -9,9 +9,13 @@ class BloodDrawAdmin(SubjectVisitModelAdmin):
     form = BloodDrawForm
     fields = (
         "subject_visit",
-        'draw_date',
         'is_blood_drawn',
-        'is_blood_drawn_other',)
+        'is_blood_drawn_other',
+        'draw_date',
+        'record_available',
+        'last_cd4_count',
+        'last_cd4_drawn_date',)
     radio_fields = {
-        'is_blood_drawn': admin.VERTICAL,}
+        'is_blood_drawn': admin.VERTICAL,
+        'record_available': admin.VERTICAL,}
 admin.site.register(BloodDraw, BloodDrawAdmin)
