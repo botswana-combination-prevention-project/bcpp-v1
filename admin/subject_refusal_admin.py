@@ -14,7 +14,7 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member',
         'report_datetime',
         'sex',
-        'age',
+#         'age',
 #         'length_residence',
         'refusal_date',
         'why_no_participate',
