@@ -52,6 +52,7 @@ class HouseholdDashboard(Dashboard):
 
         self.set_survey(kwargs.get('survey'))
         self.set_household()
+        self.set_household_structure()
 
         # TODO: is this still necessary?
         self.check_members_have_registered_subject()
@@ -128,6 +129,8 @@ class HouseholdDashboard(Dashboard):
         if not self._household_structure:
             if issubclass(self.get_dashboard_model(), HouseholdStructure):
                 self._household_structure = self.get_dashboard_model()
+            if self.get_household():
+                self._household_structure = HouseholdStructure.objects.get(household__pk=self.get_household().pk)
             if HouseholdStructure.objects.filter(pk=pk):
                 self._household_structure = HouseholdStructure.objects.get(pk=pk)
         if not self._household_structure:
@@ -174,11 +177,11 @@ class HouseholdDashboard(Dashboard):
             self.set_household_members()
         return self._household_members
 
-    def get_household_structure(self):
-        try:
-            return HouseholdStructure.objects.get(household=self.get_household(), survey=self.get_survey())
-        except:
-            return None
+#     def get_household_structure(self):
+#         try:
+#             return HouseholdStructure.objects.get(household=self.get_household(), survey=self.get_survey())
+#         except:
+#             return None
 
     def set_household_log(self):
         if not HouseholdLog.objects.filter(household_structure=self.get_household_structure()):
@@ -214,8 +217,8 @@ class HouseholdDashboard(Dashboard):
         """Gets the url_patterns for the dashboard view.
 
         Called in the urls.py"""
-        regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
-        regex['dashboard_model'] = '|household|household_structure|registered_subject'
+        regex.update({'pk': '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'})
+        regex.update({'dashboard_model': 'household|household_structure|registered_subject'})
         regex.update({'dashboard_type': 'household'})
         urlpatterns = patterns(view,
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>any)/$'.format(**regex),
