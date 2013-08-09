@@ -375,7 +375,7 @@ PROJECT_NUMBER = 'BHP066'
 PROJECT_IDENTIFIER_PREFIX = '066'
 PROJECT_IDENTIFIER_MODULUS = 7
 PROJECT_TITLE = 'Botswana Combination Prevention Project'
-PROTOCOL_REVISION = 'V1.0 12 April 2013'
+PROTOCOL_REVISION = 'V1.0 12 August 2013'
 INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
 LOGIN_URL = '/{app_name}/login/'.format(app_name=APP_NAME)
 LOGIN_REDIRECT_URL = '/{app_name}/'.format(app_name=APP_NAME)
