@@ -8,6 +8,7 @@ class HouseholdInfoAdmin(BaseModelAdmin):
 
     form = HouseholdInfoForm
     fields = (
+        "report_datetime",
         "household_structure",
         "household_member",
         "flooring_type",
