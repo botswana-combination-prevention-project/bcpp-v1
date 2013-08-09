@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import get_model
 from bhp_base_admin.admin import BaseModelAdmin
 from bcpp_household_member.models import BaselineHouseholdSurvey, HouseholdMember
 from bcpp_household_member.forms import BaselineHouseholdSurveyForm
@@ -9,6 +8,7 @@ class BaselineHouseholdSurveyAdmin(BaseModelAdmin):
 
     form = BaselineHouseholdSurveyForm
     fields = (
+        "household_structure",
         "household_member",
         "flooring_type",
         "flooring_type_other",
@@ -40,13 +40,10 @@ class BaselineHouseholdSurveyAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            household_members = []
-            SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
-            for hm in HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0)):
-                if SubjectConsent.objects.filter(registered_subject=hm.registered_subject):
-                    household_members.append(hm)
+            household_members = HouseholdMember.objects.none()
+            if HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0)):
+                household_members = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0))
             kwargs["queryset"] = household_members
-
         return super(BaselineHouseholdSurveyAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(BaselineHouseholdSurvey, BaselineHouseholdSurveyAdmin)

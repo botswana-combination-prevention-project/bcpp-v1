@@ -11,7 +11,7 @@ from household_member import HouseholdMember
 from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
 
-class BaselineHouseholdSurvey(BaseDispatchSyncUuidModel):
+class HouseholdQuestionnaire(BaseDispatchSyncUuidModel):
 
     household_member = models.OneToOneField(HouseholdMember,
         help_text='The household member must consent before completing this questionnaire. Only consented members are listed here.')
@@ -121,9 +121,10 @@ class BaselineHouseholdSurvey(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.registered_subject = self.household_member.registered_subject
-        super(BaselineHouseholdSurvey, self).save(*args, **kwargs)
+        super(HouseholdQuestionnaire, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'bcpp_household_member'
+        db_table = 'bcpp_household_member_baselinehouseholdsurvey'
         verbose_name = "Household Survey, Baseline"
         verbose_name_plural = "Household Survey, Baseline"
