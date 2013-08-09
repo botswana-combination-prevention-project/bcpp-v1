@@ -25,21 +25,21 @@ def coordinates_to_gps(request, **kwargs):
         if settings.DEVICE_ID == '99':
             raise MapperError('You are in the server, You can\'t dispatch the whole server data to a GPS receiver.')
         else:    
-            FNAME = '/Users/django/source/bhp066/bhp_map/static/gpx/Current.gpx'
-            os.system('chmod 777 /Users/django/source/bhp066/bhp_map/static/gpx/Current.gpx')
+            FNAME = '/users/ckgathi/source/bhp066/bhp_map/static/gpx/Current.gpx'
             f = open(FNAME, 'r')
             line = f.readline()
             lines = f.read()
             f.close()
-            os.system('chmod -R 777 /Users/django/')
-            GPS_FILE_PATH = '/Users/django/Current.gpx'
+            GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
+            
+        
     
-            wf = open(GPS_FILE_PATH, 'a')
+            wf = open('/Volumes/GARMIN/GPX/Current.gpx', 'a')
             wf.write(line)
             
             
             #This values need to come from the edc   
-            items = m.get_item_model_cls().objects.filter(community='mochudi')
+            items = m.get_item_model_cls().objects.all()
             for item in items:
                 identifier_name = str(getattr(item, m.get_identifier_field_attr()))
                 lat = item.gps_target_lat 
@@ -47,6 +47,7 @@ def coordinates_to_gps(request, **kwargs):
                 ele = 0.0
                 city_village = m.get_map_area()
                 str_from_edc = '<wpt lat="' + str(lat) + '" lon="' + str(lon) + '"><ele>' + str(ele) + '</ele>' + '<name>' + str(identifier_name) + '</name><sym>Waypoint</sym><extensions><gpxx:WaypointExtension><gpxx:Categories><gpxx:Category>Map Points and Coordinates</gpxx:Category></gpxx:Categories><gpxx:Address><gpxx:City>' + str(city_village) + '</gpxx:City><gpxx:State>South Eastern</gpxx:State></gpxx:Address></gpxx:WaypointExtension></extensions>' + '</wpt>'
+                print str_from_edc
                 wf.write(str_from_edc)
             wf.write(lines)
             wf.close()

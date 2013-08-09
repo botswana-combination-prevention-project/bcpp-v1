@@ -21,6 +21,11 @@
     <li><A href="{% url "draw_site_polygon_url" mapper_name %}">Site Polygon</A></li>
     </ul>
     </div>
+	<br /><br />
+	<ul>
+		<li>Select the {{ region_label }} and {{ section_label }} you would like to dispatch item from</li>
+		<li>Click submit</li>
+	</ul>
 
     <div id="selection_box">  
     <form action="{% url "map_plot_item_points_url" mapper_name %}" method="post">
