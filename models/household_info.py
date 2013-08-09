@@ -66,7 +66,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         )
     toilet_facility_other = OtherCharField()
 
-    electrical_appliances = models.ManyToManyField(ElectricalAppliances,
+    electrical = models.ManyToManyField(ElectricalAppliances,
         verbose_name=_("Does any member of this household have any of the following that are"
                       " currently working? (check all that apply)."),
         null=True,
