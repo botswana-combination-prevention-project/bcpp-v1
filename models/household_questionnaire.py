@@ -13,12 +13,12 @@ from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOI
 
 class HouseholdQuestionnaire(BaseDispatchSyncUuidModel):
 
+    household_structure = models.OneToOneField(HouseholdStructure)
+
     household_member = models.OneToOneField(HouseholdMember,
-        help_text='The household member must consent before completing this questionnaire. Only consented members are listed here.')
+        help_text=('Important: The household member must verbally consent before completing this questionnaire.'))
 
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False)
-
-    household_structure = models.OneToOneField(HouseholdStructure)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
@@ -125,6 +125,3 @@ class HouseholdQuestionnaire(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household_member'
-        db_table = 'bcpp_household_member_baselinehouseholdsurvey'
-        verbose_name = "Household Survey, Baseline"
-        verbose_name_plural = "Household Survey, Baseline"

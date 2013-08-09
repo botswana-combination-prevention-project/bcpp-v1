@@ -1,9 +1,9 @@
 from django import forms
 from bhp_base_form.forms import BaseModelForm
-from bcpp_household_member.models import BaselineHouseholdSurvey
+from bcpp_household_member.models import HouseholdQuestionnaire
 
 
-class BaselineHouseholdSurveyForm (BaseModelForm):
+class HouseholdQuestionnaireForm (BaseModelForm):
 
     def clean(self):
 
@@ -15,8 +15,8 @@ class BaselineHouseholdSurveyForm (BaseModelForm):
             raise forms.ValidationError('If participant uses a different water source, specify it')
         if cleaned_data.get('energy_source') == 'OTHER' and not cleaned_data.get('energy_source_other'):
             raise forms.ValidationError('If a different energy source is used, specify it')
-        cleaned_data = super(BaselineHouseholdSurveyForm, self).clean()
+        cleaned_data = super(HouseholdQuestionnaireForm, self).clean()
         return cleaned_data
 
     class Meta:
-        model = BaselineHouseholdSurvey
+        model = HouseholdQuestionnaire
