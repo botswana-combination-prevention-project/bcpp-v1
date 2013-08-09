@@ -1,12 +1,12 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
-from bcpp_household_member.models import HouseholdQuestionnaire, HouseholdMember
-from bcpp_household_member.forms import HouseholdQuestionnaireForm
+from bcpp_household_member.models import HouseholdInfo, HouseholdMember
+from bcpp_household_member.forms import HouseholdInfoForm
 
 
-class HouseholdQuestionnaireAdmin(BaseModelAdmin):
+class HouseholdInfoAdmin(BaseModelAdmin):
 
-    form = HouseholdQuestionnaireForm
+    form = HouseholdInfoForm
     fields = (
         "household_structure",
         "household_member",
@@ -44,6 +44,6 @@ class HouseholdQuestionnaireAdmin(BaseModelAdmin):
             if HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0)):
                 household_members = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0))
             kwargs["queryset"] = household_members
-        return super(HouseholdQuestionnaireAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(HouseholdInfoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(HouseholdQuestionnaire, HouseholdQuestionnaireAdmin)
+admin.site.register(HouseholdInfo, HouseholdInfoAdmin)
