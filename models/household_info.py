@@ -11,7 +11,7 @@ from household_member import HouseholdMember
 from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
 
-class HouseholdQuestionnaire(BaseDispatchSyncUuidModel):
+class HouseholdInfo(BaseDispatchSyncUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -121,7 +121,7 @@ class HouseholdQuestionnaire(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.registered_subject = self.household_member.registered_subject
-        super(HouseholdQuestionnaire, self).save(*args, **kwargs)
+        super(HouseholdInfo, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'bcpp_household_member'
