@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import get_model
 from django.utils.translation import ugettext as _
 from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
@@ -118,6 +119,9 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         )
 
     history = AuditTrail()
+    
+    def dispatch_container_lookup(self, using=None):
+        return (get_model('bcpp_household','Household'), 'household_structure__household__household_identifier')
 
     def save(self, *args, **kwargs):
         self.registered_subject = self.household_member.registered_subject
