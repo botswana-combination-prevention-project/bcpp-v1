@@ -6,7 +6,7 @@ from django.db.models import get_model
 from bhp_dashboard.classes import Dashboard
 from bhp_registration.models import RegisteredSubject
 from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
-from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist
+from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from bcpp_survey.models import Survey
 from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 from bhp_section.classes import site_sections
@@ -21,6 +21,7 @@ class HouseholdDashboard(Dashboard):
         self._household_log = None
         self._current_member_count = None
         self._enrolment_checklist = None
+        self._household_info = None
         self._survey = None
         # TODO: section/search stuff should move to base class
         section = site_sections.get('household')
@@ -38,6 +39,7 @@ class HouseholdDashboard(Dashboard):
             household_structure_meta=HouseholdStructure._meta,
             household_log_entry_meta=HouseholdLogEntry._meta,
             enrolment_checklist_meta=EnrolmentChecklist._meta,
+            household_info_meta=HouseholdInfo._meta,
             )
 
     def create(self, **kwargs):
@@ -70,6 +72,7 @@ class HouseholdDashboard(Dashboard):
             surveys=Survey.objects.all().order_by('survey_name'),
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry(),
+            household_info=self.get_household_info(),
             )
         self.set_mapper_name(kwargs.get('mapper_name'))
         self.context.add(mapper_name=self.get_mapper_name())
@@ -85,6 +88,16 @@ class HouseholdDashboard(Dashboard):
                 report_datetime__day=today.day):
                 return False
         return True
+
+    def set_household_info(self):
+        self._household_info = None
+        if HouseholdInfo.objects.filter(household_structure=self.get_household_structure()):
+            self._household_info = HouseholdInfo.objects.get(household_structure=self.get_household_structure())
+
+    def get_household_info(self):
+        if not self._household_info:
+            self.set_household_info()
+        return self._household_info
 
     def set_mapper_name(self, value=None):
         self._mapper_name = value
