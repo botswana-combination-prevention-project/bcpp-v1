@@ -15,7 +15,7 @@ from bcpp.choices import ETHNIC_CHOICE, MARITALSTATUS_CHOICE, WHYNOHIVTESTING_CH
 
 
 class HtcData (BaseDispatchSyncUuidModel):
-    
+
     household_member = models.OneToOneField(HouseholdMember)
 
     registered_subject = models.OneToOneField(RegisteredSubject)
