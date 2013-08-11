@@ -104,8 +104,8 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     logs.allow_tags = True
 
     def dashboard(self):
-        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'household_identifier': self.household.household_identifier, 'household_structure': self.pk})
-        return """<a href="{url}" />dashboard</a>""".format(url=url)
+        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'dashboard_model': 'household_structure', 'dashboard_id': self.pk, 'show': 'any'})
+        return """<a href="{url}" />composition</a>""".format(url=url)
     dashboard.allow_tags = True
 
     class Meta:
