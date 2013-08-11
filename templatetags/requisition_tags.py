@@ -109,11 +109,13 @@ class GetRequisitionValue(template.Node):
         if self.visit_model.__class__.objects.filter(appointment=self.appointment):
             self.visit_model_instance = self.visit_model.__class__.objects.get(appointment=self.appointment)
         visit_model_helper = VisitModelHelper()
-        fk_fieldname_to_visit_model = visit_model_helper.get_visit_field(model=self.requisition_model, visit_model=self.visit_model)
+        fk_fieldname_to_visit_model = visit_model_helper.get_visit_field(model=self.requisition_model,
+                                                                         visit_model=self.visit_model)
         if not fk_fieldname_to_visit_model:
             raise AttributeError('Cannot determine pk with this templatetag, Model %s must have a foreignkey to the '
                                  'visit model.')
-        req = self.requisition_model.objects.filter(**{fk_fieldname_to_visit_model: self.visit_model_instance, 'panel_id': self.panel.pk})
+        req = self.requisition_model.objects.filter(**{fk_fieldname_to_visit_model: self.visit_model_instance,
+                                                       'panel_id': self.panel.pk})
         if req:
             return getattr(req[0], self.field_name)
         else:
