@@ -4,7 +4,6 @@ import re
 import socket
 from math import ceil
 from datetime import date
-#from dateutil.relativedelta import *
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
@@ -177,7 +176,6 @@ def get_revision(opts):
             cwd=os.path.join(settings.DIRNAME, '/'.join([opts.app_label, 'models/']))
             )
         #s = re.search('Revision: [0-9]+', rev)
-        #revision = s.group().split(': ')[1]
         s = re.search('Last Changed Rev: [0-9]+', rev)
         return s.group().split(': ')[1]
     except:
