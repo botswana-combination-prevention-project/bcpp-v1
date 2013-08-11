@@ -18,7 +18,21 @@
 </thead>
 <tbody>
 
-{% for household_member in household_members %}
+{% if not has_household_log_entry %}
+  {% for household_member in household_members %}
+    <tr {% if household_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
+    <td>{{ forloop.counter }}.&nbsp;{{ household_member.first_name|encrypted }}</td>
+    <td>{{ household_member.initials }}</td>
+    <td>{{ household_member.gender }}</td>
+    <td>{{ household_member.age_in_years }}</td>
+    <td>{{ household_member.relation }}</td>
+    <td>{{ household_member.member_status }}</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    </tr>
+  {% endfor %}
+{% else %}
+  {% for household_member in household_members %}
     <tr {% if household_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
     
     <td>{{ forloop.counter }}.&nbsp;
@@ -103,7 +117,7 @@
             {% endif %}                
     </td>
     </tr>
-{% endfor %}
-
+  {% endfor %}
+{% endif %}
 </tbody>
 </table>    

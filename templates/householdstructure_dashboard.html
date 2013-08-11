@@ -30,7 +30,6 @@
 <div id="tile_wrapper">
 
 {% include "household_log_include.html" %}
-{% if has_household_log_entry %}
     <H4>B. Household Composition</H4>
 	{% if household.household_identifier|is_dispatched %}
 	<div align="center"><h1>This household is currently <font color="red">dispatched</font> to a netbook. Please do not make any changes to it or it's members.</h1></div>
@@ -86,21 +85,23 @@
             </div>
         {% endif %}        
     {% endblock %}
-    {% block household_questionnaire %}
+    {% if has_household_log_entry %}
+      {% block household_questionnaire %}
         {% if household_info %}
             <p style="clear:both;font-size:11px;"><a href="{% url household_info_meta|admin_urlname:'change' household_info.pk %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information from Head of Household ({{household_info.household_member.first_name|encrypted }})</a></p>
         {% else %}
             <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information from Head of Household</a></p>
         {% endif %}
-    {% endblock %}
-
+      {% endblock %}
+    {% endif %}
     {% if survey %}
-        {% if household_structure %}
+          {% if household_structure %}
             {% include "householdmember_dashboard_include.html" %}
-            {% if allow_edit_members %}
+            {% if has_household_log_entry %}
+              {% if allow_edit_members %}
                     <table><tr><td><A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></td></tr></table>
-            {% endif %}
-              
+              {% endif %}
+            {% endif%}  
             {% if household.comment %}            
             <table>
             <tr>
@@ -108,7 +109,6 @@
             </tr>
             </table> 
             {% endif %}
-              
         {% endif%}
     {% endif%}
 
@@ -125,7 +125,6 @@
                 {% endif %}
             {% endfor %}
             </table>
-{% endif %}
 </div>
 {% endblock dashboard %}
 
