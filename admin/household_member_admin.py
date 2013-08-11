@@ -37,7 +37,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                     'survey',
                     'visit_date',
                     'to_locator',
-                    'contact',
+                    #'contact',
                     'cso',
                     'lon',
                     'lat',

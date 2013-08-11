@@ -229,27 +229,28 @@ class HouseholdMember(BaseHouseholdMember):
         return self.household_structure.household.cso_number
 
     def lon(self):
-        return self.household_structure.household.gps_lon()
+        return self.household_structure.household.gps_lon
 
     def lat(self):
-        return self.household_structure.household.gps_lat()
+        return self.household_structure.household.gps_lat
 
     def to_locator(self):
         retval = ''
         if self.registered_subject:
             if self.registered_subject.subject_identifier:
-                retval = '<a href="/admin/bcpp_subject/locator/?q={0}">locator</A>'.format(self.registered_subject.subject_identifier)
+                url = reverse('admin:bcpp_subject_subjectlocator_changelist')
+                retval = '<a href="{0}?q={1}">locator</A>'.format(url, self.registered_subject.subject_identifier)
         return retval
     to_locator.allow_tags = True
 
-    def contact(self):
-        url = reverse('admin:bcpp_household_contactlog_add')
-        ret = """<a href="{url}" class="add-another" id="add_id_contact_log" onclick="return showAddAnotherPopup(this);"> <img src="/static/admin/img/icon_addlink.gif" width="10" height="10" alt="View contact"/>contact</a>""".format(url=url)
-        if self.contact_log:
-            url = self.contact_log.get_absolute_url()
-            ret = """<a href="{url}" class="add-another" id="change_id_contact_log" onclick="return showAddAnotherPopup(this);">contact</a>""".format(url=url)
-        return ret
-    contact.allow_tags = True
+#     def contact(self):
+#         url = reverse('admin:bcpp_household_contactlog_add')
+#         ret = """<a href="{url}" class="add-another" id="add_id_contact_log" onclick="return showAddAnotherPopup(this);"> <img src="/static/admin/img/icon_addlink.gif" width="10" height="10" alt="View contact"/>contact</a>""".format(url=url)
+#         if self.contact_log:
+#             url = self.contact_log.get_absolute_url()
+#             ret = """<a href="{url}" class="add-another" id="change_id_contact_log" onclick="return showAddAnotherPopup(this);">contact</a>""".format(url=url)
+#         return ret
+#     contact.allow_tags = True
 
     def get_short_label(self):
         return '{first_name} ({initials}) {gender} {age} {hiv_status}'.format(
