@@ -1,5 +1,8 @@
 import logging
 import re
+import pysvn
+import os
+from django.conf import settings
 from django.contrib import admin
 from datetime import datetime
 from django.core.urlresolvers import reverse
@@ -39,6 +42,7 @@ class BaseModelAdmin (admin.ModelAdmin):
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
         extra_context.update(self.get_dashboard_context(request))
+        extra_context.update({'svn_revision_number': self.get_revision_number(request)})
         model_help_text = self.get_model_help_text(self.model._meta.app_label, self.model._meta.object_name)
         extra_context.update(model_help_text_meta=model_help_text[META], model_help_text=model_help_text[DCT])
         return super(BaseModelAdmin, self).add_view(request, form_url=form_url, extra_context=extra_context)
@@ -203,6 +207,26 @@ class BaseModelAdmin (admin.ModelAdmin):
                 if not re.match(r'^\d+\.', unicode(fld[WIDGET].label)):
                     fld[WIDGET].label = '{0}. {1}'.format(unicode(index + 1), unicode(fld[WIDGET].label))
         return form
+
+    def get_svn_info(self, path):
+        try:
+            info = pysvn.Client().info(path)
+        except pysvn.ClientError:
+            # working copy must be 1.7 or higher
+            info = [(path, {'rev': '<A alt=\"{0}\">0</A>'.format(path)})]
+        return info[0][1]
+
+    def get_revision_number(self, request, model=None):
+        model = model or self.model
+        if not model:
+            raise TypeError('Attribute \'model\' may not be None.')
+        DIRNAME = settings.DIRNAME
+        app_label = self.model._meta.app_label
+        module_name = self.model._meta.module_name
+        path = os.path.join(DIRNAME, app_label)
+        path = os.path.join(path, 'models/' + module_name)
+        info = self.get_svn_info(path)
+        return info.get('rev', 0)
 
     def get_dashboard_context(self, request):
         return {'subject_dashboard_url': request.GET.get('next', ''),
