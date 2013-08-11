@@ -4,6 +4,7 @@
 {% load admin_urls %}
 {% load admin_modify %}
 {% load bhp_admin_modify %}
+{% load common_tags %}
 
 {% block extrahead %}{{ block.super }}
 {% url 'admin:jsi18n' as jsi18nurl %}
@@ -58,7 +59,7 @@
 {% endblock %}
 
 {% block after_field_sets %}
-<small>{{ app_label }}: model revision {{ svn_revision_number|default:'unknown?' }}</small>
+<small>{{ app_label }}/{{ opts.module_name }}: revision {{ opts|get_revision|default:'unknown?' }}</small>
 {% endblock %}
 
 {% block inline_field_sets %}
