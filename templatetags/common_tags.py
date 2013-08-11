@@ -1,3 +1,5 @@
+import subprocess
+import os
 import re
 import socket
 from math import ceil
@@ -8,7 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from bhp_common.utils import formatted_age
+from bhp_common.utils import formatted_age, convert_from_camel
 
 register = template.Library()
 
@@ -164,6 +166,23 @@ def get_item(items, key):
         except:
             pass
     return None
+
+
+@register.filter(name='get_revision')
+def get_revision(opts):
+    """Returns the svn revision number for the model\'s file using Opts (_meta)."""
+    try:
+        rev = subprocess.check_output(
+            ['svn', 'info', '{0}.py'.format(convert_from_camel(opts.object_name))],
+            cwd=os.path.join(settings.DIRNAME, '/'.join([opts.app_label, 'models/']))
+            )
+        #s = re.search('Revision: [0-9]+', rev)
+        #revision = s.group().split(': ')[1]
+        s = re.search('Last Changed Rev: [0-9]+', rev)
+        return s.group().split(': ')[1]
+    except:
+        pass
+    return '?'
 
 
 @register.filter(name='get_field')
