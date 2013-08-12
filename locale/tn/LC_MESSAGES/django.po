@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-02 11:24+0200\n"
-"PO-Revision-Date: 2013-08-06 16:09+0200\n"
+"PO-Revision-Date: 2013-08-12 13:43+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -2613,7 +2613,7 @@ msgstr ""
 
 #: bcpp_subject/models/circumcised.py:12
 msgid "At what age were you circumcised?"
-msgstr "O rupisitswe o le dingwaga di kae?"
+msgstr "O dirile loaro la borre o le dingwaga di kae?"
 
 #: bcpp_subject/models/circumcised.py:16
 msgid "Note:Leave blank if participant does not want to respond."
@@ -2621,15 +2621,15 @@ msgstr "Note:Leave blank if participant does not want to respond."
 
 #: bcpp_subject/models/circumcised.py:20
 msgid "Where were you circumcised?"
-msgstr "O rupiseditswe kae?"
+msgstr "O dirile loara la borre kae?"
 
 #: bcpp_subject/models/circumcised.py:31
 msgid "What was the main reason why you were circumcised?"
-msgstr "Lebaka legolo la gore o bo o rupile ke lefe?"
+msgstr "Lebaka legolo la gore o bo o dirile loara la borre ke lefe?"
 
 #: bcpp_subject/models/circumcision.py:13
 msgid "Are you circumcised?"
-msgstr "A o rupile/rupisitswe?"
+msgstr "A o dirile loaro la borre?"
 
 #: bcpp_subject/models/community_engagement.py:15
 msgid ""
