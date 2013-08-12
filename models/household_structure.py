@@ -8,7 +8,6 @@ from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdStructureManager
 from household import Household
 
-
 class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     """ Each year/survey a new household_structure is created for the household """
@@ -37,13 +36,13 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     objects = HouseholdStructureManager()
 
     history = AuditTrail()
-
+          
     def __unicode__(self):
         return unicode(self.household)
 
     def natural_key(self):
         return self.household.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_survey.survey', 'bcpp_household.household', ]
+    natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey',]
 
     def gps_point(self):
         return "LON:{0} LAT:{1}".format(self.household.gps_point_11, self.household.gps_point_21)
