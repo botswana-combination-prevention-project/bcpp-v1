@@ -4,7 +4,8 @@
   margin-bottom: 10px !important;
 }
 
-.long-lbl ~ input { 
+.long-lbl ~ input,
+.long-lbl ~ .selector { 
   margin-left: 10em             !important;
 }
 
@@ -19,7 +20,4 @@
   right: 30px             !important;
 }
 
-.long-lbl ~ .selector {
-  margin-left: 10em !important;
-}
 
