@@ -26,7 +26,7 @@ class BaseSectionView(object):
         self._section_name = None
         self._add_model_cls = None
         self._section_list = None
-        self.search_label = None
+        #self.search_label = None
         self._sections_using_search = []
         self._custom_template = {}
         self._search_type = {}
@@ -60,7 +60,7 @@ class BaseSectionView(object):
 
     def set_section_name(self, value=None):
         """Sets the name for this section."""
-        if self.section_name:
+        if self.section_name:  # try for class attribute first
             self._section_name = self.section_name
         else:
             self._section_name = value
@@ -74,7 +74,7 @@ class BaseSectionView(object):
 
     def _set_add_model_cls(self, value=None):
         """Sets the model class used for the 'Add' button."""
-        if self.add_model:
+        if self.add_model:  # try for class attribute first
             self._add_model_cls = self.add_model
         else:
             self._add_model_cls = value
@@ -100,14 +100,18 @@ class BaseSectionView(object):
     def set_search_type(self, section_name, search_type=None):
         """Sets the search type.
 
+        Called from url_patterns()
+
         If the `section name` is listed as a search type, the :func:`view` method
         will get the search class from the `site_search` global and try to search against
         the search class' search model."""
         if search_type:
             self._search_type.update({section_name: search_type})
 
-    def get_search_type(self, section_name):
+    def get_search_type(self, section_name=None):
         """Returns the search type for this section."""
+        if not section_name:
+            section_name = self.get_section_name()
         if not section_name in self._search_type:
             self.set_search_type(section_name)
         if section_name in self._search_type:
