@@ -35,13 +35,13 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         return (self.report_datetime, ) + self.household_member.natural_key()
-    natural_key.dependencies = ['mochudi_household.householdmember', ]
+    natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
     def dispatch_container_lookup(self, using=None):
         return (Household, 'household_member__household_structure__household__household_identifier')
 
     def dispatch_item_container_reference(self, using=None):
-        return (('mochudi_household', 'household'), 'household_structure__household')
+        return (('bcpp_household', 'household'), 'household_structure__household')
 
     def is_dispatchable(self):
         return True
