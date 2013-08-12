@@ -10,7 +10,6 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
     dashboard_type = 'subject'
     subject_identifier_attribute = 'registration_identifier'
     fields = (
-        'registered_subject',
         'household_member',
         'report_datetime',
         'refusal_date',
