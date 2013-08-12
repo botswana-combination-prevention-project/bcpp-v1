@@ -19,7 +19,7 @@ from hiv_tested_form import HivTestedForm
 from hiv_untested_form import HivUntestedForm
 from months_partner_form import *
 from hiv_test_review_form import HivTestReviewForm
-from uncircumcised_form import UncircumcisedForm
+from circumcision_form import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from access_to_care_form import AccessToCareForm
 from future_hiv_testing_form import FutureHivTestingForm
 from reproductive_health_form import ReproductiveHealthForm

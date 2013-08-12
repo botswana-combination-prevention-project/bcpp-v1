@@ -9,10 +9,10 @@ class AccessToCareForm (BaseSubjectModelForm):
         cleaned_data = self.cleaned_data
 
         # if other, specify
-        if cleaned_data.get('often_medicalcare') == 'OTHER' and not cleaned_data.get('often_medicalcare_other'):
+        if cleaned_data.get('access_care') == 'OTHER' and not cleaned_data.get('access_care_other'):
             raise forms.ValidationError('if other medical care is used, specify the kind of medical care received')
-        if cleaned_data.get('whereaccess') == 'Other, specify' and not cleaned_data.get('whereaccess_other'):
-            raise forms.ValidationError('if medical access is \'OTHER\', provide the type of medical access obtained')
+#         if cleaned_data.get('medical_care_access') == 'Other, specify' and not cleaned_data.get('medical_care_access_other'):
+#             raise forms.ValidationError('if medical access is \'OTHER\', provide the type of medical access obtained')
 
         return cleaned_data
 

@@ -3,8 +3,7 @@ from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
                                  CeaEnrolmentChecklist, CommunityEngagement,
-                                 HivMedicalCare, Circumcision, Circumcised,
-                                 MedicalDiagnoses, HeartAttack,
+                                 HivMedicalCare, MedicalDiagnoses, HeartAttack,
                                  Cancer, Tubercolosis, Sti, SubstanceUse, Stigma,
                                  StigmaOpinion, PositiveParticipant,
                                  HivResultDocumentation)
@@ -85,28 +84,6 @@ class HivMedicalCareForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivMedicalCare
-
-
-class CircumcisionForm (BaseSubjectModelForm):
-    def clean(self):
-
-        cleaned_data = self.cleaned_data
-
-        return cleaned_data
-
-    class Meta:
-        model = Circumcision
-
-
-class CircumcisedForm (BaseSubjectModelForm):
-    def clean(self):
-
-        cleaned_data = self.cleaned_data
-
-        return cleaned_data
-
-    class Meta:
-        model = Circumcised
 
 
 class MedicalDiagnosesForm (BaseSubjectModelForm):
