@@ -14,11 +14,14 @@ class EducationForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant is not working, do not give job type')
         if cleaned_data.get('working') == 'No' and not cleaned_data.get('reason_unemployed'):
             raise forms.ValidationError('If participant is not working, provide reason for unemployment')
+        # validating for those employed
+        if cleaned_data.get('working') == 'Yes' and cleaned_data.get('reason_unemployed'):
+            raise forms.ValidationError('You have provided unemployment details yet have indicated that participant is working')
         if cleaned_data.get('working') == 'Yes' and not cleaned_data.get('job_type'):
             raise forms.ValidationError('If participant is working, provide the job type')
-        if cleaned_data.get('working') != 'Yes' and not cleaned_data.get('job_description'):
+        if cleaned_data.get('working') == 'Yes' and not cleaned_data.get('job_description'):
             raise forms.ValidationError('If participant is employed, what is the job description')
-        if cleaned_data.get('working') != 'Yes' and not cleaned_data.get('monthly_income'):
+        if cleaned_data.get('working') == 'Yes' and not cleaned_data.get('monthly_income'):
             raise forms.ValidationError('If participant is employed, what is his/her monthly income?')
  
         cleaned_data = super(EducationForm, self).clean()

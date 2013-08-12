@@ -8,16 +8,20 @@ class DemographicsForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-        #validating religion affiliation
-        if cleaned_data.get('religion') == 'Christian' and not cleaned_data.get('religion_other'):
-            raise forms.ValidationError('If participant is a Christian, specify denomination.')
-        #validating Other
-        if cleaned_data.get('ethnic') == 'Other' and not cleaned_data.get('other'):
-            raise forms.ValidationError('If participant ethnic group not given in list-of-options, specify the ethnic group.')
+        #validation religion
+        if cleaned_data.get('religion')[0].name == 'Other' and not cleaned_data.get('religion_other'):
+            raise forms.ValidationError('If participant\'s religion not in given list, name the religion')
+        #validation- ethnic group
+        if cleaned_data.get('ethnic')[0].name == 'Other, specify' and not cleaned_data.get('other'):
+            raise forms.ValidationError('If participant\'s ethnic group is not in the given list, name the ethnic group')
         #validating marital status
-#         if cleaned_data.get('marital_status') == 'Married' and not cleaned_data.get('num_wives'):
-#             raise forms.ValidationError('If participant is married, give number of wives')
-#         cleaned_data = super(DemographicsForm, self).clean()
+        #asked if female
+        if cleaned_data.get('marital_status') == 'Married' and not cleaned_data.get('num_wives'):
+            raise forms.ValidationError('If participant is married, give number of wives')
+        #asked if male
+        if cleaned_data.get('marital_status') == 'Married' and not cleaned_data.get('husband_wives'):
+            raise forms.ValidationError('If participant is married, how many wives is he married to, including traditional marriages?')
+        cleaned_data = super(DemographicsForm, self).clean()
         return cleaned_data
 
     class Meta:

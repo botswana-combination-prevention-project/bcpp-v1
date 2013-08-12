@@ -26,3 +26,5 @@ from reproductive_health_form import ReproductiveHealthForm
 from pima_form import PimaForm
 from blood_draw_form import BloodDrawForm
 from education_form import EducationForm 
+from community_engagement_form import CommunityEngagementForm
+from medical_diagnoses_form import MedicalDiagnosesForm

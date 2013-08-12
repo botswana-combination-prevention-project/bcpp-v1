@@ -23,7 +23,7 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant is taking ARV\'s, have they skipped/ missed taking any? Pleae indicate')
         #if you are not taking any arv's do not indicate that you have missed taking medication
         if cleaned_data.get('on_arv') == 'No' and cleaned_data.get('adherence_4_day'):
-            raise forms.ValidationError('You do not have to indicate missed medication (70) because you are not taking any ARV\'s (68)')
+            raise forms.ValidationError('You do not have to indicate missed medication because you are not taking any ARV\'s')
         #if currently taking arv's, how well has participant been taking medication
         if cleaned_data.get('on_arv') == 'Yes' and cleaned_data.get('adherence_4_wk'):
             raise forms.ValidationError('If participant is currently taking ARV\'s, how well has he/she been taking the medication this past week?')

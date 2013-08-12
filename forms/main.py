@@ -2,9 +2,8 @@ from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
-                                 CeaEnrolmentChecklist, CommunityEngagement,
-                                 HivMedicalCare, MedicalDiagnoses, HeartAttack,
-                                 Cancer, Tubercolosis, Sti, SubstanceUse, Stigma,
+                                 CeaEnrolmentChecklist, HivMedicalCare, 
+                                 HeartAttack, Cancer, Tubercolosis, Sti, SubstanceUse, Stigma,
                                  StigmaOpinion, PositiveParticipant,
                                  HivResultDocumentation)
 
@@ -69,12 +68,6 @@ class CeaEnrolmentChecklistForm (BaseSubjectModelForm):
         model = CeaEnrolmentChecklist
 
 
-class CommunityEngagementForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = CommunityEngagement
-
-
 class HivMedicalCareForm (BaseSubjectModelForm):
     def clean(self):
 
@@ -84,16 +77,6 @@ class HivMedicalCareForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivMedicalCare
-
-
-class MedicalDiagnosesForm (BaseSubjectModelForm):
-    def clean(self):
-
-        cleaned_data = self.cleaned_data
-        return cleaned_data
-
-    class Meta:
-        model = MedicalDiagnoses
 
 
 class SubstanceUseForm (BaseSubjectModelForm):
