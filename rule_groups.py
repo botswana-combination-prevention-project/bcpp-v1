@@ -155,14 +155,14 @@ class SexualBehaviourRuleGroup(RuleGroup):
     
     partners = ScheduledDataRule(
         logic=Logic(
-            predicate=('last_year_partners', 'equals', 1),
+            predicate=('last_year_partners', 'lt', 2),
             consequence='new',
             alternative='not_required'),
         target_model=['monthsrecentpartner'])
     
     last_year_partners = ScheduledDataRule(
         logic=Logic(
-            predicate=('last_year_partners', 'equals', 2),
+            predicate=('last_year_partners', 'eq', 2),
             consequence='new',
             alternative='not_required'),
         target_model=['monthsrecentpartner', 'monthssecondpartner'])
@@ -275,14 +275,6 @@ rule_groups.register(ReproductiveRuleGroup)
 
 
 class MedicalDiagnosesRuleGroup(RuleGroup):
-    
-    #to cancel all related illnesses if diagnoses is equal to none
-    diagnoses = ScheduledDataRule(
-        logic=Logic(
-            predicate=('diagnoses', 'equals', 'none'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['heartattack', 'cancer', 'tubercolosis', 'sti', ])
 
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
