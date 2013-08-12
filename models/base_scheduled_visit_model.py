@@ -38,11 +38,11 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
     def get_visit(self):
         return self.subject_visit
     
-    def deserialize_get_missing_fk(self, attrname):
-        if attrname == 'subject_visit':
-            return SubjectVisit.objects.get(internal_identifier=self.appointment.registered_subject.registration_identifier, survey=self.survey)
-        else:
-            return None
+#     def deserialize_get_missing_fk(self, attrname):
+#         if attrname == 'subject_visit':
+#             return SubjectVisit.objects.get(internal_identifier=self.appointment.registered_subject.registration_identifier, survey=self.survey)
+#         else:
+#             return None
         
     def is_dispatched_item_within_container(self, using=None):
         return (('bcpp_household', 'household'), 'subject_visit__household_member__household_structure__household')
