@@ -7,7 +7,7 @@ class SexualBehaviourForm (BaseSubjectModelForm):
 
     def clean(self):
 
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(SexualBehaviourForm, self).clean()
         #validating having had sex and no sex
         if cleaned_data.get('ever_sex') == 'No' and cleaned_data.get('lifetime_sex_partners') and cleaned_data.get('last_year_partners'):
             raise forms.ValidationError('If participant has NEVER had sex, DO NOT provide details about sexual partners')
@@ -21,9 +21,6 @@ class SexualBehaviourForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant has had sex at some point in their life, did participant use a condom the last time he/she had sex?')
         if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('alcohol_sex'):
             raise forms.ValidationError('If participant has had sex at some point in their life, did participant drink alcohol before sex last time?')
-        
-
-        cleaned_data = super(SexualBehaviourForm, self).clean()
         return cleaned_data
 
     class Meta:

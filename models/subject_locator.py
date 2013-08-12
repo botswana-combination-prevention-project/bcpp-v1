@@ -94,7 +94,9 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
         return self.subject_visit
 
     def get_subject_identifier(self):
-        return self.get_visit().get_subject_identifier()
+        if self.get_visit():
+            return self.get_visit().get_subject_identifier()
+        return None
 
     def get_report_datetime(self):
         return self.created

@@ -1,13 +1,13 @@
 from django import forms
 from bhp_base_form.forms import BaseModelForm
-from bcpp_subject.models import SubjectConsent  
+from bcpp_subject.models import SubjectConsent
 
 
 class BaseMembershipForm(BaseModelForm):
 
     def clean(self):
 
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(BaseMembershipForm, self).clean()
         if cleaned_data:
             household_member = cleaned_data.get('household_member', None)
             if not household_member:
@@ -19,5 +19,4 @@ class BaseMembershipForm(BaseModelForm):
                 subject_consent = SubjectConsent.objects.get(household_member=household_member)
                 if cleaned_data.get('report_datetime', None) > subject_consent.consent_datetime:
                     raise forms.ValidationError("Report may not be submitted for survey {}. Subject is already consented for this survey.".format(subject_consent.survey.survey_name,))
-
-        return super(BaseMembershipForm, self).clean()
+        return cleaned_data
