@@ -17,15 +17,7 @@
                     {% if field.is_checkbox %}
                         {{ field.field }}{{ field.label_tag }}
                     {% else %}
-                        {% if field.field.label|length > 20 %}
-                        <label 
-                          class="long-qn{% if field.field.field.required %} required{% endif %}" 
-                          id="id_{{ field.field.name}}">
-                            {{ field.field.label }}
-                          </label>
-                        {% else %}
-                          {{ field.label_tag }}
-                        {% endif %}
+                        {{ field.label_tag }}
                         {% if field.is_readonly %}
                             <p>{{ field.contents }}</p>
                         {% else %}
