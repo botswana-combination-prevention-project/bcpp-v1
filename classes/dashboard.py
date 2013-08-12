@@ -2,6 +2,7 @@ import re
 import inspect
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
+from bhp_section.classes import site_sections
 from bhp_context.classes import BaseContext
 from bhp_base_model.models import BaseModel
 from bhp_registration.models import RegisteredSubject
@@ -22,6 +23,9 @@ class Dashboard(object):
         self._dashboard_model_key = None
         self._dashboard_model_instance = None
         self._dashboard_model_reference = None
+        self._section = None
+        self._section_name = None
+        self._search_type = None
 
     def create(self, **kwargs):
         self.set_dashboard_type(kwargs.get('dashboard_type'))
@@ -29,7 +33,7 @@ class Dashboard(object):
         self.set_dashboard_model_key(kwargs.get('dashboard_model'))
         self.set_dashboard_model()
         self.context.add(
-            search_name=self.search_name,
+            #search_name=self.search_name,
             template=self.get_template(),
             dashboard_type=self.get_dashboard_type(),
             dashboard_id=self.get_dashboard_id(),
@@ -44,6 +48,47 @@ class Dashboard(object):
 
     def get_context(self):
         return self.context.values
+
+    def set_search_type(self):
+        self._search_type = self.get_section().get_search_type(self.get_section_name())
+        #if not self._search_type:
+        #    raise TypeError('Attribute \'self._search_type\' may not be None.')
+
+    def get_search_type(self):
+        if not self._search_type:
+            self.set_search_type()
+        return self._search_type
+
+    def set_section(self, key=None):
+        """Sets the section class for the dashboard.
+
+        Call in __init__::
+
+            self.set_section('household')
+        """
+        if not key:
+            raise TypeError('Parameter \'key\' may not be None. Call set_section in __init__ to set the correct section class for this dashboard.')
+        section = site_sections.get(key)
+        if not section:
+            if site_sections.get_section_names() == []:
+                raise TypeError('class site_sections is not set up. Call autodoscover first.')
+            section = site_sections.get(key)
+        if not section:
+            raise TypeError('Could not find section \'{0}\' in site_sections. You need to define a section class for this name in section.py.'.format(key))
+        self._section = section()
+
+    def get_section(self):
+        if not self._section:
+            self.set_section()
+        return self._section
+
+    def set_section_name(self):
+        self._section_name = self.get_section().get_section_name()
+
+    def get_section_name(self):
+        if not self._section_name:
+            self.set_section_name()
+        return self._section_name
 
     def set_dashboard_type(self, value=None):
         self._dashboard_type = value
