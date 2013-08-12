@@ -156,16 +156,16 @@ class SexualBehaviourRuleGroup(RuleGroup):
     partners = ScheduledDataRule(
         logic=Logic(
             predicate=('last_year_partners', 'lt', 2),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['monthsrecentpartner'])
+            consequence='not_required',
+            alternative='new'),
+        target_model=['monthssecondpartner', 'monthsthirdpartner'])
     
     last_year_partners = ScheduledDataRule(
         logic=Logic(
             predicate=('last_year_partners', 'eq', 2),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['monthsrecentpartner', 'monthssecondpartner'])
+            consequence='not_required',
+            alternative='new'),
+        target_model=['monthsthirdpartner'])
     
     more_partners = ScheduledDataRule(
         logic=Logic(
