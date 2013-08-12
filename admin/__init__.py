@@ -30,3 +30,5 @@ from reproductive_health_admin import ReproductiveHealthAdmin
 from pima_admin import PimaAdmin
 from blood_draw_admin import BloodDrawAdmin
 from education_admin import EducationAdmin
+from community_engagement_admin import CommunityEngagementAdmin
+from medical_diagnoses_admin import MedicalDiagnosesAdmin

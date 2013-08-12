@@ -10,7 +10,9 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'religion',
+        'religion_other',
         'ethnic',
+        'other',
         'marital_status',
         'num_wives',
         'husband_wives',
