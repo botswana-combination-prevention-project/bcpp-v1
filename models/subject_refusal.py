@@ -2,33 +2,11 @@ from django.db import models
 from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bhp_base_model.validators import date_not_future, date_not_before_study_start
-from bhp_common.choices import GENDER
 from bcpp.choices import WHYNOPARTICIPATE_CHOICE
 from base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectRefusal (BaseMemberStatusModel):
-
-#     sex = models.CharField(
-#         verbose_name="[For interviewer] Resident sex?",
-#         max_length=15,
-#         choices=GENDER,
-#         help_text="",
-#         )
-
-#     age = models.IntegerField(
-#         verbose_name="What is your age?",
-#         null=True,
-#         blank=True,
-#         help_text="Leave blank If participant does not want to answer.",
-#         )
-
-#     length_residence = models.CharField(
-#         verbose_name="How long have your lived in this community?",
-#         max_length=25,
-#         choices=LENGTHRESIDENCE_CHOICE,
-#         help_text="",
-#         )
 
     refusal_date = models.DateField(
         verbose_name="Date subject refused participation",
@@ -52,22 +30,6 @@ class SubjectRefusal (BaseMemberStatusModel):
                    " when the subject changes their mind"),
         default='REFUSED',
         editable=False)
-# 
-#     hiv_test_today = models.CharField(
-#         verbose_name="[For interviewer] Did resident complete HIV testing today?",
-#         max_length=15,
-#         choices=YES_NO_UNSURE,
-#         help_text="",
-#         )
-# 
-#     why_no_hivtest = models.CharField(
-#         verbose_name="What was the main reason why you did not want HIV testing as part of today's visit?",
-#         max_length=50,
-#         null=True,
-#         blank=True,
-#         choices=WHYNOHIVTESTING_CHOICE,
-#         help_text="if 'Yes or Unsure' END survey",
-#         )
 
     comment = models.CharField(
         verbose_name="Comment",
@@ -89,6 +51,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         kwargs['reason'] = 'refuse'
         kwargs['info_source'] = 'subject'
         self.survey = self.household_member.survey
+        self.registered_subject = self.household_member.registered_subject
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     class Meta:
