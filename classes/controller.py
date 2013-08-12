@@ -65,16 +65,24 @@ class Controller(object):
         self.set_registry(search_cls)
 
     def autodiscover(self, sections_list):
-        self._section_list = [tpl[self.SECTION_NAME] for tpl in sections_list]
-        for app in settings.INSTALLED_APPS:
-            mod = import_module(app)
-            try:
-                before_import_registry = copy.copy(site_search._registry)
-                import_module('%s.search' % app)
-            except:
-                site_search._registry = before_import_registry
-                if module_has_submodule(mod, 'search'):
-                    raise
-        self.is_autodiscovered = True
+        """Discovers search classes in each installed app with a search.py.
+
+        By default this is called by :func:`setup` in :class:`bhp_sections.classes.BaseSectionIndexView`.
+
+        Otherwise you need to call something like this::
+
+            site_search.autodiscover(site_sections.get_section_list())"""
+        if not self.is_autodiscovered:
+            self._section_list = [tpl[self.SECTION_NAME] for tpl in sections_list]
+            for app in settings.INSTALLED_APPS:
+                mod = import_module(app)
+                try:
+                    before_import_registry = copy.copy(site_search._registry)
+                    import_module('%s.search' % app)
+                except:
+                    site_search._registry = before_import_registry
+                    if module_has_submodule(mod, 'search'):
+                        raise
+            self.is_autodiscovered = True
 
 site_search = Controller()

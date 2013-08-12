@@ -62,7 +62,7 @@ class BaseSearchByWord(BaseSearch):
                 Q(user_created__icontains=search_term_or_hash.get('user_created')) |
                 Q(user_modified__icontains=search_term_or_hash.get('user_modified'))
                 )
-        elif isinstance(model(), BaseConsent):
+        elif issubclass(model, BaseConsent):
             # model is a subclass of BaseConsent
             search_term_or_hash = self.hash_for_encrypted_fields(search_term, model)
             self.update_context(order_by='subject_identifier')

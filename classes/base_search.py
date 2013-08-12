@@ -18,6 +18,7 @@ class BaseSearch(object):
     MODEL_NAME = 1
     section_name = None
     search_model = None
+    template = None
     order_by = None
 
     def __init__(self):
@@ -122,7 +123,7 @@ class BaseSearch(object):
     def set_search_result_include_template(self, template=None):
         if template:
             self._search_result_template = template
-        elif self.template:
+        elif self.template:  # try for class attribute first
             self._search_result_template = self.template
         else:
             self._search_result_template = '{0}_include.html'.format(self.get_search_model_cls()._meta.object_name.lower())
