@@ -1,9 +1,9 @@
 from django.db.models import get_models, get_app
-from bhp_appointment_helper.models import BaseAppointmentMixin
+# from bhp_appointment_helper.models import BaseAppointmentMixin
 from base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 
 
-class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel, BaseAppointmentMixin):
+class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
 
     def __unicode__(self):
         return '{0} {1}'.format(self.member_status_string().lower(), self.get_report_datetime().strftime('%Y-%m-%d'))
