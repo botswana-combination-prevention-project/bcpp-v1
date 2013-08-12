@@ -9,7 +9,6 @@ from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEnt
 from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from bcpp_survey.models import Survey
 from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
-from bhp_section.classes import site_sections
 
 
 class HouseholdDashboard(Dashboard):
@@ -23,14 +22,14 @@ class HouseholdDashboard(Dashboard):
         self._enrolment_checklist = None
         self._household_info = None
         self._survey = None
+        self.set_section('household')
         # TODO: section/search stuff should move to base class
-        section = site_sections.get('household')
         self.add_to_dashboard_model_reference({'household': Household, 'household_structure': HouseholdStructure})
         self.context.add(
-            section_name=section().get_section_name(),
-            search_type=section().get_search_type(section().get_section_name()),
+            section_name=self.get_section_name(),
+            search_type=self.get_search_type(),
             home='bcpp_survey',
-            search_name='household',
+            #search_name='household',
             household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_ACTION],
             membership_forms={'ABSENT': get_model('bcpp_subject', 'subjectabsentee')},
             title='',  # 'A. Household Composition',
