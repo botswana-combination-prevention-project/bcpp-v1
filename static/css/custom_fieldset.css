@@ -1,0 +1,24 @@
+.long-qn {
+  float: none             !important;
+  width: 80%            !important;
+  padding-bottom: 10px            !important;
+}
+
+.long-qn + select,
+.long-qn ~ .selector,
+.long-qn + input { 
+  margin-left: 10em             !important;
+}
+
+.long-qn ~ .selector { float: none  !important; }
+
+.relative {
+  position: relative             !important;
+}
+
+.relative .add-help,
+.relative .edit-help {
+  position: absolute            !important;
+  top: 10px             !important;
+  right: 30px             !important;
+}
