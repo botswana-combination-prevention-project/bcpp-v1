@@ -51,12 +51,15 @@ class HouseholdMember(BaseHouseholdMember):
     history = AuditTrail()
 
     objects = HouseholdMemberManager()
-
+            
     def natural_key(self):
+        self.registered_subject =  None
         if not self.household_structure:
             raise AttributeError("member.household_structure cannot be None for pk='\{0}\'".format(self.pk))
-        return self.household_structure.natural_key()
-    natural_key.dependencies = ['bcpp_household.householdstructure']
+        if not self.registered_subject:
+            raise AttributeError("member.registered_subject cannot be None for pk='\{0}\'".format(self.pk))
+        return self.household_structure.natural_key() + self.registered_subject.natural_key()
+    natural_key.dependencies = ['bcpp_household.householdstructure', 'bhp_registration.registeredsubject']
 
     def __unicode__(self):
         return '{0} of {1} ({2}{3}) {4}'.format(
