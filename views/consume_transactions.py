@@ -66,7 +66,7 @@ def consume_transactions(request, **kwargs):
                         else:
                             #I am still a Server, but now pulling from a netbook, just grab all eligible(i.e not synced by Server yet) transactions from OutgoingTransactions table
                             #however pass the producer for filtering on the other side.
-                            url = '{host}bhp_sync/api_otsr/outgoingtransaction/?format=json&limit={limit}&producer={producer}&username={username}&api_key={api_key}'.format(**data)
+                            url = '{host}bhp_sync/api_otsr/outgoingtransaction/?format=json&limit={limit}&producer={producer}_survey&username={username}&api_key={api_key}'.format(**data)
                     request_log = RequestLog()
                     request_log.producer = producer
                     request_log.save()
