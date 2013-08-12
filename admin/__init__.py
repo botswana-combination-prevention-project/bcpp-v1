@@ -22,7 +22,7 @@ from hiv_untested_admin import HivUntestedAdmin
 from future_hiv_testing_admin import FutureHivTestingAdmin
 from months_partner_admin import *
 from hiv_test_review_admin import HivTestReviewAdmin
-from uncircumcised_admin import UncircumcisedAdmin
+from circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin
 from access_to_care_admin import AccessToCareAdmin
 from labour_market_wages_admin import LabourMarketWagesAdmin, GrantInlineAdmin
 from grant_admin import GrantAdmin

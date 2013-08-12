@@ -3,7 +3,7 @@ from django.contrib import admin
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
                                  HospitalAdmission, HivHealthCareCosts, CeaEnrolmentChecklist,
-                                 CommunityEngagement, HivMedicalCare, Circumcision, Circumcised,
+                                 CommunityEngagement, HivMedicalCare,
                                  MedicalDiagnoses, HeartAttack, Cancer, Sti,
                                  Tubercolosis, SubstanceUse, Stigma,
                                  StigmaOpinion, PositiveParticipant,
@@ -12,9 +12,7 @@ from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
                                 HospitalAdmissionForm, HivHealthCareCostsForm,
                                 CeaEnrolmentChecklistForm, CommunityEngagementForm,
-                                HivMedicalCareForm,
-                                CircumcisionForm, CircumcisedForm,
-                                MedicalDiagnosesForm,
+                                HivMedicalCareForm, MedicalDiagnosesForm,
                                 HeartAttackForm, CancerForm, StiForm,
                                 TubercolosisForm, SubstanceUseForm, StigmaForm,
                                 StigmaOpinionForm, PositiveParticipantForm,
@@ -192,52 +190,6 @@ class HivMedicalCareAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         "lowest_cd4": admin.VERTICAL}
 admin.site.register(HivMedicalCare, HivMedicalCareAdmin)
-
-
-class CircumcisionAdmin(SubjectVisitModelAdmin):
-
-    form = CircumcisionForm
-    fields = (
-        "subject_visit",
-        'circumcised',)
-    radio_fields = {
-         'circumcised': admin.VERTICAL, }
-    required_instructions = ("Note to Interviewer: This section is to be completed"
-                             " by male participants. SKIP for female participants."
-                             "Read to Participant: Some men are circumcised. "
-                             "Male circumcision is [enter site specific word] when"
-                             " the foreskin of the man's penis has been cut off."
-                             " I would like to ask you a few questions regarding"
-                             " male circumcision. Here is a diagram to clarify what"
-                             " a circumcised and uncircumcised man looks like.")
-admin.site.register(Circumcision, CircumcisionAdmin)
-
-
-class CircumcisedAdmin(SubjectVisitModelAdmin):
-
-    form = CircumcisedForm
-#     supplemental_fields = SupplementalFields(
-#         ("circumcised",
-#         "health_benefits_smc",
-#         'where_circ', 
-#         'where_circ_other',
-#         'why_circ', 
-#         'why_circ_other'), p=0.18, group='MC')
-    fields = (
-        "subject_visit",
-        "circumcised",
-        "health_benefits_smc",
-        'when_circ',
-        'where_circ',
-        'where_circ_other',
-        'why_circ',
-        'why_circ_other',)
-    radio_fields = {
-        "circumcised": admin.VERTICAL,
-        "where_circ": admin.VERTICAL,
-        "why_circ": admin.VERTICAL, }
-    filter_horizontal = ("health_benefits_smc",)
-admin.site.register(Circumcised, CircumcisedAdmin)
 
 
 class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):

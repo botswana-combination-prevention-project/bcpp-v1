@@ -1,0 +1,98 @@
+from django.contrib import admin
+# from bhp_supplemental_fields.classes import SupplementalFields
+from subject_visit_model_admin import SubjectVisitModelAdmin
+from bcpp_subject.models import Circumcision, Circumcised, Uncircumcised
+from bcpp_subject.forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
+
+
+class CircumcisionAdmin(SubjectVisitModelAdmin):
+
+    form = CircumcisionForm
+    fields = (
+        "subject_visit",
+        'circumcised',)
+    radio_fields = {
+         'circumcised': admin.VERTICAL, }
+    required_instructions = ("Note to Interviewer: This section is to be completed"
+                             " by male participants. SKIP for female participants."
+                             "Read to Participant: Some men are circumcised. "
+                             "Male circumcision is [enter site specific word] when"
+                             " the foreskin of the man's penis has been cut off."
+                             " I would like to ask you a few questions regarding"
+                             " male circumcision. Here is a diagram to clarify what"
+                             " a circumcised and uncircumcised man looks like.")
+admin.site.register(Circumcision, CircumcisionAdmin)
+
+
+class CircumcisedAdmin(SubjectVisitModelAdmin):
+
+    form = CircumcisedForm
+#     supplemental_fields = SupplementalFields(
+#         ("circumcised",
+#         "health_benefits_smc",
+#         'where_circ', 
+#         'where_circ_other',
+#         'why_circ', 
+#         'why_circ_other'), p=0.18, group='MC')
+    fields = (
+        "subject_visit",
+        "circumcised",
+        "health_benefits_smc",
+        'when_circ',
+        'where_circ',
+        'where_circ_other',
+        'why_circ',
+        'why_circ_other',)
+    radio_fields = {
+        "circumcised": admin.VERTICAL,
+        "where_circ": admin.VERTICAL,
+        "why_circ": admin.VERTICAL, }
+    filter_horizontal = ("health_benefits_smc",)
+admin.site.register(Circumcised, CircumcisedAdmin)
+
+
+class UncircumcisedAdmin(SubjectVisitModelAdmin):
+
+    form = UncircumcisedForm
+#     supplemental_fields = SupplementalFields(
+#         ("circumcised",
+#         "health_benefits_smc",
+#         'reason_circ',
+#         'reason_circ_other',
+#         'circumcision_day',
+#         'circumcision_day_other',
+#         'circumcision_week',
+#         'circumcision_week_other',
+#         'circumcision_year',
+#         'circumcision_year_other',
+#         'future_reasons_smc',
+#         'service_facilities',
+#         'aware_free'), p=0.18, group='MC')
+    fields = (
+        "subject_visit",
+        "circumcised",
+        "health_benefits_smc",
+        'reason_circ',
+        'reason_circ_other',
+        'future_circ',
+        'circumcision_day',
+        'circumcision_day_other',
+        'circumcision_week',
+        'circumcision_week_other',
+        'circumcision_year',
+        'circumcision_year_other',
+        'future_reasons_smc',
+        'service_facilities',
+        'aware_free',)
+    radio_fields = {
+        "circumcised": admin.VERTICAL,
+        "reason_circ": admin.VERTICAL,
+        "future_circ": admin.VERTICAL,
+        "circumcision_day": admin.VERTICAL,
+        "circumcision_week": admin.VERTICAL,
+        "circumcision_year": admin.VERTICAL,
+        "future_reasons_smc": admin.VERTICAL,
+        "service_facilities": admin.VERTICAL,
+        "aware_free": admin.VERTICAL}
+    filter_horizontal = ("health_benefits_smc",)
+admin.site.register(Uncircumcised, UncircumcisedAdmin)
