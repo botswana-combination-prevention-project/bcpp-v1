@@ -10,6 +10,8 @@ class BasePregnancy (BaseScheduledVisitModel):
 
     last_birth = models.DateField(
         verbose_name=_("When did you last (most recently) give birth?"),
+        null=True, 
+        blank=True,
         help_text="",
         )
 
@@ -17,6 +19,8 @@ class BasePregnancy (BaseScheduledVisitModel):
         verbose_name=_("During your last pregnancy (not current pregnancy) did you go for antenatal care?"),
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
+        null=True, 
+        blank=True,
         help_text="",
         )
 
@@ -25,6 +29,7 @@ class BasePregnancy (BaseScheduledVisitModel):
         max_length=25,
         choices=YES_NO_UNSURE,
         null=True,
+        blank=True,
         help_text="If respondent was aware that she was HIV-positive prior to last pregnancy",
         )
 
@@ -33,6 +38,7 @@ class BasePregnancy (BaseScheduledVisitModel):
         max_length=95,
         choices=PREGARV_CHOICE,
         null=True,
+        blank=True,
         help_text="",
         )
 

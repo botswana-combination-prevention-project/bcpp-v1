@@ -19,8 +19,6 @@ class Demographics (BaseScheduledVisitModel):
 
     ethnic = models.ManyToManyField(EthnicGroups,
         verbose_name=_("What is your ethnic group?"),
-#         max_length=35,
-#         choices=ETHNIC_CHOICE,
         help_text="Ask for the original ethnic group",
         )
     other = OtherCharField()
