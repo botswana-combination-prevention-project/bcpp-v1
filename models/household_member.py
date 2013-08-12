@@ -53,7 +53,6 @@ class HouseholdMember(BaseHouseholdMember):
     objects = HouseholdMemberManager()
             
     def natural_key(self):
-        self.registered_subject =  None
         if not self.household_structure:
             raise AttributeError("member.household_structure cannot be None for pk='\{0}\'".format(self.pk))
         if not self.registered_subject:
