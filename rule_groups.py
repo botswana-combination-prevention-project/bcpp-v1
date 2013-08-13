@@ -1,7 +1,7 @@
 from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
 from bhp_registration.models import RegisteredSubject
 from models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
-                    SexualBehaviour, HivCareAdherence, Circumcision, 
+                    SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses)
 
 
@@ -28,16 +28,16 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 rule_groups.register(ResourceUtilizationRuleGroup)
 
 
-#Would probably be useful for T12 survey
+# Would probably be useful for T12 survey
 # class SubjectDeathRuleGroup(RuleGroup):
-# 
+#
 #     death = AdditionalDataRule(
 #         logic=Logic(
 #             predicate=('reason', 'equals', 'death'),
 #             consequence='required',
 #             alternative='not_required'),
 #         target_model=['subjectoffstudy', 'subjectdeath'])
-# 
+#
 #     class Meta:
 #         app_label = 'bcpp_subject'
 #         source_model = SubjectVisit
@@ -53,49 +53,48 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivtestreview'])
-    
+
     has_tested = ScheduledDataRule(
         logic=Logic(
             predicate=('has_tested', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivtested'])
-    
+
     hiv_untested = ScheduledDataRule(
         logic=Logic(
             predicate=('has_tested', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivuntested'])
-    
+
     other_record = ScheduledDataRule(
         logic=Logic(
             predicate=('other_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivresultdocumentation'])
-    
+
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
- 
+
     verbal_response = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'NEG'),
             consequence='new',
             alternative='not_required'),
-        target_model=['futurehivtesting','stigma', 'stigmaopinion'])
-    
+        target_model=['futurehivtesting', 'stigma', 'stigmaopinion'])
+
     other_response = ScheduledDataRule(
         logic=Logic(
             predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'or')),
             consequence='not_required',
             alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
-
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -111,15 +110,15 @@ class HivTestReviewRuleGroup(RuleGroup):
             predicate=('recorded_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence','positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
+        target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
 
     recorded_hivresult = ScheduledDataRule(
         logic=Logic(
             predicate=('recorded_hiv_result', 'equals', 'NEG'),
             consequence='new',
             alternative='not_required'),
-        target_model=['futurehivtesting','stigma', 'stigmaopinion'])
-    
+        target_model=['futurehivtesting', 'stigma', 'stigmaopinion'])
+
     other_responses = ScheduledDataRule(
         logic=Logic(
             predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'or')),
@@ -132,7 +131,6 @@ class HivTestReviewRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 rule_groups.register(HivTestReviewRuleGroup)
-
 
 
 class MedicalCareRuleGroup(RuleGroup):
@@ -152,35 +150,35 @@ rule_groups.register(MedicalCareRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
-    
+
+#     ever_sex_two = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=(('ever_sex', 'equals', 'No'), ('ever_sex', 'equals', 'not_answering', 'or')),
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+
     partners = ScheduledDataRule(
         logic=Logic(
-            predicate=('last_year_partners', 'lt', 2),
+            predicate=('last_year_partners', 'eq', 1),
             consequence='not_required',
             alternative='new'),
         target_model=['monthssecondpartner', 'monthsthirdpartner'])
-    
-    last_year_partners = ScheduledDataRule(
-        logic=Logic(
-            predicate=('last_year_partners', 'eq', 2),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['monthsthirdpartner'])
-    
-    more_partners = ScheduledDataRule(
-        logic=Logic(
-            predicate=('last_year_partners', 'gt', 2),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
 
-    ever_sex_two = ScheduledDataRule(
-        logic=Logic(
-            predicate=(('ever_sex', 'equals', 'No'),('ever_sex', 'equals', 'Don\'t want to answer', 'or')),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
-    
+#     last_year_partners = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('last_year_partners', 'eq', 2),
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['monthsthirdpartner'])
+# 
+#     more_partners = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('last_year_partners', 'gt', 2),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+
     class Meta:
         app_label = 'bcpp_subject'
         filter_model = (SubjectVisit, 'subject_visit')
@@ -212,7 +210,7 @@ class CircumcisionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['circumcised'])
-    
+
     uncircumcised = ScheduledDataRule(
         logic=Logic(
             predicate=('circumcised', 'equals', 'No'),
@@ -251,21 +249,21 @@ class ReproductiveRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['pregnancy'])
-    
+
     currently_pregnant = ScheduledDataRule(
         logic=Logic(
             predicate=('currently_pregnant', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['pregnancy'])
-    
+
     pregnant = ScheduledDataRule(
         logic=Logic(
             predicate=('currently_pregnant', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
         target_model=['nonpregnancy'])
-    
+
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -289,14 +287,14 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['cancer'])
-    
+
     tb_record = ScheduledDataRule(
         logic=Logic(
             predicate=('tb_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['tubercolosis'])
-    
+
     sti_record = ScheduledDataRule(
         logic=Logic(
             predicate=('sti_record', 'equals', 'Yes'),
