@@ -20,6 +20,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
         verbose_name=_("What do you believe are the health"
                       " benefits of male circumcision? (Indicate all that apply.)"),
         null=True,
+        blank=True,
         help_text="supplemental",
         )
 
