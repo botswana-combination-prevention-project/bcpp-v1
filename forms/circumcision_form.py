@@ -4,19 +4,20 @@ from bcpp_subject.models import Circumcision, Uncircumcised, Circumcised
 
 
 class CircumcisionForm (BaseSubjectModelForm):
-    def clean(self):
-
-        cleaned_data = super(CircumcisionForm, self).clean()
-        if cleaned_data.get('circumcised') == 'Yes' and not cleaned_data.get('health_benefits_smc'):
-            raise forms.ValidationError('if \'YES\', what are the benefits of male circumcision?.')
-
-        return cleaned_data
 
     class Meta:
         model = Circumcision
 
 
 class CircumcisedForm (BaseSubjectModelForm):
+    
+    def clean(self):
+
+        cleaned_data = super(CircumcisedForm, self).clean()
+        if cleaned_data.get('circumcised') == 'Yes' and not cleaned_data.get('health_benefits_smc'):
+            raise forms.ValidationError('if \'YES\', what are the benefits of male circumcision?.')
+
+        return cleaned_data
 
     class Meta:
         model = Circumcised
