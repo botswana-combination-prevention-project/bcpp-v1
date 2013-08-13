@@ -18,7 +18,7 @@
                         {{ field.field }}{{ field.label_tag }}
                     {% else %}
                         {% if field.field.label|length > 20 %}
-                        <span class="long-lbl"></span>
+                          <span class="long-lbl"></span>
                         {% endif %}
                         {{ field.label_tag }}
                         {% if field.is_readonly %}
@@ -28,7 +28,7 @@
                         {% endif %}
                     {% endif %}
                     {% if field.field.help_text %}
-                        <p class="help">{{ field.field.help_text|safe }}</p>
+                    <p class="help {% if field.field.label|length > 20 %}long-help{% endif %}">{{ field.field.help_text|safe }}</p>
                     {% endif %}
                     
                     {% include 'admin/includes/custom_fieldset.html' %}
@@ -38,3 +38,13 @@
         </div>
     {% endfor %}
 </fieldset>
+<script type="text/javascript">
+  $(window).bind("load", function() {
+    alignHelpMsg();
+  });
+  function alignHelpMsg() {
+    $('.long-help ~ .selector').parent().each(function(){ 
+      $(this).children('.long-help').insertBefore($(this).children('.add-another')) 
+    }); 
+  }
+</script>
