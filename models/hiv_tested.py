@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
+from bhp_base_model.fields import OtherCharField
 from bcpp.choices import WHEREHIVTEST_CHOICE, WHYHIVTEST_CHOICE
 from hiv_testing_supplemental import HivTestingSupplemental
 
@@ -23,6 +24,7 @@ class HivTested (HivTestingSupplemental):
         choices=WHEREHIVTEST_CHOICE,
         help_text="",
         )
+    where_hiv_test_other = OtherCharField()
 
     why_hiv_test = models.CharField(
         verbose_name=_("Not including today's HIV test, which of the following"
