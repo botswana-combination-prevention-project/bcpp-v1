@@ -5,6 +5,26 @@ from django.forms import RegexField
 from bhp_common.choices import DATE_ESTIMATED, IDENTITY_TYPE
 
 
+class TransCharField(CharField):
+    """Custom field for translation form field"""
+
+    description = _("Custom field for translation form field")
+
+    def to_python(self, value):
+        return _(value)
+
+    def get_internal_type(self):
+        return "CharField"
+
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        # We'll just introspect ourselves, since we inherit.
+        from south.modelsinspector import introspector
+        field_class = "django.db.models.fields.CharField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+
+
 class OtherCharField(CharField):
     """field for "Other specify" options"""
 
