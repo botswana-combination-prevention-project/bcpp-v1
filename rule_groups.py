@@ -234,14 +234,24 @@ class FemaleReproductiveRuleGroup(RuleGroup):
 rule_groups.register(FemaleReproductiveRuleGroup)
 
 
-class ReproductiveRuleGroup(RuleGroup):
-
+class MenopauseRuleGroup(RuleGroup):
+    
     menopause = ScheduledDataRule(
         logic=Logic(
             predicate=('menopause', 'equals', 'Yes'),
             consequence='not_required',
             alternative='new'),
-        target_model=['pregnancy'])
+        target_model=['pregnancy', 'nonpregnancy'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = ReproductiveHealth
+rule_groups.register(MenopauseRuleGroup)
+
+
+
+class ReproductiveRuleGroup(RuleGroup):
 
     currently_pregnant = ScheduledDataRule(
         logic=Logic(
@@ -256,7 +266,6 @@ class ReproductiveRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['nonpregnancy'])
-
 
     class Meta:
         app_label = 'bcpp_subject'
