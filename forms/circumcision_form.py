@@ -7,8 +7,8 @@ class CircumcisionForm (BaseSubjectModelForm):
     def clean(self):
  
         cleaned_data = self.cleaned_data
-        if cleaned_data.get('circumcised') =='Yes' and not cleaned_data.get('health_benefits_smc'):
-            raise forms.ValidationError('if \'YES\', what are the benefits of male circumcision?.')
+        #if cleaned_data.get('circumcised') =='Yes' and not cleaned_data.get('health_benefits_smc'):
+        #    raise forms.ValidationError('if \'YES\', what are the benefits of male circumcision?.')
  
         return cleaned_data
  
