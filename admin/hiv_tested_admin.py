@@ -17,6 +17,7 @@ class HivTestedAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         'num_hiv_tests',
         'where_hiv_test',
+        'where_hiv_test_other',
         'why_hiv_test',
         'hiv_pills',
         'arvs_hiv_test',)
