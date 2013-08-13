@@ -1,7 +1,6 @@
 import socket
 from django.db import models
 from datetime import datetime
-from django.core.urlresolvers import reverse
 from base_transaction import BaseTransaction
 from bhp_sync.managers import IncomingTransactionManager
 
@@ -17,12 +16,6 @@ class IncomingTransaction(BaseTransaction):
         default=False,
         db_index=True)
     objects = IncomingTransactionManager()
-
-    def render(self):
-        url = reverse('view_transaction_url', kwargs={'model_name': self._meta.object_name.lower(), 'pk': self.pk})
-        ret = """<a href="{url}" class="add-another" id="add_id_report" onclick="return showAddAnotherPopup(this);"> <img src="/static/admin/img/icon_addlink.gif" width="10" height="10" alt="View transaction"/></a>""".format(url=url)
-        return ret
-    render.allow_tags = True
 
     def save(self, *args, **kwargs):
         """ An incoming transaction produced by self may exist, but is not wanted, if received by fanout from a consumer of
