@@ -54,8 +54,9 @@ def plot_item_points(request, **kwargs):
             'egg-circle',
             'red-circle', selected_sub_section)
         if selected_sub_section != "ALL":
-            for lon, lat, identifier_label, icon, other_identifier_label in payload:
+            for lon, lat, identifier_label, icon in payload:
                 icon_name_length = len(icon)
+                other_identifier_label = 0
                 icon_label = icon[icon_name_length - 1]
                 cso_icon_dict.append([icon_label, other_identifier_label])
         if selected_sub_section == "All":
