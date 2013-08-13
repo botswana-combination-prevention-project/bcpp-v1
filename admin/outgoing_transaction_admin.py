@@ -6,7 +6,7 @@ from bhp_sync.actions import reset_outgoing_transaction_middle_as_consumed, rese
 
 class OutgoingTransactionAdmin (BaseModelAdmin):
 
-    list_display = ('tx_name', 'producer', 'is_consumed_middleman' ,'is_consumed_server' , 'is_error', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
+    list_display = ('tx_name', 'render', 'producer', 'is_consumed_middleman', 'is_consumed_server', 'is_error', 'consumer', 'consumed_datetime', 'action', 'tx_pk', 'timestamp', 'hostname_modified')
 
     list_filter = ('is_error', 'is_consumed_middleman', 'is_consumed_server', 'consumer', 'consumed_datetime', 'producer', 'action', 'tx_name', 'hostname_modified')
 
