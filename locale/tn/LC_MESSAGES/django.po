@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-13 16:31+0200\n"
+"POT-Creation-Date: 2013-08-14 11:36+0200\n"
 "PO-Revision-Date: 2013-08-13 16:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3016,7 +3016,7 @@ msgstr "Mo lenaneong lengwe le lengwe o amogela di le kae?"
 msgid "Grant name"
 msgstr "Leina la lenaneo"
 
-#: bcpp_subject/models/heart_attack.py:14
+#: bcpp_subject/models/heart_attack.py:15
 msgid ""
 "Note: Record date of first day of hospital admission or date the diagnosis "
 "was documented in the OPD record. If report not available, then record "
@@ -3028,7 +3028,7 @@ msgstr ""
 "participant's best knowledge. If participant does not want to answer,leave "
 "blank. If unable to estimate date, leave blank"
 
-#: bcpp_subject/models/heart_attack.py:22
+#: bcpp_subject/models/heart_attack.py:23
 msgid ""
 "Note: If record of diagnosis is not available, record the participant's best "
 "knowledge. (tick all that apply)"
