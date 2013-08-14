@@ -19,6 +19,11 @@ class Entry(BaseWindowPeriodItem):
         related_name='+',
         verbose_name='entry form / model')
     entry_order = models.IntegerField()
+    group_title = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text='for example, may be used to add to the form title on the change form to group serveral forms')
     required = models.CharField(
         max_length=10,
         choices=YES_NO_OPTIONAL,
