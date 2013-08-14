@@ -349,7 +349,7 @@ class Mapper(object):
             identifier_label = str(getattr(item, self.get_identifier_field_attr()))
             other_identifier_label = ""
             if getattr(item, self.get_other_identifier_field_attr()):  # e.g. cso_number
-                other_identifier_label = str("  {0}: ".format(self.get_other_identifier_label()) + getattr(item, self.get_other_identifier_field_attr()))
+                other_identifier_field_label = str("  {0}: ".format(self.other_identifier_field_label) + getattr(item, self.get_other_identifier_field_attr()))
             if item.is_dispatched_as_item():
                 icon = dipatched_icon
                 identifier_label = "{0} already dispatched".format(identifier_label)
