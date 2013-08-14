@@ -6,14 +6,17 @@ register = template.Library()
 
 @register.inclusion_tag('admin/submit_line.html', takes_context=True)
 def bhp_submit_row(context):
-    ctx = original_submit_row(context)
-    is_popup = context['is_popup']
-    request = context['request']
+    try:
+        ctx = original_submit_row(context)
+    except KeyError:
+        ctx = {'add': True}
+    is_popup = context.get('is_popup', False)
+    request = context.get('request', None)
     show = request.GET.get('show') == 'forms'
     ctx.update({
         #'show_save_and_add_another': context.get('show_save_and_add_another', ctx['show_save_and_add_another']),
         #'show_save_and_continue': context.get('show_save_and_continue', ctx['show_save_and_continue'])
-        'show_savenext': (not is_popup and context['add'] and show)
+        'show_savenext': (not is_popup and context.get('add') and show)
         })
     return ctx
 
