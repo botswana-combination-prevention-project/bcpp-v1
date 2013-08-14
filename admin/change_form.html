@@ -52,15 +52,18 @@
 {% endif %}
 
 {% block field_sets %}
-<b>Instructions:</b> {{ instructions|safe }} {{ required_instructions|safe }}
+<b>Instructions:</b> {% for instruction in instructions %}{{ instruction|safe }}<BR>{% endfor %}
+<p><i>{{ required_instructions|safe }}</i></p>
 {% for fieldset in adminform %}
   {% include "admin/includes/fieldset.html" %}
 {% endfor %}
 {% endblock %}
 
+{% comment %}
 {% block after_field_sets %}
 <small>{{ app_label }}/{{ opts.module_name }}: revision {{ opts|get_revision|default:'unknown?' }}</small>
 {% endblock %}
+{% endcomment %}
 
 {% block inline_field_sets %}
 {% for inline_admin_formset in inline_admin_formsets %}
