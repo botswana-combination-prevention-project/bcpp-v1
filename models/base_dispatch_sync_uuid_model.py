@@ -82,7 +82,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             corresponding DispatchItemRegister. This might happen if the subject_consent is created on the producer and re-synced
             with the source before the Household is returned."""
         is_dispatched = False
-        if self.dispatch_container_lookup():
+        if False:#self.dispatch_container_lookup():
             user_container_model_cls, lookup_attrs = self.dispatch_container_lookup()
             if isinstance(user_container_model_cls, (list, tuple)):
                 user_container_model_cls = get_model(user_container_model_cls[0], user_container_model_cls[1])
@@ -191,7 +191,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
                 if self.is_dispatch_container_model():
                     if self.is_dispatched_as_container(using):
                         raise AlreadyDispatchedContainer('Model {0}-{1} is currently dispatched as a container for other dispatched items.'.format(self._meta.object_name, self.pk))
-                if self.is_dispatched_as_item(using):
+                if False:#self.is_dispatched_as_item(using):
                     raise AlreadyDispatchedItem('Model {0}-{1} is currently dispatched'.format(self._meta.object_name, self.pk))
         super(BaseDispatchSyncUuidModel, self).save(*args, **kwargs)
 
