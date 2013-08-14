@@ -1,6 +1,6 @@
 import re
 from datetime import date, datetime
-from django.db.models import get_model, Model
+from django.db.models import get_model, Model, IntegerField
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_consent.classes import ConsentHelper
 from bhp_registration.models import RegisteredSubject
@@ -13,6 +13,9 @@ from logic import Logic
 
 class BaseRule(object):
     """Base class for all rules."""
+
+    OPERATORS = ['equals', 'eq', 'gt', 'gte', 'lt', 'lte', 'ne', '!=', '==', 'in', 'not in']
+
     def __init__(self, *args, **kwargs):
 
         self._predicate = None
@@ -128,8 +131,10 @@ class BaseRule(object):
                 a = field_value
                 b = comparative_value
         """
+        if word not in self.OPERATORS:
+            raise TypeError('Predicate operator must be one of {0}. Got {1}.'.format(self.OPERATORS, word))
         operator = None
-        if word.lower() == 'equals' or word.lower() == 'eq':
+        if word.lower() == 'equals' or word.lower() == 'eq' or word == '==':
             if b is None:
                 operator = ' is '
             else:
@@ -142,7 +147,7 @@ class BaseRule(object):
             operator = '<'
         if word.lower() == 'lte':
             operator = '<='
-        if word.lower() == 'ne':
+        if word.lower() == 'ne' or word.lower() == '!=':
             if b is None:
                 operator = ' is not '
             else:
@@ -164,53 +169,50 @@ class BaseRule(object):
             raise TypeError('Invalid predicate operator in rule for value None. Must be (equals, ea or ne). Got \'{0}\'.'.format(word))
         return operator
 
-    def _set_predicate_field_value(self, instance, attr_name):
+    def _set_predicate_field_value(self, instance, field_name):
         """ Returns a field value either by applying getattr to the source model or, if the field name matches one in RegisteredSubject, returns that value.
 
         Some RegisteredSubject field names are excluded:
             ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status', 'hiv_status']"""
-        if attr_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status', 'hiv_status']]:
+        registered_subject_override_field_names = ['id', 'created', 'modified', 'hostname_created', 'hostname_modified', 'study_site', 'survival_status', 'hiv_status']
+        if field_name in [field.name for field in RegisteredSubject._meta.fields if field.name not in registered_subject_override_field_names]:
             registered_subject = self.get_visit_model_instance().appointment.registered_subject
-            self._field_value = getattr(registered_subject, attr_name)
-        elif attr_name == 'consent_version':
+            self._field_value = getattr(registered_subject, field_name)
+        elif field_name == 'consent_version':
             self._field_value = ConsentHelper(self.get_visit_model_instance(), suppress_exception=True).get_current_consent_version()
             if not self._field_value:
                 self._field_value = 0
-        elif attr_name == 'hiv_status':
+        elif field_name == 'hiv_status':
             self._field_value, is_default_value = lab_tracker.get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().report_datetime)
         else:
-            self._field_value = getattr(instance, attr_name)
+            self._field_value = getattr(instance, field_name)
         if self._field_value:
             if isinstance(self._field_value, basestring):
                 self._field_value = re.escape(self._field_value).lower()
+            else:
+                field_inst = [fld for fld in instance._meta.fields if fld.name == field_name]
+                if field_inst:
+                    if isinstance(field_inst[0], IntegerField):
+                        # make sure is int and not long
+                        self._field_value = int(self._field_value)
 
     def _get_predicate_field_value(self):
         return self._field_value
 
-    def _set_predicate_comparitive_value(self, value):
-#        if type(self._get_predicate_field_value()) != type(value):
-#                raise TypeError('Predicate field value must be of the same type as the comparative value. Got {0} and {1}.'.format(type(self._get_predicate_field_value()), type(value)))
-#        else:
-        self._comparitive_value = value
-        if self._comparitive_value:
-            if isinstance(self._comparitive_value, basestring):
-                self._comparitive_value = re.escape(self._comparitive_value).lower()
+    def _set_predicate_comparative_value(self, value):
+        self._comparative_value = value
+        if self._comparative_value:
+            if isinstance(self._comparative_value, basestring):
+                self._comparative_value = re.escape(self._comparative_value).lower()
 
-    def _get_predicate_comparitive_value(self):
-        return self._comparitive_value
+    def _get_predicate_comparative_value(self):
+        return self._comparative_value
 
-    def set_predicate(self):
-        """Converts the predicate to something like "value==value" that can be evaluated with eval().
-
-        A simple predicate would be a tuple ('field_name', 'equals', 'value') meant to resolve to 'value' == 'value'.
-        A more complex one might be (('field_name', 'equals', 'value'), ('field_name', 'equals', 'value', 'or'))
-        which would resolve to 'value' == 'value' or 'value' == 'value'.
-        """
-        self._predicate = None
-        source_model_instance = self.get_source_model_instance()
-        if source_model_instance:
-            self._predicate = ''
-            unresolved_predicate = self._logic.predicate
+    def _set_unresolved_predicate(self, value=None):
+        if not value:
+            self._unresolved_predicate = self.get_logic().predicate
+        else:
+            unresolved_predicate = value
             if isinstance(unresolved_predicate[0], basestring):
                 unresolved_predicate = (unresolved_predicate,)
             elif isinstance(unresolved_predicate[0], tuple):
@@ -221,18 +223,32 @@ class BaseRule(object):
             # check that unresolved predicate is a tuple
             if not isinstance(unresolved_predicate, tuple):
                 raise TypeError('First \'logic\' item must be a tuple of (field, operator, value). Got %s' % (unresolved_predicate,))
+            self._unresolved_predicate = unresolved_predicate
+
+    def _get_unresolved_predicate(self):
+        if not self._unresolved_predicate:
+            self._set_unresolved_predicate()
+        return self._unresolved_predicate
+
+    def set_predicate(self):
+        """Converts the predicate to something like "value==value" that can be evaluated with eval().
+
+        A simple predicate would be a tuple ('field_name', 'equals', 'value') meant to resolve to 'value' == 'value'.
+        A more complex one might be (('field_name', 'equals', 'value'), ('field_name', 'equals', 'value', 'or'))
+        which would resolve to 'value' == 'value' or 'value' == 'value'.
+        """
+        self._predicate = None
+        if self.get_source_model_instance():  # if no instance, just skip the rule
+            self._predicate = ''
+            self._set_unresolved_predicate(self.get_logic().predicate)
             n = 0
-            for item in unresolved_predicate:
+            for item in self._get_unresolved_predicate():
                 if n == 0 and not len(item) == 3:
                     ValueError('The logic tuple (or the first tuple of tuples) must must have three items')
                 if n > 0 and not len(item) == 4:
                     ValueError('Additional tuples in the logic tuple must have a boolean operator as the fourth item')
-                self._set_predicate_field_value(source_model_instance, item[0])
-                #if not self._get_predicate_field_value():
-                #    self._predicate = None
-                #    break
-                # comparison value
-                self._set_predicate_comparitive_value(item[2])
+                self._set_predicate_field_value(self.get_source_model_instance(), item[0])
+                self._set_predicate_comparative_value(item[2])
                 # logical_operator if more than one tuple in the logic tuple
                 if len(item) == 4:
                     logical_operator = item[3]
@@ -243,7 +259,7 @@ class BaseRule(object):
                     logical_operator = ''
                 # add as string for eval()
                 a = self._get_predicate_field_value()
-                b = self._get_predicate_comparitive_value()
+                b = self._get_predicate_comparative_value()
                 if b == 'None':
                     b = None
                 # check type of field value and comparative value, must be the same or <Some>Type to NoneType
