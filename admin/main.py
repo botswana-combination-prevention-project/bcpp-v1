@@ -178,7 +178,8 @@ class HeartAttackAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
        "date_heart_attack",
-       'dx_heart_attack',)
+       'dx_heart_attack',
+       'dx_heart_attack_other',)
     filter_horizontal = ('dx_heart_attack',)
 admin.site.register(HeartAttack, HeartAttackAdmin)
 
