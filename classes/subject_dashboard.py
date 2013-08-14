@@ -2,7 +2,7 @@ import re
 from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
 from bhp_registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.models import SubjectVisit
+from bcpp_subject.models import SubjectVisit, SubjectConsent
 from bcpp_lab.models import SubjectRequisition, PackingList
 
 
@@ -42,6 +42,11 @@ class SubjectDashboard(RegisteredSubjectDashboard):
 
     def set_membership_form_category(self):
         self._membership_form_category = (self.get_survey().survey_slug)
+
+    def set_consent(self):
+        self._consent = None
+        if SubjectConsent.objects.filter(registered_subject=self.get_registered_subject()):
+            self._consent = SubjectConsent.objects.get(registered_subject=self.get_registered_subject())
 
     def set_visit_model(self):
         if self.get_dashboard_type() == 'subject':
