@@ -1,6 +1,8 @@
 import logging
 import re
+from django.utils.encoding import force_unicode
 from django.contrib import admin
+from django.core.exceptions import ImproperlyConfigured
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import NoReverseMatch
@@ -20,8 +22,17 @@ nullhandler = logger.addHandler(NullHandler())
 
 class BaseModelAdmin (admin.ModelAdmin):
 
-    instructions = 'Please complete the questions below.'
-    required_instructions = 'Required questions are in bold. Additional questions may be required based on submitted data.'
+    instructions = ['Please complete the questions below.']
+    required_instructions = ('Required questions are in bold. '
+                             'When all required data has been entered click SAVE to return to the dashboard '
+                             'or SAVE NEXT to go to the next form (if available). Additional questions may be required or may need to be corrected when you attempt to save.')
+
+    def __init__(self, *args):
+        if not isinstance(self.instructions, list):
+            raise ImproperlyConfigured('ModelAdmin {0} attribute \'instructions\' must be a list.'.format(self.__class__))
+        if not isinstance(self.required_instructions, basestring):
+            raise ImproperlyConfigured('ModelAdmin {0} attribute \'required_instructions\' must be a list.'.format(self.__class__))
+        super(BaseModelAdmin, self).__init__(*args)
 
     def save_model(self, request, obj, form, change):
         self.update_modified_stamp(request, obj, change)
@@ -38,6 +49,9 @@ class BaseModelAdmin (admin.ModelAdmin):
         extra_context = extra_context or {}
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
+        extra_context['form_language_code'] = request.GET.get('form_language_code', '')
+        if request.GET.get('group_title'):
+            extra_context['title'] = ('{group_title}: Add {title}').format(group_title=request.GET.get('group_title'), title=force_unicode(self.model._meta.verbose_name))
         extra_context.update(self.get_dashboard_context(request))
         model_help_text = self.get_model_help_text(self.model._meta.app_label, self.model._meta.object_name)
         extra_context.update(model_help_text_meta=model_help_text[META], model_help_text=model_help_text[DCT])
@@ -47,6 +61,9 @@ class BaseModelAdmin (admin.ModelAdmin):
         extra_context = extra_context or {}
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
+        extra_context['form_language_code'] = request.GET.get('form_language_code', '')
+        if request.GET.get('group_title'):
+            extra_context['title'] = ('{group_title}: Add {title}').format(group_title=request.GET.get('group_title'), title=force_unicode(self.model._meta.verbose_name))
         extra_context.update(self.get_dashboard_context(request))
         result = super(BaseModelAdmin, self).change_view(request, object_id, form_url=form_url, extra_context=extra_context)
         # Look at the referer for a query string '^.*\?.*$'
