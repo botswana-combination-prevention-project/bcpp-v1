@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bcpp_list.models import HeartDisease
+from bhp_base_model.fields import OtherCharField
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -22,6 +23,7 @@ class HeartAttack (BaseScheduledVisitModel):
         help_text=_("Note: If record of diagnosis is not available, record the participant's "
                    "best knowledge. (tick all that apply)"),
         )
+    dx_heart_attack_other = OtherCharField()
 
     history = AuditTrail()
 
