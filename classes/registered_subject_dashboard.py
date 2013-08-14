@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
+from django.utils import translation
 from bhp_common.utils import convert_from_camel
 from bhp_crypto.fields import EncryptedTextField
 from bhp_entry.models import AdditionalEntryBucket, ScheduledEntryBucket
@@ -26,6 +27,7 @@ from bhp_locator.models import BaseLocator
 from bhp_lab_tracker.classes import lab_tracker
 from bhp_data_manager.models import ActionItem
 from bhp_subject_config.models import SubjectConfiguration
+from bhp_consent.models import BaseConsent
 
 
 class RegisteredSubjectDashboard(Dashboard):
@@ -56,7 +58,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self._additional_lab_bucket = None
         self._membership_models = None
         self._visit_messages = []
-
+        self._consent = None
+        self._language = None
         self.selected_visit = None
         self._subject_hiv_status = None
         self.is_dispatched, self.dispatch_producer = False, None
@@ -99,11 +102,10 @@ class RegisteredSubjectDashboard(Dashboard):
             #visit_model_app_label=self.visit_model_app_label,  # TODO: needed??
             visit_model_meta=self.get_visit_model()._meta,
             visit_messages=self.get_visit_messages(),
-            )
-        self.context.add(
             membership_forms=self.get_membership_models(),
             keyed_membership_forms=self.get_keyed_membership_models(),
-            unkeyed_membership_forms=self.get_unkeyed_membership_models()
+            unkeyed_membership_forms=self.get_unkeyed_membership_models(),
+            form_language_code=self.get_language(),
             )
         if self.get_show() == 'forms':
             self._add_or_update_entry_buckets()
@@ -125,6 +127,31 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(packinglist_meta=self.get_packing_list_model()._meta)
         if self.get_requisition_model():
             self.context.add(requisition_meta=self.get_requisition_model()._meta)
+
+    def set_consent(self):
+        raise ImproperlyConfigured('Users must override this method.')
+
+    def _set_consent(self):
+        self.set_consent()
+        if self._consent:
+            if not isinstance(self._consent, BaseConsent):
+                raise TypeError('Expected an instance of BaseConsent. Got {0}'.format(self._consent))
+
+    def get_consent(self):
+        if not self._consent:
+            self._set_consent()
+        return self._consent
+
+    def set_language(self):
+        if self.get_consent():
+            self.get_consent().language
+            translation.activate(self.get_consent().language)
+        self._language = translation.get_language()
+
+    def get_language(self):
+        if not self._language:
+            self.set_language()
+        return self._language
 
     def set_appointment_row_template(self, template_file=None):
         self._appointment_row_template = template_file or 'appointment_row.html'
@@ -491,14 +518,17 @@ class RegisteredSubjectDashboard(Dashboard):
             self._set_subject_configuration()
         return self._subject_configuration
 
-    def set_extra_url_context(self, value=None):
-        self._extra_url_context = value or ''
-#         if self._extra_url_context == {}:
-#             self._extra_url_context = ''
+    def _set_extra_url_context(self):
+        """Sets / updates the extra_url_context dictionary."""
+        self._extra_url_context = ''
+        self.set_extra_url_context()
+        # adds the current language
+        self._extra_url_context = '{0}&form_language_code={1}'.format(self._extra_url_context, self.get_language())
 
     def get_extra_url_context(self):
+        """Gets the extra_url_context and returns as a GET query string."""
         if not self._extra_url_context:
-            self.set_extra_url_context()
+            self._set_extra_url_context()
         return self._extra_url_context
 
     def set_show(self, value):

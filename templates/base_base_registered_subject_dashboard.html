@@ -1,6 +1,7 @@
 {% extends "base_dashboard.html" %}
 {% load admin_urls %}
 {% load url from future %}
+{% load i18n %}
 
 {% block dashboard_main %}
 
@@ -113,7 +114,7 @@
         <td>
             <table name="right"  border=0 width=100%>
                 <tr><td>
-                {% block top_links %}
+                {% block top_links %}[{{form_language_code}}]
                     {% block subject_configuration %}
                     {% if subject_configuration %}
                        {% if visit_model_instance %}
