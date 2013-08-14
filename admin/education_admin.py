@@ -22,7 +22,7 @@ class EducationAdmin(SubjectVisitModelAdmin):
         'reason_unemployed': admin.VERTICAL,
         'job_description': admin.VERTICAL,
         "monthly_income": admin.VERTICAL, }
-    required_instructions = ("Read to Participant: Next, I will ask you some"
-                              " questions about what education and work you"
-                              " may have done or are currently doing.")
+    instructions = [("Read to Participant: Next, I will ask you some "
+                              "questions about what education and work you "
+                              "may have done or are currently doing.")]
 admin.site.register(Education, EducationAdmin)

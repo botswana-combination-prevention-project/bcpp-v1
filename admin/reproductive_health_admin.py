@@ -4,7 +4,6 @@ from bcpp_subject.models import ReproductiveHealth
 from bcpp_subject.forms import ReproductiveHealthForm
 
 
-
 class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
 
     form = ReproductiveHealthForm
@@ -18,10 +17,10 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
         )
     radio_fields = {
         "menopause": admin.VERTICAL,
-        "currently_pregnant": admin.VERTICAL,}
+        "currently_pregnant": admin.VERTICAL}
     filter_horizontal = ("family_planning",)
-    required_instructions = ("Note to Interviewer: This section is to be"
-                             " completed by female participants. SKIP for male participants."
-                             "Read to Participant: I am now going to ask you questions"
-                             " about reproductive health and pregnancy.")
+    instructions = [("Note to Interviewer: This section is to be"
+                             " completed by female participants. SKIP for male participants."),
+                             ("Read to Participant: I am now going to ask you questions"
+                             " about reproductive health and pregnancy.")]
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)

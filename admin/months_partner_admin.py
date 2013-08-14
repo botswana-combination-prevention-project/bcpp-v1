@@ -46,15 +46,15 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
-    required_instructions = ("Interviewer Note: Ask the respondent to answer"
+    instructions = [("Interviewer Note: Ask the respondent to answer"
                              " the following questions about their most recent"
                              " sexual partner in the past 12 months. It may be"
                              " helpful for respondent to give initials or"
                              " nickname, but DO NOT write down or otherwise"
-                             "record this information. "
-                             "Read to Participant: I am now going to ask you"
+                             "record this information. "), 
+                             ("Read to Participant: I am now going to ask you"
                              " about your most recent sexual partners. I will"
-                             " start with your last or most recent sexual partner.")
+                             " start with your last or most recent sexual partner.")]
 admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 
 
@@ -99,18 +99,18 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
-    required_instructions = ("Interviewer Note: If the respondent has only had "
-                             "one partner, SKIP to HIV adherence questions if HIV"
+    instructions = [("Interviewer Note: If the respondent has only had "
+                             " one partner, SKIP to HIV adherence questions if HIV"
                              " negative. Else go to Reproductive health for women,"
                              " or circumcision for men. Ask the respondent to"
                              " answer the following questions about their second"
-                             "most recent sexual partner. It may be helpful for"
+                             " most recent sexual partner. It may be helpful for"
                              " respondent to give initials or nickname, but DO NOT"
-                             " write down or otherwise record this information."
-                             " Read to Participant: I am now going to ask you about"
-                             "your second most recent sexual partner in the past"
+                             " write down or otherwise record this information."),
+                             ("Read to Participant: I am now going to ask you about"
+                             " your second most recent sexual partner in the past"
                              " 12 months, the one before the person we were just"
-                             "talking about.")
+                             " talking about.")]
 admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 
 
@@ -155,16 +155,16 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
-    required_instructions = ("Interviewer Note: If the respondent has only had "
-                             "two partners, SKIP HIV adherence questions if HIV"
+    instructions = [("Interviewer Note: If the respondent has only had "
+                             " two partners, SKIP HIV adherence questions if HIV"
                              " negative, if HIV positive, proceed. Else go to Reproductive health for women,"
                              " or circumcision for men. Ask the respondent to"
                              " answer the following questions about their second"
-                             "most recent sexual partner. It may be helpful for"
+                             " most recent sexual partner. It may be helpful for"
                              " respondent to give initials or nickname, but DO NOT"
-                             " write down or otherwise record this information."
-                             " Read to Participant: I am now going to ask you about"
+                             " write down or otherwise record this information."),
+                             ("Read to Participant: I am now going to ask you about"
                              "your second most recent sexual partner in the past"
                              " 12 months, the one before the person we were just"
-                             "talking about.")
+                             "talking about.")]
 admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)

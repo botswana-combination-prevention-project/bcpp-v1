@@ -20,10 +20,10 @@ class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
         "has_record": admin.VERTICAL,
         "verbal_hiv_result": admin.VERTICAL,
         'other_record': admin.VERTICAL}
-    required_instructions = ("Read to Participant: Many people have had a test"
+    instructions = [("Read to Participant: Many people have had a test"
                               " to see if they have HIV. I am going to ask you"
                               " about whether you have been tested for HIV and"
                               " whether you received the results. Please"
                               " remember that all of your answers are"
-                              " confidential.")
+                              " confidential.")]
 admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)

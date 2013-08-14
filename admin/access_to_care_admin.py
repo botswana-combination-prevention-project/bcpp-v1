@@ -43,7 +43,8 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "local_hiv_care": admin.VERTICAL}
     filter_horizontal = (
         "medical_care_access",)
-    required_instructions = ("Read to Participant: Now, I will be asking you"
-                             "about your preferences and options for accessing"
-                             "health care when you need it.")
+    instructions = [("Read to Participant: Now, I will be asking you "
+                             "about your preferences and options for accessing "
+                             "health care when you need it.")]
+
 admin.site.register(AccessToCare, AccessToCareAdmin)

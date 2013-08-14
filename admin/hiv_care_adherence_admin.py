@@ -33,12 +33,12 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         "arv_stop": admin.VERTICAL,
         "adherence_4_day": admin.VERTICAL,
         "adherence_4_wk": admin.VERTICAL, }
-    required_instructions = ("Note to Interviewer: This section is only to be"
+    instructions = [("Note to Interviewer: This section is only to be"
                              " completed by HIV-positive participants who knew"
                              " that they were HIV-positive before today."
-                             "Section should be skipped for HIV-negative participants"
+                             " Section should be skipped for HIV-negative participants"
                              " and participants who first tested HIV-positive"
                              " today. Read to Participant: I am now going to"
                              " ask you some questions about care you may have"
-                             " been given for your HIV infection.")
+                             " been given for your HIV infection.")]
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)

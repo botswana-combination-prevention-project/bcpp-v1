@@ -13,14 +13,14 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
         'circumcised',)
     radio_fields = {
          'circumcised': admin.VERTICAL, }
-    required_instructions = ("Note to Interviewer: This section is to be completed"
-                             " by male participants. SKIP for female participants."
+    instructions = [("Note to Interviewer: This section is to be completed "
+                             "by male participants. SKIP for female participants. "
                              "Read to Participant: Some men are circumcised. "
-                             "Male circumcision is [enter site specific word] when"
-                             " the foreskin of the man's penis has been cut off."
-                             " I would like to ask you a few questions regarding"
-                             " male circumcision. Here is a diagram to clarify what"
-                             " a circumcised and uncircumcised man looks like.")
+                             "Male circumcision is [enter site specific word] when "
+                             "the foreskin of the man's penis has been cut off. "
+                             "I would like to ask you a few questions regarding "
+                             "male circumcision. Here is a diagram to clarify what "
+                             "a circumcised and uncircumcised man looks like.")]
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
@@ -48,6 +48,7 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
         "where_circ": admin.VERTICAL,
         "why_circ": admin.VERTICAL, }
     filter_horizontal = ("health_benefits_smc",)
+
 admin.site.register(Circumcised, CircumcisedAdmin)
 
 

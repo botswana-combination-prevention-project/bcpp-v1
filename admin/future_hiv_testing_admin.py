@@ -30,9 +30,7 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
         "hiv_test_time": admin.VERTICAL,
         "hiv_test_week": admin.VERTICAL,
         "hiv_test_year": admin.VERTICAL, }
-    required_instructions = ("Note to Interviewer: If participant is known"
-                              " to be HIV-infected (tested positive today or"
-                              " previously), skip to the next section. "
-                              "Read to Participant: The following questions are"
-                              " about how you would like to have HIV testing in the future.")
+    instructions = [("Note to Interviewer: This form is only for HIV- (negative) participants"),
+                  ("Read to Participant: The following questions are "
+                  "about how you would like to have HIV testing in the future.")]
 admin.site.register(FutureHivTesting, FutureHivTestingAdmin)

@@ -15,5 +15,5 @@ class PimaAdmin(SubjectVisitModelAdmin):
         'is_drawn',
         'is_drawn_other',)
     radio_fields = {
-        'is_drawn': admin.VERTICAL,}
+        'is_drawn': admin.VERTICAL}
 admin.site.register(Pima, PimaAdmin)

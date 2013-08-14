@@ -4,8 +4,9 @@ from bcpp_household_member.models import HouseholdMember
 from bcpp_subject.models import SubjectReferral
 from bcpp_subject.forms import SubjectReferralForm
 
+
 class SubjectReferralAdmin(BaseRegisteredSubjectModelAdmin):
-    
+
     form = SubjectReferralForm
 
     def __init__(self, *args, **kwargs):
@@ -20,19 +21,19 @@ class SubjectReferralAdmin(BaseRegisteredSubjectModelAdmin):
         self.list_filter.append('in_clinic')
         self.list_filter.append('subject_referral_reason')
         self.list_filter.append('next_appt_datetime')
-    
+
     search_fields = ['household_member__first_name', 'household_member__household_structure__household__household_identifier', ]
-    
+
     dashboard_type = 'subject'
-    
+
     subject_identifier_attribute = 'registration_identifier'
-    
+
     fields = (
-        'registered_subject', 
-        'household_member', 
-        'report_datetime', 
-        'subject_referral_reason', 
-        'subject_referral_reason_other', 
+        'registered_subject',
+        'household_member',
+        'report_datetime',
+        'subject_referral_reason',
+        'subject_referral_reason_other',
         'comment'
         )
     radio_fields = {"subject_referral_reason": admin.VERTICAL}

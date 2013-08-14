@@ -36,14 +36,14 @@ class Demographics (BaseScheduledVisitModel):
         max_length=2,
         null=True,
         blank=True,
-        help_text="Leave blank if participant does not want to respond.",
+        help_text="Leave blank if participant does not want to respond. (women only)",
         )
     husband_wives = models.IntegerField(
         verbose_name=_("How many wives do you have, including traditional marriage?"),
         max_length=2,
         null=True,
         blank=True,
-        help_text="Leave blank if participant does not want to respond.",
+        help_text="Leave blank if participant does not want to respond. (men only)",
         )
 
     live_with = models.ManyToManyField(LiveWith,
