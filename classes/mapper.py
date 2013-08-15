@@ -5,6 +5,7 @@ import math
 from geopy import distance
 from geopy import Point
 from datetime import date, timedelta
+from django.conf import settings
 from django.utils.encoding import smart_str
 from bhp_base_model.models import BaseUuidModel
 from bhp_map.exceptions import MapperError
@@ -456,7 +457,11 @@ class Mapper(object):
         """Verifies the gps lat, lon occur within a radius of the target lat/lon and raises an exception if not.
 
         Wrapper for :func:`gps_validator`"""
-        dist = self.gps_distance_between_points(lat, lon, center_lat, center_lon, radius)
-        if dist > radius:
-            raise exception_cls('GPS {0} {1} is more than {2} meters from the target location.'.format(lat, lon, radius * 1000))
+        verify = True
+        if 'VERIFY_GPS' in dir(settings):
+            verify = settings.VERIFY_GPS
+        if verify:
+            dist = self.gps_distance_between_points(lat, lon, center_lat, center_lon, radius)
+            if dist > radius:
+                raise exception_cls('GPS {0} {1} is more than {2} meters from the target location.'.format(lat, lon, radius * 1000))
         return True
