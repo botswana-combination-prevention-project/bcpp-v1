@@ -1,7 +1,7 @@
 {% extends "section.html"%}
 {% load admin_urls %}
 {% load url from future %}
-
+{% load map_tags %}
 {% block section_tiles %}
 
 <div id="tile_wrapper">
@@ -17,7 +17,7 @@
      {% else %}
         {{ community_form }}
      {% endif %}
-     {% if verify_gps == False %}&nbsp;<span class="background-color:red; color:white;">GPS to target verification is disabled</span>{% endif %}
+     {% if not use_gps_to_target_verification %}&nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>{% endif %}
     </div>
     {% endblock%}
     
