@@ -15,9 +15,10 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         'is_dob_estimated',
         'gender',
         'omang',
-#         "mental_capacity",
-#         "incarceration",
         "citizen",
+        "legal_marriage",
+        "marriage_certificate",
+        "marriage_certificate_no",
         "community_resident")
 
     list_display = (
@@ -35,9 +36,9 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
     radio_fields = {
         "is_dob_estimated": admin.VERTICAL,
         "gender": admin.VERTICAL,
-#         "mental_capacity": admin.VERTICAL,
-#         "incarceration": admin.VERTICAL,
         "citizen": admin.VERTICAL,
+        "legal_marriage": admin.VERTICAL,
+        "marriage_certificate": admin.VERTICAL,
         "community_resident": admin.VERTICAL, }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
