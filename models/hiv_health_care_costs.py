@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
-# from bhp_common.choices import YES_NO_REFUSED
 from bcpp.choices import YES_NO_REFUSED
 from bcpp_subject.choices import NO_MEDICALCARE_REASON, HEALTH_CARE_PLACE, CARE_REGULARITY, DOCTOR_VISITS
 from base_scheduled_visit_model import BaseScheduledVisitModel
