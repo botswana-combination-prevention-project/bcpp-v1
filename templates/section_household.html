@@ -17,6 +17,7 @@
      {% else %}
         {{ community_form }}
      {% endif %}
+     {% if verify_gps == False %}&nbsp;<span class="background-color:red; color:white;">GPS to target verification is disabled</span>{% endif %}
     </div>
     {% endblock%}
     
