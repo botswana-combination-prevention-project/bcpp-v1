@@ -82,6 +82,14 @@ class BaseStudySpecific (BaseUuidModel):
         help_text="For the check digit. Use 7 for single digit, 77 for double digit, etc"
         )
 
+    subject_type = models.CharField(
+        verbose_name='Subject type',
+        max_length=100,
+        validators=[RegexValidator('(^[a-z]+$|^[a-z]+\,\ [a-z]+$)+', "use lower case comma delimited. e.g. <subject_type>, <subject_type>, ...")],
+        default='subject',
+        help_text='in lower case separate by <comma><space> (e.g. <subject_type>, <subject_type>, ...)',
+        )
+
     machine_type = models.CharField(
         verbose_name='Machine type',
         choices=MACHINE_TYPE,
