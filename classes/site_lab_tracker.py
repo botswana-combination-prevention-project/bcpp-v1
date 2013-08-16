@@ -14,7 +14,7 @@ class NotRegistered(Exception):
     pass
 
 
-class SiteLabTracker(object):
+class SiteLabTrackerController(object):
     """Registers from modules with a lab_tracker module (lab_tracker.py).
 
     Models in the models tuples class attribute
@@ -66,21 +66,21 @@ class SiteLabTracker(object):
         else:
             lab_tracker_cls.models = []
         # add result_item model
-        lab_tracker_cls.add_model_tpl(lab_tracker_cls().result_item_tpl)
-        self._registry.append(lab_tracker_cls)
+        #lab_tracker_cls.add_model_tpl(lab_tracker_cls()._get_result_item_tpl())
+        self._registry.append(lab_tracker_cls())
 
     def update_all(self, supress_messages):
-        for lab_tracker_cls in self._registry:
-            lab_tracker_cls().update_all(supress_messages)
+        for lab_tracker_inst in self._registry:
+            lab_tracker_inst.update_all(supress_messages)
 
     def all(self):
         return self._registry
 
-    def _get_tracker_cls_by_group_name(self, group_name):
-        for lab_tracker_cls in self._registry:
+    def _get_tracker_by_group_name(self, group_name):
+        for lab_tracker_inst in self._registry:
             # confirm group names match
-            if lab_tracker_cls().get_group_name() == group_name:
-                return lab_tracker_cls
+            if lab_tracker_inst.get_group_name() == group_name:
+                return lab_tracker_inst
         return None
 
     def get_history_as_qs(self, group_name, subject_identifier, reference_datetime=None):
@@ -88,9 +88,9 @@ class SiteLabTracker(object):
         retval = ''
         if not reference_datetime:
             reference_datetime = datetime.today()
-        for lab_tracker_cls in self._registry:
-            if lab_tracker_cls().get_group_name() == group_name:
-                retval = lab_tracker_cls().get_history(group_name, subject_identifier, reference_datetime)
+        for lab_tracker_inst in self._registry:
+            if lab_tracker_inst.get_group_name() == group_name:
+                retval = lab_tracker_inst.get_history(group_name, subject_identifier, reference_datetime)
         return retval
 
     def get_history_as_list(self, group_name, subject_identifier, reference_datetime=None):
@@ -98,17 +98,17 @@ class SiteLabTracker(object):
         retval = ''
         if not reference_datetime:
             reference_datetime = datetime.today()
-        for lab_tracker_cls in self._registry:
-            if lab_tracker_cls().get_group_name() == group_name:
-                retval = lab_tracker_cls().get_history_as_list(subject_identifier, reference_datetime)
+        for lab_tracker_inst in self._registry:
+            if lab_tracker_inst.get_group_name() == group_name:
+                retval = lab_tracker_inst.get_history_as_list(subject_identifier, reference_datetime)
         return retval
 
     def get_history_as_string(self, group_name, subject_identifier, mapped=True):
         self.confirm_autodiscovered()
         retval = ''
-        for lab_tracker_cls in self._registry:
-            if lab_tracker_cls().get_group_name() == group_name:
-                retval = lab_tracker_cls().get_history_as_string(subject_identifier, mapped)
+        for lab_tracker_inst in self._registry:
+            if lab_tracker_inst.get_group_name() == group_name:
+                retval = lab_tracker_inst.get_history_as_string(subject_identifier, mapped)
         return retval
 
     def get_current_value(self, group_name, subject_identifier):
@@ -132,10 +132,10 @@ class SiteLabTracker(object):
         self.confirm_autodiscovered()
         value = None
         is_default_value = None  # if no value is found in the classes' history model, is there a default?
-        for lab_tracker_cls in self._registry:
+        for lab_tracker_inst in self._registry:
             # confirm group names match
-            if lab_tracker_cls().get_group_name() == group_name:
-                value, is_default_value = lab_tracker_cls().get_current_value(group_name, subject_identifier, value_datetime)
+            if lab_tracker_inst.get_group_name() == group_name:
+                value, is_default_value = lab_tracker_inst.get_current_value(group_name, subject_identifier, value_datetime)
             if value:
                 break
         if not value:
@@ -145,16 +145,17 @@ class SiteLabTracker(object):
 
     def autodiscover(self):
         """Searches all apps for :file:`lab_tracker.py` and registers and :class:`LabTracker` subclasses found."""
-        self._autodiscovered = True
-        for app in settings.INSTALLED_APPS:
-            mod = import_module(app)
-            try:
-                before_import_registry = copy.copy(lab_tracker._registry)
-                import_module('%s.lab_tracker' % app)
-            except:
-                lab_tracker._registry = before_import_registry
-                if module_has_submodule(mod, 'lab_tracker'):
-                    raise
+        if not self._autodiscovered:
+            self._autodiscovered = True
+            for app in settings.INSTALLED_APPS:
+                mod = import_module(app)
+                try:
+                    before_import_registry = copy.copy(site_lab_tracker._registry)
+                    import_module('%s.lab_tracker' % app)
+                except:
+                    site_lab_tracker._registry = before_import_registry
+                    if module_has_submodule(mod, 'lab_tracker'):
+                        raise
 
     def confirm_autodiscovered(self):
         """Confirms that autodiscover() was called at least once."""
@@ -163,4 +164,4 @@ class SiteLabTracker(object):
 
 
 # A global to contain all lab_tracker instances from modules
-lab_tracker = SiteLabTracker()
+site_lab_tracker = SiteLabTrackerController()
