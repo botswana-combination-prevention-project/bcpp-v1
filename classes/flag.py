@@ -4,7 +4,7 @@ from datetime import datetime
 from bhp_common.utils import get_age_in_days
 from lab_test_code.models import BaseTestCode
 from lab_reference.models import BaseReferenceListItem
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ class Flag(object):
         if not self.hiv_status:
             # convert reference datetime to midnight
             release_datetime = datetime(self.release_datetime.year, self.release_datetime.month, self.release_datetime.day, 23, 59, 59, 999)
-            self.hiv_status, self.is_default_hiv_status = lab_tracker.get_value(
+            self.hiv_status, self.is_default_hiv_status = site_lab_tracker.get_value(
                 self.group_name,
                 self.subject_identifier,
                 release_datetime)
