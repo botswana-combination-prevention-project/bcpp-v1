@@ -12,7 +12,7 @@ class Result(BaseResult):
     review = models.OneToOneField(Review, null=True)
     reviewed = models.BooleanField(default=False)
     subject_identifier = models.CharField(
-        max_length=25,
+        max_length=50,
         null=True,
         editable=False,
         db_index=True,

@@ -71,6 +71,12 @@ class ResultItem(BaseResultItem):
         #pdb.set_trace()
         return ('reference_range_list', models.get_model('lab_clinic_reference', 'referencerangelistitem'))
 
+    def get_test_code(self):
+        return self.test_code.code
+
+    def get_result_datetime(self):
+        return self.result_item_datetime
+
     class Meta:
         app_label = "lab_clinic_api"
         ordering = ('-result_item_datetime', )
