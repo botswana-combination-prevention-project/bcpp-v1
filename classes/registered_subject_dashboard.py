@@ -24,7 +24,7 @@ from lab_requisition.models import BaseBaseRequisition
 from lab_packing.models import BasePackingList
 from bhp_entry.classes import ScheduledEntry, AdditionalEntry
 from bhp_locator.models import BaseLocator
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_data_manager.models import ActionItem
 from bhp_subject_config.models import SubjectConfiguration
 from bhp_consent.models import BaseConsent
@@ -75,8 +75,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self._set_registered_subject(kwargs.get('registered_subject', None))
         self.set_dashboard_model()
         if self.get_registered_subject():
-            subject_hiv_status = lab_tracker.get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
-            subject_hiv_history = lab_tracker.get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
+            subject_hiv_status = site_lab_tracker.get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
+            subject_hiv_history = site_lab_tracker.get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
             self.context.add(
                 registered_subject=self.get_registered_subject(),
                 subject_identifier=self.get_subject_identifier(),
@@ -543,7 +543,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """Sets the hiv_status to the value from bhp_lab_tracker history model."""
         RESULT = 0
         IS_DEFAULT = 1
-        subject_hiv_status = lab_tracker.get_current_value('HIV', self.get_subject_identifier())
+        subject_hiv_status = site_lab_tracker.get_current_value('HIV', self.get_subject_identifier())
         if isinstance(subject_hiv_status, tuple):
             if subject_hiv_status[IS_DEFAULT]:
                 self._subject_hiv_status = 'UNKNOWN'
@@ -705,10 +705,6 @@ class RegisteredSubjectDashboard(Dashboard):
         if not regex.get('dashboard_type', None):
             regex.update({'dashboard_type': 'subject'})
         regex.update({'show': 'appointments|forms'})
-        #regex['panel'] = '\d+'
-        #regex['content_type_map'] = '[a-z0-9]+'
-        #if 'registration_identifier' not in regex.keys():
-        #    regex['registration_identifier'] = '[A-Z0-9]{6,8}'
 
         urlpatterns = patterns(view,
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>{show})/$'.format(**regex),
