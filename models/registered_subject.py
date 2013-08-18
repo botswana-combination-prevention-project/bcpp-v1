@@ -1,4 +1,3 @@
-import re
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -7,8 +6,7 @@ from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO, POS_NEG_UNKNOWN, ALIVE_DEAD_UNKNOWN
 from bhp_base_model.fields import IdentityTypeField
-#from bhp_dispatch.models import DispatchItem
-from bhp_variables.models import StudySite
+from bhp_variables.models import StudySite, StudySpecific
 from bhp_registration.managers import RegisteredSubjectManager
 from bhp_subject.models import BaseSubject
 from bhp_crypto.fields import EncryptedIdentityField, SaltField
@@ -118,14 +116,22 @@ class RegisteredSubject(BaseSubject):
     objects = RegisteredSubjectManager()
 
     def save(self, *args, **kwargs):
+        #MAX_SUBJECTS = {'maternal': 3700, 'infant': 4000}
         if not self.id:
             # confirm have not reached max number of subjects
+            #if isinstance(settings.MAX_SUBJECTS, (tuple, list))
             if self.__class__.objects.all().count() + 1 > settings.MAX_SUBJECTS:
                 raise ValidationError('Save failed. Maximum number of subjects has been reached. Got {0}.'.format(settings.MAX_SUBJECTS))
         super(RegisteredSubject, self).save(*args, **kwargs)
 
     def get_registered_subject(self):
         return self
+
+    def get_subject_type(self):
+        subject_types = StudySpecific.objects.get_subject_types()
+        if self.subject_type.lower() not in subject_types:
+            raise TypeError('Expected registered_subject.subject_type to be any of {0}. Got \'{1}\'. Either update StudySpecific model or change the subject_type in registered_subject.'.format(subject_types, self.subject_type))
+        return self.subject_type
 
     def check_if_may_change_subject_identifier(self, using):
         """Allows a consent to change the subject identifier."""
