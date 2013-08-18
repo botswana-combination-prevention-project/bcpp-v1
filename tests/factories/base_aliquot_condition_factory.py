@@ -1,5 +1,3 @@
-
-
 import factory
 from lab_base_model.tests.factories import BaseLabListModelFactory
 
