@@ -14,7 +14,7 @@ YES_NO_UNSURE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
-#for some reason translations not reading this yes no though translation is available.
+# for some reason translations not reading this yes no though translation is available.
 YES_NO = (
         ('Yes', _('Yes')),
         ('No', _('No')),
@@ -106,10 +106,10 @@ COMMUNITIES = (
         ('Sebina', _('Sebina')),
         ('Sefare', _('Sefare')),
         ('Sefophe', _('Sefophe')),
-        ('Shakawe', _('Shakawe')),  
+        ('Shakawe', _('Shakawe')),
         ('Shoshong', _('Shoshong')),
         ('Tati Siding', _('Tati Siding')),
-        ('Tsetsebjwe', _('Tsetsebjwe')), 
+        ('Tsetsebjwe', _('Tsetsebjwe')),
     )
 
 # REASONAWAY_CHOICE = (
@@ -287,20 +287,20 @@ WHYHIVTEST_CHOICE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
-HIVTEST_PREFEREDTIME= (
+HIVTEST_PREFEREDTIME = (
         ('Yes, specify', _('Yes, specify:')),
         ('No, any time of day is fine', _('No, any time of day is fine')),
         ('not_sure', _('I am not sure')),
         ('not_answering', _('Don\'t want to answer')),
     )
 
-HIVTEST_PREFEREDWEEK= (
+HIVTEST_PREFEREDWEEK = (
         ('Yes, specify', _('Yes, specify:')),
         ('No, any day of the week is fine', _('No, any day of the week is fine')),
         ('not_sure', _('I am not sure')),
         ('not_answering', _('Don\'t want to answer')),
     )
-HIVTEST_PREFEREDYEAR= (
+HIVTEST_PREFEREDYEAR = (
         ('Yes, specify', _('Yes, specify:')),
         ('No, any month is fine', _('No, any month is fine')),
         ('not_sure', _('I am not sure')),
@@ -413,7 +413,7 @@ SECONDRELATIONSHIP_CHOICE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
-    
+
 SECONDPARTNERHIV_CHOICE = (
         ('HIV-positive', _('HIV-positive')),
         ('HIV-negative', _('HIV-negative')),
@@ -703,7 +703,7 @@ ALCOHOL_CHOICE = (
         ('more than 3 times a week', _('more than 3 times a week')),
         ('not_answering', _('Don\'t want to answer')),
     )
-  
+
 WHEREACCESS_CHOICE = (
         ('Traditional, faith, or religious healer/doctor', _('Traditional, faith, or religious healer/doctor')),
         ('Pharmacy', _('Pharmacy')),
