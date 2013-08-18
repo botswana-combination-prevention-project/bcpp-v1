@@ -5,8 +5,8 @@ from lab_order.models import BaseOrder
 from lab_import_dmis.classes.dmis_tools import DmisTools
 from lab_clinic_api.managers import OrderManager
 from aliquot import Aliquot
-from aliquot_condition import AliquotCondition
 from panel import Panel
+from aliquot_condition import AliquotCondition
 
 
 logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class Order(BaseOrder):
     aliquot = models.ForeignKey(Aliquot)
     panel = models.ForeignKey(Panel)
     subject_identifier = models.CharField(
-        max_length=25,
+        max_length=50,
         null=True,
         editable=False,
         db_index=True,
@@ -42,7 +42,7 @@ class Order(BaseOrder):
 
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
         self.receive_identifier = self.aliquot.receive_identifier
-        self.status = self.get_status()
+        #self.status = self.get_status()
         super(Order, self).save(*args, **kwargs)
 
     def get_status(self):
@@ -62,16 +62,7 @@ class Order(BaseOrder):
         # in the panel.
         # get the condition OK aliquot condition instance
         result_item_cls = models.get_model(self._meta.app_label, 'resultitem')
-        aliquot_condition_ok = AliquotCondition.objects.get_condition_ok()
-        if self.aliquot.aliquot_condition:
-            # TODO: fix this...
-            # this IF is here because i cannot figure out how this aliquot condition crept in
-            # somewhere on the import id=10 instead of short_name=10??
-            if self.aliquot.aliquot_condition.short_name == '4294967287':
-                aliquot = self.aliquot
-                aliquot.aliquot_condition = aliquot_condition_ok
-                aliquot.save()
-                logger.warning('Changing aliquot condition from 4294967287 to 10')
+        aliquot_condition_ok = AliquotCondition.objects.get_ok()
         if not self.aliquot.aliquot_condition:
             # how can this be ??
             status = 'ERROR'
