@@ -55,6 +55,8 @@ def _add_field_to_factory(field):
                 add = 'factory.Sequence(lambda n: \'{0}{{0}}\'.format(n))'.format(field.name)
         elif isinstance(field, models.IntegerField):
             add = '1'
+        elif isinstance(field, models.TimeField):
+            add = 'datetime.today().strftime(\'%H:%m\')'
         elif isinstance(field, (models.DateField, models.DateTimeField)):
             if 'DateTime' in type(field).__name__:
                 add = 'datetime.today()'
