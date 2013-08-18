@@ -5,7 +5,7 @@ from bhp_content_type_map.models import ContentTypeMap
 from bhp_consent.classes import ConsentHelper
 from bhp_registration.models import RegisteredSubject
 from bhp_visit_tracking.models import BaseVisitTracking
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_entry.models import BaseEntryBucket
 from bhp_entry.classes import BaseEntry
 from logic import Logic
@@ -183,7 +183,7 @@ class BaseRule(object):
             if not self._field_value:
                 self._field_value = 0
         elif field_name == 'hiv_status':
-            self._field_value, is_default_value = lab_tracker.get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().report_datetime)
+            self._field_value, is_default_value = site_lab_tracker.get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().report_datetime)
         else:
             self._field_value = getattr(instance, field_name)
         if self._field_value:
