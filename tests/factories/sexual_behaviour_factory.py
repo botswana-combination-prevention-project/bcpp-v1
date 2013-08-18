@@ -8,4 +8,4 @@ class SexualBehaviourFactory(BaseUuidModelFactory):
     FACTORY_FOR = SexualBehaviour
 
     report_datetime = datetime.today()
-    ever_sex = (('Yes', u'Yes'), ('No', u'No'), ("Don't want to answer", u"Don't want to answer"))[0][0]
+    ever_sex = (('Yes', u'Yes'), ('No', u'No'), ('not_answering', u"Don't want to answer"))[0][0]

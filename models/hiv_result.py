@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
@@ -8,10 +9,14 @@ from base_scheduled_visit_model import BaseScheduledVisitModel
 class HivResult (BaseScheduledVisitModel):
 
     hiv_result = models.CharField(
-        verbose_name=_("Record today\'s HIV test result:"),
+        verbose_name=_("Today\'s HIV test result"),
         max_length=50,
         choices=HIV_RESULT,
         help_text="If participant declined HIV testing, please select a reason below.",
+        )
+
+    hiv_result_datetime = models.DateTimeField(
+        verbose_name=_("Today\'s HIV test result date and time"),
         )
 
     why_not_tested = models.CharField(
@@ -25,6 +30,12 @@ class HivResult (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def get_test_code(self):
+        return 'HIV'
+
+    def get_result_datetime(self):
+        return datetime(self.hiv_result_datetime.year, self.hiv_result_datetime.month, self.hiv_result_datetime.day)
 
     class Meta:
         app_label = "bcpp_subject"

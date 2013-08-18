@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
@@ -21,6 +22,12 @@ class HivTestReview (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def get_test_code(self):
+        return 'HIV'
+
+    def get_result_datetime(self):
+        return datetime(self.hiv_test_date.year, self.hiv_test_date.month, self.hiv_test_date.day)
 
     class Meta:
         app_label = 'bcpp_subject'

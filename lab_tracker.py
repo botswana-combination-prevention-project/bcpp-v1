@@ -1,15 +1,14 @@
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_lab_tracker.classes import HivLabTracker
-from models import HivTestReview
+from models import HivTestReview, HivResult
 
 
 class SubjectHivLabTracker(HivLabTracker):
-    models = [
-        (HivTestReview, 'recorded_hiv_result', 'hiv_test_date', ),
-        ]
+    trackers = [(HivTestReview, 'recorded_hiv_result', 'hiv_test_date', ),
+              (HivResult, 'hiv_result', 'hiv_result_datetime', )]
 
-    def get_default_value(self, group_name, subject_identifier, value_datetime):
+    def get_default_value(self):
         """Returns the a value if none is available."""
         return 'UNK'
 
-lab_tracker.register(SubjectHivLabTracker)
+site_lab_tracker.register(SubjectHivLabTracker)

@@ -10,6 +10,7 @@ class HivResultAdmin (SubjectVisitModelAdmin):
     fields = (
         'subject_visit',
         'hiv_result',
+        'hiv_result_datetime',
         'why_not_tested',)
     radio_fields = {
         "hiv_result": admin.VERTICAL,
