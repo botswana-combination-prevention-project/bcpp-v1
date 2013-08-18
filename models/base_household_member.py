@@ -9,7 +9,7 @@ from bhp_crypto.fields import EncryptedFirstnameField
 from bhp_crypto.utils import mask_encrypted
 from bhp_common.choices import YES_NO, GENDER
 from bhp_registration.models import RegisteredSubject
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 
 
 class BaseHouseholdMember(BaseDispatchSyncUuidModel):
@@ -219,12 +219,12 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
             hiv_status=self.get_hiv_history())
 
     def get_hiv_history(self):
-        """Updates and returns hiv history using the lab_tracker global.
+        """Updates and returns hiv history using the site_lab_tracker global.
         """
         hiv_history = ''
         if self.registered_subject:
             if self.registered_subject.subject_identifier:
-                hiv_history = lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier)
+                hiv_history = site_lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier)
         return hiv_history
 
     def get_subject_identifier(self):
