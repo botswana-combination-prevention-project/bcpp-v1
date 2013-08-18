@@ -7,7 +7,6 @@
 {% load common_tags %}
 
 {% block extrahead %}{{ block.super }}
-{% url 'admin:jsi18n' as jsi18nurl %}
 <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
 {{ media }}
 {% endblock %}
@@ -79,6 +78,8 @@
 {% if subject_dashboard_url and dashboard_model == 'visit' %}
   <p class="deletelink-box"><a href="{% url subject_dashboard_url dashboard_type=dashboard_type dashboard_model=dashboard_model dashboard_id=dashboard_id show='forms' %}"/>Cancel</A></p>
 {% endif %}
+<A href="{% url 'admin:jsi18n' as jsi18nurl %}">{{LANGUAGE_CODE}}</A>
+
 </div>
 {% endblock %}
 

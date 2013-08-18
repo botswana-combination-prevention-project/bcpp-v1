@@ -1,6 +1,5 @@
 {% load url from future %}
 {% load admin_urls %}{% load i18n %}
-{% language form_language_code %}
 <fieldset class="module aligned {{ fieldset.classes }}">
     {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
     {% if fieldset.description %}
@@ -38,7 +37,7 @@
         </div>
     {% endfor %}
 </fieldset>
-{% endlanguage %}
+
 <script type="text/javascript">
   $(window).bind("load", function() {
     alignHelpMsg();
