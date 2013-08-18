@@ -103,7 +103,7 @@ class BaseResultItem(BaseLabUuidModel):
         blank=True,
         help_text='')
     subject_identifier = models.CharField(
-        max_length=25,
+        max_length=50,
         null=True,
         editable=False,
         db_index=True,
