@@ -5,7 +5,6 @@ from django.db.models.signals import Signal, post_save
 from audit_trail.audit import AuditTrail
 from bhp_crypto.utils import mask_encrypted
 from bhp_registration.models import RegisteredSubject
-from bhp_lab_tracker.classes import lab_tracker
 from bhp_household_member.models import BaseHouseholdMember
 from bcpp_survey.models import Survey
 from bcpp_household.choices import RELATIONS
@@ -51,7 +50,7 @@ class HouseholdMember(BaseHouseholdMember):
     history = AuditTrail()
 
     objects = HouseholdMemberManager()
-            
+
     def natural_key(self):
         if not self.household_structure:
             raise AttributeError("member.household_structure cannot be None for pk='\{0}\'".format(self.pk))
@@ -261,15 +260,6 @@ class HouseholdMember(BaseHouseholdMember):
             age=self.age_in_years,
             gender=self.gender,
             hiv_status=self.get_hiv_history())
-
-    def get_hiv_history(self):
-        """Updates and returns hiv history using the lab_tracker global.
-        """
-        hiv_history = ''
-        if self.registered_subject:
-            if self.registered_subject.subject_identifier:
-                hiv_history = lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier)
-        return hiv_history
 
     def get_subject_identifier(self):
         """ Uses the hsm internal_identifier to locate the subject identifier in
