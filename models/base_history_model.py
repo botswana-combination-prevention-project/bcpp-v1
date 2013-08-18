@@ -13,7 +13,8 @@ class BaseHistoryModel(BaseUuidModel):
     test_code = models.CharField(max_length=25)
     value = models.CharField(max_length=25)
     value_datetime = models.DateTimeField()
-    source = models.CharField(max_length=50)
+    source_model_name = models.CharField(max_length=50)
+    source_app_label = models.CharField(max_length=50, null=True, blank=False)
     source_identifier = models.CharField(max_length=50, null=True)
     history_datetime = models.DateTimeField(null=True)
 

@@ -25,8 +25,7 @@ class HivLabTracker(LabTracker):
                 ]
         lab_tracker.register(MaternalHivLabTracker)
     """
-    resultitem_test_code = ('ELISA', 'RELISA', 'DNAPCR')
-    tracker_test_code = 'HIV'
+    resultitem_test_code = ('ELISA', 'RELISA', 'DNAPCR', 'HIV')
     group_name = 'HIV'
 
     def get_display_map_prep(self):
