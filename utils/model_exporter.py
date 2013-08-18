@@ -1,11 +1,6 @@
-import copy
 import os
-from django.template import RequestContext
-from django.http import HttpRequest
 from django.contrib import admin
 from django.conf import settings
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from bhp_visit.models import VisitDefinition
 
@@ -16,7 +11,6 @@ class ModelExporter(object):
         self.response = None
         self._client = None
         self._visit_definition = None
-        # create a admin_user
         try:
             self.admin_user = User.objects.create(username='django', password='cc3721b')
             self.admin_user.set_password('1234')
@@ -26,19 +20,6 @@ class ModelExporter(object):
             self.admin_user.save()
         except:
             pass
-
-#     def set_client(self):
-#         self._client = Client()
-# 
-#     def get_client(self):
-#         if not self._client:
-#             self.set_client()
-#         return self._client
-
-#     def login(self):
-#         response = self.get_client().post('/{app_name}/login/'.format(app_name=settings.APP_NAME), {'username': 'django', 'password': 'cc3721b'})
-#         if not response.status_code == 200:
-#             raise TypeError('login failed')
 
     def export(self, request, code):
         """ """
