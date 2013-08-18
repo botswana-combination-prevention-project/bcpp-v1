@@ -1,0 +1,4 @@
+
+
+class LabTrackerError(Exception):
+    pass
