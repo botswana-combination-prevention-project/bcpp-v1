@@ -2,10 +2,11 @@ import logging
 from datetime import datetime
 from django.db.models import ForeignKey, OneToOneField, get_model
 from django.core.exceptions import ImproperlyConfigured
-from bhp_registration.models import RegisteredSubject
 from bhp_base_model.models import BaseModel
-from bhp_lab_tracker.models import HistoryModel, HistoryModelError, DefaultValueLog
+from bhp_lab_tracker.models import HistoryModel, DefaultValueLog
 from helpers import TrackerNamedTpl
+from history_updater import HistoryUpdater
+
 
 logger = logging.getLogger(__name__)
 
@@ -76,11 +77,12 @@ class LabTracker(object):
         self._subject_identifier = None
         self._value_datetime = None
         self._is_default_value = None
-        self._current_value = None
+        self._value = None
         self._history = None
         self._tracked_test_codes = None
         self._test_code = None
         self._history_inst = None
+        self._subject_type = None
         self._is_dirty = True
         self._init_subject_identifier = subject_identifier
 
@@ -104,22 +106,23 @@ class LabTracker(object):
     def is_dirty(self):
         return self._is_dirty
 
-    def set_current_value(self):
-        """Sets the current value relative to value_datetime OR the default value if there is no
+    def set_value(self):
+        """Sets the result value relative to value_datetime OR the default value if there is no
         information for this subject in the History model."""
-        self._current_value = self._get_history_inst().value
-        if not self._current_value:
-            self.set_is_default_value(True)
-            self._current_value = self._get_default_value()
-        if not self._current_value:
+        self._value = self._get_history_inst().value
+        if not self._value:
+            self._value = self._get_default_value()
+            self._log_default_value_used()
+        if not self._value:
             raise TypeError('Unable to determine the current value. May not be None.')
         self._set_is_dirty(False)
 
-    def get_current_value(self, value_datetime=None):
-        self.set_value_datetime(value_datetime)
-        if not self._current_value or self.is_dirty():
-            self.set_current_value()
-        return self._current_value
+    def get_value(self, value_datetime=None):
+        if value_datetime:
+            self.set_value_datetime(value_datetime)
+        if not self._value or self.is_dirty():
+            self.set_value()
+        return self._value
 
     def set_history(self, order_desc=None):
         """Sets to an ordered HistoryModel queryset for this subject filtered for records on or before value_datetime."""
@@ -130,7 +133,6 @@ class LabTracker(object):
         self.update_history()
         options = {'subject_identifier': self.get_subject_identifier(),
                    'group_name': self.get_group_name()}
-        #if value_datetime:
         options.update({'value_datetime__lte': self.get_value_datetime()})
         self._history = HistoryModel.objects.filter(**options).order_by(order_by)
 
@@ -150,7 +152,7 @@ class LabTracker(object):
         queryset = self.get_history(reference_datetime, order_desc=False)
         return [qs.value for qs in queryset]
 
-    def get_history_as_string(self, mapped=None):
+    def get_history_as_string(self, reference_datetime, mapped=None):
         """Returns a subject's qualitative values joined as a string in ascending chronological order.
 
         Args:
@@ -162,13 +164,11 @@ class LabTracker(object):
             mapped = True
         retlst = []
         inv_display_map = {}
-        # get history of results
-        lst = self.get_history_as_list()
         if mapped:
             for k, v in self._get_display_map().iteritems():
                 inv_display_map[v] = inv_display_map.get(v, [])
                 inv_display_map[v].append(k)
-        for l in lst:
+        for l in self.get_history_as_list(reference_datetime):
             if mapped:
                 retlst.append(inv_display_map[l][0].lower())
             else:
@@ -179,7 +179,7 @@ class LabTracker(object):
         self._is_default_value = is_default_value or False
 
     def get_is_default_value(self):
-        if not self._is_default_value or self.is_dirty():
+        if not self._is_default_value:
             self.set_is_default_value()
         return self._is_default_value
 
@@ -236,19 +236,17 @@ class LabTracker(object):
     def get_default_value(self):
         """Returns the a value if None is available.
 
-        Users should override"""
+        Users may override, carefully"""
         return 'UNK'
 
     def _get_default_value(self):
         """Returns the default value when none is available from the HistoryModel."""
         default_value = self.get_default_value()
-        # track that a default value was used
-        subject_type = 'unknown'
-        if RegisteredSubject.objects.filter(subject_identifier=self.get_subject_identifier()):
-            registered_subject = RegisteredSubject.objects.get(subject_identifier=self.get_subject_identifier())
-            subject_type = registered_subject.get_subject_type()
-        self._log_default_value_used(subject_type, default_value)
+        self.set_is_default_value(True)
         return default_value
+
+    def _get_default_value_datetime(self):
+        return datetime.today()
 
     def get_value_map_prep(self, model_name):
         """Users should override to use a custom map for a given tracker model."""
@@ -261,63 +259,6 @@ class LabTracker(object):
             if tracker.model_cls._meta.object_name.lower():
                 return self.get_value_map_prep(model_name)
         return None
-
-    def _update_history_for_inst(self, instance, tracker):
-        """Updates the history model given a registered tracker model instance.
-
-        .. note:: An instance from ResultItem may be sent from the signal. Do not automatically
-                  accept it, first send it to check if the testcode is being tracked.
-        """
-        history_model = None
-        # confirm this is an instance for the correct subject
-        if instance.get_subject_identifier() != self.get_subject_identifier():
-            raise TypeError('Invalid model instance for this lab_tracker. Lab tracker was instantiated for subject {0}, but model instance is for subject {1}.'.format(self.get_subject_identifier(), instance.get_subject_identifier()))
-        # if model instance test code is not listed with this lab tracker, abort
-        if not self._get_test_code(instance) in self._get_tracked_test_codes():
-            return None
-        # confirm is a valid tracker for this lab_tracker
-        if tracker not in self.get_trackers():
-            raise TypeError('tracker {0} is not valid tracker for this class. Must be in {1}'.format(tracker, self.get_trackers()))
-        # the instance must be listed as a model with the passed tracker
-        if not tracker.model_cls == instance.__class__:
-            raise TypeError('Model {0} in tracker tuple does not match instance class. Got {1}.'.format(tracker.model_cls, instance._meta.object_name.lower()))
-        # get the result value and datetime
-        result_value = self._get_value_for_inst(instance, tracker)
-        value_datetime = self._get_value_datetime_for_inst(instance, tracker)
-        if result_value and value_datetime:
-            # update the history model, get or create
-            history_model, created = HistoryModel.objects.get_or_create(
-                source_app_label=instance._meta.app_label,
-                source_model_name=instance._meta.object_name.lower(),
-                source_identifier=instance.pk,
-                group_name=self.get_group_name(),
-                defaults={'value': result_value,
-                          'history_datetime': datetime.today(),
-                          'report_datetime': instance.get_report_datetime(),
-                          'test_code': self._get_test_code(instance),
-                          'subject_identifier': self.get_subject_identifier(),
-                          'value_datetime': value_datetime})
-            if not created:
-                history_model.value = result_value
-                history_model.history_datetime = datetime.today()
-                history_model.report_datetime = instance.get_report_datetime()
-                history_model.subject_identifier = self.get_subject_identifier()
-                history_model.test_code = self._get_test_code(instance)
-                history_model.value_datetime = value_datetime
-                history_model.save()
-        else:
-            self.delete_history(instance)
-        self._set_is_dirty(True)
-        return history_model
-
-    def delete_history(self, instance):
-        """Deletes a single instance from the HistoryModel."""
-        HistoryModel.objects.filter(
-            source_app_label=instance._meta.app_label,
-            source_model_name=instance._meta.object_name.lower(),
-            source_identifier=instance.pk,
-            group_name=self.get_group_name(),
-            ).delete()
 
     def update_history(self):
         """Updates the HistoryModel with the subject's values found in any registered models and ResultItem."""
@@ -343,8 +284,8 @@ class LabTracker(object):
                                     ' not a subclass of BaseVisitTracking and nor does it have a relation to RegisteredSubject.').format(tracker.model_cls._meta.object_name))
                 options = {query_string: self.get_subject_identifier()}
             queryset = tracker.model_cls.objects.filter(**options)
-            for tracker_instance in queryset:
-                self._update_history_for_inst(tracker_instance, tracker)
+            for model_inst in queryset:
+                HistoryUpdater(model_inst, self.get_group_name(), tracker=tracker, tracked_test_codes=self._get_tracked_test_codes()).update()
 
     def set_value_datetime(self, value=None):
         """Sets value_datetime, None is allowed."""
@@ -374,7 +315,7 @@ class LabTracker(object):
         # create a default instance
         self._history_inst = HistoryModel(
             subject_identifier=self.get_subject_identifier(),
-            value_datetime=self.get_value_datetime(),
+            value_datetime=self._get_default_value_datetime(),
             value=self._get_default_value())
         if HistoryModel.objects.filter(subject_identifier=self.get_subject_identifier(),
                                        group_name=self.get_group_name(),
@@ -393,56 +334,23 @@ class LabTracker(object):
             self._set_history_inst()
         return self._history_inst
 
-    def _get_test_code(self, instance):
-        """Returns test_code for this value by inspecting the model instance or defers to the default."""
-        if instance.__class__ == self.get_result_item_tracker().model_cls:
-            test_code = instance.test_code.code
-        elif 'get_test_code' in dir(instance):
-            test_code = instance.get_test_code()
-        else:
-            raise TypeError('Cannot determine the test code for model {0}. Perhaps add a get_test_code method to the model.'.format(instance))
-        return test_code
-
-    def _log_default_value_used(self, subject_type, value):
+    def _log_default_value_used(self):
         """Logs that a default value was used. """
         default_value_log = DefaultValueLog.objects.create(
             subject_identifier=self.get_subject_identifier(),
-            subject_type=subject_type,
             group_name=self.get_group_name(),
-            value=value,
-            value_datetime=self.get_value_datetime())
+            value=self._get_default_value(),
+            value_datetime=self._get_default_value_datetime())
         return default_value_log
 
-    def _log_history_model_error(self, history_model, error):
-        """Logs errors with the HistoryModel such as when no instance can be found for a subject."""
-        history_model_error = HistoryModelError()
-        for field in history_model._meta.fields:
-            if field.name not in ['id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified']:
-                setattr(history_model_error, field.name, getattr(history_model, field.name))
-        history_model_error.error_message = error
-        history_model_error.save()
-
-    def _get_value_for_inst(self, instance, tracker):
-        """Returns a result item value which, if a map exists, is mapped to a value label that matches the tracker.
-
-        Qualitative values must be translated / mapped to how they appear in ResultItem."""
-        if 'get_result_value' in dir(instance):
-            result_value = instance.get_result_value()
-        else:
-            try:
-                result_value = getattr(instance, tracker.value_attr)
-            except:
-                raise TypeError('Cannot get result value from instance. Expected model attribute \'{0}\' or method \'get_result_value()\' on instance {0}.'.format(tracker.value_attr, instance._meta.object_name))
-        return result_value
-
-    def _get_display_value(self, result_value, tracker):
-        display_value = result_value
+    def _get_display_value(self, tracker):
+        display_value = self.get_value()
         if display_value:
             display_map = tracker._get_display_map()
             if display_map:
-                display_value = display_map.get(result_value, None)
+                display_value = display_map.get(self.get_value(), None)
             if not display_value and not tracker.allow_null:
-                raise ValueError('Result value \'{0}\' did not match any value in the display map \'{1}\'.'.format(result_value, display_map))
+                raise ValueError('Result value \'{0}\' did not match any value in the display map \'{1}\'.'.format(self.get_value(), display_map))
         return display_value
 
     def _get_display_map(self):
@@ -462,18 +370,6 @@ class LabTracker(object):
 
             Users may override."""
         return None
-
-    def _get_value_datetime_for_inst(self, instance, tracker):
-        """Returns the datetime of the result item value determined either by getting the instance
-        attribute or calling the instance method :func:`get_result_datetime` with the attribute name.
-        """
-        if 'get_result_datetime' in dir(instance):
-            retval = instance.get_result_datetime()
-        else:
-            retval = getattr(instance, tracker.datetime_attr)
-        if not retval:
-            raise TypeError('value_datetime may not be None.')
-        return retval
 
     def _set_tracked_test_codes(self):
         self._tracked_test_codes = self.tracked_test_codes

@@ -41,7 +41,7 @@ class TrackerMethodsTests(TestCase):
 
         print 'test if no history yet available, returns default value (UNK)'
         self.assertEqual(tracker1.get_history(value_datetime).count(), 0)
-        self.assertEqual('UNK', tracker1.get_current_value(value_datetime))
+        self.assertEqual('UNK', tracker1.get_value(value_datetime))
         self.assertTrue(isinstance(tracker1._get_history_inst(), HistoryModel))
         self.assertTrue(tracker1._get_history_inst().subject_identifier, subject_identifier)
         self.assertTrue(tracker1._get_history_inst().value_datetime, value_datetime)
@@ -69,14 +69,14 @@ class TrackerMethodsTests(TestCase):
         print 'test with history, returns current value (POS)'
         self.assertEqual([tracker1._get_history_inst().value, tracker1._get_history_inst().value_datetime, tracker1._get_history_inst().subject_identifier],
                          [unicode(test_result_model.result), test_result_model.result_datetime, unicode(test_result_model.subject_identifier)])
-        self.assertEqual('POS', tracker1.get_current_value(value_datetime))
+        self.assertEqual('POS', tracker1.get_value(value_datetime))
 
         print 'change subject_identifier'
         subject_identifier = 'subject_identifier2'
         tracker2 = TestLabTracker(subject_identifier)
         value_datetime = datetime.today() - timedelta(days=5)
         print 'test if no history yet available, returns default value (UNK)'
-        self.assertEqual('UNK', tracker2.get_current_value(value_datetime))
+        self.assertEqual('UNK', tracker2.get_value(value_datetime))
         self.assertEqual(tracker2.get_history(value_datetime=value_datetime).count(), 0)
         print 'attributes are set'
         self.assertEqual(tracker2.get_subject_identifier(), subject_identifier)
@@ -115,7 +115,7 @@ class TrackerMethodsTests(TestCase):
         result_item3 = ResultItemFactory(result=result, test_code=test_code, result_item_datetime=datetime.today())
         print 'count=2 for history model for this subject {0}'.format(subject_identifier)
         self.assertEqual(tracker2.get_history(value_datetime=result_item3.result_item_datetime).count(), 2)
-        self.assertEqual(result_item3.result_item_value, tracker2.get_current_value(result_item3.result_item_datetime))
+        self.assertEqual(result_item3.result_item_value, tracker2.get_value(result_item3.result_item_datetime))
 
         # test get_current_history / value returns the correct value relative to the value_datetime
         print 'change subject_identifier'
