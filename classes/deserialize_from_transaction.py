@@ -48,8 +48,8 @@ class DeserializeFromTransaction(object):
                             # insert failed so unique contraints blocked the forced insert above
                             # check if there is a helper method
                             print '    force insert failed'
-                            if 'deserialize_on_duplicate' in dir(obj.object):
-                                obj.object.deserialize_on_duplicate()
+                            if 'deserialize_on_duplicate' in dir(obj.object) and obj.object.deserialize_on_duplicate():
+                                #obj.object.deserialize_on_duplicate()
                                 obj.save(using=using)
                                 print '    OK update succeeded after deserialize_on_duplicate on using={0}'.format(using)
                                 is_success = True
@@ -114,9 +114,9 @@ class DeserializeFromTransaction(object):
                                     obj.object.id = new_pk
                                     try:
                                         print '    deserialize_on_duplicate'
-                                        if 'deserialize_on_duplicate' in dir(obj.object):
+                                        if 'deserialize_on_duplicate' in dir(obj.object) and obj.object.deserialize_on_duplicate():
                                             print '    deserialize_on_duplicate'
-                                            obj.object.deserialize_on_duplicate()
+                                            #obj.object.deserialize_on_duplicate()
                                             # not every duplicate needs to be saved
                                             # if you can develop criteria to decide,
                                             # then use deserialize_on_duplicate to evaluate
@@ -128,8 +128,10 @@ class DeserializeFromTransaction(object):
                                             incoming_transaction.__class__.objects.replace_pk_in_tx(old_pk, new_pk, using)
                                             print '    {0} is now {1}'.format(old_pk, new_pk)
                                         else:
-                                            print '    no deserialize_on_duplicate method'
+                                            print '    no deserialize_on_duplicate method/model choosing to ignore duplicate'
                                             incoming_transaction.is_ignored = True
+                                            incoming_transaction.is_error = True
+                                            incoming_transaction.save(using=using)
                                     except IntegrityError as error:
                                         print '    integrity error ... giving up.'
                                         incoming_transaction.is_consumed = False
