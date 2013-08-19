@@ -32,7 +32,10 @@ class Crypt (BaseSyncUuidModel):
         null=True)
 
     objects = models.Manager()
-
+    
+    def deserialize_on_duplicate(self):      
+        return False
+    
     def natural_key(self):
         return (self.hash, self.algorithm, self.mode, )
 
