@@ -4,65 +4,79 @@ from shutil import move
 import os
 
 
-repo_url = '192.168.1.50/svn'
+env.svn_repo = '192.168.1.50/svn'
+env.netbook_proj_dir = '/Users/django/source/bhp066'
+
+
+def setup_vagrant_as_host():
+    env.user = 'vagrant'
+    env.hosts = ['192.168.16.8']
+    result = local('vagrant ssh-config | grep IdentityFile', capture=True)
+    env.key_filename = result.split()[1]
+
+
+def set_netbooks_as_hosts():
+    host_ids = ['82', '138', '230', '112', '120', '127', '21', '205', '170', '187', '244']
+    ips = ['192.168.1.' + id for id in host_ids]
+    netbook_id = ['92', '90', '60', '42', '83', '10', '54', '70', '78', '12', '15']
+    env.netbook_ip_id = dict(zip(ips, netbook_id))
+    env.hosts = ips
+
+
+def checkout_app_repos():
+    installed_apps = get_setting().INSTALLED_APPS
+    repos = filter(RepoFilter(['au', 'bcpp', 'bhp', 'lab']), installed_apps)
+    print "total number of repos = %d" % len(repos)
+    for repo in repos:
+        local("svn co %s/%s" % (env.svn_repo, repo,))
+    print "and we are done checking out projects! woohoo!"
+
+
+def get_setting(key=None):
+    try:
+        settings = __import__("settings", globals(), locals(), [], 0)
+        if not key:
+            return settings
+        try:
+            return settings[key]
+        except KeyError:
+            print "Key: %s not found" % key
+            raise ImportError
+    except ImportError:
+        print "Error encountered reading the settings file"
+        exit()
+
+
+class RepoFilter(object):
+    def __init__(self, prefixes):
+        self.prefixes = prefixes
+
+    def __call__(self, repo):
+        for prefix in self.prefixes:
+            if repo.startswith(prefix):
+                return True
+        return False
+
+
 settings_file = 'settings.py'
-remote_proj_dir = '/Users/django/source/bhp066'
-host_ids = ['82', '138', '230', '112', '120', '127', '21', '205', '170',
-            '187', '244']
-ips = ['192.168.1.' + id for id in host_ids]
-netbook_id = ['92', '90', '60', '42', '83', '10', '54', '70', '78', '12', '15']
-ip_id_map = dict(zip(ips, netbook_id))
 ip_id_map = {'192.168.1.112': '42'}
 #env.hosts = ips
-env.hosts = ['django@192.168.1.112']
-env.password = 'aM+u*Z0O'
+#env.hosts = ['django@192.168.1.112']
+#env.password = 'aM+u*Z0O'
 
 
-def checkout_repo():
-    repos = ('audit_trail', 'autocomplete', 'bhp_templates', 'bhp_static',
-             'bhp_crypto', 'bhp_string', 'bhp_lock', 'bhp_appointment_helper',
-             'bhp_userprofile', 'bhp_poll_mysql', 'bhp_model_selector',
-             'bhp_templatetags', 'bhp_calendar', 'bhp_base_model',
-             'bhp_base_test', 'bhp_variables', 'bhp_actg_reference',
-             'bhp_adverse', 'bhp_map', 'bhp_code_lists', 'bhp_common',
-             'bhp_identifier', 'bhp_content_type_map', 'bhp_search',
-             'bhp_section', 'bhp_consent', 'bhp_locator', 'bhp_off_study',
-             'bhp_registration', 'bhp_botswana', 'bhp_data_manager',
-             'bhp_base_admin', 'bhp_base_form', 'bhp_supplemental_fields',
-             'bhp_variables', 'bhp_site_edc', 'bhp_research_protocol',
-             'bhp_sync', 'bhp_device', 'lab_common', 'lab_import',
-             'lab_import_lis', 'lab_import_dmis', 'lab_flag', 'lab_grading',
-             'lab_reference', 'lab_requisition', 'lab_aliquot_list',
-             'lab_base_model', 'lab_panel', 'lab_test_code', 'lab_account',
-             'lab_patient', 'lab_receive', 'lab_aliquot', 'lab_order',
-             'lab_result', 'lab_result_item', 'lab_barcode', 'lab_clinic_api',
-             'lab_clinic_reference', 'lab_export', 'lab_result_report',
-             'lab_packing', 'lab_base_model', 'bhp_lab_tracker', 'bhp_visit',
-             'bhp_visit_tracking', 'bhp_appointment', 'bhp_subject',
-             'bhp_subject_config', 'bhp_supplemental_fields', 'bhp_nmap',
-             'bhp_data_manager', 'bhp_entry', 'bhp_lab_entry', 'bhp_context',
-             'bhp_birt_reports', 'bhp_using', 'bhp_contact', 'bhp_dashboard',
-             'bhp_dashboard_registered_subject', 'bhp_export_data',
-             'bhp_model_describer', 'bhp_subject_summary', 'bhp_entry_rules',
-             'bhp_dispatch', 'bhp_netbook', 'bhp_household',
-             'bhp_household_member', 'bcpp', 'bcpp_lab', 'bcpp_list',
-             'bcpp_subject', 'bcpp_dashboard', 'bcpp_stats', 'bcpp_household',
-             'bcpp_household_member', 'bcpp_survey',)
+def drop_db():
+    run('drop database bhp066_survey')
 
-    print "total number of repos = %d" % len(repos)
 
-    for repo in repos:
-        print "SVN checkout of '%s' ...." % repo
-        local("svn co %s/%s" % (repo_url, repo,))
-        print "finished checking out '%s'" % repo
-
-    print "and we are done checking out projects! woohoo!"
+def create_db():
+    run('create database bhp066_survey')
 
 
 def provision():
     """ The main task for provisioning netbook """
     print "executing provisioning for %s" % env.host
-    with cd(remote_proj_dir):
+    with cd(env.netbook_proj_dir):
         svn_update('bcpp*')
         svn_update('bhp*')
         svn_update('lab*')
@@ -81,7 +95,7 @@ def provision():
 
 def svn_checkout(repo):
     print "checking out a repository '%s'" % repo
-    run('svn co http://192.168.1.50/svn/%s' % repo)
+    run('svn co %s/%s' % (env.svn_repo, repo,))
 
 
 def svn_update(item):
@@ -106,10 +120,10 @@ def clean_pyc():
 
 def modify_remote_settings(func):
     tmp_dir = tempfile.mkdtemp()
-    get(_path_of(remote_proj_dir, settings_file), tmp_dir)
+    get(_path_of(env.netbook_proj_dir, settings_file), tmp_dir)
     file_to_modify = _path_of(tmp_dir, settings_file)
     modified_file = process_line(file_to_modify, func)
-    put(modified_file, remote_proj_dir)
+    put(modified_file, env.netbook_proj_dir)
 
 
 def _uncomment_south(new_file, line):
