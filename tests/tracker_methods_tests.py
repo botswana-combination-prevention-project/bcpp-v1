@@ -1,17 +1,16 @@
 from datetime import datetime, timedelta
 from django.test import TestCase
-from django.db.models import signals
 from bhp_variables.tests.factories import StudySpecificFactory
 from bhp_lab_tracker.classes import LabTracker, site_lab_tracker
 from lab_clinic_api.models import ResultItem
 from bhp_registration.tests.factories import RegisteredSubjectFactory
-from bhp_lab_tracker.models import TestResultModel, HistoryModel, tracker_on_post_save
+from bhp_lab_tracker.models import TestResultModel, HistoryModel
 from lab_clinic_api.tests.factories import ResultItemFactory, AliquotConditionFactory, AliquotFactory, OrderFactory, ReceiveFactory, ResultFactory, TestCodeFactory
 
 
 class TrackerMethodsTests(TestCase):
 
-    def test_init(self):
+    def test_p1(self):
         StudySpecificFactory()
         tracker = LabTracker()
         self.assertEqual(tracker.trackers, None)
@@ -20,69 +19,72 @@ class TrackerMethodsTests(TestCase):
         # at least result item is included
         self.assertEquals(len(tracker.get_trackers()), 1)
         self.assertEquals(tracker.get_trackers()[0][0], ResultItem)
+        del tracker
 
         class TestLabTracker(LabTracker):
             trackers = [(TestResultModel, 'result', 'result_datetime', )]
             group_name = 'HIV'
-            resultitem_test_code = ('HIV', 'ELISA', 'RELISA')
-            tracker_test_code = 'HIV'
+            tracked_test_codes = ('HIV', 'ELISA', 'RELISA')
 
-        tracker = TestLabTracker()
-        self.assertNotEqual(tracker.trackers, None)
+        subject_identifier = 'subject_identifier1'
+        tracker1 = TestLabTracker(subject_identifier)
+        self.assertNotEqual(tracker1.trackers, None)
         # get models, sets the model
-        self.assertTrue(isinstance(tracker.get_trackers(), list))
+        self.assertTrue(isinstance(tracker1.get_trackers(), list))
         # at least result item is included
-        self.assertEquals(len(tracker.get_trackers()), 2)
-        trackers = [tracker_tpl[0] for tracker_tpl in tracker.get_trackers()]
+        self.assertEquals(len(tracker1.get_trackers()), 2)
+        trackers = [tracker_tpl[0] for tracker_tpl in tracker1.get_trackers()]
         self.assertTrue(ResultItem in trackers)
         self.assertTrue(TestResultModel in trackers)
-        subject_identifier = 'subject_identifier1'
         value_datetime = datetime.today() - timedelta(days=5)
         group_name = 'HIV'
 
         print 'test if no history yet available, returns default value (UNK)'
-        self.assertEqual(tracker.get_history(subject_identifier, value_datetime).count(), 0)
-        self.assertEqual('UNK', tracker.get_current_value(subject_identifier, value_datetime))
-        self.assertTrue(isinstance(tracker._get_current_history_inst(), HistoryModel))
-        self.assertTrue(tracker._get_current_history_inst().subject_identifier, subject_identifier)
-        self.assertTrue(tracker._get_current_history_inst().value_datetime, value_datetime)
-        self.assertTrue(tracker._get_current_history_inst().value, 'UNK')
-        self.assertTrue(tracker._get_current_history_inst().pk == '')
+        self.assertEqual(tracker1.get_history(value_datetime).count(), 0)
+        self.assertEqual('UNK', tracker1.get_current_value(value_datetime))
+        self.assertTrue(isinstance(tracker1._get_history_inst(), HistoryModel))
+        self.assertTrue(tracker1._get_history_inst().subject_identifier, subject_identifier)
+        self.assertTrue(tracker1._get_history_inst().value_datetime, value_datetime)
+        self.assertTrue(tracker1._get_history_inst().value, 'UNK')
+        self.assertTrue(tracker1._get_history_inst().pk == '')
 
         print 'add a TestModelResult with a POS result value to the tracker model'
-        self.assertEqual(tracker.get_history(subject_identifier, value_datetime).count(), 0)
+        self.assertEqual(tracker1.get_history(value_datetime).count(), 0)
         test_result_model = TestResultModel.objects.create(subject_identifier=subject_identifier, result='POS', result_datetime=value_datetime)
         self.assertTrue(TestResultModel.objects.filter(subject_identifier=subject_identifier, result='POS', result_datetime=value_datetime).count(), 1)
         self.assertTrue(TestResultModel.objects.filter(subject_identifier=subject_identifier, result='POS', result_datetime__lte=value_datetime).count(), 1)
         print 'history model now returns values from the TestModelResult'
-        self.assertEqual(tracker.get_history(subject_identifier, value_datetime).count(), 1)
+        self.assertEqual(tracker1.get_history(value_datetime).count(), 1)
         print 'attributes are set'
-        self.assertEqual(tracker.get_subject_identifier(), subject_identifier)
-        self.assertEqual(tracker.get_group_name(), group_name)
-        self.assertEqual(tracker.get_value_datetime(), value_datetime)
+        self.assertEqual(tracker1.get_subject_identifier(), subject_identifier)
+        self.assertEqual(tracker1.get_group_name(), group_name)
+        self.assertEqual(tracker1.get_value_datetime(), value_datetime)
         #self.assertEqual(tracker.get_value_datetime(), tracker._get_max_value_datetime())
-        self.assertNotEqual(tracker._get_current_history_inst().pk, '')
+        self.assertNotEqual(tracker1._get_history_inst().pk, '')
 
         print 'calling site_lab_tracker.update should not add a new rec to history'
         site_lab_tracker.update(test_result_model)
-        self.assertEqual(tracker.get_history(subject_identifier, value_datetime).count(), 1)
+        self.assertEqual(tracker1.get_history(value_datetime).count(), 1)
 
         print 'test with history, returns current value (POS)'
-        self.assertEqual([tracker._get_current_history_inst().value, tracker._get_current_history_inst().value_datetime, tracker._get_current_history_inst().subject_identifier],
+        self.assertEqual([tracker1._get_history_inst().value, tracker1._get_history_inst().value_datetime, tracker1._get_history_inst().subject_identifier],
                          [unicode(test_result_model.result), test_result_model.result_datetime, unicode(test_result_model.subject_identifier)])
-        self.assertEqual('POS', tracker.get_current_value(subject_identifier, value_datetime))
+        self.assertEqual('POS', tracker1.get_current_value(value_datetime))
 
         print 'change subject_identifier'
         subject_identifier = 'subject_identifier2'
-        value_datetime = None
+        tracker2 = TestLabTracker(subject_identifier)
+        value_datetime = datetime.today() - timedelta(days=5)
         print 'test if no history yet available, returns default value (UNK)'
-        self.assertEqual(tracker.get_history(subject_identifier, None).count(), 0)
+        self.assertEqual('UNK', tracker2.get_current_value(value_datetime))
+        self.assertEqual(tracker2.get_history(value_datetime=value_datetime).count(), 0)
         print 'attributes are set'
-        self.assertEqual(tracker.get_subject_identifier(), subject_identifier)
-        self.assertEqual(tracker.get_group_name(), group_name)
-        self.assertEqual(tracker.get_value_datetime(), value_datetime)
-        self.assertEqual(tracker._get_current_history_inst().pk, '')
-        self.assertEqual(tracker.get_value_datetime(), value_datetime)
+        self.assertEqual(tracker2.get_subject_identifier(), subject_identifier)
+        self.assertEqual(tracker2.get_group_name(), group_name)
+        self.assertEqual(tracker2.get_value_datetime(), value_datetime)
+        self.assertIsNotNone(tracker2._get_history_inst())
+        self.assertEqual(tracker2._get_history_inst().pk, '')
+        self.assertEqual(tracker2.get_value_datetime(), value_datetime)
 
         print 'site_lab_tracker.autodiscover()'
         site_lab_tracker.autodiscover()
@@ -100,15 +102,25 @@ class TrackerMethodsTests(TestCase):
         result = ResultFactory(order=order)
         test_code = TestCodeFactory(code='ELISA')
         print 'create result item with test code ELISA (tracked)'
-        ResultItemFactory(result=result, test_code=test_code)
-        print 'count=1 for history model for this subject {0}'.format(subject_identifier)
-        self.assertEqual(tracker.get_history(subject_identifier, None).count(), 1)
+        result_item1 = ResultItemFactory(result=result, test_code=test_code)
+        print 'count=0 for history model for this subject {0} up to {1}'.format(subject_identifier, value_datetime)
+        self.assertEqual(tracker2.get_history(value_datetime=value_datetime).count(), 0)
+        print 'count=1 for history model for this subject {0} up to {1}'.format(subject_identifier, result_item1.result_item_datetime)
+        self.assertEqual(tracker2.get_history(value_datetime=result_item1.result_item_datetime).count(), 1)
         print 'create result item with factory test code (not tracked)'
-        ResultItemFactory(result=result)
+        result_item2 = ResultItemFactory(result=result)
         print 'count=1 for history model for this subject {0}'.format(subject_identifier)
-        self.assertEqual(tracker.get_history(subject_identifier, None).count(), 1)
+        self.assertEqual(tracker2.get_history(value_datetime=result_item2.result_item_datetime).count(), 1)
         print 'create another result item with test code ELISA (tracked)'
-        result_item = ResultItemFactory(result=result, test_code=test_code, result_item_datetime=datetime.today())
+        result_item3 = ResultItemFactory(result=result, test_code=test_code, result_item_datetime=datetime.today())
         print 'count=2 for history model for this subject {0}'.format(subject_identifier)
-        self.assertEqual(tracker.get_history(subject_identifier, None).count(), 2)
-        self.assertEqual(result_item.result_item_value, tracker.get_current_value(subject_identifier, result_item.result_item_datetime))
+        self.assertEqual(tracker2.get_history(value_datetime=result_item3.result_item_datetime).count(), 2)
+        self.assertEqual(result_item3.result_item_value, tracker2.get_current_value(result_item3.result_item_datetime))
+
+        # test get_current_history / value returns the correct value relative to the value_datetime
+        print 'change subject_identifier'
+        subject_identifier = 'subject_identifier3'
+        tracker3 = TestLabTracker(subject_identifier)
+        value_datetime = None
+        self.assertRaises(TypeError, tracker3._get_history_inst)
+        #tracker3._update_history_for_inst(result_item1, tracker3)

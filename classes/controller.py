@@ -1,11 +1,21 @@
+import logging
 import copy
 from datetime import datetime
+from django.db.models import get_model
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.module_loading import module_has_submodule
 from bhp_lab_tracker.exceptions import LabTrackerError
 from helpers import TrackerNamedTpl
+
+logger = logging.getLogger(__name__)
+
+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+nullhandler = logger.addHandler(NullHandler())
 
 
 class AlreadyRegistered(Exception):
@@ -49,7 +59,7 @@ class Controller(object):
     def register(self, lab_tracker_cls):
         """Registers lab_tracker classes to a list."""
         lab_tracker_inst = lab_tracker_cls()
-        if lab_tracker_inst in self._registry:
+        if lab_tracker_cls in self._registry:
             raise AlreadyRegistered('The class %s is already registered' % lab_tracker_cls)
         if 'trackers' in dir(lab_tracker_cls):
             for tracker in lab_tracker_inst.get_trackers():
@@ -74,42 +84,62 @@ class Controller(object):
                 raise ImproperlyConfigured('Class attribute \'models\' has been changed to \'trackers\'. Please correct your class declaration for lab_tracker {0}'.format(lab_tracker_cls))
             raise ImproperlyConfigured('LabTracker class {0} is missing class attribute \'trackers\'.'.format(lab_tracker_cls))
 
-        for tracker in lab_tracker_inst.get_trackers():
+        for tracker in lab_tracker_cls().get_trackers():
             if not isinstance(tracker, TrackerNamedTpl):
                 raise TypeError('expected an instance of TrackerTpl. Got {0}'.format(tracker))
-        self._registry.append(lab_tracker_inst)
+        self._registry.append(lab_tracker_cls)
 
     def update(self, instance):
         """Updates the history model for the tracker that refers to this model."""
-        for lab_tracker_inst in self._registry:
+        for lab_tracker_cls in self._registry:
+            lab_tracker_inst = lab_tracker_cls(instance.get_subject_identifier())
             if isinstance(instance, lab_tracker_inst.get_models()):
                 for tracker in lab_tracker_inst.get_trackers():
                     if tracker.model_cls == instance.__class__:
                         lab_tracker_inst._update_history_for_inst(instance, tracker)
 
     def delete_history(self, instance):
-        for tracker in self._registry:
-            if isinstance(instance, tracker.get_models()):
-                tracker.delete_history(instance)
+        for lab_tracker_cls in self._registry:
+            lab_tracker_inst = lab_tracker_cls(instance.get_subject_identifier())
+            if isinstance(instance, lab_tracker_inst.get_models()):
+                lab_tracker_inst.delete_history(instance)
 
     def update_all(self, supress_messages):
-        for lab_tracker_inst in self._registry:
-            lab_tracker_inst.update_history_for_all(supress_messages)
+        RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
+        tot = RegisteredSubject.objects.values('subject_identifier').all().count()
+        for lab_tracker_cls in self._registry:
+            for index, registered_subject in enumerate(RegisteredSubject.objects.values('subject_identifier').filter(subject_identifier__isnull=False)):
+                if not supress_messages:
+                    logger.info('{0} / {1} ...updating {2}'.format(index, tot, registered_subject.get('subject_identifier')))
+                lab_tracker_inst = lab_tracker_cls(registered_subject.get('subject_identifier'))
+                lab_tracker_inst.update_history(supress_messages)
+
+#     def update_history_for_all(self, supress_messages=True):
+#         tot = RegisteredSubject.objects.values('subject_identifier').all().count()
+#         for index, registered_subject in enumerate(RegisteredSubject.objects.values('subject_identifier').filter(subject_identifier__isnull=False)):
+#             if not supress_messages:
+#                 logger.info('{0} / {1} ...updating {2}'.format(index, tot, registered_subject.get('subject_identifier')))
+#             self.update_history(registered_subject.get('subject_identifier'))
+#         return tot
 
     def all(self):
         return self._registry
 
-    def _get_tracker_by_group_name(self, group_name):
-        for lab_tracker_inst in self._registry:
-            if lab_tracker_inst.get_group_name() == group_name:
-                return lab_tracker_inst
-        return None
+    def _get_lab_tracker_inst_by_group_name(self, group_name, subject_identifier):
+        lab_tracker_inst = None
+        for lab_tracker_cls in self._registry:
+            inst = lab_tracker_cls(subject_identifier)
+            if inst.get_group_name() == group_name:
+                lab_tracker_inst = inst
+                break
+        return lab_tracker_inst
 
     def set_model_list(self):
         if not self.autodiscovered:
             raise LabTrackerError('Lab Tracker is not ready. Call autodiscover first.')
         self._models = []
-        for lab_tracker_inst in self._registry:
+        for lab_tracker_cls in self._registry:
+            lab_tracker_inst = lab_tracker_cls()
             self._models.extend(lab_tracker_inst.get_models())
         self._models = tuple(self._models)
 
@@ -124,7 +154,7 @@ class Controller(object):
         retval = ''
         if not reference_datetime:
             reference_datetime = datetime.today()
-        lab_tracker_inst = self._get_tracker_by_group_name(group_name)
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
         if lab_tracker_inst:
             retval = lab_tracker_inst.get_history(subject_identifier, reference_datetime)
         return retval
@@ -134,7 +164,7 @@ class Controller(object):
         retval = ''
         if not reference_datetime:
             reference_datetime = datetime.today()
-        lab_tracker_inst = self._get_tracker_by_group_name(group_name)
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
         if lab_tracker_inst:
             retval = lab_tracker_inst.get_history_as_list(subject_identifier, reference_datetime)
         return retval
@@ -142,7 +172,7 @@ class Controller(object):
     def get_history_as_string(self, group_name, subject_identifier, mapped=True):
         self.confirm_autodiscovered()
         retval = ''
-        lab_tracker_inst = self._get_tracker_by_group_name(group_name)
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
         if lab_tracker_inst:
             retval = lab_tracker_inst.get_history_as_string(subject_identifier, mapped)
         return retval
@@ -168,9 +198,9 @@ class Controller(object):
         self.confirm_autodiscovered()
         value = None
         is_default_value = None  # if no value is found in the classes' history model, is there a default?
-        lab_tracker_inst = self._get_tracker_by_group_name(group_name)
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
         if lab_tracker_inst:
-            value = lab_tracker_inst.get_current_value(subject_identifier, value_datetime)
+            value = lab_tracker_inst.get_current_value(value_datetime)
             is_default_value = lab_tracker_inst.get_is_default_value()
         if not value:
             # a value should always be returned, even if it is the classes' default value.
