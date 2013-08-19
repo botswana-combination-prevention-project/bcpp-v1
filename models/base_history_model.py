@@ -1,11 +1,8 @@
 from django.db import models
-#try:
-#    from bhp_dispatch.models import BaseDispatchSyncUuidModel as BaseUuidModel
-#except ImportError:
-from bhp_base_model.models import BaseUuidModel
+from bhp_sync.models import BaseSyncUuidModel
 
 
-class BaseHistoryModel(BaseUuidModel):
+class BaseHistoryModel(BaseSyncUuidModel):
 
     subject_identifier = models.CharField(max_length=25, db_index=True)
     report_datetime = models.DateTimeField(null=True, db_index=True)

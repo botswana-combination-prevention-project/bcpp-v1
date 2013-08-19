@@ -83,6 +83,7 @@ class LabTracker(object):
         self._test_code = None
         self._history_inst = None
         self._subject_type = None
+        self._history_query_options = None
         self._is_dirty = True
         self._init_subject_identifier = subject_identifier
 
@@ -260,18 +261,20 @@ class LabTracker(object):
                 return self.get_value_map_prep(model_name)
         return None
 
-    def update_history(self):
-        """Updates the HistoryModel with the subject's values found in any registered models and ResultItem."""
+    def _set_history_query_options(self):
         from bhp_visit_tracking.models import BaseVisitTracking
+        self._history_query_options = {}
         for tracker in self.get_trackers():
             query_string = None
+            options = None
             if tracker.model_cls == self.get_result_item_tracker().model_cls:
                 options = {'result__subject_identifier': self.get_subject_identifier(),
                            'test_code__code__in': self._get_tracked_test_codes()}
             else:
-                if 'subject_identifier' in [f.name for f in tracker.model_cls._meta.fields]:
+                field_list = [f.name for f in tracker.model_cls._meta.fields]
+                if 'subject_identifier' in field_list:
                     query_string = 'subject_identifier'
-                if 'registered_subject' in [f.name for f in tracker.model_cls._meta.fields]:
+                elif 'registered_subject' in field_list:
                     query_string = 'registered_subject__subject_identifier'
                 else:
                     for field in tracker.model_cls._meta.fields:
@@ -283,8 +286,20 @@ class LabTracker(object):
                     raise TypeError(('Missing subject_identifier attribute or a relation to one. The model class {0} is'
                                     ' not a subclass of BaseVisitTracking and nor does it have a relation to RegisteredSubject.').format(tracker.model_cls._meta.object_name))
                 options = {query_string: self.get_subject_identifier()}
-            queryset = tracker.model_cls.objects.filter(**options)
-            for model_inst in queryset:
+            if not options:
+                raise TypeError('Unable to determine the query options for tracker \'{0}\'.'.format(tracker))
+            self._history_query_options.update({tracker: options})
+
+    def _get_history_query_options(self, tracker):
+        if not self._history_query_options:
+            self._set_history_query_options()
+        return self._history_query_options.get(tracker)
+
+    def update_history(self):
+        """Updates the HistoryModel with the subject's values found in any registered models and ResultItem."""
+        for tracker in self.get_trackers():
+            options = self._get_history_query_options(tracker)
+            for model_inst in tracker.model_cls.objects.filter(**options):
                 HistoryUpdater(model_inst, self.get_group_name(), tracker=tracker, tracked_test_codes=self._get_tracked_test_codes()).update()
 
     def set_value_datetime(self, value=None):

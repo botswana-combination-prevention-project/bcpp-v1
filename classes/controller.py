@@ -173,6 +173,8 @@ class Controller(object):
     def get_history_as_string(self, group_name, subject_identifier, mapped=True, reference_datetime=None):
         self.confirm_autodiscovered()
         retval = ''
+        if not reference_datetime:
+            reference_datetime = datetime.today()
         lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
         if lab_tracker_inst:
             retval = lab_tracker_inst.get_history_as_string(reference_datetime, mapped)
