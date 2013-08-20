@@ -112,7 +112,7 @@ class Controller(object):
             if isinstance(model_inst, lab_tracker_inst.get_models()):
                 HistoryUpdater(model_inst, lab_tracker_inst.get_group_name()).delete()
 
-    def update_all(self, supress_messages):
+    def update_history_for_all(self, supress_messages=None):
         """Updates the history for all subjects in RegisteredSubject for all LabTrackers in the registry."""
         RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
         tot = RegisteredSubject.objects.values('subject_identifier').all().count()
@@ -121,15 +121,8 @@ class Controller(object):
                 if not supress_messages:
                     logger.info('{0} / {1} ...updating {2}'.format(index, tot, registered_subject.get('subject_identifier')))
                 lab_tracker_inst = lab_tracker_cls(registered_subject.get('subject_identifier'))
-                lab_tracker_inst.update_history(supress_messages)
-
-#     def update_history_for_all(self, supress_messages=True):
-#         tot = RegisteredSubject.objects.values('subject_identifier').all().count()
-#         for index, registered_subject in enumerate(RegisteredSubject.objects.values('subject_identifier').filter(subject_identifier__isnull=False)):
-#             if not supress_messages:
-#                 logger.info('{0} / {1} ...updating {2}'.format(index, tot, registered_subject.get('subject_identifier')))
-#             self.update_history(registered_subject.get('subject_identifier'))
-#         return tot
+                lab_tracker_inst.update_history()
+        return (index, tot)
 
     def all(self):
         """Returns the registry as a list."""
