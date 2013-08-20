@@ -56,7 +56,7 @@
 <dt id="bhp_lab_tracker.models.HistoryModel">
 <em class="property">class </em><tt class="descclassname">bhp_lab_tracker.models.</tt><tt class="descname">HistoryModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.models.HistoryModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_lab_tracker.models.base_history_model.BaseHistoryModel</span></tt></p>
-<p>HistoryModel(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, group_name, test_code, value, value_datetime, source, source_identifier, history_datetime)</p>
+<p>HistoryModel(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, report_datetime, group_name, test_code, value, value_datetime, source_model_name, source_app_label, source_identifier, history_datetime)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -69,13 +69,44 @@
 </tr>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>subject_identifier</strong> (<em>CharField</em>) &#8211; Subject identifier</li>
+<li><strong>report_datetime</strong> (<em>DateTimeField</em>) &#8211; Report datetime</li>
 <li><strong>group_name</strong> (<em>CharField</em>) &#8211; Group name</li>
 <li><strong>test_code</strong> (<em>CharField</em>) &#8211; Test code</li>
 <li><strong>value</strong> (<em>CharField</em>) &#8211; Value</li>
 <li><strong>value_datetime</strong> (<em>DateTimeField</em>) &#8211; Value datetime</li>
-<li><strong>source</strong> (<em>CharField</em>) &#8211; Source</li>
+<li><strong>source_model_name</strong> (<em>CharField</em>) &#8211; Source model name</li>
+<li><strong>source_app_label</strong> (<em>CharField</em>) &#8211; Source app label</li>
 <li><strong>source_identifier</strong> (<em>CharField</em>) &#8211; Source identifier</li>
 <li><strong>history_datetime</strong> (<em>DateTimeField</em>) &#8211; History datetime</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="bhp_lab_tracker.models.DefaultValueLog">
+<em class="property">class </em><tt class="descclassname">bhp_lab_tracker.models.</tt><tt class="descname">DefaultValueLog</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.models.DefaultValueLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_sync.models.base_sync_uuid_model.BaseSyncUuidModel</span></tt></p>
+<p>DefaultValueLog(created, modified, user_created, user_modified, hostname_created, hostname_modified, id, subject_identifier, subject_type, group_name, value_datetime, value, error_message)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Name :</th><td class="field-body"><p class="first">default value log</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Table :</th><td class="field-body"><p class="first">bhp_lab_tracker_defaultvaluelog</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subject_identifier</strong> (<em>CharField</em>) &#8211; Subject identifier</li>
+<li><strong>subject_type</strong> (<em>CharField</em>) &#8211; Subject type</li>
+<li><strong>group_name</strong> (<em>CharField</em>) &#8211; Group name</li>
+<li><strong>value_datetime</strong> (<em>DateTimeField</em>) &#8211; Value datetime</li>
+<li><strong>value</strong> (<em>CharField</em>) &#8211; Value</li>
+<li><strong>error_message</strong> (<em>TextField</em>) &#8211; Error message</li>
 </ul>
 </td>
 </tr>

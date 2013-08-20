@@ -4,24 +4,28 @@ Classes
 ================== 
 
 :class:`LabTracker` subclasses are defined in a module specific file :file:`lab_tracker.py`. Using 
-:func:`SiteLabTracker.autodiscover`, :class:`LabTracker` subclasses are registered and made available
-through a global :attr:`lab_tracker`. 
+:func:`bhp_lab_tracker.classes.Controller.site_lab_tracker.autodiscover`, :class:`LabTracker` subclasses are registered and made available
+through a global :attr:`site_lab_tracker`. 
 
-To get the value being tracked for a subjetc,  access :func:`SiteLabTracker.get_value`.
+To get the value being tracked for a subject,  access :func:`site_lab_tracker.get_value`.
 
-.. autoclass:: SiteLabTracker
+.. autoclass:: controller.Controller
     :members:
     :show-inheritance:
 
-.. autoclass:: LabTracker
+.. autoclass:: tracker.LabTracker
     :members:    
     :show-inheritance:
     
-.. note:: The global `lab_tracker` is an instance of :class:`SiteLabTracker` which is referred to in the :file:`lab_tracker.py`
+.. autoclass:: history_updater.HistoryUpdater
+    :members:    
+    :show-inheritance:
+
+.. note:: The global `site_lab_tracker` is an instance of :class:`Controller`.
     
 Custom Subclasses of LabTracker
 +++++++++++++++++++++++++++++++
 
-.. autoclass:: HivLabTracker
+.. autoclass:: hiv_lab_tracker.HivLabTracker
     :members:    
     :show-inheritance:

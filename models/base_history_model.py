@@ -1,9 +1,10 @@
 from django.db import models
-from bhp_sync.models import BaseSyncUuidModel
+from bhp_base_model.models import BaseUuidModel
 
 
-class BaseHistoryModel(BaseSyncUuidModel):
-
+class BaseHistoryModel(BaseUuidModel):
+    """...note:: no need to add this to sync, data is generated and will regenerate
+                 on demand."""
     subject_identifier = models.CharField(max_length=25, db_index=True)
     report_datetime = models.DateTimeField(null=True, db_index=True)
     group_name = models.CharField(max_length=25)

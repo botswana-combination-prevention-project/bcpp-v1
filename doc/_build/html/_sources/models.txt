@@ -6,3 +6,7 @@ Models
 .. autoclass:: HistoryModel
     :members:  
     :show-inheritance: 
+
+.. autoclass:: DefaultValueLog
+    :members:  
+    :show-inheritance: 

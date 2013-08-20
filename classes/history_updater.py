@@ -5,6 +5,14 @@ from bhp_lab_tracker.models import HistoryModel
 class HistoryUpdater(object):
 
     def __init__(self, model_inst, group_name, tracker=None, tracked_test_codes=None):
+        """Updates the HistoryModel model class with values from a model instance.
+
+            Args:
+                model_inst: a model instance that meets the requirements for a lab_tracker (see site_lab_tracker register()).
+                group_name: the LabTracker group name, just used as a reference value for the HistoryModel.
+                tracker: a valid tracker (namedtuple) instance (Default:None). Required for calls to :func:`update`
+                tracker_test_codes: a list of test codes that the caller (labTracker) is monitoring (Default:None). Required for calls to :func:`update`
+        """
         self._model_inst = None
         self._tracker = None
         self._value = None
@@ -19,6 +27,7 @@ class HistoryUpdater(object):
             self.set_tracker(tracker)
 
     def set_model_inst(self, value=None):
+        """Sets the model instance that is used to set most instance attributes and to update the HistoryModel."""
         self._model_inst = value
         if not self._model_inst:
             raise TypeError('self._model_inst may not be None.')
@@ -29,6 +38,7 @@ class HistoryUpdater(object):
         return self._model_inst
 
     def set_tracker(self, value=None):
+        """Sets the tracker provided by the caller which has information on how to inspect the model instance."""
         self._tracker = value
         if not self._tracker:
             raise TypeError('self._tracker may not be None.')
@@ -39,6 +49,7 @@ class HistoryUpdater(object):
         return self._tracker
 
     def set_group_name(self, value=None):
+        """Sets the group name provided by the caller which is only needed as a reference field value for the HistoryModel."""
         self._group_name = value
         if not self._group_name:
             raise TypeError('self._group_name may not be None.')
@@ -49,6 +60,7 @@ class HistoryUpdater(object):
         return self._group_name
 
     def set_value(self):
+        """Sets the result value from the model instance."""
         self._value = None
         if 'get_result_value' in dir(self.get_model_inst()):
             self._value = self.get_model_inst().get_result_value()
@@ -59,14 +71,12 @@ class HistoryUpdater(object):
                 raise TypeError('Cannot get result value from instance. Expected model attribute \'{0}\' or method \'get_result_value()\' on instance {0}.'.format(self.get_tracker().value_attr, self.get_model_inst()._meta.object_name))
 
     def get_value(self):
-        """Returns a result item value which, if a map exists, is mapped to a value label that matches the tracker.
-
-        Qualitative values must be translated / mapped to how they appear in ResultItem."""
         if not self._value:
             self.set_value()
         return self._value
 
     def set_value_datetime(self):
+        """Sets the result datetime by accessing a method or field attribute on the model instance."""
         self._value_datetime = None
         if 'get_result_datetime' in dir(self.get_model_inst()):
             self._value_datetime = self.get_model_inst().get_result_datetime()
@@ -76,13 +86,12 @@ class HistoryUpdater(object):
             raise TypeError('self._value_datetime may not be None.')
 
     def get_value_datetime(self):
-        """Returns the datetime of the result item value determined either by getting the instance
-        attribute or calling the instance method :func:`get_result_datetime` with the attribute name."""
         if not self._value_datetime:
             self.set_value_datetime()
         return self._value_datetime
 
     def set_subject_identifier(self):
+        """Sets the subject identifier by accessing the method get_subject_identifier on the model instance."""
         self._subject_identifier = None
         if 'get_subject_identifier' in dir(self.get_model_inst()):
             self._subject_identifier = self.get_model_inst().get_subject_identifier()
@@ -97,7 +106,7 @@ class HistoryUpdater(object):
         return self._subject_identifier
 
     def set_test_code(self):
-        """Sets the test_code for this value by inspecting the model instance or defers to the default."""
+        """Sets the test_code for this value by inspecting the model instance."""
         self._test_code = None
         if 'get_test_code' in dir(self.get_model_inst()):
             self._test_code = self.get_model_inst().get_test_code()
@@ -110,10 +119,17 @@ class HistoryUpdater(object):
         return self._test_code
 
     def get_tracked_test_codes(self):
+        """Gets the list of test codes to inspect the model instance.
+
+            * If a model instance test code is not listed then the save is aborted.
+            * Comes from the calling lab_tracker."""
+
         return self._tracked_test_codes
 
     def update(self):
         """Updates the history model given a registered tracker model instance.
+
+        .. note:: Default values are not saved to the history model.
 
         .. note:: An instance from ResultItem may be sent from the signal. Do not automatically
                   accept it, first send it to check if the testcode is being tracked.
@@ -150,7 +166,7 @@ class HistoryUpdater(object):
             self.delete_history()
         return history_model
 
-    def delete_history(self):
+    def delete(self):
         """Deletes a single instance from the HistoryModel."""
         HistoryModel.objects.filter(
             source_app_label=self.get_model_inst()._meta.app_label,

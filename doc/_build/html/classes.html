@@ -56,88 +56,157 @@
             
   <span class="target" id="module-bhp_lab_tracker.classes"></span><div class="section" id="classes">
 <h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="#bhp_lab_tracker.classes.LabTracker" title="bhp_lab_tracker.classes.LabTracker"><tt class="xref py py-class docutils literal"><span class="pre">LabTracker</span></tt></a> subclasses are defined in a module specific file <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt>. Using
-<a class="reference internal" href="#bhp_lab_tracker.classes.SiteLabTracker.autodiscover" title="bhp_lab_tracker.classes.SiteLabTracker.autodiscover"><tt class="xref py py-func docutils literal"><span class="pre">SiteLabTracker.autodiscover()</span></tt></a>, <a class="reference internal" href="#bhp_lab_tracker.classes.LabTracker" title="bhp_lab_tracker.classes.LabTracker"><tt class="xref py py-class docutils literal"><span class="pre">LabTracker</span></tt></a> subclasses are registered and made available
-through a global <tt class="xref py py-attr docutils literal"><span class="pre">lab_tracker</span></tt>.</p>
+<p><tt class="xref py py-class docutils literal"><span class="pre">LabTracker</span></tt> subclasses are defined in a module specific file <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt>. Using
+<tt class="xref py py-func docutils literal"><span class="pre">bhp_lab_tracker.classes.Controller.site_lab_tracker.autodiscover()</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">LabTracker</span></tt> subclasses are registered and made available
+through a global <tt class="xref py py-attr docutils literal"><span class="pre">site_lab_tracker</span></tt>.</p>
+<p>To get the value being tracked for a subject,  access <tt class="xref py py-func docutils literal"><span class="pre">site_lab_tracker.get_value()</span></tt>.</p>
 <dl class="class">
-<dt id="bhp_lab_tracker.classes.SiteLabTracker">
-<em class="property">class </em><tt class="descclassname">bhp_lab_tracker.classes.</tt><tt class="descname">SiteLabTracker</tt><a class="headerlink" href="#bhp_lab_tracker.classes.SiteLabTracker" title="Permalink to this definition">¶</a></dt>
+<dt id="controller.Controller">
+<em class="property">class </em><tt class="descclassname">controller.</tt><tt class="descname">Controller</tt><a class="reference internal" href="_modules/controller.html#Controller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>Registers from modules with a lab_tracker module (lab_tracker.py).</p>
-<dl class="docutils">
-<dt>Models in the models tuples class attribute</dt>
-<dd><ol class="first last arabic">
-<li><p class="first">must define the method <tt class="xref py py-func docutils literal"><span class="pre">get_subject_identifier()</span></tt>.</p>
-</li>
-<li><dl class="first docutils">
-<dt>may define:</dt>
-<dd><ul class="first last simple">
-<li><tt class="xref py py-func docutils literal"><span class="pre">get_result_value(attr)()</span></tt></li>
-<li><tt class="xref py py-func docutils literal"><span class="pre">get_result_datetime(attr)()</span></tt></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ol>
-</dd>
-</dl>
 <p>To register a class or classes create <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt> in your module and add something like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bhp_lab_tracker.classes</span> <span class="kn">import</span> <span class="n">lab_tracker</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">bhp_lab_tracker.classes</span> <span class="kn">import</span> <span class="n">site_lab_tracker</span>
 <span class="kn">from</span> <span class="nn">bhp_lab_tracker.classes</span> <span class="kn">import</span> <span class="n">HivLabTracker</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">HivTestReview</span><span class="p">,</span> <span class="n">HivResult</span>
 
 
-<span class="k">class</span> <span class="nc">InfantHivLabTracker</span><span class="p">(</span><span class="n">HivLabTracker</span><span class="p">):</span>
-    <span class="k">pass</span>
-<span class="n">lab_tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">InfantHivLabTracker</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">SubjectHivLabTracker</span><span class="p">(</span><span class="n">HivLabTracker</span><span class="p">):</span>
+
+    <span class="n">trackers</span> <span class="o">=</span> <span class="p">[(</span><span class="n">HivTestReview</span><span class="p">,</span> <span class="s">&#39;recorded_hiv_result&#39;</span><span class="p">,</span> <span class="s">&#39;hiv_test_date&#39;</span><span class="p">,</span> <span class="p">),</span>
+              <span class="p">(</span><span class="n">HivResult</span><span class="p">,</span> <span class="s">&#39;hiv_result&#39;</span><span class="p">,</span> <span class="s">&#39;hiv_result_datetime&#39;</span><span class="p">,</span> <span class="p">)]</span>
+
+<span class="n">site_lab_tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">SubjectHivLabTracker</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition-see-also admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#bhp_lab_tracker.classes.HivLabTracker" title="bhp_lab_tracker.classes.HivLabTracker"><tt class="xref py py-class docutils literal"><span class="pre">HivLabTracker</span></tt></a></p>
+<p class="last"><tt class="xref py py-class docutils literal"><span class="pre">HivLabTracker</span></tt></p>
 </div>
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.SiteLabTracker.autodiscover">
-<tt class="descname">autodiscover</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.SiteLabTracker.autodiscover" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches all apps for <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt> and registers and <a class="reference internal" href="#bhp_lab_tracker.classes.LabTracker" title="bhp_lab_tracker.classes.LabTracker"><tt class="xref py py-class docutils literal"><span class="pre">LabTracker</span></tt></a> subclasses found.</p>
+<dt id="controller.Controller.all">
+<tt class="descname">all</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the registry as a list.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.SiteLabTracker.get_value">
-<tt class="descname">get_value</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>value_datetime</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.SiteLabTracker.get_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches thru the registry to find a class that can be used to search for the value.</p>
+<dt id="controller.Controller.autodiscover">
+<tt class="descname">autodiscover</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.autodiscover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.autodiscover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches all apps for <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt> and registers all <tt class="xref py py-class docutils literal"><span class="pre">LabTracker</span></tt> subclasses found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.confirm_autodiscovered">
+<tt class="descname">confirm_autodiscovered</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.confirm_autodiscovered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.confirm_autodiscovered" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms that autodiscover() was called at least once.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.delete_history">
+<tt class="descname">delete_history</tt><big>(</big><em>model_inst</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.delete_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.delete_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes history for a given model instance (on pk) via the tracker for the model class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.get_current_value">
+<tt class="descname">get_current_value</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_current_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_current_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps <tt class="xref py py-func docutils literal"><span class="pre">get_value()</span></tt> calling with value_datetime = today&#8217;s date.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.get_history_as_list">
+<tt class="descname">get_history_as_list</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result history as a list of values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.get_history_as_qs">
+<tt class="descname">get_history_as_qs</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_qs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_qs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result history as QuerySet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.get_history_as_string">
+<tt class="descname">get_history_as_string</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>mapped=True</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result history as a string of values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.get_model_list">
+<tt class="descname">get_model_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_model_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_model_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of model classes used by the trackers in the registry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.get_value">
+<tt class="descname">get_value</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>value_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result value or a tuple with the result value, if default, in this LabTracker group for this subject.</p>
+<blockquote>
+<div><p>Searches thru the registry to find a class that can be used to search for the value..</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>Args:</dt>
 <dd><ul class="first last simple">
-<li>group_name: the group name that you expect to be the same as that of lab_tracker_cls().get_group_name()</li>
-<li>subject_identifier: used by <tt class="xref py py-func docutils literal"><span class="pre">get_current_value()</span></tt></li>
-<li>value_datetime: used by <tt class="xref py py-func docutils literal"><span class="pre">get_current_value()</span></tt></li>
+<li>group_name: group name as set on the LabTracker class declaration</li>
+<li>subject_identifier: a valid subject identifier</li>
+<li>value_datetime: a valid datetim</li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a default value is returned, the result is a tuple.</p>
+</div>
+</div></blockquote>
 <p>This method will be called from any class that needs the value being tracked. For example,
 <tt class="xref py py-class docutils literal"><span class="pre">ClinicGradeFlag</span></tt> needs to know the HIV Status of a subject at the time a sample
-was drawn in order to grade a test result.
-See <tt class="xref py py-func docutils literal"><span class="pre">lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status()</span></tt>.</p>
+was drawn in order to grade a test result.</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-func docutils literal"><span class="pre">lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status()</span></tt>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.SiteLabTracker.register">
-<tt class="descname">register</tt><big>(</big><em>lab_tracker_cls</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.SiteLabTracker.register" title="Permalink to this definition">¶</a></dt>
-<dd><p>Registers lab_tracker classes to a list.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><tt class="xref py py-mod docutils literal"><span class="pre">lab_clinic_api</span></tt>&#8216;s model <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt> is always added to <tt class="xref py py-attr docutils literal"><span class="pre">models</span></tt> of the incoming
-lab_tracker_cls before appending to the register.</p>
-</div>
+<dt id="controller.Controller.register">
+<tt class="descname">register</tt><big>(</big><em>lab_tracker_cls</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers lab_tracker classes to the registry (a list).</p>
+<dl class="docutils">
+<dt>Ensures model classes refered to by the trackers in the LabTracker classes have the following methods:</dt>
+<dd><ul class="first last simple">
+<li>get_subject_identifier</li>
+<li>get_report_datetime</li>
+<li>get_result_datetime</li>
+<li>get_test_code</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.set_model_list">
+<tt class="descname">set_model_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.set_model_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.set_model_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the list of model classes used by the trackers in the registry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.update_all">
+<tt class="descname">update_all</tt><big>(</big><em>supress_messages</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.update_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.update_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the history for all subjects in RegisteredSubject for all LabTrackers in the registry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="controller.Controller.update_history">
+<tt class="descname">update_history</tt><big>(</big><em>model_inst</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.update_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.update_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates history for a given model instance (on pk) via the tracker for the model class.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="bhp_lab_tracker.classes.LabTracker">
-<em class="property">class </em><tt class="descclassname">bhp_lab_tracker.classes.</tt><tt class="descname">LabTracker</tt><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker" title="Permalink to this definition">¶</a></dt>
+<dt id="tracker.LabTracker">
+<em class="property">class </em><tt class="descclassname">tracker.</tt><tt class="descname">LabTracker</tt><big>(</big><em>subject_identifier=None</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>An abstract class to track or maintain a history of subject&#8217;s lab result value from both the lab_clinic_api models ands protocol scheduled model(s).</p>
 <dl class="docutils">
@@ -163,28 +232,37 @@ model <tt class="xref py py-class docutils literal"><span class="pre">lab_clinic
 </div>
 </dd>
 </dl>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">InfantHivLabTracker</span><span class="p">(</span><span class="n">HivLabTracker</span><span class="p">):</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">HivTesting</span><span class="p">,</span> <span class="s">&#39;pcr_result&#39;</span><span class="p">,</span> <span class="s">&#39;pcr_date&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">HivTesting</span><span class="p">,</span> <span class="s">&#39;elisa_result&#39;</span><span class="p">,</span> <span class="s">&#39;elisa_date&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">)]</span>
+<span class="n">lab_tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">InfantHivLabTracker</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You may also need to add a method on the model to return a known value. For example, for HIV:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">get_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">retval</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Attribute {0} does not exist in model {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_name</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s">&#39;is_hiv_pos&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_hiv_pos</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;yes&#39;</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="s">&#39;POS&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="s">&#39;NEG&#39;</span>
+    <span class="k">return</span> <span class="n">retval</span>
+</pre></div>
+</div>
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.delete_with_tracker_instance">
-<tt class="descname">delete_with_tracker_instance</tt><big>(</big><em>instance</em>, <em>model_tpl</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.delete_with_tracker_instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes a single instance from the HistoryModel.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.get_current_instance">
-<tt class="descname">get_current_instance</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>value_datetime=None</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.get_current_instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the instance of <a class="reference internal" href="models.html#bhp_lab_tracker.models.HistoryModel" title="bhp_lab_tracker.models.HistoryModel"><tt class="xref py py-class docutils literal"><span class="pre">bhp_lab_tracker.models.HistoryModel</span></tt></a> with the most current value if it exists.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.get_default_value">
-<tt class="descname">get_default_value</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.get_default_value" title="Permalink to this definition">¶</a></dt>
+<dt id="tracker.LabTracker.get_default_value">
+<tt class="descname">get_default_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.get_default_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.get_default_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the a value if None is available.</p>
-<p>Users should override</p>
+<p>Users may override, carefully</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.get_display_map_prep">
-<tt class="descname">get_display_map_prep</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.get_display_map_prep" title="Permalink to this definition">¶</a></dt>
+<dt id="tracker.LabTracker.get_display_map_prep">
+<tt class="descname">get_display_map_prep</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.get_display_map_prep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.get_display_map_prep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary that may be used to map values for storage in the <tt class="xref py py-class docutils literal"><span class="pre">HistoryModel</span></tt> to value formats used in <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt> model.</p>
 <p>Format {given this value: store this value}.</p>
 <p>This is useful if update_prep adds results that are not described in the same format as the <tt class="xref py py-class docutils literal"><span class="pre">ResultItem</span></tt> model.</p>
@@ -197,56 +275,154 @@ model <tt class="xref py py-class docutils literal"><span class="pre">lab_clinic
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.get_history">
-<tt class="descname">get_history</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>value_datetime</em>, <em>order_desc=False</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.get_history" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns values from the history model for this subject as an ordered queryset
-filtered for records on or before value_datetime.</p>
+<dt id="tracker.LabTracker.get_history">
+<tt class="descname">get_history</tt><big>(</big><em>value_datetime</em>, <em>order_desc=None</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.get_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.get_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an ordered HistoryModel queryset for this subject filtered for records on or before value_datetime.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.get_history_as_list">
-<tt class="descname">get_history_as_list</tt><big>(</big><em>subject_identifier</em>, <em>reference_datetime=None</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.get_history_as_list" title="Permalink to this definition">¶</a></dt>
+<dt id="tracker.LabTracker.get_history_as_list">
+<tt class="descname">get_history_as_list</tt><big>(</big><em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.get_history_as_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.get_history_as_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all values on or before <tt class="xref py py-attr docutils literal"><span class="pre">reference_datetime</span></tt> for a subject as a list in ascending chronological order.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.get_history_as_string">
-<tt class="descname">get_history_as_string</tt><big>(</big><em>subject_identifier</em>, <em>mapped=True</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.get_history_as_string" title="Permalink to this definition">¶</a></dt>
+<dt id="tracker.LabTracker.get_history_as_string">
+<tt class="descname">get_history_as_string</tt><big>(</big><em>reference_datetime</em>, <em>mapped=None</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.get_history_as_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.get_history_as_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a subject&#8217;s qualitative values joined as a string in ascending chronological order.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><ul class="first last simple">
-<li>subject_identifier:</li>
 <li>mapped: if False do not attempt to use a display map (default=True).</li>
 </ul>
 </dd>
 </dl>
-<p>If <tt class="xref py py-attr docutils literal"><span class="pre">mapped</span></tt> is True and a display map is defined in <a class="reference internal" href="#bhp_lab_tracker.classes.LabTracker.get_display_map_prep" title="bhp_lab_tracker.classes.LabTracker.get_display_map_prep"><tt class="xref py py-func docutils literal"><span class="pre">get_display_map_prep()</span></tt></a>, the display map is
+<p>If <tt class="xref py py-attr docutils literal"><span class="pre">mapped</span></tt> is True and a display map is defined in <tt class="xref py py-func docutils literal"><span class="pre">get_display_map_prep()</span></tt>, the display map is
 inverted and a string of values is generated from the map.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.get_value_map_prep">
-<tt class="descname">get_value_map_prep</tt><big>(</big><em>model_name</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.get_value_map_prep" title="Permalink to this definition">¶</a></dt>
+<dt id="tracker.LabTracker.get_value_map_prep">
+<tt class="descname">get_value_map_prep</tt><big>(</big><em>model_name</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.get_value_map_prep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.get_value_map_prep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Users should override to use a custom map for a given tracker model.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.log_history_model_error">
-<tt class="descname">log_history_model_error</tt><big>(</big><em>history_model</em>, <em>error</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.log_history_model_error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Logs errors with the HistoryModel such as when no instance can be found for a subject.</p>
+<dt id="tracker.LabTracker.set_history">
+<tt class="descname">set_history</tt><big>(</big><em>order_desc=None</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.set_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.set_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to an ordered HistoryModel queryset for this subject filtered for records on or before value_datetime.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.update">
-<tt class="descname">update</tt><big>(</big><em>subject_identifier</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.update" title="Permalink to this definition">¶</a></dt>
+<dt id="tracker.LabTracker.set_result_item_tracker">
+<tt class="descname">set_result_item_tracker</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.set_result_item_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.set_result_item_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the tracker for lab_clinic_api.result_item which is added by default to the list of trackers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker.set_subject_identifier">
+<tt class="descname">set_subject_identifier</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.set_subject_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.set_subject_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the subject_identifier which may not be None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker.set_value">
+<tt class="descname">set_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the result value relative to value_datetime OR the default value if there is no
+information for this subject in the History model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker.set_value_datetime">
+<tt class="descname">set_value_datetime</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.set_value_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.set_value_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets value_datetime, None is allowed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker.update_history">
+<tt class="descname">update_history</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.update_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.update_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the HistoryModel with the subject&#8217;s values found in any registered models and ResultItem.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="history_updater.HistoryUpdater">
+<em class="property">class </em><tt class="descclassname">history_updater.</tt><tt class="descname">HistoryUpdater</tt><big>(</big><em>model_inst</em>, <em>group_name</em>, <em>tracker=None</em>, <em>tracked_test_codes=None</em><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.LabTracker.update_with_tracker_instance">
-<tt class="descname">update_with_tracker_instance</tt><big>(</big><em>instance</em>, <em>model_tpl</em><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.LabTracker.update_with_tracker_instance" title="Permalink to this definition">¶</a></dt>
+<dt id="history_updater.HistoryUpdater.delete">
+<tt class="descname">delete</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a single instance from the HistoryModel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.get_subject_identifier">
+<tt class="descname">get_subject_identifier</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.get_subject_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.get_subject_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the datetime of the result item value determined either by getting the instance
+attribute or calling the instance method <tt class="xref py py-func docutils literal"><span class="pre">get_result_datetime()</span></tt> with the attribute name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.get_tracked_test_codes">
+<tt class="descname">get_tracked_test_codes</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.get_tracked_test_codes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.get_tracked_test_codes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the list of test codes to inspect the model instance.</p>
+<ul class="simple">
+<li>If a model instance test code is not listed then the save is aborted.</li>
+<li>Comes from the calling lab_tracker.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.set_group_name">
+<tt class="descname">set_group_name</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_group_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_group_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the group name provided by the caller which is only needed as a reference field value for the HistoryModel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.set_model_inst">
+<tt class="descname">set_model_inst</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_model_inst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_model_inst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the model instance that is used to set most instance attributes and to update the HistoryModel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.set_subject_identifier">
+<tt class="descname">set_subject_identifier</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_subject_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_subject_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the subject identifier by accessing the method get_subject_identifier on the model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.set_test_code">
+<tt class="descname">set_test_code</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_test_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_test_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the test_code for this value by inspecting the model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.set_tracker">
+<tt class="descname">set_tracker</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the tracker provided by the caller which has information on how to inspect the model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.set_value">
+<tt class="descname">set_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the result value from the model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.set_value_datetime">
+<tt class="descname">set_value_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_value_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_value_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the result datetime by accessing a method or field attribute on the model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="history_updater.HistoryUpdater.update">
+<tt class="descname">update</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the history model given a registered tracker model instance.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Default values are not saved to the history model.</p>
+</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">An instance from ResultItem may be sent from the signal. Do not automatically
@@ -258,20 +434,19 @@ accept it, first send it to check if the testcode is being tracked.</p>
 
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The global <cite>lab_tracker</cite> is an instance of <a class="reference internal" href="#bhp_lab_tracker.classes.SiteLabTracker" title="bhp_lab_tracker.classes.SiteLabTracker"><tt class="xref py py-class docutils literal"><span class="pre">SiteLabTracker</span></tt></a> which is referred to in the <tt class="file docutils literal"><span class="pre">lab_tracker.py</span></tt></p>
+<p class="last">The global <cite>site_lab_tracker</cite> is an instance of <tt class="xref py py-class docutils literal"><span class="pre">Controller</span></tt>.</p>
 </div>
 <div class="section" id="custom-subclasses-of-labtracker">
 <h2>Custom Subclasses of LabTracker<a class="headerlink" href="#custom-subclasses-of-labtracker" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="bhp_lab_tracker.classes.HivLabTracker">
-<em class="property">class </em><tt class="descclassname">bhp_lab_tracker.classes.</tt><tt class="descname">HivLabTracker</tt><a class="headerlink" href="#bhp_lab_tracker.classes.HivLabTracker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">bhp_lab_tracker.classes.tracker.LabTracker</span></tt></p>
+<dt id="hiv_lab_tracker.HivLabTracker">
+<em class="property">class </em><tt class="descclassname">hiv_lab_tracker.</tt><tt class="descname">HivLabTracker</tt><big>(</big><em>subject_identifier=None</em><big>)</big><a class="reference internal" href="_modules/hiv_lab_tracker.html#HivLabTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hiv_lab_tracker.HivLabTracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tracker.LabTracker" title="tracker.LabTracker"><tt class="xref py py-class docutils literal"><span class="pre">tracker.LabTracker</span></tt></a></p>
 <p>Subclasses LabTracker to specialize on tracking HIV results.</p>
 <dl class="docutils">
 <dt>Predefined Class Attributes:</dt>
 <dd><ul class="first last simple">
-<li>resultitem_test_code = (&#8216;ELISA&#8217;, &#8216;RELISA&#8217;, &#8216;DNAPCR&#8217;)</li>
-<li>tracker_test_code = &#8216;HIV&#8217;</li>
+<li>tracked_test_codes = (&#8216;ELISA&#8217;, &#8216;RELISA&#8217;, &#8216;DNAPCR&#8217;)</li>
 <li>group_name = &#8216;HIV&#8217;</li>
 </ul>
 </dd>
@@ -291,8 +466,14 @@ accept it, first send it to check if the testcode is being tracked.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="bhp_lab_tracker.classes.HivLabTracker.get_display_map_prep">
-<tt class="descname">get_display_map_prep</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_lab_tracker.classes.HivLabTracker.get_display_map_prep" title="Permalink to this definition">¶</a></dt>
+<dt id="hiv_lab_tracker.HivLabTracker.get_default_value">
+<tt class="descname">get_default_value</tt><big>(</big><big>)</big><a class="headerlink" href="#hiv_lab_tracker.HivLabTracker.get_default_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the a value if none is available.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hiv_lab_tracker.HivLabTracker.get_display_map_prep">
+<tt class="descname">get_display_map_prep</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/hiv_lab_tracker.html#HivLabTracker.get_display_map_prep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hiv_lab_tracker.HivLabTracker.get_display_map_prep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maps HIV result values to single letters for use when displaying the results as a string.</p>
 </dd></dl>
 

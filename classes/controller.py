@@ -30,23 +30,21 @@ class NotRegistered(Exception):
 class Controller(object):
     """Registers from modules with a lab_tracker module (lab_tracker.py).
 
-    Models in the trackers tuples class attribute
-      1. must define the method :func:`get_subject_identifier`.
-      2. may define:
-           * :func:`get_result_value(attr)`
-           * :func:`get_result_datetime(attr)`
-
     To register a class or classes create :file:`lab_tracker.py` in your module and add something like this:
 
     .. code-block:: python
 
-        from bhp_lab_tracker.classes import lab_tracker
+        from bhp_lab_tracker.classes import site_lab_tracker
         from bhp_lab_tracker.classes import HivLabTracker
+        from models import HivTestReview, HivResult
 
 
-        class InfantHivLabTracker(HivLabTracker):
-            pass
-        lab_tracker.register(InfantHivLabTracker)
+        class SubjectHivLabTracker(HivLabTracker):
+
+            trackers = [(HivTestReview, 'recorded_hiv_result', 'hiv_test_date', ),
+                      (HivResult, 'hiv_result', 'hiv_result_datetime', )]
+
+        site_lab_tracker.register(SubjectHivLabTracker)
 
     .. seealso:: :class:`HivLabTracker`
 
@@ -58,7 +56,14 @@ class Controller(object):
         self._models = None
 
     def register(self, lab_tracker_cls):
-        """Registers lab_tracker classes to a list."""
+        """Registers lab_tracker classes to the registry (a list).
+
+        Ensures model classes refered to by the trackers in the LabTracker classes have the following methods:
+            * get_subject_identifier
+            * get_report_datetime
+            * get_result_datetime
+            * get_test_code
+        """
         lab_tracker_inst = lab_tracker_cls()
         if lab_tracker_cls in self._registry:
             raise AlreadyRegistered('The class %s is already registered' % lab_tracker_cls)
@@ -84,14 +89,15 @@ class Controller(object):
             if 'models' in dir(lab_tracker_cls):
                 raise ImproperlyConfigured('Class attribute \'models\' has been changed to \'trackers\'. Please correct your class declaration for lab_tracker {0}'.format(lab_tracker_cls))
             raise ImproperlyConfigured('LabTracker class {0} is missing class attribute \'trackers\'.'.format(lab_tracker_cls))
-
+        # all trackers in a LabTracker must be namedtuples
+        # TODO: is this check necessary, aren't these converted when instantiated?
         for tracker in lab_tracker_cls().get_trackers():
             if not isinstance(tracker, TrackerNamedTpl):
                 raise TypeError('expected an instance of TrackerTpl. Got {0}'.format(tracker))
         self._registry.append(lab_tracker_cls)
 
-    def update(self, model_inst):
-        """Updates the history model for the tracker that refers to this model."""
+    def update_history(self, model_inst):
+        """Updates history for a given model instance (on pk) via the tracker for the model class."""
         for lab_tracker_cls in self._registry:
             lab_tracker_inst = lab_tracker_cls(model_inst.get_subject_identifier())
             if isinstance(model_inst, lab_tracker_inst.get_models()):
@@ -100,12 +106,14 @@ class Controller(object):
                         HistoryUpdater(model_inst, lab_tracker_inst.get_group_name(), tracker, lab_tracker_inst._get_tracked_test_codes()).update()
 
     def delete_history(self, model_inst):
+        """Deletes history for a given model instance (on pk) via the tracker for the model class."""
         for lab_tracker_cls in self._registry:
             lab_tracker_inst = lab_tracker_cls(model_inst.get_subject_identifier())
             if isinstance(model_inst, lab_tracker_inst.get_models()):
-                HistoryUpdater(model_inst, lab_tracker_inst.get_group_name()).delete_history()
+                HistoryUpdater(model_inst, lab_tracker_inst.get_group_name()).delete()
 
     def update_all(self, supress_messages):
+        """Updates the history for all subjects in RegisteredSubject for all LabTrackers in the registry."""
         RegisteredSubject = get_model('bhp_registration', 'RegisteredSubject')
         tot = RegisteredSubject.objects.values('subject_identifier').all().count()
         for lab_tracker_cls in self._registry:
@@ -124,9 +132,11 @@ class Controller(object):
 #         return tot
 
     def all(self):
+        """Returns the registry as a list."""
         return self._registry
 
     def _get_lab_tracker_inst_by_group_name(self, group_name, subject_identifier):
+        """Returns a lab_tracker instantiated for this subject from the registry given a group_name."""
         lab_tracker_inst = None
         for lab_tracker_cls in self._registry:
             inst = lab_tracker_cls(subject_identifier)
@@ -136,6 +146,7 @@ class Controller(object):
         return lab_tracker_inst
 
     def set_model_list(self):
+        """Sets the list of model classes used by the trackers in the registry."""
         if not self.autodiscovered:
             raise LabTrackerError('Lab Tracker is not ready. Call autodiscover first.')
         self._models = []
@@ -151,6 +162,7 @@ class Controller(object):
         return self._models
 
     def get_history_as_qs(self, group_name, subject_identifier, reference_datetime=None):
+        """Returns the result history as QuerySet."""
         self.confirm_autodiscovered()
         retval = ''
         if not reference_datetime:
@@ -161,6 +173,7 @@ class Controller(object):
         return retval
 
     def get_history_as_list(self, group_name, subject_identifier, reference_datetime=None):
+        """Returns the result history as a list of values."""
         self.confirm_autodiscovered()
         retval = ''
         if not reference_datetime:
@@ -171,6 +184,7 @@ class Controller(object):
         return retval
 
     def get_history_as_string(self, group_name, subject_identifier, mapped=True, reference_datetime=None):
+        """Returns the result history as a string of values."""
         self.confirm_autodiscovered()
         retval = ''
         if not reference_datetime:
@@ -181,22 +195,27 @@ class Controller(object):
         return retval
 
     def get_current_value(self, group_name, subject_identifier):
+        """Wraps :func:`get_value` calling with value_datetime = today's date."""
         return self.get_value(group_name, subject_identifier, value_datetime=datetime.today())
 
     def get_value(self, group_name, subject_identifier, value_datetime=None):
-        """Searches thru the registry to find a class that can be used to search for the value.
+        """Returns the result value or a tuple with the result value, if default, in this LabTracker group for this subject.
+
+        Searches thru the registry to find a class that can be used to search for the value..
 
             Args:
-                * group_name: the group name that you expect to be the same as that of lab_tracker_cls().get_group_name()
-                * subject_identifier: used by :func:`get_current_value`
-                * value_datetime: used by :func:`get_current_value`
+                * group_name: group name as set on the LabTracker class declaration
+                * subject_identifier: a valid subject identifier
+                * value_datetime: a valid datetim
 
-           Method :func:`get_value()`
+        .. note:: If a default value is returned, the result is a tuple.
 
-           This method will be called from any class that needs the value being tracked. For example,
-           :class:`ClinicGradeFlag` needs to know the HIV Status of a subject at the time a sample
-           was drawn in order to grade a test result.
-           See :func:`lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status`.
+       This method will be called from any class that needs the value being tracked. For example,
+       :class:`ClinicGradeFlag` needs to know the HIV Status of a subject at the time a sample
+       was drawn in order to grade a test result.
+
+       .. seealso:: :func:`lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status`.
+
         """
         self.confirm_autodiscovered()
         value = None
@@ -213,7 +232,7 @@ class Controller(object):
         return value
 
     def autodiscover(self):
-        """Searches all apps for :file:`lab_tracker.py` and registers and :class:`LabTracker` subclasses found."""
+        """Searches all apps for :file:`lab_tracker.py` and registers all :class:`LabTracker` subclasses found."""
         if not self.autodiscovered:
             self.autodiscovered = True
             for app in settings.INSTALLED_APPS:
