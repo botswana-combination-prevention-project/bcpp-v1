@@ -75,6 +75,7 @@ REFFERED_FOR=(
 
 REFFERED_TO=(
     ('health_facility',('Public/Private Health Facility')),
+    ('d',('d')),
     ('religious',('Religious Institution')),
     ('plwh',('PLWH/A Association')),
     ('social_welfare',('Social Welfare facilities')),
