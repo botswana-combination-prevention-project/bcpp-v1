@@ -100,7 +100,7 @@ class Flag(object):
     def evaluate(self, value):
         """ Determines the flag for value and returns a with the flag and related parameters.
 
-        .. note:: If an value is evaluated but not of a gradable range, flag = 0. If 
+        .. note:: If an value is evaluated but not of a gradable range, flag = 0. If
                   the value / test code cannot be evaluated for lack of grade items, the
                   flag is None.
 
