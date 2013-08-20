@@ -32,3 +32,4 @@ from blood_draw_admin import BloodDrawAdmin
 from education_admin import EducationAdmin
 from community_engagement_admin import CommunityEngagementAdmin
 from medical_diagnoses_admin import MedicalDiagnosesAdmin
+from cea_enrolment_checklist_admin import CeaEnrolmentChecklistAdmin

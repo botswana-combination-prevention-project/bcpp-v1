@@ -2,15 +2,14 @@ from django.contrib import admin
 # from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
-                                 HospitalAdmission, HivHealthCareCosts, CeaEnrolmentChecklist,
+                                 HospitalAdmission, HivHealthCareCosts,
                                  HivMedicalCare, HeartAttack, Cancer, Sti,
                                  Tubercolosis, SubstanceUse, Stigma,
                                  StigmaOpinion, PositiveParticipant,
                                  HivResultDocumentation)
-from registered_subject_model_admin import RegisteredSubjectModelAdmin
 from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
                                 HospitalAdmissionForm, HivHealthCareCostsForm,
-                                CeaEnrolmentChecklistForm, HivMedicalCareForm,
+                                HivMedicalCareForm,
                                 HeartAttackForm, CancerForm, StiForm,
                                 TubercolosisForm, SubstanceUseForm, StigmaForm,
                                 StigmaOpinionForm, PositiveParticipantForm,
@@ -132,31 +131,6 @@ class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
         }
 admin.site.register(HivHealthCareCosts, HivHealthCareCostsAdmin)
 
-
-class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
-
-    form = CeaEnrolmentChecklistForm
-    fields = (
-        "registered_subject",
-#         "registration_datetime",
-#         "mental_capacity",
-#         "incarceration",
-        "citizen",
-        "community_resident",
-        "enrolment_reason",
-        "cd4_date",
-        "cd4_count",
-        "opportunistic_illness",
-        "diagnosis_date",
-        "date_signed",)
-    radio_fields = {
-#         "mental_capacity": admin.VERTICAL,
-#         "incarceration": admin.VERTICAL,
-        "citizen": admin.VERTICAL,
-        "community_resident": admin.VERTICAL,
-        "enrolment_reason": admin.VERTICAL,
-        "opportunistic_illness": admin.VERTICAL, }
-admin.site.register(CeaEnrolmentChecklist, CeaEnrolmentChecklistAdmin)
 
 
 class HivMedicalCareAdmin(SubjectVisitModelAdmin):
