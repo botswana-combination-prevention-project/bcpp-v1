@@ -1,17 +1,17 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 from bhp_base_model.validators import (datetime_not_before_study_start, datetime_not_future,
                                        dob_not_future, MinConsentAge, MaxConsentAge)
+from bhp_base_model.validators import eligible_if_yes
 from bhp_base_model.fields import IsDateEstimatedField
 from household_member import HouseholdMember
 from bhp_registration.models import RegisteredSubject
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_botswana.fields import EncryptedOmangField
-from bhp_base_model.fields import OtherCharField
+# from bhp_base_model.fields import OtherCharField
 from audit_trail.audit import AuditTrail
-from bcpp_list.models import Religion
-from bhp_common.choices import POS_NEG_ONLY, GENDER_UNDETERMINED, YES_NO
-from bcpp.choices import ETHNIC_CHOICE, MARITALSTATUS_CHOICE, WHYNOHIVTESTING_CHOICE
+from bcpp.choices import COMMUNITIES
+from bcpp_subject.choices import COUNSELING_SITE
+from bhp_common.choices import GENDER_UNDETERMINED, YES_NO, YES_NO_DONT_KNOW
 
 
 class HtcData (BaseDispatchSyncUuidModel):
@@ -23,6 +23,21 @@ class HtcData (BaseDispatchSyncUuidModel):
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
         validators=[datetime_not_before_study_start, datetime_not_future],
+        )
+    
+    is_resident = models.CharField(
+        verbose_name="Is this your community of residence?",
+        choices=YES_NO,
+        max_length=3,
+        help_text="Community of residence is where an individual spends on average >=14 nights per month",
+        )
+    
+    your_community = models.CharField(
+        verbose_name="What is your community of residence?",
+        max_length=50,
+        choices=COMMUNITIES,
+        null=True,
+        blank=True,
         )
 
     dob = models.DateField(
@@ -61,63 +76,56 @@ class HtcData (BaseDispatchSyncUuidModel):
         verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
-#         validators=[eligible_if_yes, ],
         help_text="",
         )
-
-    rel = models.ManyToManyField(Religion,
-        verbose_name=_("What is your religion affiliation?"),
-        help_text="",
-        )
-    rel_other = OtherCharField()
-
-    ethnic = models.CharField(
-        verbose_name=_("What is your ethnic group?"),
-        max_length=35,
-        choices=ETHNIC_CHOICE,
-        help_text="Ask for the original ethnic group",
-        )
-    other = OtherCharField()
-
-    marital_status = models.CharField(
-        verbose_name=_("What is your current marital status?"),
-        max_length=55,
-        choices=MARITALSTATUS_CHOICE,
-        help_text="",
-        )
-    num_wives = models.IntegerField(
-        verbose_name=_("How many wives does your husband have (including traditional marriage),"
-                        " including yourself?"),
-        max_length=2,
+    
+    legal_marriage = models.CharField(
+        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
+        max_length=3,
+        choices=YES_NO,
         null=True,
         blank=True,
-        help_text="Leave blank if participant does not want to respond.",
+        validators=[eligible_if_yes, ],
+        help_text=" if 'NO,' STOP participant cannot be enrolled",
         )
-    husband_wives = models.IntegerField(
-        verbose_name=_("How many wives do you have, including traditional marriage?"),
-        max_length=2,
+ 
+    marriage_certificate = models.CharField(
+        verbose_name=("Has the participant produced the marriage certificate, as proof? "),
+        max_length=3,
+        choices=YES_NO,
         null=True,
         blank=True,
-        help_text="Leave blank if participant does not want to respond.",
+        validators=[eligible_if_yes, ],
+        help_text=" if 'NO,' STOP participant cannot be enrolled",
         )
-
-    hiv_result = models.CharField(
-        verbose_name=_("Record today\'s HIV test result:"),
-        max_length=50,
-        choices=POS_NEG_ONLY,
+    
+    marriage_certificate_no = models.CharField(
+        verbose_name=("What is the marriage certificate number?"),
+        max_length=9,
+        null=True,
+        blank=True,
+        help_text="e.g. 000/YYYY",
+        )
+    
+    is_pregnant = models.CharField(
+        verbose_name=("Are you pregnant?"),
+        max_length=15,
+        choices=YES_NO_DONT_KNOW,
+        null=True,
+        blank=True,
+        help_text=" For female participants only",
+        )
+    
+    testing_counseling_site = models.CharField(
+        verbose_name=("Testing and Counseling Site"),
+        max_length=15,
+        choices=COUNSELING_SITE,
+        null=True,
+        blank=True,
         help_text="",
         )
 
-    why_not_tested = models.CharField(
-        verbose_name=_("What was the main reason why you did not want HIV testing"
-                       " as part of today's visit?"),
-        max_length=65,
-        null=True,
-        blank=True,
-        choices=WHYNOHIVTESTING_CHOICE,
-        help_text="Note: Only asked of individuals declining HIV testing during this visit.",
-        )
-
+    
     history = AuditTrail()
 
     class Meta:
