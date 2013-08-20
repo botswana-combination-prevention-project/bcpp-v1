@@ -2,8 +2,8 @@ from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
-                                 CeaEnrolmentChecklist, HivMedicalCare,
-                                 HeartAttack, Cancer, Tubercolosis, Sti, SubstanceUse, Stigma,
+                                 HivMedicalCare,HeartAttack, Cancer, Tubercolosis, 
+                                 Sti, SubstanceUse, Stigma,
                                  StigmaOpinion, PositiveParticipant,
                                  HivResultDocumentation)
 
@@ -60,12 +60,6 @@ class GrantForm (BaseSubjectModelForm):
 
     class Meta:
         model = Grant
-
-
-class CeaEnrolmentChecklistForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = CeaEnrolmentChecklist
 
 
 class HivMedicalCareForm (BaseSubjectModelForm):
