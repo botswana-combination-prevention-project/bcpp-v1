@@ -1,2 +1,4 @@
 from main import *
 from demographics_risk_form import DemographicsRiskForm
+from hiv_testing_counseling_form import HivTestingCounselingForm
+from followup_contact_permission_form import FollowupContactPermissionForm

@@ -1,1 +1,3 @@
 from demographics_risk import DemographicsRisk
+from hiv_testing_counseling import HivTestingCounseling
+from followup_contact_permission import FollowupContactPermission
