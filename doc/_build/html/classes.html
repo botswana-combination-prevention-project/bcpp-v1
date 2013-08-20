@@ -222,19 +222,19 @@ Must be unique for each type of value being tracked. For example: &#8216;HIV&#82
 </dd>
 <dt>Optional class attributes to be defined on the subclass:</dt>
 <dd><ul class="first simple">
-<li>models: a tuple of tuples where the containing tuple defines (model_cls, value_attr, date_attr).
+<li>trackers: a list of tuples where the containing tuple defines (model_cls, value_attr, date_attr).
 Use this attribute to include models from your app that capture values not captured in
 model <tt class="xref py py-class docutils literal"><span class="pre">lab_clinic_api.models.ResultItem</span></tt>.</li>
 </ul>
 <div class="last admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If models is not defined, the class will just track values in <tt class="xref py py-mod docutils literal"><span class="pre">lab_clinic_api.result_item</span></tt>.</p>
+<p class="last">If &#8216;trackers&#8217; is not defined, the class will just track values in <tt class="xref py py-mod docutils literal"><span class="pre">lab_clinic_api.result_item</span></tt>.</p>
 </div>
 </dd>
 </dl>
 <p>For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">InfantHivLabTracker</span><span class="p">(</span><span class="n">HivLabTracker</span><span class="p">):</span>
-    <span class="n">models</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">trackers</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">HivTesting</span><span class="p">,</span> <span class="s">&#39;pcr_result&#39;</span><span class="p">,</span> <span class="s">&#39;pcr_date&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
         <span class="p">(</span><span class="n">HivTesting</span><span class="p">,</span> <span class="s">&#39;elisa_result&#39;</span><span class="p">,</span> <span class="s">&#39;elisa_date&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">)]</span>
 <span class="n">lab_tracker</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">InfantHivLabTracker</span><span class="p">)</span>
