@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.db.models import get_model
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 
-lab_tracker.autodiscover()
+site_lab_tracker.autodiscover()
 
 
 class Command(BaseCommand):
