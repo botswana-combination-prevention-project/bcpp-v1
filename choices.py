@@ -555,3 +555,10 @@ CHOICES_FROM_BCPPLIST = (
     ('Donkey or cow cart', _('Donkey or cow cart')),
     ('Donkey/horses', _('Donkey/horses')),
     )
+
+COUNSELING_SITE = (
+    ('IN_HOME', 'In home'),
+    ('MOBILE', 'Mobile Unit'),
+    ('TENT', 'Tent'),
+    ('CLINIC', 'Clinic'),
+    )
