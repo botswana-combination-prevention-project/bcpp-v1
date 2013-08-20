@@ -11,38 +11,37 @@ class HtcDataAdmin(BaseModelAdmin):
     fields = (
         'household_member',
         "report_datetime",
+        "is_resident",
+        "your_community",
         'dob',
         'is_dob_estimated',
         'gender',
         'omang',
         "citizen",
-        'rel',
-        'rel_other',
-        'ethnic',
-        'other',
-        'marital_status',
-        'num_wives',
-        'husband_wives',
-        'hiv_result',
-        'why_not_tested',)
+        "legal_marriage",
+        "marriage_certificate",
+        "marriage_certificate_no",
+        "is_pregnant",
+        "testing_counseling_site",
+        )
 
     list_display = (
         'household_member',
-#         'composition',
         "report_datetime",
         )
 
     list_filter = ["report_datetime",]
 
     radio_fields = {
+        "is_resident": admin.VERTICAL,
+        "your_community": admin.VERTICAL,
         "is_dob_estimated": admin.VERTICAL,
         "gender": admin.VERTICAL,
         "citizen": admin.VERTICAL,
-        "marital_status": admin.VERTICAL, 
-        "hiv_result": admin.VERTICAL,
-        "why_not_tested": admin.VERTICAL,}
-
-    filter_horizontal = ('rel',)
+        "legal_marriage": admin.VERTICAL,
+        "marriage_certificate": admin.VERTICAL,
+        "is_pregnant": admin.VERTICAL,
+        "testing_counseling_site": admin.VERTICAL,}
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
