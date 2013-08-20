@@ -29,16 +29,16 @@ class LabTracker(object):
           Must be unique for each type of value being tracked. For example: 'HIV'.
 
     Optional class attributes to be defined on the subclass:
-        * models: a tuple of tuples where the containing tuple defines (model_cls, value_attr, date_attr).
+        * trackers: a list of tuples where the containing tuple defines (model_cls, value_attr, date_attr).
           Use this attribute to include models from your app that capture values not captured in
           model :class:`lab_clinic_api.models.ResultItem`.
 
-        .. note:: If models is not defined, the class will just track values in :mod:`lab_clinic_api.result_item`.
+        .. note:: If \'trackers\' is not defined, the class will just track values in :mod:`lab_clinic_api.result_item`.
 
     For example::
 
         class InfantHivLabTracker(HivLabTracker):
-            models = [
+            trackers = [
                 (HivTesting, 'pcr_result', 'pcr_date', None, True),
                 (HivTesting, 'elisa_result', 'elisa_date', None, True)]
         lab_tracker.register(InfantHivLabTracker)
