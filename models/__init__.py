@@ -6,4 +6,12 @@ from htc_visit import HtcVisit
 from circumcision import Circumcision
 from hiv_testing_history import HivTestingHistory
 from last_hiv_record import LastHivRecord
+from hiv_testing_consent import HivTestingConsent
+from hiv_result import HivResult
+from referral import Referral 
+from cd4_test import CD4Test
+from circumcision_appointment import CircumcisionAppointment
+from positive_followup_consent import PositiveFollowupConsent
+from male_followup_consent import MaleFollowupConsent
+from pregnant_followup_consent import PregnantFollowupConsent
 from htc_registration import HtcRegistration
