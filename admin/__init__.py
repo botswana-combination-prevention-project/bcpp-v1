@@ -2,6 +2,7 @@ from main import *
 from demographics_risk_admin import DemographicsRiskAdmin
 from partners_admin import RecentPartnerAdmin, SecondPartnerAdmin, ThirdPartnerAdmin
 from htc_visit_admin import HtcVisitAdmin
+from htc_registration_admin import HtcRegistrationAdmin
 from circumcision_admin import CircumcisionAdmin
 from hiv_testing_history_admin import HivTestingHistoryAdmin
 from last_hiv_record_admin import LastHivRecordAdmin
