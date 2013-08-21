@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_locator.models import BaseLocator
 from bhp_common.choices import YES_NO
@@ -16,7 +17,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     alt_contact_cell_number = EncryptedCharField(
         max_length=8,
-        verbose_name="Cell number (alternate)",
+        verbose_name=_("Cell number (alternate)"),
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
@@ -25,7 +26,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name=("If we are unable to contact the person indicated above, is there another"
+        verbose_name=_("If we are unable to contact the person indicated above, is there another"
                       " individual (including next of kin) with whom the study team can get"
                       " in contact with?"),
         help_text="",
@@ -33,7 +34,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     alt_contact_name = EncryptedCharField(
         max_length=35,
-        verbose_name="Full Name of the responsible person",
+        verbose_name=_("Full Name of the responsible person"),
         help_text="include first name and surname",
         blank=True,
         null=True,
@@ -41,14 +42,14 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     alt_contact_rel = EncryptedCharField(
         max_length=35,
-        verbose_name="Relationship to participant",
+        verbose_name=_("Relationship to participant"),
         blank=True,
         null=True,
         help_text="",
         )
     alt_contact_cell = EncryptedCharField(
         max_length=8,
-        verbose_name="Cell number",
+        verbose_name=_("Cell number"),
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
@@ -57,7 +58,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     other_alt_contact_cell = EncryptedCharField(
         max_length=8,
-        verbose_name="Cell number (alternate)",
+        verbose_name=_("Cell number (alternate)"),
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
@@ -66,7 +67,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     alt_contact_tel = EncryptedCharField(
         max_length=8,
-        verbose_name="Telephone number",
+        verbose_name=_("Telephone number"),
         validators=[BWTelephoneNumber, ],
         help_text="",
         blank=True,
