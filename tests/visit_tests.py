@@ -7,7 +7,7 @@ from bhp_base_test.models import TestVisit
 from bhp_consent.tests.factories import ConsentCatalogueFactory
 from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_registration.models import RegisteredSubject
 from bhp_appointment.models import Appointment
 
@@ -16,7 +16,7 @@ class VisitTests(TestCase):
 
     def test_p1(self):
         from bhp_base_test.tests.factories import TestRegistrationFactory, TestVisitFactory, TestConsentFactory, TestScheduledModelFactory
-        lab_tracker.autodiscover()
+        site_lab_tracker.autodiscover()
         StudySpecificFactory()
         study_site = StudySiteFactory()
         ConfigurationFactory()
