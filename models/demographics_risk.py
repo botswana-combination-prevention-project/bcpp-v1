@@ -2,10 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bcpp_htc.choices import EDUCATION, EMPLOYMENT, MARITAL_STATUS, ALCOHOL_INTAKE
-from bcpp_subject.models.base_scheduled_visit_model import BaseScheduledVisitModel
+from base_scheduled_htc_visit import BaseScheduledHtcVisit
 
 
-class DemographicsRisk (BaseScheduledVisitModel):
+class DemographicsRisk (BaseScheduledHtcVisit):
 
     """C. Demographics and Risk Factors"""
 
@@ -43,6 +43,6 @@ class DemographicsRisk (BaseScheduledVisitModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_htc'
         verbose_name = "Demographics & Risk Factors"
         verbose_name_plural = "Demographics & Risk Factors"
