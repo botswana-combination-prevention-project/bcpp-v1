@@ -21,3 +21,6 @@ from heart_disease import HeartDisease
 from diagnoses import Diagnoses
 from religion import Religion
 from ethnic_groups import EthnicGroups
+
+from referred_to import ReferredTo
+from referred_for import ReferredFor
