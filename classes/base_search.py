@@ -16,27 +16,23 @@ class BaseSearch(object):
 
     APP_LABEL = 0
     MODEL_NAME = 1
-    section_name = None
+    section = None
     search_model = None
     template = None
     order_by = None
 
     def __init__(self):
-        """
-        Keyword Arguments:
-            search_result_template --
-            section_name --
-        """
+        self._section_name_list = None
+        self._section = None
+        self._section_name = None
+        self._search_model_cls = None
+        self._context = {}
+        self._search_result_template = None
         self.form_is_valid = False
         self.registration_model = {}
         self.search_form = None
         self.search_label = None
         self.search_model_name = None
-        self._section_name_list = None
-        self._section_name = None
-        self._search_model_cls = None
-        self._context = {}
-        self._search_result_template = None
         self.pattern = patterns
         if 'name' not in dir(self):
             self.name = 'SEARCH'
@@ -49,11 +45,21 @@ class BaseSearch(object):
         for k, v in kwargs.iteritems():
             self._context[k] = v
 
-    def set_section_name(self, value=None):
-        if self.section_name:
-            self._section_name = self.section_name
-        else:
-            self._section_name = value
+    def set_section(self):
+        from bhp_section.classes import BaseSectionView
+        self._section = self.section
+        if not self._section:
+            raise SearchAttributeError('Class attribute section may not be None for class {0}. Set this in the class declaration.'.format(self))
+        if not issubclass(self._section, BaseSectionView):
+            raise TypeError('Class attribute section must be a subclass of BaseSectionView for class {0}. Set this in the class declaration.'.format(self))
+
+    def get_section(self):
+        if not self._section:
+            self.set_section()
+        return self._section
+
+    def set_section_name(self):
+        self._section_name = self.get_section().section_name
         if not self._section_name:
             raise SearchAttributeError('Attribute \'section_name\' may not be None.')
 

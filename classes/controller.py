@@ -18,12 +18,13 @@ class Controller(object):
 
     """ Main controller of :class:`Search` objects. """
 
-    SECTION_NAME = 0
-
     def __init__(self):
         self._registry = {}
         self.is_autodiscovered = False
-        self._section_list = []
+        self._section_list = None
+
+    def register(self, search_cls):
+        self.set_registry(search_cls)
 
     def set_registry(self, search_cls):
         """Sets the dictionary to the controller register.
@@ -34,37 +35,39 @@ class Controller(object):
         """
         if not issubclass(search_cls, BaseSearch):
             raise AlreadyRegistered('Expected an instance of BaseSearch.')
-        if search_cls.section_name in self._registry:
-            if search_cls.search_type == self.get(search_cls.section_name).search_type:
-                raise AlreadyRegistered('A search class of type {0} is already registered for section {1}'.format(search_cls.search_type, search_cls.section_name))
-        self._registry[search_cls.section_name] = search_cls
+        if not search_cls.search_type:
+            raise AttributeError('Attribute search_type cannot be None')
+        if not search_cls.search_model:
+            raise AttributeError('Attribute search_model cannot be None')
+        if not search_cls.section:
+            raise ImproperlyConfigured('Class attribute section may not be None for search class {0}. Expected a subclass of BaseSectionView.'.format(search_cls))
+        section = search_cls.section()
+        if section.get_section_name() in self._registry:
+            raise AlreadyRegistered('A search class {0} is already registered for section {1}'.format(search_cls, section.get_section_name()))
+        self._registry[section.get_section_name()] = search_cls
 
     def get(self, section_name):
         return self._registry.get(section_name)
 
     def get_registry(self, section_name=None):
         if section_name:
-            if section_name in self._registry:
-                return self._registry.get(section_name)
-            else:
-                return {}
+            if not section_name in self._registry:
+                raise TypeError('Invalid section name. Got {0}. Expected any of {1}'.format(section_name, self.get_section_names()))
+            return self._registry.get(section_name)
         return self._registry
+
+    def set_section_list(self):
+        self._section_list = [cls.section_name for cls in self._registry.itervalues()]
+
+    def get_section_list(self):
+        if not self._section_list:
+            self.set_section_list()
+        return self._section_list
 
     def all(self):
         return self.get_registry()
 
-    def register(self, search_cls):
-        if not search_cls.section_name:
-            raise AttributeError('Attribute section_name cannot be None')
-        if not search_cls.search_type:
-            raise AttributeError('Attribute search_type cannot be None')
-        if not search_cls.search_model:
-            raise AttributeError('Attribute search_model cannot be None')
-        if search_cls.section_name not in self._section_list:
-            raise ImproperlyConfigured('{0} refers to section name {1} which is not a valid section. Must be any of {2}.'.format(search_cls, search_cls.section_name, self._section_list))
-        self.set_registry(search_cls)
-
-    def autodiscover(self, sections_list):
+    def autodiscover(self, section_name_list):
         """Discovers search classes in each installed app with a search.py.
 
         By default this is called by :func:`setup` in :class:`bhp_sections.classes.BaseSectionIndexView`.
@@ -73,7 +76,6 @@ class Controller(object):
 
             site_search.autodiscover(site_sections.get_section_list())"""
         if not self.is_autodiscovered:
-            self._section_list = [tpl[self.SECTION_NAME] for tpl in sections_list]
             for app in settings.INSTALLED_APPS:
                 mod = import_module(app)
                 try:
