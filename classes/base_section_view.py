@@ -16,6 +16,8 @@ from bhp_section.exceptions import SectionError
 class BaseSectionView(object):
 
     section_name = None
+    section_display_name = None
+    section_display_index = None
     section_list = None
     section_template = None
     add_model = None
@@ -24,9 +26,10 @@ class BaseSectionView(object):
         self._context = {}
         self._template = None
         self._section_name = None
+        self._section_display_name = None
+        self._section_display_index = None
         self._add_model_cls = None
         self._section_list = None
-        #self.search_label = None
         self._sections_using_search = []
         self._custom_template = {}
         self._search_type = {}
@@ -71,6 +74,32 @@ class BaseSectionView(object):
         if not self._section_name:
             self.set_section_name()
         return self._section_name
+
+    def set_section_display_name(self, value=None):
+        """Sets the name for this section."""
+        if self.section_display_name:  # try for class attribute first
+            self._section_display_name = self.section_display_name
+        else:
+            self._section_display_name = value
+
+    def get_section_display_name(self):
+        """Returns the name for this section."""
+        if not self._section_display_name:
+            self.set_section_display_name()
+        return self._section_display_name
+
+    def set_section_display_index(self, value=None):
+        """Sets the name for this section."""
+        if self.section_display_index:  # try for class attribute first
+            self._section_display_index = self.section_display_index
+        else:
+            self._section_display_index = value
+
+    def get_section_display_index(self):
+        """Returns the name for this section."""
+        if not self._section_display_index:
+            self.set_section_display_index()
+        return self._section_display_index
 
     def _set_add_model_cls(self, value=None):
         """Sets the model class used for the 'Add' button."""
