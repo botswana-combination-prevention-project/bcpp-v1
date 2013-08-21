@@ -12,6 +12,12 @@
         </div>
     {% else %}
     	
+    	
+    	<br />
+    	<div id="section_navbar">
+    		<li><a href="{% url "selected_map_index_url" mapper_name %}">{{ mapper_name }} maps</a></li>
+		</div>
+    	<br />
     	<h1><b>{{ message }} for {{ mapper_name }}</b></h1>
     	
 	{% endif %}	
