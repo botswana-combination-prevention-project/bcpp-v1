@@ -1,4 +1,3 @@
 from household_member_admin import HouseholdMemberAdmin
 from enrolment_checklist_admin import EnrolmentChecklistAdmin
-from htc_data_admin import HtcDataAdmin
 from household_info_admin import HouseholdInfoAdmin
