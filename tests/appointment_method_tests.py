@@ -4,7 +4,7 @@ from bhp_appointment.choices import APPT_STATUS
 from bhp_appointment.models import Appointment
 from bhp_visit.models import VisitDefinition
 from base_appointment_tests import BaseAppointmentTests
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.tests.factories import ConsentCatalogueFactory
@@ -17,10 +17,10 @@ from bhp_base_test.models import TestConsent, TestVisit
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_entry.tests.factories import EntryFactory
 from bhp_visit_tracking.models import TestScheduledModel
-
-
+ 
+ 
 class AppointmentMethodTests(BaseAppointmentTests):
-
+ 
     def test_save(self):
         # create an appointment
         self.setup()
@@ -54,19 +54,19 @@ class AppointmentMethodTests(BaseAppointmentTests):
             self.appointment.save()
         except:
             self.fail('appointment.save() has unexpectedly raised an exception.')
-
+ 
     def test_is_new_appointment(self):
         """
         is_new_appointment() should return False if not "new" and "new" must be listed in the choices tuple.
         """
-        lab_tracker.autodiscover()
+        site_lab_tracker.autodiscover()
         StudySpecificFactory()
         StudySiteFactory()
         ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-
+ 
         appointment = Appointment()
         dte = datetime.today()
         appointment.appt_datetime = dte
@@ -89,12 +89,12 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 self.assertEqual(appointment.is_new_appointment(), False)
         # test "new" case exists in choices
         self.assertEqual(is_found_new, True)
-
+ 
     def test_validate_appt_status(self):
         # setup visit 1000
         from bhp_base_test.tests.factories import TestRegistrationFactory, TestVisitFactory, TestConsentFactory, TestScheduledModelFactory
         app_label = 'bhp_base_test'
-        lab_tracker.autodiscover()
+        site_lab_tracker.autodiscover()
         StudySpecificFactory()
         StudySiteFactory()
         ConfigurationFactory()
@@ -106,7 +106,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
         consent_catalogue = ConsentCatalogueFactory(name='v1', content_type_map=content_type_map)
         consent_catalogue.add_for_app = 'bhp_base_test'
         consent_catalogue.save()
-
+ 
         print 'setup bhp_visit (1000, 1010, 1020, 1030)'
         content_type_map = ContentTypeMap.objects.get(content_type__model='testregistration')
         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model=TestVisit._meta.object_name.lower())
@@ -126,7 +126,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
         visit_definition.schedule_group.add(schedule_group)
         content_type_map = ContentTypeMap.objects.get(content_type__model=TestScheduledModel._meta.object_name.lower())
         EntryFactory(visit_definition=visit_definition, content_type_map=content_type_map)
-
+ 
         visit_definition = VisitDefinitionFactory(code='1020', title='Test Registration 20', grouping='test_subject',
                                                   time_point=20,
                                                   base_interval=2,
@@ -160,7 +160,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
             else:
                 self.assertIn(appointment.appt_status, ['new', 'cancelled'])
             print '    {0} becomes {1}'.format(appt_status[0], appointment.appt_status) 
-
+ 
         print 'get appointment 1000'
         appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000')
         print 'add a visit tracking form for appointment 1000'
@@ -200,7 +200,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 self.assertEquals(appointment.appt_status, 'done')
             else:
                 raise TypeError()
-
+ 
         print 'get appointment 1010, which has entries'
         appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1010')
         print 'add a visit tracking form for appointment 1010'
@@ -240,7 +240,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 self.assertEquals(appointment.appt_status, 'incomplete')
             else:
                 raise TypeError()
-
+ 
         print 'add the TestScheduledModel for visit 1010, scheduledentry should be KEYED'
         TestScheduledModelFactory(test_visit=test_visit)
         print 'assert is KEYED in ScheduledEntryBucket'
@@ -279,7 +279,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
                 self.assertEquals(appointment.appt_status, 'done')
             else:
                 raise TypeError()
-
+ 
     def test_validate_appt_datetime(self):
         self.setup()
         # a new record, original appt_datetime and best_appt_datetime are equal. 
@@ -289,7 +289,7 @@ class AppointmentMethodTests(BaseAppointmentTests):
         # returned appt_datetime may not be equal to original appt_datetime
         appt_datetime, appointment.best_appt_datetime = appointment.validate_appt_datetime()
         self.assertEqual(appointment.appt_datetime, appointment.best_appt_datetime, 'Expected appointment.appt_datetime and best_appt_datetime to be equal.')
-
+ 
         # a changed record must return  appt_datetime and best_appt_datetime but they do not need to be equal
         appointment.id = '1'
         appointment.appt_datetime = appt_datetime

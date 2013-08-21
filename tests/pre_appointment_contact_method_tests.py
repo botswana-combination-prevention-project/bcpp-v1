@@ -2,10 +2,10 @@ from datetime import datetime
 from bhp_appointment.models import Appointment, PreAppointmentContact
 from base_appointment_tests import BaseAppointmentTests
 from factories import PreAppointmentContactFactory
-
-
+ 
+ 
 class PreAppointmentContactMethodTests(BaseAppointmentTests):
-
+ 
     def test_post_save(self):
         self.setup()
         appt_pk = self.appointment.pk
@@ -33,7 +33,7 @@ class PreAppointmentContactMethodTests(BaseAppointmentTests):
         self.assertEqual(appointment.contact_count, 1)
         # is _confirmed false because not instances of pre_appt exist except the current one
         self.assertEqual(appointment.is_confirmed, False)
-
+ 
         # make another attempt to contact,  but not confirmed
         pre_appointment_contact = PreAppointmentContactFactory(appointment=appointment, is_confirmed=False)
         self.assertEqual(pre_appointment_contact.post_save(), (2, False, False))
@@ -51,7 +51,7 @@ class PreAppointmentContactMethodTests(BaseAppointmentTests):
         appointment = Appointment.objects.get(pk=appt_pk)
         self.assertEqual(appointment.is_confirmed, True)
         self.assertEqual(appointment.contact_count, 3)
-
+ 
     def test_post_delete(self):
         """ post_delete() has to update appointment contact_count and is_confirmed."""
         self.setup()
