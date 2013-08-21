@@ -2,6 +2,7 @@ from main import *
 from demographics_risk_form import DemographicsRiskForm
 from partners_form import RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm
 from htc_visit_form import HtcVisitForm
+from htc_registration_form import HtcRegistrationForm
 from circumcision_form import CircumcisionForm
 from hiv_testing_history_form import HivTestingHistoryForm
 from last_hiv_record_form import LastHivRecordForm
@@ -13,4 +14,3 @@ from circumcision_appointment_form import CircumcisionAppointmentForm
 from positive_followup_consent_form import PositiveFollowupConsentForm
 from male_followup_consent_form import MaleFollowupConsentForm
 from pregnant_followup_consent_form import PregnantFollowupConsentForm
-from htc_registration_form import HtcRegistrationForm
