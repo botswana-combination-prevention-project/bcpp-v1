@@ -7,3 +7,4 @@ from hiv_testing_history_form import HivTestingHistoryForm
 from last_hiv_record_form import LastHivRecordForm
 from hiv_testing_counseling_form import HivTestingCounselingForm
 from followup_contact_permission_form import FollowupContactPermissionForm
+from htc_registration_form import HtcRegistrationForm

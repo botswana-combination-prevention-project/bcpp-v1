@@ -7,3 +7,4 @@ from hiv_testing_history_admin import HivTestingHistoryAdmin
 from last_hiv_record_admin import LastHivRecordAdmin
 from hiv_testing_counseling_admin import HivTestingCounselingAdmin
 from followup_contact_permission_admin import FollowupContactPermissionAdmin
+from htc_registration_admin import HtcRegistrationAdmin

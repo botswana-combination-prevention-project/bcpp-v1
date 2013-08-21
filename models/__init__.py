@@ -8,3 +8,4 @@ from hiv_testing_history import HivTestingHistory
 from last_hiv_record import LastHivRecord
 from hiv_testing_counseling import HivTestingCounseling
 from followup_contact_permission import FollowupContactPermission
+from htc_registration import HtcRegistration
