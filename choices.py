@@ -37,6 +37,45 @@ ALCOHOL_INTAKE = (
     ('more_times', _('4 or more times per week')),
 )
 
+
+PARTNER_HIV_STATUS = (
+    ('positive', 'HIV Positive'),
+    ('negative', 'HIV Negative'),
+    ('not_sure', 'I am not sure'),
+    ('declined', 'Decline to answer'),
+)
+
+
+RELATIONSHIP_TYPE = (
+    ('spouse', 'Spouse (husband/wife)'),
+    ('cohabiting', 'Cohabitating partner'),
+    ('boy_girl_friend', 'Boyfriend/Girlfriend'),
+    ('casual', 'Casual (known) sex partner'),
+    ('partner_unknown', 'One time partner (previously unknown)'),
+    ('sex_worker', 'Commercial sex worker'),
+    ('OTHER', 'Other, specify'),
+    ('declined', 'Decline to answer'),
+)
+
+
+TESTING_CENTRE = (
+    ('tvct_inside_comunity', _('TVCT in this community')),
+    ('tvct_outside_community', _('TVCT outside of this community')),
+    ('public', _('Public Health Facility')),
+    ('private', _('Private Health Facility')),
+    ('door_to_door', _('Door to door projects')),
+    ('other_vct_site', _('Other VCT site')),
+    ('OTHER', _('Other')),
+    ('dont_remember', _('Don\'t remember')),
+)
+
+YES_NO_DECLINED = (
+    ('Yes', _('Yes')),
+    ('No', _('No')),
+    ('DECLINED', _('Declined to answer')),
+)
+
+
 REASON_NOT_TESTING = (
     ('know_status', _('I already know I am HIV positive.')),
     ('not_risk',_('I don\'t believe I am at risk of getting HIV.')),
@@ -75,10 +114,8 @@ REFFERED_FOR=(
 
 REFFERED_TO=(
     ('health_facility',('Public/Private Health Facility')),
-    ('d',('d')),
     ('religious',('Religious Institution')),
     ('plwh',('PLWH/A Association')),
     ('social_welfare',('Social Welfare facilities')),
     ('youth_friendly',('Youth Friendly Services')),
 )
-
