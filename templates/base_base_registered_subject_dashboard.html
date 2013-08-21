@@ -5,7 +5,10 @@
 
 {% block dashboard_main %}
 
-{% block clinic_dashboard_marquee %}{% endblock %}
+{% block clinic_dashboard_marquee %}
+  {% block subject_consent %}
+  {% endblock%}
+{% endblock %}
 
 {% block clinic_dashboard %}
 
