@@ -24,14 +24,12 @@
     			<p>NB: Depending on how many coordinates exits in the file, time to create all items may take a while.</p>
     		</td>
     		
-    	</tr>
-    	<tr>
-	    	<form enctype="multipart/form-data" action="{% url 'create_kmz_items_url' mapper_name %}" method="post">
-	    		{% csrf_token %}
-				<td><p>File: <input type="file" id='file' name="file"></p></td>
-				<td><p><input type="submit" value="Upload"></p></td>
-			</form>
-    		</tr>
     	</table>
+    	<form enctype="multipart/form-data" action="{% url 'create_kmz_items_url' mapper_name %}" method="post">
+    		{% csrf_token %}
+			<p>File: <input type="file" id='file' name="file"></p>
+			<p><input type="submit" value="Upload"></p>
+		</form>
+    	
 	{% endif %}	
 {% endblock content %}
