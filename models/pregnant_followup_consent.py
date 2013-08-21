@@ -5,7 +5,7 @@ from bcpp.choices import YES_NO
 from base_scheduled_htc_visit import BaseScheduledHtcVisit
 
 
-class   PregnantFollowupConsent (BaseScheduledHtcVisit):
+class PregnantFollowupConsent (BaseScheduledHtcVisit):
 
     """Permission to contact for follow up for pregnant women"""
        

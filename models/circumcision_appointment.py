@@ -19,6 +19,8 @@ class CircumcisionAppointment (BaseScheduledHtcVisit):
     circumcision_ap_date = models.DateField(
         verbose_name=_("Male circumcision appointment date"),
         validators=[date_not_future],
+        null=True,
+        blank=True,
         help_text=_("Format is YYYY-MM-DD (If male, negative and uncircumcised)"),
         )
     

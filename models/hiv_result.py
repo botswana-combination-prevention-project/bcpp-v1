@@ -23,10 +23,12 @@ class HivResult(BaseScheduledHtcVisit):
         choices=YES_NO,
         help_text='',
         )
-    
+    #We need clarification here as to the type of id used here. Is it Omang?
     partner_id = models.CharField(
         verbose_name=_("What is the unique identification number for the other member of the couple?"),
         max_length=25,
+        null=True,
+        blank=True,
         help_text='',
         )
     

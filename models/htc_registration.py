@@ -4,7 +4,8 @@ from bhp_base_model.validators import (datetime_not_before_study_start, datetime
 from bhp_base_model.fields import IsDateEstimatedField
 from bcpp_household_member.models import HouseholdMember
 from bhp_registration.models import RegisteredSubject
-from bhp_dispatch.models import BaseDispatchSyncUuidModel
+from bhp_appointment_helper.models import BaseAppointmentMixin
+from bhp_botswana.models import BaseBwConsent
 from bhp_botswana.fields import EncryptedOmangField
 from audit_trail.audit import AuditTrail
 from bcpp.choices import COMMUNITIES
@@ -12,7 +13,7 @@ from bcpp_subject.choices import COUNSELING_SITE
 from bhp_common.choices import GENDER_UNDETERMINED, YES_NO, YES_NO_DONT_KNOW
 
 
-class HtcRegistration (BaseDispatchSyncUuidModel):
+class HtcRegistration (BaseAppointmentMixin, BaseBwConsent):
 
     household_member = models.OneToOneField(HouseholdMember)
 
@@ -50,33 +51,35 @@ class HtcRegistration (BaseDispatchSyncUuidModel):
         unique=True,
         help_text="Use Omang, Passport number, driver's license number or Omang receipt number"
         )
-
-    dob = models.DateField(
-        verbose_name="Date of birth",
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge,
-            ],
-        null=True,
-        blank=False,
-        help_text="Format is YYYY-MM-DD.",
-        )
-
-    is_dob_estimated = IsDateEstimatedField(
-        verbose_name="Is date of birth estimated?",
-        null=True,
-        blank=False,
-        )
-
-    gender = models.CharField(
-        verbose_name="Gender",
-        choices=GENDER_UNDETERMINED,
-        max_length=1,
-        null=True,
-        blank=False,
-        )
-#
+    
+#Inherited already from base class
+#     dob = models.DateField(
+#         verbose_name="Date of birth",
+#         validators=[
+#             dob_not_future,
+#             MinConsentAge,
+#             MaxConsentAge,
+#             ],
+#         null=True,
+#         blank=False,
+#         help_text="Format is YYYY-MM-DD.",
+#         )
+# 
+#     is_dob_estimated = IsDateEstimatedField(
+#         verbose_name="Is date of birth estimated?",
+#         null=True,
+#         blank=False,
+#         )
+# 
+#     gender = models.CharField(
+#         verbose_name="Gender",
+#         choices=GENDER_UNDETERMINED,
+#         max_length=1,
+#         null=True,
+#         blank=False,
+#         )
+# 
+#Does Tebelopele have these as per new protocol? They need to update their form
 #     legal_marriage = models.CharField(
 #         verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
 #         max_length=3,
