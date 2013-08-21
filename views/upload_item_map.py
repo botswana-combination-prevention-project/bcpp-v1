@@ -1,4 +1,3 @@
-import os
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -37,7 +36,8 @@ def upload_item_map(request, **kwargs):
         m = site_mappers.get_registry(mapper_name)()
         filename = handle_uploaded_file(request.FILES['file'], identifier)
         if filename:
-            item = m.get_item_model_cls().objects.filter(**{m.identifier_field_attr: identifier})
-            item.uploaded_map = filename
-            item.save()
+            items = m.get_item_model_cls().objects.filter(**{m.identifier_field_attr: identifier})
+            for item in items:
+                item.uploaded_map = filename
+                item.save()
         return HttpResponseRedirect('{% url "section" mapper_name %}')

@@ -33,6 +33,8 @@ class Mapper(object):
         self._other_identifier_label = None
         self._gps_center_lat = None
         self._gps_center_lon = None
+        self._target_gps_lon_field_attr = None
+        self._target_gps_lat_field_attr = None
 
         # item_model_cls
         if 'map_area' in kwargs:
@@ -112,6 +114,18 @@ class Mapper(object):
 
     def get_identifier_field_attr(self):
         return self._get_attr('identifier_field_attr')
+    
+    def set_target_gps_lon_field_attr(self, attr=None):
+        self._set_attr('target_gps_lon_field_attr', attr)
+
+    def get_target_gps_lon_field_attr(self):
+        return self._get_attr('target_gps_lon_field_attr')
+    
+    def set_target_gps_lat_field_attr(self, attr=None):
+        self._set_attr('target_gps_lat_field_attr', attr)
+
+    def get_target_gps_lat_field_attr(self):
+        return self._get_attr('target_gps_lat_field_attr')
 
     def set_other_identifier_field_attr(self, attr=None):
         self._set_attr('other_identifier_field_attr', attr)

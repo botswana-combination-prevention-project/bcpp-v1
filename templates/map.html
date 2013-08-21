@@ -70,41 +70,6 @@
 				    </td>
 			    </tr>
 		      </table>
-		{% else %}
-			On now you are randomisin
-			
-			<table align="center">
-			    <tr><td><div align="center" id="map"></div></td></tr>
-			</table>
-			
-		    <table align="center">
-		    	<input type="hidden" value="{{ selected_region }}"  id="{{ region_field_attr }}" name="{{ region_field_attr }}" />
-		    	<input type="hidden" value="no"  id="sec" name="sec" />
-		    	<tr align="middle">
-		    		<td>
-			    	<button id="save_map_selection" disabled="disabled">Save</button> 
-			    	<button id="revert_map" disabled="disabled">Revert</button> 
-			    	<button id="clear_map">Clear</button> 
-			    	<a href="{% url "selected_map_index_url" mapper_name %}">Continue</a>
-			    	</td>
-				</tr>
-			    	<tr>
-			    	<td>
-				    <H4> Instructions</H4>
-				    <ol>
-				    <li>Draw a polygon around the {{mapper_item_label}}s to select; </li>
-				    <li>
-				    	<ul>
-				    		<li>Right click on the map and click to the first point to close the polygon</li>
-				            <li>Remove a marker by right clicking on it</li>
-				            <li>Add a marker by right clicking on the polygon line and dragging the marker to stretch the shape of the polygon</li>
-				         </ul>
-				    </li>
-				    <li>Click the save button</li>
-				    </ol>
-				    </td>
-			    </tr>
-		      </table>
 			
 		{% endif %}
 		

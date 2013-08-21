@@ -5,7 +5,7 @@ from bhp_map.classes import site_mappers
 from bhp_map.exceptions import MapperError
 
 
-def subject_map(request, **kwargs):
+def item_map(request, **kwargs):
     """Displays map for a subject on the dashboard
 
         Show the location visually on the map of a subject from the dash by clicking the view map button
@@ -29,7 +29,7 @@ def subject_map(request, **kwargs):
         for place, lon, lat in landmarks:
             landmark_list.append([place, lon, lat])
         return render_to_response(
-                'subject_map_location.html', {
+                'item_map_location.html', {
                     'latitude': latitude,
                     'mapper_name': mapper_name,
                     'longitude': longitude,

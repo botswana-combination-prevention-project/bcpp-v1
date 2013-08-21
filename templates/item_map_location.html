@@ -18,6 +18,10 @@ var x = 0;
 
 
 
+
+
+
+
 var point = new google.maps.LatLng({{ latitude }}, {{ longitude }});
 
 //function called Initialize the map when loading the browser
@@ -95,10 +99,10 @@ function setLandMarks(map, locations) {
 	           ,zIndex: null
 	           ,boxStyle: { 
 	             background: "url('tipbox.gif') no-repeat"
-	             ,opacity: 0.75
+	             ,opacity: 0.53
 	             ,width: "280px"
 	            }
-	           ,closeBoxMargin: "10px 2px 2px 2px"
+	           ,closeBoxMargin: "8px 2px 2px 2px"
 	           ,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
 	           ,infoBoxClearance: new google.maps.Size(1, 1)
 	           ,isHidden: false
