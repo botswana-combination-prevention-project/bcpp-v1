@@ -6,22 +6,17 @@ from django.db.models import get_model
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from bhp_common.utils import convert_from_camel
-from bhp_lab_tracker.classes import lab_tracker
-from bhp_registration.models import RegisteredSubject
-from bhp_appointment.models import Appointment
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_consent.tests.factories import ConsentCatalogueFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_appointment.tests.factories import AppointmentFactory
 from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_subject.models import SubjectConsent
-from bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory, EnrolmentChecklistFactory
-from bcpp_subject.models import BaseScheduledVisitModel
 
 admin.autodiscover()
 
@@ -31,7 +26,7 @@ class FormsTests(TestCase):
     app_label = 'bcpp_household_member'
 
     def test_all_forms(self):
-        lab_tracker.autodiscover()
+        site_lab_tracker.autodiscover()
         study_specific = StudySpecificFactory()
         StudySiteFactory()
         ConfigurationFactory()
