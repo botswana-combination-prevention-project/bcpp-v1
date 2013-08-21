@@ -4,7 +4,7 @@ from django.core import serializers
 from bhp_crypto.classes import FieldCryptor
 
 from django.db.models import get_app, get_models
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_sync.classes import SerializeToTransaction
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_registration.models import RegisteredSubject
