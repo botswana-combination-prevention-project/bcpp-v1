@@ -8,7 +8,7 @@ from hiv_testing_history_form import HivTestingHistoryForm
 from last_hiv_record_form import LastHivRecordForm
 from hiv_testing_consent_form import HivTestingConsentForm
 from hiv_result_form import HivResultForm
-from referral_form import Referral
+from referral_form import ReferralForm
 from cd4_test_form import CD4TestForm
 from circumcision_appointment_form import CircumcisionAppointmentForm
 from positive_followup_consent_form import PositiveFollowupConsentForm
