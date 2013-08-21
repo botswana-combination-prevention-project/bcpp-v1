@@ -8,7 +8,8 @@ from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
                               HouseholdSurveyStatus, SubjectAbsenteeReason, 
                               SubjectMovedReason, SubjectUndecidedReason, 
                               PartnerResidency, HeartDisease,
-                              Diagnoses, Religion, EthnicGroups)
+                              Diagnoses, Religion, EthnicGroups, ReferredTo,
+                              ReferredFor)
 
 
 class ElectricalAppliancesAdmin(BaseModelAdmin):
@@ -114,3 +115,14 @@ admin.site.register(Religion, ReligionAdmin)
 class EthnicGroupsAdmin(BaseModelAdmin):
     pass
 admin.site.register(EthnicGroups, EthnicGroupsAdmin)
+
+
+class ReferredForAdmin(BaseModelAdmin):
+    pass
+admin.site.register(ReferredFor, ReferredForAdmin)
+
+
+
+class ReferredToAdmin(BaseModelAdmin):
+    pass
+admin.site.register(ReferredTo, ReferredToAdmin)
