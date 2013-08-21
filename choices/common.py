@@ -124,9 +124,12 @@ HOUSEHOLD_MEMBER_ACTION = [
     ('NOT_REPORTED', '<not reported>'),
     ('CONSENT', 'Research Cohort Consent'),
     ('CONSENT_BLOOD', 'Blood Draw Only Consent'),
+    ('HTC_ONLY', 'HTC Only'),
+    ('CEA', 'Cost Effectiveness'),
     ('ABSENT', 'Absentee'),
     ('REFUSED', 'Refusal'),
-    ('HTC_ONLY', 'HTC Only'),
+    ('UNDECIDED', 'Undecided'),
+    ('REFERRAL', 'Referral'),
     ('OTHER', 'Other'),
 ]
 
