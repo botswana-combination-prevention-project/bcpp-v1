@@ -1,10 +1,10 @@
 from django.contrib import admin
-from bcpp_subject.admin.subject_visit_model_admin import SubjectVisitModelAdmin
+from htc_visit_model_admin import HtcVisitModelAdmin
 from bcpp_htc.models import FollowupContactPermission
 from bcpp_htc.forms import FollowupContactPermissionForm
 
 
-class FollowupContactPermissionAdmin(SubjectVisitModelAdmin):
+class FollowupContactPermissionAdmin(HtcVisitModelAdmin):
 
     form = FollowupContactPermissionForm
 
@@ -24,6 +24,5 @@ class FollowupContactPermissionAdmin(SubjectVisitModelAdmin):
         }
     instructions = [("For newly identified HIV positive individuals"
                      " and known HIV positive individuals not enrolled"
-                     " in care, ask questions 37 and 37a.")]
-
+                     " in care, ask questions the first two questions.")]
 admin.site.register(FollowupContactPermission, FollowupContactPermissionAdmin)

@@ -1,6 +1,9 @@
 from main import *
 from demographics_risk_admin import DemographicsRiskAdmin
+from partners_admin import RecentPartnerAdmin, SecondPartnerAdmin, ThirdPartnerAdmin
+from htc_visit_admin import HtcVisitAdmin
+from circumcision_admin import CircumcisionAdmin
+from hiv_testing_history_admin import HivTestingHistoryAdmin
+from last_hiv_record_admin import LastHivRecordAdmin
 from hiv_testing_counseling_admin import HivTestingCounselingAdmin
 from followup_contact_permission_admin import FollowupContactPermissionAdmin
-
-

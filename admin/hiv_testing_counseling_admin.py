@@ -1,17 +1,17 @@
 from django.contrib import admin
-from bcpp_subject.admin.subject_visit_model_admin import SubjectVisitModelAdmin
+from htc_visit_model_admin import HtcVisitModelAdmin
 from bcpp_htc.models import HivTestingCounseling
 from bcpp_htc.forms import HivTestingCounselingForm
 
 
-class HivTestingCounselingAdmin(SubjectVisitModelAdmin):
+class HivTestingCounselingAdmin(HtcVisitModelAdmin):
 
     form = HivTestingCounselingForm
 
     fields = (
         "testing_today",
         "reason_not_testing",
-        "todays_result"
+        "todays_result",
         "cd4_test_date",
         "cd4_result",
         "clinic",
@@ -23,7 +23,6 @@ class HivTestingCounselingAdmin(SubjectVisitModelAdmin):
         "symptoms",
         "reffered_for",
         "reffered_to",
-        "history",    
     )
     radio_fields = {
         "testing_today": admin.VERTICAL,
@@ -36,8 +35,8 @@ class HivTestingCounselingAdmin(SubjectVisitModelAdmin):
         }
     instructions = [("Request consent for HIV testing and counseling"
                      " from all age-eligible (16-64 years) clients who:"
-                     "Do not have documentation of an HIV test within the last three months"
-                     "Have documentation of HIV negative status within the last three months"
+                     " Do not have documentation of an HIV test within the last three months"
+                     " Have documentation of HIV negative status within the last three months"
                      " and are pregnant Request to be tested")]
 
 admin.site.register(HivTestingCounseling, HivTestingCounselingAdmin)
