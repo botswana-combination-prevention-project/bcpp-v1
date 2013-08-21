@@ -29,7 +29,7 @@
             <td>{{subjectconsent.initials}}</td>
             <td>{{subjectconsent.gender}}</td>
             <td>{{subjectconsent.dob|date:"Y-m-d"}}</td>
-            <td>{{subjectconsent.household_structure_member.age_in_years}}</td>            
+            <td>{{subjectconsent.household_member.age_in_years}}</td>            
             <td>{{subjectconsent.consent_datetime|date:"d M Y H:i"}}</td>
             {% if subjectconsent.subjecthivresult %}
                 <td><a href="/admin{{ subjectconsent.subjecthivresult.get_absolute_url }}">{{subjectconsent.subjecthivresult.subject_hiv_result_option.result_word}}</A></td>
@@ -42,7 +42,7 @@
             </tr>
 
       {% endfor %}
-      <tr><td colspan="9">{{ search_results.object_list.count }} subject consent{{ search_results.object_list|pluralize }} found.</td></tr>                  
+      <tr><td colspan="9">{{ search_result.object_list.count }} subject consent{{ search_result.object_list|pluralize }} found.</td></tr>                  
       </tbody>
       </table>
       </div>
