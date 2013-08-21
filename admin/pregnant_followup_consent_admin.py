@@ -13,7 +13,7 @@ class PregnantFollowupConsentAdmin(HtcVisitModelAdmin):
       "contact_family",
     )
     radio_fields = {
-        "contact_permission": admin.VERTICAL,
+        "contact_consent": admin.VERTICAL,
         "contact_family": admin.VERTICAL,  
         }
     instructions = [("For women who are pregnant and HIV negative")]
