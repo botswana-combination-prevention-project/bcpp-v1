@@ -1,11 +1,12 @@
 from bhp_search.classes import BaseSearchByWord, site_search
-from models import Household  # , HouseholdStructure, HouseholdStructureMember
+from models import Household
+from section import SectionHouseholdView
 
 
 class HouseholdSearchByWord(BaseSearchByWord):
 
-    section_name = 'household'
-    search_model = Household  # , HouseholdStructure, HouseholdStructureMember)
+    section = SectionHouseholdView
+    search_model = Household
     order_by = 'household_identifier'
     template = 'search_result_include.html'
 site_search.register(HouseholdSearchByWord)
