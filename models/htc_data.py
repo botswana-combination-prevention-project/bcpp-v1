@@ -40,6 +40,19 @@ class HtcData (BaseDispatchSyncUuidModel):
         blank=True,
         )
 
+    citizen = models.CharField(
+        verbose_name="Are you a Botswana citizen? ",
+        max_length=3,
+        choices=YES_NO,
+        help_text="",
+        )
+    
+    omang = EncryptedOmangField(
+        verbose_name="Identity number (OMANG, etc)",
+        unique=True,
+        help_text="Use Omang, Passport number, driver's license number or Omang receipt number"
+        )
+    
     dob = models.DateField(
         verbose_name="Date of birth",
         validators=[
@@ -49,7 +62,7 @@ class HtcData (BaseDispatchSyncUuidModel):
             ],
         null=True,
         blank=False,
-        help_text="Format is YYYY-MM-DD. (Data will not be saved if ineligible)",
+        help_text="Format is YYYY-MM-DD.",
         )
 
     is_dob_estimated = IsDateEstimatedField(
@@ -65,48 +78,35 @@ class HtcData (BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         )
-
-    omang = EncryptedOmangField(
-        verbose_name="Identity number (OMANG, etc)",
-        unique=True,
-        help_text="Use Omang, Passport number, driver's license number or Omang receipt number (Data will not be saved if ineligible)"
-        )
-
-    citizen = models.CharField(
-        verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
-        max_length=3,
-        choices=YES_NO,
-        help_text="",
-        )
-    
-    legal_marriage = models.CharField(
-        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
-        max_length=3,
-        choices=YES_NO,
-        null=True,
-        blank=True,
-        validators=[eligible_if_yes, ],
-        help_text=" if 'NO,' STOP participant cannot be enrolled",
-        )
- 
-    marriage_certificate = models.CharField(
-        verbose_name=("Has the participant produced the marriage certificate, as proof? "),
-        max_length=3,
-        choices=YES_NO,
-        null=True,
-        blank=True,
-        validators=[eligible_if_yes, ],
-        help_text=" if 'NO,' STOP participant cannot be enrolled",
-        )
-    
-    marriage_certificate_no = models.CharField(
-        verbose_name=("What is the marriage certificate number?"),
-        max_length=9,
-        null=True,
-        blank=True,
-        help_text="e.g. 000/YYYY",
-        )
-    
+#     
+#     legal_marriage = models.CharField(
+#         verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
+#         max_length=3,
+#         choices=YES_NO,
+#         null=True,
+#         blank=True,
+#         validators=[eligible_if_yes, ],
+#         help_text=" if 'NO,' STOP participant cannot be enrolled",
+#         )
+#  
+#     marriage_certificate = models.CharField(
+#         verbose_name=("Has the participant produced the marriage certificate, as proof? "),
+#         max_length=3,
+#         choices=YES_NO,
+#         null=True,
+#         blank=True,
+#         validators=[eligible_if_yes, ],
+#         help_text=" if 'NO,' STOP participant cannot be enrolled",
+#         )
+#     
+#     marriage_certificate_no = models.CharField(
+#         verbose_name=("What is the marriage certificate number?"),
+#         max_length=9,
+#         null=True,
+#         blank=True,
+#         help_text="e.g. 000/YYYY",
+#         )
+#     
     is_pregnant = models.CharField(
         verbose_name=("Are you pregnant?"),
         max_length=15,
@@ -130,5 +130,5 @@ class HtcData (BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = "bcpp_household_member"
-        verbose_name = "HTC Data"
-        verbose_name_plural = "HTC Data"
+        verbose_name = "HTC Client Info"
+        verbose_name_plural = "HTC Client Info"
