@@ -20,7 +20,7 @@ from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureF
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_subject.models import SubjectConsent
-from bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory, EnrolmentChecklistFactory
+from bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory, CeaEnrolmentChecklistFactory as EnrolmentChecklistFactory
 from bcpp_subject.models import BaseScheduledVisitModel
 
 admin.autodiscover()
@@ -39,10 +39,10 @@ class FormsTests(TestCase):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        content_type_map = ContentTypeMap.objects.get(model__iexact=SubjectConsent._meta.object_name)
+        #content_type_map = ContentTypeMap.objects.get(model__iexact=SubjectConsent._meta.object_name)
         ConsentCatalogueFactory(
             name=self.app_label,
-            content_type_map=content_type_map,
+            #content_type_map=content_type_map,
             consent_type='study',
             version=1,
             start_datetime=study_specific.study_start_datetime,
