@@ -1,8 +1,8 @@
-from bcpp_subject.forms import BaseSubjectModelForm
+from base_htc_model_form import BaseHtcModelForm
 from bcpp_htc.models import FollowupContactPermission
 
 
-class FollowupContactPermissionForm (BaseSubjectModelForm):
+class FollowupContactPermissionForm (BaseHtcModelForm):
 
     class Meta:
         model = FollowupContactPermission
