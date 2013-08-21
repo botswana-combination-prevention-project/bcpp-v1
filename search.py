@@ -1,10 +1,11 @@
 from bhp_search.classes import BaseSearchByWord, site_search
 from models import HtcRegistration
+from section import SectionHtcSubjectView
 
 
 class HtcSubjectSearchByWord(BaseSearchByWord):
 
-    section_name = 'htc_subject'
+    section = SectionHtcSubjectView
     search_model = HtcRegistration
     order_by = '-created'
     template = 'htcregistration_include.html'
