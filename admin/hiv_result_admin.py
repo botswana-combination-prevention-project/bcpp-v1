@@ -10,18 +10,14 @@ class HivResultAdmin(HtcVisitModelAdmin):
 
     fields = (
         "todays_result",
-        "circumcision_ap",
-        "circumcision_ap_date",
         "couples_testing",
         "partner_id",
         "symptoms",
         "family_tb"
     )
     radio_fields = { 
-        "circumcision_ap": admin.VERTICAL,
         "couples_testing": admin.VERTICAL, 
         "symptoms": admin.VERTICAL,
         "family_tb": admin.VERTICAL,      
         }
-
 admin.site.register(HivResult, HivResultAdmin)
