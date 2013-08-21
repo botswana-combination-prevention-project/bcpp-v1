@@ -31,18 +31,20 @@
 {% endif %}
 </tr>
 </table>
-<table>
-<tr style="background:lightyellow;">
+{% block subject_consent %}
 {% if subject_consent %}
+  <table>
+  <tr style="background:lightyellow;">
     <td><B>Survey Consent:</B> {{subject_consent.survey.survey_name }}</td>
     <td><B>Identifier:</B> {{subject_consent.subject_identifier }}</td>
     <td><B>{{subject_consent.identity_type|capfirst }}:</B> {{subject_consent.identity|encrypted }}</td>      
     <td><B>Born:</B> {{subject_consent.dob|date:"Y-m-d" }}</td> 
     <td><B>Age:</B> {{subject_consent.dob|age }}</td>
     <td><B>Date:</B> {{subject_consent.consent_datetime|date:"Y-m-d H:i" }}</td>
+  </tr>
+  </table>
 {% endif %}
-</tr>
-</table>
+{% endblock %}
 {% if subject_hiv_result %}
 <table>
 <tr style="background:lightyellow;">
