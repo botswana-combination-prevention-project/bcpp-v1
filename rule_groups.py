@@ -1,6 +1,6 @@
 from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
 from bhp_registration.models import RegisteredSubject
-from models import HtcVisit, HivTestingHistory, HivResult, HivTestingConsent
+from models import HtcVisit, HtcHivTestingHistory, HtcHivResult, HivTestingConsent
 
 
 class GenderRuleGroup(RuleGroup):
@@ -10,14 +10,14 @@ class GenderRuleGroup(RuleGroup):
             predicate=('gender', 'equals', 'f'),
             consequence='not_required',
             alternative='new'),
-        target_model=['circumcision', 'malefollowupconsent', 'circumcisionappointment'])
+        target_model=['htccircumcision', 'malefollowup', 'circumcisionappointment'])
 
     male = ScheduledDataRule(
         logic=Logic(
             predicate=('gender', 'equals', 'm'),
             consequence='not_required',
             alternative='new'),
-        target_model=['pregnantfollowupconsent'])
+        target_model=['pregnantfollowup'])
 
     class Meta:
         app_label = 'bcpp_htc'
@@ -38,7 +38,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_htc'
         filter_model = (HtcVisit, 'htc_visit')
-        source_model = HivTestingHistory
+        source_model = HtcHivTestingHistory
 rule_groups.register(HivTestingHistoryRuleGroup)
 
 
@@ -49,12 +49,12 @@ class HivResultRuleGroup(RuleGroup):
             predicate=('todays_result', 'equals', 'NEG'),
             consequence='not_required',
             alternative='new'),
-        target_model=['Cd4test', 'positivefollowupconsent'])
+        target_model=['Cd4test', 'positivefollowup'])
     
     class Meta:
         app_label = 'bcpp_htc'
         filter_model = (HtcVisit, 'htc_visit')
-        source_model = HivResult
+        source_model = HtcHivResult
 rule_groups.register(HivResultRuleGroup)
 
 
@@ -65,7 +65,7 @@ class HivTestingConsentRuleGroup(RuleGroup):
             predicate=('testing_today', 'equals', 'No'),
             consequence='not_required',
             alternative='new'),
-        target_model=['Cd4test', 'positivefollowupconsent', 'pregnantfollowupconsent', 'malefollowupconsent', 'circumcisionappointment'])
+        target_model=['Cd4test', 'positivefollowup', 'pregnantfollowup', 'malefollowup', 'circumcisionappointment'])
     
     class Meta:
         app_label = 'bcpp_htc'
