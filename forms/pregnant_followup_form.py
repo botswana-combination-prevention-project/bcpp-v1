@@ -1,12 +1,12 @@
 from django import forms
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_htc.models import PositiveFollowupConsent
+from bcpp_htc.models import PregnantFollowup
 
 
-class PositiveFollowupConsentForm (BaseHtcModelForm):
+class PregnantFollowupForm (BaseHtcModelForm):
 
     def clean(self):
-        cleaned_data=super(PositiveFollowupConsentForm,self).clean()
+        cleaned_data=super(PregnantFollowupForm,self).clean()
         contact_consent=cleaned_data.get("contact_consent")
         contact_family=cleaned_data.get("contact_family")
         
@@ -21,4 +21,4 @@ class PositiveFollowupConsentForm (BaseHtcModelForm):
         return cleaned_data
     
     class Meta:
-        model = PositiveFollowupConsent
+        model = PregnantFollowup

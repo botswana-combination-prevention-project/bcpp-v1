@@ -1,20 +1,20 @@
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_htc.models import RecentPartner, SecondPartner, ThirdPartner
+from bcpp_htc.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
 
 
-class RecentPartnerForm (BaseHtcModelForm):
-
-    class Meta:
-        model = RecentPartner
-
-
-class SecondPartnerForm (BaseHtcModelForm):
+class HtcRecentPartnerForm (BaseHtcModelForm):
 
     class Meta:
-        model = SecondPartner
+        model = HtcRecentPartner
 
 
-class ThirdPartnerForm (BaseHtcModelForm):
+class HtcSecondPartnerForm (BaseHtcModelForm):
 
     class Meta:
-        model = ThirdPartner
+        model = HtcSecondPartner
+
+
+class HtcThirdPartnerForm (BaseHtcModelForm):
+
+    class Meta:
+        model = HtcThirdPartner

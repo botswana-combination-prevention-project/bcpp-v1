@@ -1,12 +1,12 @@
 from django import forms
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_htc.models import HivTestingHistory
+from bcpp_htc.models import HtcHivTestingHistory
 
 
-class HivTestingHistoryForm (BaseHtcModelForm):
+class HtcHivTestingHistoryForm (BaseHtcModelForm):
     
     def clean(self):
-        cleaned_data = super(HivTestingHistoryForm, self).clean()
+        cleaned_data = super(HtcHivTestingHistoryForm, self).clean()
         # validating testing
         if cleaned_data.get('previous_testing') == 'Yes' and not cleaned_data.get('testing_place'):
             raise forms.ValidationError('If participant has previously tested for HIV, where did'
@@ -17,4 +17,4 @@ class HivTestingHistoryForm (BaseHtcModelForm):
         return cleaned_data
 
     class Meta:
-        model = HivTestingHistory
+        model = HtcHivTestingHistory

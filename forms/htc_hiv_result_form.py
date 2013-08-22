@@ -1,12 +1,12 @@
 from django import forms
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_htc.models import HivResult
+from bcpp_htc.models import HtcHivResult
 
 
-class HivResultForm (BaseHtcModelForm):
+class HtcHivResultForm (BaseHtcModelForm):
     
     def clean(self):
-        cleaned_data=super(HivResultForm).clean()
+        cleaned_data=super(HtcHivResultForm).clean()
         couples_testing=cleaned_data.get("couples_testing")
         partner_id=cleaned_data.get("partner_id")
         
@@ -16,4 +16,4 @@ class HivResultForm (BaseHtcModelForm):
         return cleaned_data           
         
     class Meta:
-        model = HivResult
+        model = HtcHivResult

@@ -1,16 +1,16 @@
 from main import *
 from demographics_risk_form import DemographicsRiskForm
-from partners_form import RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm
+from partners_form import HtcRecentPartnerForm, HtcSecondPartnerForm, HtcThirdPartnerForm
 from htc_visit_form import HtcVisitForm
 from htc_registration_form import HtcRegistrationForm
-from circumcision_form import CircumcisionForm
-from hiv_testing_history_form import HivTestingHistoryForm
+from htc_circumcision_form import HtcCircumcisionForm
+from htc_hiv_testing_history_form import HtcHivTestingHistoryForm
 from last_hiv_record_form import LastHivRecordForm
 from hiv_testing_consent_form import HivTestingConsentForm
-from hiv_result_form import HivResultForm
+from htc_hiv_result_form import HtcHivResultForm
 from referral_form import ReferralForm
-from cd4_test_form import CD4TestForm
+from cd4_test_form import Cd4TestForm
 from circumcision_appointment_form import CircumcisionAppointmentForm
-from positive_followup_consent_form import PositiveFollowupConsentForm
-from male_followup_consent_form import MaleFollowupConsentForm
-from pregnant_followup_consent_form import PregnantFollowupConsentForm
+from positive_followup_form import PositiveFollowupForm
+from male_followup_form import MaleFollowupForm
+from pregnant_followup_form import PregnantFollowupForm
