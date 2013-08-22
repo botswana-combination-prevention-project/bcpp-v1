@@ -29,8 +29,10 @@
     
     {% if search_result %}
     <div id="search_result_tile">
+        {% if not search_result_include_file%}<span style="background-color:red;color:white;">search_result_include_file not defined!</span>{%endif%}
         {% include search_result_include_file %}  
     </div>
+    <small>{{ search_result_include_file }}</small>
     {% endif %}
 
 </div>
