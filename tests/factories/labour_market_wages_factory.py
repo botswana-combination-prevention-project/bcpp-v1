@@ -2,11 +2,11 @@ import factory
 from datetime import date, datetime
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import LabourMarketWages
-
+from subject_visit_factory import SubjectVisitFactory
 
 class LabourMarketWagesFactory(BaseUuidModelFactory):
     FACTORY_FOR = LabourMarketWages
-
+    subject_visit = factory.SubFactory(SubjectVisitFactory)
     report_datetime = datetime.today()
     employed = (('government sector', u'Yes, In the government sector'), ('private sector', u'Yes, in the private sector'), ('self-employed working on my own', u'Yes, self-employed working on my own'), ('self-employed with own employees', u'Yes, self-employed with own employees'), ('not working', u'No, not working'), ("Don't want to answer", u"Don't want to answer"))[0][0]
     occupation_other = factory.Sequence(lambda n: 'occupation_other{0}'.format(n))

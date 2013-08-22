@@ -1,20 +1,28 @@
+import factory
 import pprint
 from django.test import TestCase
 from django.core import serializers
 from bhp_crypto.classes import FieldCryptor
 
 from django.db.models import get_app, get_models, get_model
-#from bhp_lab_tracker.classes import lab_tracker
+from django.contrib.contenttypes.models import ContentType
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_sync.classes import SerializeToTransaction
-#from bcpp_subject.tests.factories import SubjectConsentFactory
-from bcpp_subject.tests.factories import SubjectVisitFactory
+from bcpp_subject.tests.factories import SubjectConsentFactory
+from bcpp_subject.tests.factories import SubjectVisitFactory, BloodDrawFactory, GrantFactory, LabourMarketWagesFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.tests.factories import ConsentCatalogueFactory
+from bhp_appointment.tests.factories import AppointmentFactory
+from bhp_visit.tests.factories import VisitDefinitionFactory
+from bhp_content_type_map.tests.factories import ContentTypeMapFactory
 from bhp_appointment.models import Appointment
 from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
+from datetime import datetime, timedelta
+from bcpp_survey.models import Survey
+from bhp_visit.models import VisitDefinition
 
 
 class NaturalKeyTests(TestCase):
@@ -36,7 +44,7 @@ class NaturalKeyTests(TestCase):
                 self.assertTrue('get_by_natural_key' in dir(model.objects), 'get_by_natural_key key not found in {0}'.format(model._meta.object_name))
 
     def test_p3(self):
-        #lab_tracker.autodiscover()
+        site_lab_tracker.autodiscover()
         StudySpecificFactory()
         study_site = StudySiteFactory()
         ConfigurationFactory()
@@ -45,25 +53,51 @@ class NaturalKeyTests(TestCase):
         content_type_map_helper.sync()
         print 'setup the consent catalogue for this BCPP'
         content_type_map = ContentTypeMap.objects.get(content_type__model__iexact='SubjectConsent')
+        print ContentTypeMap.objects.all().count()
         consent_catalogue = ConsentCatalogueFactory(name='bcpp year 0', content_type_map=content_type_map)
         consent_catalogue.add_for_app = 'bcpp_subject'
         consent_catalogue.save()
 
         print 'consent the subject'
-        SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
+        #SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
+        Survey.objects.create(survey_name = 'YEAR 0',
+                          datetime_start = datetime.today() - timedelta(days=30),
+                          datetime_end = datetime.today() + timedelta(days=180)
+                          )
         subject_consent = SubjectConsentFactory(study_site=study_site)
         print subject_consent.subject_identifier
         print 'get registered subject'
         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
+        household_member = subject_consent.household_member
         instances = []
         instances.append(subject_consent)
         instances.append(registered_subject)
 
         print 'test natural key / get_by_natural_key on subject_visit'
-        appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='1000')
+        
+#         appointment, created = Appointment.objects.get_or_create(registered_subject=registered_subject,
+#                                                                  appt_datetime = datetime.today(),
+#                                                                  visit_definition__code='1000')
+        content_type = ContentType.objects.get(app_label='bcpp_subject',model='subjectvisit')
+        content_type_map = ContentTypeMap.objects.get(content_type=content_type)
+        visit_definition = VisitDefinitionFactory(visit_tracking_content_type_map=content_type_map)
+        appointment = AppointmentFactory(registered_subject=registered_subject, visit_definition=visit_definition)
         subject_visit = SubjectVisitFactory(appointment=appointment)
+        #BloodDraw : for BaseScheduledVisitModels
+        blood_draw = BloodDrawFactory(subject_visit=subject_visit)
+        #Grant: Independent Natural Key
+        labour_market_wages = LabourMarketWagesFactory(subject_visit=subject_visit)
+        grant = GrantFactory(labour_market_wages=labour_market_wages)#Investigate natural keys further
+        #Respondent : Independent Natural Key
+        respondent =
+        #SubjectAbsenteeEntry : Independent Natural Key
+        #SubjectAbsentee : for BaseRegisteredHouseholdMemberModel
+        #SubjectDeath : Independent Natural Keys
+        #SubjectLocator : Independent Natural Key
+        #SubjectOffStudy : 
+        #SubjectUndecidedEntry: for SubjectUndecidedEntry
         instances.append(subject_visit)
-
+        print 'INSTANCE: '+str(instances)
         for obj in instances:
             print 'test natural key on {0}'.format(obj._meta.object_name)
             natural_key = obj.natural_key()

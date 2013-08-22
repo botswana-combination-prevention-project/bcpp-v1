@@ -11,4 +11,4 @@ class PimaFactory(BaseUuidModelFactory):
     pima_id = factory.Sequence(lambda n: 'pima_id{0}'.format(n))
     cd4_value = 2.5
     draw_time = datetime.today().strftime('%H:%m')
-    is_drawn = (('Yes', <django.utils.functional.__proxy__ object at 0x1021b8810>), ('No', <django.utils.functional.__proxy__ object at 0x1021b8850>))[0][0]
+    is_drawn = (('Yes', '<django.utils.functional.__proxy__ object at 0x1021b8810>'), ('No', '<django.utils.functional.__proxy__ object at 0x1021b8850>'))[0][0]

@@ -9,8 +9,8 @@ class CeaEnrolmentChecklistFactory(BaseUuidModelFactory):
     FACTORY_FOR = CeaEnrolmentChecklist
 
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)
-    citizen = (('Yes', <django.utils.functional.__proxy__ object at 0x1021b8810>), ('No', <django.utils.functional.__proxy__ object at 0x1021b8850>))[0][0]
-    community_resident = (('Yes', <django.utils.functional.__proxy__ object at 0x1021b8890>), ('No', <django.utils.functional.__proxy__ object at 0x1021b88d0>), ('REF', <django.utils.functional.__proxy__ object at 0x1021b8910>))[0][0]
+    citizen = (('Yes', '<django.utils.functional.__proxy__ object at 0x1021b8810>'), ('No', '<django.utils.functional.__proxy__ object at 0x1021b8850>'))[0][0]
+    community_resident = (('Yes', '<django.utils.functional.__proxy__ object at 0x1021b8890>'), ('No', '<django.utils.functional.__proxy__ object at 0x1021b88d0>'), ('REF', '<django.utils.functional.__proxy__ object at 0x1021b8910>'))[0][0]
     enrolment_reason = (('CD4 < 50', u'Most recent (within past 3 months) CD4 < 50'), ('CD4 50-100', u'Most recent (within past 3 months) CD4 50-100'), ('AIDS opportunistic infection/condition', u'Current AIDS opportunistic infection/condition'))[0][0]
     cd4_date = date.today()
     cd4_count = 2.5
