@@ -5,7 +5,7 @@ from bcpp.choices import YES_NO
 from base_scheduled_htc_visit import BaseScheduledHtcVisit
 
 
-class MaleFollowupConsent (BaseScheduledHtcVisit):
+class MaleFollowup (BaseScheduledHtcVisit):
 
     """Male Permissions to be contacted for follow-up"""
         
@@ -35,5 +35,5 @@ class MaleFollowupConsent (BaseScheduledHtcVisit):
 
     class Meta:
         app_label = 'bcpp_htc'
-        verbose_name = "Male Permissions & Contact follow-up"
-        verbose_name_plural = "Male Permissions & Contact follow-up"
+        verbose_name = "Male Follow-up"
+        verbose_name_plural = "Male Follow-up"

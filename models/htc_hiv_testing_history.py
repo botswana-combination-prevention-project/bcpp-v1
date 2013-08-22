@@ -6,7 +6,7 @@ from bcpp_htc.choices import TESTING_CENTRE, YES_NO_DECLINED
 from base_scheduled_htc_visit import BaseScheduledHtcVisit
 
 
-class HivTestingHistory (BaseScheduledHtcVisit):
+class HtcHivTestingHistory (BaseScheduledHtcVisit):
     
     previous_testing = models.CharField(
         verbose_name=_("Have you ever previously been tested for HIV?"),

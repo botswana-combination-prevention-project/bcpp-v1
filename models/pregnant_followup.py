@@ -5,7 +5,7 @@ from bcpp.choices import YES_NO
 from base_scheduled_htc_visit import BaseScheduledHtcVisit
 
 
-class PregnantFollowupConsent (BaseScheduledHtcVisit):
+class PregnantFollowup (BaseScheduledHtcVisit):
 
     """Permission to contact for follow up for pregnant women"""
        
@@ -32,5 +32,5 @@ class PregnantFollowupConsent (BaseScheduledHtcVisit):
 
     class Meta:
         app_label = 'bcpp_htc'
-        verbose_name = "Pregnant Permissions & Contact follow-up"
-        verbose_name_plural = "Pregnant Permissions & Contact follow-up"
+        verbose_name = "Pregnant Follow-up"
+        verbose_name_plural = "Pregnant Follow-up"

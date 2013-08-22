@@ -6,7 +6,7 @@ from bhp_common.choices import YES_NO, POS_NEG, YES_NO_DONT_KNOW
 from base_scheduled_htc_visit import BaseScheduledHtcVisit
 
 
-class HivResult(BaseScheduledHtcVisit):
+class HtcHivResult(BaseScheduledHtcVisit):
     
     """ HIV Test Result """
     

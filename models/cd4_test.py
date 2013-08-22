@@ -7,7 +7,7 @@ from bhp_base_model.validators import date_not_future
 
 
 
-class CD4Test(BaseScheduledHtcVisit):
+class Cd4Test(BaseScheduledHtcVisit):
     
     
     """ CD4 test """

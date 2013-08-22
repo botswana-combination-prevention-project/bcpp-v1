@@ -5,7 +5,7 @@ from bcpp.choices import YES_NO
 from base_scheduled_htc_visit import BaseScheduledHtcVisit
 
 
-class Circumcision (BaseScheduledHtcVisit):
+class HtcCircumcision (BaseScheduledHtcVisit):
 
     """For males only"""
 

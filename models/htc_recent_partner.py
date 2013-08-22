@@ -5,7 +5,7 @@ from bcpp_htc.choices import RELATIONSHIP_TYPE
 from base_partner import BasePartner
 
 
-class RecentPartner (BasePartner):
+class HtcRecentPartner (BasePartner):
     
     """HTC"""
 
