@@ -1,1 +1,0 @@
-from section_admin import SectionAdmin
