@@ -45,5 +45,5 @@ class HtcHivTestingHistory (BaseScheduledHtcVisit):
 
     class Meta:
         app_label = 'bcpp_htc'
-        verbose_name = "HIV Testing History"
-        verbose_name_plural = "HIV Testing History"
+        verbose_name = "HTC HIV Testing History"
+        verbose_name_plural = "HTC HIV Testing History"
