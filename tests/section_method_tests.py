@@ -54,4 +54,3 @@ class SectionMethodTests(TestCase):
         self.assertFalse(section_index_view.is_setup)
         section_index_view.setup()
         self.assertTrue(section_index_view.is_setup)
-
