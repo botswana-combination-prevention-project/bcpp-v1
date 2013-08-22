@@ -11,7 +11,6 @@ class SectionIndexView(BaseSectionIndexView):
 
     def get_default_sections(self):
         return []
-        #return [('appointments', 'Appointments', 100), ('labs', 'Labs', 110), ('statistics', 'Statistics', 120), ('audit_trail', 'Audit', 130), ('administration', 'Administration', 140)]
 
     def urlpatterns(self, view=None):
         """ Generates a urlpattern for the view of this subclass."""

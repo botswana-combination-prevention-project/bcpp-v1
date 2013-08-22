@@ -117,7 +117,7 @@ class Controller(object):
         if lst != self._section_display_indexes:
             raise ImproperlyConfigured('Section classes must have a unique section_display_index. '
                                        'Got {0} from site_sections {1}. Check the section cls in '
-                                       'each app.'.format(self._section_display_indexes, site_sections.get_section_names()))
+                                       'each app. Section tuples are {2}'.format(self._section_display_indexes, site_sections.get_section_names(), site_sections.get_section_tuples()))
 
     def get_section_display_indexes(self):
         """Returns an ordered list of section display indexes."""
