@@ -34,7 +34,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
     """ Create and add to a default clinic 'registered subject' dashboard context and render_to_response from a view in shell. """
 
-    def __init__(self, **kwargs):
+    def __init__(self, view=None, **kwargs):
         super(RegisteredSubjectDashboard, self).__init__(**kwargs)
         self._registered_subject = None
         self._subject_identifier = None
@@ -60,11 +60,13 @@ class RegisteredSubjectDashboard(Dashboard):
         self._visit_messages = []
         self._consent = None
         self._language = None
+        self._view = None
         self.selected_visit = None
         self._subject_hiv_status = None
         self.is_dispatched, self.dispatch_producer = False, None
         self.exclude_others_if_keyed_model_name = ''
         self.add_to_dashboard_model_reference({'appointment': Appointment})
+        self.set_view(view)
 
     def create(self, **kwargs):
         self.set_show(kwargs.get('show'))
@@ -127,6 +129,17 @@ class RegisteredSubjectDashboard(Dashboard):
             self.context.add(packinglist_meta=self.get_packing_list_model()._meta)
         if self.get_requisition_model():
             self.context.add(requisition_meta=self.get_requisition_model()._meta)
+
+    def set_view(self, value=None):
+        """Sets the name of the view coming from __init__ for the url."""
+        self._view = value or 'subject_dashboard'  # TODO: default this for now, but should be removed
+        if not self._view:
+            raise TypeError('Attribute _view may not be None.')
+
+    def get_view(self):
+        if not self._view:
+            self.set_view()
+        return self._view
 
     def set_consent(self):
         raise ImproperlyConfigured('Users must override this method.')
@@ -708,7 +721,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         urlpatterns = patterns(view,
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>{show})/$'.format(**regex),
-              'subject_dashboard',
+              self.get_view(),
                 name="subject_dashboard_url"
                 ))
         return urlpatterns
