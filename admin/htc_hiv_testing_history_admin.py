@@ -1,12 +1,12 @@
 from django.contrib import admin
 from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import HivTestingHistory
-from bcpp_htc.forms import HivTestingHistoryForm
+from bcpp_htc.models import HtcHivTestingHistory
+from bcpp_htc.forms import HtcHivTestingHistoryForm
 
 
-class HivTestingHistoryAdmin(HtcVisitModelAdmin):
+class HtcHivTestingHistoryAdmin(HtcVisitModelAdmin):
 
-    form = HivTestingHistoryForm
+    form = HtcHivTestingHistoryForm
 
     fields = (
         "htc_visit",
@@ -20,4 +20,4 @@ class HivTestingHistoryAdmin(HtcVisitModelAdmin):
         "testing_place": admin.VERTICAL,
         "hiv_record": admin.VERTICAL,
         "result_obtained": admin.VERTICAL,}
-admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)
+admin.site.register(HtcHivTestingHistory, HtcHivTestingHistoryAdmin)

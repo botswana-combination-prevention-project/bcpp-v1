@@ -1,12 +1,12 @@
 from django.contrib import admin
 from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import MaleFollowupConsent
-from bcpp_htc.forms import MaleFollowupConsentForm
+from bcpp_htc.models import MaleFollowup
+from bcpp_htc.forms import MaleFollowupForm
 
 
-class MaleFollowupConsentAdmin(HtcVisitModelAdmin):
+class MaleFollowupAdmin(HtcVisitModelAdmin):
 
-    form = MaleFollowupConsentForm
+    form = MaleFollowupForm
 
     fields = (
       "contact_consent",
@@ -17,4 +17,4 @@ class MaleFollowupConsentAdmin(HtcVisitModelAdmin):
         "contact_family": admin.VERTICAL,   
         }
     instructions = [("For men who are HIV negative and uncircumcised")]
-admin.site.register(MaleFollowupConsent, MaleFollowupConsentAdmin)
+admin.site.register(MaleFollowup, MaleFollowupAdmin)

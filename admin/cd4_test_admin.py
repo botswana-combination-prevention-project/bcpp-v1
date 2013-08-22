@@ -1,12 +1,12 @@
 from django.contrib import admin
 from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import CD4Test
-from bcpp_htc.forms import CD4TestForm
+from bcpp_htc.models import Cd4Test
+from bcpp_htc.forms import Cd4TestForm
 
 
-class CD4TestAdmin(HtcVisitModelAdmin):
+class Cd4TestAdmin(HtcVisitModelAdmin):
 
-    form = CD4TestForm
+    form = Cd4TestForm
 
     fields = (
         "cd4_test_date",
@@ -15,4 +15,4 @@ class CD4TestAdmin(HtcVisitModelAdmin):
         "appointment_date",
     )
 
-admin.site.register(CD4Test, CD4TestAdmin)
+admin.site.register(Cd4Test, Cd4TestAdmin)

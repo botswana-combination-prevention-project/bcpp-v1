@@ -1,12 +1,12 @@
 from django.contrib import admin
 from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import PregnantFollowupConsent
-from bcpp_htc.forms import PregnantFollowupConsentForm
+from bcpp_htc.models import PregnantFollowup
+from bcpp_htc.forms import PregnantFollowupForm
 
 
-class PregnantFollowupConsentAdmin(HtcVisitModelAdmin):
+class PregnantFollowupAdmin(HtcVisitModelAdmin):
 
-    form = PregnantFollowupConsentForm
+    form = PregnantFollowupForm
 
     fields = (
       "contact_consent",
@@ -17,4 +17,4 @@ class PregnantFollowupConsentAdmin(HtcVisitModelAdmin):
         "contact_family": admin.VERTICAL,  
         }
     instructions = [("For women who are pregnant and HIV negative")]
-admin.site.register(PregnantFollowupConsent, PregnantFollowupConsentAdmin)
+admin.site.register(PregnantFollowup, PregnantFollowupAdmin)

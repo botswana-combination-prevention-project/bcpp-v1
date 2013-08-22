@@ -1,12 +1,12 @@
 from django.contrib import admin
 from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import Circumcision
-from bcpp_htc.forms import CircumcisionForm
+from bcpp_htc.models import HtcCircumcision
+from bcpp_htc.forms import HtcCircumcisionForm
 
 
-class CircumcisionAdmin(HtcVisitModelAdmin):
+class HtcCircumcisionAdmin(HtcVisitModelAdmin):
 
-    form = CircumcisionForm
+    form = HtcCircumcisionForm
 
     fields = (
         "htc_visit",
@@ -15,4 +15,4 @@ class CircumcisionAdmin(HtcVisitModelAdmin):
         "circumcision_year",)
     radio_fields = {
         "is_circumcised": admin.VERTICAL,}
-admin.site.register(Circumcision, CircumcisionAdmin)
+admin.site.register(HtcCircumcision, HtcCircumcisionAdmin)

@@ -1,12 +1,12 @@
 from django.contrib import admin
 from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import RecentPartner, SecondPartner, ThirdPartner
-from bcpp_htc.forms import RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm
+from bcpp_htc.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
+from bcpp_htc.forms import HtcRecentPartnerForm, HtcSecondPartnerForm, HtcThirdPartnerForm
 
 
-class RecentPartnerAdmin(HtcVisitModelAdmin):
+class HtcRecentPartnerAdmin(HtcVisitModelAdmin):
 
-    form = RecentPartnerForm
+    form = HtcRecentPartnerForm
 
     fields = (
         "htc_visit",
@@ -34,12 +34,12 @@ class RecentPartnerAdmin(HtcVisitModelAdmin):
                      " friends, casual partners, prostitutes, or someone you"
                      " may have met at a bar, or at a wedding or other special"
                      " events, etc.")]
-admin.site.register(RecentPartner, RecentPartnerAdmin)
+admin.site.register(HtcRecentPartner, HtcRecentPartnerAdmin)
 
 
-class SecondPartnerAdmin(HtcVisitModelAdmin):
+class HtcSecondPartnerAdmin(HtcVisitModelAdmin):
 
-    form = SecondPartnerForm
+    form = HtcSecondPartnerForm
 
     fields = (
         "htc_visit",
@@ -67,12 +67,12 @@ class SecondPartnerAdmin(HtcVisitModelAdmin):
                      " friends, casual partners, prostitutes, or someone you"
                      " may have met at a bar, or at a wedding or other special"
                      " events, etc.")]
-admin.site.register(SecondPartner, SecondPartnerAdmin)
+admin.site.register(HtcSecondPartner, HtcSecondPartnerAdmin)
 
 
-class ThirdPartnerAdmin(HtcVisitModelAdmin):
+class HtcThirdPartnerAdmin(HtcVisitModelAdmin):
 
-    form = ThirdPartnerForm
+    form = HtcThirdPartnerForm
 
     fields = (
         "htc_visit",
@@ -100,4 +100,4 @@ class ThirdPartnerAdmin(HtcVisitModelAdmin):
                      " friends, casual partners, prostitutes, or someone you"
                      " may have met at a bar, or at a wedding or other special"
                      " events, etc.")]
-admin.site.register(ThirdPartner, ThirdPartnerAdmin)
+admin.site.register(HtcThirdPartner, HtcThirdPartnerAdmin)

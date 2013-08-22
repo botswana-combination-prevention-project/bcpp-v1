@@ -1,12 +1,12 @@
 from django.contrib import admin
 from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import PositiveFollowupConsent
-from bcpp_htc.forms import PositiveFollowupConsentForm
+from bcpp_htc.models import PositiveFollowup
+from bcpp_htc.forms import PositiveFollowupForm
 
 
-class PositiveFollowupConsentAdmin(HtcVisitModelAdmin):
+class PositiveFollowupAdmin(HtcVisitModelAdmin):
 
-    form = PositiveFollowupConsentForm
+    form = PositiveFollowupForm
 
     fields = (
       "contact_consent",
@@ -18,4 +18,4 @@ class PositiveFollowupConsentAdmin(HtcVisitModelAdmin):
         }
     instructions = [("For newly identified HIV positive individuals and known"
                      " HIV positive individuals not enrolled in care")]
-admin.site.register(PositiveFollowupConsent, PositiveFollowupConsentAdmin)
+admin.site.register(PositiveFollowup, PositiveFollowupAdmin)
