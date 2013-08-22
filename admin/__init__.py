@@ -28,7 +28,7 @@ from labour_market_wages_admin import LabourMarketWagesAdmin, GrantInlineAdmin
 from grant_admin import GrantAdmin
 from reproductive_health_admin import ReproductiveHealthAdmin
 from pima_admin import PimaAdmin
-from blood_draw_admin import BloodDrawAdmin
+from cd4_history_admin import Cd4HistoryAdmin
 from education_admin import EducationAdmin
 from community_engagement_admin import CommunityEngagementAdmin
 from medical_diagnoses_admin import MedicalDiagnosesAdmin
