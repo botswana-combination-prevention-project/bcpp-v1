@@ -2,12 +2,13 @@ import factory
 from datetime import date, datetime
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import SubjectAbsenteeEntry
-#from bcpp_subject.tests.factories import SubjectAbsenteeFactory
+from bcpp_subject.tests.factories import SubjectAbsenteeFactory
 
 
 class SubjectAbsenteeEntryFactory(BaseUuidModelFactory):
     FACTORY_FOR = SubjectAbsenteeEntry
-
+    
+    SubjectAbsentee = factory.SubFactory(SubjectAbsenteeFactory)
     report_datetime = datetime.today()
     reason_other = factory.Sequence(lambda n: 'reason_other{0}'.format(n))
     next_appt_datetime = datetime.today()

@@ -9,7 +9,8 @@ from django.contrib.contenttypes.models import ContentType
 from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_sync.classes import SerializeToTransaction
 from bcpp_subject.tests.factories import SubjectConsentFactory
-from bcpp_subject.tests.factories import SubjectVisitFactory, BloodDrawFactory, GrantFactory, LabourMarketWagesFactory
+from bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, LabourMarketWagesFactory, SubjectLocatorFactory, \
+                                         SubjectAbsenteeEntryFactory, SubjectAbsenteeFactory, SubjectDeathFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.tests.factories import ConsentCatalogueFactory
@@ -83,17 +84,20 @@ class NaturalKeyTests(TestCase):
         visit_definition = VisitDefinitionFactory(visit_tracking_content_type_map=content_type_map)
         appointment = AppointmentFactory(registered_subject=registered_subject, visit_definition=visit_definition)
         subject_visit = SubjectVisitFactory(appointment=appointment)
-        #BloodDraw : for BaseScheduledVisitModels
-        blood_draw = BloodDrawFactory(subject_visit=subject_visit)
+        #BloodDraw : for BaseScheduledVisitModels, REPLACED BY CD4_HISTORY
         #Grant: Independent Natural Key
         labour_market_wages = LabourMarketWagesFactory(subject_visit=subject_visit)
         grant = GrantFactory(labour_market_wages=labour_market_wages)#Investigate natural keys further
         #Respondent : Independent Natural Key
-        respondent =
-        #SubjectAbsenteeEntry : Independent Natural Key
+        #respondent = 
         #SubjectAbsentee : for BaseRegisteredHouseholdMemberModel
+        subject_absentee = SubjectAbsenteeFactory(household_member=household_member)
+        #SubjectAbsenteeEntry : Independent Natural Key
+        subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)        
         #SubjectDeath : Independent Natural Keys
+        subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         #SubjectLocator : Independent Natural Key
+        subject_locator = SubjectLocatorFactory()
         #SubjectOffStudy : 
         #SubjectUndecidedEntry: for SubjectUndecidedEntry
         instances.append(subject_visit)
