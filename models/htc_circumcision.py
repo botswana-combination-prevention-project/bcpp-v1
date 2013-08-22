@@ -30,5 +30,5 @@ class HtcCircumcision (BaseScheduledHtcVisit):
 
     class Meta:
         app_label = 'bcpp_htc'
-        verbose_name = "Circumcision"
-        verbose_name_plural = "Circumcision"
+        verbose_name = "HTC Circumcision"
+        verbose_name_plural = "HTC Circumcision"
