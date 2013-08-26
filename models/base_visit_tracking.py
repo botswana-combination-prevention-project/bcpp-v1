@@ -210,14 +210,14 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         ScheduledEntryBucket = models.get_model('bhp_entry', 'ScheduledEntryBucket')
         dirty = False
         if self.reason in self.get_visit_reason_no_follow_up_choices():
-            self.appointment.appt_status = 'done'
+            self.get_appointment().appt_status = 'done'
             dirty = True
         else:
-            if self.appointment.appt_status != 'in_progress':
-                self.appointment.appt_status = 'in_progress'
+            if self.get_appointment().appt_status != 'in_progress':
+                self.get_appointment().appt_status = 'in_progress'
                 dirty = True
             # look for any others in progress
-        for appointment in self.appointment.__class__.objects.filter(registered_subject=self.appointment.registered_subject, appt_status='in_progress').exclude(pk=self.appointment.pk):
+        for appointment in self.get_appointment().__class__.objects.filter(registered_subject=self.get_registered_subject(), appt_status='in_progress').exclude(pk=self.get_appointment().pk):
             if ScheduledEntryBucket.objects.filter(appointment=appointment, entry_status='NEW').exists():
                 appointment.appt_status = 'incomplete'
             else:
@@ -225,41 +225,10 @@ class BaseVisitTracking (BaseConsentedUuidModel):
             appointment.save()
             dirty = True
         if dirty:
-            self.appointment.save()
-#
-#         #set other appointments that are in progress to incomplete
-#         dirty = False
-#         this_appt_tdelta = datetime.today() - self.appointment.appt_datetime
-#         if this_appt_tdelta.days == 0:
-#             # if today is the appointment, set to self.appointment in progress and
-#             # the others to incomplete if not 'done' and not 'cancelled'
-#             appointments = self.appointment.__class__.objects.filter(registered_subject=self.appointment.registered_subject,
-#                                                       appt_status='in_progress')
-#             for appointment in appointments:
-#                 tdelta = datetime.today() - self.appointment.appt_datetime
-#                 if tdelta.days < 0 and appointment.appt_status != 'done' and appointment.appt_status != 'cancelled':
-#                     appointment.appt_status = 'incomplete'
-#                     self.appointment.save()
-#             # set self.appointment to in_progress
-#             self.appointment.appt_status = 'in_progress'
-#             dirty = True
-#         elif this_appt_tdelta.days > 0 and self.appointment.appt_status != 'done' and self.appointment.appt_status != 'cancelled':
-#             # self.appointment is in the past
-#             self.appointment.appt_status = 'incomplete'
-#             dirty = True
-#         elif this_appt_tdelta.days < 0 and self.appointment.appt_status != 'cancelled':
-#             # self.appointment is in the future
-#             self.appointment.appt_status = 'new'
-#             dirty = True
-#         else:
-#             pass
-#         if self.reason in self.get_visit_reason_no_follow_up_choices():
-#             self.appointment.appt_status = 'done'
-#         if dirty:
-#             self.appointment.save()
+            self.get_appointment().save()
 
     def natural_key(self):
-        return (self.report_datetime, ) + self.appointment.natural_key()
+        return (self.report_datetime, ) + self.get_appointment().natural_key()
     natural_key.dependencies = ['bhp_appointment.appointment', ]
 
     def get_subject_identifier(self):
@@ -269,7 +238,10 @@ class BaseVisitTracking (BaseConsentedUuidModel):
         return self.report_datetime
 
     def get_registered_subject(self):
-        return self.appointment.registered_subject
+        return self.get_appointment().registered_subject
+
+    def get_appointment(self):
+        return self.appointment
 
     class Meta:
         abstract = True

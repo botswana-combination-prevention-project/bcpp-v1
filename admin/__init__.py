@@ -1,2 +1,1 @@
 from base_visit_tracking_model_admin import BaseVisitTrackingModelAdmin
-from test_subject_visit_admin import TestSubjectVisitAdmin
