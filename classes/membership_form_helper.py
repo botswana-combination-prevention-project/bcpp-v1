@@ -1,3 +1,4 @@
+import itertools
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from bhp_base_model.models import BaseModel
@@ -7,7 +8,6 @@ from bhp_appointment_helper.models import BaseAppointmentMixin
 class MembershipFormHelper(object):
 
     def __init__(self, *args, **kwargs):
-        super(MembershipFormHelper, self).__init__(*args, **kwargs)
         self._keyed = None
         self._unkeyed = None
         self._grouping_key = None
@@ -49,7 +49,7 @@ class MembershipFormHelper(object):
         if not isinstance(group, basestring):
             raise TypeError('Expected parameter group to be a string')
         if not isinstance(obj, BaseAppointmentMixin):
-            raise TypeError('Expected an instance of a model class using mixin BaseAppointmentMixin')
+            raise TypeError('Expected an instance of a model class using mixin BaseAppointmentMixin. Models {0} of group \'{1}\' is being used as membership form so must be a subclass of this mixin.'.format(obj.__class__, group))
         if group in self._get_keyed():
             self._get_keyed()[group].append(obj)
         else:
@@ -115,12 +115,19 @@ class MembershipFormHelper(object):
         return self._model
 
     def _is_configured_for_category(self, category=None):
-        """Confirms membership forms exist for this category."""
+        """Confirms membership forms exist for this category.
+
+        .. note:: category may be a string delimited by commas like 'subject, maternal' or just 'subject'. Below
+                  the string values are converted to listed and concatenated into one unique list."""
         MembershipForm = models.get_model('bhp_visit', 'MembershipForm')
         ScheduleGroup = models.get_model('bhp_visit', 'ScheduleGroup')
-        if not MembershipForm.objects.filter(category__iexact=category).exists():
-            raise ImproperlyConfigured('Can\'t find any membership forms! Have you configured any for category \'{0}\'.'.format(category))
-        if not ScheduleGroup.objects.filter(membership_form__category__iexact=category).exists():
+        # convert MembershipForm category field values into a unique list
+        categories = list(set([y.strip() for y in list(itertools.chain(*[m['category'].split(',') for m in MembershipForm.objects.values('category').order_by('category').distinct()]))]))
+        if not category in categories:
+            raise ImproperlyConfigured('Can\'t find any membership forms! Have you configured any for category \'{0}\'. Must be one of {1}.'.format(category, [m['category'] for m in MembershipForm.objects.values('category').order_by('category').distinct()]))
+        # convert ScheduleGroup category field values into a unique list
+        categories = list(set([y.strip() for y in list(itertools.chain(*[m['membership_form__category'].split(',') for m in ScheduleGroup.objects.values('membership_form__category').order_by('membership_form__category').distinct()]))]))
+        if not category in categories:
             raise ImproperlyConfigured('Can\'t find any schedule groups! Have you configured any for category \'{0}\'.'.format(category))
         return True
 

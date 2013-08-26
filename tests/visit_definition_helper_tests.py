@@ -3,7 +3,7 @@ from bhp_entry.tests.factories import EntryFactory
 from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_visit_tracking.models import TestSubjectVisit, TestSubjectVisitTwo, TestSubjectVisitThree
+from bhp_base_test.models import TestSubjectVisit, TestSubjectVisitTwo, TestSubjectVisitThree
 from bhp_visit.classes import VisitDefinitionHelper
 from bhp_visit.models import VisitDefinition
 from bhp_entry.models import Entry

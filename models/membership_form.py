@@ -1,9 +1,10 @@
 from django.db import models
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_base_model.models import BaseUuidModel
 from bhp_visit.managers import MembershipFormManager
+from bhp_appointment_helper.models import BaseAppointmentMixin
 
 
 class MembershipForm(BaseUuidModel):
@@ -35,6 +36,8 @@ class MembershipForm(BaseUuidModel):
         # inspect for registered subject attribute
         if not 'registered_subject' in dir(cls):
             raise ValidationError('Membership forms must have a key to model RegisteredSubject. Got {0}'.format(cls))
+        if not issubclass(cls, BaseAppointmentMixin):
+            raise ImproperlyConfigured('MembershipForm attribute content_type_map must refer to a model class that is a subclass of BaseAppointmentMixin. Got {0}'.format(cls))
         super(MembershipForm, self).save(*args, **kwargs)
 
     def natural_key(self):
