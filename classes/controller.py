@@ -176,7 +176,7 @@ class Controller(object):
             retval = lab_tracker_inst.get_history_as_list(reference_datetime)
         return retval
 
-    def get_history_as_string(self, group_name, subject_identifier, mapped=True, reference_datetime=None):
+    def get_history_as_string(self, group_name, subject_identifier, mapped=None, reference_datetime=None):
         """Returns the result history as a string of values."""
         self.confirm_autodiscovered()
         retval = ''
@@ -217,6 +217,8 @@ class Controller(object):
         if lab_tracker_inst:
             value = lab_tracker_inst.get_value(value_datetime)
             is_default_value = lab_tracker_inst.get_is_default_value()
+        else:
+            raise ImproperlyConfigured('Could not find a lab_tracker instance for group_name \'{0}\' and subject_identifier \'{1}\'. Available classes are {2}'.format(group_name, subject_identifier, self._registry))
         if not value:
             # a value should always be returned, even if it is the classes' default value.
             raise TypeError('Value cannot be None. Using ({0}, {1}, {2}). Lab tracker class not found for group name or no get_default_value() method.'.format(group_name, subject_identifier, value_datetime))

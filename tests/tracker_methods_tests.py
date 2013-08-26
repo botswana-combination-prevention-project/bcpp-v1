@@ -63,7 +63,7 @@ class TrackerMethodsTests(TestCase):
         self.assertNotEqual(tracker1._get_history_inst().pk, '')
 
         print 'calling site_lab_tracker.update should not add a new rec to history'
-        site_lab_tracker.update(test_result_model)
+        site_lab_tracker.update_history(test_result_model)
         self.assertEqual(tracker1.get_history(value_datetime).count(), 1)
 
         print 'test with history, returns current value (POS)'
@@ -87,6 +87,7 @@ class TrackerMethodsTests(TestCase):
         self.assertEqual(tracker2.get_value_datetime(), value_datetime)
 
         print 'site_lab_tracker.autodiscover()'
+        site_lab_tracker.register(TestLabTracker)
         site_lab_tracker.autodiscover()
         print 'create registered_subject'
         registered_subject = RegisteredSubjectFactory(subject_identifier=subject_identifier)
@@ -116,6 +117,7 @@ class TrackerMethodsTests(TestCase):
         print 'count=2 for history model for this subject {0}'.format(subject_identifier)
         self.assertEqual(tracker2.get_history(value_datetime=result_item3.result_item_datetime).count(), 2)
         self.assertEqual(result_item3.result_item_value, tracker2.get_value(result_item3.result_item_datetime))
+        self.assertEqual(tracker2.get_history_as_string(reference_datetime=result_item3.result_item_datetime), '13')
 
         # test get_current_history / value returns the correct value relative to the value_datetime
         print 'change subject_identifier'
