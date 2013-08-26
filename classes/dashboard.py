@@ -1,44 +1,167 @@
+import copy
 import re
 import inspect
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
+from bhp_common.utils import convert_from_camel
 from bhp_section.classes import site_sections
 from bhp_context.classes import BaseContext
 from bhp_base_model.models import BaseModel
 from bhp_registration.models import RegisteredSubject
+from bhp_dashboard.exceptions import DashboardModelError
 
 
 class Dashboard(object):
 
     context = BaseContext()
-    dashboard_identifier = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None):
 
-        self.search_name = None
+        self.search_name = None  # ??
         self._dashboard_type = None
+        self._dashboard_type_list = None
         self._template = None
+        self._context_is_set = None  # ??
         self._dashboard_id = None
         self._dashboard_model = None
-        self._dashboard_model_key = None
+        self._dashboard_model_name = None
         self._dashboard_model_instance = None
-        self._dashboard_model_reference = None
+        self._dashboard_models = None
+        if dashboard_type_list:
+            self._set_dashboard_type_list(dashboard_type_list)
         self._section = None
         self._section_name = None
         self._search_type = None
+        self._set_dashboard_models(dashboard_models)
+        self._set_dashboard_type(dashboard_type)
+        self._set_dashboard_model(dashboard_model)
+        self._set_dashboard_id(dashboard_id)
+        # dashboard model may be the name or the model class
+        if isinstance(dashboard_model, basestring):
+            self._set_dashboard_model_name(dashboard_model)
+        elif issubclass(dashboard_model, BaseModel):
+            self._set_dashboard_model(dashboard_model)
+        else:
+            raise TypeError('Invalid dashboard_model. Expected either a Model class or a name of a model. Got {0}'.format(dashboard_model))
 
-    def create(self, **kwargs):
-        self.set_dashboard_type(kwargs.get('dashboard_type'))
-        self.set_dashboard_id(kwargs.get('dashboard_id'))
-        self.set_dashboard_model_key(kwargs.get('dashboard_model'))
-        self.set_dashboard_model()
-        self.context.add(
-            #search_name=self.search_name,
-            template=self.get_template(),
+    @classmethod
+    def get_urlpatterns(view_module, regex, **kwargs):
+        """Users must override."""
+        raise ImproperlyConfigured('You need to define some dashboard urls.')
+
+    def add_to_context(self):
+        pass
+
+    def _add_to_context(self):
+        self.context.add(template=self.get_template(),
+            #section=self.get_section(),
+            #section_name=self.get_section_name(),
+            #search_type=self.get_search_type(),
             dashboard_type=self.get_dashboard_type(),
             dashboard_id=self.get_dashboard_id(),
-            dashboard_model=self.get_dashboard_model_key(),
-            )
+            dashboard_model=self.get_dashboard_model(),
+            dashboard_model_instance=self.get_dashboard_model_instance())
+        self.add_to_context()
+
+    def create(self, **kwargs):
+        pass
+
+    def _set_dashboard_type(self, value=None):
+        self._dashboard_type = value
+        if not isinstance(value, basestring):
+            raise TypeError('Expected a string for dashboardtype. Got {0}'.format(value))
+        if not self._dashboard_type in self.get_dashboard_type_list():
+            raise TypeError('Invalid dashboard type. Expected one of {0}'.format(self.get_dashboard_type_list()))
+        if not self._dashboard_type:
+            raise TypeError('_dashboard_type may not be None.')
+
+    def get_dashboard_type(self):
+        if not self._dashboard_type:
+            self._set_dashboard_type()
+        return self._dashboard_type
+
+    def set_dashboard_type_list(self):
+        pass
+
+    def _set_dashboard_type_list(self, value=None):
+        """Users should override to set to a list of valid dashboard types such as [\'maternal\', \'infant\'] or [\'household\']."""
+        self._dashboard_type_list = None
+        if value:
+            self._dashboard_type_list = value
+        else:
+            self.set_dashboard_type_list()
+        if not self._dashboard_type_list:
+            raise TypeError('Attribute _dashboard_type_list may not be None. Either override the setter or pass as a list on __init__.')
+
+    def get_dashboard_type_list(self):
+        if not self._dashboard_type_list:
+            self._set_dashboard_type_list()
+        return self._dashboard_type_list
+
+    def _set_dashboard_model(self, value=None):
+        """Sets the model class given by the dashboard URL.
+
+        Checks with "func"`get_dashboard_models` if model or model_name is known to the class before using it."""
+        self._dashboard_model = None
+        if value:
+            if isinstance(value, basestring):
+                if value in self.get_dashboard_models():
+                    self._dashboard_model = self.get_dashboard_models().get(value)
+                else:
+                    raise DashboardModelError('Unable to determine the dashboard model given model name \'{0}\'. Not listed in {1}.'.format(value, self.get_dashboard_models()))
+            elif issubclass(value, BaseModel):
+                if convert_from_camel(value._meta.object_name) in self.get_dashboard_models():
+                    self._dashboard_model = value
+                else:
+                    raise DashboardModelError('Model class \'{0}\' is not a valid dashboard model. Not listed in {1}.'.format(value, self.get_dashboard_models()))
+            else:
+                raise TypeError('Attribute _dashboard_model must be a subclass of BaseModel or a name of a model '
+                                'and be a know dashboard model. Got {0}. Expected one of {1}'.format(value, self.get_dashboard_models()))
+        if not self._dashboard_model:
+            raise DashboardModelError('Dashboard model may not be None')
+
+#         else:
+#             model_name = self.get_dashboard_model_name()
+#             if isinstance(self.get_dashboard_models(model_name), tuple):
+#                 app_label, model_name = self.get_dashboard_models(model_name)
+#                 self._dashboard_model = models.get_model(app_label, model_name)
+#             if not self._dashboard_model:
+#                 if model_name in self.get_dashboard_models():
+#                     if issubclass(self.get_dashboard_models(model_name), BaseModel):
+#                         self._dashboard_model = self.get_dashboard_models(model_name)
+
+    def get_dashboard_model(self):
+        if not self._dashboard_model:
+            self._set_dashboard_model()
+        return self._dashboard_model
+
+    def _set_dashboard_model_name(self, value=None):
+        self._dashboard_model_name = value
+        if not value:
+            self._dashboard_model_name = convert_from_camel(self.get_dashboard_model()._meta.object_name)
+        if not self._dashboard_model_name:
+            raise TypeError('_dashboad_model_name may not be None.')
+
+    def get_dashboard_model_name(self):
+        if not self._dashboard_model_name:
+            self._set_dashboard_model_name()
+        return self._dashboard_model_name
+
+    def _set_dashboard_id(self, value=None):
+        """Sets the pk of the dashboard model class given by the dashboard URL."""
+        if not value:
+            TypeError('Parameter \'pk\' may not be None.')
+        if not isinstance(value, basestring):
+            raise TypeError('Expected a string when setting _dashboard_id. Parameter value must be a valid pk. Got {0}'.format(value))
+        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+        if not re_pk.match(value or ''):
+            raise TypeError('Dashboard id must be a uuid (pk). Got {0}'.format(value))
+        self._dashboard_id = value
+
+    def get_dashboard_id(self):
+        if not self._dashboard_id:
+            self._set_dashboard_id()
+        return self._dashboard_id
 
     def get_context_prep(self, **kwargs):
         pass
@@ -46,8 +169,14 @@ class Dashboard(object):
     def get_create_prep(self, **kwargs):
         pass
 
+    def set_context(self):
+        self._add_to_context()
+        self._context_is_set = True
+
     def get_context(self):
-        return self.context.values
+        if not self._context_is_set:
+            self.set_context()
+        return self.context
 
     def set_search_type(self):
         self._search_type = self.get_section().get_search_type(self.get_section_name())
@@ -59,22 +188,22 @@ class Dashboard(object):
             self.set_search_type()
         return self._search_type
 
-    def set_section(self, key=None):
-        """Sets the section class for the dashboard.
+    def set_section(self, section_name=None):
+        """Sets the instance of the section class for the dashboard.
 
         Call in __init__::
 
             self.set_section('household')
         """
-        if not key:
-            raise TypeError('Parameter \'key\' may not be None. Call set_section in __init__ to set the correct section class for this dashboard.')
-        section = site_sections.get(key)
+        if not section_name:
+            raise TypeError('Parameter \'section_name\' may not be None. Call set_section in __init__ to set the correct section class for this dashboard.')
+        section = site_sections.get(section_name)
         if not section:
             if site_sections.get_section_names() == []:
                 raise TypeError('class site_sections is not set up. Call autodoscover first.')
-            section = site_sections.get(key)
+            section = site_sections.get(section_name)
         if not section:
-            raise TypeError('Could not find section \'{0}\' in site_sections. You need to define a section class for this name in section.py.'.format(key))
+            raise TypeError('Could not find section \'{0}\' in site_sections. You need to define a section class for this name in section.py.'.format(section_name))
         self._section = section()
 
     def get_section(self):
@@ -90,32 +219,6 @@ class Dashboard(object):
             self.set_section_name()
         return self._section_name
 
-    def set_dashboard_type(self, value=None):
-        self._dashboard_type = value
-
-    def get_dashboard_type(self):
-        if not self._dashboard_type:
-            self.set_dashboard_type()
-        return self._dashboard_type
-
-    def set_dashboard_model(self):
-        """Sets the model class given by the dashboard URL."""
-        model_name = self.get_dashboard_model_key()
-        if isinstance(self.get_dashboard_model_reference(model_name), tuple):
-            app_label, model_name = self.get_dashboard_model_reference(model_name)
-            self._dashboard_model = models.get_model(app_label, model_name)
-        elif issubclass(self.get_dashboard_model_reference(model_name), BaseModel):
-            self._dashboard_model = self.get_dashboard_model_reference(model_name)
-        else:
-            raise TypeError('Dashboard model reference must return a tuple (app_label, model_name) or a model class. Got neither for {0}'.format(model_name))
-        if not self._dashboard_model:
-            raise TypeError('Dashboard model may not be None')
-
-    def get_dashboard_model(self):
-        if not self._dashboard_model:
-            self.set_dashboard_model()
-        return self._dashboard_model
-
     def set_dashboard_model_instance(self):
         """Sets the model instance using the model class and pk from the dashboard URL."""
         self._dashboard_model_instance = self.get_dashboard_model().objects.get(pk=self.get_dashboard_id())
@@ -125,59 +228,55 @@ class Dashboard(object):
             self.set_dashboard_model_instance()
         return self._dashboard_model_instance
 
-    def set_dashboard_id(self, pk):
-        """Sets the pk of the dashboard model class given by the dashboard URL."""
-        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        if not re_pk.match(pk or ''):
-            raise TypeError('Dashboard id must be a uuid (pk)')
-        self._dashboard_id = pk
+    def verify_dashboard_model(self, value):
+        """Verifies the dashboard model(s) in dictionary \'value\' before adding to the dictionary and throws an exception if unable to verify.
 
-    def get_dashboard_id(self):
-        if not self._dashboard_id:
-            self.set_dashboard_id()
-        return self._dashboard_id
+        Users may override to test the model for methods or subclass, etc."""
+        pass
 
-    def add_to_dashboard_model_reference(self, value):
-        """Adds additional items to the dictionary.
+    def add_dashboard_model(self, value):
+        """Adds additional items to the dashboard models dictionary.
 
-        This dictionary is used to verify the dashboard_model_key
+        This dictionary is used to verify the dashboard_model name or class
         coming from the url. We only want ones that we expect."""
+        if not value:
+            raise TypeError('parameter \'value\' may not be None. Expected a model class or function.')
         if not isinstance(value, dict):
             raise TypeError('Parameter \'value\' must be a dictionary.')
-        for v in value.itervalues():
-            if inspect.ismethod(v) and v.__name__ == 'get_visit_model':
-                pass
-            elif not issubclass(v, BaseModel):
-                raise TypeError('Dictionary of {{k, v}} must have value attribute v of base class BaseModel. Got {0} for {1}'.format(type(v), value))
-        if not self._dashboard_model_reference:
-            self._dashboard_model_reference = {}
-        self._dashboard_model_reference.update(value)
+        for name, model_or_func in value.iteritems():
+            if (inspect.ismethod(model_or_func) or inspect.isfunction(model_or_func)) and model_or_func.__name__ in ['_get_visit_model', 'get_visit_model']:
+                value[name] = value[name]()  # may be a function (that returns a model) TODO: may we allow more than just get_visit_model?
+                if not issubclass(value[name], BaseModel):
+                    raise TypeError('Expected a subclass of BaseModel from function \'get_visit_model\'. Got {0}.'.format(value))
+            elif issubclass(model_or_func, BaseModel):
+                pass  # may be a model
+            elif isinstance(model_or_func, tuple):
+                value[name] = models.get_model(model_or_func[0], model_or_func[1])
+            else:
+                raise TypeError('Dictionary of {{k, v}} must have value attribute v of base class BaseModel or a method that returns a model class. Got {0} for {1}'.format(type(model_or_func), value))
+        self.verify_dashboard_model(value)
+        self._dashboard_models.update(value)
 
-    def set_dashboard_model_reference(self):
-        """Sets a reference dictionary by updating the user defined dictionary with a default for registered_subject."""
-        if not self._dashboard_model_reference:
-            self._dashboard_model_reference = {}
-        self.add_to_dashboard_model_reference({'registered_subject': RegisteredSubject})
+    def _set_dashboard_models(self, value=None):
+        """Sets a reference dictionary by updating the user defined dictionary with a default for registered_subject.
+        """
+        if self._dashboard_models == None:
+            self._dashboard_models = {}
+        self._dashboard_models.update({'registered_subject': RegisteredSubject})
+        if value:
+            self.add_dashboard_model(value)
 
-    def get_dashboard_model_reference(self, model_name):
-        if not self._dashboard_model_reference:
-            self.set_dashboard_model_reference()
-        if model_name not in self._dashboard_model_reference:
-            raise TypeError(('Dashboard model name {0} is not in the user defined dictionary returned by '
-                            'method get_dashboard_model_reference(). Got {1}. Perhaps add this model '
-                            'with add_dashboard_model_reference() in your subclass.').format(model_name, self._dashboard_model_reference))
-        value = self._dashboard_model_reference.get(model_name)
-        if inspect.ismethod(value) and value.__name__ == 'get_visit_model':
-            value = value()
-        return value
-
-    def set_dashboard_model_key(self, value):
-        self._dashboard_model_key = value
-
-    def get_dashboard_model_key(self):
-        if not self._dashboard_model_key:
-            self.set_dashboard_model_key()
-        return self._dashboard_model_key
+    def get_dashboard_models(self, model_name=None):
+        if not self._dashboard_models:
+            self._set_dashboard_models()
+        if model_name:
+            if model_name not in self._dashboard_models:
+                raise TypeError(('Dashboard model name {0} is not in the user defined dictionary returned by '
+                                'method get_dashboard_models(). Got {1}. Perhaps add this model '
+                                'with add_dashboard_models() in your subclass.').format(model_name, self._dashboard_models))
+            value = self._dashboard_models.get(model_name)
+            return value
+        return copy.deepcopy(self._dashboard_models)
 
     def set_template(self, value=None):
         self._template = value
@@ -191,6 +290,18 @@ class Dashboard(object):
             self.set_template()
         return self._template
 
-    def get_urlpatterns(self, view, regex, **kwargs):
-        """Users must override."""
-        raise ImproperlyConfigured('You need to define some dashboard urls.')
+    def set_extra_url_context(self):
+        pass
+
+    def _set_extra_url_context(self):
+        """Sets / updates the extra_url_context dictionary."""
+        self._extra_url_context = ''
+        self.set_extra_url_context()
+        # adds the current language
+        self._extra_url_context = '{0}&form_language_code={1}'.format(self._extra_url_context, self.get_language())
+
+    def get_extra_url_context(self):
+        """Gets the extra_url_context and returns as a GET query string."""
+        if not self._extra_url_context:
+            self._set_extra_url_context()
+        return self._extra_url_context
