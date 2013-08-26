@@ -8,7 +8,7 @@ from bhp_appointment.models import Appointment
 from bhp_appointment.tests.factories import ConfigurationFactory, AppointmentFactory
 from bhp_visit.models import VisitDefinition
 from bhp_visit.tests.factories import VisitDefinitionFactory
-from bhp_visit_tracking.models import TestSubjectVisit
+from bhp_base_test.models import TestSubjectVisit
 from bhp_consent.models import AttachedModel
 from bhp_base_test.tests.factories import TestConsentFactory
 from bhp_consent.tests.factories import ConsentCatalogueFactory
