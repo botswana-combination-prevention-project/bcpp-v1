@@ -177,6 +177,7 @@ class ConsentHelper(object):
 
         If model class of the subject instance is listed in the consent catalogue under the consent of a different subject, such
         as with mother and their infants, get the other subject's identifier from the :func:`get_consent_subject_identifier`. """
+        from bhp_consent.models import BaseConsent
         consent_models = []
         consent_subject_identifier = None
         if 'get_consenting_subject_identifier' in dir(self.get_subject_instance()):
@@ -186,6 +187,8 @@ class ConsentHelper(object):
         if not consent_subject_identifier:
             raise ConsentError('Cannot determine the subject_identifier of the consent covering data entry for model {0}'.format(self.get_subject_instance()._meta.object_name))
         for consent_model in self._get_consent_models():
+            if not issubclass(consent_model, BaseConsent):
+                raise TypeError('Consent models must be subclasses of BaseConsent. Got {0}.'.format(consent_model))
             if consent_model.objects.filter(subject_identifier=consent_subject_identifier):
                 # confirm what version covers either from consent model or consent_update_model_cls
                 # does the catalogue return only the MaternalConsent, ??
