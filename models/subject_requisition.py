@@ -7,6 +7,7 @@ from bcpp_subject.models import SubjectVisit
 from bcpp_household.models import Household
 from packing_list import PackingList
 from bcpp_inspector.models import SubjectRequisitionInspector
+from bcpp_lab.managers import SubjectRequisitionManager
 
 
 class SubjectRequisition(BaseRequisition):
@@ -22,6 +23,8 @@ class SubjectRequisition(BaseRequisition):
 
     history = AuditTrail()
     
+    objects = SubjectRequisitionManager()
+    
     def dispatch_container_lookup(self, using=None):
         return None
     
@@ -36,6 +39,9 @@ class SubjectRequisition(BaseRequisition):
                 app_name = 'bcpp_lab',
                 model_name = 'SubjectRequisition'                
                 )
+    
+    def natural_key(self):
+        return (self.requisition_identifier, )
     
     def save(self, *args, **kwargs):
         self.subject_identifier = self.get_visit().get_subject_identifier()
