@@ -12,11 +12,10 @@ from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_base_test.models import TestConsent, TestVisit
+from bhp_base_test.models import TestConsent, TestVisit, TestScheduledModel
 # from bhp_base_test.tests.factories import TestConsentFactory, TestScheduledModelFactory
 from bhp_entry.models import ScheduledEntryBucket
 from bhp_entry.tests.factories import EntryFactory
-from bhp_visit_tracking.models import TestScheduledModel
  
  
 class AppointmentMethodTests(BaseAppointmentTests):

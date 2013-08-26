@@ -198,6 +198,9 @@ class Appointment(BaseAppointment):
     def get_subject_identifier(self):
         return self.registered_subject.subject_identifier
 
+    def get_registered_subject(self):
+        return self.registered_subject
+
     def get_report_datetime(self):
         return self.appt_datetime
 
