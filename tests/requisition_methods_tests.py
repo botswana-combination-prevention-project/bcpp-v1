@@ -1,7 +1,7 @@
 from django.test import TestCase
 from bhp_device.classes import Device
 from bhp_identifier.classes import Identifier
-from lab_requisition.models import TestRequisition
+from bhp_base_test.models import TestRequisition
 
 
 class RequisitionMethodsTest(TestCase):
