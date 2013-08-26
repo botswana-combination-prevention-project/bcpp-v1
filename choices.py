@@ -204,6 +204,14 @@ POS_NEG_NOTESTED = (
 )
 
 
+POS_NEG_UNTESTED_REFUSAL = (
+    ('POS', 'Positive'),
+    ('NEG', 'Negative'),
+    ('NEVER', 'Never tested for HIV'),
+    ('UNKNOWN', 'Unknown'),
+    ('REFUSED', 'Refused to answer'),
+)
+
 REFUSAL_STATUS = (
     ('REFUSED', 'Refused'),
     ('NOT_REFUSED', 'No longer refusing'),
