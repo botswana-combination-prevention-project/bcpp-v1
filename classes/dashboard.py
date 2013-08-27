@@ -59,7 +59,7 @@ class Dashboard(object):
             #search_type=self.get_search_type(),
             dashboard_type=self.get_dashboard_type(),
             dashboard_id=self.get_dashboard_id(),
-            dashboard_model=self.get_dashboard_model(),
+            dashboard_model=self.get_dashboard_model_name(),  # yes, we use the name not the model class for the context
             dashboard_model_instance=self.get_dashboard_model_instance())
         self.add_to_context()
 
