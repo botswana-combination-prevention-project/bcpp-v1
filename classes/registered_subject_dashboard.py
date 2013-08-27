@@ -36,7 +36,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
     """ Create and add to a default clinic 'registered subject' dashboard context and render_to_response from a view in shell. """
 
-    def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, dashboard_category=None, visit_model=None, **kwargs):
+    def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, dashboard_category=None, visit_model=None, registered_subject=None, show=None, **kwargs):
         self._visit_model = None
         if visit_model:  # usually None, except in testing, but needed now regardless since passing method for one of the dashboard models below
             self._set_visit_model(visit_model)
@@ -79,9 +79,9 @@ class RegisteredSubjectDashboard(Dashboard):
         self.is_dispatched, self.dispatch_producer = False, None
         self.exclude_others_if_keyed_model_name = ''
 
-        self._set_registered_subject(kwargs.get('registered_subject'))
+        self._set_registered_subject(registered_subject)
         self._set_membership_form_category(dashboard_category)
-        self.set_show(kwargs.get('show'))
+        self.set_show(show)
 
     def add_to_context(self):
 
