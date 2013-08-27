@@ -47,7 +47,7 @@ class BaseSyncUuidModel(BaseUuidModel):
     def save_to_inspector(self, fields):
         """Override in concrete class"""
         return False
-    
+
     def delete(self, *args, **kwargs):
         """Creates a delete transaction on delete"""
         transaction_producer = TransactionProducer()
