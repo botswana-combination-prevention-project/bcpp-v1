@@ -10,7 +10,7 @@ from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_sync.classes import SerializeToTransaction
 from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, LabourMarketWagesFactory, SubjectLocatorFactory, \
-                                         SubjectAbsenteeEntryFactory, SubjectAbsenteeFactory, SubjectDeathFactory
+                                         SubjectAbsenteeEntryFactory, SubjectDeathFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.tests.factories import ConsentCatalogueFactory
@@ -18,6 +18,7 @@ from bhp_appointment.tests.factories import AppointmentFactory
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_content_type_map.tests.factories import ContentTypeMapFactory
 from bhp_appointment.models import Appointment
+from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
@@ -58,18 +59,20 @@ class NaturalKeyTests(TestCase):
         consent_catalogue = ConsentCatalogueFactory(name='bcpp year 0', content_type_map=content_type_map)
         consent_catalogue.add_for_app = 'bcpp_subject'
         consent_catalogue.save()
-
+        
         print 'consent the subject'
         #SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
         Survey.objects.create(survey_name = 'YEAR 0',
                           datetime_start = datetime.today() - timedelta(days=30),
                           datetime_end = datetime.today() + timedelta(days=180)
                           )
-        subject_consent = SubjectConsentFactory(study_site=study_site)
+#         print 'Clear previous Registered Subjects: Count='+str(RegisteredSubject.objects.all().count())
+#         RegisteredSubject.objects.all().delete()
+        household_member = HouseholdMemberFactory()
+        subject_consent = SubjectConsentFactory(study_site=study_site,household_member=household_member)
         print subject_consent.subject_identifier
         print 'get registered subject'
         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
-        household_member = subject_consent.household_member
         instances = []
         instances.append(subject_consent)
         instances.append(registered_subject)
@@ -87,27 +90,31 @@ class NaturalKeyTests(TestCase):
         #BloodDraw : for BaseScheduledVisitModels, REPLACED BY CD4_HISTORY
         #Grant: Independent Natural Key
         labour_market_wages = LabourMarketWagesFactory(subject_visit=subject_visit)
-        grant = GrantFactory(labour_market_wages=labour_market_wages)#Investigate natural keys further
-        #Respondent : Independent Natural Key
-        #respondent = 
+        grant = GrantFactory(labour_market_wages=labour_market_wages, subject_visit=subject_visit)#Investigate natural keys further
         #SubjectAbsentee : for BaseRegisteredHouseholdMemberModel
-        subject_absentee = SubjectAbsenteeFactory(household_member=household_member)
+        from bcpp_subject.tests.factories import SubjectAbsenteeFactory
+        subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
         #SubjectAbsenteeEntry : Independent Natural Key
         subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)        
         #SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         #SubjectLocator : Independent Natural Key
-        subject_locator = SubjectLocatorFactory()
-        #SubjectOffStudy : 
-        #SubjectUndecidedEntry: for SubjectUndecidedEntry
-        instances.append(subject_visit)
+        subject_locator = SubjectLocatorFactory(subject_visit=subject_visit, registered_subject=registered_subject)
+        #SubjectOffStudy :
+        #subject_off_study = 
+        instances.append(grant)
+        instances.append(subject_absentee)
+        instances.append(subject_death)
+        instances.append(subject_locator)
+        instances.append(subject_absentee_entry)
+        
         print 'INSTANCE: '+str(instances)
         for obj in instances:
             print 'test natural key on {0}'.format(obj._meta.object_name)
             natural_key = obj.natural_key()
             get_obj = obj.__class__.objects.get_by_natural_key(*natural_key)
             self.assertEqual(obj.pk, get_obj.pk)
-        pp = pprint.PrettyPrinter(indent=4)
+        #pp = pprint.PrettyPrinter(indent=4)
         for obj in instances:
             print 'test serializing/deserializing {0}'.format(obj._meta.object_name)
             outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj)

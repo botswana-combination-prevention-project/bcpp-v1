@@ -34,7 +34,8 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
         return self.household_member
 
     def natural_key(self):
-        return (self.report_datetime, ) + self.household_member.natural_key()
+        #return (self.report_datetime, ) + self.household_member.natural_key()
+        return self.household_member.natural_key()#OneToOne field with household_member, so it should be enough alone
     natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
     def dispatch_container_lookup(self, using=None):

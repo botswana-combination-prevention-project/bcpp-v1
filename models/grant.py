@@ -31,7 +31,7 @@ class Grant(BaseScheduledInlineModel):
         return self.labour_market_wages
 
     def natural_key(self):
-        return (self.report_datetime, ) + self.labour_market_wages.natural_key()
+        return (self.report_datetime, ) + self.labour_market_wages.natural_key()# 1st natural key might be wrong
     natural_key.dependencies = ['bcpp_subject.labourmarketwages', ]
 
     class Meta:

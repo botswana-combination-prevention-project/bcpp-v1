@@ -9,44 +9,44 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding field 'Uncircumcised.reason_circ_other'
-        db.add_column('bcpp_subject_uncircumcised', 'reason_circ_other',
-                      self.gf('django.db.models.fields.CharField')(max_length=35, null=True, blank=True),
-                      keep_default=False)
+#         db.add_column('bcpp_subject_uncircumcised', 'reason_circ_other',
+#                       self.gf('django.db.models.fields.CharField')(max_length=35, null=True, blank=True),
+#                       keep_default=False)
 
 
         # Changing field 'Uncircumcised.future_reasons_smc'
-        db.alter_column('bcpp_subject_uncircumcised', 'future_reasons_smc', self.gf('django.db.models.fields.CharField')(max_length=75, null=True))
-
-        # Changing field 'Uncircumcised.service_facilities'
-        db.alter_column('bcpp_subject_uncircumcised', 'service_facilities', self.gf('django.db.models.fields.CharField')(max_length=35, null=True))
-
-        # Changing field 'Uncircumcised.reason_circ'
-        db.alter_column('bcpp_subject_uncircumcised', 'reason_circ', self.gf('django.db.models.fields.CharField')(max_length=65, null=True))
-
-        # Changing field 'Uncircumcised.circumcision_week'
-        db.alter_column('bcpp_subject_uncircumcised', 'circumcision_week', self.gf('django.db.models.fields.CharField')(max_length=45, null=True))
-
-        # Changing field 'Uncircumcised.aware_free'
-        db.alter_column('bcpp_subject_uncircumcised', 'aware_free', self.gf('django.db.models.fields.CharField')(max_length=85, null=True))
-
-        # Changing field 'Uncircumcised.circumcision_year'
-        db.alter_column('bcpp_subject_uncircumcised', 'circumcision_year', self.gf('django.db.models.fields.CharField')(max_length=45, null=True))
-
-        # Changing field 'Uncircumcised.circumcision_day'
-        db.alter_column('bcpp_subject_uncircumcised', 'circumcision_day', self.gf('django.db.models.fields.CharField')(max_length=45, null=True))
-
-        # Changing field 'Uncircumcised.future_circ'
-        db.alter_column('bcpp_subject_uncircumcised', 'future_circ', self.gf('django.db.models.fields.CharField')(max_length=25))
-
-        # Changing field 'HivTestingHistory.other_record'
-        db.alter_column('bcpp_subject_hivtestinghistory', 'other_record', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
-
-        # Changing field 'HivTestingHistoryAudit.other_record'
-        db.alter_column('bcpp_subject_hivtestinghistory_audit', 'other_record', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
-        # Adding field 'UncircumcisedAudit.reason_circ_other'
-        db.add_column('bcpp_subject_uncircumcised_audit', 'reason_circ_other',
-                      self.gf('django.db.models.fields.CharField')(max_length=35, null=True, blank=True),
-                      keep_default=False)
+#         db.alter_column('bcpp_subject_uncircumcised', 'future_reasons_smc', self.gf('django.db.models.fields.CharField')(max_length=75, null=True))
+# 
+#         # Changing field 'Uncircumcised.service_facilities'
+#         db.alter_column('bcpp_subject_uncircumcised', 'service_facilities', self.gf('django.db.models.fields.CharField')(max_length=35, null=True))
+# 
+#         # Changing field 'Uncircumcised.reason_circ'
+#         db.alter_column('bcpp_subject_uncircumcised', 'reason_circ', self.gf('django.db.models.fields.CharField')(max_length=65, null=True))
+# 
+#         # Changing field 'Uncircumcised.circumcision_week'
+#         db.alter_column('bcpp_subject_uncircumcised', 'circumcision_week', self.gf('django.db.models.fields.CharField')(max_length=45, null=True))
+# 
+#         # Changing field 'Uncircumcised.aware_free'
+#         db.alter_column('bcpp_subject_uncircumcised', 'aware_free', self.gf('django.db.models.fields.CharField')(max_length=85, null=True))
+# 
+#         # Changing field 'Uncircumcised.circumcision_year'
+#         db.alter_column('bcpp_subject_uncircumcised', 'circumcision_year', self.gf('django.db.models.fields.CharField')(max_length=45, null=True))
+# 
+#         # Changing field 'Uncircumcised.circumcision_day'
+#         db.alter_column('bcpp_subject_uncircumcised', 'circumcision_day', self.gf('django.db.models.fields.CharField')(max_length=45, null=True))
+# 
+#         # Changing field 'Uncircumcised.future_circ'
+#         db.alter_column('bcpp_subject_uncircumcised', 'future_circ', self.gf('django.db.models.fields.CharField')(max_length=25))
+# 
+#         # Changing field 'HivTestingHistory.other_record'
+#         db.alter_column('bcpp_subject_hivtestinghistory', 'other_record', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
+# 
+#         # Changing field 'HivTestingHistoryAudit.other_record'
+#         db.alter_column('bcpp_subject_hivtestinghistory_audit', 'other_record', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
+#         # Adding field 'UncircumcisedAudit.reason_circ_other'
+#         db.add_column('bcpp_subject_uncircumcised_audit', 'reason_circ_other',
+#                       self.gf('django.db.models.fields.CharField')(max_length=35, null=True, blank=True),
+#                       keep_default=False)
 
 
         # Changing field 'UncircumcisedAudit.service_facilities'

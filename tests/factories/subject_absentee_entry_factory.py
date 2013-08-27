@@ -7,8 +7,8 @@ from bcpp_subject.tests.factories import SubjectAbsenteeFactory
 
 class SubjectAbsenteeEntryFactory(BaseUuidModelFactory):
     FACTORY_FOR = SubjectAbsenteeEntry
-    
-    SubjectAbsentee = factory.SubFactory(SubjectAbsenteeFactory)
+
+    subject_absentee = factory.SubFactory(SubjectAbsenteeFactory)
     report_datetime = datetime.today()
     reason_other = factory.Sequence(lambda n: 'reason_other{0}'.format(n))
     next_appt_datetime = datetime.today()
