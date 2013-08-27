@@ -39,7 +39,8 @@ class DashboardMethodTests(TestCase):
         self.assertEquals(dashboard.get_dashboard_model_name(), 'registered_subject')
 
         print 'assert raises TypeErrors if incomplete parameter list'
-        test_consent = TestConsentFactory()
+        registered_subject = RegisteredSubjectFactory()
+        test_consent = TestConsentFactory(registered_subject=registered_subject)
         self.assertRaises(TypeError, Dashboard)
         self.assertRaises(TypeError, Dashboard, None, None, None)
         self.assertRaises(TypeError, Dashboard, 'subject', None, None)
