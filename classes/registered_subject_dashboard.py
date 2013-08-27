@@ -131,8 +131,9 @@ class RegisteredSubjectDashboard(Dashboard):
                 additional_entry_bucket=self.get_additional_entry_bucket(),
                 additional_lab_bucket=self.get_additional_lab_bucket(),
                 requisition_model=self.get_requisition_model(),
-                requisition_model_meta=self.get_requisition_model()._meta,
                 )
+            if self.get_requisition_model():
+                self.context.add(requisition_model_meta=self.get_requisition_model()._meta)
             self.render_summary_links()
         self.context.add(rendered_action_items=self.render_action_item())
 
