@@ -224,20 +224,22 @@ class RegisteredSubjectDashboard(Dashboard):
     def _set_registered_subject(self, registered_subject=None):
         self._registered_subject = registered_subject
         self.set_registered_subject(registered_subject)
+        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         if not self._registered_subject and self.get_dashboard_model() == RegisteredSubject:
             self._registered_subject = RegisteredSubject.objects.filter(pk=self.get_dashboard_id()).order_by('-created')[0]
-        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        if not self._registered_subject and 'get_registered_subject' in dir(self.get_dashboard_model()):
+        elif not self._registered_subject and 'get_registered_subject' in dir(self.get_dashboard_model()):
             self._registered_subject = self.get_dashboard_model_instance().get_registered_subject()
-        if not self._registered_subject and re_pk.match(str(registered_subject)):
+        elif not self._registered_subject and re_pk.match(str(registered_subject)):
             # is registered_subject a pk? TODO: how could this be if dashboard_model is not registered_subject?
             self._registered_subject = RegisteredSubject.objects.get(pk=registered_subject)
-        if not self._registered_subject and self.get_appointment():
+        elif not self._registered_subject and self.get_appointment():
             # can i get it from an appointment? TODO: is this even possible?
             self._registered_subject = self.get_appointment().get_registered_subject()
-        if self._registered_subject:
+        elif self._registered_subject:
             if not isinstance(self._registered_subject, RegisteredSubject):
                 raise TypeError('Expected instance of RegisteredSubject.')
+        else:
+            pass
         if not self._registered_subject:
             raise TypeError('Attribute \'_registered_subject\' may not be None. Perhaps add method get_registered_subject() to the model {0}'.format(self.get_dashboard_model()))
 
