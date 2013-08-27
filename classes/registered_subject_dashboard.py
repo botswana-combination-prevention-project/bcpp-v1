@@ -397,6 +397,8 @@ class RegisteredSubjectDashboard(Dashboard):
     def _set_requisition_model(self):
         self._requisition_model = None
         self.set_requisition_model()
+        if not self._requisition_model:
+            raise TypeError('Attribute _requisition model cannot be None')
         if not issubclass(self._requisition_model, BaseBaseRequisition):
             raise TypeError('Expected a subclass of BaseBaseRequisition. Got {0}.'.format(self._requisition_model))
 
