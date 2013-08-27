@@ -45,12 +45,12 @@ def build_table(mapping):
 
 
 def handle_uploaded_file(f, community):
-    """Copies uploaded kmz file to settings.KMZ_DIR."""
+    """Copies uploaded kmz file to settings.MEDIA_ROOT."""
     filename = None
     if file:
         file_extension = f.content_type.split("/")[1]
         filename = "{0}.{1}".format(community, file_extension)
-        abs_filename = "{0}{1}".format(settings.KMZ_DIR, filename)
+        abs_filename = "{0}{1}".format(settings.MEDIA_ROOT, filename)
         with open(abs_filename, 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
@@ -70,7 +70,7 @@ def create_kmz_items(request, **kwargs):
         
         if request.FILES['file']:
             filename = handle_uploaded_file(request.FILES['file'], mapper_name)
-            file_path = str(settings.KMZ_DIR) + filename[0]
+            file_path = str(settings.MEDIA_ROOT) + filename[0]
             outstr = build_table(create_set_handler_parse_file(file_path).mapping)
             data_list = outstr.split('\n')
             data_list.pop(0)
@@ -81,8 +81,9 @@ def create_kmz_items(request, **kwargs):
                 if len(points) == 4:
                     lat = float(points[2])
                     lon = float(points[1])
-                    h = m.get_item_model_cls()(**{m.target_gps_lat_field_attr: lat, m.target_gps_lon_field_attr: lon, m.map_area_field_attr: mapper_name})
-                    h.save()
+                    print lat, lon
+                    #h = m.get_item_model_cls()(**{m.target_gps_lat_field_attr: lat, m.target_gps_lon_field_attr: lon, m.map_area_field_attr: mapper_name})
+                    #h.save()
                 else:
                     pass
                 count +=1

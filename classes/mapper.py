@@ -35,6 +35,7 @@ class Mapper(object):
         self._gps_center_lon = None
         self._target_gps_lon_field_attr = None
         self._target_gps_lat_field_attr = None
+        self._map_area_field_attr = None
 
         # item_model_cls
         if 'map_area' in kwargs:
@@ -172,6 +173,14 @@ class Mapper(object):
 
     def get_section_label(self):
         return self._get_attr('section_label')
+    
+    def set_map_area_field_attr(self, attr=None):
+        self._set_attr('map_area_field_attr', attr, allow_none=True)
+        if not self._map_area_field_attr:
+            self._map_area_field_attr = self.get_map_area_field_attr()
+
+    def get_map_area_field_attr(self):
+        return self._get_attr('map_area_field_attr')
 
     def set_item_label(self, attr=None):
         self._set_attr('item_label', attr, allow_none=True)
