@@ -55,7 +55,7 @@
     				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">view saved map</a>
                 {% else %}
                     {% if household.gps_lon|default:household.gps_target_lon and household.gps_lat|default:household.gps_target_lat %}
-                	  <form action="{% url 'subject_map_url' mapper_name=mapper_name identifier=household.household_identifier lon=household.gps_lon|default:household.gps_target_lon lat=household.gps_lat|default:household.gps_target_lat %}" method="post">
+                	  <form action="{% url 'item_map_url' mapper_name=household.community identifier=household.household_identifier lon=household.gps_lon|default:household.gps_target_lon lat=household.gps_lat|default:household.gps_target_lat %}" method="post">
 					   	{% csrf_token %}
 						<p><input type="submit" value="view google map"></p>
 					  </form>
