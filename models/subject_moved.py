@@ -48,7 +48,7 @@ class SubjectMoved(BaseMemberStatusModel):
 
     def post_save_update_hm_status(self):
         self.household_member.lives_in_household = 'No'
-        super(SubjectMoved, self).post_save_update_hsm_status()
+        super(SubjectMoved, self).post_save_update_hm_status()
 
     def save(self, *args, **kwargs):
         kwargs['reason'] = 'moved'

@@ -10,7 +10,8 @@ from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_sync.classes import SerializeToTransaction
 from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, LabourMarketWagesFactory, SubjectLocatorFactory, \
-                                         SubjectAbsenteeEntryFactory, SubjectDeathFactory, SubjectUndecidedEntryFactory
+                                         SubjectAbsenteeEntryFactory, SubjectDeathFactory, SubjectUndecidedEntryFactory, \
+                                         SubjectRefusalFactory, SubjectReferralFactory, SubjectMovedFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.tests.factories import ConsentCatalogueFactory
@@ -96,6 +97,9 @@ class NaturalKeyTests(TestCase):
         subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
         from bcpp_subject.tests.factories import SubjectUndecidedFactory
         subject_undecided = SubjectUndecidedFactory(household_member=household_member, registered_subject=registered_subject)
+        subject_refusal = SubjectRefusalFactory(household_member=household_member)
+        subject_referral = SubjectReferralFactory(household_member=household_member, registered_subject=registered_subject)
+        subject_moved = SubjectMovedFactory(household_member=household_member, registered_subject=registered_subject)
         #SubjectAbsenteeEntry : Independent Natural Key
         subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
         subject_undecided_entry = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)     
@@ -108,6 +112,9 @@ class NaturalKeyTests(TestCase):
         instances.append(grant)
         instances.append(subject_absentee)
         instances.append(subject_undecided)
+        instances.append(subject_refusal)
+        instances.append(subject_referral)
+        instances.append(subject_moved)
         instances.append(subject_death)
         instances.append(subject_locator)
         instances.append(subject_absentee_entry)

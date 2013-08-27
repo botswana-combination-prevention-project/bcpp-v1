@@ -4,11 +4,12 @@ from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import SubjectMoved
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_survey.tests.factories import SurveyFactory
-
+from bhp_registration.tests.factories import RegisteredSubjectFactory
 
 class SubjectMovedFactory(BaseUuidModelFactory):
     FACTORY_FOR = SubjectMoved
 
+    registered_subject = factory.SubFactory(RegisteredSubjectFactory)
     household_member = factory.SubFactory(HouseholdMemberFactory)
     report_datetime = datetime.today()
     survey = factory.SubFactory(SurveyFactory)
