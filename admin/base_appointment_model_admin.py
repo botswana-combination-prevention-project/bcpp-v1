@@ -72,50 +72,24 @@ class BaseAppointmentModelAdmin(BaseModelAdmin):
                 visit_model_instance=obj,
                 requisition_model=self.requisition_model,
                 )
-#        #set other appointments that are in progress to incomplete
-#        this_appointment = obj.appointment
-#        this_appt_tdelta = datetime.today() - obj.appointment.appt_datetime
-#        if this_appt_tdelta.days == 0:
-#            # if today is the appointment, set to this_appointment in progress and
-#            # the others to incomplete if not 'done' and not 'cancelled'
-#            appointments = obj.appointment.__class__.objects.filter(registered_subject=obj.appointment.registered_subject,
-#                                                      appt_status='in_progress')
-#            for appointment in appointments:
-#                tdelta = datetime.today() - obj.appointment.appt_datetime
-#                if tdelta.days < 0 and appointment.appt_status != 'done' and appointment.appt_status != 'cancelled':
-#                    appointment.appt_status = 'incomplete'
-#                    appointment.save()
-#            # set this_appointment to in_progress
-#            this_appointment.appt_status = 'in_progress'
-#            this_appointment.save()
-#        elif this_appt_tdelta.days > 0 and this_appointment.appt_status != 'done' and this_appointment.appt_status != 'cancelled':
-#            # this_appointment is in the past
-#            this_appointment.appt_status = 'incomplete'
-#            this_appointment.save()
-#        elif this_appt_tdelta.days < 0 and this_appointment.appt_status != 'cancelled':
-#            # this_appointment is in the future
-#            this_appointment.appt_status = 'new'
-#            this_appointment.save()
-#        else:
-#            pass
         return super(BaseAppointmentModelAdmin, self).save_model(request, obj, form, change)
 
-    def delete_model(self, request, obj):
-        return super(BaseAppointmentModelAdmin, self).delete_model(request, obj)
+#     def delete_model(self, request, obj):
+#         return super(BaseAppointmentModelAdmin, self).delete_model(request, obj)
 
-    def delete_view(self, request, object_id, extra_context=None):
-
-        appointment = self.model.objects.get(pk=object_id).appointment.pk
-        subject_identifier = self.model.objects.get(pk=object_id).appointment.registered_subject.subject_identifier
-        result = super(BaseAppointmentModelAdmin, self).delete_view(request, object_id, extra_context)
-        context = {'dashboard_type': self.dashboard_type, 'appointment': appointment}
-        if subject_identifier:
-            context['subject_identifier'] = subject_identifier
-        if extra_context:
-            for k, v in extra_context.items():
-                context[k] = v
-        result['Location'] = reverse('dashboard_url', kwargs=context)
-        return result
+#     def delete_view(self, request, object_id, extra_context=None):
+# 
+#         appointment = self.model.objects.get(pk=object_id).appointment.pk
+#         subject_identifier = self.model.objects.get(pk=object_id).appointment.registered_subject.subject_identifier
+#         result = super(BaseAppointmentModelAdmin, self).delete_view(request, object_id, extra_context)
+#         context = {'dashboard_type': self.dashboard_type, 'appointment': appointment}
+#         if subject_identifier:
+#             context['subject_identifier'] = subject_identifier
+#         if extra_context:
+#             for k, v in extra_context.items():
+#                 context[k] = v
+#         result['Location'] = reverse('dashboard_url', kwargs=context)
+#         return result
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         from bhp_appointment.models import Appointment
