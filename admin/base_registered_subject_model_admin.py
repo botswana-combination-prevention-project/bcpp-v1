@@ -51,30 +51,30 @@ class BaseRegisteredSubjectModelAdmin (BaseCryptorModelAdmin):
 
         return super(BaseRegisteredSubjectModelAdmin, self).save_model(request, obj, form, change)
 
-    def delete_view(self, request, object_id, extra_context=None):
-
-        kwargs = {'dashboard_type': self.dashboard_type}
-        # you can specify an attribute other than 'subject_identifier'
-        # by declaring self.subject_identifier_attribute at the ModelAdmin class declaration
-        # as long as the attribute exists in registered subject
-        subject_identifier_attribute = 'subject_identifier'
-        if 'subject_identifier_attribute' in self.__class__.__dict__:
-            subject_identifier_attribute = self.subject_identifier_attribute
-        if not subject_identifier_attribute in self.model.objects.get(pk=object_id).registered_subject.__dict__:
-            raise AttributeError('Attribute {0} does not exist in model RegisteredSubject. '
-                                 'Check the value set in your ModelAdmin for model {1}').format(subject_identifier_attribute, self.model._meta.module_name,)
-        subject_identifier = self.model.objects.get(pk=object_id).registered_subject.__dict__[subject_identifier_attribute]
-        if subject_identifier:
-            kwargs['subject_identifier'] = subject_identifier
-        else:
-            # if subject_identifier not yet allocated, try registration_identifier
-            kwargs['registered_subject'] = self.model.objects.get(pk=object_id).registered_subject.pk
-
-        result = super(BaseRegisteredSubjectModelAdmin, self).delete_view(request, object_id, extra_context)
-
-        result['Location'] = reverse('dashboard_url', kwargs=kwargs)
-
-        return result
+#     def delete_view(self, request, object_id, extra_context=None):
+# 
+#         kwargs = {'dashboard_type': self.dashboard_type}
+#         # you can specify an attribute other than 'subject_identifier'
+#         # by declaring self.subject_identifier_attribute at the ModelAdmin class declaration
+#         # as long as the attribute exists in registered subject
+#         subject_identifier_attribute = 'subject_identifier'
+#         if 'subject_identifier_attribute' in self.__class__.__dict__:
+#             subject_identifier_attribute = self.subject_identifier_attribute
+#         if not subject_identifier_attribute in self.model.objects.get(pk=object_id).registered_subject.__dict__:
+#             raise AttributeError('Attribute {0} does not exist in model RegisteredSubject. '
+#                                  'Check the value set in your ModelAdmin for model {1}').format(subject_identifier_attribute, self.model._meta.module_name,)
+#         subject_identifier = self.model.objects.get(pk=object_id).registered_subject.__dict__[subject_identifier_attribute]
+#         if subject_identifier:
+#             kwargs['subject_identifier'] = subject_identifier
+#         else:
+#             # if subject_identifier not yet allocated, try registration_identifier
+#             kwargs['registered_subject'] = self.model.objects.get(pk=object_id).registered_subject.pk
+# 
+#         result = super(BaseRegisteredSubjectModelAdmin, self).delete_view(request, object_id, extra_context)
+# 
+#         result['Location'] = reverse('dashboard_url', kwargs=kwargs)
+# 
+#         return result
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
 
