@@ -172,8 +172,10 @@ class RegisteredSubject(BaseSubject):
     def dashboard(self):
         ret = None
         if self.subject_identifier:
-            url = reverse('dashboard_url', kwargs={'dashboard_type': self.subject_type.lower(),
-                                                   'subject_identifier': self.subject_identifier})
+            url = reverse('subject_dashboard_url', kwargs={'dashboard_type': self.subject_type.lower(),
+                                                   'dashboard_id': self.pk,
+                                                   'dashboard_model': 'registered_subject',
+                                                   'show': 'appointments'})
             ret = """<a href="{url}" />dashboard</a>""".format(url=url)
         return ret
     dashboard.allow_tags = True
