@@ -6,7 +6,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.module_loading import module_has_submodule
-from bhp_lab_tracker.exceptions import LabTrackerError
 from helpers import TrackerNamedTpl
 from history_updater import HistoryUpdater
 
@@ -52,7 +51,7 @@ class Controller(object):
     def __init__(self):
         self._registry = []
         self._group_names = []
-        self.autodiscovered = False
+        self._autodiscovered = None
         self._models = None
 
     def register(self, lab_tracker_cls):
@@ -140,8 +139,7 @@ class Controller(object):
 
     def set_model_list(self):
         """Sets the list of model classes used by the trackers in the registry."""
-        if not self.autodiscovered:
-            raise LabTrackerError('Lab Tracker is not ready. Call autodiscover first.')
+        self.confirm_autodiscovered()
         self._models = []
         for lab_tracker_cls in self._registry:
             lab_tracker_inst = lab_tracker_cls()
@@ -193,22 +191,22 @@ class Controller(object):
 
     def get_value(self, group_name, subject_identifier, value_datetime=None):
         """Returns the result value or a tuple with the result value, if default, in this LabTracker group for this subject.
-
+ 
         Searches thru the registry to find a class that can be used to search for the value..
-
+ 
             Args:
                 * group_name: group name as set on the LabTracker class declaration
                 * subject_identifier: a valid subject identifier
                 * value_datetime: a valid datetim
-
+ 
         .. note:: If a default value is returned, the result is a tuple.
-
+ 
        This method will be called from any class that needs the value being tracked. For example,
        :class:`ClinicGradeFlag` needs to know the HIV Status of a subject at the time a sample
        was drawn in order to grade a test result.
-
+ 
        .. seealso:: :func:`lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status`.
-
+ 
         """
         self.confirm_autodiscovered()
         value = None
@@ -228,22 +226,30 @@ class Controller(object):
 
     def autodiscover(self):
         """Searches all apps for :file:`lab_tracker.py` and registers all :class:`LabTracker` subclasses found."""
-        if not self.autodiscovered:
-            self.autodiscovered = True
-            for app in settings.INSTALLED_APPS:
-                mod = import_module(app)
-                try:
-                    before_import_registry = copy.copy(site_lab_tracker._registry)
-                    import_module('%s.lab_tracker' % app)
-                except:
-                    site_lab_tracker._registry = before_import_registry
-                    if module_has_submodule(mod, 'lab_tracker'):
-                        raise
+        for app in settings.INSTALLED_APPS:
+            mod = import_module(app)
+            try:
+                before_import_registry = copy.copy(site_lab_tracker._registry)
+                import_module('%s.lab_tracker' % app)
+            except:
+                site_lab_tracker._registry = before_import_registry
+                if module_has_submodule(mod, 'lab_tracker'):
+                    raise
+
+    def set_autodiscovered(self, value=None):
+        if value:
+            self._autodiscovered = value
+
+    def get_autodiscovered(self):
+        if not self._autodiscovered:
+            self.set_autodiscovered()
+        return self._autodiscovered
 
     def confirm_autodiscovered(self):
-        """Confirms that autodiscover() was called at least once."""
-        if not self.autodiscovered:
-            raise ImproperlyConfigured('Call lab_tracker.autodiscover() before accessing values. Perhaps place this in the urls.py')
+        return True
+#         """Confirms that autodiscover() was called at least once."""
+#         if not self.get_autodiscovered():
+#             raise ImproperlyConfigured('Call lab_tracker.autodiscover() before accessing values. Perhaps place this in the urls.py')
 
 
 # A global to contain all lab_tracker instances from modules
