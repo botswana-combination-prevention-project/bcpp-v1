@@ -29,6 +29,7 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         study_site = StudySiteFactory(site_code='20')
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         self.assertTrue(re_pk.match(str(registered_subject.subject_identifier)))
+        RegisteredSubject.objects.all().delete()
 
         print 'create a consent without a user provided identifier'
         subject_consent = TestConsentFactory(study_site=study_site)
@@ -59,12 +60,12 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         self.assertEqual(subject_consent.subject_identifier, user_provided_subject_identifier)
 
         print 'create a consent, but do not specify registered subject'
-        self.assertEqual(RegisteredSubject.objects.all().count(), 3)
+        self.assertEqual(RegisteredSubject.objects.all().count(), 2)
         subject_consent = TestConsentFactory(study_site=study_site)
         print subject_consent.subject_identifier
         print 'assert subject_identifier was created and a registered subject was updated'
         self.assertEqual(RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier).subject_identifier, subject_consent.subject_identifier)
-        self.assertEqual(RegisteredSubject.objects.all().count(), 4)
+        self.assertEqual(RegisteredSubject.objects.all().count(), 3)
         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
         print 'assert subject_consent registered subject is set with the same registered_subject'
         self.assertEqual(subject_consent.registered_subject.pk, registered_subject.pk)
@@ -76,6 +77,8 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         print subject_consent.subject_identifier
         print 'assert subject_identifier was created and a registered subject was updated'
         self.assertEqual(RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier).subject_identifier, subject_consent.subject_identifier)
+
+        RegisteredSubject.objects.all().delete()
         print 'create a registered subject and set the subject identifier'
         registered_subject = RegisteredSubjectFactory(subject_identifier="REGISTERED_SUBJECT_ID")
         print 'create a consent related to the registerred_subject'
