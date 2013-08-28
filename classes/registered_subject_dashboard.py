@@ -31,7 +31,45 @@ from bhp_consent.models import BaseConsent
 
 class RegisteredSubjectDashboard(Dashboard):
 
-    """ Create and add to a default clinic 'registered subject' dashboard context and render_to_response from a view in shell. """
+    """ Create and add to a default clinic 'registered subject' dashboard context and render_to_response from a view in shell.
+
+        Args:
+            * dashboard_type: type of dashboard, something like \'subject\' or \'household'\. Comes from view/URL.
+            * dashboard_model: the model name of format \'model_name\' of a model class used by the dashboard to get core values like registered subject, subject identifier, etc. Comes from view/URL.
+            * dashboard_id: the pk value of the dashboard model. Comes from view/URL.
+
+        Keyword Args:
+            * dashboard_type_list: a list of allowed values for dashboard_type, e.g. ['maternal']. Hard coded in the child class.
+            * dashboard_models: a dictionary of allowed dashboard models. Defaults are added for the visit model, Appointment, and RegisteredSubject. Users probably will add the consent model as well in the child class
+            * dashboard_category: actually is the membership_form.category which is used to filter membership forms to display for this dashboard.
+            * visit_model: the visit model class.
+            * registered_subject: an instance of registered_subject for the current subject.
+            * show: either \'forms\' or \'appointments\'.
+
+        For now you still need to add a view to the xxxx_dashboard views module. For example::
+
+            from django.contrib.auth.decorators import login_required
+            from django.shortcuts import render_to_response
+            from django.template import RequestContext
+            from dom_dashboard.classes import InfantDashboard
+            from dom_infant.models import InfantBirth
+
+            @login_required
+            def infant_dashboard(request, **kwargs):
+                dashboard = InfantDashboard(
+                    dashboard_type=kwargs.get('dashboard_type'),
+                    dashboard_id=kwargs.get('dashboard_id'),
+                    dashboard_model=kwargs.get('dashboard_model'),
+                    dashboard_category=kwargs.get('dashboard_category'),
+                    registered_subject=kwargs.get('registered_subject'),
+                    show=kwargs.get('show'),
+                    dashboard_type_list=['infant'],
+                    dashboard_models={'infant_birth': InfantBirth})
+                return render_to_response(
+                    'infant_dashboard.html',
+                    dashboard.get_context().get(),
+                    context_instance=RequestContext(request))
+        """
 
     def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, dashboard_category=None, visit_model=None, registered_subject=None, show=None, **kwargs):
         self._visit_model = None
@@ -66,6 +104,8 @@ class RegisteredSubjectDashboard(Dashboard):
         self._additional_lab_bucket = None
         self._scheduled_entry_bucket_meta = None
         self._subject_membership_models = None
+        self._locator = None  # locator instance
+        self._locator_model = None
         self._membership_form_category = None
         self._visit_messages = []
         self._consent = None
@@ -74,6 +114,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self.selected_visit = None
         self._subject_hiv_status = None
         self._subject_hiv_history = None
+        self._site_lab_tracker = None
         self.is_dispatched, self.dispatch_producer = False, None
         self.exclude_others_if_keyed_model_name = ''
 
@@ -133,7 +174,9 @@ class RegisteredSubjectDashboard(Dashboard):
             if self.get_requisition_model():
                 self.context.add(requisition_model_meta=self.get_requisition_model()._meta)
             self.render_summary_links()
-        self.context.add(rendered_action_items=self.render_action_item())
+        self.context.add(rendered_action_items=self.render_action_item(),
+                         locator=self.render_locator(),
+                         local_results=self.render_labs(),)
 
     def verify_dashboard_model(self, value):
         """Verify the dashboard model has a way to get to registered_subject."""
@@ -677,45 +720,76 @@ class RegisteredSubjectDashboard(Dashboard):
                 'subject_identifier': self.get_subject_identifier()})
         self.context.add(summary_links=summary_links)
 
-    def render_labs(self, update=False):
-        # prepare results for dashboard sidebar
-        edc_lab = EdcLab()
-        return edc_lab.render(self.get_subject_identifier(), False)
+    def render_labs(self):
+        """Renders labs for the template side bar if the requisition model is set, by default will not update.
 
-    def render_locator(self, locator_cls, template=None, **kwargs):
-        """Renders to string the locator for the current registered subject or that passed as a keyword.
+        .. seealso:: :class:`lab_clinic_api.classes.EdcLab`"""
 
-            Keywords:
-                registered_subject: if locator information for the current registered subject is collected
-                    on another. For example, with mother/infant pairs.
-        """
-        from bhp_crypto.fields import EncryptedTextField
-        source_registered_subject = kwargs.get('registered_subject', self.get_registered_subject())
-        if isinstance(locator_cls, models.Model) or locator_cls is None:
-            raise TypeError('Expected first parameter to be a Locator model class. Got an instance. Please correct in local dashboard view.')
-        if locator_cls is None:
-            raise TypeError('Expected first parameter to be a Locator model class. Got None. Please correct in local dashboard view.')
-        if not issubclass(locator_cls, BaseLocator):
-            raise TypeError('Expected first parameter to be a subclass of BaseLocator model class. Please correct in local dashboard view.')
-        locator_add_url = reverse('admin:' + locator_cls._meta.app_label + '_' + locator_cls._meta.module_name + '_add')
-        if not template:
-            template = 'locator_include.html'
-        if locator_cls.objects.filter(registered_subject=source_registered_subject):
-            locator_instance = locator_cls.objects.get(registered_subject=source_registered_subject)
-            for field in locator_instance._meta.fields:
+        if self.get_requisition_model():
+            edc_lab = EdcLab()
+            return edc_lab.render(self.get_subject_identifier(), False)
+        return ''
+
+    def get_locator_model(self):
+        """Users should override to return the Locator model class.
+
+        If not overridden, the locator information will not be rendered for the template."""
+        return None
+
+    def _set_locator_model(self):
+        """Sets the locator model class which must be a subclass of bhp_locator.BaseLocator."""
+        self._locator_model = self.get_locator_model()
+        if self._locator_model:
+            if not issubclass(self._locator_model, BaseLocator):
+                raise TypeError('Locator model must be a subclass of BaseLocator.')
+
+    def _get_locator_model(self):
+        if not self._locator_model:
+            self._set_locator_model()
+        return self._locator_model
+
+    def _set_locator(self):
+        """Sets to a locator model instance for the registered_subject."""
+        self._locator = None
+        registered_subject = self.get_locator_registered_subject() or self.get_registered_subject()
+        if self.get_locator_model().objects.filter(registered_subject=registered_subject):
+            self._locator = self.get_locator_model().objects.get(registered_subject=registered_subject)
+
+    def _get_locator(self, registered_subject):
+        if not self._locator:
+            self._set_locator()
+        return self._locator
+
+    def get_locator_registered_subject(self):
+        """Users may override to return a registered_subject other than the current or None -- used to filter the locator model.
+
+        For example, current subject is an infant, need mother\'s registered subject instance to filter Locator model."""
+        return None
+
+    def get_locator_template(self):
+        """Users may override to return a custom locator template.
+
+        Defaults to 'locator_include.html'."""
+        return 'locator_include.html'
+
+    def render_locator(self):
+        """Renders to string the locator for the current locator instance if it is set."""
+        if self.get_locator():
+            from bhp_crypto.fields import EncryptedTextField
+            locator_add_url = reverse('admin:' + self.get_locator_model()._meta.app_label + '_' + self.get_locator_model()._meta.module_name + '_add')
+            for field in self.get_locator()._meta.fields:
                 if isinstance(field, (TextField, EncryptedTextField)):
-                    value = getattr(locator_instance, field.name)
+                    value = getattr(self.get_locator(), field.name)
                     if value:
-                        setattr(locator_instance, field.name, '<BR>'.join(wrap(value, 25)))
-        else:
-            locator_instance = None
-        return render_to_string(template, {'locator': locator_instance,
-                                           'subject_dashboard_url': self.get_subject_dashboard_url(),
-                                           'dashboard_type': self.get_dashboard_type(),
-                                           'dashboard_model': self.get_dashboard_model_name(),
-                                           'dashboard_id': self.get_dashboard_id(),
-                                           'show': self.get_show(),
-                                           'locator_add_url': locator_add_url})
+                        setattr(self.get_locator(), field.name, '<BR>'.join(wrap(value, 25)))
+            return render_to_string(self.get_locator_template(), {'locator': self.get_locator(),
+                                               'subject_dashboard_url': self.get_subject_dashboard_url(),
+                                               'dashboard_type': self.get_dashboard_type(),
+                                               'dashboard_model': self.get_dashboard_model_name(),
+                                               'dashboard_id': self.get_dashboard_id(),
+                                               'show': self.get_show(),
+                                               'locator_add_url': locator_add_url})
+        return ''
 
     def render_action_item(self, action_item_cls=None, template=None, **kwargs):
         """Renders to string the action_items for the current registered subject."""
