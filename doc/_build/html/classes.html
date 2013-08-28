@@ -58,16 +58,22 @@
 <dd><p>Create and add to a default clinic &#8216;registered subject&#8217; dashboard context and render_to_response from a view in shell.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>dashboard_type: type of dashboard, something like &#8216;subject&#8217; or &#8216;household&#8217;. Comes from view/URL.
-dashboard_model: the model name of format &#8216;model_name&#8217; of a model class used by the dashboard to get core values like registered subject, subject identifier, etc. Comes from view/URL.
-dashboard_id: the pk value of the dashboard model. Comes from view/URL.</dd>
+<dd><ul class="first last simple">
+<li>dashboard_type: type of dashboard, something like &#8216;subject&#8217; or &#8216;household&#8217;. Comes from view/URL.</li>
+<li>dashboard_model: the model name of format &#8216;model_name&#8217; of a model class used by the dashboard to get core values like registered subject, subject identifier, etc. Comes from view/URL.</li>
+<li>dashboard_id: the pk value of the dashboard model. Comes from view/URL.</li>
+</ul>
+</dd>
 <dt>Keyword Args:</dt>
-<dd>dashboard_type_list: a list of allowed values for dashboard_type, e.g. [&#8216;maternal&#8217;]. Hard coded in the child class.
-dashboard_models: a dictionary of allowed dashboard models. Defaults are added, the visit model, Appointment, and RegisteredSubject. Users probably will add the consent model as well in the child class
-dashboard_category: actually is the membership_form.category which is used to filter membership forms to display for this dashboard.
-visit_model: the visit model class.
-registered_subject: an instance of registered_subject for the current subject.
-show: either &#8216;forms&#8217; or &#8216;appointments&#8217;.</dd>
+<dd><ul class="first last simple">
+<li>dashboard_type_list: a list of allowed values for dashboard_type, e.g. [&#8216;maternal&#8217;]. Hard coded in the child class.</li>
+<li>dashboard_models: a dictionary of allowed dashboard models. Defaults are added, the visit model, Appointment, and RegisteredSubject. Users probably will add the consent model as well in the child class</li>
+<li>dashboard_category: actually is the membership_form.category which is used to filter membership forms to display for this dashboard.</li>
+<li>visit_model: the visit model class.</li>
+<li>registered_subject: an instance of registered_subject for the current subject.</li>
+<li>show: either &#8216;forms&#8217; or &#8216;appointments&#8217;.</li>
+</ul>
+</dd>
 </dl>
 <dl class="method">
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category">
