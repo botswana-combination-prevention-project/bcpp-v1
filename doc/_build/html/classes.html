@@ -75,6 +75,30 @@
 </ul>
 </dd>
 </dl>
+<p>For now you still need to add a view to the xxxx_dashboard views module. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render_to_response</span>
+<span class="kn">from</span> <span class="nn">django.template</span> <span class="kn">import</span> <span class="n">RequestContext</span>
+<span class="kn">from</span> <span class="nn">dom_dashboard.classes</span> <span class="kn">import</span> <span class="n">InfantDashboard</span>
+<span class="kn">from</span> <span class="nn">dom_infant.models</span> <span class="kn">import</span> <span class="n">InfantBirth</span>
+
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">infant_dashboard</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">dashboard</span> <span class="o">=</span> <span class="n">InfantDashboard</span><span class="p">(</span>
+        <span class="n">dashboard_type</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dashboard_type&#39;</span><span class="p">),</span>
+        <span class="n">dashboard_id</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dashboard_id&#39;</span><span class="p">),</span>
+        <span class="n">dashboard_model</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dashboard_model&#39;</span><span class="p">),</span>
+        <span class="n">dashboard_category</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dashboard_category&#39;</span><span class="p">),</span>
+        <span class="n">registered_subject</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;registered_subject&#39;</span><span class="p">),</span>
+        <span class="n">show</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;show&#39;</span><span class="p">),</span>
+        <span class="n">dashboard_type_list</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;infant&#39;</span><span class="p">],</span>
+        <span class="n">dashboard_models</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;infant_birth&#39;</span><span class="p">:</span> <span class="n">InfantBirth</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span>
+        <span class="s">&#39;infant_dashboard.html&#39;</span><span class="p">,</span>
+        <span class="n">dashboard</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span>
+        <span class="n">context_instance</span><span class="o">=</span><span class="n">RequestContext</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category">
 <tt class="descname">check_category</tt><big>(</big><em>category</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category" title="Permalink to this definition">¶</a></dt>
