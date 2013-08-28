@@ -145,22 +145,20 @@ class HistoryUpdater(object):
             # update the history model, get or create
             history_model, created = HistoryModel.objects.get_or_create(
                 source_app_label=self.get_model_inst()._meta.app_label,
-                source_model_name=self.get_model_inst()._meta.object_name.lower(),
                 source_identifier=self.get_model_inst().pk,
+                test_code=self.get_test_code(),
                 group_name=self.get_group_name(),
+                subject_identifier=self.get_subject_identifier(),
+                value_datetime=self.get_value_datetime(),
                 defaults={'value': self.get_value(),
                           'history_datetime': datetime.today(),
                           'report_datetime': self.get_model_inst().get_report_datetime(),
-                          'test_code': self.get_test_code(),
-                          'subject_identifier': self.get_subject_identifier(),
-                          'value_datetime': self.get_value_datetime()})
+                          'source_model_name': self.get_model_inst()._meta.object_name.lower()})
             if not created:
                 history_model.value = self.get_value()
                 history_model.history_datetime = datetime.today()
                 history_model.report_datetime = self.get_model_inst().get_report_datetime()
-                history_model.subject_identifier = self.get_subject_identifier()
-                history_model.test_code = self.get_test_code()
-                history_model.value_datetime = self.get_value_datetime()
+                history_model.source_model_name = self.get_model_inst()._meta.object_name.lower()
                 history_model.save()
         else:
             self.delete_history()
