@@ -54,63 +54,197 @@
 <span id="classes"></span><h1>Classes<a class="headerlink" href="#module-bhp_dashboard_registered_subject.classes" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard">
-<em class="property">class </em><tt class="descclassname">bhp_dashboard_registered_subject.classes.</tt><tt class="descname">RegisteredSubjectDashboard</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>Create and add to a default clinic &#8220;registered subject&#8221; dashboard context and render_to_response from a view.</p>
-<p>in shell</p>
-</div></blockquote>
-<p>from maikalelo_dashboard.classes import MaternalDashboard    
-subject_identifier = &#8216;062-88157-2&#8217;
-dashboard = MaternalDashboard()
-for visit in MaternalVisit.objects.filter(appointment__registered_subject__subject_identifier=subject_identifier):</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>dashboard.create(</dt>
-<dd>registered_subject = visit.appointment.registered_subject,
-visit_code = visit.appointment.visit_definition.code,
-visit_instance = visit.appointment.visit_instance,              
-visit_model = MaternalVisit,)</dd>
-</dl>
-<p>In your view:</p>
-<p>#get request vars from kwargs, lookup others from your models as required
-...
-...
-if kwargs.get(&#8216;subject_identifier&#8217;):</p>
-<blockquote>
-<div>registered_subject = RegisteredSubject.objects.get(subject_identifier = kwargs.get(&#8216;subject_identifier&#8217;))</div></blockquote>
-<p>...</p>
-<p># create dashboard object
-dashboard = Dashboard()</p>
-<p># create a basic dashboard context
-dashboard.create(</p>
-<blockquote>
-<div>registered_subject = registered_subject, # get this instance when you are handling request vars
-visit_code = kwargs.get(&#8216;visit_code&#8217;),
-visit_instance = kwargs.get(&#8220;visit_instance&#8221;),              
-visit_model = InfantVisit, # for example ...</div></blockquote>
-<p>)</p>
-<p># add extra context
-dashboard.add_to_context({&#8216;search_name&#8217;: &#8216;infantbirth&#8217;})</p>
-<p># render_to_response
-return render_to_response(</p>
-<blockquote>
-<div>dashboard.template, # template name is assumed unless you set it deliberately
-dashboard.context,
-context_instance=RequestContext(request))</div></blockquote>
-</div></blockquote>
+<em class="property">class </em><tt class="descclassname">bhp_dashboard_registered_subject.classes.</tt><tt class="descname">RegisteredSubjectDashboard</tt><big>(</big><em>dashboard_type</em>, <em>dashboard_id</em>, <em>dashboard_model</em>, <em>dashboard_type_list=None</em>, <em>dashboard_models=None</em>, <em>dashboard_category=None</em>, <em>visit_model=None</em>, <em>registered_subject=None</em>, <em>show=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and add to a default clinic &#8216;registered subject&#8217; dashboard context and render_to_response from a view in shell.</p>
 <dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category">
+<tt class="descname">check_category</tt><big>(</big><em>category</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for given category if any instances of MembershipForm exist.</p>
+<p>Dashboard needs these to display keyed and unkeyed models listed in the MembershipForms model.</p>
+</dd></dl>
+
+<dl class="classmethod">
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_urlpatterns">
-<tt class="descname">get_urlpatterns</tt><big>(</big><em>view</em>, <em>regex</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_urlpatterns" title="Permalink to this definition">¶</a></dt>
-<dd><p>generate urls, add this to your urls.py of your local dashboard app</p>
-<p>regex = {}
-regex[&#8216;dashboard_type&#8217;] = &#8216;subject&#8217;
-regex[&#8216;subject_identifier&#8217;] = &#8216;S[0-9]{6}-[0-9]{2}-[A-Z]{3}[0-9]{2}&#8217;
-regex[&#8216;visit_code&#8217;] = &#8216;w+&#8217;
-regex[&#8216;visit_instance&#8217;] = &#8216;[0-9]{1}&#8217;
-subject_dashboard = SubjectDashboard()
-urlpatterns = subject_dashboard.get_urlpatterns(&#8216;mochudi_survey_dashboard.views&#8217;, regex, visit_field_names=[&#8216;subject_visit&#8217;,])</p>
-<p>you may need to add a few at your app level.</p>
-<p>TODO: this needs to be cleaned up..</p>
+<em class="property">classmethod </em><tt class="descname">get_urlpatterns</tt><big>(</big><em>view_module</em>, <em>regex</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_urlpatterns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the url_patterns for the dashboard view.</p>
+<p>Called in the urls.py of the local xxxx_dashboard app. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.conf.urls.defaults</span> <span class="kn">import</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">dom_dashboard.classes</span> <span class="kn">import</span> <span class="n">InfantDashboard</span><span class="p">,</span> <span class="n">MaternalDashboard</span>
+
+<span class="n">regex</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">regex</span><span class="p">[</span><span class="s">&#39;dashboard_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;infant&#39;</span>
+<span class="n">regex</span><span class="p">[</span><span class="s">&#39;dashboard_model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;infant_birth&#39;</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">InfantDashboard</span><span class="o">.</span><span class="n">get_urlpatterns</span><span class="p">(</span><span class="s">&#39;dom_dashboard.views&#39;</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">visit_field_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;infant_visit&#39;</span><span class="p">,</span> <span class="p">])</span>
+
+<span class="n">regex</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">regex</span><span class="p">[</span><span class="s">&#39;dashboard_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;maternal&#39;</span>
+<span class="n">regex</span><span class="p">[</span><span class="s">&#39;dashboard_model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;maternal_consent&#39;</span>
+<span class="n">urlpatterns</span> <span class="o">+=</span> <span class="n">MaternalDashboard</span><span class="o">.</span><span class="n">get_urlpatterns</span><span class="p">(</span><span class="s">&#39;dom_dashboard.views&#39;</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">visit_field_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;maternal_visit&#39;</span><span class="p">,</span> <span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_visit_model">
+<tt class="descname">get_visit_model</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_visit_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets a user defined visit model and passes to the setter.</p>
+<p>Users may override.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.next_url_in_scheduled_entry_bucket">
+<tt class="descname">next_url_in_scheduled_entry_bucket</tt><big>(</big><em>obj</em>, <em>visit_attr</em>, <em>entry_order</em>, <em>dashboard_type</em>, <em>dashboard_id</em>, <em>dashboard_model</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.next_url_in_scheduled_entry_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple with the reverse of the admin url for the next model listed in scheduled_entry_bucket.</p>
+<p>If there is not a &#8220;next&#8221; model, returns an empty tuple (None, None, None).</p>
+<p>Called from response_add and response_change.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_action_item">
+<tt class="descname">render_action_item</tt><big>(</big><em>action_item_cls=None</em>, <em>template=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_action_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders to string the action_items for the current registered subject.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_locator">
+<tt class="descname">render_locator</tt><big>(</big><em>locator_cls</em>, <em>template=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders to string the locator for the current registered subject or that passed as a keyword.</p>
+<dl class="docutils">
+<dt>Keywords:</dt>
+<dd><dl class="first last docutils">
+<dt>registered_subject: if locator information for the current registered subject is collected</dt>
+<dd>on another. For example, with mother/infant pairs.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_summary_links">
+<tt class="descname">render_summary_links</tt><big>(</big><em>template_filename=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_summary_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the side bar template for subject summaries.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_additional_lab_bucket">
+<tt class="descname">set_additional_lab_bucket</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_additional_lab_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the additional lab bucket entries using the appointment with instance=0 and adds to context .</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_appointment">
+<tt class="descname">set_appointment</tt><big>(</big><em>appointment=None</em>, <em>appointment_code=None</em>, <em>appointment_continuation_count=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the appointment that has focus using either appointment_code or both appointment_code and appointment_continuation_count.</p>
+<p>self._appointment is allowed to be None if no appointment has focus.</p>
+<p>Users may override.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_appointments">
+<tt class="descname">set_appointments</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all appointments for this registered_subject or just one (if given a appointment_code and appointment_continuation_count).</p>
+<dl class="docutils">
+<dt>Could show</dt>
+<dd>one
+all
+only for this membership form category (which is the subject type)
+only those for a given membership form
+only those for a visit definition grouping</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_categories">
+<tt class="descname">set_categories</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to a list of valid categories.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">the list of categories is based on those that appear in the MembershipForm category field.
+The MembershipForm field &#8216;category&#8217; may be a string of category names delimited by a comma.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_language">
+<tt class="descname">set_language</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_language" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the language of consent.</p>
+<p>If the consent has not been defined for this dashboard, just take the settings LANGUAGE attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_membership_form_category">
+<tt class="descname">set_membership_form_category</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_membership_form_category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to a category name needed to filter the MembershipForm model.</p>
+<p>Must be a category appearing in the MembershipForm model, see <a class="reference internal" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category" title="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category"><tt class="xref py py-func docutils literal"><span class="pre">check_category()</span></tt></a>.</p>
+<p>Users may override if the category name is not coming from the URL.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_packing_list_model">
+<tt class="descname">set_packing_list_model</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_packing_list_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users must override if requisitions are used to specify the requisition model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_registered_subject">
+<tt class="descname">set_registered_subject</tt><big>(</big><em>registered_subject=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_registered_subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the registered_subject instance, may be overridden by users.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_requisition_model">
+<tt class="descname">set_requisition_model</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_requisition_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users must override if requisitions are used to specify the requisition model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_scheduled_entry_bucket">
+<tt class="descname">set_scheduled_entry_bucket</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_scheduled_entry_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the scheduled bucket entries using the appointment with instance=0 and adds to context .</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_scheduled_lab_bucket">
+<tt class="descname">set_scheduled_lab_bucket</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_scheduled_lab_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the scheduled lab bucket entries using the appointment with instance=0 and adds to context .</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_subject_hiv_history">
+<tt class="descname">set_subject_hiv_history</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_subject_hiv_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the value returned by the site_lab_tracker for this registered subject.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_subject_hiv_status">
+<tt class="descname">set_subject_hiv_status</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_subject_hiv_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the value returned by the site_lab_tracker for this registered subject.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_subject_membership_models">
+<tt class="descname">set_subject_membership_models</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_subject_membership_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to a dictionary of membership &#8220;models&#8221; that are keyed model instances and unkeyed model classes.</p>
+<p>Membership forms can also be proxy models ... see mochudi_subject.models.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_view">
+<tt class="descname">set_view</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the name of the view coming from __init__ for the url.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_visit_model_instance">
+<tt class="descname">set_visit_model_instance</tt><big>(</big><em>model_inst=None</em>, <em>pk=None</em>, <em>appointment=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.set_visit_model_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the visit model instance but may be None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.verify_dashboard_model">
+<tt class="descname">verify_dashboard_model</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.verify_dashboard_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the dashboard model has a way to get to registered_subject.</p>
 </dd></dl>
 
 </dd></dl>

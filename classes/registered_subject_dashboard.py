@@ -9,27 +9,24 @@ from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
 from django.utils import translation
 from bhp_common.utils import convert_from_camel
-from bhp_crypto.fields import EncryptedTextField
-from bhp_entry.models import AdditionalEntryBucket, ScheduledEntryBucket
-from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_entry_rules.classes import rule_groups
+from bhp_visit.classes import MembershipFormHelper
+from bhp_dashboard.classes import Dashboard
+from lab_clinic_api.classes import EdcLab
+from bhp_entry.classes import ScheduledEntry, AdditionalEntry
+from bhp_visit.exceptions import MembershipFormError
 from bhp_appointment.models import Appointment
 from bhp_visit.models import MembershipForm
-from bhp_visit.classes import MembershipFormHelper
+from bhp_lab_entry.models import ScheduledLabEntryBucket, AdditionalLabEntryBucket
 from bhp_visit_tracking.models import BaseVisitTracking
 from bhp_registration.models import RegisteredSubject
-from bhp_dashboard.classes import Dashboard
 from bhp_subject_summary.models import Link
-from lab_clinic_api.classes import EdcLab
-from lab_requisition.models import BaseBaseRequisition
-from lab_packing.models import BasePackingList
-from bhp_entry.classes import ScheduledEntry, AdditionalEntry
 from bhp_locator.models import BaseLocator
-from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_data_manager.models import ActionItem
 from bhp_subject_config.models import SubjectConfiguration
+from lab_requisition.models import BaseBaseRequisition
+from lab_packing.models import BasePackingList
 from bhp_consent.models import BaseConsent
-from bhp_visit.exceptions import MembershipFormError
 
 
 class RegisteredSubjectDashboard(Dashboard):
@@ -67,6 +64,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._scheduled_lab_bucket = None
         self._additional_entry_bucket = None
         self._additional_lab_bucket = None
+        self._scheduled_entry_bucket_meta = None
         self._subject_membership_models = None
         self._membership_form_category = None
         self._visit_messages = []
@@ -125,7 +123,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self._add_or_update_entry_buckets()
             self._run_rule_groups()
             self.context.add(
-                scheduled_entry_bucket_meta=ScheduledEntryBucket._meta,
+                scheduled_entry_bucket_meta=self.get_scheduled_entry_meta(),
                 scheduled_entry_bucket=self.get_scheduled_entry_bucket(),
                 scheduled_lab_bucket=self.get_scheduled_lab_bucket(),
                 additional_entry_bucket=self.get_additional_entry_bucket(),
@@ -144,11 +142,29 @@ class RegisteredSubjectDashboard(Dashboard):
                 if not 'get_registered_subject' in dir(model):
                     raise ImproperlyConfigured('RegisteredSubjectDashboard dashboard_model {0} must have method get_registered_subject().'.format(model))
 
+    def set_site_lab_tracker(self):
+        from bhp_lab_tracker.classes import site_lab_tracker
+        self._site_lab_tracker = site_lab_tracker
+
+    def get_site_lab_tracker(self):
+        if not self._site_lab_tracker:
+            self.set_site_lab_tracker()
+        return self._site_lab_tracker
+
+    def set_scheduled_entry_meta(self):
+        ScheduledEntryBucket = models.get_model('bhp_entry', 'ScheduledEntryBucket')
+        self._scheduled_entry_bucket_meta = ScheduledEntryBucket._meta
+
+    def get_scheduled_entry_meta(self):
+        if not self._scheduled_entry_bucket_meta:
+            self.set_scheduled_entry_meta()
+        return self._scheduled_entry_bucket_meta
+
     def set_subject_hiv_status(self):
         """Sets to the value returned by the site_lab_tracker for this registered subject."""
         self._subject_hiv_status = None
         if self.get_registered_subject():
-            self._subject_hiv_status = site_lab_tracker.get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
+            self._subject_hiv_status = self.get_site_lab_tracker().get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
         return self._subject_hiv_status
 
     def get_subject_hiv_status(self):
@@ -160,7 +176,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """Sets to the value returned by the site_lab_tracker for this registered subject."""
         self._subject_hiv_history = None
         if self.get_registered_subject():
-            self._subject_hiv_history = site_lab_tracker.get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
+            self._subject_hiv_history = self.get_site_lab_tracker().get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
         return self._subject_hiv_history
 
     def get_subject_hiv_history(self):
@@ -538,6 +554,7 @@ class RegisteredSubjectDashboard(Dashboard):
         return self._additional_lab_bucket
 
     def set_additional_entry_bucket(self):
+        AdditionalEntryBucket = models.get_model('bhp_entry', 'AdditionalEntryBucket')
         self._additional_entry_bucket = AdditionalEntryBucket.objects.filter(registered_subject=self.get_registered_subject())
 
     def get_additional_entry_bucket(self):
@@ -669,6 +686,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 registered_subject: if locator information for the current registered subject is collected
                     on another. For example, with mother/infant pairs.
         """
+        from bhp_crypto.fields import EncryptedTextField
         source_registered_subject = kwargs.get('registered_subject', self.get_registered_subject())
         if isinstance(locator_cls, models.Model) or locator_cls is None:
             raise TypeError('Expected first parameter to be a Locator model class. Got an instance. Please correct in local dashboard view.')
@@ -698,6 +716,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def render_action_item(self, action_item_cls=None, template=None, **kwargs):
         """Renders to string the action_items for the current registered subject."""
+        from bhp_crypto.fields import EncryptedTextField
         source_registered_subject = kwargs.get('registered_subject', self.get_registered_subject())
         action_item_cls = action_item_cls or ActionItem
         if isinstance(action_item_cls, models.Model):
@@ -733,7 +752,22 @@ class RegisteredSubjectDashboard(Dashboard):
     def get_urlpatterns(self, view_module, regex, **kwargs):
         """Gets the url_patterns for the dashboard view.
 
-        Called in the urls.py"""
+        Called in the urls.py of the local xxxx_dashboard app. For example::
+
+            from django.contrib import admin
+            from django.conf.urls.defaults import patterns, url
+            from dom_dashboard.classes import InfantDashboard, MaternalDashboard
+
+            regex = {}
+            regex['dashboard_type'] = 'infant'
+            regex['dashboard_model'] = 'infant_birth'
+            urlpatterns = InfantDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['infant_visit', ])
+
+            regex = {}
+            regex['dashboard_type'] = 'maternal'
+            regex['dashboard_model'] = 'maternal_consent'
+            urlpatterns += MaternalDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['maternal_visit', ])
+        """
         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
         if regex.get('dashboard_model', None):
             regex['dashboard_model'] += '|visit|appointment|registered_subject'
