@@ -110,6 +110,9 @@ class RegisteredSubjectDashboard(Dashboard):
                     'infant_dashboard.html',
                     dashboard.get_context().get(),
                     context_instance=RequestContext(request))
+
+
+        You also need to update your urls.py in the local dashboard app. See :func:`get_urlpatterns`.
         """
 
     def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, dashboard_category=None, visit_model=None, registered_subject=None, show=None, **kwargs):
