@@ -46,6 +46,47 @@ class RegisteredSubjectDashboard(Dashboard):
             * registered_subject: an instance of registered_subject for the current subject.
             * show: either \'forms\' or \'appointments\'.
 
+        Subclass in your local xxxx_dashbaord classes module::
+
+            from datetime import timedelta, date
+            from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
+            from maikalelo_infant.models import Birth, InfantVisit
+            from maikalelo_maternal.models import MaternalConsent, MaternalLocator, MaternalEnrollment
+            from maikalelo_lab.models import InfantRequisition
+
+            class InfantDashboard(RegisteredSubjectDashboard):
+
+                def __init__(self, **kwargs):
+                    self.dashboard_type = 'infant'
+                    kwargs.update({'dashboard_models': {'birth': Birth}})
+                    super(InfantDashboard, self).__init__(**kwargs)
+                    self.requisition_model = InfantRequisition
+
+                def add_to_context(self):
+                    super(InfantDashboard, self).add_to_context()
+                    self.context.add(
+                        home='maikalelo',
+                        subject_dashboard_url='subject_dashboard_url',
+                        subject_dashboard_visit_url='subject_dashboard_visit_url',
+                        title='Infant Dashboard',
+                        infant_birth=self.get_infant_birth(),
+                        maternal_consent=self.get_consent(),
+                        )
+
+                def get_visit_model(self):
+                    return InfantVisit
+
+                def set_requisition_model(self):
+                    self._requisition_model = InfantRequisition
+
+                def set_membership_form_category(self):
+                    self._membership_form_category = 'infant'
+
+                def set_dashboard_type_list(self):
+                    self._dashboard_type_list = ['infant']
+                ...
+
+
         For now you still need to add a view to the xxxx_dashboard views module. For example::
 
             from django.contrib.auth.decorators import login_required
