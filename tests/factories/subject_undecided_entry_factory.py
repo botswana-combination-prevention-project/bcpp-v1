@@ -1,5 +1,5 @@
 import factory
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import SubjectUndecidedEntry
 from bcpp_subject.tests.factories import SubjectUndecidedFactory
@@ -8,7 +8,7 @@ from bcpp_subject.tests.factories import SubjectUndecidedFactory
 class SubjectUndecidedEntryFactory(BaseUuidModelFactory):
     FACTORY_FOR = SubjectUndecidedEntry
 
-    report_datetime = datetime.today()
+    report_datetime = factory.Sequence(lambda n: datetime.now() + timedelta(days=int(n)))
     reason_other = factory.Sequence(lambda n: 'reason_other{0}'.format(n))
     next_appt_datetime = datetime.today()
     next_appt_datetime_source = (('participant', u'Participant'), ('household member', u'household member'), ('hbc', u'HBC'), ('other', u'Other'))[0][0]

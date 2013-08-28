@@ -102,7 +102,9 @@ class NaturalKeyTests(TestCase):
         subject_moved = SubjectMovedFactory(household_member=household_member, registered_subject=registered_subject)
         #SubjectAbsenteeEntry : Independent Natural Key
         subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
-        subject_undecided_entry = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)     
+        subject_undecided_entry = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
+        subject_absentee_entry1 = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
+        subject_undecided_entry1 = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)   
         #SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         #SubjectLocator : Independent Natural Key
@@ -118,7 +120,9 @@ class NaturalKeyTests(TestCase):
         instances.append(subject_death)
         instances.append(subject_locator)
         instances.append(subject_absentee_entry)
+        instances.append(subject_absentee_entry1)
         instances.append(subject_undecided_entry)
+        instances.append(subject_undecided_entry1)
         
         print 'INSTANCE: '+str(instances)
         for obj in instances:

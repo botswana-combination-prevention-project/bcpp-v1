@@ -1,5 +1,5 @@
 import factory
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import SubjectAbsenteeEntry
 from bcpp_subject.tests.factories import SubjectAbsenteeFactory
@@ -8,8 +8,8 @@ from bcpp_subject.tests.factories import SubjectAbsenteeFactory
 class SubjectAbsenteeEntryFactory(BaseUuidModelFactory):
     FACTORY_FOR = SubjectAbsenteeEntry
 
-    subject_absentee = factory.SubFactory(SubjectAbsenteeFactory)
-    report_datetime = datetime.today()
+    subject_absentee = factory.SubFactory(SubjectAbsenteeFactory)  
+    report_datetime = factory.Sequence(lambda n: datetime.now() + timedelta(days=int(n)))
     reason_other = factory.Sequence(lambda n: 'reason_other{0}'.format(n))
     next_appt_datetime = datetime.today()
     next_appt_datetime_source = (('participant', u'Participant'), ('household member', u'household member'), ('hbc', u'HBC'), ('other', u'Other'))[0][0]
