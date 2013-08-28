@@ -143,6 +143,9 @@ class RegisteredSubjectDashboard(Dashboard):
                     raise ImproperlyConfigured('RegisteredSubjectDashboard dashboard_model {0} must have method get_registered_subject().'.format(model))
 
     def set_site_lab_tracker(self):
+        """Sets to the site_lab_tracker.
+
+        (Direct import at the top of the module causes a circular import for sphinx.)"""
         from bhp_lab_tracker.classes import site_lab_tracker
         self._site_lab_tracker = site_lab_tracker
 
