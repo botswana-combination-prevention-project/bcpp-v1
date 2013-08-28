@@ -1,12 +1,12 @@
 from django.test import TestCase
-from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_appointment.tests.factories import ConfigurationFactory
-from bhp_content_type_map.models import ContentTypeMap
+# from bhp_content_type_map.classes import ContentTypeMapHelper
+# from bhp_appointment.tests.factories import ConfigurationFactory
+# from bhp_content_type_map.models import ContentTypeMap
 from factories import TestRequisitionFactory
-from bhp_variables.tests.factories import StudySiteFactory, StudySpecificFactory
-from bhp_consent.tests.factories import ConsentCatalogueFactory, AttachedModelFactory
-from lab_requisition.models import TestRequisition
-from bhp_consent.models import TestSubjectConsent, AttachedModel
+# from bhp_variables.tests.factories import StudySiteFactory, StudySpecificFactory
+# from bhp_consent.tests.factories import ConsentCatalogueFactory, AttachedModelFactory
+#from bhp_base_test.models import TestRequisition
+# from bhp_consent.models import TestSubjectConsent, AttachedModel
 
 class FactoryTests(TestCase):
 
