@@ -75,6 +75,46 @@
 </ul>
 </dd>
 </dl>
+<p>Subclass in your local xxxx_dashbaord classes module:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">bhp_dashboard_registered_subject.classes</span> <span class="kn">import</span> <span class="n">RegisteredSubjectDashboard</span>
+<span class="kn">from</span> <span class="nn">maikalelo_infant.models</span> <span class="kn">import</span> <span class="n">Birth</span><span class="p">,</span> <span class="n">InfantVisit</span>
+<span class="kn">from</span> <span class="nn">maikalelo_maternal.models</span> <span class="kn">import</span> <span class="n">MaternalConsent</span><span class="p">,</span> <span class="n">MaternalLocator</span><span class="p">,</span> <span class="n">MaternalEnrollment</span>
+<span class="kn">from</span> <span class="nn">maikalelo_lab.models</span> <span class="kn">import</span> <span class="n">InfantRequisition</span>
+
+<span class="k">class</span> <span class="nc">InfantDashboard</span><span class="p">(</span><span class="n">RegisteredSubjectDashboard</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dashboard_type</span> <span class="o">=</span> <span class="s">&#39;infant&#39;</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;dashboard_models&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;birth&#39;</span><span class="p">:</span> <span class="n">Birth</span><span class="p">}})</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InfantDashboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">requisition_model</span> <span class="o">=</span> <span class="n">InfantRequisition</span>
+
+    <span class="k">def</span> <span class="nf">add_to_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InfantDashboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add_to_context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">home</span><span class="o">=</span><span class="s">&#39;maikalelo&#39;</span><span class="p">,</span>
+            <span class="n">subject_dashboard_url</span><span class="o">=</span><span class="s">&#39;subject_dashboard_url&#39;</span><span class="p">,</span>
+            <span class="n">subject_dashboard_visit_url</span><span class="o">=</span><span class="s">&#39;subject_dashboard_visit_url&#39;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s">&#39;Infant Dashboard&#39;</span><span class="p">,</span>
+            <span class="n">infant_birth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_infant_birth</span><span class="p">(),</span>
+            <span class="n">maternal_consent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_consent</span><span class="p">(),</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_visit_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">InfantVisit</span>
+
+    <span class="k">def</span> <span class="nf">set_requisition_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_requisition_model</span> <span class="o">=</span> <span class="n">InfantRequisition</span>
+
+    <span class="k">def</span> <span class="nf">set_membership_form_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_membership_form_category</span> <span class="o">=</span> <span class="s">&#39;infant&#39;</span>
+
+    <span class="k">def</span> <span class="nf">set_dashboard_type_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_type_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;infant&#39;</span><span class="p">]</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
 <p>For now you still need to add a view to the xxxx_dashboard views module. For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
 <span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render_to_response</span>
