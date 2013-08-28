@@ -84,6 +84,8 @@
 
 <span class="k">class</span> <span class="nc">InfantDashboard</span><span class="p">(</span><span class="n">RegisteredSubjectDashboard</span><span class="p">):</span>
 
+    <span class="n">view</span> <span class="o">=</span> <span class="s">&#39;infant_dashboard&#39;</span>  <span class="c"># may specify here or pass as parameter for :func:`get_urlpatterns`</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dashboard_type</span> <span class="o">=</span> <span class="s">&#39;infant&#39;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;dashboard_models&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;birth&#39;</span><span class="p">:</span> <span class="n">Birth</span><span class="p">}})</span>
