@@ -11,7 +11,9 @@ from bhp_base_test.tests.factories import TestConsentFactory
 class DashboardMethodTests(TestCase):
 
     def test_p1(self):
-        registered_subject = RegisteredSubjectFactory()
+        test_consent = TestConsentFactory()
+        registered_subject = test_consent.registered_subject
+        print registered_subject.first_name
         self.assertRaises(TypeError, Dashboard)
         self.assertRaises(TypeError, Dashboard, None, None, None)
         self.assertRaises(TypeError, Dashboard, 'subject', None, None)
@@ -39,8 +41,9 @@ class DashboardMethodTests(TestCase):
         self.assertEquals(dashboard.get_dashboard_model_name(), 'registered_subject')
 
         print 'assert raises TypeErrors if incomplete parameter list'
-        registered_subject = RegisteredSubjectFactory()
-        test_consent = TestConsentFactory(registered_subject=registered_subject)
+        #registered_subject = RegisteredSubjectFactory()
+        #print registered_subject.first_name
+        test_consent = TestConsentFactory()
         self.assertRaises(TypeError, Dashboard)
         self.assertRaises(TypeError, Dashboard, None, None, None)
         self.assertRaises(TypeError, Dashboard, 'subject', None, None)
@@ -155,6 +158,6 @@ class DashboardMethodTests(TestCase):
         dashboard.get_context()
         self.assertEqual(dashboard.context.get().get('dashboard_type'), 'subject')
         self.assertEqual(dashboard.context.get().get('dashboard_id'), test_consent.pk)
-        self.assertEqual(dashboard.context.get().get('dashboard_model'), TestConsent)
+        self.assertEqual(dashboard.context.get().get('dashboard_model'), 'test_consent')
         self.assertEqual(dashboard.context.get().get('dashboard_model_instance'), test_consent)
         self.assertEqual(sorted(dashboard.context.get().keys()), sorted(['app_label', 'dashboard_id', 'dashboard_model', 'dashboard_model_instance', 'dashboard_type', 'hostname', 'os_variables', 'template']))
