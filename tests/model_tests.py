@@ -68,6 +68,7 @@ class ModelTests(TestCase):
             if issubclass(cls, TestConsent):
                 self.assertTrue(rs.subject_identifier.startswith(settings.PROJECT_IDENTIFIER_PREFIX))
             print 'test {0} unicode is masked if subject identifier is a uuid'.format(cls._meta.object_name)
+            cls.objects.all().delete()
             rs = cls_factory()
             if re_pk.match(rs.subject_identifier):
                 self.assertTrue('identifier not set' in unicode(rs))
