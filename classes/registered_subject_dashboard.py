@@ -46,7 +46,7 @@ class RegisteredSubjectDashboard(Dashboard):
             * registered_subject: an instance of registered_subject for the current subject.
             * show: either \'forms\' or \'appointments\'.
 
-        Subclass in your local xxxx_dashbaord classes module::
+        Subclass in your local xxxx_dashboard classes module::
 
             from datetime import timedelta, date
             from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
