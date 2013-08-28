@@ -50,7 +50,6 @@ class SectionHouseholdView(BaseSectionView):
                 minutes_e = float('{0}'.format(gps_form.cleaned_data.get('minutes_e')))
                 radius = gps_form.cleaned_data.get('radius') / 1000
                 community = settings.CURRENT_COMMUNITY
-                print settings.CURRENT_COMMUNITY
                 mapper = site_mappers.get(community)()
                 lat = mapper.get_gps_lat(degrees_s, minutes_s)
                 lon = mapper.get_gps_lon(degrees_e, minutes_e)
