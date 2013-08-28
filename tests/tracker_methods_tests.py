@@ -117,7 +117,7 @@ class TrackerMethodsTests(TestCase):
         print 'count=2 for history model for this subject {0}'.format(subject_identifier)
         self.assertEqual(tracker2.get_history(value_datetime=result_item3.result_item_datetime).count(), 2)
         self.assertEqual(result_item3.result_item_value, tracker2.get_value(result_item3.result_item_datetime))
-        self.assertEqual(tracker2.get_history_as_string(reference_datetime=result_item3.result_item_datetime), '13')
+        self.assertEqual(tracker2.get_history_as_string(reference_datetime=result_item3.result_item_datetime), ''.join(sorted([result_item1.result_item_value, result_item3.result_item_value])))
 
         # test get_current_history / value returns the correct value relative to the value_datetime
         print 'change subject_identifier'
