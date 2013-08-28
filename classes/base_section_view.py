@@ -334,7 +334,10 @@ class BaseSectionView(object):
         """
         self.set_section_name(kwargs.get('section_name'))
         search_term = kwargs.get('search_term', '')
-        page = kwargs.get('page', 1)
+        #page = kwargs.get('page', 1)
+        page = request.GET.get('page')
+        if request.method == 'POST':
+            page = 1
         default_context = {
             'app_name': settings.APP_NAME,
             'installed_apps': settings.INSTALLED_APPS,
