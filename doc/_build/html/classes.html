@@ -56,6 +56,19 @@
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard">
 <em class="property">class </em><tt class="descclassname">bhp_dashboard_registered_subject.classes.</tt><tt class="descname">RegisteredSubjectDashboard</tt><big>(</big><em>dashboard_type</em>, <em>dashboard_id</em>, <em>dashboard_model</em>, <em>dashboard_type_list=None</em>, <em>dashboard_models=None</em>, <em>dashboard_category=None</em>, <em>visit_model=None</em>, <em>registered_subject=None</em>, <em>show=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create and add to a default clinic &#8216;registered subject&#8217; dashboard context and render_to_response from a view in shell.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>dashboard_type: type of dashboard, something like &#8216;subject&#8217; or &#8216;household&#8217;. Comes from view/URL.
+dashboard_model: the model name of format &#8216;model_name&#8217; of a model class used by the dashboard to get core values like registered subject, subject identifier, etc. Comes from view/URL.
+dashboard_id: the pk value of the dashboard model. Comes from view/URL.</dd>
+<dt>Keyword Args:</dt>
+<dd>dashboard_type_list: a list of allowed values for dashboard_type, e.g. [&#8216;maternal&#8217;]. Hard coded in the child class.
+dashboard_models: a dictionary of allowed dashboard models. Defaults are added, the visit model, Appointment, and RegisteredSubject. Users probably will add the consent model as well in the child class
+dashboard_category: actually is the membership_form.category which is used to filter membership forms to display for this dashboard.
+visit_model: the visit model class.
+registered_subject: an instance of registered_subject for the current subject.
+show: either &#8216;forms&#8217; or &#8216;appointments&#8217;.</dd>
+</dl>
 <dl class="method">
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category">
 <tt class="descname">check_category</tt><big>(</big><em>category</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.check_category" title="Permalink to this definition">¶</a></dt>
