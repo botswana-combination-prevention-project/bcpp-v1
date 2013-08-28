@@ -5,3 +5,4 @@ from test_visit_factory import TestVisitFactory
 from test_registration_factory import TestRegistrationFactory
 from test_scheduled_model_factory import TestScheduledModelFactory
 from test_subject_uuid_model_factory import TestSubjectUuidModelFactory
+from test_requisition_factory import TestRequisitionFactory
