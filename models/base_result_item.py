@@ -2,7 +2,7 @@ import re
 from django.db import models
 from lab_base_model.models import BaseLabUuidModel
 from lab_result_item.choices import RESULT_VALIDATION_STATUS, RESULT_QUANTIFIER
-from lab_result_item.classes import ResultItemFlag
+# from lab_result_item.classes import ResultItemFlag
 
 
 class BaseResultItem(BaseLabUuidModel):
@@ -140,8 +140,12 @@ class BaseResultItem(BaseLabUuidModel):
         raise TypeError('Method must be overridden by the child class.')
         return None
 
+    def get_result_item_flag(self):
+        from lab_result_item.classes import ResultItemFlag
+        return ResultItemFlag()
+
     def get_result_item_values(self):
-        return ResultItemFlag().calculate(self)
+        return self.get_result_item_flag().calculate(self)
 
     def save(self, *args, **kwargs):
         if re.search(r'\d+\.?\d*', self.result_item_value):
@@ -150,7 +154,7 @@ class BaseResultItem(BaseLabUuidModel):
             except:
                 self.result_item_value_as_float = None
         if self.result_item_value_as_float:
-            self.reference_range, self.reference_flag, self.grade_range, self.grade_flag = ResultItemFlag().calculate(self)
+            self.reference_range, self.reference_flag, self.grade_range, self.grade_flag = self.get_result_item_flag().calculate(self)
         super(BaseResultItem, self).save(*args, **kwargs)
 
     class Meta:
