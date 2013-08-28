@@ -12,7 +12,7 @@ class FactoryTests(TestCase):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        content_type = ContentType.objects.get(app_label='bhp_consent', model='testsubjectconsent')
+        content_type = ContentType.objects.get(app_label='bhp_base_test', model='testconsentwithmixin')
         self.assertIsInstance(content_type, ContentType)
         content_type_map = ContentTypeMap.objects.get(content_type=content_type)
         self.assertIsInstance(content_type_map, ContentTypeMap)
