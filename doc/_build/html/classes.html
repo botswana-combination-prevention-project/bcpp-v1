@@ -82,6 +82,26 @@
 <p>Dashboard needs these to display keyed and unkeyed models listed in the MembershipForms model.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_locator_model">
+<tt class="descname">get_locator_model</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_locator_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users should override to return the Locator model class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_locator_registered_subject">
+<tt class="descname">get_locator_registered_subject</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_locator_registered_subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users may override to return a registered_subject other than the current or None &#8211; used to filter the locator model.</p>
+<p>For example, current subject is an infant, need mother&#8217;s registered subject instance to filter Locator model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_locator_template">
+<tt class="descname">get_locator_template</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_locator_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users may override to return a custom locator template.</p>
+<p>Defaults to &#8216;locator_include.html&#8217;.</p>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_urlpatterns">
 <em class="property">classmethod </em><tt class="descname">get_urlpatterns</tt><big>(</big><em>view_module</em>, <em>regex</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.get_urlpatterns" title="Permalink to this definition">¶</a></dt>
@@ -126,17 +146,19 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_labs">
+<tt class="descname">render_labs</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_labs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders labs for the template side bar if the requisition model is set, by default will not update.</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-class docutils literal"><span class="pre">lab_clinic_api.classes.EdcLab</span></tt></p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_locator">
-<tt class="descname">render_locator</tt><big>(</big><em>locator_cls</em>, <em>template=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_locator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Renders to string the locator for the current registered subject or that passed as a keyword.</p>
-<dl class="docutils">
-<dt>Keywords:</dt>
-<dd><dl class="first last docutils">
-<dt>registered_subject: if locator information for the current registered subject is collected</dt>
-<dd>on another. For example, with mother/infant pairs.</dd>
-</dl>
-</dd>
-</dl>
+<tt class="descname">render_locator</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.RegisteredSubjectDashboard.render_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders to string the locator for the current locator instance if it is set.</p>
 </dd></dl>
 
 <dl class="method">
