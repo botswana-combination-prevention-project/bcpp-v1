@@ -148,7 +148,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._additional_lab_bucket = None
         self._scheduled_entry_bucket_meta = None
         self._subject_membership_models = None
-        self._locator = None  # locator instance
+        self._locator_inst = None
         self._locator_model = None
         self._membership_form_category = None
         self._visit_messages = []
@@ -792,17 +792,18 @@ class RegisteredSubjectDashboard(Dashboard):
             self._set_locator_model()
         return self._locator_model
 
-    def _set_locator(self):
+    def _set_locator_inst(self):
         """Sets to a locator model instance for the registered_subject."""
-        self._locator = None
-        registered_subject = self.get_locator_registered_subject() or self.get_registered_subject()
-        if self.get_locator_model().objects.filter(registered_subject=registered_subject):
-            self._locator = self.get_locator_model().objects.get(registered_subject=registered_subject)
+        self._locator_inst = None
+        if self.get_locator_model():
+            registered_subject = self.get_locator_registered_subject() or self.get_registered_subject()
+            if self.get_locator_model().objects.filter(registered_subject=registered_subject):
+                self._locator_inst = self.get_locator_model().objects.get(registered_subject=registered_subject)
 
-    def _get_locator(self, registered_subject):
-        if not self._locator:
-            self._set_locator()
-        return self._locator
+    def _get_locator_inst(self):
+        if not self._locator_inst:
+            self._set_locator_inst()
+        return self._locator_inst
 
     def get_locator_registered_subject(self):
         """Users may override to return a registered_subject other than the current or None -- used to filter the locator model.
@@ -818,15 +819,15 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def render_locator(self):
         """Renders to string the locator for the current locator instance if it is set."""
-        if self.get_locator():
+        if self._get_locator_inst():
             from bhp_crypto.fields import EncryptedTextField
             locator_add_url = reverse('admin:' + self.get_locator_model()._meta.app_label + '_' + self.get_locator_model()._meta.module_name + '_add')
-            for field in self.get_locator()._meta.fields:
+            for field in self.get_locator_inst()._meta.fields:
                 if isinstance(field, (TextField, EncryptedTextField)):
-                    value = getattr(self.get_locator(), field.name)
+                    value = getattr(self.get_locator_inst(), field.name)
                     if value:
-                        setattr(self.get_locator(), field.name, '<BR>'.join(wrap(value, 25)))
-            return render_to_string(self.get_locator_template(), {'locator': self.get_locator(),
+                        setattr(self.get_locator_inst(), field.name, '<BR>'.join(wrap(value, 25)))
+            return render_to_string(self.get_locator_template(), {'locator': self.get_locator_inst(),
                                                'subject_dashboard_url': self.get_subject_dashboard_url(),
                                                'dashboard_type': self.get_dashboard_type(),
                                                'dashboard_model': self.get_dashboard_model_name(),
@@ -870,7 +871,7 @@ class RegisteredSubjectDashboard(Dashboard):
         return rendered_action_items
 
     @classmethod
-    def get_urlpatterns(self, view_module, regex, **kwargs):
+    def get_urlpatterns(self, view_module, regex, view=None, **kwargs):
         """Gets the url_patterns for the dashboard view.
 
         Called in the urls.py of the local xxxx_dashboard app. For example::
@@ -889,6 +890,15 @@ class RegisteredSubjectDashboard(Dashboard):
             regex['dashboard_model'] = 'maternal_consent'
             urlpatterns += MaternalDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['maternal_visit', ])
         """
+        if not view_module:
+            raise ImproperlyConfigured('Parameter \'view_module\' may not be None. Must be app_label.view_module, (e.g. maikalelo_dashboard.views). See your urls.py.')
+        view = view or self.view
+        if not view:
+            raise ImproperlyConfigured('Parameter \'view\' may not be None. Must be a valid view name, such as \'infant_dashboard\'.')
+        if not regex:
+            raise ImproperlyConfigured('Parameter \'regex\' may not be None.')
+        if not isinstance(regex, dict):
+            raise ImproperlyConfigured('Parameter \'regex\' must be a dictionary. Got {0}'.format(regex))
         regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
         if regex.get('dashboard_model', None):
             regex['dashboard_model'] += '|visit|appointment|registered_subject'
@@ -900,7 +910,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         urlpatterns = patterns(view_module,
             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>{show})/$'.format(**regex),
-                self.view,
+                view,
                 name="subject_dashboard_url"
                 ))
         return urlpatterns

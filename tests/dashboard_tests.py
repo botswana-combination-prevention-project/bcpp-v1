@@ -9,7 +9,7 @@ from bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFacto
 from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
 from bhp_lab_tracker.classes import LabTracker, site_lab_tracker
 from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_base_test.models import TestVisit, TestConsentWithMixin
+from bhp_base_test.models import TestVisit, TestConsentWithMixin, TestRequisition
 from bhp_base_test.tests.factories import TestVisitFactory, TestConsentWithMixinFactory
 from bhp_dashboard.exceptions import DashboardModelError
 from bhp_visit.exceptions import MembershipFormError
@@ -121,6 +121,9 @@ class DashboardTests(TestCase):
             def get_visit_model(self):
                 return TestVisit
 
+            def get_requisition_model(self):
+                return TestRequisition
+
         self.assertTrue(isinstance(TestDashboard(
             dashboard_type='subject',
             dashboard_id=test_consent_with_mixin.pk,
@@ -144,5 +147,5 @@ class DashboardTests(TestCase):
         dashboard.get_context()
         self.assertEqual(dashboard.context.get().get('dashboard_type'), 'subject')
         self.assertEqual(dashboard.context.get().get('dashboard_id'), test_consent_with_mixin.pk)
-        self.assertEqual(dashboard.context.get().get('dashboard_model'), TestConsentWithMixin)
+        self.assertEqual(dashboard.context.get().get('dashboard_model'), 'test_consent_with_mixin')
 #         self.assertEqual(sorted(dashboard.context.get().keys()), sorted(['dashboard_id', 'dashboard_model', 'dashboard_type']))
