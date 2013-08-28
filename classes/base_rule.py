@@ -5,7 +5,6 @@ from bhp_content_type_map.models import ContentTypeMap
 from bhp_consent.classes import ConsentHelper
 from bhp_registration.models import RegisteredSubject
 from bhp_visit_tracking.models import BaseVisitTracking
-from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_entry.models import BaseEntryBucket
 from bhp_entry.classes import BaseEntry
 from logic import Logic
@@ -18,6 +17,7 @@ class BaseRule(object):
 
     def __init__(self, *args, **kwargs):
 
+        self._site_lab_tracker = None
         self._predicate = None
         self._consequent_action = None
         self._alternative_action = None
@@ -75,6 +75,15 @@ class BaseRule(object):
 
     def evaluate(self):
         raise AttributeError('Evaluate should be overridden. Nothing to do.')
+
+    def set_site_lab_tracker(self):
+        from bhp_lab_tracker.classes import site_lab_tracker
+        self._site_lab_tracker = site_lab_tracker
+
+    def get_site_lab_tracker(self):
+        if not self._site_lab_tracker:
+            self.set_site_lab_tracker()
+        return self._site_lab_tracker
 
     def set_logic(self, logic):
         if isinstance(logic, Logic):
@@ -183,7 +192,7 @@ class BaseRule(object):
             if not self._field_value:
                 self._field_value = 0
         elif field_name == 'hiv_status':
-            self._field_value, is_default_value = site_lab_tracker.get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().report_datetime)
+            self._field_value, is_default_value = self.get_site_lab_tracker().get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().report_datetime)
         else:
             self._field_value = getattr(instance, field_name)
         if self._field_value:
