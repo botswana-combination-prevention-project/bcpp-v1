@@ -9,7 +9,7 @@ class BaseUsingMethodsTests(TestCase):
 
     def test_methods(self):
         using_source = 'default'
-        using_destination = 'survey'
+        using_destination = 'destination'
         # Base tests
         self.assertTrue('DEVICE_ID' in dir(settings), 'Settings attribute DEVICE_ID not found')
         # raise source and destination cannot be the same
@@ -25,7 +25,7 @@ class BaseUsingMethodsTests(TestCase):
         # id source is default, must be server = 99
         self.assertRaises(UsingSourceError, BaseUsing, using_source, using_destination, server_device_id='22')
         # assert server_device_id cannot be None if osource is not default
-        self.assertRaises(UsingSourceError, BaseUsing, 'survey', 'dispatch_destination', server_device_id=None)
+        self.assertRaises(UsingSourceError, BaseUsing, 'destination', 'dispatch_destination', server_device_id=None)
         # assert server_device_id cannot be None if osource is not default
         self.assertEqual(BaseUsing('server', 'dispatch_destination', server_device_id='22').server_device_id, '22')
         # assert destination cannot be server
