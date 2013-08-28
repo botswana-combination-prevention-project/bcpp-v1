@@ -9,8 +9,6 @@ class TestItem(BaseSyncUuidModel):
 
     comment = models.CharField(max_length=50, null=True)
 
-    objects = models.Manager()
-
     history = AuditTrail()
 
     class Meta:

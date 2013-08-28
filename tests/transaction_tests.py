@@ -39,7 +39,7 @@ class TransactionTests(TestCase):
         # create a test item on source
         src_item = self.create_test_item('SRC_IDENTIFIER', self.using_source)
         # assert outgoing transactions on source
-        self.assertEqual(OutgoingTransaction.objects.filter(tx_name=src_item._meta.object_name, tx_pk=src_item.pk).count(), 1)
+        self.assertEqual(OutgoingTransaction.objects.using(self.using_source).filter(tx_name=src_item._meta.object_name, tx_pk=src_item.pk).count(), 1)
         # assert NO outgoing transactions on destination
         self.assertEqual(OutgoingTransaction.objects.using(self.using_destination).filter(tx_name=src_item._meta.object_name, tx_pk=src_item.pk).count(), 0)
         # create a test item on using_destination
