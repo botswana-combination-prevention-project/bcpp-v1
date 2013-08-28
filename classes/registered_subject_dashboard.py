@@ -56,6 +56,8 @@ class RegisteredSubjectDashboard(Dashboard):
 
             class InfantDashboard(RegisteredSubjectDashboard):
 
+                view = 'infant_dashboard'  # may specify here or pass as parameter for :func:`get_urlpatterns`
+
                 def __init__(self, **kwargs):
                     self.dashboard_type = 'infant'
                     kwargs.update({'dashboard_models': {'birth': Birth}})
@@ -114,6 +116,8 @@ class RegisteredSubjectDashboard(Dashboard):
 
         You also need to update your urls.py in the local dashboard app. See :func:`get_urlpatterns`.
         """
+
+    view = None
 
     def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, dashboard_category=None, visit_model=None, registered_subject=None, show=None, **kwargs):
         self._visit_model = None
