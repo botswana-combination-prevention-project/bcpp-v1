@@ -115,16 +115,15 @@ class BaseSubject (BaseSyncUuidModel):
         if not ret:
             options = self._get_registered_subject_options()
             RegisteredSubject = get_model('bhp_registration', 'registeredsubject')
-            registered_subject, created = RegisteredSubject.objects.using(using).get_or_create(subject_identifier=self.subject_identifier, identity=self.identity, defaults=options)
+            registered_subject, created = RegisteredSubject.objects.using(using).get_or_create(subject_identifier=self.subject_identifier, defaults=options)
             if not created:
-                self._update_registered_subject(using, options, registered_subject)
+                self._update_registered_subject(using, registered_subject)
             ret = registered_subject
         return ret
 
     def _get_registered_subject_options(self):
         """Returns a dictionary of RegisteredSubject attributes ({field, value}) to be used, for example, as the defaults kwarg RegisteredSubject.objects.get_or_create()."""
         options = {
-            'subject_identifier': self.subject_identifier,
             'study_site': self.study_site,
             'dob': self.dob,
             'is_dob_estimated': self.is_dob_estimated,
