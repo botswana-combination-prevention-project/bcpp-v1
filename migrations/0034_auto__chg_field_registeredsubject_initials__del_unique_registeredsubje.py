@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'RegisteredSubject', fields ['dob', 'first_name', 'registration_identifier', 'identity', 'initials']
-        db.delete_unique('bhp_registration_registeredsubject', ['dob', 'first_name', 'registration_identifier', 'identity', 'initials'])
+        #db.delete_unique('bhp_registration_registeredsubject', ['dob', 'first_name', 'registration_identifier', 'identity', 'initials'])
 
         # Changing field 'RegisteredSubject.initials'
         db.alter_column('bhp_registration_registeredsubject', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
