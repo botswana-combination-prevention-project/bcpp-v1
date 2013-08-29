@@ -21,6 +21,13 @@ class SexualBehaviourForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant has had sex at some point in their life, did participant use a condom the last time he/she had sex?')
         if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('alcohol_sex'):
             raise forms.ValidationError('If participant has had sex at some point in their life, did participant drink alcohol before sex last time?')
+        
+        #validate never having sex
+        if cleaned_data.get('ever_sex') == 'No' and cleaned_data.get('more_sex') and cleaned_data.get('first_sex'):
+            raise forms.ValidationError('If participant has NEVER had sex, DO NOT any sexual intercourse details')
+        if cleaned_data.get('ever_sex') == 'No' and cleaned_data.get('condom') and cleaned_data.get('alcohol_sex'):
+            raise forms.ValidationError('If participant has NEVER had sex, DO NOT any other details')
+        
         return cleaned_data
 
     class Meta:
