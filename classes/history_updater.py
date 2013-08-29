@@ -164,7 +164,7 @@ class HistoryUpdater(object):
             self.delete_history()
         return history_model
 
-    def delete(self):
+    def delete_history(self):
         """Deletes a single instance from the HistoryModel."""
         HistoryModel.objects.filter(
             source_app_label=self.get_model_inst()._meta.app_label,
