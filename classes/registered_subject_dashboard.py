@@ -183,6 +183,7 @@ class RegisteredSubjectDashboard(Dashboard):
 #                 subject_configuration=self.get_subject_configuration(),
 #                 )
         self.context.add(
+            subject_dashboard_url=self.get_dashboard_url_name(),
             show=self.get_show(),
             registered_subject=self.get_registered_subject(),
             subject_identifier=self.get_subject_identifier(),
