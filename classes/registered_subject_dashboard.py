@@ -828,13 +828,13 @@ class RegisteredSubjectDashboard(Dashboard):
         if self._get_locator_inst():
             from bhp_crypto.fields import EncryptedTextField
             locator_add_url = reverse('admin:' + self.get_locator_model()._meta.app_label + '_' + self.get_locator_model()._meta.module_name + '_add')
-            for field in self.get_locator_inst()._meta.fields:
+            for field in self._get_locator_inst()._meta.fields:
                 if isinstance(field, (TextField, EncryptedTextField)):
-                    value = getattr(self.get_locator_inst(), field.name)
+                    value = getattr(self._get_locator_inst(), field.name)
                     if value:
-                        setattr(self.get_locator_inst(), field.name, '<BR>'.join(wrap(value, 25)))
-            return render_to_string(self.get_locator_template(), {'locator': self.get_locator_inst(),
-                                               'subject_dashboard_url': self.get_subject_dashboard_url(),
+                        setattr(self._get_locator_inst(), field.name, '<BR>'.join(wrap(value, 25)))
+            return render_to_string(self.get_locator_template(), {'locator': self._get_locator_inst(),
+                                               'subject_dashboard_url': self.get_dashboard_url_name(),
                                                'dashboard_type': self.get_dashboard_type(),
                                                'dashboard_model': self.get_dashboard_model_name(),
                                                'dashboard_id': self.get_dashboard_id(),
