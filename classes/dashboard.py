@@ -115,7 +115,7 @@ class Dashboard(object):
             dashboard_url_name=self.get_dashboard_url_name())
         self.add_to_context()
 
-    def _set_dashboard_name(self, value):
+    def _set_dashboard_name(self):
         self._dashboard_name = self.dashboard_name
 
     def get_dashboard_name(self):
