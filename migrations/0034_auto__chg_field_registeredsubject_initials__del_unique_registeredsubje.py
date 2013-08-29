@@ -12,9 +12,7 @@ class Migration(SchemaMigration):
         #db.delete_unique('bhp_registration_registeredsubject', ['dob', 'first_name', 'registration_identifier', 'identity', 'initials'])
 
         # Changing field 'RegisteredSubject.initials'
-        db.alter_column('bhp_registration_registeredsubject', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
-        # Adding unique constraint on 'RegisteredSubject', fields ['dob', 'first_name', 'initials']
-        db.create_unique('bhp_registration_registeredsubject', ['dob', 'first_name', 'initials'])
+        #db.alter_column('bhp_registration_registeredsubject', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
 
         # Deleting field 'RegisteredSubjectAudit._audit_subject_identifier'
         db.delete_column('bhp_registration_registeredsubject_audit', '_audit_subject_identifier')
@@ -22,7 +20,10 @@ class Migration(SchemaMigration):
 
         # Changing field 'RegisteredSubjectAudit.initials'
         db.alter_column('bhp_registration_registeredsubject_audit', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
-
+        
+        # Adding unique constraint on 'RegisteredSubject', fields ['dob', 'first_name', 'initials']
+        db.create_unique('bhp_registration_registeredsubject', ['dob', 'first_name', 'initials'])
+        
     def backwards(self, orm):
         pass
 
