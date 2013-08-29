@@ -1,6 +1,7 @@
 import copy
 import re
 import inspect
+from django.conf.urls.defaults import patterns, include, url
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from bhp_common.utils import convert_from_camel
@@ -14,6 +15,8 @@ from bhp_dashboard.exceptions import DashboardModelError
 class Dashboard(object):
 
     context = BaseContext()
+    dashboard_name = None  # e.g. 'Dashboard'
+    dashboard_url_name = None   # e.g. 'dashboard_url_name'
 
     def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None):
 
@@ -27,6 +30,8 @@ class Dashboard(object):
         self._dashboard_model_name = None
         self._dashboard_model_instance = None
         self._dashboard_models = None
+        self._dashboard_name = None
+        self._dashboard_url_name = None
         if dashboard_type_list:
             self._set_dashboard_type_list(dashboard_type_list)
         self._section = None
@@ -45,9 +50,54 @@ class Dashboard(object):
             raise TypeError('Invalid dashboard_model. Expected either a Model class or a name of a model. Got {0}'.format(dashboard_model))
 
     @classmethod
-    def get_urlpatterns(view_module, regex, **kwargs):
-        """Users must override."""
-        raise ImproperlyConfigured('You need to define some dashboard urls.')
+    def get_urlpatterns(self, pattern_prefix, regex, view=None, **kwargs):
+        """Gets the url_patterns for the dashboard view.
+
+        Called in the urls.py of the local xxxx_dashboard app. For example::
+
+            from django.contrib import admin
+            from django.conf.urls.defaults import patterns, url
+            from dom_dashboard.classes import InfantDashboard, MaternalDashboard
+
+            regex = {}
+            regex['dashboard_type'] = 'infant'
+            regex['dashboard_model'] = 'infant_birth'
+            urlpatterns = InfantDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['infant_visit', ])
+
+            regex = {}
+            regex['dashboard_type'] = 'maternal'
+            regex['dashboard_model'] = 'maternal_consent'
+            urlpatterns += MaternalDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['maternal_visit', ])
+        """
+
+        if not self.dashboard_url_name:
+            raise ImproperlyConfigured('class attribute \'dashboard_url_name\' may not be None')
+        if not pattern_prefix:
+            raise ImproperlyConfigured('Parameter \'pattern_prefix\' may not be None. Must be app_label.view_module, (e.g. maikalelo_dashboard.views). See your urls.py.')
+        view = view or self.view
+        if not view:
+            raise ImproperlyConfigured('Parameter \'view\' may not be None. Must be a valid view name, such as \'infant_dashboard\'.')
+        if not regex:
+            raise ImproperlyConfigured('Parameter \'regex\' may not be None.')
+        if not isinstance(regex, dict):
+            raise ImproperlyConfigured('Parameter \'regex\' must be a dictionary. Got {0}'.format(regex))
+        regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
+        regex.update({'show': 'appointments|forms'})
+
+        # TODO: this information is available from the instance
+        if regex.get('dashboard_model', None):
+            regex['dashboard_model'] += '|visit|appointment|registered_subject'
+        else:
+            regex.update({'dashboard_model': 'visit|appointment|registered_subject'})
+        if not regex.get('dashboard_type', None):
+            regex.update({'dashboard_type': 'subject'})
+
+        urlpatterns = patterns(pattern_prefix,
+            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>{show})/$'.format(**regex),
+                view,
+                name=self.dashboard_url_name
+                ))
+        return urlpatterns
 
     def add_to_context(self):
         pass
@@ -60,11 +110,26 @@ class Dashboard(object):
             dashboard_type=self.get_dashboard_type(),
             dashboard_id=self.get_dashboard_id(),
             dashboard_model=self.get_dashboard_model_name(),  # yes, we use the name not the model class for the context
-            dashboard_model_instance=self.get_dashboard_model_instance())
+            dashboard_model_instance=self.get_dashboard_model_instance(),
+            dashboard_name=self.get_dashboard_name(),
+            dashboard_url_name=self.get_dashboard_url_name())
         self.add_to_context()
 
-    def create(self, **kwargs):
-        pass
+    def _set_dashboard_name(self, value):
+        self._dashboard_name = self.dashboard_name
+
+    def get_dashboard_name(self):
+        if not self._dashboard_name:
+            self._set_dashboard_name()
+        return self._dashboard_name
+
+    def _set_dashboard_url_name(self):
+        self._dashboard_url_name = self.dashboard_url_name
+
+    def get_dashboard_url_name(self):
+        if not self._dashboard_url_name:
+            self._set_dashboard_url_name()
+        return self._dashboard_url_name
 
     def _set_dashboard_type(self, value=None):
         self._dashboard_type = value
