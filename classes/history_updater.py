@@ -161,10 +161,10 @@ class HistoryUpdater(object):
                 history_model.source_model_name = self.get_model_inst()._meta.object_name.lower()
                 history_model.save()
         else:
-            self.delete_history()
+            self.delete()
         return history_model
 
-    def delete_history(self):
+    def delete(self):
         """Deletes a single instance from the HistoryModel."""
         HistoryModel.objects.filter(
             source_app_label=self.get_model_inst()._meta.app_label,
