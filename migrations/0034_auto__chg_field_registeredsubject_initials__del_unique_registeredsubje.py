@@ -20,7 +20,7 @@ class Migration(SchemaMigration):
 
         # Changing field 'RegisteredSubjectAudit.initials'
         #db.alter_column('bhp_registration_registeredsubject_audit', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
-        
+        db.add_column('bhp_registration_registeredsubject_audit', '_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, db_index=True)
         # Adding unique constraint on 'RegisteredSubject', fields ['dob', 'first_name', 'initials']
         db.create_unique('bhp_registration_registeredsubject', ['dob', 'first_name', 'initials'])
         
