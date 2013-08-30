@@ -12,6 +12,7 @@ class AliquotConditionFactory(BaseAliquotConditionFactory):
 
 class AliquotTypeFactory(BaseAliquotTypeFactory):
     FACTORY_FOR = AliquotType
+    dmis_reference = '1111'
 
 
 class AliquotFactory(BaseAliquotFactory):
