@@ -20,6 +20,7 @@ class Command(BaseCommand):
         
 
     def prepare_stats(self):
+        #d35e5225bcb229a7f2957cc62c1e8070102fa66bd3353bece5ef9ec74c364adb
         return IncomingTransaction.objects.values('tx_name').filter(
             is_consumed=False,is_ignored=False
             ).annotate(
@@ -37,4 +38,3 @@ class Command(BaseCommand):
             for stat in stats:
                 print "{0}\t:{1}".format(stat['tx_count'],stat['tx_name'])
             print "\t -------------------\t"
-            #d35e5225bcb229a7f2957cc62c1e8070102fa66bd3353bece5ef9ec74c364adb
