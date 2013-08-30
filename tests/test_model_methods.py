@@ -1,6 +1,9 @@
 from django.test import TestCase
 from bhp_registration.tests.factories import RegisteredSubjectFactory
 from factories import AliquotFactory, AliquotConditionFactory, AliquotTypeFactory, ReceiveFactory, OrderFactory, ResultFactory, ResultItemFactory
+from bhp_lab_tracker.classes import site_lab_tracker
+
+site_lab_tracker.autodiscover()
 
 
 class TestModelMethods(TestCase):
