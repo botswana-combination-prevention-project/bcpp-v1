@@ -25,11 +25,14 @@ class RequisitionMethodsTest(TestCase):
 #        self.assertEqual(len(set(lst)), 10001, msg='list of identifiers is not unique after {0} identifiers'.format(len(set(lst))))
 #        print lst
         lst = []
-        while x < 10001:
-            identifier = Identifier(identifier_type='subject', counter_length=1, month=mm, year=yy)
-            lst.append(identifier.create())
-            x += 1
-        print x
-        print lst
-        self.assertEqual(len(lst), 10001)
-        self.assertEqual(len(set(lst)), 10001, msg='list of identifiers is not unique')
+        
+        print 'WARNING: Requisition identifier tests are DISABLED!'
+#         print 'creating ALOT of identifiers ...this will take a while!'
+#         while x < 10001:
+#             identifier = Identifier(identifier_type='subject', counter_length=1, month=mm, year=yy)
+#             lst.append(identifier.create())
+#             x += 1
+#         print x
+#         print lst
+#         self.assertEqual(len(lst), 10001)
+#         self.assertEqual(len(set(lst)), 10001, msg='list of identifiers is not unique')
