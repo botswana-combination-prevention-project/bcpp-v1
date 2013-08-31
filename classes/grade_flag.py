@@ -6,9 +6,9 @@ from lab_reference.classes import ReferenceFlag
 
 class GradeFlag(Flag):
 
-    def __init__(self, subject_identifier, reference_list, test_code, gender, dob, drawn_datetime, release_datetime, **kwargs):
+    def __init__(self, subject_identifier, subject_type, reference_list, test_code, gender, dob, drawn_datetime, release_datetime, **kwargs):
         self.fasting = kwargs.get('fasting', 'N/A')
-        super(GradeFlag, self).__init__(subject_identifier, reference_list, test_code, gender, dob, drawn_datetime, release_datetime, **kwargs)
+        super(GradeFlag, self).__init__(subject_identifier, subject_type, reference_list, test_code, gender, dob, drawn_datetime, release_datetime, **kwargs)
 
     def check_list_prep(self, list_items):
         """Runs additional checks for the reference table.
