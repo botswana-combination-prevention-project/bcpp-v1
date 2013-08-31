@@ -2,7 +2,7 @@ import re
 from textwrap import wrap
 from django.conf import settings
 from django.db import models
-from django.db.models import TextField
+from django.db.models import TextField, Count
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
@@ -68,8 +68,6 @@ class RegisteredSubjectDashboard(Dashboard):
                     super(InfantDashboard, self).add_to_context()
                     self.context.add(
                         home='maikalelo',
-                        subject_dashboard_url='subject_dashboard_url',
-                        subject_dashboard_visit_url='subject_dashboard_visit_url',
                         title='Infant Dashboard',
                         infant_birth=self.get_infant_birth(),
                         maternal_consent=self.get_consent(),
@@ -189,7 +187,7 @@ class RegisteredSubjectDashboard(Dashboard):
             registered_subject=self.get_registered_subject(),
             subject_identifier=self.get_subject_identifier(),
             subject_hiv_history=self.get_subject_hiv_history(),
-            subject_hiv_status=self.get_subject_hiv_status(),
+            subject_hiv_status=self.render_subject_hiv_status(),
             subject_configuration=self.get_subject_configuration(),
             appointment_meta=Appointment._meta,
             subject_configuration_meta=SubjectConfiguration._meta,
@@ -260,7 +258,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """Sets to the value returned by the site_lab_tracker for this registered subject."""
         self._subject_hiv_status = None
         if self.get_registered_subject():
-            self._subject_hiv_status = self.get_site_lab_tracker().get_current_value('HIV', self.get_registered_subject().subject_identifier)[0]
+            self._subject_hiv_status = self.get_site_lab_tracker().get_current_value('HIV', self.get_registered_subject().subject_identifier, self.get_registered_subject().subject_type)[0]
         return self._subject_hiv_status
 
     def get_subject_hiv_status(self):
@@ -272,7 +270,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """Sets to the value returned by the site_lab_tracker for this registered subject."""
         self._subject_hiv_history = None
         if self.get_registered_subject():
-            self._subject_hiv_history = self.get_site_lab_tracker().get_history_as_string('HIV', self.get_registered_subject().subject_identifier)
+            self._subject_hiv_history = self.get_site_lab_tracker().get_history_as_string('HIV', self.get_registered_subject().subject_identifier, self.get_registered_subject().subject_type)
         return self._subject_hiv_history
 
     def get_subject_hiv_history(self):
@@ -406,12 +404,35 @@ class RegisteredSubjectDashboard(Dashboard):
             if self.get_appointment().visit_instance == 0:
                 self._appointment_zero = self.get_appointment()
             else:
+                if Appointment.objects.filter(registered_subject=self.get_appointment().registered_subject, visit_definition=self.get_appointment().visit_definition, visit_instance=0) > 1:
+                    self.delete_duplicate_appointments(inst=self)
                 self._appointment_zero = Appointment.objects.get(registered_subject=self.get_appointment().registered_subject, visit_definition=self.get_appointment().visit_definition, visit_instance=0)
 
     def get_appointment_zero(self):
         if not self._appointment_zero:
             self.set_appointment_zero()
         return self._appointment_zero
+
+    @classmethod
+    def delete_duplicate_appointments(cls, inst=None, visit_model=None):
+        """Deletes all but one duplicate appointments as long as they are not related to a visit model."""
+        if not visit_model:
+            visit_model = inst.get_visit_model()
+        appointments = Appointment.objects.values('registered_subject__pk', 'visit_definition', 'visit_instance').all().annotate(num=Count('pk')).order_by()
+        dups = [a for a in appointments if a.get('num') > 1]
+        for dup in dups:
+            num = dup['num']
+            del dup['num']
+            for dup_appt in Appointment.objects.filter(**dup):
+                if not visit_model.objects.filter(appointment=dup_appt):
+                    try:
+                        print 'delete {0}'.format(dup_appt)
+                        dup_appt.delete()
+                        num -= 1
+                    except:
+                        pass
+                    if num == 1:
+                        break  # leave one
 
     def set_appointment_code(self, value=None):
         self._appointment_code = value
@@ -658,7 +679,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self.set_additional_entry_bucket()
         return self._additional_entry_bucket
 
-    def set_subject_type(self, value):
+    def set_subject_type(self):
         self._subject_type = self.get_registered_subject().subject_type
 
     def get_subject_type(self):
@@ -822,6 +843,20 @@ class RegisteredSubjectDashboard(Dashboard):
 
         Defaults to 'locator_include.html'."""
         return 'locator_include.html'
+
+    def get_subject_hiv_template(self):
+        return 'subject_hiv_status.html'
+
+    def render_subject_hiv_status(self):
+        """Renders to string a to a url to the historymodel for the subject_hiv_status."""
+        if self.get_subject_hiv_status():
+            change_list_url = reverse('admin:bhp_lab_tracker_historymodel_changelist')
+            return render_to_string(self.get_subject_hiv_template(), {
+                'subject_hiv_status': self.get_subject_hiv_status(),
+                'subject_identifier': self.get_subject_identifier(),
+                'subject_type': self.get_subject_type(),
+                'change_list_url': change_list_url})
+        return ''
 
     def render_locator(self):
         """Renders to string the locator for the current locator instance if it is set."""

@@ -45,6 +45,7 @@ class DashboardTests(TestCase):
         print 'site_lab_tracker.autodiscover()'
 
         class TestLabTracker(LabTracker):
+            subject_type = 'test_subject_type'
             trackers = [(TestResultModel, 'result', 'result_datetime', )]
             group_name = 'HIV'
             tracked_test_codes = ('HIV', 'ELISA', 'RELISA')
@@ -60,7 +61,7 @@ class DashboardTests(TestCase):
         visit_tracking_content_type_map = ContentTypeMap.objects.get(app_label='bhp_base_test', model='testvisit')
         visit_definition = VisitDefinitionFactory(visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
-        registered_subject = RegisteredSubjectFactory(subject_type='subject')
+        registered_subject = RegisteredSubjectFactory(subject_type='test_subject_type')
         Configuration.objects.create()
         test_consent_with_mixin = TestConsentWithMixinFactory(registered_subject=registered_subject)
         self.assertRaises(TypeError, RegisteredSubjectDashboard,
