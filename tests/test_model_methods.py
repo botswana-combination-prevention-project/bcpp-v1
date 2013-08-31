@@ -4,12 +4,11 @@ from factories import AliquotFactory, AliquotConditionFactory, AliquotTypeFactor
 from bhp_lab_tracker.classes import site_lab_tracker
 
 
-
 class TestModelMethods(TestCase):
 
-    def test_aliquot(self):
-        site_lab_tracker.autodiscover()
-        aliquot = AliquotFactory()
+#     def test_aliquot(self):
+#         site_lab_tracker.autodiscover()
+#         aliquot = AliquotFactory()
 
     def test_order(self):
         site_lab_tracker.autodiscover()
@@ -20,4 +19,3 @@ class TestModelMethods(TestCase):
         order = OrderFactory(aliquot=aliquot)
         result = ResultFactory(order=order)
         result_item = ResultItemFactory(result=result)
-
