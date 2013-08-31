@@ -192,7 +192,7 @@ class BaseRule(object):
             if not self._field_value:
                 self._field_value = 0
         elif field_name == 'hiv_status':
-            self._field_value, is_default_value = self.get_site_lab_tracker().get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().report_datetime)
+            self._field_value, is_default_value = self.get_site_lab_tracker().get_value('HIV', self.get_visit_model_instance().get_subject_identifier(), self.get_visit_model_instance().get_subject_type(), self.get_visit_model_instance().report_datetime)
         else:
             self._field_value = getattr(instance, field_name)
         if self._field_value:
