@@ -40,7 +40,7 @@ class BaseTestConsent(BaseConsent):
         return 'user_provided_subject_identifier'
 
     def get_subject_type(self):
-        return 'subject'
+        return 'test_subject_type'
 
     def get_registered_subject(self):
         return self.registered_subject
