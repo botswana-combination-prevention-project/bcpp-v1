@@ -21,6 +21,7 @@ class TrackerMethodsTests(TestCase):
         StudySpecificFactory()
         ConfigurationFactory()
         print 'assert not yet autodiscovered'
+        site_lab_tracker._registry = []
         self.assertEqual(site_lab_tracker._registry, [])
         tracker = LabTracker()
         self.assertEqual(tracker.trackers, None)
