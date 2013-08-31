@@ -66,6 +66,14 @@ class Controller(object):
         lab_tracker_inst = lab_tracker_cls()
         if lab_tracker_cls in self._registry:
             raise AlreadyRegistered('The class %s is already registered' % lab_tracker_cls)
+        if (lab_tracker_cls.subject_type, lab_tracker_cls.group_name) in [(cls.subject_type, cls.group_name) for cls in self._registry]:
+            raise AlreadyRegistered('A lab_tracker with subject_type=={0} and group_name=={1} is already registered. Cannot register {2}.'.format(lab_tracker_cls.subject_type, lab_tracker_cls.group_name, lab_tracker_cls))
+        if 'subject_type' not in dir(lab_tracker_cls):
+            raise ImproperlyConfigured('Missing class attribute \'subject_type\'. See tracker {0}.'.format(lab_tracker_cls))
+        if not 'SUBJECT_TYPES' in dir(settings):
+            raise ImproperlyConfigured('Missing settings attribute SUBJECT_TYPES.')
+        if lab_tracker_inst.get_subject_type() not in settings.SUBJECT_TYPES and not lab_tracker_inst.get_subject_type() == 'test_subject_type':
+            raise ImproperlyConfigured('Class attribute \'subject_type\' must be a valid subject type. Got {0}. Must be one of {1}. See tracker {2}'.format(lab_tracker_inst.get_subject_type(), settings.SUBJECT_TYPES, lab_tracker_cls))
         if 'trackers' in dir(lab_tracker_cls):
             for tracker in lab_tracker_inst.get_trackers():
                 if 'get_subject_identifier' not in dir(tracker.model_cls):
@@ -95,6 +103,11 @@ class Controller(object):
                 raise TypeError('expected an instance of TrackerTpl. Got {0}'.format(tracker))
         self._registry.append(lab_tracker_cls)
 
+    def unregister(self, lab_tracker_cls):
+        for index, cls in enumerate(self._registry):
+            if lab_tracker_cls == cls:
+                del self._registry[index]
+
     def update_history(self, model_inst):
         """Updates history for a given model instance (on pk) via the tracker for the model class."""
         for lab_tracker_cls in self._registry:
@@ -102,14 +115,14 @@ class Controller(object):
             if isinstance(model_inst, lab_tracker_inst.get_models()):
                 for tracker in lab_tracker_inst.get_trackers():
                     if tracker.model_cls == model_inst.__class__:
-                        HistoryUpdater(model_inst, lab_tracker_inst.get_group_name(), tracker, lab_tracker_inst._get_tracked_test_codes()).update()
+                        HistoryUpdater(model_inst, lab_tracker_inst.get_group_name(), lab_tracker_inst.get_subject_type(), tracker, lab_tracker_inst._get_tracked_test_codes()).update()
 
     def delete_history(self, model_inst):
         """Deletes history for a given model instance (on pk) via the tracker for the model class."""
         for lab_tracker_cls in self._registry:
             lab_tracker_inst = lab_tracker_cls(model_inst.get_subject_identifier())
             if isinstance(model_inst, lab_tracker_inst.get_models()):
-                HistoryUpdater(model_inst, lab_tracker_inst.get_group_name()).delete()
+                HistoryUpdater(model_inst, lab_tracker_inst.get_group_name(), lab_tracker_inst.get_subject_type()).delete()
 
     def update_history_for_all(self, supress_messages=None):
         """Updates the history for all subjects in RegisteredSubject for all LabTrackers in the registry."""
@@ -127,12 +140,12 @@ class Controller(object):
         """Returns the registry as a list."""
         return self._registry
 
-    def _get_lab_tracker_inst_by_group_name(self, group_name, subject_identifier):
-        """Returns a lab_tracker instantiated for this subject from the registry given a group_name."""
+    def _get_lab_tracker_inst_by_group_name(self, group_name, subject_identifier, subject_type):
+        """Returns a lab_tracker instantiated for this subject from the registry given a group_name and subject_type."""
         lab_tracker_inst = None
         for lab_tracker_cls in self._registry:
             inst = lab_tracker_cls(subject_identifier)
-            if inst.get_group_name() == group_name:
+            if inst.get_group_name() == group_name and inst.get_subject_type() == subject_type:
                 lab_tracker_inst = inst
                 break
         return lab_tracker_inst
@@ -152,44 +165,44 @@ class Controller(object):
             self.set_model_list()
         return self._models
 
-    def get_history_as_qs(self, group_name, subject_identifier, reference_datetime=None):
+    def get_history_as_qs(self, group_name, subject_identifier, subject_type, reference_datetime=None):
         """Returns the result history as QuerySet."""
         self.confirm_autodiscovered()
         retval = ''
         if not reference_datetime:
             reference_datetime = datetime.today()
-        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier, subject_type)
         if lab_tracker_inst:
             retval = lab_tracker_inst.get_history(reference_datetime)
         return retval
 
-    def get_history_as_list(self, group_name, subject_identifier, reference_datetime=None):
+    def get_history_as_list(self, group_name, subject_identifier, subject_type, reference_datetime=None):
         """Returns the result history as a list of values."""
         self.confirm_autodiscovered()
         retval = ''
         if not reference_datetime:
             reference_datetime = datetime.today()
-        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier, subject_type)
         if lab_tracker_inst:
             retval = lab_tracker_inst.get_history_as_list(reference_datetime)
         return retval
 
-    def get_history_as_string(self, group_name, subject_identifier, mapped=None, reference_datetime=None):
+    def get_history_as_string(self, group_name, subject_identifier, subject_type, mapped=None, reference_datetime=None):
         """Returns the result history as a string of values."""
         self.confirm_autodiscovered()
         retval = ''
         if not reference_datetime:
             reference_datetime = datetime.today()
-        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier, subject_type)
         if lab_tracker_inst:
             retval = lab_tracker_inst.get_history_as_string(reference_datetime, mapped)
         return retval
 
-    def get_current_value(self, group_name, subject_identifier):
+    def get_current_value(self, group_name, subject_identifier, subject_type):
         """Wraps :func:`get_value` calling with value_datetime = today's date."""
-        return self.get_value(group_name, subject_identifier, value_datetime=datetime.today())
+        return self.get_value(group_name, subject_identifier, subject_type, value_datetime=datetime.today())
 
-    def get_value(self, group_name, subject_identifier, value_datetime=None):
+    def get_value(self, group_name, subject_identifier, subject_type, value_datetime=None):
         """Returns the result value or a tuple with the result value, if default, in this LabTracker group for this subject.
  
         Searches thru the registry to find a class that can be used to search for the value..
@@ -211,7 +224,9 @@ class Controller(object):
         self.confirm_autodiscovered()
         value = None
         is_default_value = None  # if no value is found in the classes' history model, is there a default?
-        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier)
+        if subject_type not in settings.SUBJECT_TYPES and not subject_type == 'test_subject_type':
+            raise ImproperlyConfigured('Invalid subject type \'{0}\'. Must be one of {1}. See settings.py.'.format(subject_type, settings.SUBJECT_TYPES))
+        lab_tracker_inst = self._get_lab_tracker_inst_by_group_name(group_name, subject_identifier, subject_type)
         if lab_tracker_inst:
             value = lab_tracker_inst.get_value(value_datetime)
             is_default_value = lab_tracker_inst.get_is_default_value()

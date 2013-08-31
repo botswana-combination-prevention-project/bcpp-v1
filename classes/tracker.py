@@ -66,6 +66,7 @@ class LabTracker(object):
     trackers = None
     group_name = None
     tracked_test_codes = None
+    subject_type = None
 
     def __init__(self, subject_identifier=None):
         """If the user does not declare self.models, the tracker will add result_item so that the
@@ -85,6 +86,7 @@ class LabTracker(object):
         self._subject_type = None
         self._history_query_options = None
         self._is_dirty = True
+        self._subject_type = None
         self._init_subject_identifier = subject_identifier
 
     def set_result_item_tracker(self):
@@ -183,6 +185,18 @@ class LabTracker(object):
         if not self._is_default_value:
             self.set_is_default_value()
         return self._is_default_value
+
+    def set_subject_type(self, value=None):
+        self._subject_type = value or self.subject_type
+        if not self._subject_type:
+            raise ImproperlyConfigured('Attribute _subject_type may not be None. Specify at the class declaration (e.g. subject_type = \'infant\'. See tracker {0}'.format(self))
+        if not isinstance(self.subject_type, basestring):
+            raise ImproperlyConfigured('Attribute _subject_type must be a string. Got {0}. Specify at the class declaration (e.g. subject_type = \'infant\''.format(self._subject_type))
+
+    def get_subject_type(self):
+        if not self._subject_type:
+            self.set_subject_type()
+        return self._subject_type
 
     def set_trackers(self):
         self._trackers = []
@@ -300,7 +314,7 @@ class LabTracker(object):
         for tracker in self.get_trackers():
             options = self._get_history_query_options(tracker)
             for model_inst in tracker.model_cls.objects.filter(**options):
-                HistoryUpdater(model_inst, self.get_group_name(), tracker=tracker, tracked_test_codes=self._get_tracked_test_codes()).update()
+                HistoryUpdater(model_inst, self.get_group_name(), self.get_subject_type(), tracker=tracker, tracked_test_codes=self._get_tracked_test_codes()).update()
 
     def set_value_datetime(self, value=None):
         """Sets value_datetime, None is allowed."""
@@ -330,15 +344,18 @@ class LabTracker(object):
         # create a default instance
         self._history_inst = HistoryModel(
             subject_identifier=self.get_subject_identifier(),
+            subject_type=self.get_subject_type(),
             value_datetime=self._get_default_value_datetime(),
             value=self._get_default_value())
         if HistoryModel.objects.filter(subject_identifier=self.get_subject_identifier(),
+                                       subject_type=self.get_subject_type(),
                                        group_name=self.get_group_name(),
                                        value_datetime__lte=self.get_value_datetime()).exists():
             # set to most recent relative to value_datetime
             # TODO: this may cause problems for value_datetime when queried by date (with no time)
             self._history_inst = HistoryModel.objects.filter(
                 subject_identifier=self.get_subject_identifier(),
+                subject_type=self.get_subject_type(),
                 group_name=self.get_group_name(),
                 value_datetime__lte=self.get_value_datetime()
                 ).order_by('-value_datetime')[0]

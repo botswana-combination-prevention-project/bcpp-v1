@@ -14,4 +14,5 @@ class HistoryModel(BaseHistoryModel):
                             'test_code',
                             'group_name',
                             'subject_identifier',
+                            'subject_type',
                             'value_datetime'), )

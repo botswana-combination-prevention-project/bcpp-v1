@@ -1,10 +1,11 @@
+import inspect
 from datetime import datetime
 from bhp_lab_tracker.models import HistoryModel
 
 
 class HistoryUpdater(object):
 
-    def __init__(self, model_inst, group_name, tracker=None, tracked_test_codes=None):
+    def __init__(self, model_inst, group_name, subject_type, tracker=None, tracked_test_codes=None):
         """Updates the HistoryModel model class with values from a model instance.
 
             Args:
@@ -18,10 +19,12 @@ class HistoryUpdater(object):
         self._value = None
         self._value_datetime = None
         self._subject_identifier = None
+        self._subject_type = None
         self._test_code = None
         self._group_name = None
         self.set_model_inst(model_inst)
         self.set_group_name(group_name)
+        self.set_subject_type(subject_type)
         self._tracked_test_codes = tracked_test_codes
         if tracker:
             self.set_tracker(tracker)
@@ -63,7 +66,7 @@ class HistoryUpdater(object):
         """Sets the result value from the model instance."""
         self._value = None
         if 'get_result_value' in dir(self.get_model_inst()):
-            self._value = self.get_model_inst().get_result_value()
+            self._value = self._get_method(self.get_model_inst().get_result_value, 'attr', self.get_tracker().value_attr)
         else:
             try:
                 self._value = getattr(self.get_model_inst(), self.get_tracker().value_attr)
@@ -79,7 +82,7 @@ class HistoryUpdater(object):
         """Sets the result datetime by accessing a method or field attribute on the model instance."""
         self._value_datetime = None
         if 'get_result_datetime' in dir(self.get_model_inst()):
-            self._value_datetime = self.get_model_inst().get_result_datetime()
+            self._value_datetime = self._get_method(self.get_model_inst().get_result_datetime, 'attr', self.get_tracker().value_attr)
         else:
             self._value_datetime = getattr(self.get_model_inst(), self.get_tracker().datetime_attr)
         if not self._value_datetime:
@@ -99,19 +102,38 @@ class HistoryUpdater(object):
             raise TypeError('self._subject_identifier may not be None.')
 
     def get_subject_identifier(self):
-        """Returns the datetime of the result item value determined either by getting the instance
-        attribute or calling the instance method :func:`get_result_datetime` with the attribute name."""
         if not self._subject_identifier:
             self.set_subject_identifier()
         return self._subject_identifier
 
+    def set_subject_type(self, value=None):
+        """Sets the subject type by accessing the method get_subject_type or the subject_type attr on the model instance."""
+        self._subject_type = value
+#         if not self.
+#         if 'get_subject_type' in dir(self.get_model_inst()):
+#             self._subject_type = self.get_model_inst().get_subject_type()
+#         else:
+#             self._subject_type = self.get_model_inst().subject_type
+        if not self._subject_type:
+            raise TypeError('self._subject_type may not be None.')
+
+    def get_subject_type(self):
+        if not self._subject_type:
+            self.set_subject_type()
+        return self._subject_type
+
     def set_test_code(self):
-        """Sets the test_code for this value by inspecting the model instance."""
+        """Sets the test_code for this value by inspecting the model instance.
+
+        model instance method :func:`get_test_code` may return a test code conditional to the tracker.value_attr.
+
+        model instance method :func:`get_test_code` may specify parameter \'attr\'. All other parameters will be ignored.
+        """
         self._test_code = None
         if 'get_test_code' in dir(self.get_model_inst()):
-            self._test_code = self.get_model_inst().get_test_code()
+            self._test_code = self._get_method(self.get_model_inst().get_test_code, 'attr', self.get_tracker().value_attr)
         if not self._test_code:
-            raise TypeError('Cannot determine the test code for model {0}. Perhaps add a get_test_code method to the model.'.format(self.get_model_inst()))
+            raise TypeError('Cannot determine the test code for model {0}. Perhaps add a get_test_code(self) or get_test_code(self, attr) method to the model. '.format(self.get_model_inst()))
 
     def get_test_code(self):
         if not self._test_code:
@@ -149,6 +171,7 @@ class HistoryUpdater(object):
                 test_code=self.get_test_code(),
                 group_name=self.get_group_name(),
                 subject_identifier=self.get_subject_identifier(),
+                subject_type=self.get_subject_type(),
                 value_datetime=self.get_value_datetime(),
                 defaults={'value': self.get_value(),
                           'history_datetime': datetime.today(),
@@ -172,3 +195,11 @@ class HistoryUpdater(object):
             source_identifier=self.get_model_inst().pk,
             group_name=self.get_group_name(),
             ).delete()
+
+    def _get_method(self, func, parameter_name, parameter_value):
+        """Calls the given func with or without a value depending on inspection."""
+        argspec = inspect.getargspec(func)
+        if parameter_name in argspec.args:
+            return func(parameter_value)
+        else:
+            return func()
