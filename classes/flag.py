@@ -17,8 +17,9 @@ nullhandler = logger.addHandler(NullHandler())
 
 class Flag(object):
 
-    def __init__(self, subject_identifier, reference_list, test_code, gender, dob, drawn_datetime, release_datetime, **kwargs):
+    def __init__(self, subject_identifier, subject_type, reference_list, test_code, gender, dob, drawn_datetime, release_datetime, **kwargs):
         self.dirty = False
+        self.subject_type = subject_type
         self.group_name = 'HIV'  # lab_tracker cls group name
         self.list_name, self.list_item_model_cls = reference_list
         self.test_code = test_code
@@ -33,6 +34,7 @@ class Flag(object):
         self.age_in_days = get_age_in_days(self.drawn_datetime, self.dob)
         self.hiv_status = kwargs.get('hiv_status', None)
         self.is_default_hiv_status = kwargs.get('is_default_hiv_status', None)
+        self.set_subject_type(subject_type)
         if not self.hiv_status:
             self.get_hiv_status()
         if not self.hiv_status:
@@ -47,12 +49,24 @@ class Flag(object):
             self.hiv_status, self.is_default_hiv_status = site_lab_tracker.get_value(
                 self.group_name,
                 self.subject_identifier,
+                self.get_subject_type(),
                 release_datetime)
         if not self.hiv_status:
             raise TypeError('hiv_status cannot be None for subject {0} relative to {1} using group '
-                            'name {2}.'.format(self.subject_identifier,
+                            'name {2} and subject_type {3}.'.format(self.subject_identifier,
                                                release_datetime,
-                                               self.group_name))
+                                               self.group_name,
+                                               self.get_subject_type()))
+
+    def set_subject_type(self, value=None):
+        self._subject_type = value
+        if not self._subject_type:
+            raise TypeError('Attribute _subject_type may not be None')
+
+    def get_subject_type(self):
+        if not self._subject_type:
+            self.set_subject_type()
+        return self._subject_type
 
     def get_list_prep(self, value, test_code, gender, hiv_status, age_in_days, **kwargs):
         """Returns a filtered ordered list of list items.
