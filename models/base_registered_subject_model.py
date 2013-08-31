@@ -24,6 +24,9 @@ class BaseRegisteredSubjectModel (BaseAppointmentHelperModel):
 
     objects = RegisteredSubjectManager()
 
+    def __unicode__(self):
+        return unicode(self.registered_subject)
+
     def natural_key(self):
         return self.registered_subject.natural_key()
 
