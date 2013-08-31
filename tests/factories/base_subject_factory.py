@@ -16,4 +16,4 @@ class BaseSubjectFactory(BaseUuidModelFactory):
     dob = date(date.today().year - 20, 1, 1)
     is_dob_estimated = '-'
     gender = 'M'
-    subject_type = 'subject'
+    #subject_type = 'subject'

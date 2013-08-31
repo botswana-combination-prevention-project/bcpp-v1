@@ -93,7 +93,7 @@ class BaseSubject (BaseSyncUuidModel):
 
     subject_type = models.CharField(
         max_length=25,
-        default='undetermined',
+        #default='undetermined',
         null=True,
         )
 
@@ -177,7 +177,7 @@ class BaseSubject (BaseSyncUuidModel):
 
         ..note:: this is important for the link between dashboard and membership form category."""
 
-        return 'subject'
+        return None
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using', None)
