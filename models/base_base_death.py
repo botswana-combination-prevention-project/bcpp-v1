@@ -83,6 +83,6 @@ class BaseBaseDeath(BaseRegisteredSubjectModel):
 
     def get_report_datetime(self):
         return datetime(self.death_date.year, self.death_date.month, self.death_date.day)
-    
+
     class Meta:
         abstract = True

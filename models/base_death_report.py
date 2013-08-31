@@ -27,12 +27,5 @@ class BaseDeathReport(BaseDeath):
         help_text="Use diagnosis code from Diagnosis Reference Listing",
         )
 
-#    comment = models.TextField(
-#        max_length=500,
-#        verbose_name="8. Comments",
-#        blank=True,
-#        null=True,
-#        )
-
     class Meta:
         abstract = True
