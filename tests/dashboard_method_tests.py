@@ -160,4 +160,4 @@ class DashboardMethodTests(TestCase):
         self.assertEqual(dashboard.context.get().get('dashboard_id'), test_consent.pk)
         self.assertEqual(dashboard.context.get().get('dashboard_model'), 'test_consent')
         self.assertEqual(dashboard.context.get().get('dashboard_model_instance'), test_consent)
-        self.assertEqual(sorted(dashboard.context.get().keys()), sorted(['app_label', 'dashboard_id', 'dashboard_model', 'dashboard_model_instance', 'dashboard_type', 'hostname', 'os_variables', 'template']))
+        self.assertEqual(sorted(dashboard.context.get().keys()), sorted(['app_label', 'dashboard_id', 'dashboard_model', 'dashboard_model_instance', 'dashboard_type', 'dashboard_name', 'dashboard_url_name', 'hostname', 'os_variables', 'template']))

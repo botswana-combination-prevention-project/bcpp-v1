@@ -125,6 +125,8 @@ class Dashboard(object):
 
     def _set_dashboard_url_name(self):
         self._dashboard_url_name = self.dashboard_url_name
+        if not self._dashboard_url_name:
+            raise ImproperlyConfigured('Class attribute \'dashboard_url_name\' may not be None. Set this on the class declaration for {0}.'.format(self))
 
     def get_dashboard_url_name(self):
         if not self._dashboard_url_name:
