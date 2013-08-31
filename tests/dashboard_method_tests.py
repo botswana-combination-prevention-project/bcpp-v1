@@ -57,7 +57,11 @@ class DashboardMethodTests(TestCase):
         dashboard.add_dashboard_model({'test_consent': TestConsent})
         self.assertIn('test_consent', dashboard.get_dashboard_models())
         print 'assert OK if dashboard model is specified (and added) at init instead of on the dashboard instance'
-        dashboard = Dashboard(
+        
+        class D1(Dashboard):
+            dashboard_url_name = 'subject_dashboard_url'
+
+        dashboard = D1(
             'subject',
             test_consent.pk,
             TestConsent,
@@ -91,7 +95,7 @@ class DashboardMethodTests(TestCase):
         def get_visit_model():
             return TestVisit
 
-        dashboard = Dashboard(
+        dashboard = D1(
             'subject',
             test_consent.pk,
             'test_consent',
@@ -112,7 +116,7 @@ class DashboardMethodTests(TestCase):
             def get_visit_model(self):
                 return TestVisit
 
-        dashboard = Dashboard(
+        dashboard = D1(
             'subject',
             test_consent.pk,
             'test_consent',
@@ -133,7 +137,7 @@ class DashboardMethodTests(TestCase):
             def get_visit_model(self):
                 return TestVisit
 
-        class D(Dashboard):
+        class D2(Dashboard):
 
             dashboard_url_name = 'subject_dashboard_url'
 
@@ -142,14 +146,14 @@ class DashboardMethodTests(TestCase):
                     if not 'get_registered_subject_blah_blah' in dir(model):
                         raise ImproperlyConfigured('Dashboard model must have method get_registered_subject_blah_blah().')
 
-        self.assertRaisesRegexp(ImproperlyConfigured, 'get_registered_subject_blah_blah', D,
+        self.assertRaisesRegexp(ImproperlyConfigured, 'get_registered_subject_blah_blah', D2,
             'subject',
             test_consent.pk,
             'test_consent',
             dashboard_type_list=['subject'],
             dashboard_models={'test_consent': TestConsent, 'test_visit': Obj2().get_visit_model})
 
-        dashboard = Dashboard(
+        dashboard = D1(
             'subject',
             test_consent.pk,
             'test_consent',
