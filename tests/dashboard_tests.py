@@ -118,6 +118,7 @@ class DashboardTests(TestCase):
         print 'if get_visit_model method overridden, visit_model parameter not needed.'
 
         class TestDashboard(RegisteredSubjectDashboard):
+            dashboard_url_name = 'subject_dashboard_url'
 
             def get_visit_model(self):
                 return TestVisit
