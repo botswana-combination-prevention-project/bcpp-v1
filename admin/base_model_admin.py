@@ -112,13 +112,14 @@ class BaseModelAdmin (admin.ModelAdmin):
                     dashboard_type = request.GET.get('dashboard_type')
                     entry_order = request.GET.get('entry_order')
                     visit_attr = request.GET.get('visit_attr')
+                    help_link = request.GET.get('help_link')  # help link added to custom change form
                     show = request.GET.get('show', 'any')
                     if '_savenext' in request.POST:
                         # go to the next form
                         next_url, visit_model_instance, entry_order = RegisteredSubjectDashboard().next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model)
                         if next_url:
                             url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
-                                   '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}'
+                                   '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
                                    ).format(next_url=next_url,
                                             next=request.GET.get('next'),
                                             dashboard_type=dashboard_type,
@@ -127,7 +128,8 @@ class BaseModelAdmin (admin.ModelAdmin):
                                             show=show,
                                             visit_attr='&visit_attr={0}'.format(visit_attr),
                                             visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
-                                            entry_order='&entry_order={0}'.format(entry_order))
+                                            entry_order='&entry_order={0}'.format(entry_order),
+                                            help_link='&help_link={0}'.format(help_link))
                 if '_cancel' in request.POST:
                     url = reverse('subect_dashboard_url', kwargs={'dashboard_type': dashboard_type,
                                                                   'dashboard_id': dashboard_id,
