@@ -135,6 +135,8 @@ class DashboardMethodTests(TestCase):
 
         class D(Dashboard):
 
+            dashboard_url_name = 'subject_dashboard_url'
+
             def verify_dashboard_model(self, model):
                 if model:
                     if not 'get_registered_subject_blah_blah' in dir(model):
