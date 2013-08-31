@@ -240,6 +240,9 @@ class BaseVisitTracking (BaseConsentedUuidModel):
     def get_registered_subject(self):
         return self.get_appointment().registered_subject
 
+    def get_subject_type(self):
+        return self.get_appointment().registered_subject.subject_type
+
     def get_appointment(self):
         return self.appointment
 
