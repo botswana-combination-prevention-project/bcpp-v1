@@ -71,7 +71,7 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         self.assertEqual(subject_consent.registered_subject.pk, registered_subject.pk)
 
         print 'create a blank RegisteredSubject'
-        registered_subject = RegisteredSubject.objects.create()
+        registered_subject = RegisteredSubjectFactory(subject_type='test_subject_type')
         print 'create a consent with registered subject'
         subject_consent = TestConsentFactory(registered_subject=registered_subject, study_site=study_site)
         print subject_consent.subject_identifier
@@ -165,7 +165,7 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         test_m2m2 = TestManyToMany.objects.create(name='test_m2m2', short_name='test_m2m2')
         TestManyToMany.objects.create(name='test_m2m3', short_name='test_m2m3')
         TestForeignKey.objects.create(name='test_fk', short_name='test_fk')
-        registered_subject = RegisteredSubject.objects.create(subject_identifier="TEST_SUBJECT_UUID")
+        registered_subject = RegisteredSubjectFactory(subject_identifier="TEST_SUBJECT_UUID", subject_type='test_subject_type')
         TestConsent.objects.create(
             registered_subject=registered_subject,
             first_name='TEST_SUBJECT_UUID',
