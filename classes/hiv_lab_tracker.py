@@ -33,4 +33,4 @@ class HivLabTracker(LabTracker):
 
     def get_default_value(self):
         """Returns the a value if none is available."""
-        return 'NEG'
+        return 'UNK'
