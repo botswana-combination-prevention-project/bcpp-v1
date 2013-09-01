@@ -23,21 +23,11 @@ class ScheduledEntryBucketAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "registered_subject":
-            if request.GET.get('subject_identifier'):
-                kwargs["queryset"] = RegisteredSubject.objects.filter(subject_identifier=request.GET.get('subject_identifier'))
+            kwargs["queryset"] = RegisteredSubject.objects.filter(pk=request.GET.get('registered_subject'))
         if db_field.name == "appointment":
-            if request.GET.get('subject_identifier'):
-                kwargs["queryset"] = Appointment.objects.filter(
-                                                registered_subject__subject_identifier=request.GET.get('subject_identifier'),
-                                                visit_definition__code=request.GET.get('visit_code'),
-                                                visit_instance=request.GET.get('visit_instance'),
-                                                )
+            kwargs["queryset"] = Appointment.objects.filter(pk=request.GET.get('appointment'))
         if db_field.name == "entry":
-            if request.GET.get('visit_code'):
-                kwargs["queryset"] = Entry.objects.filter(
-                                                visit_definition__code=request.GET.get('visit_code'),
-                                                content_type_map__model=request.GET.get('content_type_map'),
-                                                )
+            kwargs["queryset"] = Entry.objects.filter(pk=request.GET.get('entry'))
         return super(ScheduledEntryBucketAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 admin.site.register(ScheduledEntryBucket, ScheduledEntryBucketAdmin)
 
