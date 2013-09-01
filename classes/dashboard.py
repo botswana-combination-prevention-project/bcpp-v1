@@ -207,7 +207,7 @@ class Dashboard(object):
         if not value:
             self._dashboard_model_name = convert_from_camel(self.get_dashboard_model()._meta.object_name)
         if not self._dashboard_model_name:
-            raise TypeError('_dashboad_model_name may not be None.')
+            raise TypeError('_dashboard_model_name may not be None.')
 
     def get_dashboard_model_name(self):
         if not self._dashboard_model_name:
