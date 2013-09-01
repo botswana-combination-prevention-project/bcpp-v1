@@ -180,7 +180,7 @@ class Appointment(BaseAppointment):
 #                     raise AppointmentStatusError('Did not expect appt_status == \'{0}\''.format(self.appt_status))
 
     def __unicode__(self):
-        return "{0} for {1}.{2}".format(self.registered_subject, self.visit_definition.code, self.visit_instance)
+        return "{0} {1} for {2}.{3}".format(self.registered_subject.subject_identifier, self.registered_subject.subject_type, self.visit_definition.code, self.visit_instance)
 
     def dashboard(self):
         ret = None
