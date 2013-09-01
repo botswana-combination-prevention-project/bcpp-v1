@@ -14,7 +14,7 @@
        <BR><b>May follow-up?</b> {{locator.may_follow_up }}       
        {% if locator.may_follow_up.lower == 'yes' %}   
             <BR><b>Home visits?</b> {{locator.home_visit_permission }}
-            <BR><i>Address:</i><BR>{{locator.physical_address|safe|encrypted}}
+            <BR><i>Address:</i><BR><pre>{{locator.physical_address|safe|encrypted|wordwrap:25}}</pre>
             <BR><i>Tel:</i> {{locator.subject_phone|default:''|encrypted}}
             <BR><i>Alt. Tel:</i> {{locator.subject_phone_alt|default:''|encrypted}}
             <BR><i>Cell:</i> {{locator.subject_cell|default:''|encrypted}}
@@ -28,7 +28,7 @@
             {% if locator.may_contact_someone.lower == 'yes' %}
                <BR>Name: {{ locator.contact_name|encrypted }}
                <BR>Relation: {{ locator.contact_rel|encrypted }}
-               <BR><i>Address:</i><BR>{{ locator.contact_physical_address|safe|encrypted }}               
+               <BR><i>Address:</i><BR><pre>{{ locator.contact_physical_address|safe|encrypted|wordwrap:25 }}</pre>               
                <BR><i>Tel:</i> {{ locator.contact_tel|encrypted }}
                <BR><i>Cell:</i> {{ locator.contact_cell|encrypted }}
             {% endif%}            
