@@ -1,17 +1,16 @@
-{% load crypto_tags %}{% load admin_urls %}
+{% load crypto_tags %}
+{% load admin_urls %}
+{% load url from future %}
+
 <tr style="background:lightyellow;">
    <td><H4>Contact Info</H4></td></tr>
    <tr style="background:lightyellow;">
    {% if not locator %}
-    <td><span style="color:red;">Please provide subject<BR>contact details.</span>    
-    <A href="{{locator_add_url}}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Add ]</A>
+      <td><span style="color:red;">Please provide subject<BR>contact details.</span>    
+      <A href="{{locator_add_url}}?next={{ subject_dashboard_url }}&dashboard_type={{ dashboard_type }}&dashboard_model={{ dashboard_model }}&dashboard_id={{ dashboard_id }}&show={{ show }}&registered_subject={{ registered_subject.pk }}&{{visit_attr}}={{ visit_model_instance.pk }}&visit_attr={{visit_attr}}">[ Add ]</A>
    {% else %}
        <td>
-       {% if visit_code and visit_instance %}
-           <A href="{{ locator.get_absolute_url }}?next=dashboard_visit_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}&visit_code={{ visit_code }}&visit_instance={{ visit_instance }}&appointment={{ appointment.pk }}">[ Edit ]</A>
-       {% else %}
-           <A href="{{ locator.get_absolute_url }}?next=dashboard_url&dashboard_type={{ dashboard_type }}&subject_identifier={{ subject_identifier }}&registered_subject={{ registered_subject.pk }}">[ Edit ]</A>
-       {% endif %}
+       <A href="{{ locator_change_url }}?next={{ subject_dashboard_url }}&dashboard_type={{ dashboard_type }}&dashboard_model={{ dashboard_model }}&dashboard_id={{ dashboard_id }}&show={{ show }}&registered_subject={{ registered_subject.pk }}&{{visit_attr}}={{ visit_model_instance.pk }}&visit_attr={{visit_attr}}">[ Edit ]</A>
        <BR><b>May follow-up?</b> {{locator.may_follow_up }}       
        {% if locator.may_follow_up.lower == 'yes' %}   
             <BR><b>Home visits?</b> {{locator.home_visit_permission }}
