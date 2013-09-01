@@ -14,3 +14,5 @@ class TestModelAdmin(BaseModelAdmin):
     conditional_fields = ConditionalFields(('f3', ), gender='M', age=(18, 64), bcpp_subject__monthsrecentpartner__first_haart='Yes')
 
 admin.site.register(TestModel, TestModelAdmin)
+
+
