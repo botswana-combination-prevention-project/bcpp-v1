@@ -118,6 +118,10 @@ class BaseVisitTracking (BaseConsentedUuidModel):
 
     objects = BaseVisitTrackingManager()
 
+    def __unicode__(self):
+        return unicode(self.appointment)
+        #return '{0} {1}'.format(self.subject_identifier, self.report_datetime)
+
     def save(self, *args, **kwargs):
         self.subject_identifier = self.get_subject_identifier()
         super(BaseVisitTracking, self).save(*args, **kwargs)
@@ -236,6 +240,9 @@ class BaseVisitTracking (BaseConsentedUuidModel):
 
     def get_report_datetime(self):
         return self.report_datetime
+
+    def get_appoinment(self):
+        return self.appointment
 
     def get_registered_subject(self):
         return self.get_appointment().registered_subject
