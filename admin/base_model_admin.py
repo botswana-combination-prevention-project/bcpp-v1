@@ -7,9 +7,10 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import NoReverseMatch
 from django.http import HttpResponseRedirect
-from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
+from bhp_entry_rules.classes import rule_groups
 from bhp_supplemental_fields.models import Excluded
 from bhp_data_manager.models import ModelHelpText
+from bhp_entry.classes import ScheduledEntry
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +117,7 @@ class BaseModelAdmin (admin.ModelAdmin):
                     show = request.GET.get('show', 'any')
                     if '_savenext' in request.POST:
                         # go to the next form
-                        next_url, visit_model_instance, entry_order = RegisteredSubjectDashboard().next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model)
+                        next_url, visit_model_instance, entry_order = self.next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order)
                         if next_url:
                             url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
                                    '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
@@ -276,3 +277,25 @@ class BaseModelAdmin (admin.ModelAdmin):
         for model_help_text in ModelHelpText.objects.filter(app_label=app_label, module_name=module_name.lower()):
             mht.update({model_help_text.field_name: model_help_text})
         return (ModelHelpText._meta, mht)
+
+    def next_url_in_scheduled_entry_bucket(self, obj, visit_attr, entry_order):
+        """Returns a tuple with the reverse of the admin url for the next model listed in scheduled_entry_bucket.
+
+        If there is not a "next" model, returns an empty tuple (None, None, None).
+
+        Called from response_add and response_change."""
+        retval = (None, None, None)
+        if not visit_attr or not entry_order:
+            return retval
+        visit_model_inst = getattr(obj, visit_attr)
+        self.run_rule_groups(visit_model_inst)
+        scheduled_entry_bucket = ScheduledEntry().get_next_entry_for(entry_order, visit_model_inst.get_appointment(), visit_model_inst.appointment.get_registered_subject())
+        if scheduled_entry_bucket:
+            url = reverse('admin:{0}_{1}_add'.format(scheduled_entry_bucket.entry.content_type_map.app_label, scheduled_entry_bucket.entry.content_type_map.module_name))
+            retval = (url, visit_model_inst, scheduled_entry_bucket.entry.entry_order)
+        return retval
+
+    def run_rule_groups(self, visit_model_instance):
+        """ Runs rules in any rule groups for a given visit model instance."""
+        if visit_model_instance:
+            rule_groups.update_all(visit_model_instance)
