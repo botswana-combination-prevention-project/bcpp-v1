@@ -61,12 +61,12 @@
 
 {% if scheduled_entry_bucket %} 
     {% block scheduled_data_collection %}
-
-        {% include 'scheduled_entry_bucket_include.html' %}
+ 
+        {{ rendered_scheduled_forms }}
         
     {% endblock scheduled_data_collection %}
 {% endif %}
-
+    
 {% if scheduled_lab_bucket %}   
     {% block scheduled_lab_bucket %}
 

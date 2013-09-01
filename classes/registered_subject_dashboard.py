@@ -2,7 +2,7 @@ import re
 from textwrap import wrap
 from django.conf import settings
 from django.db import models
-from django.db.models import TextField, Count
+from django.db.models import TextField, Count, get_model
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
@@ -14,6 +14,7 @@ from bhp_visit.classes import MembershipFormHelper
 from bhp_dashboard.classes import Dashboard
 from lab_clinic_api.classes import EdcLab
 from bhp_entry.classes import ScheduledEntry, AdditionalEntry
+from bhp_entry.models import ScheduledEntryBucket
 from bhp_visit.exceptions import MembershipFormError
 from bhp_appointment.models import Appointment
 from bhp_visit.models import MembershipForm
@@ -27,6 +28,7 @@ from bhp_subject_config.models import SubjectConfiguration
 from lab_requisition.models import BaseBaseRequisition
 from lab_packing.models import BasePackingList
 from bhp_consent.models import BaseConsent
+from scheduled_entry_context import ScheduledEntryContext
 
 
 class RegisteredSubjectDashboard(Dashboard):
@@ -119,51 +121,50 @@ class RegisteredSubjectDashboard(Dashboard):
     dashboard_url_name = 'subject_dashboard_url'
 
     def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, dashboard_category=None, visit_model=None, registered_subject=None, show=None, **kwargs):
-        self._visit_model = None
-        if visit_model:  # usually None, except in testing, but needed now regardless since passing method for one of the dashboard models below
-            self._set_visit_model(visit_model)
         dashboard_models = dashboard_models or {}
-        dashboard_models.update(
-            {'appointment': Appointment,
-             'visit': self._get_visit_model})
+        dashboard_models.update({'appointment': Appointment})
+        self._visit_model = None
+        if visit_model:  # usually None, except in testing, usually provided by the subclass. needed now regardless since passing method for one of the dashboard models below
+            self._set_visit_model(visit_model)
+        dashboard_models.update({'visit': self._get_visit_model})  # yes, i am passing the method, not calling it
         super(RegisteredSubjectDashboard, self).__init__(dashboard_type, dashboard_id, dashboard_model, dashboard_type_list, dashboard_models)
 
-        self._registered_subject = None
-        self._categories = None
-        self._subject_identifier = None
-        self._subject_type = None
-        self._appointment_row_template = None
-        self._appointment = None
-        self._appointment_zero = None
-        self._appointments = None
-        self._appointment_code = None
-        self._appointment_continuation_count = None
-        self._visit_model = None
-        self._requisition_model = None
-        self._packing_list_model = None
-        self._visit_model_instance = None
-        self._subject_configuration = None
-        self._extra_url_context = None
-        self._show = None
-        self._scheduled_entry_bucket = None
-        self._scheduled_lab_bucket = None
         self._additional_entry_bucket = None
         self._additional_lab_bucket = None
-        self._scheduled_entry_bucket_meta = None
-        self._subject_membership_models = None
+        self._appointment = None
+        self._appointment_code = None
+        self._appointment_continuation_count = None
+        self._appointment_row_template = None
+        self._appointment_zero = None
+        self._appointments = None
+        self._categories = None
+        self._consent = None
+        self._extra_url_context = None
+        self._language = None
         self._locator_inst = None
         self._locator_model = None
         self._membership_form_category = None
-        self._visit_messages = []
-        self._consent = None
-        self._language = None
-        self._view = None
-        self.selected_visit = None
-        self._subject_hiv_status = None
-        self._subject_hiv_history = None
+        self._packing_list_model = None
+        self._registered_subject = None
+        self._requisition_model = None
+        self._scheduled_entry_bucket = None
+        self._scheduled_entry_bucket_meta = None
+        self._scheduled_lab_bucket = None
+        self._show = None
         self._site_lab_tracker = None
-        self.is_dispatched, self.dispatch_producer = False, None
+        self._subject_configuration = None
+        self._subject_hiv_history = None
+        self._subject_hiv_status = None
+        self._subject_identifier = None
+        self._subject_membership_models = None
+        self._subject_type = None
+        self._view = None
+        self._visit_messages = []
+        self._visit_model = None
+        self._visit_model_instance = None
         self.exclude_others_if_keyed_model_name = ''
+        self.is_dispatched, self.dispatch_producer = False, None
+        self.selected_visit = None
 
         self._set_registered_subject(registered_subject)
         self._set_membership_form_category(dashboard_category)
@@ -213,17 +214,18 @@ class RegisteredSubjectDashboard(Dashboard):
             self._run_rule_groups()
             self.context.add(
                 scheduled_entry_bucket_meta=self.get_scheduled_entry_meta(),
-                scheduled_entry_bucket=self.get_scheduled_entry_bucket(),
+                scheduled_entry_bucket=self.get_scheduled_entry_bucket(),  # TODO: things takes a long time!!
                 scheduled_lab_bucket=self.get_scheduled_lab_bucket(),
                 additional_entry_bucket=self.get_additional_entry_bucket(),
                 additional_lab_bucket=self.get_additional_lab_bucket(),
                 requisition_model=self.get_requisition_model(),
+                rendered_scheduled_forms=self.render_scheduled_forms()
                 )
             if self.get_requisition_model():
                 self.context.add(requisition_model_meta=self.get_requisition_model()._meta)
             self.render_summary_links()
         self.context.add(rendered_action_items=self.render_action_item(),
-                         locator=self.render_locator(),
+                         rendered_locator=self.render_locator(),
                          local_results=self.render_labs(),)
 
     def verify_dashboard_model(self, value):
@@ -496,6 +498,14 @@ class RegisteredSubjectDashboard(Dashboard):
             self._set_visit_model(visit_model=self.get_visit_model())
         return self._visit_model
 
+    def get_visit_model_attrname(self):
+        """Returns what is assumed to be the field name for the visit model in appointment based on the visit model object name."""
+        return convert_from_camel(self._get_visit_model()._meta.object_name)
+
+    def get_visit_model_rel_attrname(self):
+        """Returns what is assumed to be the field name for the visit model in appointment based on the visit model object name."""
+        return self._get_visit_model()._meta.object_name.lower()
+
     def set_visit_model_instance(self, model_inst=None, pk=None, appointment=None):
         """Sets the visit model instance but may be None."""
         self._visit_model_instance = None
@@ -508,9 +518,8 @@ class RegisteredSubjectDashboard(Dashboard):
         elif self.get_dashboard_model_name() == 'visit':
             self._visit_model_instance = self._get_visit_model().objects.get(pk=self.get_dashboard_id())
         elif self.get_dashboard_model_name() == 'appointment':
-            # warning, this assumes the subject visit attribute is based on the model name SubjectVisit (which it should be!).
             try:
-                self._visit_model_instance = getattr(self.get_appointment(), self._get_visit_model()._meta.object_name.lower())
+                self._visit_model_instance = getattr(self.get_appointment(), self.get_visit_model_rel_attrname())
             except self._get_visit_model().DoesNotExist:
                 pass
         else:
@@ -759,29 +768,6 @@ class RegisteredSubjectDashboard(Dashboard):
         if self._get_visit_model_instance():
             rule_groups.update_all(self._get_visit_model_instance())
 
-    def next_url_in_scheduled_entry_bucket(self, obj, visit_attr, entry_order, dashboard_type, dashboard_id, dashboard_model):
-        """Returns a tuple with the reverse of the admin url for the next model listed in scheduled_entry_bucket.
-
-        If there is not a "next" model, returns an empty tuple (None, None, None).
-
-        Called from response_add and response_change."""
-        retval = (None, None, None)
-        if not visit_attr or not entry_order:
-            return retval
-        self.set_show('forms')
-        self.set_dashboard_type(dashboard_type)
-        self.set_dashboard_id(dashboard_id)
-        self.set_dashboard_model_key(dashboard_model)
-        visit = getattr(obj, visit_attr)
-        self._set_visit_model(visit_model=visit.__class__)
-        self.set_visit_model_instance(visit)
-        self._run_rule_groups()
-        scheduled_entry_bucket = ScheduledEntry().get_next_entry_for(entry_order, self.get_appointment(), self.get_registered_subject())
-        if scheduled_entry_bucket:
-            url = reverse('admin:{0}_{1}_add'.format(scheduled_entry_bucket.entry.content_type_map.app_label, scheduled_entry_bucket.entry.content_type_map.module_name))
-            retval = (url, self._get_visit_model_instance(), scheduled_entry_bucket.entry.entry_order)
-        return retval
-
     def render_summary_links(self, template_filename=None):
         """Renders the side bar template for subject summaries."""
         if not template_filename:
@@ -813,6 +799,8 @@ class RegisteredSubjectDashboard(Dashboard):
         if self._locator_model:
             if not issubclass(self._locator_model, BaseLocator):
                 raise TypeError('Locator model must be a subclass of BaseLocator.')
+        if not self._locator_model:
+            raise TypeError('Attribute _locator_model may not be None')
 
     def _get_locator_model(self):
         if not self._locator_model:
@@ -836,6 +824,17 @@ class RegisteredSubjectDashboard(Dashboard):
         """Users may override to return a registered_subject other than the current or None -- used to filter the locator model.
 
         For example, current subject is an infant, need mother\'s registered subject instance to filter Locator model."""
+        return self.get_registered_subject()
+
+    def get_locator_visit_model(self):
+        """Users may override to return a visit_model other than the current or None -- used to filter the locator model."""
+        return self.get_visit_model()
+
+    def _get_locator_visit_model_attrname(self):
+        return convert_from_camel(self.get_locator_visit_model()._meta.object_name)
+
+    def get_locator_scheduled_visit_code(self):
+        """ Returns visit where the locator is scheduled, TODO: maybe search visit definition for this?."""
         return None
 
     def get_locator_template(self):
@@ -844,38 +843,70 @@ class RegisteredSubjectDashboard(Dashboard):
         Defaults to 'locator_include.html'."""
         return 'locator_include.html'
 
-    def get_subject_hiv_template(self):
-        return 'subject_hiv_status.html'
-
-    def render_subject_hiv_status(self):
-        """Renders to string a to a url to the historymodel for the subject_hiv_status."""
-        if self.get_subject_hiv_status():
-            change_list_url = reverse('admin:bhp_lab_tracker_historymodel_changelist')
-            return render_to_string(self.get_subject_hiv_template(), {
-                'subject_hiv_status': self.get_subject_hiv_status(),
-                'subject_identifier': self.get_subject_identifier(),
-                'subject_type': self.get_subject_type(),
-                'change_list_url': change_list_url})
-        return ''
-
     def render_locator(self):
-        """Renders to string the locator for the current locator instance if it is set."""
+        """Renders to string the locator for the current locator instance if it is set.
+
+        .. note:: getting access to the correct visit model instance for the locator
+                  is a bit tricky. locator model is usually scheduled once for the
+                  subject type and otherwise edited from the dashboard sidebar. It may
+                  also be 'added' from the dashboard sidebar. Either way, the visit model
+                  instance is required -- that being the instance that was (or would
+                  have been) used if updated as a scheduled form. If the dashboard is
+                  in appointments mode, there is no selected visit model instance.
+                  Similarly, if the locator is edited from another dashboard, such as
+                  the infant dashboard with maternal/infant pairs, the maternal visit
+                  instance is not known. Some methods may be overriden to solve this.
+                  They all have 'locator' in the name."""
+        context = {}
+        locator_add_url = None
+        locator_change_url = None
+        if not self._get_locator_inst():
+            context.update({'locator': None})
+            locator_add_url = reverse('admin:' + self._get_locator_model()._meta.app_label + '_' + self._get_locator_model()._meta.module_name + '_add')
         if self._get_locator_inst():
-            from bhp_crypto.fields import EncryptedTextField
-            locator_add_url = reverse('admin:' + self.get_locator_model()._meta.app_label + '_' + self.get_locator_model()._meta.module_name + '_add')
+            context.update({'locator': self._get_locator_inst()})
+            locator_change_url = reverse('admin:' + self._get_locator_model()._meta.app_label + '_' + self._get_locator_model()._meta.module_name + '_change', args=(self._get_locator_inst().pk, ))
             for field in self._get_locator_inst()._meta.fields:
-                if isinstance(field, (TextField, EncryptedTextField)):
+                if isinstance(field, (TextField)):
                     value = getattr(self._get_locator_inst(), field.name)
                     if value:
                         setattr(self._get_locator_inst(), field.name, '<BR>'.join(wrap(value, 25)))
-            return render_to_string(self.get_locator_template(), {'locator': self._get_locator_inst(),
-                                               'subject_dashboard_url': self.get_dashboard_url_name(),
-                                               'dashboard_type': self.get_dashboard_type(),
-                                               'dashboard_model': self.get_dashboard_model_name(),
-                                               'dashboard_id': self.get_dashboard_id(),
-                                               'show': self.get_show(),
-                                               'locator_add_url': locator_add_url})
-        return ''
+        context.update({
+            'subject_dashboard_url': self.get_dashboard_url_name(),
+            'dashboard_type': self.get_dashboard_type(),
+            'dashboard_model': self.get_dashboard_model_name(),
+            'dashboard_id': self.get_dashboard_id(),
+            'show': self.get_show(),
+            'registered_subject': self.get_registered_subject(),
+            'visit_attr': self.get_visit_model_attrname(),
+            'visit_model_instance': self._get_visit_model_instance(),
+            'appointment': self.get_appointment(),
+            'locator_add_url': locator_add_url,
+            'locator_change_url': locator_change_url})
+        # subclass may insert / update context values (e.g. visit stuff)
+        context = self.update_locator_context(context)
+        return render_to_string(self.get_locator_template(), context)
+
+    def update_locator_context(self, context):
+        """Update context to set visit information if needing something other than the default."""
+        if context.get('visit_model_instance'):
+            if not isinstance(context.get('visit_model_instance'), self.get_locator_visit_model()):
+                context['visit_model_instance'] = None
+        if not context.get('visit_model_instance'):
+            if self._get_locator_inst():
+                visit_model_instance = getattr(self._get_locator_inst(), self._get_locator_visit_model_attrname())
+            else:
+                locator_visit_code = self.get_locator_scheduled_visit_code()
+                visit_model_instance = None
+                if self.get_locator_model().objects.filter(registered_subject=self.get_locator_registered_subject()):
+                    visit_model_instance = self.get_locator_model().objects.get(registered_subject=self.get_locator_registered_subject()).maternal_visit
+                elif self.get_locator_visit_model().objects.filter(appointment__registered_subject=self.get_locator_registered_subject(), appointment__visit_definition__code=locator_visit_code, appointment__visit_instance=0):
+                    visit_model_instance = self.get_locator_visit_model().objects.get(appointment__registered_subject=self.get_locator_registered_subject(), appointment__visit_definition__code=locator_visit_code, appointment__visit_instance=0)
+                else:
+                    pass
+            if visit_model_instance:
+                context.update({'visit_attr': convert_from_camel(visit_model_instance._meta.object_name), 'visit_model_instance': visit_model_instance})
+        return context
 
     def render_action_item(self, action_item_cls=None, template=None, **kwargs):
         """Renders to string the action_items for the current registered subject."""
@@ -910,3 +941,37 @@ class RegisteredSubjectDashboard(Dashboard):
             'show': self.get_show(),
             'action_item_meta': action_item_cls._meta})
         return rendered_action_items
+
+    def render_scheduled_forms(self):
+        """Renders the Scheduled Entry Forms section of the dashboard using the context class ScheduledEntryContext."""
+        template = 'scheduled_entries.html'
+        scheduled_entries = []
+        for scheduled_entry in self.get_scheduled_entry_bucket():
+            inst = ScheduledEntryContext(scheduled_entry, self.get_appointment(), self.get_visit_model())
+            scheduled_entries.append(inst.get_context())
+        rendered_scheduled_forms = render_to_string(template, {
+            'scheduled_entries': scheduled_entries,
+            'visit_attr': self.get_visit_model_attrname(),
+            'visit_model_instance': self._get_visit_model_instance(),
+            'registered_subject': self.get_registered_subject().pk,
+            'appointment': self.get_appointment().pk,
+            'dashboard_type': self.get_dashboard_type(),
+            'dashboard_model': self.get_dashboard_model_name(),
+            'dashboard_id': self.get_dashboard_id(),
+            'subject_dashboard_url': self.get_dashboard_url_name(),
+            'show': self.get_show()})
+        return rendered_scheduled_forms
+
+    def get_subject_hiv_template(self):
+        return 'subject_hiv_status.html'
+
+    def render_subject_hiv_status(self):
+        """Renders to string a to a url to the historymodel for the subject_hiv_status."""
+        if self.get_subject_hiv_status():
+            change_list_url = reverse('admin:bhp_lab_tracker_historymodel_changelist')
+            return render_to_string(self.get_subject_hiv_template(), {
+                'subject_hiv_status': self.get_subject_hiv_status(),
+                'subject_identifier': self.get_subject_identifier(),
+                'subject_type': self.get_subject_type(),
+                'change_list_url': change_list_url})
+        return ''
