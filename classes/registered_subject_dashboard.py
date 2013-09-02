@@ -224,16 +224,16 @@ class RegisteredSubjectDashboard(Dashboard):
             if self._get_requisition_model():
                 self.context.add(requisition_model_meta=self._get_requisition_model()._meta)
             self.render_summary_links()
-        self.context.add(rendered_action_items=self.render_action_item(),
-                         rendered_locator=self.render_locator(),
-                         local_results=self.render_labs(),)
+        self.context.add(rendered_action_items=self.render_action_item())
+        self.context.add(rendered_locator=self.render_locator())
+        self.context.add(local_results=self.render_labs())
 
     def verify_dashboard_model(self, value):
         """Verify the dashboard model has a way to get to registered_subject."""
         for model in value.itervalues():
             if model:
                 if not 'get_registered_subject' in dir(model):
-                    raise ImproperlyConfigured('RegisteredSubjectDashboard dashboard_model {0} must have method get_registered_subject().'.format(model))
+                    raise ImproperlyConfigured('RegisteredSubjectDashboard dashboard_model {0} must have method get_registered_subject(). See {1}.'.format(model, self))
 
     def set_site_lab_tracker(self):
         """Sets to the site_lab_tracker.
@@ -284,7 +284,7 @@ class RegisteredSubjectDashboard(Dashboard):
         """Sets the name of the view coming from __init__ for the url."""
         self._view = value or 'subject_dashboard'  # TODO: default this for now, but should be removed
         if not self._view:
-            raise TypeError('Attribute _view may not be None.')
+            raise TypeError('Attribute _view may not be None. See {0}'.format(self))
 
     def get_view(self):
         if not self._view:
@@ -292,13 +292,13 @@ class RegisteredSubjectDashboard(Dashboard):
         return self._view
 
     def set_consent(self):
-        raise ImproperlyConfigured('Users must override this method.')
+        raise ImproperlyConfigured('Users must override this method. See {0}'.format(self))
 
     def _set_consent(self):
         self.set_consent()
         if self._consent:
             if not isinstance(self._consent, BaseConsent):
-                raise TypeError('Expected an instance of BaseConsent. Got {0}'.format(self._consent))
+                raise TypeError('Expected an instance of BaseConsent. Got {0}. See {1}'.format(self._consent, self))
 
     def get_consent(self):
         if not self._consent:
@@ -350,11 +350,11 @@ class RegisteredSubjectDashboard(Dashboard):
             self._registered_subject = self.get_appointment().get_registered_subject()
         elif self._registered_subject:
             if not isinstance(self._registered_subject, RegisteredSubject):
-                raise TypeError('Expected instance of RegisteredSubject.')
+                raise TypeError('Expected instance of RegisteredSubject. See {0}'.format(self))
         else:
             pass
         if not self._registered_subject:
-            raise TypeError('Attribute \'_registered_subject\' may not be None. Perhaps add method get_registered_subject() to the model {0}'.format(self.get_dashboard_model()))
+            raise TypeError('Attribute \'_registered_subject\' may not be None. Perhaps add method get_registered_subject() to the model {0}. See {1}'.format(self.get_dashboard_model(), self))
 
     def get_registered_subject(self):
         if not self._registered_subject:
@@ -382,7 +382,7 @@ class RegisteredSubjectDashboard(Dashboard):
                     if Appointment.objects.filter(pk=appointment):
                         self._appointment = Appointment.objects.get(pk=appointment)
                 else:
-                    raise AttributeError('Unable to determine appointment for SubjectDashboard {0} using parameter \'appointment\'. Got {1}'.format(self.__class__, appointment))
+                    raise AttributeError('Unable to determine appointment for SubjectDashboard {0} using parameter \'appointment\'. Got {1}. See {2}.'.format(self.__class__, appointment, self))
             if appointment_code:
                 if Appointment.objects.filter(registered_subject=self.get_registered_subject(), visit_definition__code=appointment_code, visit_instance=appointment_continuation_count):
                     self._appointment = Appointment.objects.get(registered_subject=self.get_registered_subject(), visit_definition__code=appointment_code, visit_instance=appointment_continuation_count)
@@ -483,7 +483,7 @@ class RegisteredSubjectDashboard(Dashboard):
         if not self._visit_model:
             raise TypeError('Attribute _visit_model may not be None. Override the method to return a visit mode class or specify at init.')
         if not issubclass(self._visit_model, BaseVisitTracking):
-            raise TypeError('Expected visit model class to be a subclass of BaseVisitTracking. Got {0}'.format(self._visit_model))
+            raise TypeError('Expected visit model class to be a subclass of BaseVisitTracking. Got {0}. See {1}.'.format(self._visit_model, self))
 
     def get_visit_model(self):
         """gets a user defined visit model and passes to the setter.
@@ -526,7 +526,7 @@ class RegisteredSubjectDashboard(Dashboard):
             pass
         if self._visit_model_instance:
             if not isinstance(self._visit_model_instance, self._get_visit_model()):
-                raise TypeError('Expected an instance of visit model class {0} using (model_inst={1}, pk={2}, appointment={3} and self.get_dashboard_model_name()={4}).'.format(self._get_visit_model(), model_inst, pk, appointment, self.get_dashboard_model_name()))
+                raise TypeError('Expected an instance of visit model class {0} using (model_inst={1}, pk={2}, appointment={3} and self.get_dashboard_model_name()={4}). See {5}.'.format(self._get_visit_model(), model_inst, pk, appointment, self.get_dashboard_model_name(), self))
 
     def _get_visit_model_instance(self):
         if not self._visit_model_instance:
@@ -540,9 +540,9 @@ class RegisteredSubjectDashboard(Dashboard):
     def _set_requisition_model(self):
         self._requisition_model = self.get_requisition_model()
         if not self._requisition_model:
-            raise TypeError('Attribute _requisition model cannot be None')
+            raise TypeError('Attribute _requisition model cannot be None. See {0}'.format(self))
         if not issubclass(self._requisition_model, BaseBaseRequisition):
-            raise TypeError('Expected a subclass of BaseBaseRequisition. Got {0}.'.format(self._requisition_model))
+            raise TypeError('Expected a subclass of BaseBaseRequisition. Got {0}. See {1}.'.format(self._requisition_model, self))
 
     def _get_requisition_model(self):
         if not self._requisition_model:
@@ -556,9 +556,9 @@ class RegisteredSubjectDashboard(Dashboard):
     def _set_packing_list_model(self):
         self._packing_list_model = self.get_packing_list_model()
         if not self._packing_list_model:
-            raise TypeError('Attribute \'_packing_list_model\' may not be None. Override the getter.')
+            raise TypeError('Attribute \'_packing_list_model\' may not be None. Override the getter. See {0}'.format(self))
         if not issubclass(self._packing_list_model, BasePackingList):
-            raise TypeError('Expected a subclass of BasePackingList. Got {0}.'.format(self._packing_list_model))
+            raise TypeError('Expected a subclass of BasePackingList. Got {0}. See {1}.'.format(self._packing_list_model, self))
 
     def _get_packing_list_model(self):
         if not self._packing_list_model:
@@ -589,7 +589,7 @@ class RegisteredSubjectDashboard(Dashboard):
         # check if this category exists in the MembershipForm model
         if not self._membership_form_category:
             raise ImproperlyConfigured('Attribute \'_membership_form_category\' may not be None. Must be one of {0}. '
-                                 'The category should either come from the URL or from overridden dashboard method \'set_membership_form_category\''.format(self.get_categories()))
+                                 'The category should either come from the URL or from overridden dashboard method \'set_membership_form_category\'. See {1}.'.format(self.get_categories(), self))
         self.check_category(self._membership_form_category)
 
     def get_membership_form_category(self):
@@ -602,7 +602,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         Dashboard needs these to display keyed and unkeyed models listed in the MembershipForms model."""
         if category not in self.get_categories():
-            raise ImproperlyConfigured('Invalid membership_form category. Attribute \'_membership_form_category\'=\'{0}\' not found in MembershipForms. Must be one of {1}.'.format(category, self.get_categories()))
+            raise ImproperlyConfigured('Invalid membership_form category. Attribute \'_membership_form_category\'=\'{0}\' not found in MembershipForms. Must be one of {1}. See {2}.'.format(category, self.get_categories(), self))
 
     def set_categories(self, value=None):
         """Sets to a list of valid categories.
@@ -616,7 +616,7 @@ class RegisteredSubjectDashboard(Dashboard):
             self._categories.extend([x.strip() for x in c['category'].split(',')])
         self._categories = list(set(self._categories))
         if not self._categories:
-            raise MembershipFormError('Attribute _categories may not be None. Have any membership forms been defined?. See module \'bhp_visit\'')
+            raise MembershipFormError('Attribute _categories may not be None. Have any membership forms been defined?. See module \'bhp_visit\'. See {0}'.format(self))
 
     def get_categories(self):
         if not self._categories:
@@ -712,7 +712,7 @@ class RegisteredSubjectDashboard(Dashboard):
                 raise TypeError(('Subject identifier on registered subject {0} not the same as '
                                  'subject identifier on dashboard {1}!').format(self.get_registered_subject().get_subject_identifier(), self._subject_identifier))
         if not self._subject_identifier:
-            raise TypeError('attribute subject_identifier may not be None')
+            raise TypeError('attribute subject_identifier may not be None. See {0}'.format(self))
 
     def get_subject_identifier(self):
         if not self._subject_identifier:
@@ -802,9 +802,9 @@ class RegisteredSubjectDashboard(Dashboard):
         self._locator_model = self.get_locator_model()
         if self._locator_model:
             if not issubclass(self._locator_model, BaseLocator):
-                raise TypeError('Locator model must be a subclass of BaseLocator.')
-        if not self._locator_model:
-            raise TypeError('Attribute _locator_model may not be None')
+                raise TypeError('Locator model must be a subclass of BaseLocator. See {0}'.format(self))
+        #if not self._locator_model:
+        #    raise TypeError('Attribute _locator_model may not be None. See {0}'.format(self))
 
     def _get_locator_model(self):
         if not self._locator_model:
@@ -862,33 +862,34 @@ class RegisteredSubjectDashboard(Dashboard):
                   instance is not known. Some methods may be overriden to solve this.
                   They all have 'locator' in the name."""
         context = {}
-        locator_add_url = None
-        locator_change_url = None
-        if not self._get_locator_inst():
-            context.update({'locator': None})
-            locator_add_url = reverse('admin:' + self._get_locator_model()._meta.app_label + '_' + self._get_locator_model()._meta.module_name + '_add')
-        if self._get_locator_inst():
-            context.update({'locator': self._get_locator_inst()})
-            locator_change_url = reverse('admin:' + self._get_locator_model()._meta.app_label + '_' + self._get_locator_model()._meta.module_name + '_change', args=(self._get_locator_inst().pk, ))
-            for field in self._get_locator_inst()._meta.fields:
-                if isinstance(field, (TextField)):
-                    value = getattr(self._get_locator_inst(), field.name)
-                    if value:
-                        setattr(self._get_locator_inst(), field.name, '<BR>'.join(wrap(value, 25)))
-        context.update({
-            'subject_dashboard_url': self.get_dashboard_url_name(),
-            'dashboard_type': self.get_dashboard_type(),
-            'dashboard_model': self.get_dashboard_model_name(),
-            'dashboard_id': self.get_dashboard_id(),
-            'show': self.get_show(),
-            'registered_subject': self.get_registered_subject(),
-            'visit_attr': self.get_visit_model_attrname(),
-            'visit_model_instance': self._get_visit_model_instance(),
-            'appointment': self.get_appointment(),
-            'locator_add_url': locator_add_url,
-            'locator_change_url': locator_change_url})
+        if self._get_locator_model():
+            locator_add_url = None
+            locator_change_url = None
+            if not self._get_locator_inst():
+                context.update({'locator': None})
+                locator_add_url = reverse('admin:' + self._get_locator_model()._meta.app_label + '_' + self._get_locator_model()._meta.module_name + '_add')
+            if self._get_locator_inst():
+                context.update({'locator': self._get_locator_inst()})
+                locator_change_url = reverse('admin:' + self._get_locator_model()._meta.app_label + '_' + self._get_locator_model()._meta.module_name + '_change', args=(self._get_locator_inst().pk, ))
+                for field in self._get_locator_inst()._meta.fields:
+                    if isinstance(field, (TextField)):
+                        value = getattr(self._get_locator_inst(), field.name)
+                        if value:
+                            setattr(self._get_locator_inst(), field.name, '<BR>'.join(wrap(value, 25)))
+            context.update({
+                'subject_dashboard_url': self.get_dashboard_url_name(),
+                'dashboard_type': self.get_dashboard_type(),
+                'dashboard_model': self.get_dashboard_model_name(),
+                'dashboard_id': self.get_dashboard_id(),
+                'show': self.get_show(),
+                'registered_subject': self.get_registered_subject(),
+                'visit_attr': self.get_visit_model_attrname(),
+                'visit_model_instance': self._get_visit_model_instance(),
+                'appointment': self.get_appointment(),
+                'locator_add_url': locator_add_url,
+                'locator_change_url': locator_change_url})
         # subclass may insert / update context values (e.g. visit stuff)
-        context = self.update_locator_context(context)
+            context = self.update_locator_context(context)
         return render_to_string(self.get_locator_template(), context)
 
     def update_locator_context(self, context):

@@ -37,7 +37,6 @@ class ScheduledEntryContextTests(TestCase):
         self.assertEqual(inst.get_scheduled_entry(), scheduled_entry_bucket)
         print 'try to reverse scheduled_entry for pk={0}'.format(inst.get_scheduled_entry().pk)
         self.assertIsNotNone(inst.get_scheduled_entry().pk)
-        self.assertIsNotNone(inst.get_scheduled_entry_url())
         self.assertIsNotNone(inst.get_scheduled_entry().pk)
         self.assertEqual(inst.get_visit_model(), TestVisit)
         self.assertEqual(inst.get_appointment(), appointment)
@@ -48,7 +47,8 @@ class ScheduledEntryContextTests(TestCase):
         self.assertEqual(inst.get_app_label(), 'bhp_base_test')
         self.assertEqual(inst.get_model_name(), 'testscheduledmodel')
         self.assertEqual(inst.get_model_cls(), TestScheduledModel)
-        self.assertIsNotNone(inst.get_pk())
+        self.assertIsNotNone(inst.get_model_pk())
 
         inst.get_context()
-        print inst.get_context()
+        #print inst.get_context()
+        self.assertIsNotNone(inst.get_scheduled_entry_url())
