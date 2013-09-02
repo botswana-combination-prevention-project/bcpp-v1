@@ -7,7 +7,7 @@ EDUCATION = (
     ('primary', _('Primary')),
     ('secondary', _('Secondary ')),
     ('tertiary', _('Tertiary (Higher than secondary, such as vocational college or university)')),
-) 
+)
 
 EMPLOYMENT = (
     ('full_time', _('Full-time employed')),
@@ -78,44 +78,44 @@ YES_NO_DECLINED = (
 
 REASON_NOT_TESTING = (
     ('know_status', _('I already know I am HIV positive.')),
-    ('not_risk',_('I don\'t believe I am at risk of getting HIV.')),
-    ('afraid',_('I am afraid to find out the result.')),
-    ('perception',_('I am afraid of what others would think of me.')),
-    ('prohibited',_('Friends/Family did not want me to get an HIV test.')),
-    ('time_work',_('I did not have time due to work.')),
-    ('time_family',_('I didn\'t have time due to family obligations')),
-    ('partner_refused',_('My sexual partner didn\'t want me to get an HIV test')),
-    ('not_sure',_('I am not sure')),
-    ('decline',_('Decline to answer')),
+    ('not_risk', _('I don\'t believe I am at risk of getting HIV.')),
+    ('afraid', _('I am afraid to find out the result.')),
+    ('perception', _('I am afraid of what others would think of me.')),
+    ('prohibited', _('Friends/Family did not want me to get an HIV test.')),
+    ('time_work', _('I did not have time due to work.')),
+    ('time_family', _('I didn\'t have time due to family obligations')),
+    ('partner_refused', _('My sexual partner didn\'t want me to get an HIV test')),
+    ('not_sure', _('I am not sure')),
+    ('decline', _('Decline to answer')),
 )
 
-SYMPTOMS=(
-    ('cough',_('Cough > 2 weeks')),
-    ('fever',_('Fever > 2 weeks')),
-    ('big_lymph',_('Enlarged lymph nodes')),
-    ('cough_blood',_('Coughing up blood')),
-    ('night_sweats',_('Night Sweats')),
-    ('weight_loss',_('Unexplained weight loss')),
-    ('none',_('None of the above symptoms reported')),
+SYMPTOMS = (
+    ('cough', _('Cough > 2 weeks')),
+    ('fever', _('Fever > 2 weeks')),
+    ('big_lymph', _('Enlarged lymph nodes')),
+    ('cough_blood', _('Coughing up blood')),
+    ('night_sweats', _('Night Sweats')),
+    ('weight_loss', _('Unexplained weight loss')),
+    ('none', _('None of the above symptoms reported')),
 )
 
-REFERRED_FOR=(
-    ('circumcision',_('Circumcision')),
-    ('cervical_screen',_('Cervical Screening')),
-    ('sti_screen',_('STI screening')),
-    ('family_plan',_('Family Planning')),
-    ('tb_screen',_('TB screening')),
-    ('couple_test',_('Couple Testing')),
-    ('pmtct',_('PMTCT')),
-    ('hiv_care',_('HIV Care and Treatment')),
-    ('counselling',_('Supportive Counseling')),
-    ('social_welfare',_('Psycho social support/Social Welfare')),
+REFERRED_FOR = (
+    ('circumcision', _('Circumcision')),
+    ('cervical_screen', _('Cervical Screening')),
+    ('sti_screen', _('STI screening')),
+    ('family_plan', _('Family Planning')),
+    ('tb_screen', _('TB screening')),
+    ('couple_test', _('Couple Testing')),
+    ('pmtct', _('PMTCT')),
+    ('hiv_care', _('HIV Care and Treatment')),
+    ('counselling', _('Supportive Counseling')),
+    ('social_welfare', _('Psycho social support/Social Welfare')),
 )
 
-REFERRED_TO=(
-    ('health_facility',_('Public/Private Health Facility')),
-    ('religious',_('Religious Institution')),
-    ('plwh',_('PLWH/A Association')),
-    ('social_welfare',_('Social Welfare facilities')),
-    ('youth_friendly',_('Youth Friendly Services')),
+REFERRED_TO = (
+    ('health_facility', _('Public/Private Health Facility')),
+    ('religious', _('Religious Institution')),
+    ('plwh', _('PLWH/A Association')),
+    ('social_welfare', _('Social Welfare facilities')),
+    ('youth_friendly', _('Youth Friendly Services')),
 )

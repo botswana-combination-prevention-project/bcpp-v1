@@ -7,8 +7,6 @@ from base_partner import BasePartner
 
 class HtcThirdPartner (BasePartner):
 
-    """HTC"""
-        
     third_partner_rel = models.CharField(
         verbose_name=_("Now I am going to ask you about your third most"
                        " recent sexual partner.  What is your relationship"

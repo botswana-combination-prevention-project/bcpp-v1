@@ -4,7 +4,7 @@ from bcpp_htc.models import HtcHivTestingHistory
 
 
 class HtcHivTestingHistoryForm (BaseHtcModelForm):
-    
+
     def clean(self):
         cleaned_data = super(HtcHivTestingHistoryForm, self).clean()
         # validating testing

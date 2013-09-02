@@ -3,10 +3,10 @@ from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import POS_NEG_ONLY
 from bcpp_htc.choices import YES_NO_DECLINED
-from base_scheduled_htc_visit import BaseScheduledHtcVisit
+from base_scheduled_model import BaseScheduledModel
 
 
-class LastHivRecord (BaseScheduledHtcVisit):
+class LastHivRecord (BaseScheduledModel):
 
     recorded_test = models.DateField(
         verbose_name=_("Recorded date of previous test:"),
@@ -19,20 +19,20 @@ class LastHivRecord (BaseScheduledHtcVisit):
         choices=POS_NEG_ONLY,
         help_text="",
         )
-    
+
     attended_hiv_care = models.CharField(
         verbose_name=_("Have you ever attended a health clinic for HIV care?"),
         max_length=15,
         choices=YES_NO_DECLINED,
         )
-    
+
     hiv_care_clinic = models.CharField(
         verbose_name=_("What is the name of the clinic most recently visited for HIV care?"),
         max_length=25,
         null=True,
         blank=True,
         )
-    
+
     hiv_care_card = models.CharField(
         verbose_name=_("Do you have an ART card or HIV care enrollment card available to review today?"),
         max_length=25,

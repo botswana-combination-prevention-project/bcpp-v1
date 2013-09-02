@@ -2,14 +2,14 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bcpp.choices import YES_NO
-from base_scheduled_htc_visit import BaseScheduledHtcVisit
+from base_scheduled_model import BaseScheduledModel
 
 
-class PositiveFollowup (BaseScheduledHtcVisit):
+class PositiveFollowup (BaseScheduledModel):
 
     """Positive Permissions to be contacted for follow-up"""
-    
-    contact_consent=models.CharField(
+
+    contact_consent = models.CharField(
         verbose_name=_("My fellow counselors and I are available to help you"
                        " begin HIV care at the local health clinic.  Do you give"
                        " permission for counselors to contact you by telephone and"
@@ -18,8 +18,8 @@ class PositiveFollowup (BaseScheduledHtcVisit):
         choices=YES_NO,
         help_text='',
         )
-    
-    contact_family=models.CharField(
+
+    contact_family = models.CharField(
         verbose_name=_("If we are unable to reach you, would you be willing to have me or"
                        " one of my fellow counselors contact a family member or friend who "
                        "would be able to reach you"),
@@ -27,7 +27,7 @@ class PositiveFollowup (BaseScheduledHtcVisit):
         choices=YES_NO,
         help_text=''
         )
-     
+
     history = AuditTrail()
 
     class Meta:

@@ -13,7 +13,7 @@ class BasePartner (BaseScheduledModel):
         choices=YES_NO,
         help_text="",
         )
-    
+
     parter_status = models.CharField(
         verbose_name=_("What is this partner\'s HIV status?"),
         max_length=25,

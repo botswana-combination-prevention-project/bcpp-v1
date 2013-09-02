@@ -4,7 +4,7 @@ from bcpp_htc.models import LastHivRecord
 
 
 class LastHivRecordForm (BaseHtcModelForm):
-    
+
     def clean(self):
         cleaned_data = super(LastHivRecordForm, self).clean()
         # validating HIV care

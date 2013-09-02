@@ -2,13 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bcpp_htc.choices import EDUCATION, EMPLOYMENT, MARITAL_STATUS, ALCOHOL_INTAKE
-from base_scheduled_htc_visit import BaseScheduledHtcVisit
+from base_scheduled_model import BaseScheduledModel
 
 
-class DemographicsRisk (BaseScheduledHtcVisit):
-
-    """C. Demographics and Risk Factors"""
-
+class DemographicsRisk (BaseScheduledModel):
 
     education = models.CharField(
         verbose_name=_("What is your highest level of education have you completed?"),
@@ -23,7 +20,7 @@ class DemographicsRisk (BaseScheduledHtcVisit):
         choices=EMPLOYMENT,
         help_text="",
         )
-    
+
     marital_status = models.IntegerField(
         verbose_name=_("What is your current marital status?"),
         max_length=35,

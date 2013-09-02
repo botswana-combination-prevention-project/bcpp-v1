@@ -6,7 +6,7 @@ from bcpp_htc.models import HtcRegistration
 class HtcRegistrationForm(BaseModelForm):
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(HtcRegistrationForm, self).clean()
         household_structure = cleaned_data.get('household_structure', None)
         if household_structure:
             if household_structure.is_dispatched_as_item():
