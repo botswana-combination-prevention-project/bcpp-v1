@@ -446,9 +446,91 @@ The MembershipForm field &#8216;category&#8217; may be a string of category name
 <dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext">
 <em class="property">class </em><tt class="descclassname">bhp_dashboard_registered_subject.classes.</tt><tt class="descname">ScheduledEntryContext</tt><big>(</big><em>scheduled_entry</em>, <em>appointment</em>, <em>visit_model</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_appointment">
+<tt class="descname">get_appointment</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current appointment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_audit_trail_url">
+<tt class="descname">get_audit_trail_url</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_audit_trail_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the URL to display the audit trail for this model instance.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_context">
 <tt class="descname">get_context</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary for the template context including all fields from ScheduledEntryBucket, URLs, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_databrowse_url">
+<tt class="descname">get_databrowse_url</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_databrowse_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the URL to display this model instance using databrowse.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_model_cls">
+<tt class="descname">get_model_cls</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_model_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model class of the model referred to by the scheduled entry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_model_url">
+<tt class="descname">get_model_url</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_model_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the URL to the model referred to by the scheduled entry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_model_verbose_name">
+<tt class="descname">get_model_verbose_name</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_model_verbose_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the verbose name of the model referred to by the scheduled entry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_scheduled_entry_url">
+<tt class="descname">get_scheduled_entry_url</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_scheduled_entry_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the URL for the scheduled entry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_visit_model">
+<tt class="descname">get_visit_model</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_visit_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the visit model class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_visit_model_instance">
+<tt class="descname">get_visit_model_instance</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.get_visit_model_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns and instance of the visit model taken from the appointment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_entry">
+<tt class="descname">set_entry</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the Entry instance related to the scheduled entry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_model_inst">
+<tt class="descname">set_model_inst</tt><big>(</big><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_model_inst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the model instance refered to by the scheduled entry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_model_pk">
+<tt class="descname">set_model_pk</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_model_pk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the pk of the model instance.</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_model_inst" title="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_model_inst"><tt class="xref py py-func docutils literal"><span class="pre">set_model_inst()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_scheduled_entry">
+<tt class="descname">set_scheduled_entry</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#bhp_dashboard_registered_subject.classes.ScheduledEntryContext.set_scheduled_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the schedule entry instance received on __init__.</p>
 </dd></dl>
 
 </dd></dl>
