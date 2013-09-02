@@ -4,14 +4,14 @@ from bhp_base_model.validators import datetime_not_before_study_start, datetime_
 from bhp_consent.models import BaseConsentedUuidModel
 from bcpp_household.models import Household
 from bcpp_subject.managers import ScheduledModelManager
-from htc_visit import HtcVisit
+from htc_subject_visit import HtcSubjectVisit
 
 
-class BaseScheduledHtcVisit(BaseConsentedUuidModel):
+class BaseScheduledModel(BaseConsentedUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
-    htc_visit = models.OneToOneField(HtcVisit)
+    htc_subject_visit = models.OneToOneField(HtcSubjectVisit)
 
     report_datetime = models.DateTimeField("Today's date",
         validators=[
@@ -35,13 +35,13 @@ class BaseScheduledHtcVisit(BaseConsentedUuidModel):
         return self.get_visit().get_subject_identifier()
 
     def get_visit(self):
-        return self.htc_visit
-        
+        return self.htc_subject_visit
+
     def is_dispatched_item_within_container(self, using=None):
-        return (('bcpp_household', 'household'), 'htc_visit__household_member__household_structure__household')
+        return (('bcpp_household', 'household'), 'htc_subject_visit__household_member__household_structure__household')
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'htc_visit__household_member__household_structure__household__household_identifier')
+        return (Household, 'htc_subject_visit__household_member__household_structure__household__household_identifier')
 
     class Meta:
         abstract = True

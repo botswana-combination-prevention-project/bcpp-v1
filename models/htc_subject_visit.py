@@ -5,7 +5,7 @@ from bcpp_subject.choices import VISIT_UNSCHEDULED_REASON
 from bcpp_household_member.models import HouseholdMember
 
 
-class HtcVisit(BaseVisitTracking):
+class HtcSubjectVisit(BaseVisitTracking):
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -22,7 +22,7 @@ class HtcVisit(BaseVisitTracking):
     def save(self, *args, **kwargs):
         self.info_source = 'subject'
         self.reason = 'consent'
-        super(HtcVisit, self).save(*args, **kwargs)
+        super(HtcSubjectVisit, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return unicode(self.appointment)
@@ -32,4 +32,4 @@ class HtcVisit(BaseVisitTracking):
 
     class Meta:
         app_label = "bcpp_htc"
-        verbose_name = "HTC Visit"
+        verbose_name = "HTC Subject Visit"

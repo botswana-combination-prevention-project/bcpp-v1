@@ -1,11 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from base_scheduled_htc_visit import BaseScheduledHtcVisit
+from base_scheduled_model import BaseScheduledModel
 from bcpp.choices import YES_NO
 from bcpp_htc.choices import PARTNER_HIV_STATUS
 
 
-class BasePartner (BaseScheduledHtcVisit):
+class BasePartner (BaseScheduledModel):
 
     partner_tested = models.CharField(
         verbose_name=_("Has this partner ever been tested for HIV?"),

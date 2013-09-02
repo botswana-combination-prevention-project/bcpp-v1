@@ -2,7 +2,8 @@ from demographics_risk import DemographicsRisk
 from htc_recent_partner import HtcRecentPartner
 from htc_second_partner import HtcSecondPartner
 from htc_third_partner import HtcThirdPartner
-from htc_visit import HtcVisit
+from htc_subject_visit import HtcSubjectVisit
+from htc_subject_locator import HtcSubjectLocator
 from htc_registration import HtcRegistration
 from htc_circumcision import HtcCircumcision
 from htc_hiv_testing_history import HtcHivTestingHistory
