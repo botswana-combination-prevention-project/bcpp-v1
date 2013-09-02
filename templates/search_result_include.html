@@ -17,7 +17,8 @@
     <th>m</th>
 	<th>Modified</th>    	    	
 	<th>Host</th> 
-	<th>Map</th>    	    	    		    	    	    	
+	<th>Map</th>
+	<th>Household-description</th>    	    	    		    	    	    	
 	</thead>	
     {% for household in search_result.object_list %}
         <!-- obj is a Household object -->
@@ -64,10 +65,30 @@
 					{% endif %}	
 				{% endif %}
        	  
-       	  </td>    	  
+       	  </td>
+       	  <td>
+       	  	<A href="{% url household|get_meta|admin_urlname:'change' household_description.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household&dashboard_id={{ household_description.pk }}">{{ household_description }}</A>
+          </td>    	  
         </tr>
-        
+
     {% endfor %}
     <tr><td colspan="11">{{ search_result.object_list.count|default:0 }} household structure{{ search_result.object_list|pluralize }}{% if not search_result.object_list.count%}s{%endif%} found.</td></tr>    
 </table>
 </div>
+<div class="pagination">
+    <span class="step-links">
+        {% if search_result.has_previous %}
+            <a href="?page={{ search_result.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ search_result.number }} of {{ search_result.paginator.num_pages }}.
+        </span>
+
+        {% if search_result.has_next %}
+            <a href="?page={{ search_result.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+
