@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
-from bcpp_subject_htc.choices import RELATIONSHIP_TYPE
+from bcpp_htc_subject.choices import RELATIONSHIP_TYPE
 from base_partner import BasePartner
 
 
@@ -19,6 +19,6 @@ class HtcThirdPartner (BasePartner):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_subject_htc'
+        app_label = 'bcpp_htc_subject'
         verbose_name = "HTC Third Partner"
         verbose_name_plural = "HTC Third Partner"

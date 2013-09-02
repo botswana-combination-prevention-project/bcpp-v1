@@ -1,7 +1,7 @@
 from django.contrib import admin
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_subject_htc.models import PregnantFollowup
-from bcpp_subject_htc.forms import PregnantFollowupForm
+from bcpp_htc_subject.models import PregnantFollowup
+from bcpp_htc_subject.forms import PregnantFollowupForm
 
 
 class PregnantFollowupAdmin(HtcSubjectVisitModelAdmin):

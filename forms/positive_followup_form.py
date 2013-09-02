@@ -1,6 +1,6 @@
 from django import forms
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_subject_htc.models import PositiveFollowup
+from bcpp_htc_subject.models import PositiveFollowup
 
 
 class PositiveFollowupForm (BaseHtcModelForm):

@@ -27,6 +27,6 @@ class HtcCircumcision (BaseScheduledModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_subject_htc'
+        app_label = 'bcpp_htc_subject'
         verbose_name = "HTC Circumcision"
         verbose_name_plural = "HTC Circumcision"

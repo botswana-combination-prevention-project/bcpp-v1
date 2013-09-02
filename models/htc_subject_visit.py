@@ -31,5 +31,5 @@ class HtcSubjectVisit(BaseVisitTracking):
         return (('bcpp_household', 'Household'), 'household_member__household_structure__household__household_identifier')
 
     class Meta:
-        app_label = "bcpp_subject_htc"
+        app_label = "bcpp_htc_subject"
         verbose_name = "HTC Subject Visit"

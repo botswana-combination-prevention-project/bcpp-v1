@@ -34,6 +34,6 @@ class MaleFollowup (BaseScheduledModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_subject_htc'
+        app_label = 'bcpp_htc_subject'
         verbose_name = "Male Follow-up"
         verbose_name_plural = "Male Follow-up"

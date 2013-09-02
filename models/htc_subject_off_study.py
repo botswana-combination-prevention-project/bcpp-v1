@@ -12,6 +12,6 @@ class HtcSubjectOffStudy(BaseOffStudy):
         return (HtcRegistration, 'registered_subject__subject_identifier')
 
     class Meta:
-        app_label = "bcpp_subject_htc"
+        app_label = "bcpp_htc_subject"
         verbose_name = "HTC Subject Off-Study"
         verbose_name_plural = "HTC Subject Off-Study"

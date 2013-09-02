@@ -102,6 +102,6 @@ class HtcRegistration (BaseAppointmentMixin, BaseBwConsent):
         return self.report_datetime
 
     class Meta:
-        app_label = "bcpp_subject_htc"
+        app_label = "bcpp_htc_subject"
         verbose_name = "HTC registration"
         verbose_name_plural = "HTC Registration"

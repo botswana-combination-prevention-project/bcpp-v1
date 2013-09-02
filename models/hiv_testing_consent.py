@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO
-from bcpp_subject_htc.choices import REASON_NOT_TESTING
+from bcpp_htc_subject.choices import REASON_NOT_TESTING
 from base_scheduled_model import BaseScheduledModel
 
 
@@ -27,6 +27,6 @@ class HivTestingConsent(BaseScheduledModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_subject_htc'
+        app_label = 'bcpp_htc_subject'
         verbose_name = "HIV testing consent"
         verbose_name_plural = "HIV testing consent"

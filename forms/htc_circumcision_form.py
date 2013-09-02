@@ -1,5 +1,5 @@
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_subject_htc.models import HtcCircumcision
+from bcpp_htc_subject.models import HtcCircumcision
 
 
 class HtcCircumcisionForm (BaseHtcModelForm):

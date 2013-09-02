@@ -3,7 +3,7 @@ from django.db import models
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_consent.models import BaseConsentedUuidModel
 from bcpp_household.models import Household
-from bcpp_subject.managers import ScheduledModelManager
+from bcpp_htc_subject.managers import ScheduledModelManager
 from htc_subject_visit import HtcSubjectVisit
 
 
