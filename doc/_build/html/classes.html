@@ -84,6 +84,12 @@ through a global <tt class="xref py py-attr docutils literal"><span class="pre">
 <p class="last"><tt class="xref py py-class docutils literal"><span class="pre">HivLabTracker</span></tt></p>
 </div>
 <dl class="method">
+<dt id="controller.Controller._get_lab_tracker_inst_by_group_name">
+<tt class="descname">_get_lab_tracker_inst_by_group_name</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>subject_type</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller._get_lab_tracker_inst_by_group_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller._get_lab_tracker_inst_by_group_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lab_tracker instantiated for this subject from the registry given a group_name and subject_type.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="controller.Controller.all">
 <tt class="descname">all</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the registry as a list.</p>
@@ -248,6 +254,47 @@ model <tt class="xref py py-class docutils literal"><span class="pre">lab_clinic
 </pre></div>
 </div>
 <dl class="method">
+<dt id="tracker.LabTracker._get_default_value">
+<tt class="descname">_get_default_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker._get_default_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker._get_default_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the default value when none is available from the HistoryModel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker._get_tracked_test_codes">
+<tt class="descname">_get_tracked_test_codes</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker._get_tracked_test_codes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker._get_tracked_test_codes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple of test codes to track.</p>
+<p>If not listed here, the history model will not be updated with the instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker._get_value_map">
+<tt class="descname">_get_value_map</tt><big>(</big><em>model_name</em><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker._get_value_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker._get_value_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps an instance result value according to a configured map, if such a map exists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker._log_default_value_used">
+<tt class="descname">_log_default_value_used</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker._log_default_value_used"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker._log_default_value_used" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs that a default value was used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tracker.LabTracker._set_history_inst">
+<tt class="descname">_set_history_inst</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker._set_history_inst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker._set_history_inst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets to the most recent history model instance relative to the value_datetime or to a default HistoryModel instance.</p>
+<p>The default value is ignore and never reported unless a value does not exist. Make sure the default value is NOT a value
+that might be reported. For example for HIV expect (POS, NEG, IND) so the default value cannot be POS or NEG or IND. Best to keep the
+default value as (UNK) for unknown.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">the default value is excluded if a value exists. Some models may have option to report a value in more than one way.
+For example, a model might ask for the most recent pcr, elisa or last known value. If you report one of these three, such
+as the last know value (NEG), the other two will supply an UNK for that datetime. So the history for  that datetime is
+NEG, UNK, UNK. The unknowns (UNK, UNK) should be ignored to report NEG.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="tracker.LabTracker.get_default_value">
 <tt class="descname">get_default_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/tracker.html#LabTracker.get_default_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tracker.LabTracker.get_default_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the a value if None is available.</p>
@@ -344,6 +391,12 @@ information for this subject in the History model.</p>
 <dt id="history_updater.HistoryUpdater">
 <em class="property">class </em><tt class="descclassname">history_updater.</tt><tt class="descname">HistoryUpdater</tt><big>(</big><em>model_inst</em>, <em>group_name</em>, <em>subject_type</em>, <em>tracker=None</em>, <em>tracked_test_codes=None</em><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="history_updater.HistoryUpdater._get_method">
+<tt class="descname">_get_method</tt><big>(</big><em>func</em>, <em>parameter_name</em>, <em>parameter_value</em><big>)</big><a class="headerlink" href="#history_updater.HistoryUpdater._get_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the given func with or without a value depending on inspection.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="history_updater.HistoryUpdater.delete">
 <tt class="descname">delete</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.delete" title="Permalink to this definition">¶</a></dt>

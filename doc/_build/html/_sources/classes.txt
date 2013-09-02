@@ -12,14 +12,17 @@ To get the value being tracked for a subject,  access :func:`site_lab_tracker.ge
 .. autoclass:: controller.Controller
     :members:
     :show-inheritance:
+    :private-members:
 
 .. autoclass:: tracker.LabTracker
     :members:    
     :show-inheritance:
+    :private-members:
     
 .. autoclass:: history_updater.HistoryUpdater
     :members:    
     :show-inheritance:
+    :private-members:
 
 .. note:: The global `site_lab_tracker` is an instance of :class:`Controller`.
     
@@ -29,3 +32,4 @@ Custom Subclasses of LabTracker
 .. autoclass:: hiv_lab_tracker.HivLabTracker
     :members:    
     :show-inheritance:
+    :private-members:

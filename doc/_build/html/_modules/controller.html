@@ -186,7 +186,7 @@
         <span class="sd">&quot;&quot;&quot;Returns the registry as a list.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span>
 </div>
-    <span class="k">def</span> <span class="nf">_get_lab_tracker_inst_by_group_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">):</span>
+<div class="viewcode-block" id="Controller._get_lab_tracker_inst_by_group_name"><a class="viewcode-back" href="../classes.html#controller.Controller._get_lab_tracker_inst_by_group_name">[docs]</a>    <span class="k">def</span> <span class="nf">_get_lab_tracker_inst_by_group_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a lab_tracker instantiated for this subject from the registry given a group_name.&quot;&quot;&quot;</span>
         <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">for</span> <span class="n">lab_tracker_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
@@ -195,7 +195,7 @@
                 <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="n">inst</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">lab_tracker_inst</span>
-
+</div>
 <div class="viewcode-block" id="Controller.set_model_list"><a class="viewcode-back" href="../classes.html#controller.Controller.set_model_list">[docs]</a>    <span class="k">def</span> <span class="nf">set_model_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the list of model classes used by the trackers in the registry.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">autodiscovered</span><span class="p">:</span>

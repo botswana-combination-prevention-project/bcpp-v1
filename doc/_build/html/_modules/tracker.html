@@ -291,12 +291,12 @@
 <span class="sd">        Users may override, carefully&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s">&#39;UNK&#39;</span>
 </div>
-    <span class="k">def</span> <span class="nf">_get_default_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LabTracker._get_default_value"><a class="viewcode-back" href="../classes.html#tracker.LabTracker._get_default_value">[docs]</a>    <span class="k">def</span> <span class="nf">_get_default_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the default value when none is available from the HistoryModel.&quot;&quot;&quot;</span>
         <span class="n">default_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_value</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_is_default_value</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">default_value</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_get_default_value_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
 
@@ -304,14 +304,14 @@
         <span class="sd">&quot;&quot;&quot;Users should override to use a custom map for a given tracker model.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{}</span>
 </div>
-    <span class="k">def</span> <span class="nf">_get_value_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+<div class="viewcode-block" id="LabTracker._get_value_map"><a class="viewcode-back" href="../classes.html#tracker.LabTracker._get_value_map">[docs]</a>    <span class="k">def</span> <span class="nf">_get_value_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Maps an instance result value according to a configured map, if such a map exists.&quot;&quot;&quot;</span>
         <span class="c"># check model exists</span>
         <span class="k">for</span> <span class="n">tracker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_trackers</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_map_prep</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">None</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_set_history_query_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">bhp_visit_tracking.models</span> <span class="kn">import</span> <span class="n">BaseVisitTracking</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_history_query_options</span> <span class="o">=</span> <span class="p">{}</span>
@@ -376,7 +376,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">set_subject_identifier</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject_identifier</span>
 
-    <span class="k">def</span> <span class="nf">_set_history_inst</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LabTracker._set_history_inst"><a class="viewcode-back" href="../classes.html#tracker.LabTracker._set_history_inst">[docs]</a>    <span class="k">def</span> <span class="nf">_set_history_inst</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets to the most recent history model instance relative to the value_datetime or to a default HistoryModel instance.&quot;&quot;&quot;</span>
         <span class="c"># create a default instance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_history_inst</span> <span class="o">=</span> <span class="n">HistoryModel</span><span class="p">(</span>
@@ -394,13 +394,13 @@
                 <span class="n">value_datetime__lte</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_value_datetime</span><span class="p">()</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-value_datetime&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_is_dirty</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_get_history_inst</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history_inst</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_history_inst</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history_inst</span>
 
-    <span class="k">def</span> <span class="nf">_log_default_value_used</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LabTracker._log_default_value_used"><a class="viewcode-back" href="../classes.html#tracker.LabTracker._log_default_value_used">[docs]</a>    <span class="k">def</span> <span class="nf">_log_default_value_used</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Logs that a default value was used. &quot;&quot;&quot;</span>
         <span class="n">default_value_log</span> <span class="o">=</span> <span class="n">DefaultValueLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
             <span class="n">subject_identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subject_identifier</span><span class="p">(),</span>
@@ -408,7 +408,7 @@
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_default_value</span><span class="p">(),</span>
             <span class="n">value_datetime</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_default_value_datetime</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">default_value_log</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_get_display_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracker</span><span class="p">):</span>
         <span class="n">display_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">display_value</span><span class="p">:</span>
@@ -444,13 +444,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracked_test_codes</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tracked_test_codes</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracked_test_codes</span><span class="p">,</span> <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_tracked_test_codes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LabTracker._get_tracked_test_codes"><a class="viewcode-back" href="../classes.html#tracker.LabTracker._get_tracked_test_codes">[docs]</a>    <span class="k">def</span> <span class="nf">_get_tracked_test_codes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a tuple of test codes to track.</span>
 
 <span class="sd">        If not listed here, the history model will not be updated with the instance.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracked_test_codes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_tracked_test_codes</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracked_test_codes</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracked_test_codes</span></div></div>
 </pre></div>
 
           </div>
