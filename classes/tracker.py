@@ -342,10 +342,14 @@ class LabTracker(object):
     def _set_history_inst(self):
         """Sets to the most recent history model instance relative to the value_datetime or to a default HistoryModel instance.
 
+        The default value is ignore and never reported unless a value does not exist. Make sure the default value is NOT a value
+        that might be reported. For example for HIV expect (POS, NEG, IND) so the default value cannot be POS or NEG or IND. Best to keep the
+        default value as (UNK) for unknown.
+
         .. note:: the default value is excluded if a value exists. Some models may have option to report a value in more than one way.
                   For example, a model might ask for the most recent pcr, elisa or last known value. If you report one of these three, such
                   as the last know value (NEG), the other two will supply an UNK for that datetime. So the history for  that datetime is
-                  NEG, UNK, UNK. The unknowns should be ignored."""
+                  NEG, UNK, UNK. The unknowns (UNK, UNK) should be ignored to report NEG."""
         # create a default instance
         self._history_inst = HistoryModel(
             subject_identifier=self.get_subject_identifier(),
