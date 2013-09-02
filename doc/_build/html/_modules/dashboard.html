@@ -201,7 +201,7 @@
     <span class="k">def</span> <span class="nf">set_dashboard_type_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">_set_dashboard_type_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dashboard._set_dashboard_type_list"><a class="viewcode-back" href="../classes.html#dashboard.Dashboard._set_dashboard_type_list">[docs]</a>    <span class="k">def</span> <span class="nf">_set_dashboard_type_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Users should override to set to a list of valid dashboard types such as [\&#39;maternal\&#39;, \&#39;infant\&#39;] or [\&#39;household\&#39;].&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_type_list</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
@@ -210,13 +210,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">set_dashboard_type_list</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_type_list</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Attribute _dashboard_type_list may not be None. Either override the setter or pass as a list on __init__.&#39;</span><span class="p">)</span>
-
+</div>
     <span class="k">def</span> <span class="nf">get_dashboard_type_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_type_list</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_dashboard_type_list</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_type_list</span>
 
-    <span class="k">def</span> <span class="nf">_set_dashboard_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dashboard._set_dashboard_model"><a class="viewcode-back" href="../classes.html#dashboard.Dashboard._set_dashboard_model">[docs]</a>    <span class="k">def</span> <span class="nf">_set_dashboard_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the model class given by the dashboard URL.</span>
 
 <span class="sd">        Checks with &quot;func&quot;`get_dashboard_models` if model or model_name is known to the class before using it.&quot;&quot;&quot;</span>
@@ -247,7 +247,7 @@
 <span class="c">#                 if model_name in self.get_dashboard_models():</span>
 <span class="c">#                     if issubclass(self.get_dashboard_models(model_name), BaseModel):</span>
 <span class="c">#                         self._dashboard_model = self.get_dashboard_models(model_name)</span>
-
+</div>
     <span class="k">def</span> <span class="nf">get_dashboard_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_model</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_dashboard_model</span><span class="p">()</span>
@@ -265,7 +265,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_dashboard_model_name</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_model_name</span>
 
-    <span class="k">def</span> <span class="nf">_set_dashboard_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dashboard._set_dashboard_id"><a class="viewcode-back" href="../classes.html#dashboard.Dashboard._set_dashboard_id">[docs]</a>    <span class="k">def</span> <span class="nf">_set_dashboard_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the pk of the dashboard model class given by the dashboard URL.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
             <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Parameter </span><span class="se">\&#39;</span><span class="s">pk</span><span class="se">\&#39;</span><span class="s"> may not be None.&#39;</span><span class="p">)</span>
@@ -275,7 +275,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">re_pk</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span> <span class="ow">or</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Dashboard id must be a uuid (pk). Got {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_id</span> <span class="o">=</span> <span class="n">value</span>
-
+</div>
     <span class="k">def</span> <span class="nf">get_dashboard_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_id</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_dashboard_id</span><span class="p">()</span>
@@ -375,7 +375,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">verify_dashboard_model</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_models</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-    <span class="k">def</span> <span class="nf">_set_dashboard_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dashboard._set_dashboard_models"><a class="viewcode-back" href="../classes.html#dashboard.Dashboard._set_dashboard_models">[docs]</a>    <span class="k">def</span> <span class="nf">_set_dashboard_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets a reference dictionary by updating the user defined dictionary with a default for registered_subject.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_models</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
@@ -383,7 +383,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_models</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;registered_subject&#39;</span><span class="p">:</span> <span class="n">RegisteredSubject</span><span class="p">})</span>
         <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_dashboard_model</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-
+</div>
     <span class="k">def</span> <span class="nf">get_dashboard_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dashboard_models</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_dashboard_models</span><span class="p">()</span>
@@ -411,13 +411,13 @@
     <span class="k">def</span> <span class="nf">set_extra_url_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">_set_extra_url_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dashboard._set_extra_url_context"><a class="viewcode-back" href="../classes.html#dashboard.Dashboard._set_extra_url_context">[docs]</a>    <span class="k">def</span> <span class="nf">_set_extra_url_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets / updates the extra_url_context dictionary.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extra_url_context</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_extra_url_context</span><span class="p">()</span>
         <span class="c"># adds the current language</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extra_url_context</span> <span class="o">=</span> <span class="s">&#39;{0}&amp;form_language_code={1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extra_url_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_language</span><span class="p">())</span>
-
+</div>
 <div class="viewcode-block" id="Dashboard.get_extra_url_context"><a class="viewcode-back" href="../classes.html#dashboard.Dashboard.get_extra_url_context">[docs]</a>    <span class="k">def</span> <span class="nf">get_extra_url_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets the extra_url_context and returns as a GET query string.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_url_context</span><span class="p">:</span>

@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="dashboard 1.0 documentation" href="index.html" />
-    <link rel="prev" title="Welcome to lab_tracker’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Overview" href="overview.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to lab_tracker’s documentation!"
+          <a href="overview.html" title="Overview"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">dashboard 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -56,6 +56,37 @@
 <dt id="dashboard.Dashboard">
 <em class="property">class </em><tt class="descclassname">dashboard.</tt><tt class="descname">Dashboard</tt><big>(</big><em>dashboard_type</em>, <em>dashboard_id</em>, <em>dashboard_model</em>, <em>dashboard_type_list=None</em>, <em>dashboard_models=None</em><big>)</big><a class="reference internal" href="_modules/dashboard.html#Dashboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dashboard.Dashboard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="dashboard.Dashboard._set_dashboard_id">
+<tt class="descname">_set_dashboard_id</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/dashboard.html#Dashboard._set_dashboard_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dashboard.Dashboard._set_dashboard_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the pk of the dashboard model class given by the dashboard URL.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.Dashboard._set_dashboard_model">
+<tt class="descname">_set_dashboard_model</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/dashboard.html#Dashboard._set_dashboard_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dashboard.Dashboard._set_dashboard_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the model class given by the dashboard URL.</p>
+<p>Checks with &#8220;func&#8221;<cite>get_dashboard_models</cite> if model or model_name is known to the class before using it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.Dashboard._set_dashboard_models">
+<tt class="descname">_set_dashboard_models</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/dashboard.html#Dashboard._set_dashboard_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dashboard.Dashboard._set_dashboard_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a reference dictionary by updating the user defined dictionary with a default for registered_subject.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.Dashboard._set_dashboard_type_list">
+<tt class="descname">_set_dashboard_type_list</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/dashboard.html#Dashboard._set_dashboard_type_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dashboard.Dashboard._set_dashboard_type_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Users should override to set to a list of valid dashboard types such as [&#8216;maternal&#8217;, &#8216;infant&#8217;] or [&#8216;household&#8217;].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.Dashboard._set_extra_url_context">
+<tt class="descname">_set_extra_url_context</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/dashboard.html#Dashboard._set_extra_url_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dashboard.Dashboard._set_extra_url_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets / updates the extra_url_context dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="dashboard.Dashboard.add_dashboard_model">
 <tt class="descname">add_dashboard_model</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/dashboard.html#Dashboard.add_dashboard_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dashboard.Dashboard.add_dashboard_model" title="Permalink to this definition">¶</a></dt>
@@ -126,8 +157,8 @@ coming from the url. We only want ones that we expect.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to lab_tracker&#8217;s documentation!</a></p>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">Overview</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/classes.txt"
@@ -160,7 +191,7 @@ coming from the url. We only want ones that we expect.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to lab_tracker’s documentation!"
+          <a href="overview.html" title="Overview"
              >previous</a> |</li>
         <li><a href="index.html">dashboard 1.0 documentation</a> &raquo;</li> 
       </ul>
