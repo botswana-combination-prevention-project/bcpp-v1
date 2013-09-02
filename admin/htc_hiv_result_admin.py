@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import HtcHivResult
 from bcpp_htc.forms import HtcHivResultForm
 
 
-class HtcHivResultAdmin(HtcVisitModelAdmin):
+class HtcHivResultAdmin(HtcSubjectVisitModelAdmin):
 
     form = HtcHivResultForm
 
@@ -15,9 +15,9 @@ class HtcHivResultAdmin(HtcVisitModelAdmin):
         "symptoms",
         "family_tb"
     )
-    radio_fields = { 
-        "couples_testing": admin.VERTICAL, 
+    radio_fields = {
+        "couples_testing": admin.VERTICAL,
         "symptoms": admin.VERTICAL,
-        "family_tb": admin.VERTICAL,      
+        "family_tb": admin.VERTICAL,
         }
 admin.site.register(HtcHivResult, HtcHivResultAdmin)

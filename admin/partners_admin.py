@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
 from bcpp_htc.forms import HtcRecentPartnerForm, HtcSecondPartnerForm, HtcThirdPartnerForm
 
 
-class HtcRecentPartnerAdmin(HtcVisitModelAdmin):
+class HtcRecentPartnerAdmin(HtcSubjectVisitModelAdmin):
 
     form = HtcRecentPartnerForm
 
@@ -37,7 +37,7 @@ class HtcRecentPartnerAdmin(HtcVisitModelAdmin):
 admin.site.register(HtcRecentPartner, HtcRecentPartnerAdmin)
 
 
-class HtcSecondPartnerAdmin(HtcVisitModelAdmin):
+class HtcSecondPartnerAdmin(HtcSubjectVisitModelAdmin):
 
     form = HtcSecondPartnerForm
 
@@ -70,7 +70,7 @@ class HtcSecondPartnerAdmin(HtcVisitModelAdmin):
 admin.site.register(HtcSecondPartner, HtcSecondPartnerAdmin)
 
 
-class HtcThirdPartnerAdmin(HtcVisitModelAdmin):
+class HtcThirdPartnerAdmin(HtcSubjectVisitModelAdmin):
 
     form = HtcThirdPartnerForm
 

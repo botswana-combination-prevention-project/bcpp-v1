@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import HivTestingConsent
 from bcpp_htc.forms import HivTestingConsentForm
 
 
-class HivTestingConsentAdmin(HtcVisitModelAdmin):
+class HivTestingConsentAdmin(HtcSubjectVisitModelAdmin):
 
     form = HivTestingConsentForm
 
@@ -14,7 +14,7 @@ class HivTestingConsentAdmin(HtcVisitModelAdmin):
     )
     radio_fields = {
         "testing_today": admin.VERTICAL,
-        "reason_not_testing": admin.VERTICAL,      
+        "reason_not_testing": admin.VERTICAL,
         }
     instructions = [("Request consent for HIV testing and counseling"
                      " from all age-eligible (16-64 years) clients who:"

@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import DemographicsRisk
 from bcpp_htc.forms import DemographicsRiskForm
 
 
-class DemographicsRiskAdmin(HtcVisitModelAdmin):
+class DemographicsRiskAdmin(HtcSubjectVisitModelAdmin):
 
     form = DemographicsRiskForm
 

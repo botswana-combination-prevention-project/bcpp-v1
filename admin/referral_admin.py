@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import Referral
 from bcpp_htc.forms import ReferralForm
 
 
-class ReferralAdmin(HtcVisitModelAdmin):
+class ReferralAdmin(HtcSubjectVisitModelAdmin):
 
     form = ReferralForm
 

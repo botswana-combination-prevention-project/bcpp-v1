@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import LastHivRecord
 from bcpp_htc.forms import LastHivRecordForm
 
 
-class LastHivRecordAdmin(HtcVisitModelAdmin):
+class LastHivRecordAdmin(HtcSubjectVisitModelAdmin):
 
     form = LastHivRecordForm
 
@@ -19,5 +19,5 @@ class LastHivRecordAdmin(HtcVisitModelAdmin):
     radio_fields = {
         "recorded_result": admin.VERTICAL,
         "attended_hiv_care": admin.VERTICAL,
-        "hiv_care_card": admin.VERTICAL,}
+        "hiv_care_card": admin.VERTICAL}
 admin.site.register(LastHivRecord, LastHivRecordAdmin)

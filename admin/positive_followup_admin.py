@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import PositiveFollowup
 from bcpp_htc.forms import PositiveFollowupForm
 
 
-class PositiveFollowupAdmin(HtcVisitModelAdmin):
+class PositiveFollowupAdmin(HtcSubjectVisitModelAdmin):
 
     form = PositiveFollowupForm
 
@@ -14,7 +14,7 @@ class PositiveFollowupAdmin(HtcVisitModelAdmin):
     )
     radio_fields = {
         "contact_consent": admin.VERTICAL,
-        "contact_family": admin.VERTICAL,   
+        "contact_family": admin.VERTICAL,
         }
     instructions = [("For newly identified HIV positive individuals and known"
                      " HIV positive individuals not enrolled in care")]
