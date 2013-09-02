@@ -13,8 +13,11 @@ from bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
 
 class HouseholdDashboard(Dashboard):
 
-    def __init__(self):
-        super(HouseholdDashboard, self).__init__()
+    view = 'household_dashboard'
+    dashboard_name = 'Household Dashboard'
+    dashboard_url_name = 'household_dasborad_url'
+
+    def __init__(self, **kwargs):
         self._household_members = None
         self._household_structure = None
         self._household_log = None
@@ -22,16 +25,26 @@ class HouseholdDashboard(Dashboard):
         self._enrolment_checklist = None
         self._household_info = None
         self._survey = None
-        self.set_section('household')
-        # TODO: section/search stuff should move to base class
-        self.add_to_dashboard_model_reference({'household': Household, 'household_structure': HouseholdStructure})
+        self._surveys = None
+        self._first_name = None
+#         self.set_section('household')
+        kwargs.update({'dashboard_models': {'household': Household, 'household_structure': HouseholdStructure}})
+        super(HouseholdDashboard, self).__init__()
+        self.set_survey(kwargs.get('survey'))
+        self.set_household()
+        self.set_household_structure()
+        self.set_first_name(kwargs.get('first_name', None))
+        # TODO: is this still necessary?
+        self.check_members_have_registered_subject()
+        self.set_mapper_name(kwargs.get('mapper_name'))
+
+    def add_to_context(self):
+        super(HouseholdDashboard, self).add_to_context()
+
         self.context.add(
-            section_name=self.get_section_name(),
-            search_type=self.get_search_type(),
             home='bcpp_survey',
-            #search_name='household',
             household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_ACTION],
-            membership_forms={'ABSENT': get_model('bcpp_subject', 'subjectabsentee')},
+            #membership_forms={'ABSENT': get_model('bcpp_subject', 'subjectabsentee')},
             title='',  # 'A. Household Composition',
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
@@ -39,42 +52,29 @@ class HouseholdDashboard(Dashboard):
             household_log_entry_meta=HouseholdLogEntry._meta,
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             household_info_meta=HouseholdInfo._meta,
-            )
-
-    def create(self, **kwargs):
-        """Sets the template context for the dashboard given the survey and household.
-
-        .. note:: the participation form is a property on the HouseholdMember model so there is no need
-                  to import and pass it to the template context here."""
-        self.set_dashboard_type('household')
-        self.set_dashboard_model_key('household')
-        self.set_dashboard_id(kwargs.get('dashboard_id'))
-        super(HouseholdDashboard, self).create(**kwargs)
-
-        self.set_survey(kwargs.get('survey'))
-        self.set_household()
-        self.set_household_structure()
-
-        # TODO: is this still necessary?
-        self.check_members_have_registered_subject()
-
-        self.context.add(
             household=self.get_household(),
             household_identifier=self.get_household().household_identifier,
             household_structure=self.get_household_structure(),
             household_members=self.get_household_members(),
             household_log=self.get_household_log(),
             household_log_entries=self.get_household_log_entries(),
-            first_name=kwargs.get('first_name', None),
+            first_name=self.get_first_name(),
             current_member_count=self.get_current_member_count(),
             survey=self.get_survey(),
-            surveys=Survey.objects.all().order_by('survey_name'),
+            surveys=self.get_surveys(),
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry(),
             household_info=self.get_household_info(),
+            mapper_name=self.get_mapper_name()
             )
-        self.set_mapper_name(kwargs.get('mapper_name'))
-        self.context.add(mapper_name=self.get_mapper_name())
+
+    def set_first_name(self, value=None):
+        self._first_name = value
+
+    def get_first_name(self):
+        if not self._first_name:
+            self.set_first_name()
+        return self._first_name
 
     def has_household_log_entry(self):
         """Confirms there is an househol_log_entry for today."""
@@ -129,6 +129,14 @@ class HouseholdDashboard(Dashboard):
         if not self._survey:
             raise TypeError('Dashboard attribute _survey may not be null.')
         return self._survey
+
+    def set_surveys(self, value=None):
+        self._surveys = Survey.objects.all().order_by('survey_name')
+
+    def get_surveys(self):
+        if not self._surveys:
+            self.set_surveys()
+        return self._surveys
 
     def get_current_member_count(self):
         try:
@@ -189,12 +197,6 @@ class HouseholdDashboard(Dashboard):
             self.set_household_members()
         return self._household_members
 
-#     def get_household_structure(self):
-#         try:
-#             return HouseholdStructure.objects.get(household=self.get_household(), survey=self.get_survey())
-#         except:
-#             return None
-
     def set_household_log(self):
         if not HouseholdLog.objects.filter(household_structure=self.get_household_structure()):
             self._household_log = HouseholdLog.objects.create(household_structure=self.get_household_structure())
@@ -225,20 +227,20 @@ class HouseholdDashboard(Dashboard):
     def get_household_log_entries(self):
         return HouseholdLogEntry.objects.filter(household_log__household_structure=self.get_household_structure())
 
-    def get_urlpatterns(self, view, regex, **kwargs):
-        """Gets the url_patterns for the dashboard view.
-
-        Called in the urls.py"""
-        regex.update({'pk': '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'})
-        regex.update({'dashboard_model': 'household|household_structure|registered_subject'})
-        regex.update({'dashboard_type': 'household'})
-        urlpatterns = patterns(view,
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>any)/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ),
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/$'.format(**regex),
-              'household_dashboard',
-                name="household_dashboard_url"
-                ))
-        return urlpatterns
+#     def get_urlpatterns(self, view, regex, **kwargs):
+#         """Gets the url_patterns for the dashboard view.
+# 
+#         Called in the urls.py"""
+#         regex.update({'pk': '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'})
+#         regex.update({'dashboard_model': 'household|household_structure|registered_subject'})
+#         regex.update({'dashboard_type': 'household'})
+#         urlpatterns = patterns(view,
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>any)/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ),
+#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/$'.format(**regex),
+#               'household_dashboard',
+#                 name="household_dashboard_url"
+#                 ))
+#         return urlpatterns

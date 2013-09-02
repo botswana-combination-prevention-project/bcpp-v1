@@ -6,10 +6,17 @@ from bcpp_dashboard.classes import HtcSubjectDashboard
 
 @login_required
 def htc_subject_dashboard(request, **kwargs):
-    dashboard = HtcSubjectDashboard()
-    dashboard.set_template('htc_subject_dashboard.html')
-    dashboard.create(**kwargs)
+    dashboard = HtcSubjectDashboard(
+        dashboard_type=kwargs.get('dashboard_type'),
+        dashboard_id=kwargs.get('dashboard_id'),
+        dashboard_model=kwargs.get('dashboard_model'),
+        dashboard_category=kwargs.get('dashboard_category'),
+        registered_subject=kwargs.get('registered_subject'),
+        show=kwargs.get('show'),
+        dashboard_type_list=['htc_subject'],
+        #dashboard_models={'subject_consent': SubjectConsent},
+        )
     return render_to_response(
-        dashboard.get_template(),
-        dashboard.get_context(),
+        'htc_subject_dashboard.html',
+        dashboard.get_context().get(),
         context_instance=RequestContext(request))

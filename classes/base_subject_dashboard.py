@@ -2,37 +2,29 @@ import re
 from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
 from bhp_registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.models import SubjectVisit, SubjectConsent
-from bcpp_lab.models import SubjectRequisition, PackingList
 
 
 class BaseSubjectDashboard(RegisteredSubjectDashboard):
 
-    def __init__(self):
-        super(BaseSubjectDashboard, self).__init__()
+    def __init__(self, **kwargs):
         self._survey = None
         self._household_member = None
         self._household_members = None
         self._household = None
+        kwargs.update({'dashboard_models': {'household_member': HouseholdMember}})
+        super(BaseSubjectDashboard, self).__init__()
 
-        self.exclude_others_if_keyed_model_name = 'subjectconsent'
-        self.add_to_dashboard_model_reference({'household_member': HouseholdMember})
+    def add_to_context(self):
+        super(BaseSubjectDashboard, self).add_to_context()
         self.context.add(
             home='bcpp_survey',
             search_name='subject',
+            title='Subject Dashboard',
             household_dashboard_url='household_dashboard_url',
-            subject_dashboard_url='subject_dashboard_url',
-            subject_dashboard_visit_url='subject_dashboard_visit_url',
-            )
-
-    def create(self, **kwargs):
-        super(BaseSubjectDashboard, self).create(**kwargs)
-        self.context.add(
             household_member=self.get_household_member(),
             subject_consent=self.get_household_member().consent(),
             household=self.get_household(),
             survey=self.get_survey(),
-            title='Subject Dashboard',
             household_members=self.get_household_members(),
             household_structure=self.get_household_member().household_structure,
             )
@@ -42,23 +34,6 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
 
     def set_membership_form_category(self):
         self._membership_form_category = (self.get_survey().survey_slug)
-
-    def set_consent(self):
-        self._consent = None
-        if SubjectConsent.objects.filter(registered_subject=self.get_registered_subject()):
-            self._consent = SubjectConsent.objects.get(registered_subject=self.get_registered_subject())
-
-    def set_visit_model(self):
-        if self.get_dashboard_type() == 'subject':
-            self._visit_model = SubjectVisit
-
-    def set_requisition_model(self):
-        if self.get_dashboard_type() == 'subject':
-            self._requisition_model = SubjectRequisition
-
-    def set_packing_list_model(self):
-        if self.get_dashboard_type() == 'subject':
-            self._packing_list_model = PackingList
 
     def set_survey(self):
         self._survey = self.get_household_member().survey
