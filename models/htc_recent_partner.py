@@ -19,6 +19,6 @@ class HtcRecentPartner (BasePartner):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         verbose_name = "HTC Recent Partner"
         verbose_name_plural = "HTC Recent Partner"

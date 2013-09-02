@@ -43,6 +43,6 @@ class LastHivRecord (BaseScheduledModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         verbose_name = "Last HIV Record"
         verbose_name_plural = "Last HIV Record"

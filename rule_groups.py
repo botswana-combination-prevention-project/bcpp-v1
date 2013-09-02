@@ -20,7 +20,7 @@ class GenderRuleGroup(RuleGroup):
         target_model=['pregnantfollowup'])
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = RegisteredSubject
 rule_groups.register(GenderRuleGroup)
@@ -36,7 +36,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=['lasthivrecord'])
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = HtcHivTestingHistory
 rule_groups.register(HivTestingHistoryRuleGroup)
@@ -52,7 +52,7 @@ class HivResultRuleGroup(RuleGroup):
         target_model=['Cd4test', 'positivefollowup'])
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = HtcHivResult
 rule_groups.register(HivResultRuleGroup)
@@ -68,7 +68,7 @@ class HivTestingConsentRuleGroup(RuleGroup):
         target_model=['Cd4test', 'positivefollowup', 'pregnantfollowup', 'malefollowup', 'circumcisionappointment'])
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = HivTestingConsent
 rule_groups.register(HivTestingConsentRuleGroup)

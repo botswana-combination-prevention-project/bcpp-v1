@@ -26,6 +26,6 @@ class CircumcisionAppointment (BaseScheduledModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         verbose_name = "Circumcision Appointment"
         verbose_name_plural = "Circumcision Appointment"

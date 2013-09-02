@@ -20,6 +20,6 @@ class Referral(BaseScheduledModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
         verbose_name = "Referral"
         verbose_name_plural = "referral"

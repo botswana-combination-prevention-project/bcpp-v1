@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 from bcpp_htc.models import CircumcisionAppointment
 from bcpp_htc.forms import CircumcisionAppointmentForm
 
 
-class CircumcisionAppointmentAdmin(HtcVisitModelAdmin):
+class CircumcisionAppointmentAdmin(HtcSubjectVisitModelAdmin):
 
     form = CircumcisionAppointmentForm
 
@@ -12,8 +12,8 @@ class CircumcisionAppointmentAdmin(HtcVisitModelAdmin):
         "circumcision_ap",
         "circumcision_ap_date",
     )
-    radio_fields = { 
-        "circumcision_ap": admin.VERTICAL,     
+    radio_fields = {
+        "circumcision_ap": admin.VERTICAL,
         }
     instructions = [("For male negative and uncircumcised")]
 

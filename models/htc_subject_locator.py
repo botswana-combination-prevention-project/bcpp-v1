@@ -107,4 +107,4 @@ class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     class Meta:
         verbose_name = 'HTC Subject Locator'
-        app_label = 'bcpp_htc'
+        app_label = 'bcpp_subject_htc'
