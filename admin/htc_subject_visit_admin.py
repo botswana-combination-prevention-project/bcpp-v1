@@ -1,16 +1,16 @@
 from django.contrib import admin
 from bhp_appointment.admin import BaseAppointmentModelAdmin
 from bcpp_lab.models import SubjectRequisition
-from bcpp_htc.models import HtcVisit
+from bcpp_htc.models import HtcSubjectVisit
 from bcpp_htc.forms import HtcVisitForm
 
 
-class HtcVisitAdmin(BaseAppointmentModelAdmin):
+class HtcSubjectVisitAdmin(BaseAppointmentModelAdmin):
 
     form = HtcVisitForm
-    visit_model_instance_field = 'htc_visit'
+    visit_model_instance_field = 'htc_subject_visit'
     requisition_model = SubjectRequisition
-    dashboard_type = 'subject'
+    dashboard_type = 'htc_subject'
 
     list_display = (
         'appointment',
@@ -42,4 +42,4 @@ class HtcVisitAdmin(BaseAppointmentModelAdmin):
         "comments"
         )
 
-admin.site.register(HtcVisit, HtcVisitAdmin)
+admin.site.register(HtcSubjectVisit, HtcSubjectVisitAdmin)
