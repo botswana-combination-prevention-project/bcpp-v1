@@ -237,7 +237,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django_extensions',
-    'django-databrowse',
+    'django_databrowse',
     'dajaxice',
     'dajax',
     'south',
