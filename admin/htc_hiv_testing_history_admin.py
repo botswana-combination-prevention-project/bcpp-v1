@@ -9,7 +9,7 @@ class HtcHivTestingHistoryAdmin(HtcSubjectVisitModelAdmin):
     form = HtcHivTestingHistoryForm
 
     fields = (
-        "htc_visit",
+        "htc_subject_visit",
         "report_datetime",
         "previous_testing",
         "testing_place",

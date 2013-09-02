@@ -9,6 +9,7 @@ class CircumcisionAppointmentAdmin(HtcSubjectVisitModelAdmin):
     form = CircumcisionAppointmentForm
 
     fields = (
+        "htc_subject_visit",
         "circumcision_ap",
         "circumcision_ap_date",
     )

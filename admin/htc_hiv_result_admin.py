@@ -9,6 +9,7 @@ class HtcHivResultAdmin(HtcSubjectVisitModelAdmin):
     form = HtcHivResultForm
 
     fields = (
+        "htc_subject_visit",
         "todays_result",
         "couples_testing",
         "partner_id",

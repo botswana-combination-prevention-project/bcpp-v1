@@ -9,6 +9,7 @@ class PregnantFollowupAdmin(HtcSubjectVisitModelAdmin):
     form = PregnantFollowupForm
 
     fields = (
+    "htc_subject_visit",
       "contact_consent",
       "contact_family",
     )

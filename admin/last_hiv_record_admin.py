@@ -9,7 +9,7 @@ class LastHivRecordAdmin(HtcSubjectVisitModelAdmin):
     form = LastHivRecordForm
 
     fields = (
-        "htc_visit",
+        "htc_subject_visit",
         "report_datetime",
         "recorded_test",
         "recorded_result",

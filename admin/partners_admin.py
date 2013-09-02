@@ -9,7 +9,7 @@ class HtcRecentPartnerAdmin(HtcSubjectVisitModelAdmin):
     form = HtcRecentPartnerForm
 
     fields = (
-        "htc_visit",
+        "htc_subject_visit",
         "report_datetime",
         "recent_partner_rel",
         "partner_tested",
@@ -42,7 +42,7 @@ class HtcSecondPartnerAdmin(HtcSubjectVisitModelAdmin):
     form = HtcSecondPartnerForm
 
     fields = (
-        "htc_visit",
+        "htc_subject_visit",
         "report_datetime",
         "second_partner_rel",
         "partner_tested",
@@ -75,7 +75,7 @@ class HtcThirdPartnerAdmin(HtcSubjectVisitModelAdmin):
     form = HtcThirdPartnerForm
 
     fields = (
-        "htc_visit",
+        "htc_subject_visit",
         "report_datetime",
         "third_partner_rel",
         "partner_tested",

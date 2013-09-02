@@ -9,8 +9,8 @@ class ReferralAdmin(HtcSubjectVisitModelAdmin):
     form = ReferralForm
 
     fields = (
+        "htc_subject_visit",
         "referred_for",
         "referred_to",
     )
-
 admin.site.register(Referral, ReferralAdmin)

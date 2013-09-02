@@ -9,6 +9,7 @@ class Cd4TestAdmin(HtcSubjectVisitModelAdmin):
     form = Cd4TestForm
 
     fields = (
+        "htc_subject_visit",
         "cd4_test_date",
         "cd4_result",
         "referral_clinic",

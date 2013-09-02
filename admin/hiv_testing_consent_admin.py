@@ -9,6 +9,7 @@ class HivTestingConsentAdmin(HtcSubjectVisitModelAdmin):
     form = HivTestingConsentForm
 
     fields = (
+        "htc_subject_visit",
         "testing_today",
         "reason_not_testing",
     )

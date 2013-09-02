@@ -9,6 +9,7 @@ class MaleFollowupAdmin(HtcSubjectVisitModelAdmin):
     form = MaleFollowupForm
 
     fields = (
+    "htc_subject_visit",
       "contact_consent",
       "contact_family",
     )

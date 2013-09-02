@@ -9,6 +9,7 @@ class PositiveFollowupAdmin(HtcSubjectVisitModelAdmin):
     form = PositiveFollowupForm
 
     fields = (
+        "htc_subject_visit",
       "contact_consent",
       "contact_family",
     )

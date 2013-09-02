@@ -9,7 +9,7 @@ class HtcCircumcisionAdmin(HtcSubjectVisitModelAdmin):
     form = HtcCircumcisionForm
 
     fields = (
-        "htc_visit",
+        "htc_subject_visit",
         "report_datetime",
         "is_circumcised",
         "circumcision_year",)

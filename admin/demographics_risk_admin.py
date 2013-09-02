@@ -9,7 +9,7 @@ class DemographicsRiskAdmin(HtcSubjectVisitModelAdmin):
     form = DemographicsRiskForm
 
     fields = (
-        "htc_visit",
+        "htc_subject_visit",
         "report_datetime",
         "education",
         "employment",
