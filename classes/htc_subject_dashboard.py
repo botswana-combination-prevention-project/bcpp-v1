@@ -1,4 +1,4 @@
-from bcpp_htc.models import HtcVisit, HtcRegistration, HtcLocator
+from bcpp_subject_htc.models import HtcSubjectVisit, HtcRegistration, HtcSubjectLocator
 from base_subject_dashboard import BaseSubjectDashboard
 
 
@@ -31,7 +31,7 @@ class HtcSubjectDashboard(BaseSubjectDashboard):
         return self._htc_registration
 
     def get_locator_model(self):
-        return HtcLocator
+        return HtcSubjectLocator
 
     def set_consent(self):
         self._consent = None
@@ -39,4 +39,4 @@ class HtcSubjectDashboard(BaseSubjectDashboard):
             self._consent = HtcRegistration.objects.get(registered_subject=self.get_registered_subject())
 
     def get_visit_model(self):
-        return HtcVisit
+        return HtcSubjectVisit
