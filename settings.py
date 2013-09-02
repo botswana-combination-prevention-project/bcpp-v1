@@ -407,7 +407,6 @@ REPORTS_OUTPUT_PATH = os.path.join(DIRNAME, 'bhp_birt_reports/templates/')
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
-KEY_PATH = os.path.join(DIRNAME, 'keys')
 MAP_DIR = os.path.join(DIRNAME, 'static/img/')
 if platform.system() == 'Darwin':
     KEY_PATH = '/Volumes/bhp066/keys'
