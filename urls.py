@@ -1,20 +1,20 @@
+import django_databrowse
+from django.contrib.auth.decorators import login_required
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django import get_version
-from django.db.models import get_models
 from django.views.generic import RedirectView
+from django.db.models import get_models
 from dajaxice.core import dajaxice_autodiscover
 from bhp_map.classes import site_mappers
 from bhp_entry_rules.classes import rule_groups
-from bhp_lab_tracker.classes import lab_tracker
+from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_data_manager.classes import data_manager
 from bhp_section.classes import site_sections
 
 dajaxice_autodiscover()
 rule_groups.autodiscover()
-lab_tracker.autodiscover()
+site_lab_tracker.autodiscover()
 data_manager.prepare()
 site_mappers.autodiscover()
 admin.autodiscover()
@@ -22,6 +22,8 @@ site_sections.autodiscover()
 
 APP_NAME = settings.APP_NAME
 
+for model in get_models():
+    django_databrowse.site.register(model)
 
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -33,6 +35,9 @@ urlpatterns += patterns('',
     (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 )
 
+urlpatterns += patterns('',
+    (r'^databrowse/(.*)', login_required(django_databrowse.site.root)),
+)
 
 urlpatterns += patterns('',
     (r'^bhp_sync/', include('bhp_sync.urls')),
