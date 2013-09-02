@@ -96,12 +96,6 @@ through a global <tt class="xref py py-attr docutils literal"><span class="pre">
 </dd></dl>
 
 <dl class="method">
-<dt id="controller.Controller.confirm_autodiscovered">
-<tt class="descname">confirm_autodiscovered</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.confirm_autodiscovered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.confirm_autodiscovered" title="Permalink to this definition">¶</a></dt>
-<dd><p>Confirms that autodiscover() was called at least once.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="controller.Controller.delete_history">
 <tt class="descname">delete_history</tt><big>(</big><em>model_inst</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.delete_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.delete_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes history for a given model instance (on pk) via the tracker for the model class.</p>
@@ -109,25 +103,25 @@ through a global <tt class="xref py py-attr docutils literal"><span class="pre">
 
 <dl class="method">
 <dt id="controller.Controller.get_current_value">
-<tt class="descname">get_current_value</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_current_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_current_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_current_value</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>subject_type</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_current_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_current_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wraps <tt class="xref py py-func docutils literal"><span class="pre">get_value()</span></tt> calling with value_datetime = today&#8217;s date.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="controller.Controller.get_history_as_list">
-<tt class="descname">get_history_as_list</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_list" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_history_as_list</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>subject_type</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the result history as a list of values.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="controller.Controller.get_history_as_qs">
-<tt class="descname">get_history_as_qs</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_qs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_qs" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_history_as_qs</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>subject_type</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_qs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_qs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the result history as QuerySet.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="controller.Controller.get_history_as_string">
-<tt class="descname">get_history_as_string</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>mapped=True</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_string" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_history_as_string</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>subject_type</em>, <em>mapped=None</em>, <em>reference_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_history_as_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_history_as_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the result history as a string of values.</p>
 </dd></dl>
 
@@ -139,7 +133,7 @@ through a global <tt class="xref py py-attr docutils literal"><span class="pre">
 
 <dl class="method">
 <dt id="controller.Controller.get_value">
-<tt class="descname">get_value</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>value_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value</tt><big>(</big><em>group_name</em>, <em>subject_identifier</em>, <em>subject_type</em>, <em>value_datetime=None</em><big>)</big><a class="reference internal" href="_modules/controller.html#Controller.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#controller.Controller.get_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the result value or a tuple with the result value, if default, in this LabTracker group for this subject.</p>
 <blockquote>
 <div><p>Searches thru the registry to find a class that can be used to search for the value..</p>
@@ -348,19 +342,12 @@ information for this subject in the History model.</p>
 
 <dl class="class">
 <dt id="history_updater.HistoryUpdater">
-<em class="property">class </em><tt class="descclassname">history_updater.</tt><tt class="descname">HistoryUpdater</tt><big>(</big><em>model_inst</em>, <em>group_name</em>, <em>tracker=None</em>, <em>tracked_test_codes=None</em><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">history_updater.</tt><tt class="descname">HistoryUpdater</tt><big>(</big><em>model_inst</em>, <em>group_name</em>, <em>subject_type</em>, <em>tracker=None</em>, <em>tracked_test_codes=None</em><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="method">
 <dt id="history_updater.HistoryUpdater.delete">
 <tt class="descname">delete</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes a single instance from the HistoryModel.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="history_updater.HistoryUpdater.get_subject_identifier">
-<tt class="descname">get_subject_identifier</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.get_subject_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.get_subject_identifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the datetime of the result item value determined either by getting the instance
-attribute or calling the instance method <tt class="xref py py-func docutils literal"><span class="pre">get_result_datetime()</span></tt> with the attribute name.</p>
 </dd></dl>
 
 <dl class="method">
@@ -392,9 +379,17 @@ attribute or calling the instance method <tt class="xref py py-func docutils lit
 </dd></dl>
 
 <dl class="method">
+<dt id="history_updater.HistoryUpdater.set_subject_type">
+<tt class="descname">set_subject_type</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#history_updater.HistoryUpdater.set_subject_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the subject type by accessing the method get_subject_type or the subject_type attr on the model instance.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="history_updater.HistoryUpdater.set_test_code">
 <tt class="descname">set_test_code</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/history_updater.html#HistoryUpdater.set_test_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#history_updater.HistoryUpdater.set_test_code" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the test_code for this value by inspecting the model instance.</p>
+<p>model instance method <tt class="xref py py-func docutils literal"><span class="pre">get_test_code()</span></tt> may return a test code conditional to the tracker.value_attr.</p>
+<p>model instance method <tt class="xref py py-func docutils literal"><span class="pre">get_test_code()</span></tt> may specify parameter &#8216;attr&#8217;. All other parameters will be ignored.</p>
 </dd></dl>
 
 <dl class="method">
