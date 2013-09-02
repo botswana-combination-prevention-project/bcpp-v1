@@ -6,3 +6,8 @@ Classes
     
 .. autoclass:: RegisteredSubjectDashboard
    :members:
+   :private-members:
+
+.. autoclass:: ScheduledEntryContext
+   :members:
+   :private-members:
