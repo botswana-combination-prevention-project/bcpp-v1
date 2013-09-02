@@ -1,7 +1,7 @@
 from main import *
 from demographics_risk_admin import DemographicsRiskAdmin
 from partners_admin import HtcRecentPartnerAdmin, HtcSecondPartnerAdmin, HtcThirdPartnerAdmin
-from htc_visit_admin import HtcVisitAdmin
+from htc_subject_visit_admin import HtcSubjectVisitAdmin
 from htc_registration_admin import HtcRegistrationAdmin
 from htc_circumcision_admin import HtcCircumcisionAdmin
 from htc_hiv_testing_history_admin import HtcHivTestingHistoryAdmin
