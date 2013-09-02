@@ -218,11 +218,11 @@ class RegisteredSubjectDashboard(Dashboard):
                 scheduled_lab_bucket=self.get_scheduled_lab_bucket(),
                 additional_entry_bucket=self.get_additional_entry_bucket(),
                 additional_lab_bucket=self.get_additional_lab_bucket(),
-                requisition_model=self.get_requisition_model(),
+                requisition_model=self._get_requisition_model(),
                 rendered_scheduled_forms=self.render_scheduled_forms()
                 )
-            if self.get_requisition_model():
-                self.context.add(requisition_model_meta=self.get_requisition_model()._meta)
+            if self._get_requisition_model():
+                self.context.add(requisition_model_meta=self._get_requisition_model()._meta)
             self.render_summary_links()
         self.context.add(rendered_action_items=self.render_action_item(),
                          rendered_locator=self.render_locator(),
@@ -538,32 +538,36 @@ class RegisteredSubjectDashboard(Dashboard):
         self._requisition_model = None
 
     def _set_requisition_model(self):
-        self._requisition_model = None
-        self.set_requisition_model()
+        self._requisition_model = self.get_requisition_model()
         if not self._requisition_model:
             raise TypeError('Attribute _requisition model cannot be None')
         if not issubclass(self._requisition_model, BaseBaseRequisition):
             raise TypeError('Expected a subclass of BaseBaseRequisition. Got {0}.'.format(self._requisition_model))
 
-    def get_requisition_model(self):
+    def _get_requisition_model(self):
         if not self._requisition_model:
             self._set_requisition_model()
         return self._requisition_model
 
-    def set_packing_list_model(self):
-        """Users must override if requisitions are used to specify the requisition model."""
-        self._packing_list_model = None
+    def get_requisition_model(self):
+        """Users must override if requisitions are used to return the requisition model."""
+        return None
 
     def _set_packing_list_model(self):
-        self._packing_list_model = None
-        self.set_packing_list_model()
+        self._packing_list_model = self.get_packing_list_model()
+        if not self._packing_list_model:
+            raise TypeError('Attribute \'_packing_list_model\' may not be None. Override the getter.')
         if not issubclass(self._packing_list_model, BasePackingList):
             raise TypeError('Expected a subclass of BasePackingList. Got {0}.'.format(self._packing_list_model))
 
-    def get_packing_list_model(self):
+    def _get_packing_list_model(self):
         if not self._packing_list_model:
             self._set_packing_list_model()
         return self._packing_list_model
+
+    def get_packing_list_model(self):
+        """Users must override if requisitions are used to specify the requisition model."""
+        return None
 
     def set_membership_form_category(self, value=None):
         """Sets to a category name needed to filter the MembershipForm model.
@@ -625,10 +629,10 @@ class RegisteredSubjectDashboard(Dashboard):
             scheduled_entry = ScheduledEntry()
             scheduled_entry.add_or_update_for_visit(self._get_visit_model_instance())
             # if requisition_model has been defined, assume scheduled labs otherwise pass
-            if self.get_requisition_model():
+            if self._get_requisition_model():
                 ScheduledLabEntryBucket.objects.add_for_visit(
                     visit_model_instance=self._get_visit_model_instance(),
-                    requisition_model=self.get_requisition_model())
+                    requisition_model=self._get_requisition_model())
         if self.get_registered_subject():
             additional_entry = AdditionalEntry()
             additional_entry.update_for_registered_subject(self.get_registered_subject())
@@ -782,7 +786,7 @@ class RegisteredSubjectDashboard(Dashboard):
 
         .. seealso:: :class:`lab_clinic_api.classes.EdcLab`"""
 
-        if self.get_requisition_model():
+        if self._get_requisition_model():
             edc_lab = EdcLab()
             return edc_lab.render(self.get_subject_identifier(), False)
         return ''
