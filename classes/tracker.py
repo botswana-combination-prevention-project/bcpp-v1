@@ -340,7 +340,12 @@ class LabTracker(object):
         return self._subject_identifier
 
     def _set_history_inst(self):
-        """Sets to the most recent history model instance relative to the value_datetime or to a default HistoryModel instance."""
+        """Sets to the most recent history model instance relative to the value_datetime or to a default HistoryModel instance.
+
+        .. note:: the default value is excluded if a value exists. Some models may have option to report a value in more than one way.
+                  For example, a model might ask for the most recent pcr, elisa or last known value. If you report one of these three, such
+                  as the last know value (NEG), the other two will supply an UNK for that datetime. So the history for  that datetime is
+                  NEG, UNK, UNK. The unknowns should be ignored."""
         # create a default instance
         self._history_inst = HistoryModel(
             subject_identifier=self.get_subject_identifier(),
@@ -350,7 +355,7 @@ class LabTracker(object):
         if HistoryModel.objects.filter(subject_identifier=self.get_subject_identifier(),
                                        subject_type=self.get_subject_type(),
                                        group_name=self.get_group_name(),
-                                       value_datetime__lte=self.get_value_datetime()).exists():
+                                       value_datetime__lte=self.get_value_datetime()).exclude(value=self._get_default_value()).exists():
             # set to most recent relative to value_datetime
             # TODO: this may cause problems for value_datetime when queried by date (with no time)
             self._history_inst = HistoryModel.objects.filter(
@@ -358,7 +363,7 @@ class LabTracker(object):
                 subject_type=self.get_subject_type(),
                 group_name=self.get_group_name(),
                 value_datetime__lte=self.get_value_datetime()
-                ).order_by('-value_datetime')[0]
+                ).exclude(value=self._get_default_value()).order_by('-value_datetime')[0]
         self._set_is_dirty(False)
 
     def _get_history_inst(self):
