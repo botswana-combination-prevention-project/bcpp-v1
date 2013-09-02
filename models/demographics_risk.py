@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
-from bcpp_htc.choices import EDUCATION, EMPLOYMENT, MARITAL_STATUS, ALCOHOL_INTAKE
+from bcpp_subject_htc.choices import EDUCATION, EMPLOYMENT, MARITAL_STATUS, ALCOHOL_INTAKE
 from base_scheduled_model import BaseScheduledModel
 
 

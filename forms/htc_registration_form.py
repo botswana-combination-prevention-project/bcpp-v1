@@ -1,6 +1,6 @@
 from django import forms
 from bhp_base_form.forms import BaseModelForm
-from bcpp_htc.models import HtcRegistration
+from bcpp_subject_htc.models import HtcRegistration
 
 
 class HtcRegistrationForm(BaseModelForm):

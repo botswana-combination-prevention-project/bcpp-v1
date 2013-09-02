@@ -1,6 +1,6 @@
 from django import forms
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_htc.models import HtcHivTestingHistory
+from bcpp_subject_htc.models import HtcHivTestingHistory
 
 
 class HtcHivTestingHistoryForm (BaseHtcModelForm):

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_htc.models import CircumcisionAppointment
-from bcpp_htc.forms import CircumcisionAppointmentForm
+from bcpp_subject_htc.models import CircumcisionAppointment
+from bcpp_subject_htc.forms import CircumcisionAppointmentForm
 
 
 class CircumcisionAppointmentAdmin(HtcSubjectVisitModelAdmin):

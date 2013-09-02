@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
 from bhp_common.choices import POS_NEG_ONLY
-from bcpp_htc.choices import YES_NO_DECLINED
+from bcpp_subject_htc.choices import YES_NO_DECLINED
 from base_scheduled_model import BaseScheduledModel
 
 

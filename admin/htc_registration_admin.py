@@ -2,8 +2,8 @@ from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
 from bcpp_household.models import HouseholdStructure
 from bcpp_household_member.models import HouseholdMember
-from bcpp_htc.models import HtcRegistration
-from bcpp_htc.forms import HtcRegistrationForm
+from bcpp_subject_htc.models import HtcRegistration
+from bcpp_subject_htc.forms import HtcRegistrationForm
 
 
 class HtcRegistrationAdmin(BaseModelAdmin):

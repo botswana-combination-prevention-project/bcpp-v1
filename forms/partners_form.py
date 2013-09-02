@@ -1,5 +1,5 @@
 from base_htc_model_form import BaseHtcModelForm
-from bcpp_htc.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
+from bcpp_subject_htc.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
 
 
 class HtcRecentPartnerForm (BaseHtcModelForm):

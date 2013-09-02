@@ -1,5 +1,5 @@
 from bhp_consent.forms import BaseConsentedModelForm
-from bcpp_htc.models import HtcSubjectVisit
+from bcpp_subject_htc.models import HtcSubjectVisit
 
 
 class HtcVisitForm (BaseConsentedModelForm):

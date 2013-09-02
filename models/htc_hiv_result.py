@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from audit_trail.audit import AuditTrail
-from bcpp_htc.choices import SYMPTOMS
+from bcpp_subject_htc.choices import SYMPTOMS
 from bhp_common.choices import YES_NO, POS_NEG, YES_NO_DONT_KNOW
 from base_scheduled_model import BaseScheduledModel
 

@@ -1,10 +1,10 @@
 from django.contrib import admin
-from htc_visit_model_admin import HtcVisitModelAdmin
-from bcpp_htc.models import Cd4Test
-from bcpp_htc.forms import Cd4TestForm
+from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
+from bcpp_subject_htc.models import Cd4Test
+from bcpp_subject_htc.forms import Cd4TestForm
 
 
-class Cd4TestAdmin(HtcVisitModelAdmin):
+class Cd4TestAdmin(HtcSubjectVisitModelAdmin):
 
     form = Cd4TestForm
 
