@@ -150,7 +150,7 @@ class RegisteredSubject(BaseSubject):
         if 'MAX_SUBJECTS' in dir(settings_attrs):
             if not isinstance(settings_attrs.MAX_SUBJECTS, dict):
                 raise ImproperlyConfigured('Setting attribute MAX_SUBJECTS must be a dictionary of format MAX_SUBJECTS = {{\'maternal\': 1000, \'infant\': 1500, ...}}. Got {0}.'.format(settings_attrs.MAX_SUBJECTS))
-            if not self.get_subject_type(settings_attrs) in settings_attrs.MAX_SUBJECTS:
+            if not self.get_subject_type(settings_attrs).lower() in settings_attrs.MAX_SUBJECTS.keys():
                 raise ImproperlyConfigured('Setting attribute MAX_SUBJECTS should be a dictionary with a key for subject_type {0}. Got {1}.'.format(self.get_subject_type(settings_attrs), settings_attrs.MAX_SUBJECTS))
             if not filter(lambda n: isinstance(n, int), settings_attrs.MAX_SUBJECTS.values()):
                 raise ImproperlyConfigured('Setting attribute dictionary MAX_SUBJECTS must return an integer for each value. Got {0}.'.format(settings_attrs.MAX_SUBJECTS))
