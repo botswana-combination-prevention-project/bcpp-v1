@@ -1,9 +1,9 @@
 from django import forms
-from base_htc_model_form import BaseHtcModelForm
+from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 from bcpp_htc_subject.models import CircumcisionAppointment
 
 
-class CircumcisionAppointmentForm (BaseHtcModelForm):
+class CircumcisionAppointmentForm (BaseHtcScheduledModelForm):
 
     def clean(self):
         cleaned_data = super(CircumcisionAppointmentForm, self).clean()

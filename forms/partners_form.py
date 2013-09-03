@@ -1,20 +1,20 @@
-from base_htc_model_form import BaseHtcModelForm
 from bcpp_htc_subject.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
+from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 
 
-class HtcRecentPartnerForm (BaseHtcModelForm):
+class HtcRecentPartnerForm (BaseHtcScheduledModelForm):
 
     class Meta:
         model = HtcRecentPartner
 
 
-class HtcSecondPartnerForm (BaseHtcModelForm):
+class HtcSecondPartnerForm (BaseHtcScheduledModelForm):
 
     class Meta:
         model = HtcSecondPartner
 
 
-class HtcThirdPartnerForm (BaseHtcModelForm):
+class HtcThirdPartnerForm (BaseHtcScheduledModelForm):
 
     class Meta:
         model = HtcThirdPartner

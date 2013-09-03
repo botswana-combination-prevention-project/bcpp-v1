@@ -1,8 +1,8 @@
-from base_htc_model_form import BaseHtcModelForm
 from bcpp_htc_subject.models import HtcCircumcision
+from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 
 
-class HtcCircumcisionForm (BaseHtcModelForm):
+class HtcCircumcisionForm (BaseHtcScheduledModelForm):
 
     class Meta:
         model = HtcCircumcision

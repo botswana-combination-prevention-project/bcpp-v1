@@ -1,9 +1,9 @@
 from django import forms
-from base_htc_model_form import BaseHtcModelForm
 from bcpp_htc_subject.models import HtcHivTestingHistory
+from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 
 
-class HtcHivTestingHistoryForm (BaseHtcModelForm):
+class HtcHivTestingHistoryForm (BaseHtcScheduledModelForm):
 
     def clean(self):
         cleaned_data = super(HtcHivTestingHistoryForm, self).clean()

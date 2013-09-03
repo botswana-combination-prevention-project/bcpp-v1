@@ -1,9 +1,9 @@
 from django import forms
-from base_htc_model_form import BaseHtcModelForm
 from bcpp_htc_subject.models import MaleFollowup
+from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 
 
-class MaleFollowupForm (BaseHtcModelForm):
+class MaleFollowupForm (BaseHtcScheduledModelForm):
 
     def clean(self):
         cleaned_data = super(MaleFollowupForm, self).clean()
