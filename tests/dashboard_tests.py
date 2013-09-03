@@ -115,9 +115,29 @@ class DashboardTests(TestCase):
             registered_subject=registered_subject
             ), RegisteredSubjectDashboard))
 
+        print 'if requisition not overriden, has_requisirtion_model returns False.'
+
+        class TestDashboard1(RegisteredSubjectDashboard):
+            dashboard_url_name = 'subject_dashboard_url'
+
+            def get_visit_model(self):
+                return TestVisit
+
+        dashboard = TestDashboard1(
+            dashboard_type='subject',
+            dashboard_id=test_consent_with_mixin.pk,
+            dashboard_model=TestConsentWithMixin,
+            dashboard_category='subject',
+            dashboard_type_list=['subject'],
+            dashboard_models={'test_consent_with_mixin': TestConsentWithMixin},
+            registered_subject=registered_subject
+            )
+        self.assertIsNone(dashboard.get_requisition_model())
+        self.assertFalse(dashboard._get_has_requisition_model(), 'has_requisition_model not equal to False')
+
         print 'if get_visit_model method overridden, visit_model parameter not needed.'
 
-        class TestDashboard(RegisteredSubjectDashboard):
+        class TestDashboard2(RegisteredSubjectDashboard):
             dashboard_url_name = 'subject_dashboard_url'
 
             def get_visit_model(self):
@@ -126,7 +146,7 @@ class DashboardTests(TestCase):
             def get_requisition_model(self):
                 return TestRequisition
 
-        self.assertTrue(isinstance(TestDashboard(
+        self.assertTrue(isinstance(TestDashboard2(
             dashboard_type='subject',
             dashboard_id=test_consent_with_mixin.pk,
             dashboard_model=TestConsentWithMixin,
@@ -134,9 +154,9 @@ class DashboardTests(TestCase):
             dashboard_type_list=['subject'],
             dashboard_models={'test_consent_with_mixin': TestConsentWithMixin},
             registered_subject=registered_subject
-            ), TestDashboard))
+            ), TestDashboard2))
 
-        dashboard = TestDashboard(
+        dashboard = TestDashboard2(
             dashboard_type='subject',
             dashboard_id=test_consent_with_mixin.pk,
             dashboard_model=TestConsentWithMixin,
@@ -151,7 +171,7 @@ class DashboardTests(TestCase):
         self.assertEqual(dashboard.context.get().get('dashboard_id'), test_consent_with_mixin.pk)
         self.assertEqual(dashboard.context.get().get('dashboard_model'), 'test_consent_with_mixin')
 
-        class TestDashboard2(RegisteredSubjectDashboard):
+        class TestDashboard3(RegisteredSubjectDashboard):
             dashboard_url_name = 'subject_dashboard_url'
 
             def get_visit_model(self):
@@ -163,7 +183,7 @@ class DashboardTests(TestCase):
             def get_locator_model(self):
                 return TestSubjectLocator
 
-        dashboard = TestDashboard2(
+        dashboard = TestDashboard3(
             dashboard_type='subject',
             dashboard_id=test_consent_with_mixin.pk,
             dashboard_model=TestConsentWithMixin,
@@ -172,6 +192,9 @@ class DashboardTests(TestCase):
             dashboard_models={'test_consent_with_mixin': TestConsentWithMixin},
             registered_subject=registered_subject
             )
+
+        self.assertIsNotNone(dashboard.get_requisition_model())
+        self.assertTrue(dashboard._get_has_requisition_model(), 'has_requisition_model not equal to True')
 
         print 'get_context (with locator)'
         context = dashboard.get_context()

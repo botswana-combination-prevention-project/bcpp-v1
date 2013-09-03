@@ -143,6 +143,7 @@ class RegisteredSubjectDashboard(Dashboard):
         self._language = None
         self._locator_inst = None
         self._locator_model = None
+        self._has_requisition_model = None
         self._membership_form_category = None
         self._packing_list_model = None
         self._registered_subject = None
@@ -539,10 +540,11 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def _set_requisition_model(self):
         self._requisition_model = self.get_requisition_model()
-        if not self._requisition_model:
-            raise TypeError('Attribute _requisition model cannot be None. See {0}'.format(self))
-        if not issubclass(self._requisition_model, BaseBaseRequisition):
-            raise TypeError('Expected a subclass of BaseBaseRequisition. Got {0}. See {1}.'.format(self._requisition_model, self))
+        if self._get_has_requisition_model():
+            if not self._requisition_model:
+                raise TypeError('Attribute _requisition model cannot be None. See {0}'.format(self))
+            if not issubclass(self._requisition_model, BaseBaseRequisition):
+                raise TypeError('Expected a subclass of BaseBaseRequisition. Got {0}. See {1}.'.format(self._requisition_model, self))
 
     def _get_requisition_model(self):
         if not self._requisition_model:
@@ -551,7 +553,22 @@ class RegisteredSubjectDashboard(Dashboard):
 
     def get_requisition_model(self):
         """Users must override if requisitions are used to return the requisition model."""
+        self._set_has_requisition_model(False)
         return None
+
+    def _set_has_requisition_model(self, value=None):
+        """Sets to True unless deliberately set to False."""
+        self._has_requisition_model = True
+        if value == False:
+            self._has_requisition_model = False
+
+    def _get_has_requisition_model(self):
+        """Returns a boolean indicating if the class has a requisition model (default: True).
+
+        .. note:: :func:`get_requisition_model` will set this to False by default."""
+        if self._has_requisition_model == None:
+            self._set_has_requisition_model()
+        return self._has_requisition_model
 
     def _set_packing_list_model(self):
         self._packing_list_model = self.get_packing_list_model()
