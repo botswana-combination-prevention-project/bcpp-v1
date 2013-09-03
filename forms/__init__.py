@@ -14,5 +14,5 @@ from circumcision_appointment_form import CircumcisionAppointmentForm
 from positive_followup_form import PositiveFollowupForm
 from male_followup_form import MaleFollowupForm
 from pregnant_followup_form import PregnantFollowupForm
-from htc_subject_consent_form import HtcSubjectConsentForm
-from htc_subject_locator_form import HtcSubjectLocatorForm
+#from htc_subject_consent_form import HtcSubjectConsentForm
+#from htc_subject_locator_form import HtcSubjectLocatorForm

@@ -14,5 +14,5 @@ from circumcision_appointment_admin import CircumcisionAppointmentAdmin
 from positive_followup_admin import PositiveFollowupAdmin
 from male_followup_admin import MaleFollowupAdmin
 from pregnant_followup_admin import PregnantFollowupAdmin
-from htc_subject_consent_admin import HtcSubjectConsentAdmin
-from htc_subject_locator_admin import HtcSubjectLocatorAdmin
+#from htc_subject_consent_admin import HtcSubjectConsentAdmin
+#from htc_subject_locator_admin import HtcSubjectLocatorAdmin
