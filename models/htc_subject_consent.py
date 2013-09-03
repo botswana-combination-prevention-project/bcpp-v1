@@ -10,22 +10,7 @@ from subject_off_study_mixin import SubjectOffStudyMixin
 from bhp_appointment_helper.models import BaseAppointmentMixin
 
 
-class BaseSubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
-    """Base class for consent.
-
-    Useful so testing outside of this module does not triggering module specific signals."""
-
-    def __unicode__(self):
-        return self.subject_identifier
-
-    def get_registration_datetime(self):
-        return self.consent_datetime
-
-    class Meta:
-        abstract = True
-
-
-class SubjectConsent(BaseSubjectConsent):
+class HtcSubjectConsent(SubjectOffStudyMixin, BaseAppointmentMixin, BaseBwConsent):
 
     household_member = models.OneToOneField(HouseholdMember)
     survey = models.ForeignKey(Survey)
@@ -43,13 +28,19 @@ class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
 
+    def __unicode__(self):
+        return self.subject_identifier
+
+    def get_registration_datetime(self):
+        return self.consent_datetime
+
     def get_subject_type(self):
-        return 'subject'
+        return 'htc_subject'
 
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
-        super(SubjectConsent, self).save(*args, **kwargs)
+        super(HtcSubjectConsent, self).save(*args, **kwargs)
 
     def post_save_update_hm_status(self, **kwargs):
         using = kwargs.get('using', None)
@@ -75,4 +66,4 @@ class SubjectConsent(BaseSubjectConsent):
         return retval
 
     class Meta:
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_htc_subject'

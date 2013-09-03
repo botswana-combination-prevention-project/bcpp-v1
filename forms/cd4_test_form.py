@@ -1,9 +1,9 @@
 from django import forms
-from base_htc_model_form import BaseHtcModelForm
-from bcpp_subject_htc.models import Cd4Test
+from base_htc_subject_model_form import BaseHtcSubjectModelForm
+from bcpp_htc_subject.models import Cd4Test
 
 
-class Cd4TestForm (BaseHtcModelForm):
+class Cd4TestForm (BaseHtcSubjectModelForm):
 
     def clean(self):
         cleaned_data = super(Cd4TestForm, self).clean()

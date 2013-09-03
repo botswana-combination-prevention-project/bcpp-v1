@@ -4,6 +4,7 @@ from htc_second_partner import HtcSecondPartner
 from htc_third_partner import HtcThirdPartner
 from htc_subject_visit import HtcSubjectVisit
 from htc_subject_locator import HtcSubjectLocator
+from htc_subject_consent import HtcSubjectConsent
 from htc_subject_off_study import HtcSubjectOffStudy
 from htc_registration import HtcRegistration
 from htc_circumcision import HtcCircumcision

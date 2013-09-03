@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class ScheduledHtcManager(models.Manager):
+class ScheduledModelManager(models.Manager):
     """Manager for all scheduled htc models (those with a htc_visit fk)."""
     def get_by_natural_key(self, report_datetime, visit_instance, code, subject_identifier_as_pk):
         HtcSubjectVisit = models.get_model('bcpp_htc_subject', 'HtcSubjectVisit')

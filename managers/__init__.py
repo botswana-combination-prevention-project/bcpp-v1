@@ -1,1 +1,1 @@
-from scheduled_htc_manager import ScheduledHtcManager
+from scheduled_model_manager import ScheduledModelManager
