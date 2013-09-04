@@ -11,7 +11,6 @@ class SubjectConsentFactory(BaseConsentFactory):
     FACTORY_FOR = SubjectConsent
 
     subject_identifier = None  # factory.Sequence(lambda n: 'subject_identifier{0}'.format(n))
-#     study_site = factory.SubFactory(StudySiteFactory)
     consent_datetime = datetime.today()
     may_store_samples = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     is_incarcerated = (('Yes', 'Yes'), ('No', 'No'))[0][0]

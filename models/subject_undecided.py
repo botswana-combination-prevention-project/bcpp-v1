@@ -1,5 +1,5 @@
 from audit_trail.audit import AuditTrail
-from base_member_status_model import BaseMemberStatusModel
+from bcpp_household_member.models import BaseMemberStatusModel
 
 
 class SubjectUndecided (BaseMemberStatusModel):

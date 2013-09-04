@@ -5,7 +5,7 @@ from bhp_crypto.fields import EncryptedCharField
 from bhp_base_model.fields import OtherCharField
 from bcpp_list.models import SubjectAbsenteeReason
 from bcpp_subject.choices import NEXT_APPOINTMENT_SOURCE, ABSENTEE_STATUS
-from base_member_status_model import BaseMemberStatusModel
+from bcpp_household_member.models import BaseMemberStatusModel
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 

@@ -3,7 +3,7 @@ from audit_trail.audit import AuditTrail
 from bhp_base_model.fields import OtherCharField
 from bhp_base_model.validators import date_not_future, date_not_before_study_start
 from bcpp.choices import WHYNOPARTICIPATE_CHOICE
-from base_member_status_model import BaseMemberStatusModel
+from bcpp_household_member.models import BaseMemberStatusModel
 
 
 class SubjectRefusal (BaseMemberStatusModel):

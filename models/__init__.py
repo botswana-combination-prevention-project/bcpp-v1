@@ -55,9 +55,5 @@ from subject_moved import SubjectMoved
 from subject_undecided import SubjectUndecided
 from subject_undecided_entry import SubjectUndecidedEntry
 from subject_referral import SubjectReferral
-from signals import bcpp_subject_on_post_save
-#from household_composition import HouseholdComposition, Respondent
-
-
 from pima import Pima
 from cd4_history import Cd4History

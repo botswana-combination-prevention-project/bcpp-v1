@@ -5,7 +5,7 @@ from bhp_base_model.fields import OtherCharField
 from bcpp_household.models import Household
 from bcpp_subject.choices import NEXT_APPOINTMENT_SOURCE
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
-from base_member_status_model import BaseMemberStatusModel
+from bcpp_household_member.models import BaseMemberStatusModel
 
 
 class BaseSubjectEntry(BaseDispatchSyncUuidModel):

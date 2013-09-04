@@ -3,7 +3,7 @@ from audit_trail.audit import AuditTrail
 from bhp_crypto.fields import EncryptedTextField
 from bhp_base_model.validators import date_not_future, date_not_before_study_start
 from bcpp_subject.choices import MOVED_REASON, PLACE_SUBJECT_MOVED
-from base_member_status_model import BaseMemberStatusModel
+from bcpp_household_member.models import BaseMemberStatusModel
 
 
 class SubjectMoved(BaseMemberStatusModel):
