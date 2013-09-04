@@ -1,24 +1,24 @@
 from django.contrib import admin
-# from bhp_supplemental_fields.classes import SupplementalFields
+from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import AccessToCare
 from bcpp_subject.forms import AccessToCareForm
 
-
+#Access to Care [AC]: 10% in pretest, 9% in BHS and all follow-up
 class AccessToCareAdmin(SubjectVisitModelAdmin):
 
     form = AccessToCareForm
-#     supplemental_fields = SupplementalFields(
-#         ('access_care',
-#         'access_care_other',
-#         'medical_care_access',
-#         'medical_care_access_other',
-#         'overall_access',
-#         'emergency_access',
-#         'expensive_access',
-#         'convenient_access',
-#         'whenever_access',
-#         'local_hiv_care'), p=0.09, group='AC')
+    supplemental_fields = SupplementalFields(
+        ('access_care',
+        'access_care_other',
+        'medical_care_access',
+        'medical_care_access_other',
+        'overall_access',
+        'emergency_access',
+        'expensive_access',
+        'convenient_access',
+        'whenever_access',
+        'local_hiv_care'), p=0.09, group='AC')
     fields = (
         "subject_visit",
         "report_datetime",

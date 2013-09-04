@@ -1,10 +1,10 @@
 from django.contrib import admin
-# from bhp_supplemental_fields.classes import SupplementalFields
+from bhp_supplemental_fields.classes import SupplementalFields
 from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import Circumcision, Circumcised, Uncircumcised
 from bcpp_subject.forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 
-
+#Circumcision [MC]: 20% in pretest, 18% in BHS and all follow-up
 class CircumcisionAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisionForm
@@ -27,13 +27,13 @@ admin.site.register(Circumcision, CircumcisionAdmin)
 class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
-#     supplemental_fields = SupplementalFields(
-#         ("circumcised",
-#         "health_benefits_smc",
-#         'where_circ', 
-#         'where_circ_other',
-#         'why_circ', 
-#         'why_circ_other'), p=0.18, group='MC')
+    supplemental_fields = SupplementalFields(
+        ("circumcised",
+        "health_benefits_smc",
+        'where_circ', 
+        'where_circ_other',
+        'why_circ', 
+        'why_circ_other'), p=0.18, group='MC')
     fields = (
         "subject_visit",
         "circumcised",
@@ -55,20 +55,20 @@ admin.site.register(Circumcised, CircumcisedAdmin)
 class UncircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = UncircumcisedForm
-#     supplemental_fields = SupplementalFields(
-#         ("circumcised",
-#         "health_benefits_smc",
-#         'reason_circ',
-#         'reason_circ_other',
-#         'circumcision_day',
-#         'circumcision_day_other',
-#         'circumcision_week',
-#         'circumcision_week_other',
-#         'circumcision_year',
-#         'circumcision_year_other',
-#         'future_reasons_smc',
-#         'service_facilities',
-#         'aware_free'), p=0.18, group='MC')
+    supplemental_fields = SupplementalFields(
+        ("circumcised",
+        "health_benefits_smc",
+        'reason_circ',
+        'reason_circ_other',
+        'circumcision_day',
+        'circumcision_day_other',
+        'circumcision_week',
+        'circumcision_week_other',
+        'circumcision_year',
+        'circumcision_year_other',
+        'future_reasons_smc',
+        'service_facilities',
+        'aware_free'), p=0.18, group='MC')
     fields = (
         "subject_visit",
         "circumcised",
