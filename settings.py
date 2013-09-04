@@ -82,7 +82,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_survey',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -143,7 +143,7 @@ LANGUAGES = (
 
 LOCALE_PATHS = (os.path.join(DIRNAME, 'locale'), )
 
-LANGUAGE_CODE = 'tn'
+LANGUAGE_CODE = 'en'
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -342,7 +342,7 @@ INSTALLED_APPS = (
     'bcpp_lab',
     'bcpp_list',
     'bcpp_subject',
-    'bcpp_htc',
+    'bcpp_htc_subject',
     'bcpp_dashboard',
     'bcpp_stats',
     'bcpp_household',
