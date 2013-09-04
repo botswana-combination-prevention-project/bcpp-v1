@@ -13,7 +13,7 @@ from bhp_consent.managers import BaseConsentUpdateManager
 from base_consent import BaseConsent
 
 
-class BaseConsentHistory(BaseSyncUuidModel):
+class BaseConsentUpdate(BaseSyncUuidModel):
     """Tracks updates to the original consent.
 
     In the subclass:

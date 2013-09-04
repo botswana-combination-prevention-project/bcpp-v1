@@ -37,3 +37,10 @@ def add_models_to_catalogue(sender, instance, **kwargs):
                             content_type_map = ContentTypeMap.objects.get(model=model._meta.object_name.lower())
                             if not AttachedModel.objects.filter(consent_catalogue=instance, content_type_map=content_type_map).exists():
                                 AttachedModel.objects.create(consent_catalogue=instance, content_type_map=content_type_map)
+
+
+@receiver(post_save, weak=False, dispatch_uid='update_consent_history')
+def update_consent_history(sender, instance, **kwargs):
+    """Updates the consent history model with this instance."""
+    if isinstance(instance, BaseConsentedUuidModel):
+        instance.update_consent_history_model()
