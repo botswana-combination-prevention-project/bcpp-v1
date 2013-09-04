@@ -3,8 +3,7 @@ from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
                                  HivMedicalCare,HeartAttack, Cancer, Tubercolosis, 
-                                 Sti, SubstanceUse, Stigma,
-                                 StigmaOpinion, PositiveParticipant,
+                                 Sti, SubstanceUse,
                                  HivResultDocumentation)
 
 
@@ -72,24 +71,6 @@ class SubstanceUseForm (BaseSubjectModelForm):
 
     class Meta:
         model = SubstanceUse
-
-
-class StigmaForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = Stigma
-
-
-class StigmaOpinionForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = StigmaOpinion
-
-
-class PositiveParticipantForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = PositiveParticipant
 
 
 class HeartAttackForm (BaseSubjectModelForm):
