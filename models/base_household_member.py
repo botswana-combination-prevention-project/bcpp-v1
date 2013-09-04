@@ -224,7 +224,7 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
         hiv_history = ''
         if self.registered_subject:
             if self.registered_subject.subject_identifier:
-                hiv_history = site_lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier)
+                hiv_history = site_lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier, self.registered_subject.subject_type)
         return hiv_history
 
     def get_subject_identifier(self):
