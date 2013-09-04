@@ -18,7 +18,7 @@ class DeserializeFromTransaction(object):
         # may bypass this check for for testing ...
         check_hostname = kwargs.get('check_hostname', True)
         is_success = False
-        for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx).replace('066-020120002-4','066-020100002-4')):
+        for obj in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(incoming_transaction.tx)):
             # if you get an error deserializing a datetime, confirm dev version of json.py
             if incoming_transaction.action == 'I' or incoming_transaction.action == 'U':
                 # check if tx originanted from me
