@@ -15,9 +15,6 @@ class SubjectDashboard(BaseSubjectDashboard):
         kwargs.update({'dashboard_models': {'subject_consent': SubjectConsent}})
         super(SubjectDashboard, self).__init__(**kwargs)
 
-#     def set_membership_form_category(self):
-#         self._membership_form_category = 'subject'
-
     def set_dashboard_type_list(self):
         self._dashboard_type_list = ['subject']
 

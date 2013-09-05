@@ -17,7 +17,7 @@ class HouseholdDashboard(Dashboard):
     dashboard_name = 'Household Dashboard'
     dashboard_url_name = 'household_dasborad_url'
 
-    def __init__(self, **kwargs):
+    def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, **kwargs):
         self._household_members = None
         self._household_structure = None
         self._household_log = None
@@ -27,9 +27,8 @@ class HouseholdDashboard(Dashboard):
         self._survey = None
         self._surveys = None
         self._first_name = None
-#         self.set_section('household')
         kwargs.update({'dashboard_models': {'household': Household, 'household_structure': HouseholdStructure}})
-        super(HouseholdDashboard, self).__init__()
+        super(HouseholdDashboard, self).__init__(dashboard_type, dashboard_id, dashboard_model, dashboard_type_list, dashboard_models=kwargs.get('dashboard_models'))
         self.set_survey(kwargs.get('survey'))
         self.set_household()
         self.set_household_structure()
@@ -67,6 +66,9 @@ class HouseholdDashboard(Dashboard):
             household_info=self.get_household_info(),
             mapper_name=self.get_mapper_name()
             )
+
+    def set_dashboard_type_list(self):
+        self._dashboard_type_list = ['household']
 
     def set_first_name(self, value=None):
         self._first_name = value
@@ -111,23 +113,32 @@ class HouseholdDashboard(Dashboard):
             self.set_mapper_name()
         return self._mapper_name
 
-    def set_survey(self, survey):
+    def set_survey(self, value=None):
+        """Sets to the survey model class given a survey pk, slug or name or tries to determine the survey based on today\'s date.
+
+        .. warning:: this will fail if no survey name is provided and there is more than one survey defined where
+                     the survey dates overlap.
+        """
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         re_survey_slug = re.compile('bcpp\-year\-[0-9]{1}')
         re_survey_name = re.compile('BCPP\ Year\ [0-9]{1}')
-        if re_pk.match(str(survey)):
-            self._survey = Survey.objects.get(pk=survey)
-        elif re_survey_slug.match(str(survey)):
-            self._survey = Survey.objects.get(survey_slug=survey)
-        elif re_survey_name.match(str(survey)):
-            self._survey = Survey.objects.get(survey_name=survey)
-        else:
-            if Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()):
-                self._survey = Survey.objects.get(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())
+        if re_pk.match(str(value)):
+            self._survey = Survey.objects.get(pk=value)
+        elif re_survey_slug.match(str(value)):
+            self._survey = Survey.objects.get(survey_slug=value)
+        elif re_survey_name.match(str(value)):
+            self._survey = Survey.objects.get(survey_name=value)
+        elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() == 1:
+            # assume only one survey
+            self._survey = Survey.objects.get(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())
+        elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() >= 1:
+            raise TypeError('Unable to set attribute _survey given survey=None and today\'s date. More than one survey exists for the given datetime (today). Either specify a survey or given a different date. Got {0}.'.format(Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())))
+        if not self._survey:
+            raise TypeError('Dashboard attribute _survey may not be null.')
 
     def get_survey(self):
         if not self._survey:
-            raise TypeError('Dashboard attribute _survey may not be null.')
+            self.set_survey()
         return self._survey
 
     def set_surveys(self, value=None):
@@ -150,9 +161,9 @@ class HouseholdDashboard(Dashboard):
             if issubclass(self.get_dashboard_model(), HouseholdStructure):
                 self._household_structure = self.get_dashboard_model()
             if self.get_household():
-                self._household_structure = HouseholdStructure.objects.get(household__pk=self.get_household().pk)
-            if HouseholdStructure.objects.filter(pk=pk):
-                self._household_structure = HouseholdStructure.objects.get(pk=pk)
+                self._household_structure = HouseholdStructure.objects.get(household__pk=self.get_household().pk, survey=self.get_survey())
+            if HouseholdStructure.objects.filter(pk=pk, survey=self.get_survey()):
+                self._household_structure = HouseholdStructure.objects.get(pk=pk, survey=self.get_survey())
         if not self._household_structure:
             raise TypeError('Household_structure cannot be None. Using {0}.'.format((value, pk)))
 
