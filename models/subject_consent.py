@@ -4,7 +4,7 @@ from audit_trail.audit import AuditTrail
 from bhp_common.choices import YES_NO
 from subject_off_study_mixin import SubjectOffStudyMixin
 from bcpp_household_member.models import BaseHouseholdMemberConsent
-from subject_consent_history import SubjectConsentHistory
+#from subject_consent_history import SubjectConsentHistory
 
 
 class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
