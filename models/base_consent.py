@@ -212,19 +212,6 @@ class BaseConsent(BaseSubject):
     def get_consent_update_model(self):
         raise TypeError('The ConsentUpdateModel is required. Specify a class method get_consent_update_model() on the model to return the ConsentUpdateModel class.')
 
-    def get_consent_history_model(self):
-        """Returns the history model for this app.
-
-        Users must override to return a model of base class BaseConsentHistory"""
-
-        return None
-
-    def update_consent_history_model(self):
-        if self.get_consent_history_model():
-            if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
-                raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
-            self.get_consent_history_model().objects.get_or_create()
-
     def get_report_datetime(self):
         return self.consent_datetime
 
@@ -241,6 +228,26 @@ class BaseConsent(BaseSubject):
                 if getattr(self, k) != v:
                     return False
         return True
+
+    def get_consent_history_model(self):
+        """Returns the history model for this app.
+
+        Users must override to return a model of base class BaseConsentHistory"""
+
+        return None
+
+    def update_consent_history(self, created, using):
+        """Updates the consent history model for this consent instance if there is a consent history model."""
+        if self.get_consent_history_model():
+            if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
+                raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
+            self.get_consent_history_model().objects.update_consent_history(self, created, using)
+
+    def delete_consent_history(self, app_label, model_name, pk, using):
+        if self.get_consent_history_model():
+            if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
+                raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
+            self.get_consent_history_model().objects.delete_consent_history(app_label, model_name, pk, using)
 
     class Meta:
         abstract = True

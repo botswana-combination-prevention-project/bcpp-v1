@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.db.models import get_app, get_models
 from django.dispatch import receiver
 from consent_catalogue import ConsentCatalogue
@@ -40,7 +40,14 @@ def add_models_to_catalogue(sender, instance, **kwargs):
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_consent_history')
-def update_consent_history(sender, instance, **kwargs):
-    """Updates the consent history model with this instance."""
+def update_consent_history(sender, instance, raw, created, using, **kwargs):
+    """Updates the consent history model with this instance if such model exists."""
     if isinstance(instance, BaseConsent):
-        instance.update_consent_history_model()
+        instance.update_consent_history(created, using)
+
+
+@receiver(post_delete, weak=False, dispatch_uid='delete_consent_history')
+def delete_consent_history(sender, instance, using, **kwargs):
+    """Updates the consent history model with this instance if such model exists."""
+    if isinstance(instance, BaseConsent):
+        instance.delete_consent_history(instance._meta.app_label, instance._meta.object_name, instance.pk, using)
