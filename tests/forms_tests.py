@@ -18,14 +18,13 @@ from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_subject.models import SubjectConsent
 
-admin.autodiscover()
-
 
 class FormsTests(TestCase):
 
     app_label = 'bcpp_household_member'
 
     def test_all_forms(self):
+        admin.autodiscover()
         site_lab_tracker.autodiscover()
         study_specific = StudySpecificFactory()
         StudySiteFactory()

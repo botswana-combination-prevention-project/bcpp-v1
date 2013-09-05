@@ -95,11 +95,11 @@ class HouseholdMember(BaseHouseholdMember):
                     first_name=self.first_name,
                     initials=self.initials,
                     gender=self.gender,
-                    subject_type='SUBJECT',
+                    subject_type='subject',
                     registration_identifier=self.internal_identifier,
                     registration_datetime=self.created,
                     user_created=self.user_created,
-                    registration_status='MEMBER',)
+                    registration_status='member',)
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
             self.save(using=using)
