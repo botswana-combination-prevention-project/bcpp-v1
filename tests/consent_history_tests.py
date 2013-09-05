@@ -10,9 +10,9 @@ class ConsentUpdateTests(TestCase):
 
     def test_p1(self):
         print 'create a consent'
-        test_consent = TestConsentFactory(first_name='THING1')
-        test_consent = TestConsentFactory(first_name='THING2')
-        test_consent = TestConsentFactory(first_name='THING3')
+        TestConsentFactory(first_name='THING1')
+        TestConsentFactory(first_name='THING2')
+        TestConsentFactory(first_name='THING3')
         test_consent = TestConsentFactory(first_name='THING4')
         print 'assert has consent history methods'
         self.assertTrue('get_consent_history_model' in dir(test_consent))
