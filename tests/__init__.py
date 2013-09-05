@@ -3,5 +3,6 @@
 from factory_tests import FactoryTests
 from natural_key_tests import NaturalKeyTests
 from choice_tests import ChoiceTests
+from consent_history_tests import ConsentHistoryTests
 #from selenium_tests import SeleniumTests
 #from erik_tests import ErikTests
