@@ -17,6 +17,7 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     lives_in_household = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     is_eligible_member = True
     target = 2
+    #internal_identifier = registered_subject.registration_identifier
     survey = factory.SubFactory(SurveyFactory)
     household_structure = factory.SubFactory(HouseholdStructureFactory)
     nights_out = 2
