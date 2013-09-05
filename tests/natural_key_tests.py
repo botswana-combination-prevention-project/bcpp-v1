@@ -49,7 +49,6 @@ class NaturalKeyTests(TestCase):
         consent_catalogue.add_for_app = 'bcpp_subject'
         consent_catalogue.save()
         
-        print 'consent the subject'
         #SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
         Survey.objects.create(survey_name = 'YEAR 0',
                           datetime_start = datetime.today() - timedelta(days=30),
