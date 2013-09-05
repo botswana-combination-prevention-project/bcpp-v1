@@ -8,6 +8,7 @@ from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdStructureManager
 from household import Household
 
+
 class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     """ Each year/survey a new household_structure is created for the household """
@@ -36,35 +37,16 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     objects = HouseholdStructureManager()
 
     history = AuditTrail()
-          
+
     def __unicode__(self):
         return unicode(self.household)
 
     def natural_key(self):
         return self.household.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey',]
-
-    def gps_point(self):
-        return "LON:{0} LAT:{1}".format(self.household.gps_point_11, self.household.gps_point_21)
-
-    def get_absolute_url(self):
-        return "/admin/bcpp_household/householdstructure/{0}/".format(self.id)
-
-    def calendar_datetime(self):
-        return self.created
-
-    def calendar_label(self):
-        return self.__unicode__()
-
-    def group_permissions(self):
-        return {'survey': ('add', 'change')}
+    natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey']
 
     def dispatch_container_lookup(self, using=None):
         return (Household, 'household__household_identifier')
-
-    def get_subject_identifier(self):
-        #subject_identifier = self.household.household_identifier
-        return self.household.household_identifier
 
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
@@ -88,18 +70,18 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             self.save(using=using)
 
     def house(self):
-        url = '/admin/{0}/household/?q={1}'.format(self._meta.app_label, self.household.household_identifier)
-        return """<a href="{url}" />household</a>""".format(url=url)
+        url = reverse('admin:{app_label}_{model_name}__changelist'.format(self.household._meta.app_label, self.household._meta.object_name.lower()))
+        return """<a href="{url}?q={q}'" />household</a>""".format(url=url, q=self.household.household_identifier)
     house.allow_tags = True
 
     def members(self):
-        url = '/admin/bcpp_household_member/householdmember/?q={0}'.format(self.pk)
-        return """<a href="{url}" />members</a>""".format(url=url)
+        url = reverse('admin:{app_label}_{model_name}__changelist'.format('bcpp_household_member', 'householdmember'))
+        return """<a href="{url}?q={q}'" />members</a>""".format(url=url, q=self.pk)
     members.allow_tags = True
 
     def logs(self):
-        url = '/admin/{0}/householdlog/?q={1}'.format(self._meta.app_label, self.pk)
-        return """<a href="{url}" />logs</a>""".format(url=url)
+        url = reverse('admin:{app_label}_{model_name}__changelist'.format('bcpp_household', 'householdlog'))
+        return """<a href="{url}?q={q}'" />log</a>""".format(url=url, q=self.pk)
     logs.allow_tags = True
 
     def dashboard(self):

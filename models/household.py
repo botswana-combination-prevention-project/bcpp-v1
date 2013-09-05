@@ -217,7 +217,7 @@ class Household(BaseDispatchSyncUuidModel):
         Survey = models.get_model('bcpp_survey', 'Survey')
         if Survey.objects.all().count() == 0:
             raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before Household.')
-        # create a household_structure for each survey
+        # create a household_structure for each survey defined
         for survey in Survey.objects.all():
             if not HouseholdStructure.objects.filter(household=self, survey=survey):
                 HouseholdStructure.objects.create(household=self, survey=survey)
