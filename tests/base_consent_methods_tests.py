@@ -71,7 +71,7 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         self.assertEqual(subject_consent.registered_subject.pk, registered_subject.pk)
 
         print 'create a blank RegisteredSubject'
-        registered_subject = RegisteredSubjectFactory(subject_type='test_subject_type')
+        registered_subject = RegisteredSubjectFactory(subject_type='test_subject_type', first_name='ERIKIS')
         print 'create a consent with registered subject'
         subject_consent = TestConsentFactory(registered_subject=registered_subject, study_site=study_site)
         print subject_consent.subject_identifier

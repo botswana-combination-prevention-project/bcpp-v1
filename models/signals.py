@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from consent_catalogue import ConsentCatalogue
 from attached_model import AttachedModel
 from bhp_content_type_map.models import ContentTypeMap
-from bhp_consent.models import BaseConsentedUuidModel
+from bhp_consent.models import BaseConsent, BaseConsentedUuidModel
 
 
 @receiver(pre_save, weak=False, dispatch_uid='is_consented_instance_on_pre_save')
@@ -42,5 +42,5 @@ def add_models_to_catalogue(sender, instance, **kwargs):
 @receiver(post_save, weak=False, dispatch_uid='update_consent_history')
 def update_consent_history(sender, instance, **kwargs):
     """Updates the consent history model with this instance."""
-    if isinstance(instance, BaseConsentedUuidModel):
+    if isinstance(instance, BaseConsent):
         instance.update_consent_history_model()
