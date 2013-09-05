@@ -244,22 +244,13 @@ class HouseholdMember(BaseHouseholdMember):
         return retval
     to_locator.allow_tags = True
 
-#     def contact(self):
-#         url = reverse('admin:bcpp_household_contactlog_add')
-#         ret = """<a href="{url}" class="add-another" id="add_id_contact_log" onclick="return showAddAnotherPopup(this);"> <img src="/static/admin/img/icon_addlink.gif" width="10" height="10" alt="View contact"/>contact</a>""".format(url=url)
-#         if self.contact_log:
-#             url = self.contact_log.get_absolute_url()
-#             ret = """<a href="{url}" class="add-another" id="change_id_contact_log" onclick="return showAddAnotherPopup(this);">contact</a>""".format(url=url)
-#         return ret
-#     contact.allow_tags = True
-
-    def get_short_label(self):
-        return '{first_name} ({initials}) {gender} {age} {hiv_status}'.format(
-            first_name=mask_encrypted(self.first_name),
-            initials=self.initials,
-            age=self.age_in_years,
-            gender=self.gender,
-            hiv_status=self.get_hiv_history())
+#     def get_short_label(self):
+#         return '{first_name} ({initials}) {gender} {age} {hiv_status}'.format(
+#             first_name=mask_encrypted(self.first_name),
+#             initials=self.initials,
+#             age=self.age_in_years,
+#             gender=self.gender,
+#             hiv_status=self.get_hiv_history())
 
     def get_subject_identifier(self):
         """ Uses the hsm internal_identifier to locate the subject identifier in
@@ -339,25 +330,19 @@ class HouseholdMember(BaseHouseholdMember):
         else:
             return "no (%s)" % self.nights_out
 
-    def member_terse(self):
-        return mask_encrypted(unicode(self.first_name))
+#     def member_terse(self):
+#         return mask_encrypted(unicode(self.first_name))
 
-    def subject(self):
-        return mask_encrypted(unicode(self.first_name))
+#     def subject(self):
+#         return mask_encrypted(unicode(self.first_name))
 
-    def visit_date(self):
-        SubjectVisit = models.get_model('bcpp_subject', 'subjectvisit')
-        retval = None
-        if SubjectVisit.objects.filter(household_member=self):
-            subject_visit = SubjectVisit.objects.filter(household_member=self)
-            retval = subject_visit.report_datetime
-        return retval
-
-    def calendar_datetime(self):
-        return self.created
-
-    def calendar_label(self):
-        return self.__unicode__()
+#     def visit_date(self):
+#         SubjectVisit = models.get_model('bcpp_subject', 'subjectvisit')
+#         retval = None
+#         if SubjectVisit.objects.filter(household_member=self):
+#             subject_visit = SubjectVisit.objects.filter(household_member=self)
+#             retval = subject_visit.report_datetime
+#         return retval
 
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
