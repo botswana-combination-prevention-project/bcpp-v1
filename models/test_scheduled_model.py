@@ -7,5 +7,8 @@ class TestScheduledModel(BaseUuidModel):
 
     test_visit = models.OneToOneField(TestVisit)
 
+    def get_subject_identifier(self):
+        return self.test_visit.get_subject_identifier()
+
     class Meta:
         app_label = 'bhp_base_test'

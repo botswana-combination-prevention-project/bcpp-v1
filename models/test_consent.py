@@ -5,6 +5,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsent
 from bhp_consent.managers import BaseConsentManager
 from bhp_appointment_helper.models import BaseAppointmentMixin
+from test_consent_history import TestConsentHistory
 
 
 class BaseTestConsent(BaseConsent):
@@ -31,6 +32,9 @@ class BaseTestConsent(BaseConsent):
         )
 
     objects = BaseConsentManager()
+
+    def get_consent_history_model(self):
+        return TestConsentHistory
 
     def is_dispatchable_model(self):
         return False

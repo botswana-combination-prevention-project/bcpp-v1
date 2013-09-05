@@ -10,3 +10,5 @@ from test_off_study import TestOffStudy
 from test_model import TestModel
 from test_requisition import TestRequisition
 from test_subject_result_model import TestSubjectResultModel
+from test_subject_locator import TestSubjectLocator
+from test_consent_history import TestConsentHistory

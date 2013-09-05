@@ -7,3 +7,4 @@ from test_scheduled_model_factory import TestScheduledModelFactory
 from test_subject_uuid_model_factory import TestSubjectUuidModelFactory
 from test_requisition_factory import TestRequisitionFactory
 from test_subject_result_model_factory import  TestSubjectResultModelFactory
+from test_consent_history_factory import TestConsentHistoryFactory

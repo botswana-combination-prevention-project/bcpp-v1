@@ -16,7 +16,6 @@ class BaseTestConsentFactory(BaseConsentFactory):
     first_name = factory.Sequence(lambda n: 'ERIK{0}'.format(n))
     initials = factory.Sequence(lambda n: 'E{0}W'.format(n))
 
-
 class TestConsentFactory(BaseConsentFactory):
     FACTORY_FOR = TestConsent
 
