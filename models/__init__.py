@@ -57,3 +57,4 @@ from subject_undecided_entry import SubjectUndecidedEntry
 from subject_referral import SubjectReferral
 from pima import Pima
 from cd4_history import Cd4History
+from subject_consent_history import SubjectConsentHistory
