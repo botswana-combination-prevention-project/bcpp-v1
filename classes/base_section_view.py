@@ -109,6 +109,8 @@ class BaseSectionView(object):
             self._dashboard_url_name = self.dashboard_url_name
         else:
             self._section_name = value
+        if not self._dashboard_url_name:
+            raise TypeError('Attribute _dashboard_url_name may not be None for {0}'.format(self))
 
     def get_dashboard_url_name(self):
         """Returns the _dashboard_url_name for this section."""
