@@ -23,6 +23,7 @@ class Controller(object):
         self.autodiscovered = False
 
     def set_registry(self, mapper_cls):
+        """Registers a given mapper class to the site registry."""
         if not issubclass(mapper_cls, Mapper):
             raise MapperError('Expected a subclass of Mapper.')
         # use map_area class attribute add the dictionary key
@@ -31,9 +32,11 @@ class Controller(object):
         self._registry[mapper_cls.map_area] = mapper_cls
 
     def get(self, name):
+        """Returns a key, value pair from the dictionary for the given key."""
         return self._registry.get(name)
 
     def get_registry(self, name=None):
+        """Returns the site mapper registry dictionary."""
         if name:
             if name in self._registry:
                 return self._registry.get(name)
@@ -42,17 +45,21 @@ class Controller(object):
         return self._registry
 
     def get_as_list(self):
+        """Returns a list of dictionary keys from the registry dictionary to be used as a list of map areas or communities."""
         lst = [k for k in self._registry]
         lst.sort()
         return lst
 
     def get_mapper_as_tuple(self):
+        """Returns a list of tuples from the registry dictionary in the format of choices used by models."""
         return [(l, l) for l in self.get_as_list()]
 
     def register(self, mapper_cls):
+        """Registers a given mapper class to the site registry."""
         self.set_registry(mapper_cls)
 
     def autodiscover(self):
+        """Autodiscovers mapper classes in the mapper.py file of any INSTALLED_APP."""
         if not self.autodiscovered:
             for app in settings.INSTALLED_APPS:
                 mod = import_module(app)
