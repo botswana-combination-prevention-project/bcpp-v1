@@ -1,8 +1,7 @@
 import factory
-from datetime import date, datetime
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_household_member.models import HouseholdMember
-from bcpp_survey.tests.factories import SurveyFactory
+# from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_household.tests.factories import HouseholdStructureFactory
 
 
@@ -18,6 +17,6 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     is_eligible_member = True
     target = 2
     #internal_identifier = registered_subject.registration_identifier
-    survey = factory.SubFactory(SurveyFactory)
+    #survey = factory.SubFactory(SurveyFactory)
     household_structure = factory.SubFactory(HouseholdStructureFactory)
     nights_out = 2
