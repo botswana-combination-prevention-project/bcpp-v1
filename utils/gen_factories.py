@@ -10,8 +10,19 @@ from bhp_visit_tracking.models import BaseVisitTracking
 admin.autodiscover()
 
 
-def create_factory_files(app_label):
-    factory_path = '{0}/{1}/tests/factories'.format(settings.DIRNAME, app_label)
+def create_factory_files(app_label, factory_path=None):
+    """Creates factory files in the tests/factories folder in the specified app.
+
+    Loops through admin registry to find all registered models and inlines. A factory
+    will not be created for models not registered in admin.
+
+    Use within shell_plus::
+        from bhp_factory.utils.gen_factories import *
+
+        create_factory_files('bcpp_htc_subject')
+    """
+    if not factory_path:
+        factory_path = '{0}/{1}/tests/factories'.format(settings.DIRNAME, app_label)
     for model, model_admin in admin.site._registry.iteritems():
         if app_label == model._meta.app_label:
             if model_admin.inlines:
