@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'HouseholdMember', fields ['survey']
-        db.delete_unique('bcpp_household_member_householdmember', ['survey_id'])
+        #db.delete_unique('bcpp_household_member_householdmember', ['survey_id'])
 
 
         # Changing field 'HouseholdMember.survey'

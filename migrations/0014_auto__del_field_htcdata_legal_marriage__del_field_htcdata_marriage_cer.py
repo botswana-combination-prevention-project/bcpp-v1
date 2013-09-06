@@ -9,13 +9,13 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting field 'HtcData.legal_marriage'
-        db.delete_column('bcpp_household_member_htcdata', 'legal_marriage')
+#         db.delete_column('bcpp_household_member_htcdata', 'legal_marriage')
 
         # Deleting field 'HtcData.marriage_certificate_no'
-        db.delete_column('bcpp_household_member_htcdata', 'marriage_certificate_no')
+#         db.delete_column('bcpp_household_member_htcdata', 'marriage_certificate_no')
 
         # Deleting field 'HtcData.marriage_certificate'
-        db.delete_column('bcpp_household_member_htcdata', 'marriage_certificate')
+#         db.delete_column('bcpp_household_member_htcdata', 'marriage_certificate')
 
         # Deleting field 'HtcDataAudit.legal_marriage'
         db.delete_column('bcpp_household_member_htcdata_audit', 'legal_marriage')

@@ -9,41 +9,41 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'ContactLog'
-        db.create_table('bcpp_household_member_contactlog', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-        ))
-        db.send_create_signal('bcpp_household_member', ['ContactLog'])
-
-        # Adding model 'ContactLogItem'
-        db.create_table('bcpp_household_member_contactlogitem', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('contact_log', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.ContactLog'])),
-            ('contact_datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('subject_status', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('is_contacted', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('information_provider', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
-            ('appointment_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('try_again', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('comment', self.gf('django.db.models.fields.TextField')(max_length=50, null=True, blank=True)),
-        ))
-        db.send_create_signal('bcpp_household_member', ['ContactLogItem'])
-
-
+#         db.create_table('bcpp_household_member_contactlog', (
+#             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
+#             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
+#             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+#         ))
+#         db.send_create_signal('bcpp_household_member', ['ContactLog'])
+#  
+#         # Adding model 'ContactLogItem'
+#         db.create_table('bcpp_household_member_contactlogitem', (
+#             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
+#             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='honeypot', max_length=50, db_index=True, blank=True)),
+#             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+#             ('contact_log', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.ContactLog'])),
+#             ('contact_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+#             ('subject_status', self.gf('django.db.models.fields.CharField')(max_length=10)),
+#             ('is_contacted', self.gf('django.db.models.fields.CharField')(max_length=10)),
+#             ('information_provider', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
+#             ('appointment_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+#             ('try_again', self.gf('django.db.models.fields.CharField')(max_length=10)),
+#             ('comment', self.gf('django.db.models.fields.TextField')(max_length=50, null=True, blank=True)),
+#         ))
+#         db.send_create_signal('bcpp_household_member', ['ContactLogItem'])
+ 
+ 
         # Changing field 'HouseholdMember.contact_log'
         db.alter_column('bcpp_household_member_householdmember', 'contact_log_id', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['bcpp_household_member.ContactLog'], unique=True, null=True))
-
+ 
         # Changing field 'HouseholdMemberAudit.contact_log'
         db.alter_column('bcpp_household_member_householdmember_audit', 'contact_log_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['bcpp_household_member.ContactLog']))
 

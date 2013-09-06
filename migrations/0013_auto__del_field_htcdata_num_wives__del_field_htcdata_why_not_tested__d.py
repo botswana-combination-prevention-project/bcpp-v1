@@ -10,58 +10,58 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Deleting field 'HtcData.num_wives'
         db.delete_column('bcpp_household_member_htcdata', 'num_wives')
-
+ 
         # Deleting field 'HtcData.why_not_tested'
         db.delete_column('bcpp_household_member_htcdata', 'why_not_tested')
-
+ 
         # Deleting field 'HtcData.other'
         db.delete_column('bcpp_household_member_htcdata', 'other')
-
+ 
         # Deleting field 'HtcData.rel_other'
         db.delete_column('bcpp_household_member_htcdata', 'rel_other')
-
+ 
         # Deleting field 'HtcData.husband_wives'
         db.delete_column('bcpp_household_member_htcdata', 'husband_wives')
-
+ 
         # Deleting field 'HtcData.ethnic'
         db.delete_column('bcpp_household_member_htcdata', 'ethnic')
-
+ 
         # Deleting field 'HtcData.marital_status'
         db.delete_column('bcpp_household_member_htcdata', 'marital_status')
-
+ 
         # Deleting field 'HtcData.hiv_result'
         db.delete_column('bcpp_household_member_htcdata', 'hiv_result')
-
+ 
         # Adding field 'HtcData.is_resident'
         db.add_column('bcpp_household_member_htcdata', 'is_resident',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
                       keep_default=False)
-
+ 
         # Adding field 'HtcData.your_community'
         db.add_column('bcpp_household_member_htcdata', 'your_community',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HtcData.legal_marriage'
         db.add_column('bcpp_household_member_htcdata', 'legal_marriage',
                       self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HtcData.marriage_certificate'
         db.add_column('bcpp_household_member_htcdata', 'marriage_certificate',
                       self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HtcData.marriage_certificate_no'
         db.add_column('bcpp_household_member_htcdata', 'marriage_certificate_no',
                       self.gf('django.db.models.fields.CharField')(max_length=9, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HtcData.is_pregnant'
         db.add_column('bcpp_household_member_htcdata', 'is_pregnant',
                       self.gf('django.db.models.fields.CharField')(max_length=15, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HtcData.testing_counseling_site'
         db.add_column('bcpp_household_member_htcdata', 'testing_counseling_site',
                       self.gf('django.db.models.fields.CharField')(max_length=15, null=True, blank=True),

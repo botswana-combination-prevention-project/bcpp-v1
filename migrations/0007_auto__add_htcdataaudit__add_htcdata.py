@@ -9,66 +9,66 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'HtcDataAudit'
-        db.create_table('bcpp_household_member_htcdata_audit', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
-            ('report_datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('dob', self.gf('django.db.models.fields.DateField')(null=True)),
-            ('is_dob_estimated', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
-            ('gender', self.gf('django.db.models.fields.CharField')(max_length=1, null=True)),
-            ('omang', self.gf('django.db.models.fields.CharField')(max_length=78L)),
-            ('citizen', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('religion_other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
-            ('ethnic', self.gf('django.db.models.fields.CharField')(max_length=35)),
-            ('other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
-            ('marital_status', self.gf('django.db.models.fields.CharField')(max_length=55)),
-            ('num_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
-            ('husband_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
-            ('hiv_result', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('why_not_tested', self.gf('django.db.models.fields.CharField')(max_length=65, null=True, blank=True)),
-            ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
-            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_htcdata', to=orm['bcpp_household_member.HouseholdMember'])),
-            ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_htcdata', to=orm['bhp_registration.RegisteredSubject'])),
-        ))
-        db.send_create_signal('bcpp_household_member', ['HtcDataAudit'])
-
-        # Adding model 'HtcData'
-        db.create_table('bcpp_household_member_htcdata', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('household_member', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['bcpp_household_member.HouseholdMember'], unique=True)),
-            ('registered_subject', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['bhp_registration.RegisteredSubject'], unique=True)),
-            ('report_datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('dob', self.gf('django.db.models.fields.DateField')(null=True)),
-            ('is_dob_estimated', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
-            ('gender', self.gf('django.db.models.fields.CharField')(max_length=1, null=True)),
-            ('omang', self.gf('django.db.models.fields.CharField')(unique=True, max_length=78L)),
-            ('citizen', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('religion_other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
-            ('ethnic', self.gf('django.db.models.fields.CharField')(max_length=35)),
-            ('other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
-            ('marital_status', self.gf('django.db.models.fields.CharField')(max_length=55)),
-            ('num_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
-            ('husband_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
-            ('hiv_result', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('why_not_tested', self.gf('django.db.models.fields.CharField')(max_length=65, null=True, blank=True)),
-        ))
-        db.send_create_signal('bcpp_household_member', ['HtcData'])
-
-        # Adding M2M table for field religion on 'HtcData'
-        m2m_table_name = db.shorten_name('bcpp_household_member_htcdata_religion')
+#         db.create_table('bcpp_household_member_htcdata_audit', (
+#             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
+#             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
+#             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
+#             ('report_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+#             ('dob', self.gf('django.db.models.fields.DateField')(null=True)),
+#             ('is_dob_estimated', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
+#             ('gender', self.gf('django.db.models.fields.CharField')(max_length=1, null=True)),
+#             ('omang', self.gf('django.db.models.fields.CharField')(max_length=78L)),
+#             ('citizen', self.gf('django.db.models.fields.CharField')(max_length=3)),
+#             ('religion_other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
+#             ('ethnic', self.gf('django.db.models.fields.CharField')(max_length=35)),
+#             ('other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
+#             ('marital_status', self.gf('django.db.models.fields.CharField')(max_length=55)),
+#             ('num_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
+#             ('husband_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
+#             ('hiv_result', self.gf('django.db.models.fields.CharField')(max_length=50)),
+#             ('why_not_tested', self.gf('django.db.models.fields.CharField')(max_length=65, null=True, blank=True)),
+#             ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+#             ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
+#             ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
+#             ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_htcdata', to=orm['bcpp_household_member.HouseholdMember'])),
+#             ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_htcdata', to=orm['bhp_registration.RegisteredSubject'])),
+#         ))
+#         db.send_create_signal('bcpp_household_member', ['HtcDataAudit'])
+# 
+#         # Adding model 'HtcData'
+#         db.create_table('bcpp_household_member_htcdata', (
+#             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+#             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+#             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
+#             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='silverapple-2.local', max_length=50, db_index=True, blank=True)),
+#             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+#             ('household_member', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['bcpp_household_member.HouseholdMember'], unique=True)),
+#             ('registered_subject', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['bhp_registration.RegisteredSubject'], unique=True)),
+#             ('report_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+#             ('dob', self.gf('django.db.models.fields.DateField')(null=True)),
+#             ('is_dob_estimated', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
+#             ('gender', self.gf('django.db.models.fields.CharField')(max_length=1, null=True)),
+#             ('omang', self.gf('django.db.models.fields.CharField')(unique=True, max_length=78L)),
+#             ('citizen', self.gf('django.db.models.fields.CharField')(max_length=3)),
+#             ('religion_other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
+#             ('ethnic', self.gf('django.db.models.fields.CharField')(max_length=35)),
+#             ('other', self.gf('django.db.models.fields.CharField')(max_length=35, blank=True)),
+#             ('marital_status', self.gf('django.db.models.fields.CharField')(max_length=55)),
+#             ('num_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
+#             ('husband_wives', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True, blank=True)),
+#             ('hiv_result', self.gf('django.db.models.fields.CharField')(max_length=50)),
+#             ('why_not_tested', self.gf('django.db.models.fields.CharField')(max_length=65, null=True, blank=True)),
+#         ))
+#         db.send_create_signal('bcpp_household_member', ['HtcData'])
+# 
+#         # Adding M2M table for field religion on 'HtcData'
+#         m2m_table_name = db.shorten_name('bcpp_household_member_htcdata_religion')
         db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('htcdata', models.ForeignKey(orm['bcpp_household_member.htcdata'], null=False)),

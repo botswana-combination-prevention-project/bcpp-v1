@@ -120,6 +120,12 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
     
+    def natural_key(self):
+        if not self.household_structure:
+            raise AttributeError("household_structure cannot be None for household_info with pk='\{0}\'".format(self.pk))
+        return self.household_structure.natural_key()
+    natural_key.dependencies = ['bcpp_household.household_structure']
+    
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household','Household'), 'household_structure__household__household_identifier')
 

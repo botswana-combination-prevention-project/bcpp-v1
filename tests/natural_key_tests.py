@@ -1,5 +1,6 @@
 import pprint
 from django.test import TestCase
+from django.db.models import signals
 from django.core import serializers
 from django.db.models import get_app, get_models
 from datetime import datetime, timedelta
@@ -7,6 +8,7 @@ from bhp_crypto.classes import FieldCryptor
 from bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory, HouseholdInfoFactory#, ContactLogFactory, ContactLogFactoryItem
 from bcpp_household.tests.factories import HouseholdStructureFactory
 from bcpp_survey.models import Survey
+from bcpp_household.models import create_household_structure_on_post_save
 from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_sync.classes import SerializeToTransaction
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
@@ -57,7 +59,9 @@ class NaturalKeyTests(TestCase):
         survey = Survey.objects.all()[0]
 #         print 'Clear previous Registered Subjects: Count='+str(RegisteredSubject.objects.all().count())
 #         RegisteredSubject.objects.all().delete()
+        signals.post_save.disconnect(create_household_structure_on_post_save, weak=False, dispatch_uid="create_household_structure_on_post_save")
         household_structure = HouseholdStructureFactory(survey=survey)
+        signals.post_save.connect(create_household_structure_on_post_save, weak=False, dispatch_uid="create_household_structure_on_post_save")
         household_member = HouseholdMemberFactory(household_structure=household_structure, survey=survey)
         print 'get registered subject'
         registered_subject = RegisteredSubject.objects.get(subject_identifier=household_member.registered_subject.subject_identifier)

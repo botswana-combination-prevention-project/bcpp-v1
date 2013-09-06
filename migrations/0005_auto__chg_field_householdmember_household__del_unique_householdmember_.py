@@ -9,12 +9,12 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'HouseholdMember', fields ['household']
-        db.delete_unique('bcpp_household_member_householdmember', ['household_id'])
+        #db.delete_unique('bcpp_household_member_householdmember', ['household_id'])
 
 
         # Changing field 'HouseholdMember.household'
-        db.alter_column('bcpp_household_member_householdmember', 'household_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household.Household'], null=True))
-
+        #db.alter_column('bcpp_household_member_householdmember', 'household_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household.Household'], null=True))
+        pass
     def backwards(self, orm):
 
         # Changing field 'HouseholdMember.household'
