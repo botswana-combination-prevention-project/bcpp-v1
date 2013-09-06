@@ -23,7 +23,10 @@ site_sections.autodiscover()
 APP_NAME = settings.APP_NAME
 
 for model in get_models():
-    django_databrowse.site.register(model)
+    try:
+        django_databrowse.site.register(model)
+    except:
+        pass
 
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
