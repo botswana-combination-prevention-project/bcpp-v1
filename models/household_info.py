@@ -10,6 +10,7 @@ from bcpp_list.models import ElectricalAppliances, TransportMode
 from bcpp_household.models import HouseholdStructure
 from household_member import HouseholdMember
 from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
+from bcpp_houehold_member.managers import  HouseholdInfoManager
 
 
 class HouseholdInfo(BaseDispatchSyncUuidModel):
@@ -117,7 +118,9 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         choices=SMALLER_MEALS,
         help_text="",
         )
-
+    
+    objects = HouseholdInfoManager()
+     
     history = AuditTrail()
     
     def natural_key(self):
