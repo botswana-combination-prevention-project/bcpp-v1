@@ -17,4 +17,3 @@ class AppointmentFactory(BaseUuidModelFactory):
     study_site = factory.SubFactory(StudySiteFactory)
     visit_definition = factory.SubFactory(VisitDefinitionFactory)
     visit_instance = '0'
-    dashboard_type = 'subject'

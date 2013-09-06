@@ -2,25 +2,25 @@ from datetime import datetime
 from django.test import TestCase
 from django.contrib.auth.models import User
 from bhp_variables.tests.factories import StudySiteFactory
-from bhp_appointment.tests.factories import AppointmentFactory
 from bhp_visit.tests.factories import VisitDefinitionFactory
 from bhp_registration.tests.factories import RegisteredSubjectFactory
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_variables.tests.factories import StudySpecificFactory
-from bhp_appointment.tests.factories import ConfigurationFactory
- 
- 
+from factories import ConfigurationFactory
+from factories import AppointmentFactory
+
+
 class BaseAppointmentTests(TestCase):
- 
+
     def __init__(self, *args, **kwargs):
         self.visit_definition = None
         self.registered_subject = None
         self.appointment = None
         self.admin_user = None
         super(BaseAppointmentTests, self).__init__(*args, **kwargs)
- 
+
     def setup(self):
         site_lab_tracker.autodiscover()
         StudySpecificFactory()
