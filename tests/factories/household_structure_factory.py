@@ -8,8 +8,8 @@ from bcpp_survey.tests.factories import SurveyFactory
 
 class HouseholdStructureFactory(BaseUuidModelFactory):
     FACTORY_FOR = HouseholdStructure
-
-    household = factory.SubFactory(HouseholdFactory)
+    
     survey = factory.SubFactory(SurveyFactory)
+    household = factory.SubFactory(HouseholdFactory)
     member_count = 2
     note = factory.Sequence(lambda n: 'note{0}'.format(n))
