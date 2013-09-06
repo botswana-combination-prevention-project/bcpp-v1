@@ -66,7 +66,7 @@ class Dashboard(object):
 
             regex = {}
             regex['dashboard_type'] = 'maternal'
-            regex['dashboard_model'] = 'maternal_consent'
+            regex['d-ashboard_model'] = 'maternal_consent'
             urlpatterns += MaternalDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['maternal_visit', ])
         """
 
