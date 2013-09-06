@@ -32,6 +32,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
         using = kwargs.get('using', None)
         self.household_member.member_status = 'consented'
         self.household_member.save(using=using)
+        self.registered_subject.subject_identifier = self.subject_identifier
         self.registered_subject.registration_status = 'consented'
         self.registered_subject.save(using=using)
 
