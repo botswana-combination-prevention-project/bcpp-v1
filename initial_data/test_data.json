@@ -1,0 +1,1346 @@
+[
+  {
+    "pk": 1, 
+    "model": "bhp_research_protocol.fundingsource", 
+    "fields": {
+      "name": "NIH 234234234", 
+      "reference": "", 
+      "description": "asd"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_research_protocol.fundingsource", 
+    "fields": {
+      "name": "UNKNOWN", 
+      "reference": "", 
+      "description": "UNKNOWN"
+    }
+  }, 
+  {
+    "pk": "30c402fe-6720-11e0-b991-842b2b9d8d57", 
+    "model": "bhp_research_protocol.principalinvestigator", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "last_name": "ESSEX", 
+      "created": "2011-04-15 07:21:17", 
+      "user_modified": "", 
+      "modified": "2011-04-15 07:21:17", 
+      "hostname_modified": "dmc3", 
+      "first_name": "MAX", 
+      "user_created": "django", 
+      "initials": "ME"
+    }
+  }, 
+  {
+    "pk": "2c04e652-6720-11e0-b991-842b2b9d8d57", 
+    "model": "bhp_research_protocol.principalinvestigator", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "last_name": "LOCKMAN", 
+      "created": "2011-04-15 07:21:09", 
+      "user_modified": "", 
+      "modified": "2011-04-15 07:21:09", 
+      "hostname_modified": "dmc3", 
+      "first_name": "SHAHIN", 
+      "user_created": "django", 
+      "initials": "SL"
+    }
+  }, 
+  {
+    "pk": "3f0550fc-6720-11e0-b991-842b2b9d8d57", 
+    "model": "bhp_research_protocol.principalinvestigator", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "last_name": "PETERSON", 
+      "created": "2011-04-15 07:21:41", 
+      "user_modified": "", 
+      "modified": "2011-04-15 07:21:41", 
+      "hostname_modified": "dmc3", 
+      "first_name": "SCOTT", 
+      "user_created": "django", 
+      "initials": "SP"
+    }
+  }, 
+  {
+    "pk": "3858b8d4-6720-11e0-b991-842b2b9d8d57", 
+    "model": "bhp_research_protocol.principalinvestigator", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "last_name": "SHAPIRO", 
+      "created": "2011-04-15 07:21:30", 
+      "user_modified": "", 
+      "modified": "2011-04-15 07:21:30", 
+      "hostname_modified": "dmc3", 
+      "first_name": "ROGER", 
+      "user_created": "django", 
+      "initials": "RS"
+    }
+  }, 
+  {
+    "pk": "27b1fad0-6749-11e0-8a41-842b2b9d8d57", 
+    "model": "bhp_research_protocol.principalinvestigator", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "last_name": "UNKNOWN", 
+      "created": "2011-04-15 12:14:31", 
+      "user_modified": "", 
+      "modified": "2011-04-15 12:14:31", 
+      "hostname_modified": "dmc3", 
+      "first_name": "UNKNOWN", 
+      "user_created": "django", 
+      "initials": "UU"
+    }
+  }, 
+  {
+    "pk": "4d18d9ac-6720-11e0-b991-842b2b9d8d57", 
+    "model": "bhp_research_protocol.siteleader", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "last_name": "BUSSMANN", 
+      "created": "2011-04-15 07:22:05", 
+      "user_modified": "", 
+      "modified": "2011-04-15 07:22:05", 
+      "hostname_modified": "dmc3", 
+      "first_name": "HERMANN", 
+      "user_created": "django", 
+      "initials": "HB"
+    }
+  }, 
+  {
+    "pk": "f8d45d54-8055-11e0-9551-001d72b88a3a", 
+    "model": "bhp_research_protocol.siteleader", 
+    "fields": {
+      "hostname_created": "home", 
+      "last_name": "OGWU", 
+      "created": "2011-05-17 09:19:15", 
+      "user_modified": "", 
+      "modified": "2011-05-17 09:19:15", 
+      "hostname_modified": "home", 
+      "first_name": "ANTHONY", 
+      "user_created": "erikvw", 
+      "initials": "AO"
+    }
+  }, 
+  {
+    "pk": "3037d60c-6749-11e0-8a41-842b2b9d8d57", 
+    "model": "bhp_research_protocol.siteleader", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "last_name": "UNKNOWN", 
+      "created": "2011-04-15 12:14:46", 
+      "user_modified": "", 
+      "modified": "2011-04-15 12:14:46", 
+      "hostname_modified": "dmc3", 
+      "first_name": "UNKNOWN", 
+      "user_created": "django", 
+      "initials": "UU"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_research_protocol.location", 
+    "fields": {
+      "name": "Gaborone"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "bhp_research_protocol.location", 
+    "fields": {
+      "name": "Lobatse"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "bhp_research_protocol.location", 
+    "fields": {
+      "name": "Mochudi"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "bhp_research_protocol.location", 
+    "fields": {
+      "name": "Molepolole"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "bhp_research_protocol.location", 
+    "fields": {
+      "name": "UNKNOWN"
+    }
+  }, 
+  {
+    "pk": 37, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "-1", 
+      "name": "-1", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "00", 
+      "name": "00", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0000", 
+      "name": "0000", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0004", 
+      "name": "0004", 
+      "location": 5
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0006", 
+      "name": "0006", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0010", 
+      "name": "0010", 
+      "location": 3
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0012", 
+      "name": "0012", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0020", 
+      "name": "0020", 
+      "location": 4
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0021", 
+      "name": "0021", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0024", 
+      "name": "0024", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0026", 
+      "name": "0026", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0030", 
+      "name": "0030", 
+      "location": 5
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0031", 
+      "name": "0031", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0032", 
+      "name": "0032", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 41, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0033", 
+      "name": "0033", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0035", 
+      "name": "0035", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0036", 
+      "name": "0036", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 35, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0038", 
+      "name": "0038", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0039", 
+      "name": "0039", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0040", 
+      "name": "0040", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0041", 
+      "name": "0041", 
+      "location": 2
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0042", 
+      "name": "0042", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 34, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0045", 
+      "name": "0045", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0047", 
+      "name": "0047", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0048", 
+      "name": "0048", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0050", 
+      "name": "0050", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0137", 
+      "name": "0137", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "0229", 
+      "name": "0229", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 39, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "10", 
+      "name": "10", 
+      "location": 3
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "1000", 
+      "name": "1000", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "1041", 
+      "name": "1041", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "1100", 
+      "name": "1100", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "12701", 
+      "name": "12701", 
+      "location": 2
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "1300", 
+      "name": "1300", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 36, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "20", 
+      "name": "20", 
+      "location": 4
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "2000", 
+      "name": "2000", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "2010", 
+      "name": "2010", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 38, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "30", 
+      "name": "30", 
+      "location": 5
+    }
+  }, 
+  {
+    "pk": 40, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "40", 
+      "name": "40", 
+      "location": 2
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "9799", 
+      "name": "9799", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "bhp_research_protocol.site", 
+    "fields": {
+      "site_identifier": "9999", 
+      "name": "9999", 
+      "location": 1
+    }
+  }, 
+  {
+    "pk": 86, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "-9", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 73, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BANA01", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 75, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP004", 
+      "short_title": "unknown", 
+      "site": [
+        10, 
+        2, 
+        11, 
+        3
+      ], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [
+        "3037d60c-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 85, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP007", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 69, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP010", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 74, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP011", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 70, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP012", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 78, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP015", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 68, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP016", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 64, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP017", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 82, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP018", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 84, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP019", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 83, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP021", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 71, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "Host Genetics", 
+      "site_name_fragment": "Host Genetics", 
+      "protocol_identifier": "BHP022", 
+      "short_title": "Host Genetics", 
+      "site": [
+        5, 
+        4, 
+        2, 
+        20, 
+        11, 
+        32, 
+        22, 
+        3, 
+        18, 
+        19
+      ], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [
+        "3037d60c-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "research_title": "Host Genetics", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "Host Genetics"
+    }
+  }, 
+  {
+    "pk": 79, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "IMPAACT P1041", 
+      "site_name_fragment": "IMPAACT P1041", 
+      "protocol_identifier": "BHP023", 
+      "short_title": "IMPAACT P1041", 
+      "site": [
+        4, 
+        3
+      ], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [
+        "f8d45d54-8055-11e0-9551-001d72b88a3a"
+      ], 
+      "research_title": "IMPAACT P1041", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "IMPAACT P1041"
+    }
+  }, 
+  {
+    "pk": 87, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "IMC", 
+      "site_name_fragment": "IMC", 
+      "protocol_identifier": "BHP024", 
+      "short_title": "IMC", 
+      "site": [
+        4, 
+        2, 
+        3
+      ], 
+      "date_registered": "2011-05-17", 
+      "site_leader": [
+        "3037d60c-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "research_title": "Infant Male Circumcision", 
+      "date_opened": "2011-05-17", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "27b1fad0-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "description": "IMC"
+    }
+  }, 
+  {
+    "pk": 58, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP026", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-04-15", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-04-15", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": ""
+    }
+  }, 
+  {
+    "pk": 81, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP027", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 63, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP029", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 80, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP030", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 62, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP031", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 52, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "HPTN052 Thibelo", 
+      "site_name_fragment": "HPTN052 Thibelo", 
+      "protocol_identifier": "BHP032", 
+      "short_title": "HPTN052 Thibelo", 
+      "site": [
+        14, 
+        1
+      ], 
+      "date_registered": "2011-04-15", 
+      "site_leader": [
+        "3037d60c-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "research_title": "HPTN052 Thibelo", 
+      "date_opened": "2011-04-15", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "HPTN052 Thibelo"
+    }
+  }, 
+  {
+    "pk": 67, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "ACTG A5221", 
+      "site_name_fragment": "ACTG A5221", 
+      "protocol_identifier": "BHP033", 
+      "short_title": "ACTG A5221", 
+      "site": [
+        4, 
+        3
+      ], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [
+        "f8d45d54-8055-11e0-9551-001d72b88a3a"
+      ], 
+      "research_title": "ACTG A5221", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "ACTG A5221"
+    }
+  }, 
+  {
+    "pk": 59, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP035", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-06", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-06", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 72, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "Mmahama", 
+      "site_name_fragment": "Mmahama", 
+      "protocol_identifier": "BHP036", 
+      "short_title": "Mmahama", 
+      "site": [
+        3
+      ], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [
+        "3037d60c-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "research_title": "Mmahama", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "27b1fad0-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "description": "Mmahama"
+    }
+  }, 
+  {
+    "pk": 66, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP037", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 55, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "Tshipidi", 
+      "site_name_fragment": "Tshipidi", 
+      "protocol_identifier": "BHP038", 
+      "short_title": "Tshipidi", 
+      "site": [
+        4, 
+        2, 
+        11, 
+        3
+      ], 
+      "date_registered": "2011-04-15", 
+      "site_leader": [
+        "3037d60c-6749-11e0-8a41-842b2b9d8d57"
+      ], 
+      "research_title": "Tshipidi", 
+      "date_opened": "2011-04-15", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "2c04e652-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "Tshipidi"
+    }
+  }, 
+  {
+    "pk": 54, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "IMPAACT P1072", 
+      "site_name_fragment": "IMPAACT P1072", 
+      "protocol_identifier": "BHP040", 
+      "short_title": "IMPAACT P1072", 
+      "site": [
+        4, 
+        3
+      ], 
+      "date_registered": "2011-04-15", 
+      "site_leader": [
+        "f8d45d54-8055-11e0-9551-001d72b88a3a"
+      ], 
+      "research_title": "IMPAACT P1072", 
+      "date_opened": "2011-04-15", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "IMPAACT P1072"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "Mochudi", 
+      "site_name_fragment": "Mochudi Project", 
+      "protocol_identifier": "BHP041", 
+      "short_title": "Mochudi", 
+      "site": [
+        2
+      ], 
+      "date_registered": "2010-04-15", 
+      "site_leader": [
+        "4d18d9ac-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "research_title": "Mochudi Prevention Project", 
+      "date_opened": "2010-05-15", 
+      "funding_source": [
+        1
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "asdasd"
+    }
+  }, 
+  {
+    "pk": 65, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "A5253", 
+      "site_name_fragment": "ACTG A5253", 
+      "protocol_identifier": "BHP046", 
+      "short_title": "ACTG A5253", 
+      "site": [
+        4, 
+        3
+      ], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [
+        "f8d45d54-8055-11e0-9551-001d72b88a3a"
+      ], 
+      "research_title": "ACTG A5253", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "2c04e652-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 76, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP047", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 53, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "PROMISE 1077HS", 
+      "site_name_fragment": "PROMISE 1077HS", 
+      "protocol_identifier": "BHP049", 
+      "short_title": "PROMISE 1077HS", 
+      "site": [
+        4, 
+        3
+      ], 
+      "date_registered": "2011-04-15", 
+      "site_leader": [
+        "f8d45d54-8055-11e0-9551-001d72b88a3a"
+      ], 
+      "research_title": "PROMISE 1077HS", 
+      "date_opened": "2011-04-15", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "PROMISE 1077HS"
+    }
+  }, 
+  {
+    "pk": 56, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "IMPAACT P1026S", 
+      "site_name_fragment": "IMPAACT P1026S", 
+      "protocol_identifier": "BHP050", 
+      "short_title": "IMPAACT P1026S", 
+      "site": [
+        3
+      ], 
+      "date_registered": "2011-04-15", 
+      "site_leader": [
+        "f8d45d54-8055-11e0-9551-001d72b88a3a"
+      ], 
+      "research_title": "IMPAACT P1026S", 
+      "date_opened": "2011-04-15", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "IMPAACT P1026S"
+    }
+  }, 
+  {
+    "pk": 57, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "A5234", 
+      "site_name_fragment": "ACTG A5234", 
+      "protocol_identifier": "BHP053", 
+      "short_title": "ACTG A5234", 
+      "site": [
+        4, 
+        3
+      ], 
+      "date_registered": "2011-04-15", 
+      "site_leader": [
+        "f8d45d54-8055-11e0-9551-001d72b88a3a"
+      ], 
+      "research_title": "ACTG A5234", 
+      "date_opened": "2011-04-15", 
+      "funding_source": [
+        2
+      ], 
+      "prinicipal_investigator": [
+        "30c402fe-6720-11e0-b991-842b2b9d8d57"
+      ], 
+      "description": "ACTG A5234"
+    }
+  }, 
+  {
+    "pk": 60, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "BHP056", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 61, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "QA0100", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-13", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-13", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }, 
+  {
+    "pk": 77, 
+    "model": "bhp_research_protocol.protocol", 
+    "fields": {
+      "local_title": "unknown", 
+      "site_name_fragment": "UNKNOWN", 
+      "protocol_identifier": "STI007", 
+      "short_title": "unknown", 
+      "site": [], 
+      "date_registered": "2011-05-14", 
+      "site_leader": [], 
+      "research_title": "unknown", 
+      "date_opened": "2011-05-14", 
+      "funding_source": [], 
+      "prinicipal_investigator": [], 
+      "description": "auto created / imported from DMIS"
+    }
+  }
+]
