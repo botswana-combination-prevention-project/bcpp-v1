@@ -214,9 +214,6 @@
 [submodule "bhp_visit_tracking"]
 	path = bhp_visit_tracking
 	url = git@192.168.1.50:bhp_visit_tracking
-[submodule "lab_test_code"]
-	path = lab_test_code
-	url = git@192.168.1.50:lab_test_code
 [submodule "bhp_dispatch"]
 	path = bhp_dispatch
 	url = git@192.168.1.50:bhp_dispatch
@@ -268,3 +265,6 @@
 [submodule "bhp_static"]
 	path = bhp_static
 	url = git@gitserver:bhp_static
+[submodule "lab_test_code"]
+	path = lab_test_code
+	url = git@gitserver:lab_test_code
