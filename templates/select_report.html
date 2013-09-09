@@ -1,0 +1,24 @@
+{% extends "section.html"%}
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; <a href="/bhp_birt_reports/base_report">Report</A>
+    </div>
+    
+{% endblock %}
+
+
+{% block content %}
+	<form action="/bhp_birt_reports/generate_report/" method="post">
+	    <div class="fieldWrapper">
+	        <label for="name_report">Report:</label> {{ form.reports }} <br>
+	        <input type="submit" value="Submit" />
+	        {% csrf_token %}
+	    </div>
+	</form>
+{% endblock %}
+
+
+{% block section_buttons %}{% endblock section_buttons %}
+{% block section_title %}{% endblock section_title %}

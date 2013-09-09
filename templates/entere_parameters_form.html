@@ -1,0 +1,39 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}
+{% block css %}
+	<link href="/static/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+	<script type="text/javascript" src="/admin/jsi18n/"></script>
+	<script type="text/javascript" src="/static/admin/js/core.js"></script>
+	<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+	{{ form.media }}
+{% endblock css %} 
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; <a href="/admin/bhp_birt_reports/basereport/">BaseReport</A>
+    </div>
+    
+{% endblock %}
+
+
+{% block content %}
+
+<form action="/bhp_birt_reports/generate_report/" method="post">
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+    <table>
+    	<div><H4>Enter the filtering parameters for the {{report}} report below</H4></div>
+    	<tr>
+    	 	<td>REPORT:</td> 
+    	 	<td><input type="text" id={{report}} name="report" value={{report}} readonly></td>
+    	</tr>
+        {{ form.as_table }}
+        {% csrf_token %}
+        <tr>
+			<td><input type="submit" value="Submit" /></td>
+		</tr>
+    </table>
+    </div>
+</form>
+
+{% endblock %}
