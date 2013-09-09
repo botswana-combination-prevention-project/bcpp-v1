@@ -1,0 +1,6 @@
+from base_death_factory import BaseDeathFactory
+from death_reason_hospitalized_factory import DeathReasonHospitalizedFactory
+from death_medical_responsibility_factory import DeathMedicalResponsibilityFactory
+from death_cause_category_factory import DeathCauseCategoryFactory
+from death_cause_info_factory import DeathCauseInfoFactory
+#from simple_adverse_event_factory import SimpleAdverseEventFactory
