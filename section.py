@@ -2,7 +2,7 @@ from django.conf import settings
 from bhp_section.classes import BaseSectionView, site_sections
 from bhp_map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
-from models import Household
+from models import Household, Plot
 from forms import CommunityForm
 from bcpp_household.forms.current_gps_form import CurrentGpsForm
 
@@ -10,13 +10,14 @@ from bcpp_household.forms.current_gps_form import CurrentGpsForm
 site_mappers.autodiscover()
 
 
-class SectionHouseholdView(BaseSectionView):
-    section_name = 'household'
-    section_display_name = 'Surveys'
-    section_display_index = 10
+class SectionView(BaseSectionView):
+    section_name = ''
+    section_display_name = ''
+    section_display_index = 0
     section_template = 'section_bcpp_household.html'
-    add_model = Household
-
+    add_model = None
+    dashboard_url_name = ''
+    
     def contribute_to_context(self, context, request, *args, **kwargs):
         current_survey = None
         if 'CURRENT_SURVEY' in dir(settings):
@@ -35,7 +36,7 @@ class SectionHouseholdView(BaseSectionView):
         context.update({'community_form': community_form,
                         'current_community': current_community,
                         'mapper_name': current_community,
-                        'gps_search_form': gps_search_form})
+                        'gps_search_form': gps_search_form,})
         return context
 
     
@@ -75,4 +76,21 @@ class SectionHouseholdView(BaseSectionView):
                 search_result = request.session['search_result']
         return search_result
 
+class SectionHouseholdView(SectionView):
+    section_name = 'household'
+    section_display_name = 'Households'
+    add_model = Household
+    section_display_index = 123
+    dashboard_url_name = 'household_dashboard_url'
+    #subject_dashboard_url
+
+class SectionPlotView(SectionView):
+    section_name = 'plot'
+    section_display_name = 'Plots'
+    add_model = Plot
+    section_display_index = 121
+    dashboard_url_name = 'plot_dashboard_url'
+
+site_sections.register(SectionPlotView)
 site_sections.register(SectionHouseholdView)
+

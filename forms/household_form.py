@@ -42,6 +42,11 @@ class HouseholdForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
+        plot = cleaned_data.get('plot', None)
+        
+        if plot:
+            if plot.is_dispatched_as_item():
+                raise forms.ValidationError("Plot is currently dispatched. Data may not be changed.")
         # check if supplied old identifier is already in sue
         #old_household_identifier = cleaned_data.get('old_household_identifier', None)
         #if old_household_identifier:

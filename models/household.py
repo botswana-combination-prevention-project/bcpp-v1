@@ -1,24 +1,23 @@
 import re
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.core.exceptions import ImproperlyConfigured
 from audit_trail.audit import AuditTrail
+from django.core.exceptions import ValidationError
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_device.classes import Device
 from bhp_map.classes import site_mappers
-from bhp_map.exceptions import MapperError
 from bhp_identifier.exceptions import IdentifierError
-from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
-from bcpp_household.choices import HOUSEHOLD_STATUS, SECTIONS, SUB_SECTIONS
+from bcpp_household.choices import HOUSEHOLD_STATUS
 
 
-def is_valid_community(value):
-    """Validates the community string against a list of site_mappers map_areas."""
-    if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
-        raise ValidationError(u'{0} is not a valid community name.'.format(value))
-
+def is_valid_community(self, value):
+        """Validates the community string against a list of site_mappers map_areas."""
+        if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
+            raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 class Household(BaseDispatchSyncUuidModel):
 
@@ -29,12 +28,6 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=_("Household identifier"),
         editable=False,
         db_index=True,
-        )
-
-    device_id = models.CharField(
-        max_length=2,
-        null=True,
-        editable=False,
         )
 
     hh_int = models.IntegerField(
@@ -112,33 +105,10 @@ class Household(BaseDispatchSyncUuidModel):
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
-    cso_number = EncryptedCharField(
-        verbose_name="CSO Number",
-        blank=True,
-        null=True,
-        db_index=True,
-        help_text=_("provide the CSO number or leave BLANK."),
-        )
-
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
         validators=[is_valid_community, ],
-        )
-
-    section = models.CharField(
-        max_length=25,
-        null=True,
-        verbose_name='Section',
-        choices=SECTIONS,
-        )
-
-    sub_section = models.CharField(
-        max_length=25,
-        null=True,
-        verbose_name='Sub-section',
-        choices=SUB_SECTIONS,
-        help_text=u'',
         )
 
 #     was_surveyed_previously = models.CharField(
@@ -162,6 +132,10 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         )
+    
+    is_randomised = models.BooleanField(
+            verbose_name='Is_randomised',
+            editable=False)
 
     action = models.CharField(
         max_length=25,
@@ -201,8 +175,8 @@ class Household(BaseDispatchSyncUuidModel):
         mapper = mapper_cls()
         self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0)
         self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)
-        mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-        mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+        #mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+        #mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
@@ -241,18 +215,6 @@ class Household(BaseDispatchSyncUuidModel):
 
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
-
-    def is_dispatch_container_model(self):
-        return True
-
-    def dispatched_as_container_identifier_attr(self):
-        return 'household_identifier'
-
-    def dispatch_container_lookup(self):
-        dispatch_container = models.get_model('bhp_dispatch', 'DispatchContainerRegister')
-        if dispatch_container.objects.filter(container_identifier=self.household_identifier, is_dispatched=True).exists():
-            return dispatch_container.objects.get(container_identifier=self.household_identifier, is_dispatched=True)
-        return None
 
     def include_for_dispatch(self):
         return True

@@ -6,14 +6,16 @@ from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdStructureManager
-from household import Household
+#from household import Household
+from plot import Plot
 
 
 class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     """ Each year/survey a new household_structure is created for the household """
 
-    household = models.ForeignKey(Household)
+    #household = models.ForeignKey(Household)
+    plot = models.ForeignKey(Plot)
 
     survey = models.ForeignKey(Survey)
 
@@ -39,14 +41,33 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def __unicode__(self):
-        return unicode(self.household)
+        return unicode(self.plot)
 
     def natural_key(self):
-        return self.household.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey']
+        return self.plot.natural_key() + self.survey.natural_key()
+    natural_key.dependencies = ['bcpp_household.plot', 'bcpp_survey.survey',]
+
+#     def gps_point(self):
+#         return "LON:{0} LAT:{1}".format(self.plot.household.gps_point_11, self.plot.household.gps_point_21)
+
+    def get_absolute_url(self):
+        return "/admin/bcpp_household/householdstructure/{0}/".format(self.id)
+
+    def calendar_datetime(self):
+        return self.created
+
+    def calendar_label(self):
+        return self.__unicode__()
+
+    def group_permissions(self):
+        return {'survey': ('add', 'change')}
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household__household_identifier')
+        return (Plot, 'plot__plot_identifier')
+
+    def get_subject_identifier(self):
+        #subject_identifier = self.household.household_identifier
+        return self.plot.plot_identifier
 
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
@@ -70,8 +91,8 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             self.save(using=using)
 
     def house(self):
-        url = reverse('admin:{app_label}_{model_name}__changelist'.format(self.household._meta.app_label, self.household._meta.object_name.lower()))
-        return """<a href="{url}?q={q}'" />household</a>""".format(url=url, q=self.household.household_identifier)
+        url = '/admin/{0}/plot/?q={1}'.format(self._meta.app_label, self.plot.plot_identifier)
+        return """<a href="{url}" />plot</a>""".format(url=url)
     house.allow_tags = True
 
     def members(self):
@@ -85,10 +106,10 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     logs.allow_tags = True
 
     def dashboard(self):
-        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'dashboard_model': 'household_structure', 'dashboard_id': self.pk, 'show': 'any'})
+        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'plot', 'dashboard_model': 'household_structure', 'dashboard_id': self.pk, 'show': 'any'})
         return """<a href="{url}" />composition</a>""".format(url=url)
     dashboard.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_household'
-        unique_together = (('household', 'survey'), )
+        unique_together = (('plot', 'survey'), )

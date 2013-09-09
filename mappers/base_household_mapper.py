@@ -14,6 +14,8 @@ class BaseHouseholdMapper(Mapper):
     section_field_attr = 'sub_section'
     section_label = 'Sub Section'
     map_area_field_attr = 'community'
+    target_gps_lat_field_attr = 'gps_target_lat'
+    target_gps_lon_field_attr = 'gps_target_lon'
     icons = ICONS
     other_icons = OTHER_ICONS
 

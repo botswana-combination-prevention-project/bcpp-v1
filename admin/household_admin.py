@@ -19,17 +19,14 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
         'gps_minutes_s',
         'gps_degrees_e',
         'gps_minutes_e',
-        'cso_number',
         'community',
-        'section',
-        'sub_section',
         'comment')
 
-    list_display = ('household_identifier', 'structure', 'action', 'status', 'cso_number', 'community', 'section', 'created')
+    list_display = ('household_identifier', 'structure', 'action', 'status', 'community', 'created')
 
-    list_filter = ('status', 'created', 'community', 'section', 'action')
+    list_filter = ('status', 'created', 'community',  'action')
 
-    search_fields = ('household_identifier', 'cso_number', 'community', 'section', 'id')
+    search_fields = ('household_identifier', 'community', 'id')
 
     readonly_fields = ('household_identifier',)
     radio_fields = {

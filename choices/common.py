@@ -39,6 +39,12 @@ INFO_PROVIDER = (
     ('NEXT_OF_KIN', 'Kin'),
     ('OTHER', 'Other'))
 
+PLOT_STATUS = (
+    ('occupied', 'Occupied'),
+    ('vacant', 'Vacant'),
+    ('invalid', 'Not a household'),
+    )
+
 HOUSEHOLD_STATUS = (
     ('occupied', 'Occupied'),
     ('vacant', 'Vacant'),
