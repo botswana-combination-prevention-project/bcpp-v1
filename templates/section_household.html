@@ -1,0 +1,61 @@
+{% extends "section.html"%}
+{% load admin_urls %}
+{% load url from future %}
+{% load map_tags %}
+{% block section_tiles %}
+
+<div id="tile_wrapper">
+    {% block selection_tile%}
+     <div style="clear:left;">
+     {% if current_survey %}
+        Current survey is {{ current_survey }}
+     {% else %}
+        {{ survey_form }}
+     {% endif %}
+     {% if current_community %}
+        Current community is {{ current_community }}
+     {% else %}
+        {{ community_form }}
+     {% endif %}
+     {% if not use_gps_to_target_verification %}&nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>{% endif %}
+    </div>
+    {% endblock%}
+    
+    {% if current_survey and current_community%}
+    {% block add_model_tile %}
+        <div id="add_model_tile">
+        <form method="GET" action="{% url add_model_opts|admin_urlname:'add' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="section_url">
+        <input type="hidden" name="section_name" value="{{ section_name }}">
+        <input type="submit" value="Add {{ add_model_name }}"  />
+        </form></div>
+    {% endblock %}
+    {% endif %}
+ 
+    {% block gps_search %}{% endblock %}
+ 
+    {% block search_tile %}
+        <div id="search_tile">
+        <form method="POST" action="{% url 'section_search_url' section_name search_type %}">
+        {% csrf_token %}
+        <input class="search_form" type="text" name="search_term" value="{{ search_term }}">&nbsp;<input type="submit" value="Search">
+        </form></div>
+    {% endblock %}
+    {% if search_result %}
+        {% block search_result %}
+            <div id="search_result_tile">
+            {% include search_result_include_file %}
+            <small><small>{{ search_result_include_file }}</small></small>
+            </div>
+        {% endblock %}
+    {% endif %}
+    {% if top_result %}
+        {% block top_result %}
+            <div id="search_result_tile">
+            {% include search_result_include_file %}  
+            </div>
+        {% endblock %}
+    {% endif %}    
+</div>
+{% endblock %}
