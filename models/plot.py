@@ -187,7 +187,6 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         if not self.id:
             device = Device()
-            print self.community_number()
             identifier = PIdentifier(community=self.community_number())
             self.plot_identifier = identifier.get_identifier()
             self.device_id = device.device_id
