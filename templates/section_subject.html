@@ -1,0 +1,40 @@
+{% extends "section.html"%}
+{% load admin_urls %}
+{% load url from future %}
+
+{% block section_tiles %}
+
+<div id="tile_wrapper">
+
+
+    {% block add_model_tile %}
+    {% if add_model_opts %}
+    <div id="add_model_tile">
+        <form method="GET" action="{% url add_model_opts|admin_urlname:'add' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="section_url">
+        <input type="hidden" name="section_name" value="{{ section_name }}">
+        <input type="submit" value="Add {{ add_model_name }}"  />
+        </form>
+    </div>{% endif %}
+    {% endblock %}
+    
+    {% block search_tile %}
+    <div id="search_tile">
+    <form method="POST" action="{% url 'section_search_url' section_name search_type %}">
+    {% csrf_token %}
+    <input type="text" name="search_term" value="">&nbsp;<input type="submit" value="Search">
+    </form></div>
+    {% endblock %}
+    
+    {% if search_result %}
+    <div id="search_result_tile">
+        {% if not search_result_include_file%}<span style="background-color:red;color:white;">search_result_include_file not defined!</span>{%endif%}
+        {% include search_result_include_file %}  
+    </div>
+    <small>{{ search_result_include_file }}</small>
+    {% endif %}
+
+</div>
+
+{% endblock %}
