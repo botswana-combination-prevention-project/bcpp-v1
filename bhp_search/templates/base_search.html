@@ -1,0 +1,27 @@
+{% extends base_search_extender %}
+
+{% block title %}Search {{ search_name }}{% endblock %}
+
+{% block content %}
+
+<H5>
+{% block search_title %}
+{{ report_title|default:" (Report title has not been set!)"|capfirst }}
+{% endblock %}
+</H5>
+
+<small>
+{% block search_help_text %}
+{{ search_helptext|wordwrap:25 }}
+{% endblock %}
+</small>
+
+
+{% block search %}{% endblock search%}
+{% block results_title %}{% endblock results_title%}
+{% block pagination %}{% endblock %}
+{% block results %}{% endblock results%}
+
+
+{% endblock content %}
+
