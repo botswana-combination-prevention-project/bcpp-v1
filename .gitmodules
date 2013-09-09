@@ -241,3 +241,6 @@
 [submodule "bhp_lab_tracker"]
 	path = bhp_lab_tracker
 	url = git@192.168.1.50:bhp_lab_tracker
+[submodule "bhp_inspector"]
+	path = bhp_inspector
+	url = git@gitserver:bhp_inspector
