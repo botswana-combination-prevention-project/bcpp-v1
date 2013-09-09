@@ -1,0 +1,50 @@
+{% extends "section.html"%}
+{% load dispatch_tags %}
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; <a href="/bhp_dispatch/admin/">Dispatch</A>
+    </div>
+    
+{% endblock %}
+
+
+{% block content %}
+
+<table>
+<tr><TD><H4>Items selected for dispatch</H4></TD></TR>
+<tr><TD colspan=2>Dispatch by <A href="{{ user_container_admin_url }}">{{ user_container_model_name }}</A></TD></td></TR>
+    {% for qs in queryset %}
+        <tr><TD><A href="{{ dispatch_url }}{{ qs }}/">{{ qs }}</A></TD><td>{% if qs|is_dispatched %}<A href="/admin/bhp_dispatch/dispatchitem/?q={{ qs }}">dispatched</A>{% endif %}</td></TR>
+    {% endfor %}
+</table>
+<form action="/dispatch/" method="post">
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.producer.errors }}
+        <label for="id_producer">Producer:</label> {{ form.producer }}
+        {{ form.survey.errors }}
+        <label for="id_survey">Survey:</label> {{ form.survey }}
+        <input type="submit" value="Dispatch" />
+        <input type="hidden" name="ct" id="ct"  value="{{ ct }}">
+        <input type="hidden" name="items" id="items" value="{{ items }}">
+        {% csrf_token %}
+    </div>
+</form>
+
+{% if has_outgoing_transactions %}
+
+    <P><font color='red'>Producer "{{ producer }}" has outgoing transactions.</P>
+    <P>Return the data from the netbook to the server and try again.</font></P>
+    
+    
+    Go to: <A href="/bhp_sync/">Return data from netbooks to Community Server</A>
+
+{% endif %}
+
+{% endblock %}
+
+
+{% block section_buttons %}{% endblock section_buttons %}
+{% block section_title %}{% endblock section_title %}
