@@ -244,3 +244,9 @@
 [submodule "bhp_inspector"]
 	path = bhp_inspector
 	url = git@gitserver:bhp_inspector
+[submodule "bhp_household"]
+	path = bhp_household
+	url = git@gitserver:bhp_household
+[submodule "bhp_household_member"]
+	path = bhp_household_member
+	url = git@gitserver:bhp_household_member
