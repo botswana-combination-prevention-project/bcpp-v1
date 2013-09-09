@@ -1,0 +1,40 @@
+{% extends "base_site.html" %}
+
+{% block branding %}
+<h1 id="site-name">Labeller @ {{ os_variables.hostname }} from {{ remote_addr }} </h1> 
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="/lab_barcode/">Home</a>{% if title %} &rsaquo; {{ title }}{% endif %}</div>
+{% endblock %}
+
+
+{% block content %}
+<form action="." method="POST">
+<div style='display:none'>  
+  {% csrf_token %}
+</div>
+<table>
+<tr>
+{% for f in form %}
+<td class="field">
+    {{ f.errors }}
+    <label for="id_{{f.name}}">{{f.label}}</label>
+    {{ f }}
+</td>
+{% endfor %}
+<td>
+    <input type="submit" value="Submit" class="default" name="submit" />
+</td>
+
+<script type="text/javascript">document.getElementById("id_identifier").focus();</script>
+<script type="text/javascript">
+    (function($) {
+        var field = null;
+    })(django.jQuery);
+</script>
+    </table>
+</form>
+
+
+{% endblock content %}
