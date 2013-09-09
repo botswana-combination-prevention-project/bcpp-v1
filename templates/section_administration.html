@@ -1,0 +1,67 @@
+{% extends "base_section.html"%}
+{% load admin_urls %}
+{% load url from future %}
+
+{% block section_title%}<H5>Site Administration</H5>{%endblock%}
+{% block section_links %}
+<ul>
+<li><A href="/admin/">All sections</A>
+</ul>
+
+<H5>Users and settings</H5>
+<ul>
+<li><A href="/admin/auth/user/">User Management</A>
+<li><A href="/admin/auth/group/">Group Management</A>
+<li><A href="/edc/bhp_variables/studyspecific/">Study Specific Variables</A>
+</ul>
+
+{% if 'bhp_sync' in installed_apps and bhp_dispatch not in installed_apps %}
+<H5>Device Synchronization</H5>
+<ul>
+<li><A href="/bhp_sync/">Synchronize devices with Community Server (Return)</A></li>
+</ul>
+{% endif %}
+
+{%  if 'bhp_sync' in installed_apps and 'bhp_dispatch' in installed_apps %}
+<H5>Device Dispatch and Return</H5>
+<ul>
+<li><A name="dispatch-to-producer" href="/admin/mochudi_household/">Dispatch data to netbook</A>
+<li><A href="/bhp_sync/">Return data from devices to Community Server</A>
+  {% if 'bhp_map' in installed_apps %}
+    <li><A href="{% url 'map_index_url' %}">Dispatch data to devices by Map</A>
+  {% endif %}
+</ul>
+{% endif %}
+
+{% if 'bhp_birt_reports' in installed_apps %}
+<H5>Reports</H5>
+<ul>
+<li><A href="/admin/bhp_birt_reports/basereport/">Generate a Report</A></li>
+</ul>
+{% endif %}
+
+{% if 'bhp_inspector' in installed_apps %}
+<H5>Node Inspection Of Synced Trasanctions</H5>
+<ul>
+<li><A href="/admin/{{app_name}}_inspector/">Inspect Models</A></li>
+</ul>
+{% endif %}
+
+{% if 'lab_clinic_api' in installed_apps %}
+<H5>Lab</H5>
+<ul>
+<li><A href="/admin/{{app_name}}_lab/">Requisitions and Packing Lists</A></li>
+<li><A href="/admin/lab_clinic_api/">Results</A></li>
+</ul>
+{% endif %}
+
+{% if 'ph_dispenser' in installed_apps %}
+<h5>Pharmacy</h5>
+<ul>
+<li><A href="/admin/ph_dispenser/">Dispensings</A>
+</ul>
+{% endif %}
+
+{% endblock %}
+
+{% block other_section_links %}{% endblock %}
