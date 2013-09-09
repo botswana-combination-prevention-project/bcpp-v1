@@ -256,3 +256,15 @@
 [submodule "bhp_birt_reports"]
 	path = bhp_birt_reports
 	url = git@gitserver:bhp_birt_reports
+[submodule "bhp_nmap"]
+	path = bhp_nmap
+	url = git@gitserver:bhp_nmap
+[submodule "bhp_site_edc"]
+	path = bhp_site_edc
+	url = git@gitserver:bhp_site_edc
+[submodule "bhp_map"]
+	path = bhp_map
+	url = git@gitserver:bhp_map
+[submodule "bhp_static"]
+	path = bhp_static
+	url = git@gitserver:bhp_static
