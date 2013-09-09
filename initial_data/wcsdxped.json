@@ -1,0 +1,1346 @@
+[
+  {
+    "pk": 1, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS1001", 
+      "short_name": "Asymptomatic", 
+      "created": "2011-06-23 17:09:52", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:09:52", 
+      "hostname_modified": "cabel", 
+      "long_name": "Asymptomatic", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS1002", 
+      "short_name": "Persistent generalized lymphadeno", 
+      "created": "2011-06-23 17:15:20", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:15:20", 
+      "hostname_modified": "cabel", 
+      "long_name": "Persistent generalized lymphadenopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2001", 
+      "short_name": "Unexplained moderate weight loss", 
+      "created": "2011-06-23 17:16:28", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:16:28", 
+      "hostname_modified": "cabel", 
+      "long_name": "1.Unexplained moderate weight loss (<10% of presumed or measured body weight) *", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2002", 
+      "short_name": "Recurrent resp tract infection", 
+      "created": "2011-06-23 17:17:59", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:17:59", 
+      "hostname_modified": "cabel", 
+      "long_name": "1.Recurrent respiratory tract infections (sinusitis, tonsillitis, otitis media and pharyngitis)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2003", 
+      "short_name": "Herpes zoster", 
+      "created": "2011-06-23 17:19:15", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:19:15", 
+      "hostname_modified": "cabel", 
+      "long_name": "Herpes zoster", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2004", 
+      "short_name": "Angular cheilitis", 
+      "created": "2011-06-23 17:19:52", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:19:52", 
+      "hostname_modified": "cabel", 
+      "long_name": "Angular cheilitis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2005", 
+      "short_name": "Recurrent oral ulceration", 
+      "created": "2011-06-23 17:20:30", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:20:30", 
+      "hostname_modified": "cabel", 
+      "long_name": "Recurrent oral ulceration", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2006", 
+      "short_name": "Papular pruritic eruptions", 
+      "created": "2011-06-23 17:21:06", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:21:06", 
+      "hostname_modified": "cabel", 
+      "long_name": "Papular pruritic eruptions", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2007", 
+      "short_name": "Seborrhoeic dermatitis", 
+      "created": "2011-06-23 17:21:58", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:21:58", 
+      "hostname_modified": "cabel", 
+      "long_name": "Seborrhoeic dermatitis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2008", 
+      "short_name": "Fungal nail infections", 
+      "created": "2011-06-23 17:22:29", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:22:29", 
+      "hostname_modified": "cabel", 
+      "long_name": "Fungal nail infections", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3001", 
+      "short_name": "Unexplained* severe weight loss", 
+      "created": "2011-06-23 17:23:42", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:23:42", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained* severe weight loss (>10% of presumed or measured body weight)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3003", 
+      "short_name": "Unexplained persistent fever", 
+      "created": "2011-06-23 17:25:38", 
+      "user_modified": "abelc", 
+      "modified": "2011-06-23 17:29:28", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained persistent fever (above 37.5\u00b0C intermittent or constant, for longer than a month", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3002", 
+      "short_name": "Unexplained chronic diarrhoea", 
+      "created": "2011-06-23 17:27:09", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:27:09", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained chronic diarrhoea for longer than one month", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3004", 
+      "short_name": "Persistent oral candidiasis", 
+      "created": "2011-06-23 17:30:12", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:30:12", 
+      "hostname_modified": "cabel", 
+      "long_name": "Persistent oral candidiasis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3005", 
+      "short_name": "Oral hairy leukoplakia", 
+      "created": "2011-06-23 17:30:50", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:30:50", 
+      "hostname_modified": "cabel", 
+      "long_name": "Oral hairy leukoplakia", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3006", 
+      "short_name": "Pulmonary tuberculosis", 
+      "created": "2011-06-23 17:31:24", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:31:24", 
+      "hostname_modified": "cabel", 
+      "long_name": "Pulmonary tuberculosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3007", 
+      "short_name": "Severe bacterial infections", 
+      "created": "2011-06-23 17:32:24", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:32:24", 
+      "hostname_modified": "cabel", 
+      "long_name": "Severe bacterial infections (such as pneumonia, empyema, pyomyositis, bone or joint infection, meningitis or bacteraemia)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3008", 
+      "short_name": "stomatitis/gingivitis/periodontis", 
+      "created": "2011-06-23 17:34:18", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:34:18", 
+      "hostname_modified": "cabel", 
+      "long_name": "Acute necrotizing ulcerative stomatitis, gingivitis or periodontitis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3009", 
+      "short_name": " anaemia/neutropaenia/thrombocytopa", 
+      "created": "2011-06-23 17:35:54", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:35:54", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained anaemia (<8 g/dl), neutropaenia (<0.5 \u00d7 109 per litre) and/or chronic thrombocytopaenia (<50 \u00d7 109 per litre)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4001", 
+      "short_name": "HIV wasting syndrome", 
+      "created": "2011-06-23 17:37:09", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:37:09", 
+      "hostname_modified": "cabel", 
+      "long_name": "HIV wasting syndrome", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4002", 
+      "short_name": "Pneumocystis pneumonia", 
+      "created": "2011-06-23 17:37:44", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:37:44", 
+      "hostname_modified": "cabel", 
+      "long_name": "Pneumocystis pneumonia", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4003", 
+      "short_name": "Recurrent severe bacterial pneumo", 
+      "created": "2011-06-23 17:38:20", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:38:20", 
+      "hostname_modified": "cabel", 
+      "long_name": "Recurrent severe bacterial pneumonia", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4004", 
+      "short_name": "Chronic herpes simplex infection ", 
+      "created": "2011-06-23 17:38:57", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:38:57", 
+      "hostname_modified": "cabel", 
+      "long_name": "Chronic herpes simplex infection (orolabial, genital or anorectal of more than one month\u2019s duration or visceral at any site)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4005", 
+      "short_name": "Oesophageal candidiasis", 
+      "created": "2011-06-23 17:39:36", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:39:36", 
+      "hostname_modified": "cabel", 
+      "long_name": "Oesophageal candidiasis (or candidiasis of trachea, bronchi or lungs)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4006", 
+      "short_name": "Extrapulmonary tuberculosis", 
+      "created": "2011-06-23 17:40:02", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:40:02", 
+      "hostname_modified": "cabel", 
+      "long_name": "Extrapulmonary tuberculosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4007", 
+      "short_name": "Kaposi\u2019s sarcoma", 
+      "created": "2011-06-23 17:40:33", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:40:33", 
+      "hostname_modified": "cabel", 
+      "long_name": "Kaposi\u2019s sarcoma", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4008", 
+      "short_name": "Cytomegalovirus infection", 
+      "created": "2011-06-23 17:41:13", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:41:13", 
+      "hostname_modified": "cabel", 
+      "long_name": "Cytomegalovirus infection (retinitis or infection of other organs)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4009", 
+      "short_name": "CNS toxoplasmosis", 
+      "created": "2011-06-23 17:41:55", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:41:55", 
+      "hostname_modified": "cabel", 
+      "long_name": "Central nervous system toxoplasmosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4010", 
+      "short_name": "HIV encephalopathy", 
+      "created": "2011-06-23 17:42:23", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:42:23", 
+      "hostname_modified": "cabel", 
+      "long_name": "HIV encephalopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4011", 
+      "short_name": "Exp cryptococcosis/meningitis", 
+      "created": "2011-06-23 17:43:30", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:43:30", 
+      "hostname_modified": "cabel", 
+      "long_name": "Extrapulmonary cryptococcosis including meningitis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4012", 
+      "short_name": "Diss non-TB mycobacterial infection", 
+      "created": "2011-06-23 17:44:44", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:44:44", 
+      "hostname_modified": "cabel", 
+      "long_name": "Disseminated non-tuberculous mycobacterial infection", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4013", 
+      "short_name": "Prog multifocal leukoencephalopathy", 
+      "created": "2011-06-23 17:46:03", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:46:03", 
+      "hostname_modified": "cabel", 
+      "long_name": "Progressive multifocal leukoencephalopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4014", 
+      "short_name": "Chronic cryptosporidiosis", 
+      "created": "2011-06-23 17:46:35", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:46:35", 
+      "hostname_modified": "cabel", 
+      "long_name": "Chronic cryptosporidiosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 34, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4015", 
+      "short_name": "Chronic isosporiasis", 
+      "created": "2011-06-23 17:47:59", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:47:59", 
+      "hostname_modified": "cabel", 
+      "long_name": "Chronic isosporiasis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 35, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4016", 
+      "short_name": "Disseminated mycosis", 
+      "created": "2011-06-23 17:48:34", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:48:34", 
+      "hostname_modified": "cabel", 
+      "long_name": "Disseminated mycosis (extrapulmonary histoplasmosis or coccidiomycosis)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 36, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4017", 
+      "short_name": "Recurrent septicaemia", 
+      "created": "2011-06-23 17:49:09", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:49:09", 
+      "hostname_modified": "cabel", 
+      "long_name": "Recurrent septicaemia (including non-typhoidal Salmonella)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 37, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4018", 
+      "short_name": "Lymphoma ", 
+      "created": "2011-06-23 17:49:47", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:49:47", 
+      "hostname_modified": "cabel", 
+      "long_name": "Lymphoma (cerebral or B-cell non-Hodgkin)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 38, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4019", 
+      "short_name": "Invasive cervical carcinoma", 
+      "created": "2011-06-23 17:50:16", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:50:16", 
+      "hostname_modified": "cabel", 
+      "long_name": "Invasive cervical carcinoma", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 39, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4020", 
+      "short_name": "Atypical disseminated leishmaniasis", 
+      "created": "2011-06-23 17:50:43", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:50:43", 
+      "hostname_modified": "cabel", 
+      "long_name": "Atypical disseminated leishmaniasis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 40, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4021", 
+      "short_name": "Sympt nephropathy/cardiomyopathy", 
+      "created": "2011-06-23 17:52:23", 
+      "user_modified": "", 
+      "modified": "2011-06-23 17:52:23", 
+      "hostname_modified": "cabel", 
+      "long_name": "Symptomatic HIV-associated nephropathy or symptomatic HIV-associated cardiomyopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 41, 
+    "model": "bhp_code_lists.wcsdxadult", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "cs9999999", 
+      "short_name": "Not applicable", 
+      "created": "2011-06-23 17:53:16", 
+      "user_modified": "abelc", 
+      "modified": "2011-07-07 19:51:56", 
+      "hostname_modified": "cabel", 
+      "long_name": "Not applicable", 
+      "user_created": "abelc", 
+      "list_ref": ""
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS1001", 
+      "short_name": "Asymptomatic", 
+      "created": "2011-07-12 17:44:37", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:44:37", 
+      "hostname_modified": "cabel", 
+      "long_name": "Asymptomatic", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS1002", 
+      "short_name": "Persistent gen lymphadenopathy", 
+      "created": "2011-07-12 17:45:41", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:45:41", 
+      "hostname_modified": "cabel", 
+      "long_name": "Persistent generalized lymphadenopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2001", 
+      "short_name": "Unexp persistent hepatosplenomegaly", 
+      "created": "2011-07-12 17:46:33", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:46:33", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained persistent hepatosplenomegaly", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2002", 
+      "short_name": "Papular pruritic eruptions", 
+      "created": "2011-07-12 17:47:04", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:47:04", 
+      "hostname_modified": "cabel", 
+      "long_name": "Papular pruritic eruptions", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2003", 
+      "short_name": "Extensive wart virus infection", 
+      "created": "2011-07-12 17:47:38", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:47:38", 
+      "hostname_modified": "cabel", 
+      "long_name": "Extensive wart virus infection", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2004", 
+      "short_name": "Extensive molluscum contagiosum", 
+      "created": "2011-07-12 17:48:12", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:48:12", 
+      "hostname_modified": "cabel", 
+      "long_name": "Extensive molluscum contagiosum", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2005", 
+      "short_name": "Fungal nail infections", 
+      "created": "2011-07-12 17:48:43", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:48:43", 
+      "hostname_modified": "cabel", 
+      "long_name": "Fungal nail infections", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2006", 
+      "short_name": "Recurrent oral ulcerations", 
+      "created": "2011-07-12 17:49:09", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:49:09", 
+      "hostname_modified": "cabel", 
+      "long_name": "Recurrent oral ulcerations", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2007", 
+      "short_name": "Unexp persistent parotid enlargemen", 
+      "created": "2011-07-12 17:50:09", 
+      "user_modified": "abelc", 
+      "modified": "2011-07-12 17:58:45", 
+      "hostname_modified": "cabel", 
+      "long_name": "1.Unexplained persistent parotid enlargement", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2008", 
+      "short_name": "Lineal gingival erythema", 
+      "created": "2011-07-12 17:52:42", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:52:42", 
+      "hostname_modified": "cabel", 
+      "long_name": "Lineal gingival erythema", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2009", 
+      "short_name": "Herpes zoster", 
+      "created": "2011-07-12 17:53:12", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:53:12", 
+      "hostname_modified": "cabel", 
+      "long_name": "Herpes zoster", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS2010", 
+      "short_name": "Chronic upper resp tract infections", 
+      "created": "2011-07-12 17:54:09", 
+      "user_modified": "abelc", 
+      "modified": "2011-07-12 17:54:24", 
+      "hostname_modified": "cabel", 
+      "long_name": "Recurrent or chronic upper respiratory tract infections (otitis media, otorrhoea, sinusitis or tonsillitis)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3001", 
+      "short_name": "Unexplained** moderate malnutrition", 
+      "created": "2011-07-12 17:56:42", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:56:42", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained** moderate malnutrition not adequately responding to standard therapy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3002", 
+      "short_name": "Unexplained persistent diarrhoea ", 
+      "created": "2011-07-12 17:57:17", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:57:17", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained persistent diarrhoea (14 days or more)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3003", 
+      "short_name": "Unexplained persistent fever ", 
+      "created": "2011-07-12 17:58:10", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:58:10", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained persistent fever (above 37.5\u00b0C intermittent or constant, for longer than one month)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3004", 
+      "short_name": "Persistent oral candidiasis ", 
+      "created": "2011-07-12 17:59:26", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:59:26", 
+      "hostname_modified": "cabel", 
+      "long_name": "Persistent oral candidiasis (after first 6\u20138 weeks of life)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3005", 
+      "short_name": "Oral hairy leukoplakia", 
+      "created": "2011-07-12 17:59:51", 
+      "user_modified": "", 
+      "modified": "2011-07-12 17:59:51", 
+      "hostname_modified": "cabel", 
+      "long_name": "Oral hairy leukoplakia", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3006", 
+      "short_name": "necrotiz ulcer gingivit/periodontis", 
+      "created": "2011-07-12 18:01:45", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:01:45", 
+      "hostname_modified": "cabel", 
+      "long_name": "Acute necrotizing ulcerative gingivitis or periodontitis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3007", 
+      "short_name": "Lymph node tuberculosis", 
+      "created": "2011-07-12 18:03:32", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:03:32", 
+      "hostname_modified": "cabel", 
+      "long_name": "Lymph node tuberculosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3008", 
+      "short_name": "Pulmonary tuberculosis", 
+      "created": "2011-07-12 18:04:04", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:04:04", 
+      "hostname_modified": "cabel", 
+      "long_name": "Pulmonary tuberculosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3009", 
+      "short_name": "Severe recurrent bacterial pneumoni", 
+      "created": "2011-07-12 18:04:54", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:04:54", 
+      "hostname_modified": "cabel", 
+      "long_name": "Severe recurrent bacterial pneumonia", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3010", 
+      "short_name": "Symp lymph interstitial pneumonitis", 
+      "created": "2011-07-12 18:06:01", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:06:01", 
+      "hostname_modified": "cabel", 
+      "long_name": "Symptomatic lymphoid interstitial pneumonitis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3011", 
+      "short_name": "Chronic HIV-associated lung disease", 
+      "created": "2011-07-12 18:06:40", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:06:40", 
+      "hostname_modified": "cabel", 
+      "long_name": "Chronic HIV-associated lung disease including brochiectasis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS3012", 
+      "short_name": "anaemia/neutropaenia/thrombocytopa", 
+      "created": "2011-07-12 18:07:57", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:07:57", 
+      "hostname_modified": "cabel", 
+      "long_name": "1.Unexplained anaemia (<8 g/dl), neutropaenia (<0.5 \u00d7 109 per litre) and or chronic thrombocytopaenia (<50 \u00d7 109 per litre)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4001", 
+      "short_name": "unexp sev wasting/stunting/mulnutri", 
+      "created": "2011-07-12 18:10:14", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:10:14", 
+      "hostname_modified": "cabel", 
+      "long_name": "Unexplained severe wasting, stunting or severe malnutrition not responding to standard therapy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4002", 
+      "short_name": "Pneumocystis pneumonia", 
+      "created": "2011-07-12 18:12:28", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:12:28", 
+      "hostname_modified": "cabel", 
+      "long_name": "Pneumocystis pneumonia", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4003", 
+      "short_name": "Recurr severe bacterial infections", 
+      "created": "2011-07-12 18:13:36", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:13:36", 
+      "hostname_modified": "cabel", 
+      "long_name": "Recurrent severe bacterial infections (such as empyema, pyomyositis, bone or joint infection or meningitis but excluding pneumonia)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4004", 
+      "short_name": "Chronic herpes simplex infection ", 
+      "created": "2011-07-12 18:14:14", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:14:14", 
+      "hostname_modified": "cabel", 
+      "long_name": "Chronic herpes simplex infection (orolabial or cutaneous of more than one month\u2019s duration or visceral at any site)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4005", 
+      "short_name": "Extrapulmonary tuberculosis", 
+      "created": "2011-07-12 18:14:38", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:14:38", 
+      "hostname_modified": "cabel", 
+      "long_name": "Extrapulmonary tuberculosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4006", 
+      "short_name": "Kaposi sarcoma", 
+      "created": "2011-07-12 18:15:04", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:15:04", 
+      "hostname_modified": "cabel", 
+      "long_name": "Kaposi sarcoma", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4007", 
+      "short_name": "Oesophageal candidiasis ", 
+      "created": "2011-07-12 18:15:30", 
+      "user_modified": "abelc", 
+      "modified": "2011-07-12 18:15:41", 
+      "hostname_modified": "cabel", 
+      "long_name": "Oesophageal candidiasis (or candidiasis of trachea, bronchi or lungs)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4008", 
+      "short_name": "CNS toxoplasmosis", 
+      "created": "2011-07-12 18:16:23", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:16:23", 
+      "hostname_modified": "cabel", 
+      "long_name": "Central nervous system toxoplasmosis (after one month of life)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4009", 
+      "short_name": "HIV encephalopathy", 
+      "created": "2011-07-12 18:16:52", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:16:52", 
+      "hostname_modified": "cabel", 
+      "long_name": "HIV encephalopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 34, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4010", 
+      "short_name": "Cytomegalovirus infection", 
+      "created": "2011-07-12 18:17:24", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:17:24", 
+      "hostname_modified": "cabel", 
+      "long_name": "1.Cytomegalovirus infection: retinitis or cytomegalovirus infection affecting another organ, with onset at age older than one month", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 35, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4011", 
+      "short_name": "Extrapulmonary cryptococcosis ", 
+      "created": "2011-07-12 18:18:00", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:18:00", 
+      "hostname_modified": "cabel", 
+      "long_name": "Extrapulmonary cryptococcosis (including meningitis)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 36, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4012", 
+      "short_name": "Disseminated endemic mycosis ", 
+      "created": "2011-07-12 18:18:32", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:18:32", 
+      "hostname_modified": "cabel", 
+      "long_name": "Disseminated endemic mycosis (extrapulmonary histoplasmosis, coccidiomycosis)", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 37, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4013", 
+      "short_name": "Chronic cryptosporidiosis", 
+      "created": "2011-07-12 18:19:11", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:19:11", 
+      "hostname_modified": "cabel", 
+      "long_name": "Chronic cryptosporidiosis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 38, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4014", 
+      "short_name": "Chronic isosporiasis", 
+      "created": "2011-07-12 18:19:38", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:19:38", 
+      "hostname_modified": "cabel", 
+      "long_name": "Chronic isosporiasis", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 39, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4015", 
+      "short_name": "Diss  non-TBmycobacterial infection", 
+      "created": "2011-07-12 18:20:41", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:20:41", 
+      "hostname_modified": "cabel", 
+      "long_name": "Disseminated non-tuberculous mycobacterial infection", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 40, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4016", 
+      "short_name": "Cerebral/B-cell non-Hodgkin lymphom", 
+      "created": "2011-07-12 18:21:42", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:21:42", 
+      "hostname_modified": "cabel", 
+      "long_name": "Cerebral or B-cell non-Hodgkin lymphoma", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 41, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4017", 
+      "short_name": "Prog multifocal leukoencephalopathy", 
+      "created": "2011-07-12 18:22:44", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:22:44", 
+      "hostname_modified": "cabel", 
+      "long_name": "Progressive multifocal leukoencephalopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 42, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS4018", 
+      "short_name": "Sympt nephropathy/cardiomyopathy", 
+      "created": "2011-07-12 18:23:25", 
+      "user_modified": "", 
+      "modified": "2011-07-12 18:23:25", 
+      "hostname_modified": "cabel", 
+      "long_name": "1.Symptomatic HIV-associated nephropathy or HIV-associated cardiomyopathy", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }, 
+  {
+    "pk": 43, 
+    "model": "bhp_code_lists.wcsdxped", 
+    "fields": {
+      "hostname_created": "cabel", 
+      "code": "CS99999", 
+      "short_name": "Not applicable", 
+      "created": "2011-07-12 18:23:51", 
+      "user_modified": "abelc", 
+      "modified": "2011-07-12 18:24:04", 
+      "hostname_modified": "cabel", 
+      "long_name": "Not applicable", 
+      "user_created": "abelc", 
+      "list_ref": "WHO CLINICAL STAGING OF HIV INFECTION 2006"
+    }
+  }
+]
