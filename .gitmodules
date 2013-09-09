@@ -253,3 +253,6 @@
 [submodule "bhp_netbook"]
 	path = bhp_netbook
 	url = git@gitserver:bhp_netbook
+[submodule "bhp_birt_reports"]
+	path = bhp_birt_reports
+	url = git@gitserver:bhp_birt_reports
