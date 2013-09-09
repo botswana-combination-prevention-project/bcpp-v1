@@ -1,1 +1,1 @@
-"""bhp_visit_tracking"""
+"""bhp_visit_tracking module"""
