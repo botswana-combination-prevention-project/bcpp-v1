@@ -1,0 +1,97 @@
+{% extends "section.html"%}
+{% block section_title%}{% endblock%}
+
+{% block section_links %}
+
+{% if os_variables.device_id == 99 %}
+
+    <p><div class="warning">Setup error: device_id cannot be '99'. Check <a href="/admin/bhp_variables/studyspecific/">bhp_variables</a></div></p>
+    
+{% else %}
+
+    <table><tr>
+    {% for survey in surveys %}
+        <td>
+            <form method="POST" action="{% url survey_section_url section_name=section_name survey=survey.survey_slug %}">
+            {% csrf_token %}
+            <input type="submit" value="{{ survey.survey_name }}" class="{% if survey.survey_slug == selected_survey.survey_slug %}{% else %}default{% endif %}" name="{{ survey.survey_slug }}" />
+            </form>
+        </td>    
+    {% endfor %}
+    </tr></table>        
+
+    
+    {% if selected_survey.survey_slug %}
+    
+        <H4>{{ selected_survey.survey_name }}: from {{ selected_survey.datetime_start|date:" Y-M-d" }} to {{ selected_survey.datetime_end|date:" Y-M-d" }} </H4>
+    
+        <table>
+        <tr>
+        <td>
+            <form method="GET" action="{% url find_model_url section_name=section_name survey=selected_survey.survey_slug action='find' model_name='household' %}">
+            {% csrf_token %}
+            <input type='hidden' name="survey" value="{{selected_survey.survey_slug}}">
+            <input type="submit" value="Find household" class="default" name="find_household" />
+            </form>
+
+        </td>
+        <td>
+            <form method="GET" action="{% url find_model_url section_name=section_name survey=selected_survey.survey_slug action='find' model_name='householdstructuremember' %}">
+            {% csrf_token %}
+            <input type='hidden' name="survey" value="{{selected_survey.survey_slug}}">
+            <input type="submit" value="Find Member" class="default" name="find_household_structure_member" />
+            </form>
+
+        </td>
+        {% if allow_new %}
+        <td>
+            <form method="GET" action="/admin/bcpp_household/household/add/">
+            {% csrf_token %}
+            <input type='hidden' name="survey" value="{{selected_survey.survey_slug}}">
+            <input type='hidden' name="next" value="survey_section_url">
+            <input type="hidden" name="section_name" value="{{section_name}}">
+            <input type="submit" value="Add household" class="default" />
+            </form>
+        </td>
+        {% endif %}
+        <td>
+            <form method="GET" action="/admin/bcpp_household/householdstructuremember/add/">
+            {% csrf_token %}
+            <input type='hidden' name="next" value="dashboard_url_pk">
+            <input type='hidden' name="survey" value="{{selected_survey.survey_slug}}">
+            <input type='hidden' name="dashboard_type" value="subject">
+            <input type='hidden' name="pk" value="">
+            <input type="submit" value="Add new member w/o household" class="default" />
+            </form>
+        </td>
+
+        <td>
+            <form method="GET" action="/nmap/uphosts/">
+            {% csrf_token %}
+            <input type="submit" value="Join another HBC" class="default" name="uphosts" />
+            </form>
+        </td>
+
+        </tr>
+        </table> 
+
+    {% endif %}        
+{% endif %}
+
+{% if form %}
+    
+    <div style='{% if form.is_valid %}display:none{% endif %}'>
+    {% include 'bcpp_household_form.html' %}
+    </div>
+{% endif%}    
+
+
+{% if search_results  %}
+    {% include include_template %}
+{% endif%}    
+
+{% endblock %}
+
+{% block other_section_links %}
+</div>
+{% endblock%}
