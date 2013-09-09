@@ -8,7 +8,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_household_member.models import BaseHouseholdMember
 from bcpp_survey.models import Survey
 from bcpp_household.choices import RELATIONS
-from bcpp_household.models import Household
+from bcpp_household.models import Household, Plot
 from bcpp_household.models import HouseholdStructure
 from bcpp_household_member.managers import HouseholdMemberManager
 
@@ -21,7 +21,8 @@ class HouseholdMember(BaseHouseholdMember):
         null=True,
         blank=True)
 
-    household = models.ForeignKey(Household, null=True, editable=False)
+    #household = models.ForeignKey(Household, null=True, editable=False)
+    plot = models.ForeignKey(Plot, null=True, editable=False)
 
     survey = models.ForeignKey(Survey, editable=False)
 
@@ -68,7 +69,7 @@ class HouseholdMember(BaseHouseholdMember):
             self.survey.survey_name)
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household_structure__household__household_identifier')
+        return (Plot, 'household_structure__plot__plot_identifier')
 
     def update_hiv_history_on_pre_save(self, **kwargs):
         """Updates from lab_tracker."""
@@ -111,8 +112,8 @@ class HouseholdMember(BaseHouseholdMember):
                 self.survey = self.household_structure.survey
             else:
                 self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
-        if not self.household:
-            self.household = self.household_structure.household
+        if not self.plot:
+            self.plot = self.household_structure.plot
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def deserialize_prep(self):
@@ -139,7 +140,7 @@ class HouseholdMember(BaseHouseholdMember):
                                           'household_member': self.pk,
                                           'dashboard_id': self.pk,
                                           'dashboard_model': 'household_structure',
-                                          'dashboard_type': 'household'})
+                                          'dashboard_type': 'plot'})
 
     def _get_form_url(self, model_name):
         url = ''
@@ -227,13 +228,13 @@ class HouseholdMember(BaseHouseholdMember):
     moved_form_label.allow_tags = True
 
     def cso(self):
-        return self.household_structure.household.cso_number
+        return self.household_structure.plot.cso_number
 
     def lon(self):
-        return self.household_structure.household.gps_lon
+        return self.household_structure.plot.gps_lon
 
     def lat(self):
-        return self.household_structure.household.gps_lat
+        return self.household_structure.plot.gps_lat
 
     def to_locator(self):
         retval = ''
