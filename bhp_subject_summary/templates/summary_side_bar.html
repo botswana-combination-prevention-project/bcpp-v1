@@ -1,0 +1,11 @@
+<table>
+<thead></thead>
+<tbody>
+    <tr class="{% cycle 'row2' 'row1' %}">    
+    <td>
+    {% for link in links %}
+        <input type="button" name="" id="" value="{{ link.label }}" onclick="Dajaxice.{{ link.app_label}}.{{ link.ajax_method }}(Dajax.process,{'subject_identifier':'{{subject_identifier}}'});">
+    {% endfor %}
+    </td></tr>    
+</tbody>
+</table>
