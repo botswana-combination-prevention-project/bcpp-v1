@@ -1,0 +1,43 @@
+{% extends "index.html"%}
+
+{% block title %}{{ block.super }}{{ section_name|capfirst }}{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% load tags %}
+    {% comment %}
+        named urls. see urls.py 
+        use the name and pass the url parameter to 
+        successfully reverse 
+    {%endcomment %}
+    {% url section_url_name section_name as section %}
+    {% url section_search_url_name section_name search_name  as section_search_name %}
+    {% url section_search_url_name section_name search_name search_by_name as section_search_by_name %}    
+
+    <div class="breadcrumbs">
+
+        <a href="/{{app_name}}">Home</a>
+
+        {% if section_name  %}
+            &rsaquo; <a href="{{ section }}">{{ section_name|capfirst|default:"" }}</a>
+        {% endif %}        
+        {% if report_title  %}
+            &rsaquo; {{ report_title|capfirst }}
+        {% endif %}        
+       
+    </div>
+    
+{% endblock %}
+
+{% block section_title%}<H3>{{ section_name|capfirst }} Section</H3>{% endblock%}
+
+{% block content%}
+<H3>{{report_title|capfirst}}</H3>
+
+<p><i>To join another HBC netbook, click on one of the links below:</i></p>
+
+<input type="button" name="" id="" value="Search" onclick="Dajaxice.bhp_netbook.list_netbooks(Dajax.process);">
+
+<span name="netbook_list" id="netbook_list"></span>
+{% endblock %}
+
