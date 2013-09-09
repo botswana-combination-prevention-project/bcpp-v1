@@ -1,6 +1,0 @@
-[submodule "bhp_dashboard"]
-	path = bhp_dashboard
-	url = git@gitserver:/var/git/bhp_dashboard
-[submodule "bhp_dashboard_registered_subject"]
-	path = bhp_dashboard_registered_subject
-	url = git@gitserver:/var/git/bhp_dashboard_registered_subject
