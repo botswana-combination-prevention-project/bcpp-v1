@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>controller &mdash; lab_tracker 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="lab_tracker 1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">lab_tracker 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for controller</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">get_model</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ImproperlyConfigured</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.utils.importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">django.utils.module_loading</span> <span class="kn">import</span> <span class="n">module_has_submodule</span>
+<span class="kn">from</span> <span class="nn">bhp_lab_tracker.exceptions</span> <span class="kn">import</span> <span class="n">LabTrackerError</span>
+<span class="kn">from</span> <span class="nn">helpers</span> <span class="kn">import</span> <span class="n">TrackerNamedTpl</span>
+<span class="kn">from</span> <span class="nn">history_updater</span> <span class="kn">import</span> <span class="n">HistoryUpdater</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">NullHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="k">pass</span>
+<span class="n">nullhandler</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">NullHandler</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">AlreadyRegistered</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">NotRegistered</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="Controller"><a class="viewcode-back" href="../classes.html#controller.Controller">[docs]</a><span class="k">class</span> <span class="nc">Controller</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Registers from modules with a lab_tracker module (lab_tracker.py).</span>
+
+<span class="sd">    To register a class or classes create :file:`lab_tracker.py` in your module and add something like this:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from bhp_lab_tracker.classes import site_lab_tracker</span>
+<span class="sd">        from bhp_lab_tracker.classes import HivLabTracker</span>
+<span class="sd">        from models import HivTestReview, HivResult</span>
+
+
+<span class="sd">        class SubjectHivLabTracker(HivLabTracker):</span>
+
+<span class="sd">            trackers = [(HivTestReview, &#39;recorded_hiv_result&#39;, &#39;hiv_test_date&#39;, ),</span>
+<span class="sd">                      (HivResult, &#39;hiv_result&#39;, &#39;hiv_result_datetime&#39;, )]</span>
+
+<span class="sd">        site_lab_tracker.register(SubjectHivLabTracker)</span>
+
+<span class="sd">    .. seealso:: :class:`HivLabTracker`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">autodiscovered</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_models</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="Controller.register"><a class="viewcode-back" href="../classes.html#controller.Controller.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lab_tracker_cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Registers lab_tracker classes to the registry (a list).</span>
+
+<span class="sd">        Ensures model classes refered to by the trackers in the LabTracker classes have the following methods:</span>
+<span class="sd">            * get_subject_identifier</span>
+<span class="sd">            * get_report_datetime</span>
+<span class="sd">            * get_result_datetime</span>
+<span class="sd">            * get_test_code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="n">lab_tracker_cls</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">lab_tracker_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AlreadyRegistered</span><span class="p">(</span><span class="s">&#39;The class </span><span class="si">%s</span><span class="s"> is already registered&#39;</span> <span class="o">%</span> <span class="n">lab_tracker_cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&#39;trackers&#39;</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">lab_tracker_cls</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tracker</span> <span class="ow">in</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_trackers</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s">&#39;get_subject_identifier&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="s">&#39;Model {0} cannot be registered to a lab tracker. &#39;</span>
+                                               <span class="s">&#39;Define the method </span><span class="se">\&#39;</span><span class="s">get_subject_identifier()</span><span class="se">\&#39;</span><span class="s"> on &#39;</span>
+                                               <span class="s">&#39;the model first.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_name</span><span class="p">))</span>
+                <span class="k">if</span> <span class="s">&#39;get_report_datetime&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="s">&#39;Model {0} cannot be registered to a lab tracker. &#39;</span>
+                                               <span class="s">&#39;Define the method </span><span class="se">\&#39;</span><span class="s">get_report_datetime()</span><span class="se">\&#39;</span><span class="s"> on &#39;</span>
+                                               <span class="s">&#39;the model first.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_name</span><span class="p">))</span>
+                <span class="k">if</span> <span class="s">&#39;get_result_datetime&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="s">&#39;Model {0} cannot be registered to a lab tracker. &#39;</span>
+                                               <span class="s">&#39;Define the method </span><span class="se">\&#39;</span><span class="s">get_result_datetime()</span><span class="se">\&#39;</span><span class="s"> on &#39;</span>
+                                               <span class="s">&#39;the model first.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_name</span><span class="p">))</span>
+                <span class="k">if</span> <span class="s">&#39;get_test_code&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="s">&#39;Model {0} cannot be registered to a lab tracker. &#39;</span>
+                                               <span class="s">&#39;Define the method </span><span class="se">\&#39;</span><span class="s">get_test_code()</span><span class="se">\&#39;</span><span class="s"> on &#39;</span>
+                                               <span class="s">&#39;the model first.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s">&#39;models&#39;</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">lab_tracker_cls</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="s">&#39;Class attribute </span><span class="se">\&#39;</span><span class="s">models</span><span class="se">\&#39;</span><span class="s"> has been changed to </span><span class="se">\&#39;</span><span class="s">trackers</span><span class="se">\&#39;</span><span class="s">. Please correct your class declaration for lab_tracker {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lab_tracker_cls</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="s">&#39;LabTracker class {0} is missing class attribute </span><span class="se">\&#39;</span><span class="s">trackers</span><span class="se">\&#39;</span><span class="s">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lab_tracker_cls</span><span class="p">))</span>
+        <span class="c"># all trackers in a LabTracker must be namedtuples</span>
+        <span class="c"># TODO: is this check necessary, aren&#39;t these converted when instantiated?</span>
+        <span class="k">for</span> <span class="n">tracker</span> <span class="ow">in</span> <span class="n">lab_tracker_cls</span><span class="p">()</span><span class="o">.</span><span class="n">get_trackers</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">TrackerNamedTpl</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;expected an instance of TrackerTpl. Got {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tracker</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lab_tracker_cls</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Controller.update_history"><a class="viewcode-back" href="../classes.html#controller.Controller.update_history">[docs]</a>    <span class="k">def</span> <span class="nf">update_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_inst</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates history for a given model instance (on pk) via the tracker for the model class.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">lab_tracker_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="n">lab_tracker_cls</span><span class="p">(</span><span class="n">model_inst</span><span class="o">.</span><span class="n">get_subject_identifier</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_inst</span><span class="p">,</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_models</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">tracker</span> <span class="ow">in</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_trackers</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">tracker</span><span class="o">.</span><span class="n">model_cls</span> <span class="o">==</span> <span class="n">model_inst</span><span class="o">.</span><span class="n">__class__</span><span class="p">:</span>
+                        <span class="n">HistoryUpdater</span><span class="p">(</span><span class="n">model_inst</span><span class="p">,</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_group_name</span><span class="p">(),</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">_get_tracked_test_codes</span><span class="p">())</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Controller.delete_history"><a class="viewcode-back" href="../classes.html#controller.Controller.delete_history">[docs]</a>    <span class="k">def</span> <span class="nf">delete_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_inst</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deletes history for a given model instance (on pk) via the tracker for the model class.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">lab_tracker_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="n">lab_tracker_cls</span><span class="p">(</span><span class="n">model_inst</span><span class="o">.</span><span class="n">get_subject_identifier</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_inst</span><span class="p">,</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_models</span><span class="p">()):</span>
+                <span class="n">HistoryUpdater</span><span class="p">(</span><span class="n">model_inst</span><span class="p">,</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_group_name</span><span class="p">())</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Controller.update_all"><a class="viewcode-back" href="../classes.html#controller.Controller.update_all">[docs]</a>    <span class="k">def</span> <span class="nf">update_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supress_messages</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the history for all subjects in RegisteredSubject for all LabTrackers in the registry.&quot;&quot;&quot;</span>
+        <span class="n">RegisteredSubject</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s">&#39;bhp_registration&#39;</span><span class="p">,</span> <span class="s">&#39;RegisteredSubject&#39;</span><span class="p">)</span>
+        <span class="n">tot</span> <span class="o">=</span> <span class="n">RegisteredSubject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s">&#39;subject_identifier&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">lab_tracker_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">registered_subject</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">RegisteredSubject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s">&#39;subject_identifier&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">subject_identifier__isnull</span><span class="o">=</span><span class="bp">False</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">supress_messages</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;{0} / {1} ...updating {2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">tot</span><span class="p">,</span> <span class="n">registered_subject</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;subject_identifier&#39;</span><span class="p">)))</span>
+                <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="n">lab_tracker_cls</span><span class="p">(</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;subject_identifier&#39;</span><span class="p">))</span>
+                <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">update_history</span><span class="p">(</span><span class="n">supress_messages</span><span class="p">)</span>
+
+<span class="c">#     def update_history_for_all(self, supress_messages=True):</span>
+<span class="c">#         tot = RegisteredSubject.objects.values(&#39;subject_identifier&#39;).all().count()</span>
+<span class="c">#         for index, registered_subject in enumerate(RegisteredSubject.objects.values(&#39;subject_identifier&#39;).filter(subject_identifier__isnull=False)):</span>
+<span class="c">#             if not supress_messages:</span>
+<span class="c">#                 logger.info(&#39;{0} / {1} ...updating {2}&#39;.format(index, tot, registered_subject.get(&#39;subject_identifier&#39;)))</span>
+<span class="c">#             self.update_history(registered_subject.get(&#39;subject_identifier&#39;))</span>
+<span class="c">#         return tot</span>
+</div>
+<div class="viewcode-block" id="Controller.all"><a class="viewcode-back" href="../classes.html#controller.Controller.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the registry as a list.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span>
+</div>
+<div class="viewcode-block" id="Controller._get_lab_tracker_inst_by_group_name"><a class="viewcode-back" href="../classes.html#controller.Controller._get_lab_tracker_inst_by_group_name">[docs]</a>    <span class="k">def</span> <span class="nf">_get_lab_tracker_inst_by_group_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a lab_tracker instantiated for this subject from the registry given a group_name.&quot;&quot;&quot;</span>
+        <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">lab_tracker_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="n">lab_tracker_cls</span><span class="p">(</span><span class="n">subject_identifier</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inst</span><span class="o">.</span><span class="n">get_group_name</span><span class="p">()</span> <span class="o">==</span> <span class="n">group_name</span><span class="p">:</span>
+                <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="n">inst</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">lab_tracker_inst</span>
+</div>
+<div class="viewcode-block" id="Controller.set_model_list"><a class="viewcode-back" href="../classes.html#controller.Controller.set_model_list">[docs]</a>    <span class="k">def</span> <span class="nf">set_model_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the list of model classes used by the trackers in the registry.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">autodiscovered</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LabTrackerError</span><span class="p">(</span><span class="s">&#39;Lab Tracker is not ready. Call autodiscover first.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_models</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">lab_tracker_cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="n">lab_tracker_cls</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_models</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_models</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Controller.get_model_list"><a class="viewcode-back" href="../classes.html#controller.Controller.get_model_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list of model classes used by the trackers in the registry.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_model_list</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span>
+</div>
+<div class="viewcode-block" id="Controller.get_history_as_qs"><a class="viewcode-back" href="../classes.html#controller.Controller.get_history_as_qs">[docs]</a>    <span class="k">def</span> <span class="nf">get_history_as_qs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">,</span> <span class="n">reference_datetime</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the result history as QuerySet.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confirm_autodiscovered</span><span class="p">()</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">reference_datetime</span><span class="p">:</span>
+            <span class="n">reference_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lab_tracker_inst_by_group_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lab_tracker_inst</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_history</span><span class="p">(</span><span class="n">reference_datetime</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">retval</span>
+</div>
+<div class="viewcode-block" id="Controller.get_history_as_list"><a class="viewcode-back" href="../classes.html#controller.Controller.get_history_as_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_history_as_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">,</span> <span class="n">reference_datetime</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the result history as a list of values.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confirm_autodiscovered</span><span class="p">()</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">reference_datetime</span><span class="p">:</span>
+            <span class="n">reference_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lab_tracker_inst_by_group_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lab_tracker_inst</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_history_as_list</span><span class="p">(</span><span class="n">reference_datetime</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">retval</span>
+</div>
+<div class="viewcode-block" id="Controller.get_history_as_string"><a class="viewcode-back" href="../classes.html#controller.Controller.get_history_as_string">[docs]</a>    <span class="k">def</span> <span class="nf">get_history_as_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">,</span> <span class="n">mapped</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">reference_datetime</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the result history as a string of values.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confirm_autodiscovered</span><span class="p">()</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">reference_datetime</span><span class="p">:</span>
+            <span class="n">reference_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lab_tracker_inst_by_group_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lab_tracker_inst</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_history_as_string</span><span class="p">(</span><span class="n">reference_datetime</span><span class="p">,</span> <span class="n">mapped</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">retval</span>
+</div>
+<div class="viewcode-block" id="Controller.get_current_value"><a class="viewcode-back" href="../classes.html#controller.Controller.get_current_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wraps :func:`get_value` calling with value_datetime = today&#39;s date.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">,</span> <span class="n">value_datetime</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="Controller.get_value"><a class="viewcode-back" href="../classes.html#controller.Controller.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">,</span> <span class="n">value_datetime</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the result value or a tuple with the result value, if default, in this LabTracker group for this subject.</span>
+
+<span class="sd">        Searches thru the registry to find a class that can be used to search for the value..</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                * group_name: group name as set on the LabTracker class declaration</span>
+<span class="sd">                * subject_identifier: a valid subject identifier</span>
+<span class="sd">                * value_datetime: a valid datetim</span>
+
+<span class="sd">        .. note:: If a default value is returned, the result is a tuple.</span>
+
+<span class="sd">       This method will be called from any class that needs the value being tracked. For example,</span>
+<span class="sd">       :class:`ClinicGradeFlag` needs to know the HIV Status of a subject at the time a sample</span>
+<span class="sd">       was drawn in order to grade a test result.</span>
+
+<span class="sd">       .. seealso:: :func:`lab_clinic_reference.classes.ClinicGradeFlag.get_hiv_status`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confirm_autodiscovered</span><span class="p">()</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">is_default_value</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># if no value is found in the classes&#39; history model, is there a default?</span>
+        <span class="n">lab_tracker_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lab_tracker_inst_by_group_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lab_tracker_inst</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_datetime</span><span class="p">)</span>
+            <span class="n">is_default_value</span> <span class="o">=</span> <span class="n">lab_tracker_inst</span><span class="o">.</span><span class="n">get_is_default_value</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+            <span class="c"># a value should always be returned, even if it is the classes&#39; default value.</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Value cannot be None. Using ({0}, {1}, {2}). Lab tracker class not found for group name or no get_default_value() method.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">subject_identifier</span><span class="p">,</span> <span class="n">value_datetime</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">is_default_value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s">&#39;default&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Controller.autodiscover"><a class="viewcode-back" href="../classes.html#controller.Controller.autodiscover">[docs]</a>    <span class="k">def</span> <span class="nf">autodiscover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Searches all apps for :file:`lab_tracker.py` and registers all :class:`LabTracker` subclasses found.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">autodiscovered</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">autodiscovered</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">INSTALLED_APPS</span><span class="p">:</span>
+                <span class="n">mod</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">before_import_registry</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">site_lab_tracker</span><span class="o">.</span><span class="n">_registry</span><span class="p">)</span>
+                    <span class="n">import_module</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.lab_tracker&#39;</span> <span class="o">%</span> <span class="n">app</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">site_lab_tracker</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="n">before_import_registry</span>
+                    <span class="k">if</span> <span class="n">module_has_submodule</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s">&#39;lab_tracker&#39;</span><span class="p">):</span>
+                        <span class="k">raise</span>
+</div>
+<div class="viewcode-block" id="Controller.confirm_autodiscovered"><a class="viewcode-back" href="../classes.html#controller.Controller.confirm_autodiscovered">[docs]</a>    <span class="k">def</span> <span class="nf">confirm_autodiscovered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirms that autodiscover() was called at least once.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">autodiscovered</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ImproperlyConfigured</span><span class="p">(</span><span class="s">&#39;Call lab_tracker.autodiscover() before accessing values. Perhaps place this in the urls.py&#39;</span><span class="p">)</span>
+
+
+<span class="c"># A global to contain all lab_tracker instances from modules</span></div></div>
+<span class="n">site_lab_tracker</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">lab_tracker 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, erik van widenfelt.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
