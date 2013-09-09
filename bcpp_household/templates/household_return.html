@@ -1,0 +1,29 @@
+{% extends "section.html"%}
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; <a href="/bcpp_household/admin/">Household</A>
+    </div>
+    
+{% endblock %}
+
+
+{% block content %}
+
+<table>
+	<tr><TD><H4>Are you sure you want to return these households from producer {{producer}} to the community server?</H4></TD></TR>
+	    {% for qs in queryset %}
+	        <tr><TD>{{qs.container_identifier}}</td></TR>
+	    {% endfor %}
+</table>
+<form action="/bhp_dispatch/return/{{producer}}/">
+    <input type="submit" value="Submit" />
+</form>
+
+
+{% endblock %}
+
+
+{% block section_buttons %}{% endblock section_buttons %}
+{% block section_title %}{% endblock section_title %}
