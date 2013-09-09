@@ -1,0 +1,4 @@
+from appointment_method_tests import AppointmentMethodTests
+from pre_appointment_contact_method_tests import PreAppointmentContactMethodTests
+from audit_trail_tests import AuditTrailTests
+# from appointment_form_tests import AppointmentFormTests
