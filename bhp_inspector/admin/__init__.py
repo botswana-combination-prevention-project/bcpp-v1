@@ -1,0 +1,1 @@
+from base_inspector_admin import BaseInspectorAdmin
