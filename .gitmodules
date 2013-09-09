@@ -250,3 +250,6 @@
 [submodule "bhp_household_member"]
 	path = bhp_household_member
 	url = git@gitserver:bhp_household_member
+[submodule "bhp_netbook"]
+	path = bhp_netbook
+	url = git@gitserver:bhp_netbook
