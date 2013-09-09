@@ -1,0 +1,75 @@
+{% extends "orders.html" %}
+
+{% block results %}
+<h2>View Result</h2>
+
+<font id="information_message">Important: Do not print or distribute a result in "view" format. Click "print" above instead.</font>
+{* show warning based on audit trail *}
+{if isset ( $audit_trail_warning ) }
+<font class="alert">
+Important: This document has been amended since last printed on 21/09/2008
+               .<br />Refer to audit trail for details
+               </font>
+{/if}
+
+<table id="tabledata" cellspacing=0 cellpadding=1 width="500"  border='1'><tr><td>
+{# ********* table for result ********* #}
+<!-- table for result -->
+<table id="tabledata" cellspacing=0 cellpadding=1 width="100%"  border='1'>
+{# ********* table header row ********* #}
+<!-- table for result : header row -->
+<tr><th align=left>Utestid</th>
+<th align=left >Description</th>
+<th align=left >assay date</th>
+<th align=right >Result</th>
+<th align=center >Units</th>
+<th align=center >Reference</th>
+<th align=center ">Flag</th>
+</tr>
+
+{#********* table data rows ********* #}
+<!-- table for result : data rows -->
+{foreach from=$doc.result key=k item = utestid}
+	<tr>
+	<td align=left ><font size=1>{$utestid.utestid|upper}</font></td>
+	<td nowrap align=left  width=100%><font size=1>
+		{$utestid.utestid_description}&nbsp;</font>
+	</td>
+	<td nowrap align=right ><font size=1>{$utestid.sample_assay_date}&nbsp;</font></td>
+	<td nowrap align=right >
+		<font size=1>
+		{if $utestid.result_quantifier !== '='}{$utestid.result_quantifier}{/if}{$utestid.result_formatted}&nbsp;
+		</font>
+	</td>
+	<td nowrap align=left ><font size=1>{$utestid.utestid_units}&nbsp;</font></td>
+	<td nowrap align=center ><font size=1>{$utestid.utestid_range_low_formatted}&nbsp;-&nbsp;{$utestid.utestid_range_high_formatted}&nbsp;</font></td>
+	<td nowrap align=right ><font size=1>{$utestid.result_range_flag|upper} {$utestid.result_panic_flag|upper} {$utestid.result_grade|upper} &nbsp;</font></td>
+	</tr>
+{/foreach}
+<!-- table for result : end data rows-->
+</table>
+
+{# ********* table for audit data ********* #}
+<table id="tabledata" name="document" width="100%"cellspacing=0 cellpadding=1 style="{$table_style}" border='1'>
+<tr>
+<td width=50% valign="top">
+	<table>
+	<tr><td >Comment: {$doc.sample_comment}. {foreach from=$result_warnings key=k item=i}&nbsp;{$i|upper}&nbsp;{/foreach}
+	<tr><td >Condition code:  {$doc.sample_condition} {$doc.sample_condition_description}</td></tr>
+	</table>
+	</td>
+<td valign="top">
+	<table><tr><td>Authorised and released by:</td></tr>
+	<tr><td >Operator:  {$validation_ref_summary.operator}</td></tr>
+	<tr><td >Validated by:  {$validation_ref_summary.validator}</td></tr>
+	<tr><td >Validated on:  {$validation_ref_summary.date_validated|date_format:$date_config.date} {$validation_ref_summary.date_validated|date_format:$date_config.time}</td></tr>
+	<tr><td >Method:  {$validation_ref_summary.validation_method_ref}</td></tr>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+</table>
+</td></tr></table>
+{% endblock %}
+
