@@ -1,0 +1,2 @@
+from identifier_methods_tests import IdentifierMethodsTests
+from base_subject_identifier_methods_tests import BaseSubjectIdentifierMethodsTests

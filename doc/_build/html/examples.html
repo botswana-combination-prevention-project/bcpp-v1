@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &mdash; bhp_identifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="bhp_identifier 1.0 documentation" href="index.html" />
+    <link rel="next" title="Classes" href="classes.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">bhp_identifier 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="consenting-subjects">
+<h2>Consenting Subjects<a class="headerlink" href="#consenting-subjects" title="Permalink to this headline">¶</a></h2>
+<p>By default, <tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt> in the base consent model from module <tt class="xref py py-mod docutils literal"><span class="pre">bhp_consent</span></tt> uses an instance of
+<tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.Subject</span></tt> to allocate an identifier to the consenting subject:</p>
+<div class="highlight-python"><div class="highlight"><pre> <span class="k">class</span> <span class="nc">BaseConsent</span><span class="p">(</span><span class="n">BaseSubject</span><span class="p">):</span>
+
+     <span class="o">...</span>
+
+     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+         <span class="sd">&quot;&quot;&quot; create or get a subject identifier and update registered subject &quot;&quot;&quot;</span>
+         <span class="n">subject</span> <span class="o">=</span> <span class="n">Subject</span><span class="p">()</span>
+         <span class="n">registered_subject</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;registered_subject&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+             <span class="c"># see if there is a registered subject key. want to know this as it</span>
+             <span class="c"># might have the subject identifier already (e.g for subjects re-consenting)</span>
+             <span class="k">if</span> <span class="n">registered_subject</span><span class="p">:</span>
+                 <span class="c"># set identifier, but it may be None</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">subject_identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span>
+<span class="hll">             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">:</span>
+</span><span class="hll">                 <span class="c"># allocate new subject identifier</span>
+</span><span class="hll">                 <span class="bp">self</span><span class="o">.</span><span class="n">subject_identifier</span> <span class="o">=</span> <span class="n">subject</span><span class="o">.</span><span class="n">get_identifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subject_type</span><span class="p">(),</span>
+</span>                                                              <span class="bp">self</span><span class="o">.</span><span class="n">study_site</span><span class="o">.</span><span class="n">site_code</span><span class="p">)</span>
+         <span class="c"># call super</span>
+         <span class="nb">super</span><span class="p">(</span><span class="n">BaseConsent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+         <span class="c"># create or update RegisteredSubject</span>
+         <span class="n">subject</span><span class="o">.</span><span class="n">update_register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">subject_identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span>
+                                 <span class="n">registration_datetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">created</span><span class="p">,</span>
+                                 <span class="n">registration_status</span> <span class="o">=</span> <span class="s">&#39;consented&#39;</span><span class="p">,</span>
+                                 <span class="n">subject_consent_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="infants">
+<h2>Infants<a class="headerlink" href="#infants" title="Permalink to this headline">¶</a></h2>
+<p>To register infants for an already registered mother add the following to the save method of the ModelAdmin.
+For example, using the Maternal Delivery form, create an instance of <a class="reference internal" href="classes.html#bhp_identifier.classes.Infant" title="bhp_identifier.classes.Infant"><tt class="xref py py-class docutils literal"><span class="pre">bhp_identifier.classes.Infant</span></tt></a> and call it&#8217;s
+<tt class="xref py py-meth docutils literal"><span class="pre">bhp_identifier.classes.Infant.get_identifier()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MaternalLabDelAdmin</span><span class="p">(</span><span class="n">MaternalVisitModelAdmin</span><span class="p">):</span>
+
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">change</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">user_created</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">live_infants_to_register</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c">#Allocate Infant Identifier</span>
+                    <span class="n">infant</span><span class="o">=</span><span class="n">Infant</span><span class="p">()</span>
+                    <span class="n">infant</span><span class="o">.</span><span class="n">get_identifier</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                              <span class="n">maternal_identifier</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">maternal_visit</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">subject_identifier</span><span class="p">,</span>
+                              <span class="n">maternal_study_site</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">maternal_visit</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">registered_subject</span><span class="o">.</span><span class="n">study_site</span><span class="p">,</span>
+                              <span class="n">live_infants</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">live_infants</span><span class="p">,</span>
+                              <span class="n">live_infants_to_register</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">live_infants_to_register</span><span class="p">,</span>
+                              <span class="n">subject_type</span><span class="o">=</span><span class="s">&#39;infant&#39;</span><span class="p">,</span>
+                              <span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaternalLabDelAdmin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">change</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#consenting-subjects">Consenting Subjects</a></li>
+<li><a class="reference internal" href="#infants">Infants</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="classes.html"
+                        title="next chapter">Classes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/examples.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">bhp_identifier 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, erik van widenfelt.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
