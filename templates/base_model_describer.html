@@ -1,0 +1,32 @@
+{% extends "section_statistics.html"%}
+{% load describer_tags %}{% load common_tags %}
+
+{% block content %}
+
+{% include 'selector_buttons.html' %}
+
+
+{% include 'selector_form.html' %}
+
+
+{% if not app_label and not model_name %}
+    {% block app_labels %}{% endblock %}
+{% endif%}
+{% if app_label and not model_name %}
+    {% block model_names %}{% endblock %}
+{% endif%}
+
+
+{% if app_label and model_name %}
+
+    {% block describer %} {% endblock %}
+    
+{% endif %}
+
+{% if list_text_field %}
+
+    {% block list_text_field %}{% endblock %}
+
+{% endif %}
+{% endblock %}
+
