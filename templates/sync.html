@@ -1,0 +1,56 @@
+{% extends "section.html"%}
+
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; Synchronize with Community Server
+    </div>
+    
+{% endblock %}
+
+
+{% block content %}
+
+<P>You are {{ hostname }}.</P>
+<P>Your locally generated transactions can be found <A href="/admin/bhp_sync/outgoingtransaction/">here</A></P>
+<p><A href="/mochudi_map/">View mochudi map</A></p>
+<A href="/admin/bhp_sync/producer/">Producers</A>
+
+<table>
+<thead>
+<th></th>
+<th>Producer</th>
+<th>Unlock</th>
+<th>Sync URL</th>
+<th>Transactions</th>
+<th>URL</th>
+{% if show_checkin_link %}<th>Return URL</th>{% endif %}
+<th>Last Sync</th>
+<th>Status</th>
+</thead>
+<tbody>
+{% for producer in producers %}
+    {% if producer.name == selected_producer %}
+        <tr style="background: LightYellow;">
+    {% else%}
+        <tr class="{% cycle 'row1' 'row2' %}">
+    {% endif %}
+    <td>{{ forloop.counter }}.&nbsp;</td>
+    <td>{{ producer.name }}</td>
+    <td><A href="/bhp_dispatch/return/{{ producer.name }}/">unlock {{ producer.name }}</A></td>
+    <td><A href="/bhp_sync/consume/{{ producer.name }}/">synchronize with server</A></td>
+    <td><A href="{{ producer.url }}admin/bhp_sync/outgoingtransaction/?is_consumed__exact=0&producer={{ producer.name }}">producer outgoing transactions</A></td>    
+    {% if show_checkin_link %}
+        <td><A href="/{{ CHECKOUT_APP }}/return/{{ producer.name }}/">Return in netbook</A></td>
+    {% endif %}
+    <td>{{ producer.url }}</td>
+    <td>{{ producer.sync_datetime|timesince }} ago</td>
+    <td><div style="{% if producer.sync_status == 'OK' %}color:green;{% endif%}{% if producer.sync_status == 'Error' %}color:red;{% endif%}">{{ producer.sync_status }}</div></td>        
+    </tr> 
+
+{% endfor %}
+</tbody>
+<table>
+
+{% endblock content %}
