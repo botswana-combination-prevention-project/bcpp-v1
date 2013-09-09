@@ -1,0 +1,58 @@
+{% load common_tags %}
+{% load admin_urls %}
+{% load url from future %}
+{% load registered_subject_dashboard_tags %}
+
+<table>
+<thead>
+<th></th>
+<th>#</th>
+<th>Title</th>
+<th>Status</th>
+<th>Due</th>
+<th>User</th>                        
+<th>Created/Modified</th>                        
+<th>Comment</th>        
+<th>Browse</th>                        
+<th>Audit</th>                
+</thead>
+<tbody>
+{% if not scheduled_entries %}
+    <tr class="{% cycle 'row1' 'row2' %}"><td colspan="12"></td></tr>
+{% else %}
+    {% for entry in scheduled_entries %}
+        <tr class="{% cycle 'row1' 'row2' %}">
+        <td><span {% if entry.status == 'NEW'%}style="background:red;"{% endif %}>&nbsp;</span></td>
+        <td>{{ forloop.counter }}</td>
+        <td>
+        {% if entry.model_url %}
+            <A href="{{ entry.model_url }}?next={{ subject_dashboard_url }}&dashboard_type={{ dashboard_type }}&dashboard_model={{ dashboard_model }}&dashboard_id={{ dashboard_id }}&show=forms&{{visit_attr}}={{ visit_model_instance.pk }}&visit_attr={{visit_attr}}&entry_order={{ entry.entry_order }}&group_title={{ entry.group_title }}">{{ entry.label }}</A>
+        {% else %}                
+            {{ entry.label }}
+        {% endif %}
+        </td>                
+        <td>
+          {% if entry.scheduled_entry_url %}
+            <A href="{{ entry.scheduled_entry_url }}?next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{ dashboard_type }}&dashboard_model={{ dashboard_model }}&dashboard_id={{ dashboard_id }}&show=forms&registered_subject={{ registered_subject }}&entry={{ entry.entry.pk }}&appointment={{ appointment.pk }}">{{ entry.status }}</A></td>
+          {% else %}
+            {{ entry.status }}
+          {% endif %}
+        <td>{{ entry.due_datetime|date:"Y-m-d" }}</td>
+        <td>{{ entry.user_created|default:'' }}{% if entry.user_modified %}/{{ entry.user_modified }}{% endif %}</td>            
+        <td>{{ entry.created|date:"Y-m-d H:i"  }}{% if entry.modified %}/{{ entry.modified|date:"Y-m-d H:i"  }}{% endif %}</td>            
+        <td>{{ entry.entry_comment|default:'' }}</td>        
+        <td>
+        {% if entry.databrowse_url %}
+            <A href="{{ entry.databrowse_url }}">Browse</A>
+        {% endif %}
+        </td>
+        <td>
+        {% if entry.audit_trail_url %}
+          <A href="{{ entry.audit_trail_url }}?next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{ dashboard_type }}&dashboard_model={{ dashboard_model }}&dashboard_id={{ dashboard_id }}&show=forms">Audit trail</A>
+        {% endif %}
+        </td>
+        </tr>
+    {% endfor %}
+{% endif %}
+</tbody>
+</table>
