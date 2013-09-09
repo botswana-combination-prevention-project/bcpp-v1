@@ -1,0 +1,170 @@
+[
+  {
+    "pk": 1, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Sample condition OK", 
+      "short_name": "10", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 10, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Inadequate volume for testing.", 
+      "short_name": "20", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 20, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Clotted or haemolised, please ensure tube is well mixed before delivery to lab.", 
+      "short_name": "30", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 30, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Clotted", 
+      "short_name": "31", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 31, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Haemolised", 
+      "short_name": "32", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 32, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Wrong tube type, unable to test.", 
+      "short_name": "40", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 40, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Sample degradation has occured. Unsuitable for testing.", 
+      "short_name": "50", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 50, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Expired tube.", 
+      "short_name": "60", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 60, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "bhp_lab_core.aliquotcondition", 
+    "fields": {
+      "hostname_created": "dmc3", 
+      "name": "Technical problem at lab, unable to test.", 
+      "short_name": "70", 
+      "created": "2011-02-21 15:53:37", 
+      "user_modified": "erikvw", 
+      "modified": "2011-02-21 15:53:44", 
+      "hostname_modified": "dmc3", 
+      "version": "", 
+      "display_index": 70, 
+      "user_created": "erikvw", 
+      "field_name": null
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "bhp_lab_core.panel", 
+    "fields": {
+      "comment": "", 
+      "hostname_created": "dmc3", 
+      "name": "Double Rapid ELISA ", 
+      "created": "2011-02-21 14:06:54", 
+      "user_modified": "", 
+      "modified": "2011-02-21 14:06:54", 
+      "hostname_modified": "dmc3", 
+      "test_code": [], 
+      "user_created": "django"
+    }
+  }
+]
