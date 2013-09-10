@@ -15,7 +15,7 @@ class HouseholdDashboard(Dashboard):
 
     view = 'household_dashboard'
     dashboard_name = 'Household Dashboard'
-    dashboard_url_name = 'household_dasborad_url'
+    dashboard_url_name = 'household_dashboard_url'
 
     def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, **kwargs):
         self._household_members = None
