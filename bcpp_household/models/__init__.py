@@ -6,4 +6,4 @@ from household_log import *
 from community import Community
 from signals import *
 from plot import Plot
-from plot_identifier import PlotIdentifier
+from plot_identifier_history import PlotIdentifierHistory

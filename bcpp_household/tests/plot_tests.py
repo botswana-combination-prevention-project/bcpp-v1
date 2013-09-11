@@ -1,7 +1,7 @@
 from django.test import TestCase
 from bhp_map.classes import site_mappers
 from bcpp_household.classes  import PlotIdentifier
-from bcpp_household.models import PlotIdentifier as PlotIdentifierHistory
+from bcpp_household.models import PlotIdentifierHistory
 from factories import PlotFactory
 
 
