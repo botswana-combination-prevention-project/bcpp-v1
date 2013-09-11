@@ -16,7 +16,9 @@
 <th>Host</th> 
 <th>Map</th>                                  
 </thead>  
-  {% for plot in search_result.object_list %}
+
+{% for plot in search_result.object_list %}
+    {% if plot %}
       <!-- obj is a plot object -->
 
       <tr class="{% cycle 'row1' 'row2' %}">
@@ -36,7 +38,11 @@
       <td>{% if plot|is_dispatched %}
           <div class="warning">{{plot.plot_identifier}}</div>
         {% else %}
-          <A href="{% url plot|get_meta|admin_urlname:'change' plot.pk %}?next=plot_dashboard_url&dashboard_type=plot&dashboard_model=plot&dashboard_id={{ plot.pk }}">{{ plot }}</A>
+          {% if not plot.pk %}
+            <span style="background-color:red;color:white;">Error: No Plot!!</span>
+          {% else %}
+            <A href="{% url plot|get_meta|admin_urlname:'change' plot.pk %}?next=plot_dashboard_url&dashboard_type=plot&dashboard_model=plot&dashboard_id={{ plot.pk }}">{{ plot }}</A>
+          {% endif %}
         {% endif %}
         </td>
         <td>{{ plot.get_status_display }}</td>
@@ -59,13 +65,10 @@
         
         </td>       
       </tr>
-
+      {% endif %}
 {% endfor %}
   <tr><td colspan="11">{{ search_result.object_list.count|default:0 }} plot structure{{ search_result.object_list|pluralize }}{% if not search_result.object_list.count%}s{%endif%} found.</td></tr>    
 </table>
-
-
-
 
 
 </div>

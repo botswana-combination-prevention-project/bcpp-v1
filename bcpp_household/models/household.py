@@ -169,7 +169,7 @@ class Household(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         return (self.household_identifier,)
-    natural_key.dependencies = ['bcpp_household.gpsdevice', ]
+    natural_key.dependencies = ['bcpp_household.plot', ]
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -180,9 +180,6 @@ class Household(BaseDispatchSyncUuidModel):
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
-        # this just comes from plot
-        self.gps_lat = self.gps_target_lat  # gps_targets never change
-        self.gps_lon = self.gps_target_lat  # gps_targets never change
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 

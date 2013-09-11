@@ -2,6 +2,7 @@ import re
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from django.utils.translation import ugettext as _
 from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
@@ -9,6 +10,7 @@ from bhp_device.classes import Device
 from bhp_map.classes import site_mappers
 from bhp_map.exceptions import MapperError
 from bhp_identifier.exceptions import IdentifierError
+from bcpp_household.managers import PlotManager
 from bcpp_household.classes import PlotIdentifier
 from bcpp_household.choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
 
@@ -171,6 +173,36 @@ class Plot(BaseDispatchSyncUuidModel):
         choices=PLOT_STATUS,
         )
 
+    objects = PlotManager()
+    history = AuditTrail()
+
+    def __unicode__(self):
+        return self.plot_identifier
+
+    def natural_key(self):
+        return (self.plot_identifier,)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            device = Device()
+            plot_identifier = PlotIdentifier(community=self.community_number())
+            self.plot_identifier = plot_identifier.get_identifier()
+            self.device_id = device.device_id
+            if not self.plot_identifier:
+                raise IdentifierError('Expected a value for plot_identifier. Got None')
+            self.hh_int = re.search('\d+', self.plot_identifier).group(0)
+        # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
+        if self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s:
+            mapper_cls = site_mappers.get_registry(self.community)
+            mapper = mapper_cls()
+            self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
+            self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minu.tes_e)
+            mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+            mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+        self.action = self.get_action()
+        super(Plot, self).save(*args, **kwargs)
+
+
     def post_save_create_household(self, created):
         """Creates one household for this plot but only if none exist."""
         Household = models.get_model('bcpp_household', 'Household')
@@ -198,26 +230,6 @@ class Plot(BaseDispatchSyncUuidModel):
                 household.gps_minutes_s = self.gps_minutes_s
                 household.save()
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            device = Device()
-            plot_identifier = PlotIdentifier(community=self.community_number())
-            self.plot_identifier = plot_identifier.get_identifier()
-            self.device_id = device.device_id
-            if not self.plot_identifier:
-                raise IdentifierError('Expected a value for plot_identifier. Got None')
-            self.hh_int = re.search('\d+', self.plot_identifier).group(0)
-        # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
-        if self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s:
-            mapper_cls = site_mappers.get_registry(self.community)
-            mapper = mapper_cls()
-            self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
-            self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minu.tes_e)
-            mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-            mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
-        self.action = self.get_action()
-        super(Plot, self).save(*args, **kwargs)
-
     def get_action(self):
         if not self.gps_lon and not self.gps_lat:
             retval = 'unconfirmed'
@@ -228,9 +240,6 @@ class Plot(BaseDispatchSyncUuidModel):
         else:
             retval = 'unconfirmed'
         return retval
-
-    def __unicode__(self):
-        return self.plot_identifier
 
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
