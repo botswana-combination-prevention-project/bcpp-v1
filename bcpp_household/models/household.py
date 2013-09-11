@@ -189,7 +189,6 @@ class Household(BaseDispatchSyncUuidModel):
             self.device_id = device.device_id
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
-#             self.hh_int = re.search('\d+', self.household_identifier).group(0)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
