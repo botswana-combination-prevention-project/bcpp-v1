@@ -13,11 +13,11 @@ class Migration(DataMigration):
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
         # create a plot for every household
-        Household = orm['bcpp_household', 'Household']
-        Plot = orm['bcpp_household', 'Plot']
+        Household = orm['bcpp_household.household']
+        Plot = orm['bcpp_household.Plot']
         for hh in Household.objects.all():
             if not hh.plot:
-                plot = Plot.objects.get_or_create(**{'gps_target_lat': hh.gps_target_lat, 'gps_target_lon': hh.gps_target_lon})
+                plot, created = Plot.objects.get_or_create(**{'gps_target_lat': hh.gps_target_lat, 'gps_target_lon': hh.gps_target_lon})
                 hh.plot = plot
                 hh.save()
 
