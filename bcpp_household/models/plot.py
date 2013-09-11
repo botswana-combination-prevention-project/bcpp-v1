@@ -9,8 +9,7 @@ from bhp_device.classes import Device
 from bhp_map.classes import site_mappers
 from bhp_map.exceptions import MapperError
 from bhp_identifier.exceptions import IdentifierError
-from bcpp_household.models import Household
-from bcpp_household.classes import PIdentifier, Identifier
+from bcpp_household.classes import PlotIdentifier
 from bcpp_household.choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
 
 
@@ -21,8 +20,6 @@ def is_valid_community(self, value):
 
 
 class Plot(BaseDispatchSyncUuidModel):
-
-    household = models.ForeignKey(Household, null=True, editable=False)
 
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
@@ -175,16 +172,15 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     def post_save_create_household(self, created):
-        """Creates a household within a plot
-        
-        """
+        """Creates one household within a plot but only if none exist."""
+        Household = models.get_model('bcpp_household', 'Household')
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
-        identifier = Identifier(
-        plot_identifier=self.plot_identifier,
-        household_number=1)
-        self.household.save({'gps_lat': mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0), 'gps_lon': mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)})
-
+        if Household.objects.filter(plot=self).count() == 0:
+            # create at least one HH
+            Household.objects.create(**{'plot': self,
+                                        'gps_lat': mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0),
+                                        'gps_lon': mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)})
 
     def save(self, *args, **kwargs):
         if not self.id:
