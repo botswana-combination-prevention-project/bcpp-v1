@@ -8,9 +8,8 @@ class PlotIdentifier(BaseIdentifier):
         app_name = 'bcpp_household'
         model_name = 'plotidentifierhistory'
         modulus = 11
-        identifier_prefix = ''
         self.set_community(community)
-        super(PlotIdentifier, self).__init__(identifier_format, app_name, model_name, modulus, identifier_prefix)
+        super(PlotIdentifier, self).__init__(identifier_format=identifier_format, app_name=app_name, model_name=model_name, modulus=modulus)
 
     def set_community(self, value):
         if not value:
