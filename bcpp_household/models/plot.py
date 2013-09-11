@@ -202,7 +202,6 @@ class Plot(BaseDispatchSyncUuidModel):
         self.action = self.get_action()
         super(Plot, self).save(*args, **kwargs)
 
-
     def post_save_create_household(self, created):
         """Creates one household for this plot but only if none exist."""
         Household = models.get_model('bcpp_household', 'Household')
