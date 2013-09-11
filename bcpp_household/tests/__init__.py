@@ -1,2 +1,3 @@
 from natural_key_tests import NaturalKeyTests
 from household_mapper_tests import HouseholdMapperTests
+from plot_tests import PlotTests

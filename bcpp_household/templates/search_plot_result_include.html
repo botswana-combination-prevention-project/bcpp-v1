@@ -18,7 +18,7 @@
 </thead>  
 
 {% for plot in search_result.object_list %}
-    {% if plot %}
+    {% if plot.pk %}
       <!-- obj is a plot object -->
 
       <tr class="{% cycle 'row1' 'row2' %}">
