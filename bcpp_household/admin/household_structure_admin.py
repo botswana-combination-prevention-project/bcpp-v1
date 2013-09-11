@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bcpp_household.models import Household, HouseholdStructure, Plot
+from bcpp_household.models import HouseholdStructure
 from bcpp_household.forms import HouseholdStructureForm
 from bcpp_household.actions import export_as_kml_hs
 from base_household_model_admin import BaseHouseholdModelAdmin
