@@ -1,7 +1,7 @@
 from datetime import *
 from django.contrib import admin
-from autocomplete.views import autocomplete, AutocompleteSettings
-from autocomplete.admin import AutocompleteAdmin
+# from autocomplete.views import autocomplete, AutocompleteSettings
+# from autocomplete.admin import AutocompleteAdmin
 from bhp_base_admin.admin import BaseModelAdmin
 from lab_order.models import Order
 from models import Result, ResultSource
@@ -12,20 +12,12 @@ class ResultSourceAdmin(BaseModelAdmin):
 admin.site.register(ResultSource, ResultSourceAdmin)
 
 
-class ResultAutocomplete(AutocompleteSettings):
-    search_fields = ('^result_identifier',)
+# class ResultAutocomplete(AutocompleteSettings):
+#     search_fields = ('^result_identifier',)
 
 
-class ResultAdmin(AutocompleteAdmin, BaseModelAdmin):
-
-#    def save_model(self, request, obj, form, change):
-#        if not change:
-#            obj.result_identifier = AllocateResultIdentifier(
-#                request.user,
-#                request.POST.get('order'),
-# #                )
-#        save = super(ResultAdmin, self).save_model(request, obj, form, change)
-#        return save
+# class ResultAdmin(AutocompleteAdmin, BaseModelAdmin):
+class ResultAdmin(BaseModelAdmin):
 
     def change_view(self, request, object_id, extra_context=None):
 
