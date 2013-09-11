@@ -4,14 +4,13 @@ from bcpp_household.forms import PlotForm
 from bcpp_household.actions import process_dispatch
 from bcpp_household.models import Plot
 
+
 class PlotAdmin(BaseHouseholdModelAdmin):
-    
+
     form = PlotForm
     date_hierarchy = 'modified'
     list_per_page = 30
     list_max_show_all = 1000
-    
-    
 
     fields = (
         'availability_datetime',
@@ -37,7 +36,5 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'status': admin.VERTICAL,
         }
     actions = [process_dispatch, ]
-    
 
-    
 admin.site.register(Plot, PlotAdmin)
