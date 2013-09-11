@@ -183,18 +183,20 @@ class Plot(BaseDispatchSyncUuidModel):
         return (self.plot_identifier,)
 
     def save(self, *args, **kwargs):
+        # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
+        if not self.community:
+            raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
+        mapper_cls = site_mappers.get_registry(self.community)
+        mapper = mapper_cls()
         if not self.id:
-            device = Device()
-            plot_identifier = PlotIdentifier(community=self.community_number())
+#             device = Device()
+#             self.device_id = device.device_id
+            plot_identifier = PlotIdentifier(community=mapper.get_map_code())
             self.plot_identifier = plot_identifier.get_identifier()
-            self.device_id = device.device_id
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
-            self.hh_int = re.search('\d+', self.plot_identifier).group(0)
-        # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
+#             self.hh_int = re.search('\d+', self.plot_identifier).group(0)
         if self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s:
-            mapper_cls = site_mappers.get_registry(self.community)
-            mapper = mapper_cls()
             self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
             self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minu.tes_e)
             mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)

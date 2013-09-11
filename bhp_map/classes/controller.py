@@ -29,6 +29,10 @@ class Controller(object):
         # use map_area class attribute add the dictionary key
         if mapper_cls.map_area in self._registry:
             raise AlreadyRegistered('The mapper class {0} is already registered ({1})'.format(mapper_cls, mapper_cls.map_area))
+        # confirm code is not already in use
+        for value in self._registry.itervalues():
+            if value.map_code == mapper_cls.map_code:
+                raise AlreadyRegistered('The mapper class {0} is attempting to use map code {1} that is already in use by the {2} mapper'.format(value, value.map_code, mapper_cls.map_area))
         self._registry[mapper_cls.map_area] = mapper_cls
 
     def get(self, name):

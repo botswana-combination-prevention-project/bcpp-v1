@@ -11,7 +11,7 @@ from check_digit import CheckDigit
 class BaseIdentifier(object):
     """ Base class for all identifiers."""
 
-    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, 
+    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None,
                  modulus=None, identifier_prefix=None, is_derived=False, add_check_digit=None, using=None,
                  sequence_app_label=None, sequence_model_name=None):
         self.identifier_format = None
@@ -28,7 +28,7 @@ class BaseIdentifier(object):
         else:
             self.add_check_digit = add_check_digit
         self.using = using
-        self.is_derived = is_derived
+        self.is_derived = is_derived or False
         if 'PROJECT_IDENTIFIER_PREFIX' not in dir(settings):
             raise ImproperlyConfigured('Missing settings attribute PROJECT_IDENTIFIER_PREFIX. Please add. For example, PROJECT_IDENTIFIER_PREFIX = \'041\' for project BHP041.')
         if 'PROJECT_IDENTIFIER_MODULUS' not in dir(settings):
