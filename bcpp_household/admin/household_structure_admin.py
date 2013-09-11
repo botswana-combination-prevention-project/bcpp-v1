@@ -14,13 +14,12 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
     form = HouseholdStructureForm
     date_hierarchy = 'modified'
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "plot":
-            kwargs["queryset"] = Plot.objects.filter(id__exact=request.GET.get('plot', 0))
-        return super(HouseholdStructureAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+#     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+#         if db_field.name == "plot":
+#             kwargs["queryset"] = Plot.objects.filter(id__exact=request.GET.get('plot', 0))
+#         return super(HouseholdStructureAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = (
-        'plot',
         'survey',
         'member_count',
         'note')
@@ -45,6 +44,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'hostname_modified',
         )
     search_fields = (
+        'plot__plot_identifier',
         'plot__household__household_identifier',
         'plot__household__id', 'id',
         'plot__section',
