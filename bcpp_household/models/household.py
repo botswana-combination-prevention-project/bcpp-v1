@@ -1,5 +1,6 @@
 import re
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ImproperlyConfigured
 from audit_trail.audit import AuditTrail
@@ -7,6 +8,7 @@ from django.core.exceptions import ValidationError
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_device.classes import Device
 from bhp_map.classes import site_mappers
+from bhp_map.exceptions import MapperError
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
@@ -179,8 +181,8 @@ class Household(BaseDispatchSyncUuidModel):
         mapper = mapper_cls()
         self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0)
         self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)
-        #mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-        #mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+        mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+        mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
@@ -229,7 +231,7 @@ class Household(BaseDispatchSyncUuidModel):
         return False
 
     def structure(self):
-        url = '/admin/{0}/householdstructure/?q={1}'.format(self._meta.app_label, self.household_identifier)
+        url = reverse('admin:{app_label}_{model_name}__changelist'.format('bcpp_household', 'householdstructure'))
         return """<a href="{url}" />structure</a>""".format(url=url)
     structure.allow_tags = True
 
