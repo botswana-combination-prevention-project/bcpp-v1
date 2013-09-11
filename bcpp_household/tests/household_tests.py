@@ -2,7 +2,7 @@ from django.test import TestCase
 from bhp_map.classes import site_mappers
 from bhp_identifier.exceptions import IdentifierError
 from bcpp_household.classes  import HouseholdIdentifier
-from bcpp_household.models import HouseholdIdentifierHistory, Household
+from bcpp_household.models import HouseholdIdentifierHistory, Household, HouseholdStructure
 from bcpp_survey.tests.factories import SurveyFactory
 from factories import PlotFactory, HouseholdFactory
 
@@ -64,3 +64,5 @@ class HouseholdTests(TestCase):
         print h9
         print 'assert that you cannot create a tenth household in the same plot'
         self.assertRaises(IdentifierError, HouseholdFactory, plot=plot)
+        print 'assert only one household structure exists'
+        self.assertEqual(HouseholdStructure.objects.all().count(), 1)
