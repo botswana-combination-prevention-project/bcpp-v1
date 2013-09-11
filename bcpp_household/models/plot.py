@@ -206,7 +206,9 @@ class Plot(BaseDispatchSyncUuidModel):
         super(Plot, self).save(*args, **kwargs)
 
     def get_next_household_sequence(self):
-        """Returns the next sequence number for the next household identifier to use in this plot."""
+        """Returns the next sequence number for the next household identifier to use in this plot.
+
+        Default is 1"""
         Household = models.get_model('bcpp_household', 'Household')
         sequence = 1
         for household in Household.objects.filter(plot=self):
