@@ -1,5 +1,6 @@
 import re
 from django.db import models
+from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from audit_trail.audit import AuditTrail
@@ -266,6 +267,11 @@ class Plot(BaseDispatchSyncUuidModel):
         if dispatch_container.objects.filter(container_identifier=self.plot_identifier, is_dispatched=True).exists():
             return dispatch_container.objects.get(container_identifier=self.plot_identifier, is_dispatched=True)
         return None
+
+    def check_for_survey_on_pre_save(self, **kwargs):
+        Survey = models.get_model('bcpp_survey', 'Survey')
+        if Survey.objects.all().count() == 0:
+            raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before creating a Plot.')
 
     def community_number(self):
         """Sets the community number to use for the plot identifier."""
