@@ -6,7 +6,7 @@ class PlotIdentifier(BaseIdentifier):
     def __init__(self, community):
         identifier_format = '{community}{sequence}'
         app_name = 'bcpp_household'
-        model_name = 'plotidentifier'
+        model_name = 'plotidentifierhistory'
         modulus = 11
         identifier_prefix = ''
         self.set_community(community)
