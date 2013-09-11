@@ -13,8 +13,8 @@ class Migration(DataMigration):
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
 
-        Household = orm['bcpp_household_member.Household']
-        HouseholdStructure = orm['bcpp_household_member.HouseholdStructure']
+        Household = orm['bcpp_household.Household']
+        HouseholdStructure = orm['bcpp_household.HouseholdStructure']
         HouseholdMember = orm['bcpp_household_member.HouseholdMember']
         if not hasattr(Household, 'plot'):
             raise TypeError('Migrate bcpp_household first so that Household has attribute plot')

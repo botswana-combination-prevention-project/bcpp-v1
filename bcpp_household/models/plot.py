@@ -172,15 +172,31 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     def post_save_create_household(self, created):
-        """Creates one household within a plot but only if none exist."""
+        """Creates one household for this plot but only if none exist."""
         Household = models.get_model('bcpp_household', 'Household')
-        mapper_cls = site_mappers.get_registry(self.community)
-        mapper = mapper_cls()
-        if Household.objects.filter(plot=self).count() == 0:
-            # create at least one HH
+        if Household.objects.filter(gps_target_lat=self.gps_target_lat, gps_target_lon=self.gps_target_lon).count() == 0:
             Household.objects.create(**{'plot': self,
-                                        'gps_lat': mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0),
-                                        'gps_lon': mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)})
+                                        'gps_target_lat': self.gps_target_lat,
+                                        'gps_target_lon': self.gps_target_lon,
+                                        'gps_lat': self.gps_lat,
+                                        'gps_lon': self.gps_lon,
+                                        'gps_degrees_e': self.gps_degrees_e,
+                                        'gps_degrees_s': self.gps_degrees_s,
+                                        'gps_minutes_e': self.gps_minutes_e,
+                                        'gps_minutes_s': self.gps_minutes_s,
+                                        })
+        else:
+            # update all HH with new gps data
+            for household in Household.objects.filter(plot=self):
+                household.gps_target_lat = self.gps_target_lat
+                household.gps_target_lon = self.gps_target_lon
+                household.gps_lat = self.gps_lat
+                household.gps_lon = self.gps_lon
+                household.gps_degrees_e = self.gps_degrees_e
+                household.gps_degrees_s = self.gps_degrees_s
+                household.gps_minutes_e = self.gps_minutes_e
+                household.gps_minutes_s = self.gps_minutes_s
+                household.save()
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -191,12 +207,14 @@ class Plot(BaseDispatchSyncUuidModel):
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
             self.hh_int = re.search('\d+', self.plot_identifier).group(0)
-        mapper_cls = site_mappers.get_registry(self.community)
-        mapper = mapper_cls()
-        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0)
-        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)
-        mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-        mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+        # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
+        if self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s:
+            mapper_cls = site_mappers.get_registry(self.community)
+            mapper = mapper_cls()
+            self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
+            self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minu.tes_e)
+            mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+            mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
         super(Plot, self).save(*args, **kwargs)
 

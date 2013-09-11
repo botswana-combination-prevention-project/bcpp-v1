@@ -8,7 +8,6 @@ from django.core.exceptions import ValidationError
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_device.classes import Device
 from bhp_map.classes import site_mappers
-from bhp_map.exceptions import MapperError
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
@@ -62,6 +61,8 @@ class Household(BaseDispatchSyncUuidModel):
         max_digits=10,
         null=True,
         decimal_places=0,
+        editable=False,
+        help_text='comes from plot',
         )
 
     gps_minutes_s = EncryptedDecimalField(
@@ -69,6 +70,8 @@ class Household(BaseDispatchSyncUuidModel):
         max_digits=10,
         null=True,
         decimal_places=4,
+        editable=False,
+        help_text='comes from plot',
         )
 
     gps_degrees_e = EncryptedDecimalField(
@@ -76,6 +79,8 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         max_digits=10,
         decimal_places=0,
+        editable=False,
+        help_text='comes from plot',
         )
 
     gps_minutes_e = EncryptedDecimalField(
@@ -83,30 +88,36 @@ class Household(BaseDispatchSyncUuidModel):
         max_digits=10,
         null=True,
         decimal_places=4,
+        editable=False,
+        help_text='comes from plot',
         )
 
     gps_lon = models.FloatField(
         verbose_name='longitude',
         null=True,
         editable=False,
+        help_text='comes from plot',
         )
 
     gps_lat = models.FloatField(
         verbose_name='latitude',
         null=True,
         editable=False,
+        help_text='comes from plot',
         )
 
     gps_target_lon = models.FloatField(
         verbose_name='target waypoint longitude',
         null=True,
         editable=False,
+        help_text='comes from plot',
         )
 
     gps_target_lat = models.FloatField(
         verbose_name='target waypoint latitude',
         null=True,
         editable=False,
+        help_text='comes from plot',
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
@@ -116,14 +127,6 @@ class Household(BaseDispatchSyncUuidModel):
         help_text='If the community is incorrect, please contact the DMC immediately.',
         validators=[is_valid_community, ],
         )
-
-#     was_surveyed_previously = models.CharField(
-#         verbose_name="Was this household surveyed previously?",
-#         max_length=10,
-#         choices=YES_NO,
-#         default='No',
-#         help_text="For example, you know BHP was here before but the household is not in the system."
-#         )
 
     comment = EncryptedTextField(
         max_length=250,
@@ -138,7 +141,7 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         )
-    
+
     is_randomised = models.BooleanField(
             verbose_name='Is_randomised',
             editable=False)
@@ -177,12 +180,9 @@ class Household(BaseDispatchSyncUuidModel):
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
             self.hh_int = re.search('\d+', self.household_identifier).group(0)
-        mapper_cls = site_mappers.get_registry(self.community)
-        mapper = mapper_cls()
-        self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0)
-        self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)
-        mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-        mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+        # this just comes from plot
+        self.gps_lat = self.gps_target_lat  # gps_targets never change
+        self.gps_lon = self.gps_target_lat  # gps_targets never change
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
