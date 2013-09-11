@@ -13,13 +13,15 @@ from bcpp_household.models import Household
 from bcpp_household.classes import PIdentifier, Identifier
 from bcpp_household.choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
 
+
 def is_valid_community(self, value):
         """Validates the community string against a list of site_mappers map_areas."""
         if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
+
 class Plot(BaseDispatchSyncUuidModel):
-    
+
     household = models.ForeignKey(Household, null=True, editable=False)
 
     plot_identifier = models.CharField(
@@ -30,13 +32,13 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         db_index=True,
         )
-    
+
     eligible_members = models.IntegerField(
         verbose_name="Number of Eligible member",
         blank=True,
         null=True,
         help_text=("Provide the number of people who live in the household who are eligible."),)
-    
+
     description = EncryptedTextField(
         verbose_name="House household description",
         max_length=250,
@@ -44,7 +46,7 @@ class Plot(BaseDispatchSyncUuidModel):
         blank=True,
         null=True,
         )
-    
+
     cso_number = EncryptedCharField(
         verbose_name="CSO Number",
         blank=True,
@@ -52,20 +54,20 @@ class Plot(BaseDispatchSyncUuidModel):
         db_index=True,
         help_text=("provide the CSO number or leave BLANK."),
         )
-    
+
     num_household = models.IntegerField(
         verbose_name="Number of Households in a plot.",
         blank=True,
         null=True,
         help_text=("Provide the number of Households in a plot.."),)
-    
+
     comment = EncryptedTextField(
         max_length=250,
         help_text=("You may provide a comment here or leave BLANK."),
         blank=True,
         null=True,
         )
-    
+
     availability_datetime = models.DateTimeField(
         verbose_name='General Date/Time when most of the household members will be available',
         null=True,
@@ -124,26 +126,26 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
-    
+
     device_id = models.CharField(
         max_length=2,
         null=True,
         editable=False,
         )
-    
+
     action = models.CharField(
         max_length=25,
         null=True,
         default='unconfirmed',
         editable=False)
-    
+
     uploaded_map = models.CharField(
         verbose_name="filename of uploaded map",
         max_length=25,
         null=True,
         blank=True,
         )
-    
+
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
@@ -164,14 +166,14 @@ class Plot(BaseDispatchSyncUuidModel):
         choices=SUB_SECTIONS,
         help_text=u'',
         )
-    
+
     status = models.CharField(
         verbose_name='Plot status',
         max_length=15,
         null=True,
         choices=PLOT_STATUS,
         )
-    
+
     def post_save_create_household(self, created):
         """Creates a household within a plot
         
@@ -182,8 +184,8 @@ class Plot(BaseDispatchSyncUuidModel):
         plot_identifier=self.plot_identifier,
         household_number=1)
         self.household.save({'gps_lat': mapper.get_gps_lat(self.gps_degrees_s or 0, self.gps_minutes_s or 0), 'gps_lon': mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)})
-    
-    
+
+
     def save(self, *args, **kwargs):
         if not self.id:
             device = Device()
@@ -199,9 +201,9 @@ class Plot(BaseDispatchSyncUuidModel):
         self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e or 0, self.gps_minutes_e or 0)
         mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
         mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
-        self.action = self.get_action() 
+        self.action = self.get_action()
         super(Plot, self).save(*args, **kwargs)
-        
+
     def get_action(self):
         if not self.gps_lon and not self.gps_lat:
             retval = 'unconfirmed'
@@ -212,7 +214,7 @@ class Plot(BaseDispatchSyncUuidModel):
         else:
             retval = 'unconfirmed'
         return retval
-    
+
     def __unicode__(self):
         return self.plot_identifier
 
@@ -231,7 +233,6 @@ class Plot(BaseDispatchSyncUuidModel):
             return dispatch_container.objects.get(container_identifier=self.plot_identifier, is_dispatched=True)
         return None
 
-
     def community_number(self):
         """Sets the community number to use for the plot identifier."""
         community_number = None
@@ -241,7 +242,6 @@ class Plot(BaseDispatchSyncUuidModel):
                 return community_number
         return community_number
 
-
     def include_for_dispatch(self):
         return True
 
@@ -249,9 +249,7 @@ class Plot(BaseDispatchSyncUuidModel):
         if Device().get_device_id() == '99':
             return True
         return False
-        
-        
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-plot_identifier', ]
-        
