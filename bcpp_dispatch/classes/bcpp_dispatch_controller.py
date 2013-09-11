@@ -8,7 +8,8 @@ from bhp_subject.models import base_subject_get_or_create_registered_subject_on_
 from bhp_dispatch.classes import DispatchController
 from bhp_dispatch.exceptions import DispatchError
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
-from bcpp_subject.models import bcpp_subject_on_post_save, BaseMemberStatusModel
+#from bcpp_subject.models import bcpp_subject_on_post_save 
+from bcpp_subject.models import  BaseMemberStatusModel
 from bcpp_household_member.models import household_member_on_pre_save, household_member_on_post_save
 from bcpp_survey.models import Survey
 from bhp_registration.models import RegisteredSubject
@@ -57,12 +58,12 @@ class BcppDispatchController(DispatchController):
         """Disconnects signals before saving the serialized object in _to_json."""
         signals.pre_save.disconnect(household_member_on_pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
         signals.post_save.disconnect(household_member_on_post_save, weak=False, dispatch_uid="household_member_on_post_save")
-        signals.post_save.disconnect(bcpp_subject_on_post_save, weak=False, dispatch_uid="bcpp_subject_on_post_save")
+        #signals.post_save.disconnect(bcpp_subject_on_post_save, weak=False, dispatch_uid="bcpp_subject_on_post_save")
         signals.post_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
 
     def reconnect_signals(self):
         """Reconnects signals after saving the serialized object in _to_json."""
-        signals.post_save.connect(bcpp_subject_on_post_save, weak=False, dispatch_uid="bcpp_subject_on_post_save")
+        #signals.post_save.connect(bcpp_subject_on_post_save, weak=False, dispatch_uid="bcpp_subject_on_post_save")
         signals.post_save.connect(household_member_on_post_save, weak=False, dispatch_uid="household_member_on_post_save")
         signals.pre_save.connect(household_member_on_pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
         signals.post_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
