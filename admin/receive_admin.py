@@ -3,7 +3,7 @@ from bhp_base_admin.admin import BaseModelAdmin
 from lab_receive.models import Receive
 
 
-class ReceiveAdmin(AutocompleteAdmin, BaseModelAdmin):
+class ReceiveAdmin(BaseModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # In edit mode
