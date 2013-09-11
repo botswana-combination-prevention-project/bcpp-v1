@@ -6,6 +6,7 @@ from choices.gaborone import GABORONE_SECTIONS, GABORONE_SUB_SECTIONS, GABORONE_
 class GaboroneHouseholdMapper(BaseHouseholdMapper):
 
     map_area = 'gaborone'
+    map_code = '040'
 
     regions = GABORONE_SECTIONS
     sections = GABORONE_SUB_SECTIONS
