@@ -228,6 +228,9 @@ class Household(BaseDispatchSyncUuidModel):
     def include_for_dispatch(self):
         return True
 
+    def dispatch_container_lookup(self, using=None):
+        return (Plot, 'plot__plot_identifier')
+
     def is_server(self):
         if Device().get_device_id() == '99':
             return True

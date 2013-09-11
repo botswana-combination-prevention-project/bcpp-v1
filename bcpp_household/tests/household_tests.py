@@ -13,6 +13,7 @@ class HouseholdTests(TestCase):
 
         print 'create a survey'
         SurveyFactory()
+        SurveyFactory()
         print 'get site mappers'
         site_mappers.autodiscover()
         print 'get one mapper'
@@ -64,5 +65,11 @@ class HouseholdTests(TestCase):
         print h9
         print 'assert that you cannot create a tenth household in the same plot'
         self.assertRaises(IdentifierError, HouseholdFactory, plot=plot)
-        print 'assert only one household structure exists'
-        self.assertEqual(HouseholdStructure.objects.all().count(), 1)
+        print 'assert all 9 have 1 householdstructure/survey (2 surveys)'
+        self.assertEqual(HouseholdStructure.objects.all().count(), 18)
+        print 'try resaving all households'
+        for h in Household.objects.all():
+            h.save()
+        print 'try resaving all householdstructures'
+        for hs in HouseholdStructure.objects.all():
+            hs.save()
