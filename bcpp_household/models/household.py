@@ -12,6 +12,7 @@ from bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import Identifier
 from bcpp_household.choices import HOUSEHOLD_STATUS
+from plot import Plot
 
 
 def is_valid_community(self, value):
@@ -19,7 +20,10 @@ def is_valid_community(self, value):
         if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
+
 class Household(BaseDispatchSyncUuidModel):
+
+    plot = models.ForeignKey(Plot)
 
     household_identifier = models.CharField(
         verbose_name='Household Identifier',
