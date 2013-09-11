@@ -25,7 +25,7 @@ def is_valid_community(self, value):
 
 class Household(BaseDispatchSyncUuidModel):
 
-    plot = models.ForeignKey(Plot)
+    plot = models.ForeignKey(Plot, null=True)
 
     household_identifier = models.CharField(
         verbose_name='Household Identifier',

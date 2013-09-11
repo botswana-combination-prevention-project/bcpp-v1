@@ -249,3 +249,4 @@ class Plot(BaseDispatchSyncUuidModel):
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-plot_identifier', ]
+        unique_together = (('gps_target_lat', 'gps_target_lon'), )
