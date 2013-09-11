@@ -204,6 +204,16 @@ class Plot(BaseDispatchSyncUuidModel):
         self.action = self.get_action()
         super(Plot, self).save(*args, **kwargs)
 
+    def get_next_household_sequence(self):
+        """Returns the next sequence number for the next household identifier to use in this plot."""
+        Household = models.get_model('bcpp_household', 'Household')
+        sequence = 1
+        for household in Household.objects.filter(plot=self):
+            sequence += sequence
+            if sequence >= 10:
+                raise IdentifierError('Maximum number of Households for on plot is 9.')
+        return sequence
+
     def post_save_create_household(self, created):
         """Creates one household for this plot but only if none exist."""
         Household = models.get_model('bcpp_household', 'Household')

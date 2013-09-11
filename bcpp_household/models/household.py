@@ -11,7 +11,7 @@ from bhp_map.classes import site_mappers
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
-from bcpp_household.classes import Identifier
+from bcpp_household.classes import HouseholdIdentifier
 from bcpp_household.choices import HOUSEHOLD_STATUS
 from plot import Plot
 
@@ -35,13 +35,21 @@ class Household(BaseDispatchSyncUuidModel):
         db_index=True,
         )
 
+    household_sequence = models.IntegerField(
+        editable=False,
+        help_text='is 1 for first household in plot, 2 for second, 3, etc. Embedded in household identifier.'
+        )
+
     hh_int = models.IntegerField(
-        editable=False
+        null=True,
+        editable=False,
+        help_text='not used'
         )
 
     hh_seed = models.IntegerField(
+        null=True,
         editable=False,
-        default=0,
+        help_text='not used'
         )
 
     report_datetime = models.DateTimeField(
@@ -174,12 +182,14 @@ class Household(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         if not self.id:
             device = Device()
-            identifier = Identifier()
-            self.household_identifier = identifier.get_identifier()
+            self.household_sequence = self.plot.get_next_household_sequence()
+            household_identifier = HouseholdIdentifier(plot_identifier=self.plot.plot_identifier,
+                                                       household_sequence=self.household_sequence)
+            self.household_identifier = household_identifier.get_identifier()
             self.device_id = device.device_id
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
-            self.hh_int = re.search('\d+', self.household_identifier).group(0)
+#             self.hh_int = re.search('\d+', self.household_identifier).group(0)
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
