@@ -1,5 +1,6 @@
 from django.test import TestCase
 from bhp_map.classes import site_mappers
+from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_household.classes  import PlotIdentifier
 from bcpp_household.models import PlotIdentifierHistory
 from factories import PlotFactory
@@ -8,7 +9,8 @@ from factories import PlotFactory
 class PlotTests(TestCase):
 
     def test_identifier(self):
-
+        print 'create a survey'
+        SurveyFactory()
         print 'get site mappers'
         site_mappers.autodiscover()
         print 'get one mapper'
