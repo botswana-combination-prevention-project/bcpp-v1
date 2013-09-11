@@ -210,7 +210,7 @@ class Plot(BaseDispatchSyncUuidModel):
         Household = models.get_model('bcpp_household', 'Household')
         sequence = 1
         for household in Household.objects.filter(plot=self):
-            sequence += sequence
+            sequence += 1
             if sequence >= 10:
                 raise IdentifierError('Maximum number of Households for on plot is 9.')
         return sequence

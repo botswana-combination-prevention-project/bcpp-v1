@@ -103,4 +103,4 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household'
-        unique_together = (('plot', 'survey'), )
+        unique_together = (('household', 'survey'), )

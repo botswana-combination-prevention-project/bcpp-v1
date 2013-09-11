@@ -6,7 +6,7 @@ from household_structure import HouseholdStructure
 
 @receiver(pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")
 def check_for_survey_on_pre_save(sender, instance, **kwargs):
-    if isinstance(instance, Plot, Household):
+    if isinstance(instance, (Plot, Household)):
         instance.check_for_survey_on_pre_save(**kwargs)
 
 
