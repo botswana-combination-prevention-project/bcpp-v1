@@ -4,7 +4,6 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-
 class Migration(DataMigration):
 
     def forwards(self, orm):
@@ -12,7 +11,6 @@ class Migration(DataMigration):
         # Note: Don't use "from appname.models import ModelName". 
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
-
         Household = orm['bcpp_household.Household']
         HouseholdStructure = orm['bcpp_household.HouseholdStructure']
         HouseholdMember = orm['bcpp_household_member.HouseholdMember']
@@ -21,9 +19,10 @@ class Migration(DataMigration):
         if not hasattr(HouseholdStructure, 'plot'):
             raise TypeError('Migrate bcpp_household first so that HouseholdStructure has attribute plot')
         for hm in HouseholdMember.objects.all():
-            print 'updating plot for member pk={0}'.format(hm.pk)
+            #print 'updating plot for member pk={0}'.format(hm.pk)
             if not hm.household.plot:
-                raise TypeError('Run data migration on bcpp_household to populate attr Household.plot. Got None for household {0}'.format(hm.household))
+                print'warning! no plot for hh {0}'.format(hm.household.pk)
+                #raise TypeError('Run data migration on bcpp_household to populate attr Household.plot. Got None for household {0}'.format(hm.household))
             hm.save()  # updates hh and plot if null using hs
 
     def backwards(self, orm):
@@ -44,14 +43,16 @@ class Migration(DataMigration):
             'gps_minutes_s': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True'}),
             'gps_target_lat': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'gps_target_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
-            'hh_int': ('django.db.models.fields.IntegerField', [], {}),
-            'hh_seed': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'hh_int': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'hh_seed': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25', 'db_index': 'True'}),
+            'household_sequence': ('django.db.models.fields.IntegerField', [], {}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'is_randomised': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'plot': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.Plot']", 'null': 'True'}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True'}),
             'target_radius': ('django.db.models.fields.FloatField', [], {'default': '0.025'}),
@@ -60,7 +61,7 @@ class Migration(DataMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdstructure': {
-            'Meta': {'unique_together': "(('plot', 'survey'),)", 'object_name': 'HouseholdStructure'},
+            'Meta': {'unique_together': "(('household', 'survey'),)", 'object_name': 'HouseholdStructure'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
@@ -76,7 +77,7 @@ class Migration(DataMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.plot': {
-            'Meta': {'ordering': "['-plot_identifier']", 'object_name': 'Plot'},
+            'Meta': {'ordering': "['-plot_identifier']", 'unique_together': "(('gps_target_lat', 'gps_target_lon'),)", 'object_name': 'Plot'},
             'action': ('django.db.models.fields.CharField', [], {'default': "'unconfirmed'", 'max_length': '25', 'null': 'True'}),
             'availability_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
@@ -96,7 +97,6 @@ class Migration(DataMigration):
             'gps_target_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'household': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.Household']", 'null': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'num_household': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
