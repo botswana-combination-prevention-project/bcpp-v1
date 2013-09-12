@@ -11,11 +11,6 @@ site_mappers.autodiscover()
 
 
 class SectionView(BaseSectionView):
-    section_name = ''
-    section_display_name = ''
-    section_display_index = 20
-    section_template = 'section_bcpp_household.html'
-    dashboard_url_name = 'household_dashboard_url'
 
     def contribute_to_context(self, context, request, *args, **kwargs):
         current_survey = None
@@ -44,6 +39,7 @@ class SectionHouseholdView(SectionView):
     section_display_name = 'Households'
     add_model = Household
     section_display_index = 20
+    section_template = 'section_bcpp_household.html'
     dashboard_url_name = 'household_dashboard_url'
 
     def get_search_result(self, request, **kwargs):
@@ -90,6 +86,7 @@ class SectionPlotView(SectionView):
     add_model = Plot
     section_display_index = 10
     dashboard_url_name = 'plot_dashboard_url'
+    section_template = 'section_bcpp_plot.html'
 
     def get_search_result(self, request, **kwargs):
         search_result = None
