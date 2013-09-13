@@ -97,49 +97,10 @@ class BaseModelAdmin (admin.ModelAdmin):
                     <input type="submit" value="Create new household" class="default" />
                 </form>
         """
-
         http_response_redirect = super(BaseModelAdmin, self).response_add(request, obj, post_url_continue)
         if not '_addanother' in request.POST and not '_continue' in request.POST:
             if request.GET.get('next'):
-                if request.GET.get('next') in ['changelist', 'add']:
-                    app_label = request.GET.get('app_label')
-                    module_name = request.GET.get('module_name').lower()
-                    mode = request.GET.get('next')
-                    url = reverse('admin:{app_label}_{module_name}_{mode}'.format(app_label=app_label, module_name=module_name, mode=mode))
-                else:
-                    url = None
-                    dashboard_id = request.GET.get('dashboard_id')
-                    dashboard_model = request.GET.get('dashboard_model')
-                    dashboard_type = request.GET.get('dashboard_type')
-                    entry_order = request.GET.get('entry_order')
-                    visit_attr = request.GET.get('visit_attr')
-                    help_link = request.GET.get('help_link')  # help link added to custom change form
-                    show = request.GET.get('show', 'any')
-                    if '_savenext' in request.POST:
-                        # go to the next form
-                        next_url, visit_model_instance, entry_order = self.next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order)
-                        if next_url:
-                            url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
-                                   '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
-                                   ).format(next_url=next_url,
-                                            next=request.GET.get('next'),
-                                            dashboard_type=dashboard_type,
-                                            dashboard_id=dashboard_id,
-                                            dashboard_model=dashboard_model,
-                                            show=show,
-                                            visit_attr='&visit_attr={0}'.format(visit_attr),
-                                            visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
-                                            entry_order='&entry_order={0}'.format(entry_order),
-                                            help_link='&help_link={0}'.format(help_link))
-                if '_cancel' in request.POST:
-                    url = reverse('subect_dashboard_url', kwargs={'dashboard_type': dashboard_type,
-                                                                  'dashboard_id': dashboard_id,
-                                                                  'dashboard_model': dashboard_model,
-                                                                  'show': show})
-                if not url:
-                    # go back to the dashboard
-                    url = self.reverse_next_to_dashboard(request, obj)
-                http_response_redirect = HttpResponseRedirect(url)
+                http_response_redirect = self.response_add_redirect_on_next_url(request, obj, post_url_continue)
         return http_response_redirect
 
     def response_change(self, request, obj, post_url_continue=None):
@@ -155,9 +116,55 @@ class BaseModelAdmin (admin.ModelAdmin):
                     request.session['filtered'] = None
             if request.GET.get('next'):
                 # go back to the dashboard
-                url = self.reverse_next_to_dashboard(request, obj)
-                http_response_redirect = HttpResponseRedirect(url)
-                request.session['filtered'] = None
+                http_response_redirect = self.reponse_change_redirect_next_url(request, obj, post_url_continue)
+        return http_response_redirect
+
+    def response_add_redirect_on_next_url(self, request, obj, post_url_continue):
+        if request.GET.get('next') in ['changelist', 'add']:
+            app_label = request.GET.get('app_label')
+            module_name = request.GET.get('module_name').lower()
+            mode = request.GET.get('next')
+            url = reverse('admin:{app_label}_{module_name}_{mode}'.format(app_label=app_label, module_name=module_name, mode=mode))
+        else:
+            url = None
+            dashboard_id = request.GET.get('dashboard_id')
+            dashboard_model = request.GET.get('dashboard_model')
+            dashboard_type = request.GET.get('dashboard_type')
+            entry_order = request.GET.get('entry_order')
+            visit_attr = request.GET.get('visit_attr')
+            help_link = request.GET.get('help_link')  # help link added to custom change form
+            show = request.GET.get('show', 'any')
+            if '_savenext' in request.POST:
+                # go to the next form
+                next_url, visit_model_instance, entry_order = self.next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order)
+                if next_url:
+                    url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
+                           '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
+                           ).format(next_url=next_url,
+                                    next=request.GET.get('next'),
+                                    dashboard_type=dashboard_type,
+                                    dashboard_id=dashboard_id,
+                                    dashboard_model=dashboard_model,
+                                    show=show,
+                                    visit_attr='&visit_attr={0}'.format(visit_attr),
+                                    visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
+                                    entry_order='&entry_order={0}'.format(entry_order),
+                                    help_link='&help_link={0}'.format(help_link))
+        if '_cancel' in request.POST:
+            url = reverse('subect_dashboard_url', kwargs={'dashboard_type': dashboard_type,
+                                                          'dashboard_id': dashboard_id,
+                                                          'dashboard_model': dashboard_model,
+                                                          'show': show})
+        if not url:
+            # go back to the dashboard
+            url = self.reverse_next_to_dashboard(request, obj)
+        http_response_redirect = HttpResponseRedirect(url)
+        return http_response_redirect
+
+    def reponse_change_redirect_on_next(self, request, obj, post_url_continue):
+        url = self.reverse_next_to_dashboard(request, obj)
+        http_response_redirect = HttpResponseRedirect(url)
+        request.session['filtered'] = None
         return http_response_redirect
 
     def get_form(self, request, obj=None, **kwargs):
