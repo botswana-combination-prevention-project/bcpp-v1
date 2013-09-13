@@ -20,7 +20,6 @@ class BaseSectionView(object):
     section_display_index = None
     section_list = None
     section_template = None
-    dashboard_url_name = None
     add_model = None
 
     def __init__(self):
@@ -35,7 +34,6 @@ class BaseSectionView(object):
         self._custom_template = {}
         self._search_type = {}
         self._search_name = {}
-        self._dashboard_url_name = None
 
     @property
     def context(self):
@@ -102,21 +100,6 @@ class BaseSectionView(object):
         if not self._section_display_index:
             self.set_section_display_index()
         return self._section_display_index
-
-    def set_dashboard_url_name(self, value=None):
-        """Sets the _dashboard_url_name for this section."""
-        if self.dashboard_url_name:  # try for class attribute first
-            self._dashboard_url_name = self.dashboard_url_name
-        else:
-            self._section_name = value
-        if not self._dashboard_url_name:
-            raise TypeError('Attribute _dashboard_url_name may not be None for {0}'.format(self))
-
-    def get_dashboard_url_name(self):
-        """Returns the _dashboard_url_name for this section."""
-        if not self._dashboard_url_name:
-            self.set_dashboard_url_name()
-        return self._dashboard_url_name
 
     def _set_add_model_cls(self, value=None):
         """Sets the model class used for the 'Add' button."""
@@ -347,7 +330,6 @@ class BaseSectionView(object):
             * search_model_admin_url: 'url',
             * search_result: search_result,
             * search_result_include_file: search_result_include_file,
-            * dashboard_url_name: may be needed by the template that displays the search results
 
         """
         self.set_section_name(kwargs.get('section_name'))
@@ -372,7 +354,6 @@ class BaseSectionView(object):
             'search_model_admin_url': 'url',
             'search_result': self._paginate(self._get_search_result(request, **kwargs), page),
             'search_result_include_file': self._get_search_result_include_template(),
-            'subject_dashboard_url': self.get_dashboard_url_name(),
             }
         # add extra values to the context dictionary
         context = self._contribute_to_context(default_context, request, **kwargs)
