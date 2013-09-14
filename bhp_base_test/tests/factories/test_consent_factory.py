@@ -1,14 +1,32 @@
 import factory
+from datetime import datetime
 from bhp_base_test.models import TestConsent, TestConsentWithMixin
-from bhp_consent.tests.factories import BaseConsentFactory
-#from bhp_registration.tests.factories import RegisteredSubjectFactory
 from bhp_common.choices import IDENTITY_TYPE
+from bhp_subject.tests.factories import BaseSubjectFactory
+from bhp_variables.tests.factories import StudySiteFactory
+
+
+class BaseConsentBasicsFactory(BaseSubjectFactory):
+    ABSTRACT_FACTORY = True
+
+    consent_reviewed = 'Yes'
+    study_questions = 'Yes'
+    assessment_score = 'Yes'
+    consent_copy = 'Yes'
+
+
+class BaseConsentFactory(BaseConsentBasicsFactory):
+    ABSTRACT_FACTORY = True
+
+    study_site = factory.SubFactory(StudySiteFactory)
+    consent_datetime = datetime.today()
+    may_store_samples = 'Yes'
+    is_incarcerated = 'No'
 
 
 class BaseTestConsentFactory(BaseConsentFactory):
     ABSTRACT_FACTORY = True
 
-    #registered_subject = factory.SubFactory(RegisteredSubjectFactory)
     user_provided_subject_identifier = None
     identity = factory.Sequence(lambda n: '{0}2{1}'.format(str(n).rjust(4, '0'), str(n).rjust(4, '0')))
     identity_type = factory.Iterator(IDENTITY_TYPE, getter=lambda c: c[0])
