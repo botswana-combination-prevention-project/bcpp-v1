@@ -35,9 +35,9 @@ class BaseTestConsentFactory(BaseConsentFactory):
     initials = factory.Sequence(lambda n: 'E{0}W'.format(n))
 
 
-class TestConsentFactory(BaseConsentFactory):
+class TestConsentFactory(BaseTestConsentFactory):
     FACTORY_FOR = TestConsent
 
 
-class TestConsentWithMixinFactory(BaseConsentFactory):
+class TestConsentWithMixinFactory(BaseTestConsentFactory):
     FACTORY_FOR = TestConsentWithMixin
