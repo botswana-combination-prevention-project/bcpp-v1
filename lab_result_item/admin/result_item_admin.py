@@ -1,11 +1,9 @@
 from datetime import datetime
 from django.contrib import admin
-# from autocomplete.admin import AutocompleteAdmin
 from bhp_base_admin.admin import BaseModelAdmin
 from lab_result_item.models import ResultItem
 
 
-# class ResultItemAdmin(AutocompleteAdmin, BaseModelAdmin):
 class ResultItemAdmin(BaseModelAdmin):
 
     def save_model(self, request, obj, form, change):
