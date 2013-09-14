@@ -1,23 +1,8 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
-# from autocomplete.views import autocomplete, AutocompleteSettings
-# from autocomplete.admin import AutocompleteAdmin
 from lab_aliquot.models import Aliquot
 
 
-# class ReceiveAutocomplete(AutocompleteSettings):
-#     search_fields = ('^receive_identifier',)
-# 
-# 
-# class AliquotTypeAutocomplete(AutocompleteSettings):
-# 
-#     search_fields = ('^numeric_code', '^alpha_code', '^name',)
-# 
-# autocomplete.register(Aliquot.receive, ReceiveAutocomplete)
-# autocomplete.register(Aliquot.aliquot_type, AliquotTypeAutocomplete)
-
-
-# class AliquotAdmin(AutocompleteAdmin, BaseModelAdmin):
 class AliquotAdmin(BaseModelAdmin):
 
     def save_model(self, request, obj, form, change):
