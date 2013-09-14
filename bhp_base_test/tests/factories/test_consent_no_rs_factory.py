@@ -1,7 +1,7 @@
 import factory
-from bhp_base_test.models import TestConsent
-from bhp_consent.tests.factories import BaseConsentFactory
 from bhp_common.choices import IDENTITY_TYPE
+from bhp_base_test.models import TestConsent
+from test_consent_factory import BaseConsentFactory
 
 
 class TestConsentNoRsFactory(BaseConsentFactory):
