@@ -1,6 +1,28 @@
 import factory
+from datetime import datetime
 from bhp_base_test.models import TestConsent, TestConsentWithMixin
 from bhp_common.choices import IDENTITY_TYPE
+from bhp_subject.tests.factories import BaseSubjectFactory
+from bhp_variables.tests.factories import StudySiteFactory
+from base_consent_basics_factory import BaseConsentBasicsFactory
+
+
+class BaseConsentBasicsFactory(BaseSubjectFactory):
+    ABSTRACT_FACTORY = True
+
+    consent_reviewed = 'Yes'
+    study_questions = 'Yes'
+    assessment_score = 'Yes'
+    consent_copy = 'Yes'
+
+
+class BaseConsentFactory(BaseConsentBasicsFactory):
+    ABSTRACT_FACTORY = True
+
+    study_site = factory.SubFactory(StudySiteFactory)
+    consent_datetime = datetime.today()
+    may_store_samples = 'Yes'
+    is_incarcerated = 'No'
 
 
 class BaseTestConsentFactory(BaseConsentFactory):
