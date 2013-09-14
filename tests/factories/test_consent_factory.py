@@ -4,7 +4,6 @@ from bhp_base_test.models import TestConsent, TestConsentWithMixin
 from bhp_common.choices import IDENTITY_TYPE
 from bhp_subject.tests.factories import BaseSubjectFactory
 from bhp_variables.tests.factories import StudySiteFactory
-from base_consent_basics_factory import BaseConsentBasicsFactory
 
 
 class BaseConsentBasicsFactory(BaseSubjectFactory):
