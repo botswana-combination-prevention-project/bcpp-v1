@@ -1,4 +1,3 @@
-import re
 from django.test import TestCase
 from bhp_variables.tests.factories import StudySiteFactory, StudySpecificFactory
 from bhp_registration.models import RegisteredSubject
