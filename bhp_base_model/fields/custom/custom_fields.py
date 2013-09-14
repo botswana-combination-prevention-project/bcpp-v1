@@ -15,6 +15,8 @@ class TransCharField(CharField):
 
     def to_python(self, value):
         """Translates the value."""
+        if not value:  # ugettext will fail if value is None
+            return value
         return _(value)
 
     def get_internal_type(self):

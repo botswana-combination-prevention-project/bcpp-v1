@@ -1,1 +1,6 @@
 *.pyc
+.project
+.pydevproject
+south.log
+*.sql
+*.sh
