@@ -70,10 +70,8 @@ class BaseConsentMethodsTests(TestCase, BaseMethods):
         print 'assert subject_consent registered subject is set with the same registered_subject'
         self.assertEqual(subject_consent.registered_subject.pk, registered_subject.pk)
 
-        print 'create a blank RegisteredSubject'
-        registered_subject = RegisteredSubjectFactory(subject_type='test_subject_type', first_name='ERIKIS')
-        print 'create a consent with registered subject'
-        subject_consent = TestConsentFactory(registered_subject=registered_subject, study_site=study_site)
+        print 'create a consent'
+        subject_consent = TestConsentFactory(study_site=study_site)
         print subject_consent.subject_identifier
         print 'assert subject_identifier was created and a registered subject was updated'
         self.assertEqual(RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier).subject_identifier, subject_consent.subject_identifier)

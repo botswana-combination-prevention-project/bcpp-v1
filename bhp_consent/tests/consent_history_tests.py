@@ -2,8 +2,7 @@ from django.test import TestCase
 from datetime import datetime
 from bhp_registration.models import RegisteredSubject
 from bhp_consent.models import BaseConsentHistory
-from bhp_base_test.tests.factories import TestConsentFactory, TestConsentHistoryFactory
-from bhp_base_test.models import TestConsentHistory
+from bhp_base_test.tests.factories import TestConsentFactory
 
 
 class ConsentUpdateTests(TestCase):
