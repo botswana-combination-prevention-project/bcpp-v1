@@ -10,14 +10,10 @@ from bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
 from bhp_lab_tracker.classes import LabTracker, site_lab_tracker
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_base_test.models import TestVisit, TestConsentWithMixin, TestRequisition, TestSubjectLocator
-from bhp_base_test.tests.factories import TestVisitFactory, TestConsentWithMixinFactory
+from bhp_base_test.tests.factories import TestConsentWithMixinFactory
 from bhp_dashboard.exceptions import DashboardModelError
-from bhp_visit.exceptions import MembershipFormError
 from bhp_lab_tracker.models import TestResultModel
 from bhp_appointment.models import Configuration
-from bhp_appointment_helper.models import BaseAppointmentMixin
-from bhp_consent.tests.factories import BaseConsentFactory
-from bhp_common.choices import IDENTITY_TYPE
 
 
 class DashboardTests(TestCase):
