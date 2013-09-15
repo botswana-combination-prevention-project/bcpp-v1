@@ -14,7 +14,7 @@ from bhp_lab_tracker.classes import site_lab_tracker
 
 class BaseHouseholdMember(BaseDispatchSyncUuidModel):
 
-    registered_subject = models.OneToOneField(RegisteredSubject, null=True)  # will always be set in post_save()
+    registered_subject = models.ForeignKey(RegisteredSubject, null=True)  # will always be set in post_save()
 
     internal_identifier = models.CharField(
         max_length=36,
@@ -43,7 +43,9 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
     age_in_years = models.IntegerField('Age in years',
         help_text="If age is unknown, enter 0. If member is less than one year old, enter 1",
         validators=[MinValueValidator(0), MaxValueValidator(120)],
-        db_index=True)
+        db_index=True,
+        null=True,
+        blank=False)
 
     present = models.CharField(
         max_length=3,
@@ -107,16 +109,6 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
         if SubjectMoved.objects.filter(household_member=self, survey=self.survey):
             retval = True
         return retval
-
-#     @property
-#     def participation_form(self):
-#         """Returns a form object for the household survey dashboard."""
-#         if not self.member_status:
-#             self.member_status = 'NOT_REPORTED'
-#         return ParticipationForm(initial={'status': self.member_status,
-#                                           'household_member': self.pk,
-#                                           'survey': self.survey,
-#                                           'dashboard_type': 'household'})
 
     @property
     def absentee_form_url(self):
@@ -311,35 +303,6 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
             subject_visit = SubjectVisit.objects.filter(household_member=self)
             retval = subject_visit.report_datetime
         return retval
-
-    def calendar_datetime(self):
-        return self.created
-
-    def calendar_label(self):
-        return self.__unicode__()
-
-#     def deserialize_on_duplicate(self):
-#         """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
-#         retval = False
-#         if (self.present.lower() == 'yes' or self.present.lower() == 'no'):
-#             if self.is_eligible_member and self.member_status:
-#                 retval = True
-#             elif not self.is_eligible_member:
-#                 retval = True
-#             else:
-#                 pass
-#         return retval
-# 
-#     def deserialize_get_missing_fk(self, attrname):
-#         retval = None
-#         if attrname == 'household_structure' and self.registered_subject:
-#             subject_identifier = self.registered_subject.subject_identifier
-#             if subject_identifier:
-#                 registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
-#                 if registered_subject:
-#                     if HouseholdMember.objects.filter(pk=registered_subject.registration_identifier).exists():
-#                         retval = HouseholdMember.objects.get(pk=registered_subject.registration_identifier).household_structure
-#         return retval
 
     class Meta:
         abstract = True
