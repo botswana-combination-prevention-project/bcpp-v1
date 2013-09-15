@@ -122,19 +122,29 @@ class HouseholdDashboard(Dashboard):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         re_survey_slug = re.compile('bcpp\-year\-[0-9]{1}')
         re_survey_name = re.compile('BCPP\ Year\ [0-9]{1}')
-        if re_pk.match(str(value)):
-            self._survey = Survey.objects.get(pk=value)
-        elif re_survey_slug.match(str(value)):
-            self._survey = Survey.objects.get(survey_slug=value)
-        elif re_survey_name.match(str(value)):
-            self._survey = Survey.objects.get(survey_name=value)
-        elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() == 1:
-            # assume only one survey
-            self._survey = Survey.objects.get(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())
-        elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() >= 1:
-            raise TypeError('Unable to set attribute _survey given survey=None and today\'s date. More than one survey exists for the given datetime (today). Either specify a survey or given a different date. Got {0}.'.format(Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())))
-        elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() == 0:
-            raise TypeError('Unable to set attribute _survey given survey=None and today\'s date. No survey exists to include the given datetime (today). Either create a new survey or update an existing survey\'s start and end date to include today.')
+        if value:  # must be able to use the value or fail
+            if isinstance(value, Survey):
+                self._survey = value
+            elif not re_pk.match(str(value)) and not re_survey_slug.match(str(value)) and not re_survey_name.match(str(value)):
+                raise TypeError('Unable to set attribute _survey. Survey value specified, but expected a pk, slug or survey_name. Got {0}.'.format(value))
+            elif re_pk.match(str(value)):
+                self._survey = Survey.objects.get(pk=value)
+            elif re_survey_slug.match(str(value)):
+                self._survey = Survey.objects.get(survey_slug=value)
+            elif re_survey_name.match(str(value)):
+                self._survey = Survey.objects.get(survey_name=value)
+            else:
+                self._survey = None
+        else:  # no value provided to try to figure it our using today's date
+            if Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() == 1:
+                # assume only one survey
+                self._survey = Survey.objects.get(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())
+            elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() >= 1:
+                raise TypeError('Unable to set attribute _survey given survey=None and today\'s date. More than one survey exists for the given datetime (today). Either specify a survey or given a different date. Got {0}.'.format(Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())))
+            elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() == 0:
+                raise TypeError('Unable to set attribute _survey given survey=None and today\'s date. No survey exists to include the given datetime (today). Either create a new survey or update an existing survey\'s start and end date to include today.')
+            else:
+                self._survey = None
         if not self._survey:
             raise TypeError('Dashboard attribute _survey may not be null.')
 
@@ -200,15 +210,25 @@ class HouseholdDashboard(Dashboard):
         return self._household
 
     def set_household_members(self):
+        """Sets to a queryset of household members for this household structure (and therefore survey)."""
+        self.create_household_members_for_new_survey()
+#         self._household_members = HouseholdMember.objects.filter(
+#             household_structure__household=self.get_household(),
+#             household_structure__survey=self.get_survey(),
+#             ).order_by('first_name')
         self._household_members = HouseholdMember.objects.filter(
-            household_structure__household=self.get_household(),
-            household_structure__survey=self.get_survey(),
+            household_structure=self.get_household_structure(),
             ).order_by('first_name')
 
     def get_household_members(self):
+        """Returns a HouseholdMember queryset of household members for this dashboard."""
         if not self._household_members:
             self.set_household_members()
         return self._household_members
+
+    def get_household_members_as_list(self):
+        """Returns a list of household members for this dashboard."""
+        return [hm for hm in self.get_household_members()]
 
     def set_household_log(self):
         if not HouseholdLog.objects.filter(household_structure=self.get_household_structure()):
@@ -240,20 +260,34 @@ class HouseholdDashboard(Dashboard):
     def get_household_log_entries(self):
         return HouseholdLogEntry.objects.filter(household_log__household_structure=self.get_household_structure())
 
-#     def get_urlpatterns(self, view, regex, **kwargs):
-#         """Gets the url_patterns for the dashboard view.
-# 
-#         Called in the urls.py"""
-#         regex.update({'pk': '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'})
-#         regex.update({'dashboard_model': 'household|household_structure|registered_subject'})
-#         regex.update({'dashboard_type': 'household'})
-#         urlpatterns = patterns(view,
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>any)/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ),
-#             url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/$'.format(**regex),
-#               'household_dashboard',
-#                 name="household_dashboard_url"
-#                 ))
-#         return urlpatterns
+    def create_household_members_for_new_survey(self):
+        """ Prepares a householdstructure for a new survey by fetching a list of the
+        householdstructure members for a given householdstructure from the FIRST
+        survey and adds them to the new survey
+
+        ..todo:: This can be improved to check if someone has moved or died and
+                 if there are members identified in interim surveys.
+        """
+        #get first survey
+        surveys = Survey.objects.all().order_by('datetime_start')
+        if surveys:
+            first_survey = surveys[0]
+            # add members from most recent first survey to current survey
+            for hm in  HouseholdMember.objects.filter(
+                            household_structure__household=self.get_household_structure().household,
+                            household_structure__survey=first_survey):
+                if not HouseholdMember.objects.filter(
+                           household_structure=self.get_household_structure(),
+                           registered_subject=hm.registered_subject):
+                    options = {}
+                    [options.update({key: value}) for key, value in hm.__dict__.iteritems() if not key.startswith('_') and not key in ['id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified']]
+                    options.update(
+                        {'household_structure_id': self.get_household_structure().pk,
+                         'registered_subject_id': hm.registered_subject.pk,
+                        'survey_id': self.get_survey().pk,
+                        'age_in_years': None,  # TODO: can this be incremented or at least accurate for consented subjects?
+                        'nights_out': None,
+                        'present': '-',
+                        'lives_in_household': '-',
+                        'member_status': None})
+                    HouseholdMember.objects.create(**options)
