@@ -3,4 +3,6 @@
 *.sql
 .project
 .pydevproject
+.settings
+.keys
 south.log
