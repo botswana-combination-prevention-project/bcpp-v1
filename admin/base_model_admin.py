@@ -11,6 +11,7 @@ from bhp_entry_rules.classes import rule_groups
 from bhp_supplemental_fields.models import Excluded
 from bhp_data_manager.models import ModelHelpText
 from bhp_entry.classes import ScheduledEntry
+from bhp_base_admin.exceptions import NextUrlError
 
 logger = logging.getLogger(__name__)
 
@@ -75,97 +76,120 @@ class BaseModelAdmin (admin.ModelAdmin):
         return result
 
     def response_add(self, request, obj, post_url_continue=None):
-        """Redirects if keyword 'next' is a url name that can be reversed.
-
-        Important:
-        1. the value of next is NOT a url but a 'url name' where kwargs has
-           the keyword/values needed to reverse the 'url name'.
-        2. All keyword/values must be used for the reverse (except 'next' and 'csrfmiddlewaretoken').
-
-        Example:
-            In your urls.py a named url such as "survey_section_url":
-
-                url(r'^(?P<section_name>household|mobile|statistics|administration)/(?P<survey>mpp\-year\-[0-9]{1}|mobile\-year\-[0-9]{1})/$',
-                    'section_index', name="survey_section_url"),
-
-            In your template, refer to this named url and provide the kwargs as hidden input tags.
-                <form method="GET" action="/admin/mochudi_household/household/add/">
-                    {% csrf_token %}
-                    <input type='hidden' name="survey" value="{{selected_survey.survey_slug}}">
-                    <input type='hidden' name="next" value="survey_section_url">
-                    <input type="hidden" name="section_name" value="{{section_name}}">
-                    <input type="submit" value="Create new household" class="default" />
-                </form>
-        """
+        """Redirects as default unless keyword 'next' is in the GET and is a valid url_name (e.g. can be reversed using other GET values)."""
         http_response_redirect = super(BaseModelAdmin, self).response_add(request, obj, post_url_continue)
+        custom_http_response_redirect = None
         if not '_addanother' in request.POST and not '_continue' in request.POST:
             if request.GET.get('next'):
-                http_response_redirect = self.response_add_redirect_on_next_url(request, obj, post_url_continue)
-        return http_response_redirect
+                custom_http_response_redirect = self.response_add_redirect_on_next_url(
+                    request.GET.get('next'),
+                    request,
+                    obj,
+                    post_url_continue,
+                    post_save=request.POST.get('_save'),
+                    post_save_next=request.POST.get('_savenext'),
+                    post_cancel=request.POST.get('_cancel'))
+        return custom_http_response_redirect or http_response_redirect
 
     def response_change(self, request, obj, post_url_continue=None):
-        """Redirects if keyword 'next' is a url name that can be reversed.
-
-        See comment for response_add() above"""
+        """Redirects as default unless keyword 'next' is in the GET and is a valid url_name (e.g. can be reversed using other GET values)."""
         http_response_redirect = super(BaseModelAdmin, self).response_add(request, obj, post_url_continue)
+        custom_http_response_redirect = None
         if not '_addanother' in request.POST and not '_continue' in request.POST:
             # look for session variable "filtered" set in change_view
             if request.session.get('filtered', None):
                 if 'next=' not in request.session.get('filtered'):
-                    http_response_redirect = HttpResponseRedirect(request.session['filtered'])
+                    # return to the changelist using the same changelist filter, e.g. ?q=Erik
+                    custom_http_response_redirect = HttpResponseRedirect(request.session['filtered'])
                     request.session['filtered'] = None
             if request.GET.get('next'):
-                # go back to the dashboard
-                http_response_redirect = self.reponse_change_redirect_next_url(request, obj, post_url_continue)
-        return http_response_redirect
+                # go back to the dashboard or something custom
+                custom_http_response_redirect = self.reponse_change_redirect_on_next_url(
+                    request.GET.get('next'),
+                    request,
+                    obj,
+                    post_url_continue,
+                    post_save=request.POST.get('_save'),
+                    post_save_next=request.POST.get('_savenext'),
+                    post_cancel=request.POST.get('_cancel'))
+        return custom_http_response_redirect or http_response_redirect
 
-    def response_add_redirect_on_next_url(self, request, obj, post_url_continue):
-        if request.GET.get('next') in ['changelist', 'add']:
-            app_label = request.GET.get('app_label')
-            module_name = request.GET.get('module_name').lower()
-            mode = request.GET.get('next')
-            url = reverse('admin:{app_label}_{module_name}_{mode}'.format(app_label=app_label, module_name=module_name, mode=mode))
+    def response_add_redirect_on_next_url(self, next_url_name, request, obj, post_url_continue, post_save=None, post_save_next=None, post_cancel=None):
+        """Returns a http_response_redirect when called using the next_url_name.
+
+        Users may override to to add special handling for a named url next_url_name."""
+        custom_http_response_redirect = None
+        if not next_url_name:
+            raise NextUrlError('Attribute \'next_url_name\' may not be none. Check the GET parameter \'next\' in your url.')
         else:
             url = None
-            dashboard_id = request.GET.get('dashboard_id')
-            dashboard_model = request.GET.get('dashboard_model')
-            dashboard_type = request.GET.get('dashboard_type')
-            entry_order = request.GET.get('entry_order')
-            visit_attr = request.GET.get('visit_attr')
-            help_link = request.GET.get('help_link')  # help link added to custom change form
-            show = request.GET.get('show', 'any')
-            if '_savenext' in request.POST:
-                # go to the next form
-                next_url, visit_model_instance, entry_order = self.next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order)
-                if next_url:
-                    url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
-                           '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
-                           ).format(next_url=next_url,
-                                    next=request.GET.get('next'),
-                                    dashboard_type=dashboard_type,
-                                    dashboard_id=dashboard_id,
-                                    dashboard_model=dashboard_model,
-                                    show=show,
-                                    visit_attr='&visit_attr={0}'.format(visit_attr),
-                                    visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
-                                    entry_order='&entry_order={0}'.format(entry_order),
-                                    help_link='&help_link={0}'.format(help_link))
-        if '_cancel' in request.POST:
-            url = reverse('subect_dashboard_url', kwargs={'dashboard_type': dashboard_type,
-                                                          'dashboard_id': dashboard_id,
-                                                          'dashboard_model': dashboard_model,
-                                                          'show': show})
-        if not url:
-            # go back to the dashboard
-            url = self.reverse_next_to_dashboard(request, obj)
-        http_response_redirect = HttpResponseRedirect(url)
-        return http_response_redirect
+            if next_url_name in ['changelist', 'add']:
+                # reverse to a default admin url
+                # next_url_name is "mode" and is being used to get to the default admin add or changelist
+                mode = next_url_name
+                app_label = request.GET.get('app_label')
+                module_name = request.GET.get('module_name')
+                if module_name:
+                    module_name = module_name.lower()
+                if not app_label or not module_name:
+                    raise NextUrlError('next_url_name shortcut \'{0}\' (next={0}) requires GET attributes \'app_label\' and \'module_name\'. Got app_label={1}, module_name={2}.'.format(next_url_name, app_label, module_name))
+                url = reverse('admin:{app_label}_{module_name}_{mode}'.format(app_label=app_label, module_name=module_name, mode=mode))
+            else:
+                dashboard_id = request.GET.get('dashboard_id')
+                dashboard_model = request.GET.get('dashboard_model')
+                dashboard_type = request.GET.get('dashboard_type')
+                entry_order = request.GET.get('entry_order')
+                visit_attr = request.GET.get('visit_attr')
+                help_link = request.GET.get('help_link')  # help link added to custom change form
+                show = request.GET.get('show', 'any')
+            if post_save:
+                pass
+            elif post_save_next:
+                # try to reverse using method next_url_in_scheduled_entry_bucket()
+                try:
+                    next_url, visit_model_instance, entry_order = self.next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order)
+                    if next_url:
+                        url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
+                               '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
+                               ).format(next_url=next_url,
+                                        next=next_url_name,
+                                        dashboard_type=dashboard_type,
+                                        dashboard_id=dashboard_id,
+                                        dashboard_model=dashboard_model,
+                                        show=show,
+                                        visit_attr='&visit_attr={0}'.format(visit_attr),
+                                        visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
+                                        entry_order='&entry_order={0}'.format(entry_order),
+                                        help_link='&help_link={0}'.format(help_link))
+                except NoReverseMatch:
+                    pass
+            elif post_cancel:
+                url = reverse(
+                    'subject_dashboard_url', kwargs={  # TODO: this defaults to the value subject_dashboard_url, not the variable!!!
+                    'dashboard_type': dashboard_type,
+                    'dashboard_id': dashboard_id,
+                    'dashboard_model': dashboard_model,
+                    'show': show})
+            else:
+                pass
+            if not url:
+                # default back to the dashboard
+                url = self.reverse_next_to_dashboard(next_url_name, request, obj)
+            custom_http_response_redirect = HttpResponseRedirect(url)
+        return custom_http_response_redirect
 
-    def reponse_change_redirect_on_next(self, request, obj, post_url_continue):
-        url = self.reverse_next_to_dashboard(request, obj)
-        http_response_redirect = HttpResponseRedirect(url)
-        request.session['filtered'] = None
-        return http_response_redirect
+    def reponse_change_redirect_on_next_url(self, next_url_name, request, obj, post_url_continue, post_save, post_save_next, post_cancel):
+        """Returns an http_response_redirect if next_url_name can be reversed otherwise None.
+
+        Users may override to to add special handling for a named url next_url_name.
+
+        .. note:: currently this assumes the next_url_name is reversible using dashboard criteria or returns nothing."""
+        custom_http_response_redirect = None
+        if 'dashboard' in next_url_name:   # TODO: find a better way to intercept dashboard urls and ignore others
+            url = self.reverse_next_to_dashboard(next_url_name, request, obj)
+            custom_http_response_redirect = HttpResponseRedirect(url)
+            request.session['filtered'] = None
+        return custom_http_response_redirect
 
     def get_form(self, request, obj=None, **kwargs):
         """Overrides to check if conditional and supplemental fields have been defined in the admin class.
@@ -238,27 +262,27 @@ class BaseModelAdmin (admin.ModelAdmin):
                       'dashboard_id': request.GET.get('dashboard_id', ''),
                       'show': request.GET.get('show', 'any')}
 
-    def reverse_next_to_dashboard(self, request, obj, **kwargs):
+    def reverse_next_to_dashboard(self, next_url_name, request, obj, **kwargs):
         url = ''
-        if request.GET.get('next') and request.GET.get('dashboard_id') and request.GET.get('dashboard_model') and request.GET.get('dashboard_type'):
-            url = reverse(request.GET.get('next'), kwargs={'dashboard_id': request.GET.get('dashboard_id'),
+        if next_url_name and request.GET.get('dashboard_id') and request.GET.get('dashboard_model') and request.GET.get('dashboard_type'):
+            url = reverse(next_url_name, kwargs={'dashboard_id': request.GET.get('dashboard_id'),
                                                            'dashboard_model': request.GET.get('dashboard_model'),
                                                            'dashboard_type': request.GET.get('dashboard_type'),
                                                            'show': request.GET.get('show', 'any')})
-        elif request.GET.get('next') in ['changelist', 'add']:
+        elif next_url_name in ['changelist', 'add']:
             app_label = request.GET.get('app_label')
             module_name = request.GET.get('module_name').lower()
-            mode = request.GET.get('next')
+            mode = next_url_name
             url = reverse('admin:{app_label}_{module_name}_{mode}'.format(app_label=app_label, module_name=module_name, mode=mode))
         else:
             # normally you should not be here.
             try:
                 kwargs = self.convert_get_to_kwargs(request, obj)
-                url = reverse(request.GET.get('next'), kwargs=kwargs)
+                url = reverse(next_url_name, kwargs=kwargs)
             except NoReverseMatch:
-                raise NoReverseMatch('response_add failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs))
-                logger.warning('Warning: response_add failed to reverse \'{0}\' with kwargs {1}'.format(request.GET.get('next'), kwargs))
-                pass
+                raise NoReverseMatch('response_add failed to reverse url \'{0}\' with kwargs {1}. Is this a dashboard url?'.format(next_url_name, kwargs))
+                #logger.warning('Warning: response_add failed to reverse \'{0}\' with kwargs {1}'.format(next_url_name, kwargs))
+                #pass
             except:
                 raise
         return url
