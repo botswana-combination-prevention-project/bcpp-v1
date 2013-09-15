@@ -4,7 +4,6 @@ from bhp_base_test.tests.factories.test_consent_factory import BaseConsentFactor
 from bcpp_subject.models import SubjectConsent
 #from bhp_variables.tests.factories import StudySiteFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
-from bcpp_survey.tests.factories import SurveyFactory
 
 
 class SubjectConsentFactory(BaseConsentFactory):
@@ -21,5 +20,4 @@ class SubjectConsentFactory(BaseConsentFactory):
     identity = factory.Sequence(lambda n: 'identity{0}'.format(n))
     identity_type = (('OMANG', 'Omang'), ('DRIVERS', "Driver's License"), ('PASSPORT', 'Passport'), ('OMANG_RCPT', 'Omang Receipt'), ('OTHER', 'Other'))[0][0]
     household_member = factory.SubFactory(HouseholdMemberFactory)
-    survey = factory.SubFactory(SurveyFactory)
     is_signed = True
