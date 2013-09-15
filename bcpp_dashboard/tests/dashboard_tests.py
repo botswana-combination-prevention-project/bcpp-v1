@@ -15,7 +15,7 @@ from bhp_appointment.models import Configuration
 from bhp_consent.tests.factories import ConsentCatalogueFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_household.models import HouseholdStructure
-from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory
+from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory, PlotFactory
 from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_htc_subject.tests.factories import HtcSubjectConsentFactory
 from bcpp_survey.tests.factories import SurveyFactory
@@ -44,8 +44,9 @@ class DashboardTests(TestCase):
         survey1 = SurveyFactory(datetime_start=datetime(2013, 07, 01), datetime_end=datetime(2013,12,01))
         survey2 = SurveyFactory(datetime_start=datetime(2014, 01, 01), datetime_end=datetime(2014,07,01))
         survey3 = SurveyFactory(datetime_start=datetime(2015, 01, 01), datetime_end=datetime(2015,07,01))
-        print 'create a new HH in community {0}.'.format(community)
-        household = HouseholdFactory(community=community)
+        print 'create a new Plot in community {0}.'.format(community)
+        plot = PlotFactory(community=community)
+        household = HouseholdFactory(plot=plot)
         print household.community
         dashboard_type = 'household'
         dashboard_model = 'household'
@@ -56,7 +57,7 @@ class DashboardTests(TestCase):
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)
         household_structure = household_dashboard.get_household_structure()
         print 'create another new HH in community {0}.'.format(community)
-        household2 = HouseholdFactory(community=community)
+        household2 = HouseholdFactory(plot=plot)
         print 'assert no hh structure created'
         self.assertEquals(HouseholdStructure.objects.all().count(), 6)  # 2 surveys for each HH = 2 x 3 = 6
         print 'create HH members for this survey and HH {0}'.format(household)
@@ -69,7 +70,7 @@ class DashboardTests(TestCase):
         hm4 = HouseholdMemberFactory(household_structure=household_structure)
         print hm4.registered_subject.pk
 
-        print 'fail on attempt to create consent using household member with different first name and initials'
+        print 'fail on attempt to create consent using household member with different first name and initials than household member'
         self.assertRaises(IntegrityError, HtcSubjectConsentFactory, household_member=hm1)
         print 'consent {0}'.format(hm1)
         subject_consent = HtcSubjectConsentFactory(household_member=hm1, first_name=hm1.first_name, initials=hm1.initials, registered_subject=hm1.registered_subject)
