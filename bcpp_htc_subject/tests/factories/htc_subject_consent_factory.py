@@ -1,7 +1,6 @@
 import factory
 from datetime import datetime
-from bhp_consent.tests.factories import BaseConsentFactory
-
+from bhp_base_test.tests.factories.test_consent_factory import BaseConsentFactory
 from bcpp_htc_subject.models import HtcSubjectConsent
 from bhp_variables.tests.factories import StudySiteFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
