@@ -3,7 +3,7 @@ from django.db import models
 from bhp_registration.models import RegisteredSubject
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bcpp_survey.models import Survey
-from bcpp_household.models import Household
+from bcpp_household.models import Plot
 from bcpp_household_member.models import HouseholdMember
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
@@ -34,15 +34,14 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
         return self.household_member
 
     def natural_key(self):
-        #return (self.report_datetime, ) + self.household_member.natural_key()
-        return self.household_member.natural_key()#OneToOne field with household_member, so it should be enough alone
-    natural_key.dependencies = ['bcpp_household_member.householdmember', ]
+        return self.household_member.natural_key()  # OneToOne field with household_member, so it should be enough alone
+    natural_key.dependencies = ['bcpp_household_member.householdmember']
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household_member__household_structure__household__household_identifier')
+        return (Plot, 'household_member__household_structure__plot__plot_identifier')
 
     def dispatch_item_container_reference(self, using=None):
-        return (('bcpp_household', 'household'), 'household_structure__household')
+        return (('bcpp_household', 'plot'), 'household_structure__plot')
 
     def is_dispatchable(self):
         return True
