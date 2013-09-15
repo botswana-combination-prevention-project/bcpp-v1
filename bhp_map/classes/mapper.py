@@ -15,6 +15,7 @@ class Mapper(object):
 
     def __init__(self, *args, **kwargs):
         self._map_area = None
+        self._map_code = None
         self._radius = None
         self._item_model_cls = None
         self._item_label = None
@@ -40,6 +41,8 @@ class Mapper(object):
         # item_model_cls
         if 'map_area' in kwargs:
             self.set_map_area(kwargs.get('map_area'))
+        if 'map_code' in kwargs:
+            self.set_map_code(kwargs.get('map_code'))
         #if 'radius' in kwargs:
         #    self.set_radius(kwargs.get('radius'))
         if 'item_model' in kwargs:
@@ -91,6 +94,13 @@ class Mapper(object):
 
     def get_map_area(self):
         return self._get_attr('map_area')
+
+    def set_map_code(self, attr=None):
+        """Sets to a unique numeric code for this mapper."""
+        self._set_attr('map_code', attr)
+
+    def get_map_code(self):
+        return self._get_attr('map_code')
 
     def set_radius(self, attr=None):
         self._set_attr('radius', attr)

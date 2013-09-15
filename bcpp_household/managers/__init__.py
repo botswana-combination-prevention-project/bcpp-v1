@@ -5,4 +5,4 @@ from ward_manager import WardManager
 from household_survey_manager import HouseholdSurveyManager
 from household_log_manager import *
 from community_manager import CommunityManager
-
+from plot_manager import PlotManager

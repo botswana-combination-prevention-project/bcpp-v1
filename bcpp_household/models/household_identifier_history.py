@@ -1,7 +1,7 @@
 from bhp_identifier.models import BaseIdentifierModel
 
 
-class PlotIdentifier(BaseIdentifierModel):
+class HouseholdIdentifierHistory(BaseIdentifierModel):
 
     def ignore_for_dispatch(self):
         return True
