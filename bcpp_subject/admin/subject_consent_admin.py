@@ -17,22 +17,8 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             if item == 'assessment_score':
                 del self.fields[i]
         self.fields.insert(0, 'household_member')
-        self.search_fields.append('household_member__household_structure__household__household_identifier')
+        self.search_fields.append('household_member__household_structure__household__household_identifier', 'household_member__household_structure__plot__plot_identifier')
         self.radio_fields.update({"is_minor": admin.VERTICAL})
-
-    def save_model(self, request, obj, form, change):
-        super(SubjectConsentAdmin, self).save_model(request, obj, form, change)
-        # update hm member_status
-        household_member = obj.household_member
-        household_member.member_status = 'CONSENTED'
-        household_member.save()
-
-    def delete_model(self, request, obj):
-        # update hm member_status
-        household_member = obj.household_member
-        household_member.member_status = None
-        household_member.save()
-        return super(SubjectConsentAdmin, self).delete_model(request, obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
