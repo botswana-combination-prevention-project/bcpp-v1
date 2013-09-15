@@ -6,7 +6,7 @@ from audit_trail.audit import AuditTrail
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
 from bcpp_household.managers import HouseholdStructureManager
-#from household import Household
+from household import Household
 from plot import Plot
 
 
@@ -14,8 +14,9 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     """ Each year/survey a new household_structure is created for the household """
 
-    #household = models.ForeignKey(Household)
-    plot = models.ForeignKey(Plot)
+    household = models.ForeignKey(Household)
+
+    plot = models.ForeignKey(Plot, null=True, editable=False, help_text='helper field')
 
     survey = models.ForeignKey(Survey)
 
@@ -43,24 +44,14 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def __unicode__(self):
         return unicode(self.plot)
 
+    def save(self, *args, **kwargs):
+        if not self.plot:
+            self.plot = self.household.plot
+        super(HouseholdStructure, self).save(*args, **kwargs)
+
     def natural_key(self):
         return self.plot.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_household.plot', 'bcpp_survey.survey',]
-
-#     def gps_point(self):
-#         return "LON:{0} LAT:{1}".format(self.plot.household.gps_point_11, self.plot.household.gps_point_21)
-
-    def get_absolute_url(self):
-        return "/admin/bcpp_household/householdstructure/{0}/".format(self.id)
-
-    def calendar_datetime(self):
-        return self.created
-
-    def calendar_label(self):
-        return self.__unicode__()
-
-    def group_permissions(self):
-        return {'survey': ('add', 'change')}
+    natural_key.dependencies = ['bcpp_household.plot', 'bcpp_survey.survey']
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
@@ -91,8 +82,8 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             self.save(using=using)
 
     def house(self):
-        url = '/admin/{0}/plot/?q={1}'.format(self._meta.app_label, self.plot.plot_identifier)
-        return """<a href="{url}" />plot</a>""".format(url=url)
+        url = reverse('admin:{app_label}_{model_name}__changelist'.format(self._meta.app_label, self._meta.object_name.lower()))
+        return """<a href="{url}?q={q}" />plot</a>""".format(url=url, q=self.plot.plot_identifier)
     house.allow_tags = True
 
     def members(self):
@@ -112,4 +103,4 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household'
-        unique_together = (('plot', 'survey'), )
+        unique_together = (('household', 'survey'), )

@@ -1,12 +1,12 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from household import Household
+from household import Plot, Household
 from household_structure import HouseholdStructure
 
 
 @receiver(pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")
 def check_for_survey_on_pre_save(sender, instance, **kwargs):
-    if isinstance(instance, Household):
+    if isinstance(instance, (Plot, Household)):
         instance.check_for_survey_on_pre_save(**kwargs)
 
 
