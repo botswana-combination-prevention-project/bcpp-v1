@@ -38,7 +38,9 @@ class HouseholdMember(BaseHouseholdMember):
         validators=[
             MinValueValidator(0),
             MaxValueValidator(31)],
-        db_index=True)
+        db_index=True,
+        null=True,
+        blank=False)
 
     relation = models.CharField(
         verbose_name="Relation to head of household",
