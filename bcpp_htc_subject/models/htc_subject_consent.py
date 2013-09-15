@@ -24,3 +24,4 @@ class HtcSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     class Meta:
         app_label = 'bcpp_htc_subject'
+        unique_together = ('subject_identifier', 'survey')

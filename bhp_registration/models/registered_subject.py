@@ -15,6 +15,14 @@ from bhp_crypto.utils import mask_encrypted
 
 class RegisteredSubject(BaseSubject):
 
+    subject_identifier = models.CharField(
+        verbose_name="Subject Identifier",
+        max_length=50,
+        blank=True,
+        db_index=True,
+        unique=True,
+        )
+
     subject_consent_id = models.CharField(
         max_length=100,
         null=True,
