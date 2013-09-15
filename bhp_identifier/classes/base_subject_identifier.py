@@ -6,9 +6,12 @@ from base_identifier import BaseIdentifier
 class BaseSubjectIdentifier(BaseIdentifier):
     """ Base class for all identifiers."""
 
-    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None, is_derived=False, add_check_digit=None, using=None):
+    def __init__(self, identifier_format=None, app_name=None, model_name=None, site_code=None, padding=None, modulus=None, identifier_prefix=None, is_derived=None, add_check_digit=None, using=None):
+        # TODO: rewrite
         if 'PROJECT_IDENTIFIER_PREFIX' not in dir(settings):
             raise ImproperlyConfigured('Missing settings attribute PROJECT_IDENTIFIER_PREFIX. Please add. For example, PROJECT_IDENTIFIER_PREFIX = \'041\' for project BHP041.')
+        if is_derived == None:
+            is_derived = False
         app_name = app_name or 'bhp_identifier'
         model_name = model_name or 'subjectidentifier'
         identifier_format = identifier_format or "{identifier_prefix}-{site_code}{device_id}{sequence}"

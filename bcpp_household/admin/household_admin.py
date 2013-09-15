@@ -15,18 +15,14 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     fields = (
         'report_datetime',
         'status',
-        'gps_degrees_s',
-        'gps_minutes_s',
-        'gps_degrees_e',
-        'gps_minutes_e',
         'community',
         'comment')
 
-    list_display = ('household_identifier', 'structure', 'action', 'status', 'community', 'created')
+    list_display = ('household_identifier', 'structure', 'plot', 'action', 'status', 'community', 'created')
 
-    list_filter = ('status', 'created', 'community',  'action')
+    list_filter = ('status', 'created', 'community', 'action')
 
-    search_fields = ('household_identifier', 'community', 'id')
+    search_fields = ('household_identifier', 'community', 'id', 'plot__id')
 
     readonly_fields = ('household_identifier',)
     radio_fields = {

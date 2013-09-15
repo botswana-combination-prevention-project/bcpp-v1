@@ -6,7 +6,7 @@ from choices import OTSE_SECTIONS, OTSE_SUB_SECTIONS, OTSE_LANDMARKS
 class OtseHouseholdMapper(BaseHouseholdMapper):
 
     map_area = 'otse'
-
+    map_code = '198'
     regions = OTSE_SECTIONS
     sections = OTSE_SUB_SECTIONS
 

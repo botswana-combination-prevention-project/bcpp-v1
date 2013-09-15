@@ -21,8 +21,9 @@ class HouseholdMember(BaseHouseholdMember):
         null=True,
         blank=True)
 
-    #household = models.ForeignKey(Household, null=True, editable=False)
-    plot = models.ForeignKey(Plot, null=True, editable=False)
+    household = models.ForeignKey(Household, null=True, editable=False, help_text='helper field')
+
+    plot = models.ForeignKey(Plot, null=True, editable=False, help_text='helper field')
 
     survey = models.ForeignKey(Survey, editable=False)
 
@@ -114,6 +115,8 @@ class HouseholdMember(BaseHouseholdMember):
                 self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
         if not self.plot:
             self.plot = self.household_structure.plot
+        if not self.household:
+            self.household = self.household_structure.household
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def deserialize_prep(self):
