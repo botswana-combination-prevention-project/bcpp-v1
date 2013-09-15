@@ -2,7 +2,7 @@ from django.db import models
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_crypto.fields import EncryptedCharField
 from bhp_base_model.fields import OtherCharField
-from bcpp_household.models import Household
+from bcpp_household.models import Plot
 from bcpp_subject.choices import NEXT_APPOINTMENT_SOURCE
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_household_member.models import BaseMemberStatusModel
@@ -55,7 +55,7 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
                     break
         if not field:
             raise TypeError('Method \'dispatch_container_lookup\' cannot find the "inline\'s" related field for class {0}'.format(self.__class__))
-        return (Household, '{0}__household_member__household_structure__household__household_identifier'.format(field.name))
+        return (Plot, '{0}__household_member__household_structure__plot__plot_identifier'.format(field.name))
 
     class Meta:
         abstract = True

@@ -19,7 +19,7 @@ class Grant(BaseScheduledInlineModel):
     grant_type = models.CharField(
         verbose_name=_("Grant name"),
         choices=GRANT_TYPE,
-        max_length=34,
+        max_length=50,
         )
     other_grant = OtherCharField()
 
@@ -31,7 +31,7 @@ class Grant(BaseScheduledInlineModel):
         return self.labour_market_wages
 
     def natural_key(self):
-        return (self.report_datetime, ) + self.labour_market_wages.natural_key()# 1st natural key might be wrong
+        return (self.report_datetime, ) + self.labour_market_wages.natural_key()  # 1st natural key might be wrong
     natural_key.dependencies = ['bcpp_subject.labourmarketwages', ]
 
     class Meta:

@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db import models
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_consent.models import BaseConsentedUuidModel
-from bcpp_household.models import Household
+from bcpp_household.models import Plot
 from bcpp_subject.managers import ScheduledModelManager
 from subject_visit import SubjectVisit
 from subject_off_study_mixin import SubjectOffStudyMixin
@@ -37,18 +37,12 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     def get_visit(self):
         return self.subject_visit
-    
-#     def deserialize_get_missing_fk(self, attrname):
-#         if attrname == 'subject_visit':
-#             return SubjectVisit.objects.get(internal_identifier=self.appointment.registered_subject.registration_identifier, survey=self.survey)
-#         else:
-#             return None
-        
+
     def is_dispatched_item_within_container(self, using=None):
-        return (('bcpp_household', 'household'), 'subject_visit__household_member__household_structure__household')
+        return (('bcpp_household', 'plot'), 'subject_visit__household_member__household_structure__plot')
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'subject_visit__household_member__household_structure__household__household_identifier')
+        return (Plot, 'subject_visit__household_member__household_structure__plot__plot_identifier')
 
     class Meta:
         abstract = True

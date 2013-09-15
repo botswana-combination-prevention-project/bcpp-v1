@@ -17,7 +17,7 @@ class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
         return None
 
     def dispatch_item_container_reference(self, using=None):
-        return (('bcpp_household', 'household'), 'household_member__household_structure__household')
+        return (('bcpp_household', 'plot'), 'household_member__household_structure__plot')
 
     def post_save_update_hm_status(self, using=None):
         """Updates the hm member_status."""
