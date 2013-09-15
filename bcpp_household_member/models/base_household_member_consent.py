@@ -32,12 +32,13 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
         using = kwargs.get('using', None)
         self.household_member.member_status = 'consented'
         self.household_member.save(using=using)
+        # since member is now consented, registered_subject gets a subject identifier
         self.registered_subject.subject_identifier = self.subject_identifier
         self.registered_subject.registration_status = 'consented'
         self.registered_subject.save(using=using)
 
     def dispatch_container_lookup(self, using=None):
-        return (('bcpp_household', 'household'), 'household_member__household_structure__household__household_identifier')
+        return (('bcpp_household', 'Plot'), 'household_member__household_structure__plot__plot_identifier')
 
     def deserialize_get_missing_fk(self, attrname):
         if attrname == 'household_member':
