@@ -16,10 +16,25 @@ from bhp_consent.exceptions import ConsentError
 from bhp_consent.classes import ConsentedSubjectIdentifier
 from base_consent_history import BaseConsentHistory
 
+# allow a settings attribute to override the unique constraint on the
+# subject identifier
+try:
+    subject_identifier_is_unique = settings.SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT
+except:
+    subject_identifier_is_unique = True
+
 
 class BaseConsent(BaseSubject):
 
     """ Consent models should be subclasses of this """
+
+    subject_identifier = models.CharField(
+        verbose_name="Subject Identifier",
+        max_length=50,
+        blank=True,
+        db_index=True,
+        unique=subject_identifier_is_unique,
+        )
 
     study_site = models.ForeignKey(StudySite,
         verbose_name='Site',
