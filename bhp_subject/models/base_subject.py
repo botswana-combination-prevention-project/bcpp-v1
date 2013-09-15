@@ -18,7 +18,6 @@ from bhp_crypto.fields import EncryptedFirstnameField, EncryptedLastnameField
 from bhp_consent.exceptions import ConsentError
 from bhp_identifier.exceptions import IdentifierError
 from bhp_subject.managers import BaseSubjectManager
-from bhp_subject.exceptions import SubjectError
 
 
 class BaseSubject (BaseSyncUuidModel):
@@ -27,14 +26,6 @@ class BaseSubject (BaseSyncUuidModel):
     .. note:: the field subject_identifier_as_pk is in both models but the values are independent; that
               is, consent.subject_identifier_as_pk != registered_subject.subject_identifier_as_pk.
     """
-
-    subject_identifier = models.CharField(
-        verbose_name="Subject Identifier",
-        max_length=50,
-        blank=True,
-        db_index=True,
-        unique=True,
-        )
 
     # a signal changes subject identifier which messes up bhp_sync
     # this field is always available and is unique
@@ -237,11 +228,11 @@ class BaseSubject (BaseSyncUuidModel):
         if not self.pk and self.subject_identifier:
             if self.__class__.objects.using(using).filter(subject_identifier=self.subject_identifier):
                 raise IdentifierError('Attempt to insert duplicate value for '
-                                      'subject_identifier {0} when saving {1}.'.format(self.subject_identifier, self))
+                                      'subject_identifier {0} when saving {1} on add.'.format(self.subject_identifier, self))
         else:
             if self.__class__.objects.using(using).filter(subject_identifier=self.subject_identifier).exclude(pk=self.pk):
                 raise IdentifierError('Attempt to insert duplicate value for '
-                                      'subject_identifier {0} when saving {1}.'.format(self.subject_identifier, self))
+                                      'subject_identifier {0} when saving {1} on change.'.format(self.subject_identifier, self))
         self.check_for_duplicate_subject_identifier()
 
     def check_for_duplicate_subject_identifier(self):

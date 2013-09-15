@@ -28,3 +28,4 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     class Meta:
         app_label = 'bcpp_subject'
+        unique_together = ('subject_identifier', 'survey')
