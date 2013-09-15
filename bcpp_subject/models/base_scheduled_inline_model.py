@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from bhp_consent.models import BaseConsentedUuidModel
-from bcpp_household.models import Household
+from bcpp_household.models import Plot
 from subject_visit import SubjectVisit
 
 
@@ -38,10 +38,10 @@ class BaseScheduledInlineModel(BaseConsentedUuidModel):
         return self.subject_visit
 
     def is_dispatched_item_within_container(self, using=None):
-        return (('bcpp_household', 'household'), 'subject_visit__household_member__household_structure__household')
+        return (('bcpp_household', 'household'), 'subject_visit__household_member__household_structure__plot')
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'subject_visit__household_member__household_structure__household__household_identifier')
+        return (Plot, 'subject_visit__household_member__household_structure__plot__plot_identifier')
 
     class Meta:
         abstract = True
