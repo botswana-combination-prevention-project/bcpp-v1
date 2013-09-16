@@ -32,12 +32,12 @@ class UncircumcisedForm (BaseSubjectModelForm):
 #         if cleaned_data.get('reason_circ') == 'OTHER' and not cleaned_data.get('reason_circ_other'):
 #             raise forms.ValidationError('if \'OTHER\', provide other reason why participant has not yet been circumcised.')
         # validate other
-        if cleaned_data.get('circumcision_day') == 'Yes, specify:' and not cleaned_data.get('circumcision_day_other'):
-            raise forms.ValidationError('if \'YES\', specify the day preferred.')
-        if cleaned_data.get('circumcision_week') == 'Yes, specify:' and not cleaned_data.get('circumcision_week_other'):
-            raise forms.ValidationError('if \'YES\', specify the week preferred.')
-        if cleaned_data.get('circumcision_year') == 'Yes, specify:' and not cleaned_data.get('circumcision_year_other'):
-            raise forms.ValidationError('if \'YES\', specify the year preferred.')
+#         if cleaned_data.get('circumcision_day') == 'Yes, specify:' and not cleaned_data.get('circumcision_day_other'):
+#             raise forms.ValidationError('if \'YES\', specify the day preferred.')
+#         if cleaned_data.get('circumcision_week') == 'Yes, specify:' and not cleaned_data.get('circumcision_week_other'):
+#             raise forms.ValidationError('if \'YES\', specify the week preferred.')
+#         if cleaned_data.get('circumcision_year') == 'Yes, specify:' and not cleaned_data.get('circumcision_year_other'):
+#             raise forms.ValidationError('if \'YES\', specify the year preferred.')
 
         return cleaned_data
 
