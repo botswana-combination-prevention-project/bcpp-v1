@@ -64,7 +64,8 @@ class HouseholdDashboard(Dashboard):
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry(),
             household_info=self.get_household_info(),
-            mapper_name=self.get_mapper_name()
+            mapper_name=self.get_mapper_name(),
+            subject_dashboard_url='subject_dashboard_url',
             )
 
     def set_dashboard_type_list(self):
