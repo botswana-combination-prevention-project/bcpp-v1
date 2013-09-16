@@ -6,13 +6,15 @@ from bcpp_household_member.models import HouseholdMember
 
 class BaseSubjectDashboard(RegisteredSubjectDashboard):
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._survey = None
         self._household_member = None
         self._household_members = None
         self._household = None
-        kwargs.update({'dashboard_models': {'household_member': HouseholdMember}})
-        super(BaseSubjectDashboard, self).__init__()
+        dashboard_models = kwargs.get('dashboard_models', {})
+        dashboard_models.update({'household_member': HouseholdMember})
+        kwargs.update({'dashboard_models': dashboard_models})
+        super(BaseSubjectDashboard, self).__init__(*args, **kwargs)
 
     def add_to_context(self):
         super(BaseSubjectDashboard, self).add_to_context()
@@ -46,19 +48,19 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
     def set_household_member(self):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         if re_pk.match(self.get_dashboard_id() or ''):
-            if self.get_dashboard_model_key() == 'household_member':
+            if self.get_dashboard_model_name() == 'household_member':
                 self._household_member = HouseholdMember.objects.get(pk=self.get_dashboard_id())
-            if self.get_dashboard_model_key() == 'visit':
+            if self.get_dashboard_model_name() == 'visit':
                 self._household_member = self.get_visit_model().objects.get(pk=self.get_dashboard_id()).household_member
-            if self.get_dashboard_model_key() == 'appointment':
-                if self.get_visit_model_instance():
-                    self._household_member = self.get_visit_model_instance().household_member
+            if self.get_dashboard_model_name() == 'appointment':
+                if self._get_visit_model_instance():
+                    self._household_member = self._get_visit_model_instance().household_member
                 elif self.get_appointment():
                     # may have more than on, so take most recent
                     self._household_member = HouseholdMember.objects.filter(registered_subject=self.get_appointment().registered_subject).order_by('-created')[0]
                 else:
                     pass
-            if self.get_dashboard_model_key() == 'registered_subject':
+            if self.get_dashboard_model_name() == 'registered_subject':
                 # may have more than on, so take most recent
                 self._household_member = HouseholdMember.objects.filter(registered_subject=self.get_dashboard_id()).order_by('-created')[0]
         if not self._household_member:

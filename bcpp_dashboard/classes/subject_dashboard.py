@@ -8,18 +8,28 @@ class SubjectDashboard(BaseSubjectDashboard):
     view = 'subject_dashboard'
     dashboard_name = 'Subject Dashboard'
 
-    def __init__(self, **kwargs):
-        self._delivery_datetime = None
-        self.dashboard_type = 'subject'
-        self.exclude_others_if_keyed_model_name = 'subjectconsent'  # TODO: is this needed??
+    def __init__(self, *args, **kwargs):
         kwargs.update({'dashboard_models': {'subject_consent': SubjectConsent}})
-        super(SubjectDashboard, self).__init__(**kwargs)
+        super(SubjectDashboard, self).__init__(*args, **kwargs)
+
+    def add_to_context(self):
+        super(SubjectDashboard, self).add_to_context()
+        self.context.add(
+            home='bcpp',
+            search_name='subject',
+            subject_dashboard_url='subject_dashboard_url',
+            title='Research Subject Dashboard',
+            subject_consent=self.get_consent(),
+            )
 
     def set_dashboard_type_list(self):
         self._dashboard_type_list = ['subject']
 
     def set_consent(self):
-        self._consent = SubjectConsent.objects.get(subject_identifier=self.get_subject_identifier())
+        """Sets to the subject consent, if it has been completed."""
+        self._consent = None
+        if SubjectConsent.objects.filter(subject_identifier=self.get_subject_identifier()):
+            self._consent = SubjectConsent.objects.get(subject_identifier=self.get_subject_identifier())
 
     def get_visit_model(self):
         return SubjectVisit
@@ -36,3 +46,6 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     def get_packing_list_model(self):
         return PackingList
+
+    def render_labs(self, update=False):
+        return ''
