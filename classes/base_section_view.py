@@ -330,7 +330,6 @@ class BaseSectionView(object):
             * search_model_admin_url: 'url',
             * search_result: search_result,
             * search_result_include_file: search_result_include_file,
-
         """
         self.set_section_name(kwargs.get('section_name'))
         search_term = kwargs.get('search_term', '')
