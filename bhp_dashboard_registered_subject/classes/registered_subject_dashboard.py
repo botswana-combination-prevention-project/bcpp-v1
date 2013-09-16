@@ -229,6 +229,21 @@ class RegisteredSubjectDashboard(Dashboard):
         self.context.add(rendered_locator=self.render_locator())
         self.context.add(local_results=self.render_labs())
 
+    @classmethod
+    def add_to_urlpattern_string(cls):
+        return '(?P<show>{show})/'
+
+    @classmethod
+    def add_to_urlpattern_string_kwargs(cls):
+        return {'show': 'appointments|forms'}
+
+    def get_home_url(self):
+        """Returns a home url."""
+        return reverse(self.get_dashboard_url_name(), kwargs={'dashboard_type': self.get_dashboard_type(),
+                                                              'dashboard_model': self.get_dashboard_model_name(),
+                                                              'dashboard_id': self.get_dashboard_id(),
+                                                              'show': 'forms'})
+
     def verify_dashboard_model(self, value):
         """Verify the dashboard model has a way to get to registered_subject."""
         for model in value.itervalues():
