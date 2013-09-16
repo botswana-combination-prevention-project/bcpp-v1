@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_dispatch.exceptions import AlreadyDispatchedContainer, AlreadyDispatchedItem
+from bhp_dispatch.exceptions import AlreadyDispatchedContainer, AlreadyDispatchedItem, DispatchContainerError
 #from bhp_dispatch.models import DispatchItemRegister, DispatchContainerRegister
 
 
@@ -94,10 +94,17 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
 #                raise ImproperlyConfigured('Expect last list item to be {0}. Got {1}. Model method dispatch_container_lookup() '
 #                                           'must return a lookup attr string that ends in the container '
 #                                           'identifier field name.'.format(user_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
-            lookup_value = self
-            # TODO: fails sometimes on getattr
+
+            lookup_value = self  # why is this set to self?
+
+            # FIXME: if lookup value gets set to None below (e.g. attribute Plot is None and the user container is Plot)
+            #        that means the user_container value is not known and is_dispatched will be false.
+            #        this condition should not occur!
+
             for attrname in lookup_attrs:
-                lookup_value = getattr(lookup_value, attrname)
+                lookup_value = getattr(lookup_value, attrname, None)  # is this supposed to default to self?
+            if not lookup_value:
+                raise DispatchContainerError('Expected to get a value for the user_container model \'{0}\' on dispatch_container_lookup for model \'{1}\'.'.format(user_container_model_cls, self.__class__))
             container_attr = user_container_model_cls().dispatched_as_container_identifier_attr()
             options = {container_attr: lookup_value}
             if user_container_model_cls.objects.using(using).filter(**options).exists():
