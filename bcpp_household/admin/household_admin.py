@@ -15,7 +15,6 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     fields = (
         'report_datetime',
         'status',
-        'community',
         'comment')
 
     list_display = ('household_identifier', 'structure', 'plot', 'action', 'status', 'community', 'created')

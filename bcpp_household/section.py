@@ -1,5 +1,5 @@
 from django.conf import settings
-from bhp_section.classes import BaseSectionView, site_sections
+from bhp_section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
 from bhp_map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
 from models import Household, Plot
@@ -34,7 +34,7 @@ class SectionView(BaseSectionView):
         return context
 
 
-class SectionHouseholdView(SectionView):
+class SectionHouseholdView(BaseSectionForDashboardView):
     section_name = 'household'
     section_display_name = 'Households'
     add_model = Household
@@ -85,7 +85,6 @@ class SectionPlotView(SectionView):
     section_display_name = 'Plots'
     add_model = Plot
     section_display_index = 10
-    dashboard_url_name = 'plot_dashboard_url'
     section_template = 'section_bcpp_plot.html'
 
     def get_search_result(self, request, **kwargs):

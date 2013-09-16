@@ -13,7 +13,7 @@ from bhp_base_model.fields import IsDateEstimatedField
 from bhp_base_model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from bhp_common.choices import GENDER_UNDETERMINED
 from household_member import HouseholdMember
-from bcpp_household.models import Household
+from bcpp_household.models import Plot
 from bcpp_household_member.managers import EnrolmentChecklistManager
 
 
@@ -145,7 +145,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         return self.report_datetime
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household_member__household_structure__household__household_identifier')
+        return (Plot, 'household_member__household_structure__plot__plot_identifier')
 
     def composition(self):
         url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'dashboard_model': 'household_structure', 'dashboard_id': self.household_member.household_structure.pk})

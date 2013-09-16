@@ -1,5 +1,6 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
+from bcpp_household.models import HouseholdStructure
 from bcpp_household_member.models import HouseholdInfo, HouseholdMember
 from bcpp_household_member.forms import HouseholdInfoForm
 
@@ -45,6 +46,8 @@ class HouseholdInfoAdmin(BaseModelAdmin):
             if HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0)):
                 household_members = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0))
             kwargs["queryset"] = household_members
+        if db_field.name == "household_structure":
+            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
         return super(HouseholdInfoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(HouseholdInfo, HouseholdInfoAdmin)

@@ -8,30 +8,24 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Removing unique constraint on 'SubjectConsent', fields ['registered_subject']
-        db.delete_unique('bcpp_subject_subjectconsent', ['registered_subject_id'])
+        # Changing field 'SubjectConsentAudit.initials'
+        db.alter_column('bcpp_subject_subjectconsent_audit', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
 
-        # Removing unique constraint on 'SubjectConsent', fields ['household_member']
-        db.delete_unique('bcpp_subject_subjectconsent', ['household_member_id'])
+        # Changing field 'Grant.grant_type'
+        db.alter_column('bcpp_subject_grant', 'grant_type', self.gf('django.db.models.fields.CharField')(max_length=50))
 
-        # Adding model 'SubjectConsentHistory'
-        db.create_table('bcpp_subject_subjectconsenthistory', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_registration.RegisteredSubject'])),
-            ('consent_datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('consent_pk', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('consent_app_label', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('consent_model_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('survey', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_survey.Survey'])),
-            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.HouseholdMember'])),
-        ))
-        db.send_create_signal('bcpp_subject', ['SubjectConsentHistory'])
+        print 'Warning, foreign key not changed!!!!!!!!!!!!!!!!!!!!!!!'
+        # Changing field 'SubjectConsent.household_member'
+        #db.alter_column('bcpp_subject_subjectconsent', 'household_member_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.HouseholdMember']))
+
+        # Changing field 'SubjectConsent.registered_subject'
+        #db.alter_column('bcpp_subject_subjectconsent', 'registered_subject_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_registration.RegisteredSubject'], null=True))
+
+        # Changing field 'SubjectConsent.initials'
+        db.alter_column('bcpp_subject_subjectconsent', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
+
+        # Changing field 'GrantAudit.grant_type'
+        db.alter_column('bcpp_subject_grant_audit', 'grant_type', self.gf('django.db.models.fields.CharField')(max_length=50))
 
     def backwards(self, orm):
         pass

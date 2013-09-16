@@ -21,8 +21,9 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href="/">{% trans 'Home' %}</a>
-{% if dashboard_type and dashboard_model and dashboard_id %}
-  &rsaquo; <a href="{% url subject_dashboard_url dashboard_type=dashboard_type dashboard_model=dashboard_model dashboard_id=dashboard_id show='forms' %}">{% trans 'Dashboard' %}</a>
+
+{% if home_url %}
+  &rsaquo; <a href="{{ home_url }}">{% trans 'Dashboard' %}</a>
   &rsaquo; {{ opts.verbose_name_plural|capfirst }}
 {% else%}
   &rsaquo; <a href="{% url 'admin:index' %}">{% trans 'Admin' %}</a>
