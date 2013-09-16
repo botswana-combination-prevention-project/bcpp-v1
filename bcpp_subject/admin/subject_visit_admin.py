@@ -3,6 +3,7 @@ from bhp_appointment.admin import BaseAppointmentModelAdmin
 from bcpp_lab.models import SubjectRequisition
 from bcpp_subject.models import SubjectVisit
 from bcpp_subject.forms import SubjectVisitForm
+from bcpp_household_member.models import HouseholdMember
 
 
 class SubjectVisitAdmin(BaseAppointmentModelAdmin):
@@ -41,5 +42,13 @@ class SubjectVisitAdmin(BaseAppointmentModelAdmin):
         "report_datetime",
         "comments"
         )
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "household_member":
+            household_members = HouseholdMember.objects.none()
+            if HouseholdMember.objects.filter(id=request.GET.get('household_member', 0)):
+                household_members = HouseholdMember.objects.filter(id=request.GET.get('household_member', 0))
+            kwargs["queryset"] = household_members
+        return super(SubjectVisitAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(SubjectVisit, SubjectVisitAdmin)

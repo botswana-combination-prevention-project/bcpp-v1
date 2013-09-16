@@ -26,6 +26,9 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     def get_consent_history_model(self):
         return SubjectConsentHistory
 
+    def get_registered_subject(self):
+        return self.registered_subject
+
     class Meta:
         app_label = 'bcpp_subject'
         unique_together = ('subject_identifier', 'survey')
