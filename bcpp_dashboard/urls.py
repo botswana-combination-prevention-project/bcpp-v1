@@ -22,7 +22,7 @@ urlpatterns += SubjectDashboard.get_urlpatterns('bcpp_dashboard.views', regex, v
 
 regex = {}
 regex['dashboard_type'] = 'household'
-regex['dashboard_model'] = 'household'
+regex['dashboard_model'] = 'household|household_structure'
 urlpatterns += HouseholdDashboard.get_urlpatterns('bcpp_dashboard.views', regex)
 
 urlpatterns += patterns('bcpp_dashboard.views',
