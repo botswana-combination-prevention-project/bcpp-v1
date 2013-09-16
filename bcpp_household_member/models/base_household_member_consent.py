@@ -59,12 +59,12 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
     def post_save_update_hm_status(self, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         using = kwargs.get('using', None)
-        self.household_member.member_status = 'consented'
+        self.household_member.member_status = 'CONSENTED'
         self.household_member.save(using=using)
         # since member is now consented, registered_subject gets a subject identifier, if not already set
         if re_pk.match(self.registered_subject.subject_identifier):
             self.registered_subject.subject_identifier = self.subject_identifier
-        self.registered_subject.registration_status = 'consented'
+        self.registered_subject.registration_status = 'CONSENTED'
         self.registered_subject.save(using=using)
         if self.subject_identifier != self.registered_subject.subject_identifier:
             raise TypeError('Subject identifier expected to be same as registered_subject subject_identifier. Got {0} != {1}'.format(self.subject_identifier, self.registered_subject.subject_identifier))
