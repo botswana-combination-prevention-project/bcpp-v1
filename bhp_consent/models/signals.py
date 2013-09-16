@@ -39,15 +39,15 @@ def add_models_to_catalogue(sender, instance, **kwargs):
                                 AttachedModel.objects.create(consent_catalogue=instance, content_type_map=content_type_map)
 
 
-@receiver(post_save, weak=False, dispatch_uid='update_consent_history')
-def update_consent_history(sender, instance, raw, created, using, **kwargs):
-    """Updates the consent history model with this instance if such model exists."""
-    if isinstance(instance, BaseConsent):
-        instance.update_consent_history(created, using)
-
-
-@receiver(post_delete, weak=False, dispatch_uid='delete_consent_history')
-def delete_consent_history(sender, instance, using, **kwargs):
-    """Updates the consent history model with this instance if such model exists."""
-    if isinstance(instance, BaseConsent):
-        instance.delete_consent_history(instance._meta.app_label, instance._meta.object_name, instance.pk, using)
+# @receiver(post_save, weak=False, dispatch_uid='update_consent_history')
+# def update_consent_history(sender, instance, raw, created, using, **kwargs):
+#     """Updates the consent history model with this instance if such model exists."""
+#     if isinstance(instance, BaseConsent):
+#         instance.update_consent_history(created, using)
+# 
+# 
+# @receiver(post_delete, weak=False, dispatch_uid='delete_consent_history')
+# def delete_consent_history(sender, instance, using, **kwargs):
+#     """Updates the consent history model with this instance if such model exists."""
+#     if isinstance(instance, BaseConsent):
+#         instance.delete_consent_history(instance._meta.app_label, instance._meta.object_name, instance.pk, using)
