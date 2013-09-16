@@ -1,6 +1,7 @@
 import copy
 import re
 import inspect
+from django.core.urlresolvers import reverse
 from django.conf.urls.defaults import patterns, include, url
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
@@ -50,7 +51,7 @@ class Dashboard(object):
             raise TypeError('Invalid dashboard_model. Expected either a Model class or a name of a model. Got {0}'.format(dashboard_model))
 
     @classmethod
-    def get_urlpatterns(self, pattern_prefix, regex, view=None, **kwargs):
+    def get_urlpatterns(self, pattern_prefix, urlpattern_string_kwargs, view=None, **kwargs):
         """Gets the url_patterns for the dashboard view.
 
         Called in the urls.py of the local xxxx_dashboard app. For example::
@@ -59,15 +60,15 @@ class Dashboard(object):
             from django.conf.urls.defaults import patterns, url
             from dom_dashboard.classes import InfantDashboard, MaternalDashboard
 
-            regex = {}
-            regex['dashboard_type'] = 'infant'
-            regex['dashboard_model'] = 'infant_birth'
-            urlpatterns = InfantDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['infant_visit', ])
+            urlpattern_string_kwargs = {}
+            urlpattern_string_kwargs['dashboard_type'] = 'infant'
+            urlpattern_string_kwargs['dashboard_model'] = 'infant_birth'
+            urlpatterns = InfantDashboard.get_urlpatterns('dom_dashboard.views', urlpattern_string_kwargs, visit_field_names=['infant_visit', ])
 
-            regex = {}
-            regex['dashboard_type'] = 'maternal'
-            regex['d-ashboard_model'] = 'maternal_consent'
-            urlpatterns += MaternalDashboard.get_urlpatterns('dom_dashboard.views', regex, visit_field_names=['maternal_visit', ])
+            urlpattern_string_kwargs = {}
+            urlpattern_string_kwargs['dashboard_type'] = 'maternal'
+            urlpattern_string_kwargs['d-ashboard_model'] = 'maternal_consent'
+            urlpatterns += MaternalDashboard.get_urlpatterns('dom_dashboard.views', urlpattern_string_kwargs, visit_field_names=['maternal_visit', ])
         """
 
         if not self.dashboard_url_name:
@@ -77,27 +78,44 @@ class Dashboard(object):
         view = view or self.view
         if not view:
             raise ImproperlyConfigured('Parameter \'view\' may not be None. Must be a valid view name, such as \'infant_dashboard\'.')
-        if not regex:
-            raise ImproperlyConfigured('Parameter \'regex\' may not be None.')
-        if not isinstance(regex, dict):
-            raise ImproperlyConfigured('Parameter \'regex\' must be a dictionary. Got {0}'.format(regex))
-        regex['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
-        regex.update({'show': 'appointments|forms'})
+        if not urlpattern_string_kwargs:
+            raise ImproperlyConfigured('Parameter \'urlpattern_string_kwargs\' may not be None.')
+        if not isinstance(urlpattern_string_kwargs, dict):
+            raise ImproperlyConfigured('Parameter \'urlpattern_string_kwargs\' must be a dictionary. Got {0}'.format(urlpattern_string_kwargs))
+        # add default re patterns
+        urlpattern_string_kwargs['pk'] = '[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}'
 
-        # TODO: this information is available from the instance
-        if regex.get('dashboard_model', None):
-            regex['dashboard_model'] += '|visit|appointment|registered_subject'
+        # FIXME: need to move to registeredSubjectDashboard as these regexs are
+        # specific to it, '|visit|appointment|registered_subject'
+        # should use the add_to_urlpattern_string_kwargs()
+        # and probably do not need to set these in urls!
+        if urlpattern_string_kwargs.get('dashboard_model', None):
+            urlpattern_string_kwargs['dashboard_model'] += '|visit|appointment|registered_subject'
         else:
-            regex.update({'dashboard_model': 'visit|appointment|registered_subject'})
-        if not regex.get('dashboard_type', None):
-            regex.update({'dashboard_type': 'subject'})
+            urlpattern_string_kwargs.update({'dashboard_model': 'visit|appointment|registered_subject'})
+        if not urlpattern_string_kwargs.get('dashboard_type', None):
+            urlpattern_string_kwargs.update({'dashboard_type': 'subject'})
 
+        # add user patterns
+        urlpattern_string_kwargs.update(self.add_to_urlpattern_string_kwargs())
+        # add extra key/value to the pattern string, if the user has overriden the method add_to_urlpattern_string
+        urlpattern_string = r'^(?P<dashboard_type>{{dashboard_type}})/(?P<dashboard_model>{{dashboard_model}})/(?P<dashboard_id>{{pk}})/{0}$'.format(self.add_to_urlpattern_string())
         urlpatterns = patterns(pattern_prefix,
-            url(r'^(?P<dashboard_type>{dashboard_type})/(?P<dashboard_model>{dashboard_model})/(?P<dashboard_id>{pk})/(?P<show>{show})/$'.format(**regex),
+            url(urlpattern_string.format(**urlpattern_string_kwargs),
                 view,
                 name=self.dashboard_url_name
                 ))
         return urlpatterns
+
+    @classmethod
+    def add_to_urlpattern_string(cls):
+        """Returns a fragment of a url regular expression to be added to the urlpattern string in :func:`get_urlpatterns`."""
+        return ''
+
+    @classmethod
+    def add_to_urlpattern_string_kwargs(cls):
+        """Returns a dictionary to compliment the url regular expression fragment returned by :func:`add_to_urlpattern_string`."""
+        return {}
 
     def add_to_context(self):
         pass
@@ -112,8 +130,15 @@ class Dashboard(object):
             dashboard_model=self.get_dashboard_model_name(),  # yes, we use the name not the model class for the context
             dashboard_model_instance=self.get_dashboard_model_instance(),
             dashboard_name=self.get_dashboard_name(),
-            dashboard_url_name=self.get_dashboard_url_name())
+            dashboard_url_name=self.get_dashboard_url_name(),
+            home_url=self.get_home_url())
         self.add_to_context()
+
+    def get_home_url(self):
+        """Returns a home url."""
+        return reverse(self.get_dashboard_url_name(), kwargs={'dashboard_type': self.get_dashboard_type(),
+                                                              'dashboard_model': self.get_dashboard_model_name(),
+                                                              'dashboard_id': self.get_dashboard_id()})
 
     def _set_dashboard_name(self):
         self._dashboard_name = self.dashboard_name
