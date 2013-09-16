@@ -9,10 +9,8 @@ from bhp_sync.models import BaseSyncUuidModel
 from bhp_base_model.fields import MyUUIDField
 from bhp_crypto.fields import BaseEncryptedField
 from bhp_sync.classes import SerializeToTransaction
-try:
-    import settings_audit
-except ImportError:
-    settings_audit = None
+import settings_audit
+
 value_error_re = re.compile("^.+'(.+)'$")
 
 
