@@ -199,7 +199,7 @@ class Plot(BaseDispatchSyncUuidModel):
 #             self.hh_int = re.search('\d+', self.plot_identifier).group(0)
         if self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s:
             self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
-            self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minu.tes_e)
+            self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
             mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
             mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
@@ -257,6 +257,19 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
+
+    @property
+    def producer_dispatched_to(self):
+        container = self.dispatch_container_lookup()
+        if container:
+            producer_name = container.producer.name
+            return producer_name.split('-')[0]
+        return 'Not Dispatched'
+
+    def is_server(self):
+        if Device().get_device_id() == '99':
+            return True
+        return False
 
     def is_dispatch_container_model(self):
         return True

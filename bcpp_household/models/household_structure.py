@@ -42,7 +42,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def __unicode__(self):
-        return unicode(self.plot)
+        return unicode(self.household)
 
     def save(self, *args, **kwargs):
         if not self.plot:
@@ -97,7 +97,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     logs.allow_tags = True
 
     def dashboard(self):
-        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'plot', 'dashboard_model': 'household_structure', 'dashboard_id': self.pk, 'show': 'any'})
+        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'plot', 'dashboard_model': 'household_structure', 'dashboard_id': self.pk})
         return """<a href="{url}" />composition</a>""".format(url=url)
     dashboard.allow_tags = True
 

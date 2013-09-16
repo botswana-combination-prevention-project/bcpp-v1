@@ -1,25 +1,16 @@
-import re
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ImproperlyConfigured
 from audit_trail.audit import AuditTrail
-from django.core.exceptions import ValidationError
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bhp_device.classes import Device
-from bhp_map.classes import site_mappers
 from bhp_identifier.exceptions import IdentifierError
 from bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from bcpp_household.managers import HouseholdManager
 from bcpp_household.classes import HouseholdIdentifier
 from bcpp_household.choices import HOUSEHOLD_STATUS
 from plot import Plot
-
-
-def is_valid_community(self, value):
-        """Validates the community string against a list of site_mappers map_areas."""
-        if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
-            raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -133,7 +124,7 @@ class Household(BaseDispatchSyncUuidModel):
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
-        validators=[is_valid_community, ],
+        editable=False,
         )
 
     comment = EncryptedTextField(
@@ -167,20 +158,13 @@ class Household(BaseDispatchSyncUuidModel):
     def mapper_name(self):
         return self.community
 
-    @property
-    def producer_dispatched_to(self):
-        container = self.dispatch_container_lookup()
-        if container:
-            producer_name = container.producer.name
-            return producer_name.split('-')[0]
-        return 'Not Dispatched'
-
     def natural_key(self):
         return (self.household_identifier,)
     natural_key.dependencies = ['bcpp_household.plot', ]
 
     def save(self, *args, **kwargs):
         if not self.id:
+            self.community = self.plot.community
             device = Device()
             self.household_sequence = self.plot.get_next_household_sequence()
             household_identifier = HouseholdIdentifier(plot_identifier=self.plot.plot_identifier,
@@ -225,16 +209,11 @@ class Household(BaseDispatchSyncUuidModel):
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
-    def include_for_dispatch(self):
-        return True
-
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
 
-    def is_server(self):
-        if Device().get_device_id() == '99':
-            return True
-        return False
+#     def is_dispatched_as_container(self, using=None):
+#         return False
 
     def structure(self):
         url = reverse('admin:{app_label}_{model_name}__changelist'.format('bcpp_household', 'householdstructure'))

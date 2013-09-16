@@ -5,7 +5,7 @@ from bhp_crypto.fields import EncryptedTextField
 from bcpp_household.choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from bcpp_household.managers import HouseholdLogManager, HouseholdLogEntryManager
 from household_structure import HouseholdStructure
-from household import Household
+from plot import Plot
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 
 
@@ -21,7 +21,7 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
         return unicode(self.household_structure)
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household_structure__household__household_identifier')
+        return (Plot, 'household_structure__plot__plot_identifier')
 
     def natural_key(self):
         return self.household_structure.natural_key()
@@ -80,7 +80,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
     def dispatch_container_lookup(self, using=None):
-        return (Household, 'household_log__household_structure__household__household_identifier')
+        return (Plot, 'household_log__household_structure__plot__plot_identifier')
 
     class Meta:
         app_label = 'bcpp_household'
