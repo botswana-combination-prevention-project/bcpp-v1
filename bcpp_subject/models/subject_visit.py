@@ -29,7 +29,7 @@ class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
         return unicode(self.appointment)
 
     def dispatch_container_lookup(self):
-        return (('bcpp_household', 'Household'), 'household_member__household_structure__household__household_identifier')
+        return (('bcpp_household', 'Plot'), 'household_member__household_structure__plot__plot_identifier')
 
 #     def post_save_update_appt_status(self):
 #         """Sets the appointment appt_status to 'in progress' as a convenience to the user editing a subject visit."""
