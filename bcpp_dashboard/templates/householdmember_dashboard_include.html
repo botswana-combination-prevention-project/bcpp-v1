@@ -36,7 +36,7 @@
     <tr {% if household_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
     
     <td>{{ forloop.counter }}.&nbsp;
-    {% if not household_member.member_status == 'CONSENTED' %}
+    {% if not household_member.member_status == 'CONSENT' %}
     	{% if household_member.household_structure.household.household_identifier|is_dispatched %}
     		{{ household_member.first_name|encrypted }}
     	{% else %}
@@ -74,7 +74,7 @@
 
     {% comment %}eligibility / enrolment checklist{% endcomment %}
     <td>
-    {% if household_member.member_status != 'CONSENT' %}
+    {% if household_member.member_status != 'CONSENT'%}
      ----
     {% else %}
      {% if not household_member.enrolment_checklist %}
