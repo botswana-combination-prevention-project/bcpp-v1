@@ -1,7 +1,7 @@
-from bhp_section.classes import BaseSectionView, site_sections
+from bhp_section.classes import BaseSectionForDashboardView, site_sections
 
 
-class SectionHtcSubjectView(BaseSectionView):
+class SectionHtcSubjectView(BaseSectionForDashboardView):
     section_name = 'htc_subject'
     section_display_name = 'HTC Subjects'
     section_display_index = 40

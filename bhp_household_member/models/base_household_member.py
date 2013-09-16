@@ -232,6 +232,9 @@ class BaseHouseholdMember(BaseDispatchSyncUuidModel):
             subject_identifier = self.pk
         return subject_identifier
 
+    def get_registered_subject(self):
+        return self.registered_subject
+
     def consent(self):
 
         """ Gets the consent model instance else return None.

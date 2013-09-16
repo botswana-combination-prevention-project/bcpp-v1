@@ -82,7 +82,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_survey',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -395,8 +395,8 @@ MAX_SUBJECTS = {'subject': 3000}
 APPOINTMENTS_PER_DAY_MAX = 20
 APPOINTMENTS_DAYS_FORWARD = 15
 
-SUBJECT_APP_LIST = ['bcpp_subject']
-DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
+SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_htc_subject']
+DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
 #Reports settings
 REPORTS_TEMPLATES_PATH = os.path.join(DIRNAME)
