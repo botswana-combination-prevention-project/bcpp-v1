@@ -19,6 +19,7 @@ class Migration(DataMigration):
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
         # create a plot for every household
+        HouseholdStructure = orm['bcpp_household.HouseholdStructure']
         Household = orm['bcpp_household.household']
         Plot = orm['bcpp_household.Plot']
         DispatchItemRegister = orm['bhp_dispatch.DispatchItemRegister']
