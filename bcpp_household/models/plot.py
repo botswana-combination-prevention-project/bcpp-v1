@@ -300,7 +300,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def include_for_dispatch(self):
         return True
     
-    def get_subject_identifier(self):
+    def get_contained_households(self):
         from bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
