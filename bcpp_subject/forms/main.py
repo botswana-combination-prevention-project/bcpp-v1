@@ -1,16 +1,10 @@
 from base_subject_model_form import BaseSubjectModelForm
-from bcpp_subject.models import (SubjectLocator, SubjectDeath, QualityOfLife,
+from bcpp_subject.models import (SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
                                  HivMedicalCare,HeartAttack, Cancer, Tubercolosis, 
                                  Sti, SubstanceUse,
                                  HivResultDocumentation)
-
-
-class SubjectLocatorForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = SubjectLocator
 
 
 class SubjectDeathForm (BaseSubjectModelForm):
