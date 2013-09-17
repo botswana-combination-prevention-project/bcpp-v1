@@ -27,12 +27,13 @@ def set_section(request, **kwargs):
         action_script_url = 'save_section_url'
         cart_size = len(identifiers)
         sections = m.get_sections()
-        selected_region = request.POST.get(m.get_region_field_attr())
+        selected_region = request.POST.get(m.region_field_attr)
+        print m.item_model_cls
         region_field = m.get_region_field_attr()
         request.session['icon'] = request.POST.get('marker_icon')
-        if m.item_model_cls.objects.filter(**{m.get_region_field_attr() : None}).exists():
+        if m.item_model_cls.objects.filter(**{m.region_field_attr : None}).exists():
             has_items = True
-            items = m.item_model_cls.objects.filter(**{m.get_region_field_attr() : None})
+            items = m.item_model_cls.objects.filter(**{m.region_field_attr : None})
 
         icon = str(request.session['icon'])
         payload = m.prepare_map_points(items,

@@ -9,9 +9,10 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding field 'RegisteredSubjectAudit._audit_subject_identifier'
-        db.add_column('bhp_registration_registeredsubject_audit', '_audit_subject_identifier',
-                      self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
-                      keep_default=False)
+#         db.add_column('bhp_registration_registeredsubject_audit', '_audit_subject_identifier',
+#                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
+#                       keep_default=False)
+        pass
 
 
     def backwards(self, orm):

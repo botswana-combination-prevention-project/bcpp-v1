@@ -4,6 +4,7 @@ import platform
 import sys
 import logger
 
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DIRNAME = os.path.dirname(__file__)
@@ -82,7 +83,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_survey',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -99,7 +100,7 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
-        'mpp78': {
+        'mpp15-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -107,20 +108,20 @@ else:
             'NAME': 'bhp066_survey',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.93',
+            'HOST': '192.168.1.36',
             'PORT': '3306',
         },
-        'mpp83': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066_survey',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.22',
-            'PORT': '3306',
-        },
+#         'mpp83': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'init_command': 'SET storage_engine=INNODB',
+#             },
+#             'NAME': 'bhp066_survey',
+#             'USER': 'root',
+#             'PASSWORD': 'cc3721b',
+#             'HOST': '192.168.1.22',
+#             'PORT': '3306',
+#         },
     }
 
 # Local time zone for this installation. Choices can be found here:
@@ -161,7 +162,7 @@ MEDIA_ROOT = os.path.join(DIRNAME, 'media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory that holds static files.
 # Example: "/home/media/media.lawrence.com/static/"
@@ -348,7 +349,8 @@ INSTALLED_APPS = (
     'bcpp_household_member',
     'bcpp_survey',
     'bcpp_inspector',
-#    'tastypie',
+    'bcpp_dispatch',
+    'tastypie',
 #     'bcpp_survey_dashboard',
 #     'bcpp_survey_lab',
 )
@@ -407,8 +409,10 @@ REPORTS_OUTPUT_PATH = os.path.join(DIRNAME, 'bhp_birt_reports/templates/')
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 MAP_DIR = os.path.join(DIRNAME, 'static/img/')
+
 if platform.system() == 'Darwin':
-    KEY_PATH = '/Volumes/bhp066/keys'
+    #KEY_PATH = '/Volumes/bhp066/keys'
+    KEY_PATH = os.path.join(DIRNAME, 'keys')
 else:
     KEY_PATH = os.path.join(DIRNAME, 'keys')
 
