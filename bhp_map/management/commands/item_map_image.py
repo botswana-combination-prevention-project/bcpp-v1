@@ -24,6 +24,9 @@ class Command(BaseCommand):
         else:
             m = site_mappers.get_registry(mapper_name)()
             
+            #NOT YET COMPLETE: TODO
+            
+            
             items = m.get_item_model_cls().objects.filter(**{m.map_area_field_attr: mapper_name})
             idnt = m.get_identifier_field_attr()
             for item in items:

@@ -78,10 +78,17 @@
                 {% comment %}Link to google map or saved map {% endcomment%}
             
                 {% if household.uploaded_map %}
-    				<a href="{{ STATIC_URL }}images/{{ household.uploaded_map }}">Saved Map</a>
+    				<a href="{{ MEDIA_URL }}{{ household.uploaded_map }}"/>view saved map</a>
                 {% else %}
-    				<a href="/bcpp_map/subject_map/?lon={{ household_structure.household.lon }}&lat={{ household_structure.household.lat }}&identifier={{ household_structure.household.household_identifier }}">Google Map</a>
-    			{% endif %}
+                    {% if household.gps_lon|default:household.gps_target_lon and household.gps_lat|default:household.gps_target_lat %}
+                	  <form action="{% url 'item_map_url' mapper_name=household.community identifier=household.household_identifier lon=household.gps_lon|default:household.gps_target_lon lat=household.gps_lat|default:household.gps_target_lat %}" method="post">
+					   	{% csrf_token %}
+						<p><input type="submit" value="view google map"></p>
+					  </form>
+					{% else %}
+					   <span style="background-color:red;color:white;"> missing lat/lon!</span>
+					{% endif %}	
+				{% endif %}
     		
             </div>
         {% endif %}        
