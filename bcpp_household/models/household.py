@@ -50,7 +50,7 @@ class Household(BaseDispatchSyncUuidModel):
 
     status = models.CharField(
         verbose_name='Household status',
-        max_length=15,
+        max_length=17,
         null=True,
         choices=HOUSEHOLD_STATUS,
         )
