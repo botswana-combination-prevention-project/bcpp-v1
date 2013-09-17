@@ -14,7 +14,29 @@ site_mappers.autodiscover()
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
+        """Write your forwards methods here.
+        from bhp_map.classes import site_mappers
+        site_mappers.autodiscover()
+        for hh in Household.objects.all():
+            if not hh.plot:
+                print '**no plot for {0}'.format(hh)
+                if not Plot.objects.filter(gps_target_lat=hh.gps_target_lat, gps_target_lon=hh.gps_target_lon):
+                    mapper_cls = site_mappers.get_registry(hh.community)
+                    mapper = mapper_cls()
+                    plot = Plot()
+                    plot.pk = uuid4()  # need to set this manually
+                    plot.gps_target_lat = hh.gps_target_lat
+                    plot.gps_target_lon = hh.gps_target_lon
+                    plot.community = hh.community
+                    plot_identifier = PlotIdentifier(community=mapper.get_map_code())    # need to set this manually as well
+                    plot.plot_identifier = plot_identifier.get_identifier()
+                    print 'creating Plot from hh {0} for community= {3}, gps {1}:{2}'.format(hh, plot.gps_target_lat, plot.gps_target_lon, plot.community)
+                    plot.save()
+                    print 'Plot={0}'.format(plot.pk)
+                else:
+                    plot = Plot.objects.get(gps_target_lat=hh.gps_target_lat, gps_target_lon=hh.gps_target_lon) 
+                hh.plot_id = plot.pk
+                hh.save()"""
         # Note: Don't use "from appname.models import ModelName". 
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
