@@ -1,13 +1,13 @@
 from bhp_map.classes import Mapper
-from bcpp_household.models import Household
+from bcpp_household.models import Plot
 from bhp_map.choices import ICONS, OTHER_ICONS
 
 
 class BaseHouseholdMapper(Mapper):
 
-    item_model = Household
-    item_model_cls = Household
-    item_label = 'Household'
+    item_model = Plot
+    item_model_cls = Plot
+    item_label = 'Plot'
 
     region_field_attr = 'section'
     region_label = 'Section'
@@ -19,8 +19,8 @@ class BaseHouseholdMapper(Mapper):
     icons = ICONS
     other_icons = OTHER_ICONS
 
-    identifier_field_attr = 'household_identifier'
-    identifier_field_label = 'household'
+    identifier_field_attr = 'plot_identifier'
+    identifier_field_label = 'plot'
     other_identifier_field_attr = 'cso_number'
     other_identifier_field_label = 'cso'
 

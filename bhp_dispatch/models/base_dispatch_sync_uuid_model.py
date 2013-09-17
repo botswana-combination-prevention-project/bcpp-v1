@@ -95,7 +95,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
 #                                           'must return a lookup attr string that ends in the container '
 #                                           'identifier field name.'.format(user_container_model_cls().dispatched_as_container_identifier_attr(), lookup_attrs[-1:]))
 
-            lookup_value = self  # why is this set to self?
+            lookup_value = self  # Default to self because dispatch_container_lookup is overriten in self, refere to line 85
 
             # FIXME: if lookup value gets set to None below (e.g. attribute Plot is None and the user container is Plot)
             #        that means the user_container value is not known and is_dispatched will be false.
