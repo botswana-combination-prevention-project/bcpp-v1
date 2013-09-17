@@ -42,14 +42,18 @@ class BasePrepareDevice(BaseController):
             if not ApiKey.objects.using(self.get_using_destination()).filter(user=user):
                 ApiKey.objects.using(self.get_using_destination()).create(user=user)
         if not username:
-            username = 'django'
+            username = [f.username for f in User.objects.using(self.get_using_destination()).all()]
+        else:
+            username = username
         # get username account api key
-        source_api_key = ApiKey.objects.using(self.get_using_source()).get(user=User.objects.get(username=username))
-        api_key = ApiKey.objects.using(self.get_using_destination()).get(user=User.objects.get(username=username))
-        api_key.key = source_api_key.key
-        api_key.save(using=self.get_using_destination())
-        print '    updated {0}\'s api key on \'{1}\' to matching key on server.'.format(username, self.get_using_destination())
-        print '    to update additional accounts use update_api_keys(source, destination, username).'.format(username, self.get_using_destination())
+        for name in username:
+            source_api_key = ApiKey.objects.using(self.get_using_source()).get(user=User.objects.get(username=name))
+            api_key = ApiKey.objects.using(self.get_using_destination()).get(user=User.objects.get(username=name))
+            #destination apikey = source apikey
+            api_key.key = source_api_key.key
+            api_key.save(using=self.get_using_destination())
+        print '    updated api keys on \'{0}\' to matching keys on server.'.format(self.get_using_destination())
+        print '    to update a single account additional account use update_api_keys(source, destination, username).'
 
     def update_content_type(self):
         ContentType.objects.using(self.get_using_destination()).all().delete()
@@ -68,12 +72,12 @@ class BasePrepareDevice(BaseController):
         self.update_model(User, [Model])
         print '    done with Auth.'
 
-    def update_app_models(self, app_name, additional_base_model_class=None):
+    def update_app_models(self, app_name, additional_base_model_class=None, fk_to_skip=None):
         print '    updating for app {0}...'.format(app_name)
         #models = []
         for model in get_models(get_app(app_name)):
             #models.append(model)
-            self.model_to_json(model, additional_base_model_class)
+            self.model_to_json(model, additional_base_model_class, fk_to_skip=fk_to_skip)
 
     def update_list_models(self):
         list_models = []

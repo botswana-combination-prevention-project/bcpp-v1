@@ -12,13 +12,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, Count, Max
 from lab_base_model.models import BaseLabListModel, BaseLabListUuidModel
 from bhp_base_model.models import BaseListModel
-from bhp_visit.models import VisitDefinition, ScheduleGroup
 from bhp_variables.models import StudySite
 from bhp_entry.models import BaseEntryBucket
 from bhp_sync.classes import BaseProducer
 from bhp_sync.helpers import TransactionHelper
 from bhp_sync.exceptions import PendingTransactionError
 from bhp_dispatch.exceptions import ControllerBaseModelError
+from bhp_visit.models import VisitDefinition, ScheduleGroup
 from controller_register import registered_controllers
 from signal_manager import SignalManager
 
@@ -150,9 +150,9 @@ class BaseController(BaseProducer):
                         options[n] = dct
         return options
 
-    def model_to_json(self, model_cls, additional_base_model_class=None):
+    def model_to_json(self, model_cls, additional_base_model_class=None, fk_to_skip=None):
         """Sends all instances of the model class to :func:`_to_json`."""
-        self._to_json(model_cls.objects.all(), additional_base_model_class)
+        self._to_json(model_cls.objects.all(), additional_base_model_class, fk_to_skip=fk_to_skip)
 
     def is_allowed_base_model_cls(self, cls, additional_base_model_class=None):
         """Returns True or raises an exception if the class is a subclass of a base model class allowed for serialization."""
