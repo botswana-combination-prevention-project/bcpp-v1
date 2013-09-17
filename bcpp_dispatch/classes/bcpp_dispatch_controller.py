@@ -109,7 +109,7 @@ class BcppDispatchController(DispatchController):
         self.dispatch_list_models('bcpp_subject')
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
-            self.dispatch_user_container_as_json(plot)
+            #self.dispatch_user_container_as_json(plot)
             for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
                 self.dispatch_user_items_as_json(household, plot, ['plot_id'])
                 for survey in surveys:
@@ -129,7 +129,7 @@ class BcppDispatchController(DispatchController):
                                 raise DispatchError('HouseholdMember field registered_subject cannot be None. Got {0}.'.format(missing_rs))
                             registered_subjects = RegisteredSubject.objects.filter(pk__in=[hsm.registered_subject.pk for hsm in household_members])
                             self.dispatch_user_items_as_json(registered_subjects, plot)
-                            self.dispatch_user_items_as_json(household_members, plot, ['survey_id'])   # FIXME: One, what is the FK referring to
+                            #self.dispatch_user_items_as_json(household_members, plot, ['survey_id'])   # FIXME: One, what is the FK referring to
                             for household_member in household_members:
                                 # dispatch consents
                                 self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
