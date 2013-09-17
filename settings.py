@@ -4,6 +4,7 @@ import platform
 import sys
 import logger
 
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DIRNAME = os.path.dirname(__file__)
@@ -161,7 +162,7 @@ MEDIA_ROOT = os.path.join(DIRNAME, 'media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory that holds static files.
 # Example: "/home/media/media.lawrence.com/static/"
@@ -407,11 +408,11 @@ REPORTS_OUTPUT_PATH = os.path.join(DIRNAME, 'bhp_birt_reports/templates/')
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 MAP_DIR = os.path.join(DIRNAME, 'static/img/')
-if platform.system() == 'Darwin':
-    KEY_PATH = '/Volumes/bhp066/keys'
-else:
-    KEY_PATH = os.path.join(DIRNAME, 'keys')
-
+#if platform.system() == 'Darwin':
+    #KEY_PATH = '/Volumes/bhp066/keys'
+#else:
+   # KEY_PATH = os.path.join(DIRNAME, 'keys')
+KEY_PATH = os.path.join(DIRNAME, 'keys')
 GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
 VERIFY_GPS = False
 FIELD_MAX_LENGTH = 'migration'
