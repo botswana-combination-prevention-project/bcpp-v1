@@ -91,8 +91,13 @@ class BaseSearchByWord(BaseSearch):
                         pass
                 elif isinstance(field, (models.DateTimeField, models.DateField)):
                     pass
+                elif isinstance(field, (models.OneToOneField, models.ForeignKey)):
+                    pass
+                elif isinstance(field, models.BooleanField):
+                    pass
                 else:
-                    raise SearchError('model contains a field type not handled. Got {0} from model {1}.'.format(field, model))
+                    pass
+                    #raise SearchError('model contains a field type not handled. Got {0} from model {1}.'.format(field, model))
             self.update_context(order_by=self.order_by)
 #             raise ImproperlyConfigured('Search models must have a foreign key to model '
 #                                        'RegisteredSubject or be a subclass of BaseConsent. '
