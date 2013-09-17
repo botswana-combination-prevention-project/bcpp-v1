@@ -4,5 +4,6 @@
 .project
 .pydevproject
 .settings
-keys.bak
+keys
 south.log
+*.bz2
