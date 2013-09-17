@@ -50,8 +50,8 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         super(HouseholdStructure, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return self.plot.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_household.plot', 'bcpp_survey.survey']
+        return self.household.natural_key() + self.survey.natural_key()
+    natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey']
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
