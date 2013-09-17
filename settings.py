@@ -83,7 +83,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_migrated',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -350,7 +350,7 @@ INSTALLED_APPS = (
     'bcpp_survey',
     'bcpp_inspector',
     'bcpp_dispatch',
-    'tastypie',
+    #'tastypie',
 #     'bcpp_survey_dashboard',
 #     'bcpp_survey_lab',
 )
