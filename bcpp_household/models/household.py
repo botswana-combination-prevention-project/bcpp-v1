@@ -216,8 +216,8 @@ class Household(BaseDispatchSyncUuidModel):
 #         return False
 
     def structure(self):
-        url = reverse('admin:{app_label}_{model_name}__changelist'.format('bcpp_household', 'householdstructure'))
-        return """<a href="{url}" />structure</a>""".format(url=url)
+        #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))
+        return """<a href="{url}" />structure</a>"""#.format(url=url)
     structure.allow_tags = True
 
     class Meta:
