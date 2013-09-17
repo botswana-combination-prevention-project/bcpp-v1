@@ -39,8 +39,6 @@ class SectionHouseholdView(BaseSectionForDashboardView):
                         'mapper_name': current_community,
                         'gps_search_form': gps_search_form})
         return context
-    
-    
 
     def get_search_result(self, request, **kwargs):
         search_result = None
@@ -86,7 +84,7 @@ class SectionPlotView(BaseSectionView):
     add_model = Plot
     section_display_index = 10
     section_template = 'section_bcpp_plot.html'
-    
+
     def contribute_to_context(self, context, request, *args, **kwargs):
         current_survey = None
         if 'CURRENT_SURVEY' in dir(settings):
