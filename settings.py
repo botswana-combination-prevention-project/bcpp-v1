@@ -350,7 +350,7 @@ INSTALLED_APPS = (
     'bcpp_survey',
     'bcpp_inspector',
     'bcpp_dispatch',
-    'tastypie',
+    #'tastypie',
 #     'bcpp_survey_dashboard',
 #     'bcpp_survey_lab',
 )

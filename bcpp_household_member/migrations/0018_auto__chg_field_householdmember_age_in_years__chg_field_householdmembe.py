@@ -11,7 +11,6 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'HouseholdMember', fields ['registered_subject']
         db.delete_unique('bcpp_household_member_householdmember', ['registered_subject_id'])
 
-
         # Changing field 'HouseholdMember.age_in_years'
         db.alter_column('bcpp_household_member_householdmember', 'age_in_years', self.gf('django.db.models.fields.IntegerField')(null=True))
 
@@ -20,10 +19,6 @@ class Migration(SchemaMigration):
 
         # Changing field 'HouseholdMember.nights_out'
         db.alter_column('bcpp_household_member_householdmember', 'nights_out', self.gf('django.db.models.fields.IntegerField')(null=True))
-        # Adding field 'HouseholdMemberAudit._audit_subject_identifier'
-        db.add_column('bcpp_household_member_householdmember_audit', '_audit_subject_identifier',
-                      self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
-                      keep_default=False)
 
 
         # Changing field 'HouseholdMemberAudit.age_in_years'
@@ -31,16 +26,21 @@ class Migration(SchemaMigration):
 
         # Changing field 'HouseholdMemberAudit.nights_out'
         db.alter_column('bcpp_household_member_householdmember_audit', 'nights_out', self.gf('django.db.models.fields.IntegerField')(null=True))
+
+        # Adding field 'HouseholdMemberAudit._audit_subject_identifier'
+#         db.add_column('bcpp_household_member_householdmember_audit', '_audit_subject_identifier',
+#                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
+#                       keep_default=False)
+
         # Adding field 'HouseholdInfoAudit._audit_subject_identifier'
-        db.add_column('bcpp_household_member_householdinfo_audit', '_audit_subject_identifier',
-                      self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
-                      keep_default=False)
-
-        # Adding field 'EnrolmentChecklistAudit._audit_subject_identifier'
-        db.add_column('bcpp_household_member_enrolmentchecklist_audit', '_audit_subject_identifier',
-                      self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
-                      keep_default=False)
-
+#         db.add_column('bcpp_household_member_householdinfo_audit', '_audit_subject_identifier',
+#                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
+#                       keep_default=False)
+#
+#         # Adding field 'EnrolmentChecklistAudit._audit_subject_identifier'
+#         db.add_column('bcpp_household_member_enrolmentchecklist_audit', '_audit_subject_identifier',
+#                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
+#                       keep_default=False)
 
     def backwards(self, orm):
 
