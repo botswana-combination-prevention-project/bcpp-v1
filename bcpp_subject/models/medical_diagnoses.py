@@ -37,7 +37,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         )
 
     sti_record = models.CharField(
-        verbose_name=_("Is a record (OPD card, discharge summary) of a sti diagnosis"
+        verbose_name=_("Is a record (OPD card, discharge summary) of a STI diagnosis"
                       " available to review?"),
         max_length=25,
         null=True,
