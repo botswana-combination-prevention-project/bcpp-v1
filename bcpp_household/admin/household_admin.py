@@ -27,6 +27,6 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     radio_fields = {
         'status': admin.VERTICAL,
         }
-    actions = [process_dispatch, ]
+    #actions = [process_dispatch, ]
 
 admin.site.register(Household, HouseholdAdmin)
