@@ -8,28 +8,12 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Changing field 'SubjectConsent.initials'
-#         db.alter_column('bcpp_subject_subjectconsent', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
 
-        # Changing field 'GrantAudit.grant_type'
-#         db.alter_column('bcpp_subject_grant_audit', 'grant_type', self.gf('django.db.models.fields.CharField')(max_length=50))
-
-# 
-#         # Changing field 'SubjectConsentAudit.initials'
-#         db.alter_column('bcpp_subject_subjectconsent_audit', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
-
-# 
-#         # Changing field 'Grant.grant_type'
-        db.alter_column('bcpp_subject_grant', 'grant_type', self.gf('django.db.models.fields.CharField')(max_length=50))
-        raise TypeError()
-
-#         print 'Warning, foreign key not changed!!!!!!!!!!!!!!!!!!!!!!!'
         # Changing field 'SubjectConsent.household_member'
-#         db.alter_column('bcpp_subject_subjectconsent', 'household_member_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.HouseholdMember']))
+        db.alter_column('bcpp_subject_subjectconsent', 'household_member_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.HouseholdMember']))
 # 
 #         # Changing field 'SubjectConsent.registered_subject'
-#         db.alter_column('bcpp_subject_subjectconsent', 'registered_subject_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_registration.RegisteredSubject'], null=True))
-
+        db.alter_column('bcpp_subject_subjectconsent', 'registered_subject_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bhp_registration.RegisteredSubject'], null=True))
 
     def backwards(self, orm):
         pass
