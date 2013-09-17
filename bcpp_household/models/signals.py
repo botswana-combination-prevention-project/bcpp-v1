@@ -23,3 +23,11 @@ def household_structure_on_post_save(sender, instance, **kwargs):
         if isinstance(instance, HouseholdStructure):
             instance.create_household_log_on_post_save(**kwargs)
             instance.fetch_and_count_members_on_post_save(**kwargs)
+
+
+@receiver(post_save, weak=False, dispatch_uid="create_household_on_post_save")
+def create_household_on_post_save(sender, instance, created, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, Plot):
+            instance.post_save_create_household(created)
+

@@ -299,11 +299,11 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def include_for_dispatch(self):
         return True
-
-    def is_server(self):
-        if Device().get_device_id() == '99':
-            return True
-        return False
+    
+    def get_contained_households(self):
+        from bcpp_household.models import Household
+        households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
+        return households
 
     class Meta:
         app_label = 'bcpp_household'
