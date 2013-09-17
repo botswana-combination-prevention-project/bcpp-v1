@@ -10,7 +10,7 @@ def process_dispatch(modeladmin, request, queryset, **kwargs):
     content_type = ContentType.objects.get_for_model(queryset.model)
     return HttpResponseRedirect("/dispatch/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
 
-process_dispatch.short_description = "Dispatch households to netbook."
+process_dispatch.short_description = "Dispatch plots to netbook."
 
 
 def export_as_kml(modeladmin, request, queryset, **kwargs):

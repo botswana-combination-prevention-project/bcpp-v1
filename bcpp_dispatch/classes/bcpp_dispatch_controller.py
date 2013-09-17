@@ -10,6 +10,7 @@ from bhp_dispatch.exceptions import DispatchError
 from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_subject.models import  BaseMemberStatusModel
 from bcpp_household_member.models import household_member_on_pre_save, household_member_on_post_save
+from bcpp_household.models import post_save_create_household
 from bcpp_survey.models import Survey
 from bhp_registration.models import RegisteredSubject
 
@@ -57,17 +58,17 @@ class BcppDispatchController(DispatchController):
         """Disconnects signals before saving the serialized object in _to_json."""
         signals.pre_save.disconnect(household_member_on_pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
         signals.post_save.disconnect(household_member_on_post_save, weak=False, dispatch_uid="household_member_on_post_save")
-        #signals.post_save.disconnect(bcpp_subject_on_post_save, weak=False, dispatch_uid="bcpp_subject_on_post_save")
+        signals.post_save.disconnect(post_save_create_household, weak=False, dispatch_uid="post_save_create_household")
         signals.post_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
 
     def reconnect_signals(self):
         """Reconnects signals after saving the serialized object in _to_json."""
-        #signals.post_save.connect(bcpp_subject_on_post_save, weak=False, dispatch_uid="bcpp_subject_on_post_save")
         signals.post_save.connect(household_member_on_post_save, weak=False, dispatch_uid="household_member_on_post_save")
         signals.pre_save.connect(household_member_on_pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
+        signals.post_save.connect(post_save_create_household, weak=False, dispatch_uid="post_save_create_household")
         signals.post_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
 
-    def pre_dispatch(self, household, **kwargs):
+    def pre_dispatch(self, plot, **kwargs):
         """Create household_structures before dispatch, if they don't exist."""
         survey = kwargs.get('survey', None)
         if survey:
@@ -76,9 +77,10 @@ class BcppDispatchController(DispatchController):
             surveys = self.get_surveys()
         HouseholdStructure = get_model('bcpp_household', 'householdstructure')
         for survey in surveys:
-            if not HouseholdStructure.objects.using(self.get_using_source()).filter(household=household, survey=survey).exists():
-                # create household_structure, signal takes care of adding the members
-                HouseholdStructure.objects.using(self.get_using_source()).create(household=household, survey=survey, member_count=0, note='created on dispatch')
+            for household in plot.get_contained_households():
+                if not HouseholdStructure.objects.using(self.get_using_source()).filter(household=household, survey=survey).exists():
+                    # create household_structure, signal takes care of adding the members
+                    HouseholdStructure.objects.using(self.get_using_source()).create(household=household, survey=survey, member_count=0, note='created on dispatch')
 
     def dispatch_prep(self, **kwargs):
         """Get a household with the given identifier for dispatch to the specified producer.
@@ -107,12 +109,13 @@ class BcppDispatchController(DispatchController):
         self.dispatch_list_models('bcpp_subject')
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
+            self.dispatch_user_container_as_json(plot)
             for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
-                self.dispatch_user_items_as_json(household, plot)
+                self.dispatch_user_items_as_json(household, plot, ['plot_id'])
                 for survey in surveys:
                     household_structure = HouseholdStructure.objects.filter(household=household, survey=survey)
                     if household_structure:
-                        self.dispatch_user_items_as_json(household_structure, plot)
+                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id'])
                         if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
                             household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                             household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
