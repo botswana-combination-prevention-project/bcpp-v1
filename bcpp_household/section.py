@@ -10,8 +10,15 @@ from bcpp_household.forms.current_gps_form import CurrentGpsForm
 site_mappers.autodiscover()
 
 
-class SectionView(BaseSectionView):
-
+class SectionHouseholdView(BaseSectionForDashboardView):
+    section_name = 'household'
+    section_display_name = 'Households'
+    add_model = Household
+    section_display_index = 20
+    section_template = 'section_bcpp_household.html'
+    dashboard_url_name = 'household_dashboard_url'
+    
+    
     def contribute_to_context(self, context, request, *args, **kwargs):
         current_survey = None
         if 'CURRENT_SURVEY' in dir(settings):
@@ -32,15 +39,8 @@ class SectionView(BaseSectionView):
                         'mapper_name': current_community,
                         'gps_search_form': gps_search_form})
         return context
-
-
-class SectionHouseholdView(BaseSectionForDashboardView):
-    section_name = 'household'
-    section_display_name = 'Households'
-    add_model = Household
-    section_display_index = 20
-    section_template = 'section_bcpp_household.html'
-    dashboard_url_name = 'household_dashboard_url'
+    
+    
 
     def get_search_result(self, request, **kwargs):
         search_result = None
@@ -80,12 +80,33 @@ class SectionHouseholdView(BaseSectionForDashboardView):
 site_sections.register(SectionHouseholdView)
 
 
-class SectionPlotView(SectionView):
+class SectionPlotView(BaseSectionView):
     section_name = 'plot'
     section_display_name = 'Plots'
     add_model = Plot
     section_display_index = 10
     section_template = 'section_bcpp_plot.html'
+    
+    def contribute_to_context(self, context, request, *args, **kwargs):
+        current_survey = None
+        if 'CURRENT_SURVEY' in dir(settings):
+            current_survey = settings.CURRENT_SURVEY
+            survey_form = None
+        else:
+            survey_form = SurveyForm()
+        context.update({'survey_form': survey_form, 'current_survey': current_survey})
+        current_community = None
+        if 'CURRENT_COMMUNITY' in dir(settings):
+            current_community = settings.CURRENT_COMMUNITY
+            community_form = None
+        else:
+            community_form = CommunityForm()
+        gps_search_form = CurrentGpsForm(initial={'community': current_community, 'radius': 100})
+        context.update({'community_form': community_form,
+                        'current_community': current_community,
+                        'mapper_name': current_community,
+                        'gps_search_form': gps_search_form})
+        return context
 
     def get_search_result(self, request, **kwargs):
         search_result = None

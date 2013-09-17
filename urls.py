@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
+from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from django.db.models import get_models
 from dajaxice.core import dajaxice_autodiscover
@@ -68,7 +69,7 @@ urlpatterns += patterns('',
     url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('bhp_sync.urls')),
     url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('bhp_dispatch.urls')),
     url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('bhp_map.urls')),
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += patterns('',
     url(r'^dispatch/', include('bcpp_dispatch.urls')),
