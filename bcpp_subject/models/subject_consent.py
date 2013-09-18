@@ -5,6 +5,7 @@ from bhp_common.choices import YES_NO
 from subject_off_study_mixin import SubjectOffStudyMixin
 from bcpp_household_member.models import BaseHouseholdMemberConsent
 from subject_consent_history import SubjectConsentHistory
+from bhp_lab_tracker.classes import site_lab_tracker
 
 
 class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
@@ -28,6 +29,9 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     def get_registered_subject(self):
         return self.registered_subject
+
+    def get_hiv_status(self):
+        return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
 
     class Meta:
         app_label = 'bcpp_subject'
