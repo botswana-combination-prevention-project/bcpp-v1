@@ -15,6 +15,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     internalize_stigma = models.CharField(
         verbose_name=_("I think less of myself."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -22,6 +23,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     internalized_stigma = models.CharField(
         verbose_name=_("I have felt ashamed because of having HIV."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -30,6 +32,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         verbose_name=_("I fear that if I disclosed my HIV status to my"
                       " friends, they would lose respect for me."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -38,6 +41,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         verbose_name=_("I fear that if I disclosed my HIV status to my family,"
                       " they would exclude me from usual family activities."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -45,6 +49,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     enacted_talk_stigma = models.CharField(
         verbose_name=_("People have talked badly about me."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -52,6 +57,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     enacted_respect_stigma = models.CharField(
         verbose_name=_("I have lost respect or standing in the community."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -59,6 +65,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     enacted_jobs_tigma = models.CharField(
         verbose_name=_("I have lost a job because of having HIV."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
