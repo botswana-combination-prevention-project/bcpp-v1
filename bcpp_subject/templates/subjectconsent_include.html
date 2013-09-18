@@ -6,7 +6,6 @@
       <table cellspacing="0" id="result_list">
         <thead><tr>
         <th>Dashboard</th>
-        <th>Composition</th>
         <th>First Name</th>
         <th>Last Name</th>        
         <th>Initials</th>
@@ -31,11 +30,7 @@
             <td>{{subjectconsent.dob|date:"Y-m-d"}}</td>
             <td>{{subjectconsent.household_member.age_in_years}}</td>            
             <td>{{subjectconsent.consent_datetime|date:"d M Y H:i"}}</td>
-            {% if subjectconsent.subjecthivresult %}
-                <td><a href="/admin{{ subjectconsent.subjecthivresult.get_absolute_url }}">{{subjectconsent.subjecthivresult.subject_hiv_result_option.result_word}}</A></td>
-            {% else %}                 
-                <td><div class="warning">?????</div></td>
-            {% endif %}    
+            <td>{{ subjectconsent.get_hiv_status|default:'unk' }}</td>
             <td>{{subjectconsent.user_created}}</td>
             <td>{{subjectconsent.created|date:"d M Y H:i"}}</td>
             <td>{{subjectconsent.hostname_created}}</td>
