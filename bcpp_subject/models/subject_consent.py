@@ -31,6 +31,10 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         return self.registered_subject
 
     def get_hiv_status(self):
+        """Returns the hiv testing history as a string.
+
+        .. note:: more than one table is tracked so the history includes HIV results not performed by our team
+                  as well as the results of tests we perform."""
         return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
 
     class Meta:
