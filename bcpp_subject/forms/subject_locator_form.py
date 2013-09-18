@@ -28,7 +28,14 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         self.validate_next_of_kin('alt_contact_cell', cleaned_data)
         self.validate_next_of_kin('other_alt_contact_cell', cleaned_data)
         self.validate_next_of_kin('alt_contact_tel', cleaned_data)
-       
+
+        """validating anyone_else contact"""
+        self.validate_contact_someone('contact_name', cleaned_data)
+        self.validate_contact_someone('contact_rel', cleaned_data)
+        self.validate_contact_someone('contact_physical_address', cleaned_data)
+        self.validate_contact_someone('contact_cell', cleaned_data)
+        self.validate_contact_someone('contact_phone', cleaned_data)
+        
         return cleaned_data
     
     
@@ -43,6 +50,10 @@ class SubjectLocatorForm (BaseSubjectModelForm):
     def validate_work_place(self, field, cleaned_data):
         msg ='If participant has not given permission to contact him/her at work, do not give work details'
         self.validate_dependent_fields('may_call_work', field,cleaned_data, msg)
+    
+    def validate_contact_someone(self, field, cleaned_data):
+        msg ='If participant has not given permission to contact anyone else for follow up purposes, do not give any other details'
+        self.validate_dependent_fields('may_contact_someone', field,cleaned_data, msg)
     
     def validate_dependent_fields(self,master_field, sub_field, cleaned_data, msg):
         if cleaned_data.get(master_field, None) == 'No' and cleaned_data.get(sub_field, None):
