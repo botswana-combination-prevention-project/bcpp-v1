@@ -10,4 +10,4 @@ class HtcSubjectSearchByWord(BaseSearchByWord):
     order_by = '-created'
     template = 'htcregistration_include.html'
 
-site_search.register(HtcSubjectSearchByWord)
+#site_search.register(HtcSubjectSearchByWord)
