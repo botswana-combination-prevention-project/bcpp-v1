@@ -30,6 +30,7 @@ class BaseModelAdmin (admin.ModelAdmin):
                              'or SAVE NEXT to go to the next form (if available). Additional questions may be required or may need to be corrected when you attempt to save.')
 
     def __init__(self, *args):
+        self._excluded_supplemental_fields = None
         if not isinstance(self.instructions, list):
             raise ImproperlyConfigured('ModelAdmin {0} attribute \'instructions\' must be a list.'.format(self.__class__))
         if not isinstance(self.required_instructions, basestring):
@@ -39,16 +40,25 @@ class BaseModelAdmin (admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         self.update_modified_stamp(request, obj, change)
         super(BaseModelAdmin, self).save_model(request, obj, form, change)
-        if 'supplemental_fields' in dir(self) or 'conditional_fields' in dir(self):
+        if self.get_excluded_supplemental_fields(obj):
             if self.form._meta.exclude:
                 # record which instances were selected for excluded fields, (see also the post_delete signal).
-                Excluded.objects.get_or_create(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk, excluded=self.form._meta.exclude)
+                if Excluded.objects.filter(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk):
+                    excluded = Excluded.objects.get(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk)
+                    excluded.excluded = self.get_excluded_supplemental_fields(obj)
+                    excluded.save()
+                else:
+                    Excluded.objects.create(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk, excluded=self.get_excluded_supplemental_fields(obj))
             self.form._meta.exclude = None
+            self._excluded_supplemental_fields = None
 
     def add_view(self, request, form_url='', extra_context=None):
         META = 0
         DCT = 1
         extra_context = extra_context or {}
+        self._excluded_supplemental_fields = None
+        if self.get_excluded_supplemental_fields():
+            extra_context['has_excluded_supplemental_fields'] = True
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
         extra_context['form_language_code'] = request.GET.get('form_language_code', '')
@@ -61,6 +71,8 @@ class BaseModelAdmin (admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
+        if self.has_excluded_supplemental_fields(object_id):
+            extra_context['has_excluded_supplemental_fields'] = True
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
         extra_context['form_language_code'] = request.GET.get('form_language_code', '')
@@ -223,6 +235,24 @@ class BaseModelAdmin (admin.ModelAdmin):
             request.session['filtered'] = None
         return custom_http_response_redirect
 
+    def set_excluded_supplemental_fields(self, obj):
+        self._excluded_supplemental_fields = None
+        if 'supplemental_fields' in dir(self):
+            # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
+            if 'exclude' in dir(self.form.Meta):
+                raise AttributeError('The form.Meta attribute exclude cannot be used with \'supplemental_fields\'. See {0}.'.format(self.form))
+            # always set to None first
+            self.form._meta.exclude = None
+            self.fields, self._excluded_supplemental_fields = self.supplemental_fields.choose_fields(self.fields, self.form._meta.model, obj)
+
+    def get_excluded_supplemental_fields(self, obj=None):
+        if not self._excluded_supplemental_fields:
+            self.set_excluded_supplemental_fields(obj)
+        return self._excluded_supplemental_fields
+
+    def has_excluded_supplemental_fields(self, object_id):
+        return Excluded.objects.filter(model_pk=object_id).exists()
+
     def get_form(self, request, obj=None, **kwargs):
         """Overrides to check if conditional and supplemental fields have been defined in the admin class.
 
@@ -230,34 +260,28 @@ class BaseModelAdmin (admin.ModelAdmin):
             * Need to be sure that the same conditional and/or supplemental choice is given on GET and POST for both
               add and change.
         """
-        exclude_conditional_fields = None
-        exclude_supplemental_fields = None
+#         exclude_conditional_fields = None
+        #exclude_supplemental_fields = None
         if not request.method == 'POST':
-            exclude_conditional_fields = None
-            exclude_supplemental_fields = None
-            if 'conditional_fields' in dir(self):
-                # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
-                if 'exclude' in dir(self.form.Meta):
-                    raise AttributeError('The form.Meta attribute exclude cannot be used with \'conditional_fields\'. See {0}.'.format(self.form))
-                # always set to None first
-                self.form._meta.exclude = None
-                self.fields, exclude_conditional_fields = self.conditional_fields.choose_fields(self.fields, self.form._meta.model, obj)
-            if 'supplemental_fields' in dir(self):
-                # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
-                if 'exclude' in dir(self.form.Meta):
-                    raise AttributeError('The form.Meta attribute exclude cannot be used with \'supplemental_fields\'. See {0}.'.format(self.form))
-                # always set to None first
-                self.form._meta.exclude = None
-                self.fields, exclude_supplemental_fields = self.supplemental_fields.choose_fields(self.fields, self.form._meta.model, obj)
-            if exclude_conditional_fields:
-                # set exclude so that when the form is saved we use the same excluded fields from when the form was rendered
-                self.form._meta.exclude = exclude_conditional_fields
-            if exclude_supplemental_fields:
+            #exclude_conditional_fields = None
+            #exclude_supplemental_fields = None
+#             if 'conditional_fields' in dir(self):
+#                 # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
+#                 if 'exclude' in dir(self.form.Meta):
+#                     raise AttributeError('The form.Meta attribute exclude cannot be used with \'conditional_fields\'. See {0}.'.format(self.form))
+#                 # always set to None first
+#                 self.form._meta.exclude = None
+#                 self.fields, exclude_conditional_fields = self.conditional_fields.choose_fields(self.fields, self.form._meta.model, obj)
+            #self.get_excluded_supplemental_fields(obj)
+#             if exclude_conditional_fields:
+#                 # set exclude so that when the form is saved we use the same excluded fields from when the form was rendered
+#                 self.form._meta.exclude = exclude_conditional_fields
+            if self.get_excluded_supplemental_fields(obj):
                 # set exclude so that when the form is saved we use the same excluded fields from when the form was rendered
                 if self.form._meta.exclude:
-                    self.form._meta.exclude = tuple(set(list(self.form._meta.exclude) + list(exclude_supplemental_fields)))
+                    self.form._meta.exclude = tuple(set(list(self.form._meta.exclude) + list(self.get_excluded_supplemental_fields(obj))))
                 else:
-                    self.form._meta.exclude = exclude_supplemental_fields
+                    self.form._meta.exclude = self.get_excluded_supplemental_fields(obj)
         form = super(BaseModelAdmin, self).get_form(request, obj, **kwargs)
         form = self.auto_number(form)
         return form
