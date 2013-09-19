@@ -63,6 +63,9 @@
 {% for fieldset in adminform %}
   {% include "admin/includes/fieldset.html" %}
 {% endfor %}
+{% if has_excluded_supplemental_fields %}
+    <p style="color:teal"><b>This form has supplemental questions. The supplemental questions have been removed for this subject.</b></p>
+{% endif %}
 {% endblock %}
 
 {% comment %}
