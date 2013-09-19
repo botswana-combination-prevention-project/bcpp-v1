@@ -4,6 +4,7 @@ from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import FutureHivTesting
 from bcpp_subject.forms import FutureHivTestingForm
 
+
 #HIV testing and history [HT]: 10% in pretest, 9% in BHS and all follow-up
 class FutureHivTestingAdmin(SubjectVisitModelAdmin):
 
