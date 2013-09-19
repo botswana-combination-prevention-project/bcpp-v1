@@ -91,6 +91,7 @@ class Base(object):
         # Instances are only logged if exclude fields is not null
         # Instances are logged in :func:`base_model_admin.save_model`
         if Excluded.objects.filter(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk).exists():
+            # note we do not used the stored list of fields, we always refer back to the list defined in admin.
             exclude_fields = self._get_optional_fields()
         return exclude_fields
 

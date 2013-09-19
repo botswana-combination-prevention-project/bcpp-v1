@@ -36,7 +36,10 @@ class SupplementalFields(Base):
         return exclude_fields
 
     def _stored_choice(self, exclude_fields, obj):
-        if obj:
+        """Returns the list of fields to exclude from the \'add\' by querying model Excluded.
+
+        The list must be the same as was calculated on add."""
+        if not obj:
             raise AttributeError('Attribute \'obj\' cannot be None.')
         if Excluded.objects.filter(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk).exists():
             exclude_fields = self._get_optional_fields()
