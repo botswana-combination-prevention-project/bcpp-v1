@@ -11,12 +11,12 @@ class EncryptedFirstnameField(LocalRsaEncryptionField):
 
         if attname  in cleaned_data:
             first_name = cleaned_data.get(attname, None)
-            if first_name:
+            if first_name and "last_name" in cleaned_data and "initials" in cleaned_data:
                 # check for required keys from cleaned_data
-                if 'initials' not in cleaned_data:
-                    raise ValidationError('Field %s expects key \'initials\' for validation' % (attname,))
-                if 'last_name' not in cleaned_data:
-                    raise ValidationError('Field %s expects key \'last_name\' for validation' % (attname,))
+#                 if 'initials' not in cleaned_data:
+#                     raise ValidationError('Field %s expects key \'initials\' for validation' % (attname,))
+#                 if 'last_name' not in cleaned_data:
+#                     raise ValidationError('Field %s expects key \'last_name\' for validation' % (attname,))
                 # check if value is encrypted, if so we need to decrypt it to run the tests
                 if self.is_encrypted(first_name):
                     self.decrypt(first_name)
