@@ -1,10 +1,11 @@
 from django import forms
+from bhp_base_form.forms import BaseModelForm
 from bhp_common.utils import check_initials_field
 
 
-class BaseHouseholdMemberForm(forms.ModelForm):
+class BaseHouseholdMemberForm(BaseModelForm):
 
-    def clean(self):
+    def validate_cleaned_data(self, cleaned_data):
 
         cleaned_data = self.cleaned_data
         #check if dispatched
