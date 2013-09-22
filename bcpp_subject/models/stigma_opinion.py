@@ -14,6 +14,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         verbose_name=_("People are hesitant to take an HIV test due to"
                       " fear of people\'s reaction if the test result is positive for HIV."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -22,6 +23,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         verbose_name=_("People talk badly about people living with or thought"
                       " to be living with HIV to others."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -30,6 +32,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         verbose_name=_("People living with or thought to be living with HIV"
                       " lose respect or standing."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -38,6 +41,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         verbose_name=_("People living with or thought to be living with HIV"
                       " are verbally insulted, harassed and/or threatened."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -46,6 +50,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         verbose_name=_("People living with or thought to be living with"
                       " HIV are sometimes physically assaulted."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -55,6 +60,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
                       " HIV are now more accepted by others as there is now an effective"
                       " treatment available."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -63,6 +69,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         verbose_name=_("People living with HIV are less able to financially"
                       " support themselves and their families."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
