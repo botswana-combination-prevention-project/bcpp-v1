@@ -15,6 +15,7 @@ class Stigma (BaseScheduledVisitModel):
                       " hesitant to take an HIV test due to fear of people\'s "
                       "reaction if you tested positive for HIV."),
         max_length=25,
+        null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
         )
@@ -23,6 +24,7 @@ class Stigma (BaseScheduledVisitModel):
         verbose_name=_("I would be ashamed if someone in my family had HIV."),
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
@@ -31,6 +33,7 @@ class Stigma (BaseScheduledVisitModel):
                       " with the saliva of a person living with HIV."),
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
@@ -39,6 +42,7 @@ class Stigma (BaseScheduledVisitModel):
                       " is not sick, he/she should be allowed to continue teaching in the school."),
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
@@ -47,6 +51,7 @@ class Stigma (BaseScheduledVisitModel):
                       " with children who are HIV negative."),
         max_length=25,
         choices=AGREE_STRONGLY,
+        null=True,
         help_text="supplemental",
         )
 
