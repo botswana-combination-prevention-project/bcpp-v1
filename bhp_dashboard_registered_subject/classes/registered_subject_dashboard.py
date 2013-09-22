@@ -2,10 +2,9 @@ import re
 from textwrap import wrap
 from django.conf import settings
 from django.db import models
-from django.db.models import TextField, Count, get_model
+from django.db.models import TextField, Count
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.conf.urls import patterns, url
 from django.template.loader import render_to_string
 from django.utils import translation
 from bhp_common.utils import convert_from_camel
@@ -14,7 +13,6 @@ from bhp_visit.classes import MembershipFormHelper
 from bhp_dashboard.classes import Dashboard
 from lab_clinic_api.classes import EdcLab
 from bhp_entry.classes import ScheduledEntry, AdditionalEntry
-from bhp_entry.models import ScheduledEntryBucket
 from bhp_visit.exceptions import MembershipFormError
 from bhp_appointment.models import Appointment
 from bhp_visit.models import MembershipForm

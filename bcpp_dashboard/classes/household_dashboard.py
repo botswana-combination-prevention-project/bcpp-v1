@@ -1,8 +1,6 @@
 import re
 from datetime import datetime, date
-from django.conf.urls.defaults import patterns, url
 from django.conf import settings
-from django.db.models import get_model
 from bhp_dashboard.classes import Dashboard
 from bhp_registration.models import RegisteredSubject
 from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
