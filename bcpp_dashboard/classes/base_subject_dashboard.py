@@ -11,6 +11,7 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
         self._household_member = None
         self._household_members = None
         self._household = None
+        self._household_structure = None
         dashboard_models = kwargs.get('dashboard_models', {})
         dashboard_models.update({'household_member': HouseholdMember})
         kwargs.update({'dashboard_models': dashboard_models})
@@ -78,6 +79,14 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
         if not self._household:
             self.set_household()
         return self._household
+
+    def set_household_structure(self):
+        self._household_structure = self.get_household_member().household_structure
+
+    def get_household_structure(self):
+        if not self._household_structure:
+            self.set_household_structure()
+        return self._household_structure
 
     def set_registered_subject(self, value=None):
         """Sets the registered subject using a given pk or from household member."""
