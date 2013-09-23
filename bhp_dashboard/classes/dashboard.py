@@ -2,7 +2,7 @@ import copy
 import re
 import inspect
 from django.core.urlresolvers import reverse
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, url
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from bhp_common.utils import convert_from_camel

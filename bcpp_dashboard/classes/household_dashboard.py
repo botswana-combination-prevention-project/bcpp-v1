@@ -1,8 +1,8 @@
 import re
 from datetime import datetime, date
-from django.conf.urls.defaults import patterns, url
+from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.db.models import get_model
+from django.template.loader import render_to_string
 from bhp_dashboard.classes import Dashboard
 from bhp_registration.models import RegisteredSubject
 from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
@@ -18,6 +18,8 @@ class HouseholdDashboard(Dashboard):
     dashboard_url_name = 'household_dashboard_url'
 
     def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_type_list=None, dashboard_models=None, **kwargs):
+        self._plot = None
+        self._household = None
         self._household_members = None
         self._household_structure = None
         self._household_log = None
@@ -29,9 +31,14 @@ class HouseholdDashboard(Dashboard):
         self._first_name = None
         kwargs.update({'dashboard_models': {'household': Household, 'household_structure': HouseholdStructure}})
         super(HouseholdDashboard, self).__init__(dashboard_type, dashboard_id, dashboard_model, dashboard_type_list, dashboard_models=kwargs.get('dashboard_models'))
-        self.set_survey(kwargs.get('survey'))
-        self.set_household()
-        self.set_household_structure()
+        if self.get_dashboard_model_name() == 'household':
+            self.set_household()
+            self.set_current_survey()
+            self.set_household_structure()
+        if self.get_dashboard_model_name() == 'household_structure':
+            self.set_household_structure()
+            self.set_survey(self.get_household_structure().survey)
+            self.set_household()
         self.set_first_name(kwargs.get('first_name', None))
         # TODO: is this still necessary?
         self.check_members_have_registered_subject()
@@ -51,6 +58,7 @@ class HouseholdDashboard(Dashboard):
             household_log_entry_meta=HouseholdLogEntry._meta,
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             household_info_meta=HouseholdInfo._meta,
+            plot=self.get_plot(),
             household=self.get_household(),
             household_identifier=self.get_household().household_identifier,
             household_structure=self.get_household_structure(),
@@ -60,12 +68,13 @@ class HouseholdDashboard(Dashboard):
             first_name=self.get_first_name(),
             current_member_count=self.get_current_member_count(),
             survey=self.get_survey(),
-            surveys=self.get_surveys(),
+            rendered_surveys=self.render_surveys(),
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry(),
             household_info=self.get_household_info(),
             mapper_name=self.get_mapper_name(),
             subject_dashboard_url='subject_dashboard_url',
+            household_dashboard_url=self.dashboard_url_name,
             )
 
     def set_dashboard_type_list(self):
@@ -149,13 +158,37 @@ class HouseholdDashboard(Dashboard):
         if not self._survey:
             raise TypeError('Dashboard attribute _survey may not be null.')
 
+    def set_current_survey(self):
+        """Sets to the current survey using today's date."""
+        if Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() == 1:
+            self._survey = Survey.objects.get(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())
+        elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() >= 1:
+            raise TypeError('Unable to set attribute _survey given survey=None and today\'s date. More than one survey exists for the given datetime (today). Either specify a survey or given a different date. Got {0}.'.format(Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today())))
+        elif Survey.objects.filter(datetime_start__lte=datetime.today(), datetime_end__gte=datetime.today()).count() == 0:
+            raise TypeError('Unable to set attribute _survey given survey=None and today\'s date. No survey exists to include the given datetime (today). Either create a new survey or update an existing survey\'s start and end date to include today.')
+        else:
+            self._survey = None
+        if not self._survey:
+            raise TypeError('Dashboard attribute _survey may not be null.')
+
     def get_survey(self):
         if not self._survey:
             self.set_survey()
         return self._survey
 
     def set_surveys(self, value=None):
-        self._surveys = Survey.objects.all().order_by('survey_name')
+        self._surveys = [(self.get_survey(), '')]
+        for survey in Survey.objects.all().exclude(pk=self.get_survey().pk).order_by('datetime_start'):
+            # if a household_structure does not exist for this household and survey, create otherwise get
+            if not HouseholdStructure.objects.filter(household=self.get_household(), survey=survey):
+                household_structure = HouseholdStructure.objects.create(household=self.get_household(), survey=survey)
+            else:
+                household_structure = HouseholdStructure.objects.get(household=self.get_household(), survey=survey)
+            url = reverse(self.dashboard_url_name, kwargs={'dashboard_type': self.get_dashboard_type(),
+                                                           'dashboard_model': 'household_structure',
+                                                           'dashboard_id': household_structure.pk})
+            self._surveys.append((survey, url))
+        #self._surveys = Survey.objects.all().order_by('survey_name')
 
     def get_surveys(self):
         if not self._surveys:
@@ -168,15 +201,26 @@ class HouseholdDashboard(Dashboard):
         except:
             self._current_member_count = 0
 
+    def set_plot(self):
+        self._plot = self.get_household()
+        if not self._plot:
+            raise TypeError('Attribute plot may not be None.')
+
+    def get_plot(self):
+        if not self._plot:
+            self.set_plot()
+        return self._plot
+
     def set_household_structure(self, value=None, pk=None):
         self._household_structure = value
         if not self._household_structure:
             if issubclass(self.get_dashboard_model(), HouseholdStructure):
-                self._household_structure = self.get_dashboard_model()
-            if self.get_household():
+                self._household_structure = self.get_dashboard_model_instance()
+            # try to set with survey and household
+            if issubclass(self.get_dashboard_model(), Household):
                 self._household_structure = HouseholdStructure.objects.get(household__pk=self.get_household().pk, survey=self.get_survey())
-            if HouseholdStructure.objects.filter(pk=pk, survey=self.get_survey()):
-                self._household_structure = HouseholdStructure.objects.get(pk=pk, survey=self.get_survey())
+            #elif HouseholdStructure.objects.filter(pk=pk, survey=self.get_survey()):
+            #    self._household_structure = HouseholdStructure.objects.get(pk=pk, survey=self.get_survey())
         if not self._household_structure:
             raise TypeError('Household_structure cannot be None. Using {0}.'.format((value, pk)))
 
@@ -207,7 +251,7 @@ class HouseholdDashboard(Dashboard):
 
     def get_household(self):
         if not self._household:
-            raise TypeError('Dashboard attribute _household may not be null. Set this from kwargs in method create.')
+            self.set_household()
         return self._household
 
     def set_household_members(self):
@@ -275,11 +319,11 @@ class HouseholdDashboard(Dashboard):
             first_survey = surveys[0]
             # add members from most recent first survey to current survey
             for hm in  HouseholdMember.objects.filter(
-                            household_structure__household=self.get_household_structure().household,
-                            household_structure__survey=first_survey):
+                    household_structure__household=self.get_household_structure().household,
+                    household_structure__survey=first_survey):
                 if not HouseholdMember.objects.filter(
-                           household_structure=self.get_household_structure(),
-                           registered_subject=hm.registered_subject):
+                        household_structure=self.get_household_structure(),
+                        registered_subject=hm.registered_subject):
                     options = {}
                     [options.update({key: value}) for key, value in hm.__dict__.iteritems() if not key.startswith('_') and not key in ['id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified']]
                     options.update(
@@ -292,3 +336,7 @@ class HouseholdDashboard(Dashboard):
                         'lives_in_household': '-',
                         'member_status': None})
                     HouseholdMember.objects.create(**options)
+
+    def render_surveys(self):
+        """Renders to string the surveys."""
+        return render_to_string('surveys.html', {'surveys': self.get_surveys(), 'survey': self.get_survey()})

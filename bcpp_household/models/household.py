@@ -158,6 +158,9 @@ class Household(BaseDispatchSyncUuidModel):
     def mapper_name(self):
         return self.community
 
+    def __unicode__(self):
+        return self.household_identifier
+
     def natural_key(self):
         return (self.household_identifier,)
     natural_key.dependencies = ['bcpp_household.plot', ]
@@ -188,9 +191,6 @@ class Household(BaseDispatchSyncUuidModel):
         for survey in Survey.objects.all():  # create a household_structure for each survey defined
             if not HouseholdStructure.objects.filter(household=self, survey=survey):
                 HouseholdStructure.objects.create(household=self, survey=survey)
-
-    def __unicode__(self):
-        return self.household_identifier
 
     def get_action(self):
         if not self.gps_lon and not self.gps_lat:
