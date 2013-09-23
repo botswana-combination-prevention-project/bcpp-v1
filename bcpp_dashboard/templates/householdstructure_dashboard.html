@@ -58,8 +58,6 @@
 	            {% else %}
 	            	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
 	            {% endif %}
-                <b>Section:</b> {{ household.section|encrypted }}-{{ household.sub_section|encrypted }}
-                <b>CSO:</b> {{ household.cso_number|encrypted|default:'?' }}
                 {% if household_structure %}
                     <b>Members:&nbsp;</b>{{ household_structure.member_count }}
                 {% endif %}
@@ -73,22 +71,7 @@
                     style="background-color:lightyellow">*
                   {% endif %}    
                   </span>                
-                {% endfor %}    
-            
-                {% comment %}Link to google map or saved map {% endcomment%}
-            
-                {% if household.uploaded_map %}
-    				<a href="{{ MEDIA_URL }}{{ household.uploaded_map }}"/>view saved map</a>
-                {% else %}
-                    {% if household.gps_lon|default:household.gps_target_lon and household.gps_lat|default:household.gps_target_lat %}
-                	  <form action="{% url 'item_map_url' mapper_name=household.community identifier=household.household_identifier lon=household.gps_lon|default:household.gps_target_lon lat=household.gps_lat|default:household.gps_target_lat %}" method="post">
-					   	{% csrf_token %}
-						<p><input type="submit" value="view google map"></p>
-					  </form>
-					{% else %}
-					   <span style="background-color:red;color:white;"> missing lat/lon!</span>
-					{% endif %}	
-				{% endif %}
+                {% endfor %} 
     		
             </div>
         {% endif %}        
