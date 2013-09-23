@@ -82,17 +82,17 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             self.save(using=using)
 
     def house(self):
-        url = reverse('admin:{app_label}_{model_name}__changelist'.format(app_label=self._meta.app_label, model_name='householdstructure'))
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='householdstructure'))
         return """<a href="{url}?q={q}" />plot</a>""".format(url=url, q=self.plot.plot_identifier)
     house.allow_tags = True
 
     def members(self):
-        url = reverse('admin:{app_label}_{model_name}__changelist'.format(app_label='bcpp_household_member', model_name='householdmember'))
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household_member', model_name='householdmember'))
         return """<a href="{url}?q={q}'" />members</a>""".format(url=url, q=self.pk)
     members.allow_tags = True
 
     def logs(self):
-        url = reverse('admin:{app_label}_{model_name}__changelist'.format(app_label='bcpp_household', model_name='householdlog'))
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='householdlog'))
         return """<a href="{url}?q={q}'" />log</a>""".format(url=url, q=self.pk)
     logs.allow_tags = True
 
