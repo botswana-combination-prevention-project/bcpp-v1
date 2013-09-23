@@ -1,11 +1,10 @@
-import pprint
 from django.test import TestCase
 from django.db.models import signals
 from django.core import serializers
 from django.db.models import get_app, get_models
 from datetime import datetime, timedelta
 from bhp_crypto.classes import FieldCryptor
-from bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory, HouseholdInfoFactory#, ContactLogFactory, ContactLogFactoryItem
+from bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory, HouseholdInfoFactory
 from bcpp_household.tests.factories import HouseholdStructureFactory
 from bcpp_survey.models import Survey
 from bcpp_household.models import create_household_structure_on_post_save
@@ -17,6 +16,7 @@ from bhp_consent.tests.factories import ConsentCatalogueFactory
 from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap
+
 
 class NaturalKeyTests(TestCase):
 

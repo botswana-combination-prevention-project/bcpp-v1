@@ -14,7 +14,7 @@ from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_appointment.models import Configuration
 from bhp_consent.tests.factories import ConsentCatalogueFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
-from bcpp_household.models import HouseholdStructure
+from bcpp_household.models import HouseholdStructure, Household
 from bcpp_household.tests.factories import HouseholdFactory, PlotFactory
 # from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_htc_subject.tests.factories import HtcSubjectConsentFactory
@@ -122,7 +122,7 @@ def setup_dashboard(inst):
     inst.survey3 = None
     inst.survey4 = None
     inst.plot = None
-    inst.household = None
+    inst.household1 = None
     inst.household2 = None
     inst.household_structure = None
     inst.household_member1 = None
@@ -136,7 +136,7 @@ def setup_dashboard(inst):
     inst.household_dashboard = None
     print 'create survey, plot, household, and household_member'
     print 'create three surveys where NONE include today (to trigger error laster)'
-    inst.survey1 = SurveyFactory(datetime_start=datetime.today() + relativedelta(months=-5), datetime_end=datetime.today() + relativedelta(days=-5))
+    inst.survey1 = SurveyFactory(datetime_start=datetime.today() + relativedelta(months=-5), datetime_end=datetime.today() + relativedelta(days=5))
     print inst.survey1
     inst.survey2 = SurveyFactory(datetime_start=datetime.today() + relativedelta(months=-5, years=1), datetime_end=datetime.today() + relativedelta(months=5, years=1))
     print inst.survey2
@@ -150,8 +150,11 @@ def setup_dashboard(inst):
     print 'mapper is {0}'.format(mapper().get_map_area())
     print 'create a plot model instance for community {0}'.format(mapper().get_map_area())
     inst.plot = PlotFactory(community=inst.community)
-    inst.household = HouseholdFactory(plot=inst.plot)
-    print inst.household.community
+    inst.household1 = Household.objects.get(plot=inst.plot)
+    print 'create a second HH on the plot'
+    inst.household2 = HouseholdFactory(plot=inst.plot)
+    print inst.household1.community
     inst.dashboard_type = 'household'
     inst.dashboard_model = 'household'
-    inst.dashboard_id = inst.household.pk
+    inst.dashboard_id = inst.household1.pk
+    return inst
