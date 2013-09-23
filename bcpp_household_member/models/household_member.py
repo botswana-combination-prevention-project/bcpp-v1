@@ -1,31 +1,89 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.core.urlresolvers import reverse
 from django.db.models.signals import Signal, post_save
 from audit_trail.audit import AuditTrail
 from bhp_crypto.utils import mask_encrypted
 from bhp_registration.models import RegisteredSubject
-from bhp_household_member.models import BaseHouseholdMember
+from bhp_dispatch.models import BaseDispatchSyncUuidModel
+from bhp_crypto.fields import EncryptedFirstnameField
+from bhp_common.choices import YES_NO, GENDER
+from bhp_lab_tracker.classes import site_lab_tracker
 from bcpp_survey.models import Survey
 from bcpp_household.choices import RELATIONS
 from bcpp_household.models import Household, Plot
 from bcpp_household.models import HouseholdStructure
 from bcpp_household_member.managers import HouseholdMemberManager
-
 from contact_log import ContactLog
 
 
-class HouseholdMember(BaseHouseholdMember):
+class HouseholdMember(BaseDispatchSyncUuidModel):
 
     household_structure = models.ForeignKey(HouseholdStructure,
         null=True,
-        blank=True)
+        blank=False)
 
     household = models.ForeignKey(Household, null=True, editable=False, help_text='helper field')
 
     plot = models.ForeignKey(Plot, null=True, editable=False, help_text='helper field')
 
     survey = models.ForeignKey(Survey, editable=False)
+
+    registered_subject = models.ForeignKey(RegisteredSubject, null=True)  # will always be set in post_save()
+
+    internal_identifier = models.CharField(
+        max_length=36,
+        null=True,  # will always be set in post_save()
+        default=None,
+        editable=False,
+        help_text=('Identifier to track member between surveys, '
+                   'is the pk of the member\'s first appearance in the table.'))
+    first_name = EncryptedFirstnameField(
+        verbose_name='First name',
+        validators=[
+            RegexValidator("^[a-zA-Z]{1,250}$", "Ensure first name does not contain any spaces or numbers"),
+            RegexValidator("^[A-Z]{1,250}$", "Ensure first name is in uppercase"), ],
+        db_index=True)
+    initials = models.CharField('Initials',
+        max_length=3,
+        validators=[
+            MinLengthValidator(2),
+            MaxLengthValidator(3),
+            RegexValidator("^[A-Z]{1,4}$", "Ensure initials are in uppercase")],
+        db_index=True)
+    gender = models.CharField('Gender',
+        max_length=1,
+        choices=GENDER,
+        db_index=True)
+    age_in_years = models.IntegerField('Age in years',
+        help_text="If age is unknown, enter 0. If member is less than one year old, enter 1",
+        validators=[MinValueValidator(0), MaxValueValidator(120)],
+        db_index=True,
+        null=True,
+        blank=False)
+
+    present = models.CharField(
+        max_length=3,
+        choices=YES_NO,
+        db_index=True)
+    lives_in_household = models.CharField(
+        max_length=3,
+        choices=YES_NO,
+        verbose_name="Does the subject live in this household?",
+        help_text="Does the subject live in this household? If not, you will be asked later to get information about the location of their household")
+    member_status = models.CharField(
+        max_length=25,
+        null=True,
+        editable=False,
+        default='NOT_REPORTED',
+        help_text='CONSENTED, ABSENT, REFUSED, MOVED',
+        db_index=True)
+    hiv_history = models.CharField(max_length=25, null=True, editable=False)
+
+    is_eligible_member = models.BooleanField(default=False, db_index=True)
+
+    target = models.IntegerField(default=0)
 
     relation = models.CharField(
         verbose_name="Relation to head of household",
@@ -42,18 +100,25 @@ class HouseholdMember(BaseHouseholdMember):
         null=True,
         blank=False)
 
-    relation = models.CharField(
-        verbose_name="Relation to head of household",
-        max_length=35,
-        choices=RELATIONS,
-        null=True,
-        help_text="Relation to head of household")
-
     contact_log = models.OneToOneField(ContactLog, null=True)
+
+    objects = HouseholdMemberManager()
 
     history = AuditTrail()
 
-    objects = HouseholdMemberManager()
+    def save(self, *args, **kwargs):
+        using = kwargs.get('using', None)
+        self.is_eligible_member = self.is_eligible()
+        if not self.survey_id:
+            if self.household_structure:
+                self.survey = self.household_structure.survey
+            else:
+                self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
+        if not self.plot:
+            self.plot = self.household_structure.plot
+        if not self.household:
+            self.household = self.household_structure.household
+        super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
         if not self.household_structure:
@@ -70,6 +135,18 @@ class HouseholdMember(BaseHouseholdMember):
             self.age_in_years,
             self.gender,
             self.survey.survey_name)
+
+    @property
+    def is_consented(self):
+        from bhp_consent.models import BaseConsent
+        retval = False
+        for model in models.get_models():
+            if issubclass(model, BaseConsent):
+                if 'household_member' in dir(model):
+                    if model.objects.filter(household_member=self, household_member__household_structure__survey=self.survey):
+                        retval = True
+                        break
+        return retval
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__plot__plot_identifier')
@@ -108,18 +185,8 @@ class HouseholdMember(BaseHouseholdMember):
             self.registered_subject = registered_subject
             self.save(using=using)
 
-    def save(self, *args, **kwargs):
-        using = kwargs.get('using', None)
-        if not self.survey_id:
-            if self.household_structure:
-                self.survey = self.household_structure.survey
-            else:
-                self.survey = Survey.objects.using(using).get(datetime_start__lte=self.created, datetime_end__gte=self.created)
-        if not self.plot:
-            self.plot = self.household_structure.plot
-        if not self.household:
-            self.household = self.household_structure.household
-        super(HouseholdMember, self).save(*args, **kwargs)
+    def get_registered_subject(self):
+        return self.registered_subject
 
     def deserialize_prep(self):
         Signal.disconnect(post_save, None, weak=False, dispatch_uid="member_on_post_save")
@@ -180,35 +247,6 @@ class HouseholdMember(BaseHouseholdMember):
         return report_datetime
     absentee_form_label.allow_tags = True
 
-#     @property
-#     def undecided_form_url(self):
-#         """Returns a url to the subject_undecided if an instance exists."""
-#         url = ''
-#         subject_undecided = None
-#         if not self.registered_subject:
-#             self.save()
-#         SubjectUndecided = models.get_model('bcpp_subject', 'subjectundecided')
-#         if SubjectUndecided.objects.filter(household_member=self):
-#             subject_undecided = SubjectUndecided.objects.get(household_member=self)
-#         if subject_undecided:
-#             url = subject_undecided.get_absolute_url()
-#         else:
-#             url = SubjectUndecided().get_absolute_url()
-#         return url
-# 
-#     @property
-#     def undecided_form_label(self):
-#         SubjectUndecided = models.get_model('bcpp_subject', 'subjectundecided')
-#         SubjectUndecidedEntry = models.get_model('bcpp_subject', 'subjectundecidedentry')
-#         report_datetime = []
-#         if SubjectUndecided.objects.filter(household_member=self):
-#             subject_undecided = SubjectUndecided.objects.get(household_member=self)
-#             for subject_undecided_entry in SubjectUndecidedEntry.objects.filter(subject_undecided=subject_undecided).order_by('report_datetime'):
-#                 report_datetime.append(subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'))
-#         if not report_datetime:
-#             report_datetime.append('add new entry')
-#         return report_datetime
-
     @property
     def refused_form_url(self):
         return self._get_form_url('subjectrefusal')
@@ -250,14 +288,6 @@ class HouseholdMember(BaseHouseholdMember):
         return retval
     to_locator.allow_tags = True
 
-#     def get_short_label(self):
-#         return '{first_name} ({initials}) {gender} {age} {hiv_status}'.format(
-#             first_name=mask_encrypted(self.first_name),
-#             initials=self.initials,
-#             age=self.age_in_years,
-#             gender=self.gender,
-#             hiv_status=self.get_hiv_history())
-
     def get_subject_identifier(self):
         """ Uses the hsm internal_identifier to locate the subject identifier in
         registered_subject OR return the hsm.pk"""
@@ -270,6 +300,15 @@ class HouseholdMember(BaseHouseholdMember):
             #$ this should not be an option as all hsm's have a registered_subject instance
             subject_identifier = self.pk
         return subject_identifier
+
+    def get_hiv_history(self):
+        """Updates and returns hiv history using the site_lab_tracker global.
+        """
+        hiv_history = ''
+        if self.registered_subject:
+            if self.registered_subject.subject_identifier:
+                hiv_history = site_lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier, self.registered_subject.subject_type)
+        return hiv_history
 
     def consent(self):
 
@@ -336,20 +375,6 @@ class HouseholdMember(BaseHouseholdMember):
         else:
             return "no (%s)" % self.nights_out
 
-#     def member_terse(self):
-#         return mask_encrypted(unicode(self.first_name))
-
-#     def subject(self):
-#         return mask_encrypted(unicode(self.first_name))
-
-#     def visit_date(self):
-#         SubjectVisit = models.get_model('bcpp_subject', 'subjectvisit')
-#         retval = None
-#         if SubjectVisit.objects.filter(household_member=self):
-#             subject_visit = SubjectVisit.objects.filter(household_member=self)
-#             retval = subject_visit.report_datetime
-#         return retval
-
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
         retval = False
@@ -372,6 +397,12 @@ class HouseholdMember(BaseHouseholdMember):
                     if HouseholdMember.objects.filter(pk=registered_subject.registration_identifier).exists():
                         retval = HouseholdMember.objects.get(pk=registered_subject.registration_identifier).household_structure
         return retval
+
+    def member_terse(self):
+        return mask_encrypted(unicode(self.first_name))
+
+    def subject(self):
+        return mask_encrypted(unicode(self.first_name))
 
     class Meta:
         ordering = ['-created']

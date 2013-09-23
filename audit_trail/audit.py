@@ -6,7 +6,7 @@ from django.contrib import admin
 import copy
 import re
 from bhp_sync.models import BaseSyncUuidModel
-from bhp_base_model.fields import MyUUIDField
+from django_extensions.db.fields import UUIDField
 from bhp_crypto.fields import BaseEncryptedField
 from bhp_sync.classes import SerializeToTransaction
 import settings_audit
@@ -191,7 +191,7 @@ def create_audit_model(cls, **kwargs):
         '__module__': cls.__module__,
         'Meta': Meta,
         # erikvw '_audit_id': models.AutoField(primary_key=True),
-        '_audit_id': MyUUIDField(primary_key=True),
+        '_audit_id': UUIDField(primary_key=True),
         '_audit_timestamp': models.DateTimeField(auto_now_add=True, db_index=True),
         '_audit__str__': cls.__str__.im_func,
         '__str__': lambda self: '%s as of %s' % (self._audit__str__(), self._audit_timestamp),
