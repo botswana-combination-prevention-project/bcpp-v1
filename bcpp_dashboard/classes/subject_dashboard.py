@@ -1,3 +1,4 @@
+from django.template.loader import render_to_string
 from base_subject_dashboard import BaseSubjectDashboard
 from bcpp_subject.models import SubjectConsent, SubjectVisit, SubjectLocator
 from bcpp_lab.models import SubjectRequisition, PackingList
@@ -18,9 +19,14 @@ class SubjectDashboard(BaseSubjectDashboard):
             home='bcpp',
             search_name='subject',
             subject_dashboard_url='subject_dashboard_url',
+            household_dashboard_url=self.get_household_dashboard_url(),
             title='Research Subject Dashboard',
             subject_consent=self.get_consent(),
+            rendered_household_members_sidebar=self.render_household_members_sidebar(),
             )
+
+    def get_household_dashboard_url(self):
+        return 'household_dashboard_url'
 
     def set_dashboard_type_list(self):
         self._dashboard_type_list = ['subject']
@@ -49,3 +55,10 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     def render_labs(self, update=False):
         return ''
+
+    def render_household_members_sidebar(self):
+        """Renders to string the household members sidebar."""
+        return render_to_string('household_members_sidebar.html',
+            {'household_members': self.get_household_members(),
+             'household_dashboard_url': self.get_household_dashboard_url(),
+             'household_structure': self.get_household_structure()})
