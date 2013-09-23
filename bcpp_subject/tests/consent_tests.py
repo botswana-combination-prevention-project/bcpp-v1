@@ -23,7 +23,7 @@ from bhp_map.classes import site_mappers
 from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory, PlotFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_household_member.models import HouseholdMember
-from bcpp_household.models import HouseholdStructure
+from bcpp_household.models import HouseholdStructure, Household
 from bcpp_dashboard.classes import HouseholdDashboard, SubjectDashboard, HtcSubjectDashboard
 from bcpp_dashboard.tests.dashboard_tests import setup_dashboard
 
@@ -33,6 +33,9 @@ class ConsentTests(TestCase):
     app_label = 'bcpp_subject'
 
     def test_p1(self):
+        self.assertTrue(Household.objects.all().count() == 0)
+        self.assertTrue(HouseholdStructure.objects.all().count() == 0)
+        self.assertTrue(HouseholdMember.objects.all().count() == 0)
         site_lab_tracker.autodiscover()
         study_specific = StudySpecificFactory()
         StudySiteFactory()
@@ -51,24 +54,27 @@ class ConsentTests(TestCase):
             end_datetime=datetime(datetime.today().year + 5, 1, 1),
             add_for_app=self.app_label)
 
-        setup_dashboard(self)
+        setup_dashboard(self)  # creates 3 surveys a plot and two HH which -> 6 HHS
 
         print 'initialize the HH dashboard which will create HHS'
         print 'assert no survey for today\'s date'
+        self.survey1.datetime_end = datetime.today() + relativedelta(days=-5)
+        self.survey1.save()
         self.assertRaises(TypeError, HouseholdDashboard, self.dashboard_type, self.dashboard_id, self.dashboard_model)
+        self.assertEquals(HouseholdStructure.objects.all().count(), 6)
         print 'update survey1 to include today'
         self.survey1.datetime_end = datetime.today() + relativedelta(days=+5)
         self.survey1.save()
         print 'try again, initialize the HH dashboard which will create HHS'
         self.household_dashboard = HouseholdDashboard(self.dashboard_type, self.dashboard_id, self.dashboard_model)
         print 'assert household structure exists for this HH and the three surveys'
-        self.assertEquals(HouseholdStructure.objects.all().count(), 3)
+        self.assertEquals(HouseholdStructure.objects.filter(household=self.household1).count(), 3)
         self.household_structure = self.household_dashboard.get_household_structure()
         print 'create another new HH in community {0}.'.format(self.community)
-        self.household2 = HouseholdFactory(plot=self.plot)
-        print 'assert no hh structure created'
+        self.assertEquals(HouseholdStructure.objects.filter(household=self.household2).count(), 3)
+        print 'assert no additional hh structure created'
         self.assertEquals(HouseholdStructure.objects.all().count(), 6)  # 2 surveys for each HH = 2 x 3 = 6
-        print 'create HH members for this survey and HH {0}'.format(self.household)
+        print 'create HH members for this survey and HH {0}'.format(self.household1)
         self.household_member1 = HouseholdMemberFactory(household_structure=self.household_structure)
         print 'household_member1.registered_subject.pk = {0}'.format(self.household_member1.registered_subject.pk)
         print 'household_member1.survey = {0}'.format(self.household_member1.survey)
@@ -111,19 +117,42 @@ class ConsentTests(TestCase):
         # verify that subsequent surveys refer to the same registered subject
         # that being the one created from the first year
 
-        print 'repeat for YEAR 2'
+        print 'repeat for YEAR 2 for household1'
         print 'assert still have only 3 surveys'
         self.assertEqual(Survey.objects.all().count(), 3)
-        print 'get a household dashboard for survey2'
+        print 'assert have 4 HHMs for household1 (from survey1'
+        self.assertEqual(HouseholdMember.objects.all().count(), 4)
+        print 'get a household dashboard for survey2 using HH2'
+        self.dashboard_type = 'household'
+        self.dashboard_model = 'household'
+        self.dashboard_id = self.household1.pk
+        print 'instantiate hHH dashboard with household'
         household_dashboard_survey2 = HouseholdDashboard(self.dashboard_type, self.dashboard_id, self.dashboard_model, survey=self.survey2)
+        print household_dashboard_survey2
         self.assertEqual(Survey.objects.all().count(), 3)
+        print 'assert defaults to survey1, HHS for survey1'
+        self.assertEqual(household_dashboard_survey2.get_survey(), self.survey1)
+        self.assertEqual(household_dashboard_survey2.get_household_structure().survey, self.survey1)
+        print 'get a household dashboard for survey2 using HH2'
+        self.household_structure2 = HouseholdStructure.objects.get(household=self.household1, survey=self.survey2)
+        self.dashboard_type = 'household'
+        self.dashboard_model = 'household_structure'
+        self.dashboard_id = self.household_structure2.pk
+        household_dashboard_survey2 = HouseholdDashboard(self.dashboard_type, self.dashboard_id, self.dashboard_model, survey=self.survey2)
+        household_dashboard_survey2
+        print 'confirm uses HHS2 and survey2'
         self.assertEqual(household_dashboard_survey2.get_survey(), self.survey2)
         self.assertEqual(household_dashboard_survey2.get_household_structure().survey, self.survey2)
         household_structure = household_dashboard_survey2.get_household_structure()
         self.assertEqual(Survey.objects.all().count(), 3)
         print 'assert household dashboard returns correct household structure if given survey2'
         self.assertEqual(household_structure.survey.pk, self.survey2.pk)
+        print 'assert household dashboard returns correct household structure if given HH1'
+        self.assertEqual(household_structure.household.pk, self.household1.pk)
         print 'household_structure={0}, plot={1}'.format(household_structure, household_structure.plot)
+        print 'assert have 4 HHMs imported from first survey after instantiating dashboard'
+        household_dashboard_survey2.get_context()
+        self.assertEqual(HouseholdMember.objects.filter(household_structure=household_structure).count(), 4)
         print 'assert cannot create a household_member for this survey for known household members (because the dashboard created them)'
         self.assertRaises(IntegrityError, HouseholdMemberFactory, household_structure=household_structure, survey=self.survey2, registered_subject=self.household_member1.registered_subject)
         self.assertRaises(IntegrityError, HouseholdMemberFactory, household_structure=household_structure, survey=self.survey2, registered_subject=self.household_member2.registered_subject)
@@ -152,6 +181,8 @@ class ConsentTests(TestCase):
         print 'assert one RS per 2 HM'
         self.assertEqual(HouseholdMember.objects.all().count(), RegisteredSubject.objects.all().count() * 2)
         print 'assert HM1.registered_subject.subject_identifier is a subject identifier (was consented in previous survey)'
+        print HouseholdMember.objects.get(pk=household_member1.pk).registered_subject.subject_identifier
+        print HouseholdMember.objects.get(pk=household_member1.pk).registered_subject.subject_identifier_as_pk
         self.assertTrue(HouseholdMember.objects.get(pk=household_member1.pk).registered_subject.subject_identifier.startswith('066'))
         print 'consent household_member1 (it should find the existing registered subject and subject identifier)'
         consent1 = SubjectConsentFactory(household_member=household_member1)
