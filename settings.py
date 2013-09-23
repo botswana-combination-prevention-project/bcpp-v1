@@ -83,7 +83,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_r130917',
+            'NAME': 'bhp066_migrated',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -433,7 +433,7 @@ else:
 VAR_ROOT = '/var'
 LOGGING = logger.LOGGING
 CURRENT_COMMUNITY = 'mochudi'
-CURRENT_SURVEY = 'baseline'
+CURRENT_SURVEY = 'year-one'
 
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
