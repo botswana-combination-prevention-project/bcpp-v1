@@ -82,7 +82,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             self.save(using=using)
 
     def house(self):
-        url = reverse('admin:{app_label}_{model_name}__changelist'.format(app_label=self._meta.app_label, model_name=self._meta.object_name.lower()))
+        url = reverse('admin:{app_label}_{model_name}__changelist'.format(app_label=self._meta.app_label, model_name='householdstructure'))
         return """<a href="{url}?q={q}" />plot</a>""".format(url=url, q=self.plot.plot_identifier)
     house.allow_tags = True
 
