@@ -1,12 +1,12 @@
 from base_model import BaseModel
-from bhp_base_model.fields import MyUUIDField
+from django_extensions.db.fields import UUIDField
 
 
 class BaseUuidModel(BaseModel):
 
     """Base model class for all models using an UUID and not an INT for the primary key. """
 
-    id = MyUUIDField(primary_key=True)
+    id = UUIDField(primary_key=True)
 
     class Meta:
         abstract = True

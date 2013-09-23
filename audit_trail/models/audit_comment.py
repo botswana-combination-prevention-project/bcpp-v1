@@ -1,6 +1,6 @@
 from django.db import models
 from bhp_base_model.models import BaseUuidModel
-from bhp_base_model.fields import MyUUIDField
+from django_extensions.db.fields import UUIDField
 from audit_trail.choices import AUDITCODES
 
 
@@ -18,7 +18,7 @@ class AuditComment (BaseUuidModel):
         max_length=50,
         )
 
-    audit_id = MyUUIDField(
+    audit_id = UUIDField(
         db_index=True,
         editable=True)
 
