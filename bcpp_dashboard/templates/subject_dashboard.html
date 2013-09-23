@@ -77,32 +77,8 @@
         <table>
             <tr><td>{{ survey.survey_name }}</td><td colspan="2">CSO {{ household.cso_number|encrypted }}</td></tr>
 
-        {% if household_members %}
-            {% for hsm in household_members %}
-                <tr {% if hsm.first_name == household_member.first_name%}style="background:lightyellow;"{% else %}class="row1"{% endif %}>
-                <td>
-                {% if hsm.is_eligible and not hsm.present == '-' %}
-                    {{ forloop.counter }}.&nbsp;<A href="{% url subject_dashboard_url dashboard_type=dashboard_type dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{% if hsm.first_name == household_member.first_name%}<B>{% endif %}{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}&nbsp;{{ hsm.hiv_status }}</A>{% if hsm.first_name == household_member.first_name%}</B>{% endif %}
-                {% else%}                
-                    {{ forloop.counter }}.&nbsp;{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}            
-                {% endif %}
-                {% if hsm.present == '-' %}
-                    <span style="color:red;font-size:9px;vertical-align:super">Update!</span>
-                {% endif %}                    
-                </td>            
-                <td>{{ hsm.household_structure_relation }}</td>
-                <td>
-                {% if hsm.member_status %}
-                    {{ hsm.member_status }}
-                {% else %}    
-                    {{ hsm.is_eligible_label }}            
-                {% endif %}
-                </td>
-                </tr>
-            {% endfor %}
-        {% else %}    
-            <tr><td colspan="3">no members</td></tr>
-        {% endif %}
+            {{ rendered_household_members_sidebar }}
+
         </table>        
 
         </td></tr>
