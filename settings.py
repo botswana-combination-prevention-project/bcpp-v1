@@ -83,7 +83,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_migrated',
+            'NAME': 'bhp066_r130917',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
