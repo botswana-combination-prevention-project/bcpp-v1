@@ -26,6 +26,9 @@ from bhp_content_type_map.models import ContentTypeMap
 from datetime import datetime, timedelta
 from bcpp_survey.models import Survey
 from bhp_visit.models import VisitDefinition
+from bcpp_household.models import Household, HouseholdStructure
+from bcpp_household.tests.factories import HouseholdFactory, PlotFactory
+from bhp_map.classes import site_mappers
 
 
 class NaturalKeyTests(TestCase):
@@ -60,17 +63,30 @@ class NaturalKeyTests(TestCase):
         consent_catalogue = ConsentCatalogueFactory(name='bcpp year 0', content_type_map=content_type_map)
         consent_catalogue.add_for_app = 'bcpp_subject'
         consent_catalogue.save()
-        
+
         print 'consent the subject'
-        #SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
-        Survey.objects.create(survey_name = 'YEAR 0',
-                          datetime_start = datetime.today() - timedelta(days=30),
-                          datetime_end = datetime.today() + timedelta(days=180)
+        # SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
+        survey1 = Survey.objects.create(survey_name='YEAR 0',
+                          datetime_start=datetime.today() - timedelta(days=30),
+                          datetime_end=datetime.today() + timedelta(days=180)
                           )
 #         print 'Clear previous Registered Subjects: Count='+str(RegisteredSubject.objects.all().count())
 #         RegisteredSubject.objects.all().delete()
-        household_member = HouseholdMemberFactory()
-        subject_consent = SubjectConsentFactory(study_site=study_site,household_member=household_member)
+
+
+        print 'get a community name from the mapper classes'
+        community = site_mappers.get_as_list()[0]
+        print 'create a new survey'
+        site_mappers.autodiscover()
+        mapper = site_mappers.get(site_mappers.get_as_list()[0])
+        plot = PlotFactory(community=mapper().get_map_area())
+        household = Household.objects.get(plot=plot)
+        self.assertEquals(HouseholdStructure.objects.all().count(), 1)
+        household_structure = HouseholdStructure.objects.get(survey=survey1)
+
+        household_member = HouseholdMemberFactory(household_structure=household_structure)
+
+        subject_consent = SubjectConsentFactory(study_site=study_site, household_member=household_member, registered_subject=household_member.registered_subject)
         print subject_consent.subject_identifier
         print 'get registered subject'
         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
@@ -79,20 +95,20 @@ class NaturalKeyTests(TestCase):
         instances.append(registered_subject)
 
         print 'test natural key / get_by_natural_key on subject_visit'
-        
+
 #         appointment, created = Appointment.objects.get_or_create(registered_subject=registered_subject,
 #                                                                  appt_datetime = datetime.today(),
 #                                                                  visit_definition__code='1000')
-        content_type = ContentType.objects.get(app_label='bcpp_subject',model='subjectvisit')
+        content_type = ContentType.objects.get(app_label='bcpp_subject', model='subjectvisit')
         content_type_map = ContentTypeMap.objects.get(content_type=content_type)
         visit_definition = VisitDefinitionFactory(visit_tracking_content_type_map=content_type_map)
         appointment = AppointmentFactory(registered_subject=registered_subject, visit_definition=visit_definition)
         subject_visit = SubjectVisitFactory(appointment=appointment)
-        #BloodDraw : for BaseScheduledVisitModels, REPLACED BY CD4_HISTORY
-        #Grant: Independent Natural Key
+        # BloodDraw : for BaseScheduledVisitModels, REPLACED BY CD4_HISTORY
+        # Grant: Independent Natural Key
         labour_market_wages = LabourMarketWagesFactory(subject_visit=subject_visit)
-        grant = GrantFactory(labour_market_wages=labour_market_wages, subject_visit=subject_visit)#Investigate natural keys further
-        #SubjectAbsentee : for BaseRegisteredHouseholdMemberModel
+        grant = GrantFactory(labour_market_wages=labour_market_wages, subject_visit=subject_visit)  # Investigate natural keys further
+        # SubjectAbsentee : for BaseRegisteredHouseholdMemberModel
         from bcpp_subject.tests.factories import SubjectAbsenteeFactory
         subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
         from bcpp_subject.tests.factories import SubjectUndecidedFactory
@@ -100,17 +116,17 @@ class NaturalKeyTests(TestCase):
         subject_refusal = SubjectRefusalFactory(household_member=household_member)
         subject_referral = SubjectReferralFactory(household_member=household_member, registered_subject=registered_subject)
         subject_moved = SubjectMovedFactory(household_member=household_member, registered_subject=registered_subject)
-        #SubjectAbsenteeEntry : Independent Natural Key
+        # SubjectAbsenteeEntry : Independent Natural Key
         subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
         subject_undecided_entry = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
         subject_absentee_entry1 = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
-        subject_undecided_entry1 = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)   
-        #SubjectDeath : Independent Natural Keys
+        subject_undecided_entry1 = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
+        # SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
-        #SubjectLocator : Independent Natural Key
+        # SubjectLocator : Independent Natural Key
         subject_locator = SubjectLocatorFactory(subject_visit=subject_visit, registered_subject=registered_subject)
-        #SubjectOffStudy :
-        #subject_off_study = 
+        # SubjectOffStudy :
+        # subject_off_study =
         instances.append(grant)
         instances.append(subject_absentee)
         instances.append(subject_undecided)
@@ -123,17 +139,17 @@ class NaturalKeyTests(TestCase):
         instances.append(subject_absentee_entry1)
         instances.append(subject_undecided_entry)
         instances.append(subject_undecided_entry1)
-        
-        print 'INSTANCE: '+str(instances)
+
+        print 'INSTANCE: ' + str(instances)
         for obj in instances:
             print 'test natural key on {0}'.format(obj._meta.object_name)
             natural_key = obj.natural_key()
             get_obj = obj.__class__.objects.get_by_natural_key(*natural_key)
             self.assertEqual(obj.pk, get_obj.pk)
-        #pp = pprint.PrettyPrinter(indent=4)
+        # pp = pprint.PrettyPrinter(indent=4)
         for obj in instances:
             print 'test serializing/deserializing {0}'.format(obj._meta.object_name)
             outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj)
-            #pp.pprint(FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx))
+            # pp.pprint(FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx))
             for transaction in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx)):
                 self.assertEqual(transaction.object.pk, obj.pk)
