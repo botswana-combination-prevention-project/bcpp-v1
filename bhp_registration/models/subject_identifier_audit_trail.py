@@ -1,6 +1,6 @@
 from datetime import date
 from django.db import models
-from bhp_base_model.fields import MyUUIDField
+from django_extensions.db.fields import UUIDField
 from bhp_base_model.models import BaseModel
 
 
@@ -14,7 +14,7 @@ class SubjectIdentifierAuditTrail(BaseModel):
     See also AllocateSubjectIdentifier()
 
     """
-    subject_consent_id = MyUUIDField()
+    subject_consent_id = UUIDField()
 
     subject_identifier = models.CharField(
         max_length=25,

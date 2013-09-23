@@ -45,7 +45,7 @@
         </div>
             <table>
             {% for survey in surveys %}
-                <tr><td><A href="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household_structure' dashboard_id=household_structure.pk %}">{{survey.survey_name}}</A></td></tr>                             
+                <tr><td><A href="{% url household_dashboard_url dashboard_type='household' dashboard_model='household_structure' dashboard_id=household_structure.pk %}">{{survey.survey_name}}</A></td></tr>                             
             {% endfor %}
             </table>
             
@@ -56,10 +56,8 @@
 	            {% if household|is_dispatched %}
 	            	{{ household.household_identifier }}
 	            {% else %}
-	            	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
+	            	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
 	            {% endif %}
-                <b>Section:</b> {{ household.section|encrypted }}-{{ household.sub_section|encrypted }}
-                <b>CSO:</b> {{ household.cso_number|encrypted|default:'?' }}
                 {% if household_structure %}
                     <b>Members:&nbsp;</b>{{ household_structure.member_count }}
                 {% endif %}
@@ -76,19 +74,6 @@
                 {% endfor %}    
             
                 {% comment %}Link to google map or saved map {% endcomment%}
-            
-                {% if household.uploaded_map %}
-    				<a href="{{ MEDIA_URL }}{{ household.uploaded_map }}"/>view saved map</a>
-                {% else %}
-                    {% if household.gps_lon|default:household.gps_target_lon and household.gps_lat|default:household.gps_target_lat %}
-                	  <form action="{% url 'item_map_url' mapper_name=household.community identifier=household.household_identifier lon=household.gps_lon|default:household.gps_target_lon lat=household.gps_lat|default:household.gps_target_lat %}" method="post">
-					   	{% csrf_token %}
-						<p><input type="submit" value="view google map"></p>
-					  </form>
-					{% else %}
-					   <span style="background-color:red;color:white;"> missing lat/lon!</span>
-					{% endif %}	
-				{% endif %}
     		
             </div>
         {% endif %}        
@@ -96,9 +81,9 @@
     {% if has_household_log_entry %}
       {% block household_questionnaire %}
         {% if household_info %}
-            <p style="clear:both;font-size:11px;"><a href="{% url household_info_meta|admin_urlname:'change' household_info.pk %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information from Head of Household ({{household_info.household_member.first_name|encrypted }})</a></p>
+            <p style="clear:both;font-size:11px;"><a href="{% url household_info_meta|admin_urlname:'change' household_info.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information from Head of Household ({{household_info.household_member.first_name|encrypted }})</a></p>
         {% else %}
-            <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information from Head of Household</a> (Add at least one household member first)</p>
+            <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information from Head of Household</a> (Add at least one household member first)</p>
         {% endif %}
       {% endblock %}
     {% endif %}
@@ -107,7 +92,7 @@
             {% include "householdmember_dashboard_include.html" %}
             {% if has_household_log_entry %}
               {% if allow_edit_members %}
-                    <table><tr><td><A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></td></tr></table>
+                    <table><tr><td><A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A></td></tr></table>
               {% endif %}
             {% endif%}  
             {% if household.comment %}            
@@ -120,16 +105,8 @@
         {% endif%}
     {% endif%}
     
-            <H4>C. Surveys for this Household</H4>    
-            <table>
-            {% for s in surveys %}
-                {% if s == survey %}
-                    <tr><td>{{ forloop.counter }}.&nbsp;{{s.survey_name}}</td><td><span style="color:green"><small>selected</small></span></td><td>{{ s.datetime_start}}</td><td>{{ s.datetime_end}}</td></tr>
-                {% else %}
-                    <tr><td>{{ forloop.counter }}.&nbsp;<A href="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household_structure' dashboard_id=household_structure.pk %}">{{s.survey_name}}</A></td><td></td></tr>                             
-                {% endif %}
-            {% endfor %}
-            </table>
+            <H4>C. Surveys for this Household</H4>
+            {{ rendered_surveys }}    
 </div>
 {% endblock dashboard %}
 
