@@ -1,5 +1,1 @@
-from consent_helper import ConsentHelper
-from site_consent_controller import consents
-from consented_subject_identifier import ConsentedSubjectIdentifier
-from consent import Consent
-from controller import site_consents
+from base_natural_key_tests import BaseNaturalKeyTests
