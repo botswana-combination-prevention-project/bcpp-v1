@@ -6,6 +6,12 @@
 
 <div id="tile_wrapper">
 
+	{% if 'dom_randomize' in installed_apps %}
+	<H5>Randomization Children</H5>
+	<ul>
+	        <li><A href="{% url 'randomize_index_url' total_items=0 to_attend_to=0 %}">Randomize</A>
+	</ul>
+	{% endif %}
 
     {% block add_model_tile %}
     {% if add_model_opts %}
