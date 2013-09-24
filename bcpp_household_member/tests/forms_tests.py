@@ -2,7 +2,6 @@ from __future__ import print_function
 from datetime import datetime
 from django.contrib import admin
 from django.test import TestCase
-from django.db.models import get_model
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from bhp_common.utils import convert_from_camel
@@ -13,10 +12,12 @@ from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
-from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory
+from bcpp_household.tests.factories import HouseholdFactory, PlotFactory
+from bcpp_household.models import HouseholdStructure
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_subject.models import SubjectConsent
+from bhp_map.classes import site_mappers
 
 
 class FormsTests(TestCase):
@@ -51,7 +52,7 @@ class FormsTests(TestCase):
         adminuser.save()
         self.client.login(username=adminuser.username, password='pass')
 
-        content_type_map = ContentTypeMap.objects.get(content_type__model='EnrolmentChecklist'.lower())
+        content_type_map = ContentTypeMap.objects.get(content_type__model='SubjectConsent'.lower())
         membership_form = MembershipFormFactory(content_type_map=content_type_map)
         schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='enrolment', grouping_key='ELIGIBILITY')
         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='subjectvisit')
@@ -59,8 +60,15 @@ class FormsTests(TestCase):
         visit_definition.schedule_group.add(schedule_group)
 
         survey = SurveyFactory()
-        household = HouseholdFactory()
-        household_structure = HouseholdStructureFactory(household=household, survey=survey)
+        print('get site mappers')
+        site_mappers.autodiscover()
+        print('get one mapper')
+        mapper = site_mappers.get(site_mappers.get_as_list()[0])
+        print('mapper is {0}'.format(mapper().get_map_area()))
+        print('Create a plot')
+        plot = PlotFactory(community=mapper().get_map_area())
+        household = HouseholdFactory(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=survey)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)

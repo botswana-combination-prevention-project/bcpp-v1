@@ -15,7 +15,7 @@ class BaseMonthsPartnerForm (BaseSubjectModelForm):
 
     def clean(self):
         """Ensures that question about antiretrovirals is not answered if partner is known to be HIV negative."""
-        cleaned_data = super(MonthsRecentPartnerForm, self).clean()
+        cleaned_data = super(BaseMonthsPartnerForm, self).clean()
         if cleaned_data.get('firstpartnerhiv') == 'negative' and cleaned_data.get('firsthaart') in self.yes_no_unsure_options:
             raise forms.ValidationError('Do not answer this question if partners HIV status is known to be negative')
         if cleaned_data.get('firstpartnerhiv') == 'I am not sure' and cleaned_data.get('firsthaart') in self.yes_no_unsure_options:

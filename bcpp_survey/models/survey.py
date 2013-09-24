@@ -12,7 +12,7 @@ class Survey (BaseSyncUuidModel):
         verbose_name="Survey name",
         max_length=15,
         validators=[RegexValidator('BCPP\ Year\ [0-9]{1}'), ],
-        help_text="",
+        help_text="format is, form example, BCPP Year 1",
         db_index=True,
         unique=True,
         )

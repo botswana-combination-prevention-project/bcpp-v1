@@ -1,6 +1,6 @@
 <VirtualHost *:80>
 
-	#Redirect / http://192.168.1.50/bcpp_offline.html?
+	#Redirect / http://192.168.1.65/bcpp_offline.html?
 
         ServerAdmin webmaster@localhost
 
@@ -10,27 +10,27 @@
 
         CustomLog /var/log/apache2/django-bcpp-access.log combined
 
-        Alias /media/ /home/django/source/bcpp/media/
-        <Directory "/home/django/source/bcpp/media/" >
+        Alias /media/ /home/django/source/bhp066_project/media/
+        <Directory "/home/django/source/bhp066_project/media/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        Alias /sitestatic/ /home/django/source/bcpp/sitestatic/        
-        <Directory "/home/django/source/bcpp/sitestatic/" >
+        Alias /sitestatic/ /home/django/source/bhp066_project/sitestatic/        
+        <Directory "/home/django/source/bhp066_project/sitestatic/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        Alias /static/ /home/django/source/bcpp/static/
-        <Directory "/home/django/source/bcpp/static/" >
+        Alias /static/ /home/django/source/bhp066_project/static/
+        <Directory "/home/django/source/bhp066_project/static/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        WSGIScriptAlias / /home/django/source/bcpp/apache/django.wsgi
+        WSGIScriptAlias / /home/django/source/bhp066_project/apache/django.wsgi
 
-        <Directory "/home/django/source/bcpp/apache/" >
+        <Directory "/home/django/source/bhp066_project/apache/" >
           Order deny,allow
           Allow from all
         </Directory>

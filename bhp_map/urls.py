@@ -1,8 +1,5 @@
-import os
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from bhp_map.classes import site_mappers
-from django.conf import settings
-from bhp_map.exceptions import MapperError
 site_mappers.autodiscover()
 
 urlpatterns = patterns('bhp_map.views',
@@ -25,7 +22,7 @@ urlpatterns = patterns('bhp_map.views',
 #     url(r'^empty_cart/(?P<mapper_name>\w+)/', 'empty_cart'),
     url(r'^checkout/(?P<mapper_name>\w+)/', 'checkout_cart', name='map_checkout_cart_url'),
     url(r'^complete/(?P<mapper_name>\w+)/', 'save_cart', name='complete_cart_save'),
-    
+
     url(r'^upload_kmz/(?P<mapper_name>\w+)/', 'kmz_file_upload', name='kmz_file_upload_url'),
     url(r'^create_kmz_itemsdata_list.pop[0]/(?P<mapper_name>\w+)/', 'create_kmz_items', name='create_kmz_items_url'),
     url(r'^view/(?P<mapper_name>\w+)/', 'plot_item_points', name='map_plot_item_points_url'),
@@ -48,4 +45,3 @@ for mapper_name in site_mappers.get_registry().iterkeys():
     urlpatterns += patterns('bhp_map.views', url(r'^(?P<mapper_name>{0})/$'.format(mapper_name), 'map_index', name='selected_map_index_url'))
 
 urlpatterns += patterns('bhp_map.views', url(r'^', 'map_index', name='map_index_url'))
-

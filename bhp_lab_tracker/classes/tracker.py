@@ -169,13 +169,16 @@ class LabTracker(object):
         inv_display_map = {}
         if mapped:
             for k, v in self._get_display_map().iteritems():
-                inv_display_map[v] = inv_display_map.get(v, [])
-                inv_display_map[v].append(k)
-        for l in self.get_history_as_list(reference_datetime):
+                inv_display_map.update({v: inv_display_map.get(v, [k])})
+        history = self.get_history_as_list(reference_datetime)
+        for item in history:
             if mapped:
-                retlst.append(inv_display_map[l][0].lower())
+                if item in inv_display_map:
+                    retlst.append(inv_display_map[item][0].lower())
+                else:
+                    retlst.append(item)  # value not in map, so just append the value, almost an error...
             else:
-                retlst.append(l)
+                retlst.append(item)
         return ''.join(retlst)
 
     def set_is_default_value(self, is_default_value=None):

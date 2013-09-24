@@ -1,7 +1,7 @@
 import re
 from datetime import datetime, date
 #from django.views.base import View  # for 1.5
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.shortcuts import render_to_response
 from django.template import RequestContext
