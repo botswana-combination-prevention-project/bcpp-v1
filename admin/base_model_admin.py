@@ -30,6 +30,7 @@ class BaseModelAdmin (admin.ModelAdmin):
                              'or SAVE NEXT to go to the next form (if available). Additional questions may be required or may need to be corrected when you attempt to save.')
 
     def __init__(self, *args):
+        self._excluded_supplemental_fields = None
         if not isinstance(self.instructions, list):
             raise ImproperlyConfigured('ModelAdmin {0} attribute \'instructions\' must be a list.'.format(self.__class__))
         if not isinstance(self.required_instructions, basestring):
@@ -39,16 +40,25 @@ class BaseModelAdmin (admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         self.update_modified_stamp(request, obj, change)
         super(BaseModelAdmin, self).save_model(request, obj, form, change)
-        if 'supplemental_fields' in dir(self) or 'conditional_fields' in dir(self):
+        if self.get_excluded_supplemental_fields(obj):
             if self.form._meta.exclude:
                 # record which instances were selected for excluded fields, (see also the post_delete signal).
-                Excluded.objects.get_or_create(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk, excluded=self.form._meta.exclude)
+                if Excluded.objects.filter(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk):
+                    excluded = Excluded.objects.get(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk)
+                    excluded.excluded = self.get_excluded_supplemental_fields(obj)
+                    excluded.save()
+                else:
+                    Excluded.objects.create(app_label=obj._meta.app_label, object_name=obj._meta.object_name, model_pk=obj.pk, excluded=self.get_excluded_supplemental_fields(obj))
             self.form._meta.exclude = None
+            self._excluded_supplemental_fields = None
 
     def add_view(self, request, form_url='', extra_context=None):
         META = 0
         DCT = 1
         extra_context = extra_context or {}
+        self._excluded_supplemental_fields = None
+        if self.get_excluded_supplemental_fields():
+            extra_context['has_excluded_supplemental_fields'] = True
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
         extra_context['form_language_code'] = request.GET.get('form_language_code', '')
@@ -61,6 +71,8 @@ class BaseModelAdmin (admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
+        if self.has_excluded_supplemental_fields(object_id):
+            extra_context['has_excluded_supplemental_fields'] = True
         extra_context['instructions'] = self.instructions
         extra_context['required_instructions'] = self.required_instructions
         extra_context['form_language_code'] = request.GET.get('form_language_code', '')
@@ -135,43 +147,69 @@ class BaseModelAdmin (admin.ModelAdmin):
                     raise NextUrlError('next_url_name shortcut \'{0}\' (next={0}) requires GET attributes \'app_label\' and \'module_name\'. Got app_label={1}, module_name={2}.'.format(next_url_name, app_label, module_name))
                 url = reverse('admin:{app_label}_{module_name}_{mode}'.format(app_label=app_label, module_name=module_name, mode=mode))
             else:
-                dashboard_id = request.GET.get('dashboard_id')
-                dashboard_model = request.GET.get('dashboard_model')
-                dashboard_type = request.GET.get('dashboard_type')
-                entry_order = request.GET.get('entry_order')
-                visit_attr = request.GET.get('visit_attr')
-                help_link = request.GET.get('help_link')  # help link added to custom change form
-                show = request.GET.get('show', 'any')
-            if post_save:
-                pass
-            elif post_save_next:
-                # try to reverse using method next_url_in_scheduled_entry_bucket()
                 try:
-                    next_url, visit_model_instance, entry_order = self.next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order)
-                    if next_url:
-                        url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
-                               '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
-                               ).format(next_url=next_url,
-                                        next=next_url_name,
-                                        dashboard_type=dashboard_type,
-                                        dashboard_id=dashboard_id,
-                                        dashboard_model=dashboard_model,
-                                        show=show,
-                                        visit_attr='&visit_attr={0}'.format(visit_attr),
-                                        visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
-                                        entry_order='&entry_order={0}'.format(entry_order),
-                                        help_link='&help_link={0}'.format(help_link))
-                except NoReverseMatch:
+                    # try to reverse using the next_url_name and the all values in the GET string
+                    # less ['next', 'dashboard_id', 'dashboard_model', 'dashboard_type', 'show'].
+                    # dashbord_xx values are excluded because we do not want to intercept a dashboard url here
+                    kwargs = {}
+                    [kwargs.update({key: value}) for key, value in request.GET.iteritems() if key not in ['next', 'dashboard_id', 'dashboard_model', 'dashboard_type', 'show']]
+                    if kwargs:
+                        url = reverse(next_url_name, kwargs=kwargs)
+                except:
+                    # ok, failed to reverse with exactly what was given
+                    dashboard_id = request.GET.get('dashboard_id')
+                    dashboard_model = request.GET.get('dashboard_model')
+                    dashboard_type = request.GET.get('dashboard_type')
+                    entry_order = request.GET.get('entry_order')
+                    visit_attr = request.GET.get('visit_attr')
+                    help_link = request.GET.get('help_link')  # help link added to custom change form
+                    show = request.GET.get('show', 'any')
+
+            # at this point we may have a url
+            #   1. an admin url (default)
+            #   2. a reversed url using next= and all other non-dashboard GET values
+            # if we do not have a url, then we have set the dashboard values
+            # and will treat the next url as a dashboard url
+
+            if not url:
+                if post_save:
+                    # will default to a url that takes us back to the subject dashoard below
                     pass
-            elif post_cancel:
-                url = reverse(
-                    'subject_dashboard_url', kwargs={  # TODO: this defaults to the value subject_dashboard_url, not the variable!!!
-                    'dashboard_type': dashboard_type,
-                    'dashboard_id': dashboard_id,
-                    'dashboard_model': dashboard_model,
-                    'show': show})
-            else:
-                pass
+                elif post_save_next:
+                    # post_save_next is only available to subject forms
+                    # try to reverse using method next_url_in_scheduled_entry_bucket()
+                    # which jumps to the next form on the subject dashboard instead of going
+                    # back to the subject dashboard
+                    try:
+                        next_url, visit_model_instance, entry_order = self.next_url_in_scheduled_entry_bucket(obj, visit_attr, entry_order)
+                        if next_url:
+                            url = ('{next_url}?next={next}&dashboard_type={dashboard_type}&dashboard_id={dashboard_id}'
+                                   '&dashboard_model={dashboard_model}&show={show}{visit_attr}{visit_model_instance}{entry_order}{help_link}'
+                                   ).format(next_url=next_url,
+                                            next=next_url_name,
+                                            dashboard_type=dashboard_type,
+                                            dashboard_id=dashboard_id,
+                                            dashboard_model=dashboard_model,
+                                            show=show,
+                                            visit_attr='&visit_attr={0}'.format(visit_attr),
+                                            visit_model_instance='&{0}={1}'.format(visit_attr, visit_model_instance.pk),
+                                            entry_order='&entry_order={0}'.format(entry_order),
+                                            help_link='&help_link={0}'.format(help_link))
+                    except NoReverseMatch:
+                        pass
+                elif post_cancel:
+                    # cancel goes back to the dashboard
+                    # FIXME: i think the URL for the cancel button/link is calculated for by the dashboard
+                    #        for the template or reversed on the template, so this might
+                    #        be code that cannot be reached
+                    url = reverse(
+                        'subject_dashboard_url', kwargs={  # TODO: this defaults to the value subject_dashboard_url, not the variable!!!
+                        'dashboard_type': dashboard_type,
+                        'dashboard_id': dashboard_id,
+                        'dashboard_model': dashboard_model,
+                        'show': show})
+                else:
+                    pass
             if not url:
                 # default back to the dashboard
                 url = self.reverse_next_to_dashboard(next_url_name, request, obj)
@@ -185,11 +223,35 @@ class BaseModelAdmin (admin.ModelAdmin):
 
         .. note:: currently this assumes the next_url_name is reversible using dashboard criteria or returns nothing."""
         custom_http_response_redirect = None
-        if 'dashboard' in next_url_name:   # TODO: find a better way to intercept dashboard urls and ignore others
+        if 'dashboard' in next_url_name:   # FIXME: find a better way to intercept dashboard urls and ignore others
             url = self.reverse_next_to_dashboard(next_url_name, request, obj)
             custom_http_response_redirect = HttpResponseRedirect(url)
             request.session['filtered'] = None
+        else:
+            kwargs = {}
+            [kwargs.update({key: value}) for key, value in request.GET.iteritems() if key != 'next']
+            url = reverse(next_url_name, kwargs=kwargs)
+            custom_http_response_redirect = HttpResponseRedirect(url)
+            request.session['filtered'] = None
         return custom_http_response_redirect
+
+    def set_excluded_supplemental_fields(self, obj):
+        self._excluded_supplemental_fields = None
+        if 'supplemental_fields' in dir(self):
+            # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
+            if 'exclude' in dir(self.form.Meta):
+                raise AttributeError('The form.Meta attribute exclude cannot be used with \'supplemental_fields\'. See {0}.'.format(self.form))
+            # always set to None first
+            self.form._meta.exclude = None
+            self.fields, self._excluded_supplemental_fields = self.supplemental_fields.choose_fields(self.fields, self.form._meta.model, obj)
+
+    def get_excluded_supplemental_fields(self, obj=None):
+        if not self._excluded_supplemental_fields:
+            self.set_excluded_supplemental_fields(obj)
+        return self._excluded_supplemental_fields
+
+    def has_excluded_supplemental_fields(self, object_id):
+        return Excluded.objects.filter(model_pk=object_id).exists()
 
     def get_form(self, request, obj=None, **kwargs):
         """Overrides to check if conditional and supplemental fields have been defined in the admin class.
@@ -198,34 +260,28 @@ class BaseModelAdmin (admin.ModelAdmin):
             * Need to be sure that the same conditional and/or supplemental choice is given on GET and POST for both
               add and change.
         """
-        exclude_conditional_fields = None
-        exclude_supplemental_fields = None
+#         exclude_conditional_fields = None
+        #exclude_supplemental_fields = None
         if not request.method == 'POST':
-            exclude_conditional_fields = None
-            exclude_supplemental_fields = None
-            if 'conditional_fields' in dir(self):
-                # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
-                if 'exclude' in dir(self.form.Meta):
-                    raise AttributeError('The form.Meta attribute exclude cannot be used with \'conditional_fields\'. See {0}.'.format(self.form))
-                # always set to None first
-                self.form._meta.exclude = None
-                self.fields, exclude_conditional_fields = self.conditional_fields.choose_fields(self.fields, self.form._meta.model, obj)
-            if 'supplemental_fields' in dir(self):
-                # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
-                if 'exclude' in dir(self.form.Meta):
-                    raise AttributeError('The form.Meta attribute exclude cannot be used with \'supplemental_fields\'. See {0}.'.format(self.form))
-                # always set to None first
-                self.form._meta.exclude = None
-                self.fields, exclude_supplemental_fields = self.supplemental_fields.choose_fields(self.fields, self.form._meta.model, obj)
-            if exclude_conditional_fields:
-                # set exclude so that when the form is saved we use the same excluded fields from when the form was rendered
-                self.form._meta.exclude = exclude_conditional_fields
-            if exclude_supplemental_fields:
+            #exclude_conditional_fields = None
+            #exclude_supplemental_fields = None
+#             if 'conditional_fields' in dir(self):
+#                 # we are using form._meta.exclude, so make sure it was not set in the form.Meta class definition
+#                 if 'exclude' in dir(self.form.Meta):
+#                     raise AttributeError('The form.Meta attribute exclude cannot be used with \'conditional_fields\'. See {0}.'.format(self.form))
+#                 # always set to None first
+#                 self.form._meta.exclude = None
+#                 self.fields, exclude_conditional_fields = self.conditional_fields.choose_fields(self.fields, self.form._meta.model, obj)
+            #self.get_excluded_supplemental_fields(obj)
+#             if exclude_conditional_fields:
+#                 # set exclude so that when the form is saved we use the same excluded fields from when the form was rendered
+#                 self.form._meta.exclude = exclude_conditional_fields
+            if self.get_excluded_supplemental_fields(obj):
                 # set exclude so that when the form is saved we use the same excluded fields from when the form was rendered
                 if self.form._meta.exclude:
-                    self.form._meta.exclude = tuple(set(list(self.form._meta.exclude) + list(exclude_supplemental_fields)))
+                    self.form._meta.exclude = tuple(set(list(self.form._meta.exclude) + list(self.get_excluded_supplemental_fields(obj))))
                 else:
-                    self.form._meta.exclude = exclude_supplemental_fields
+                    self.form._meta.exclude = self.get_excluded_supplemental_fields(obj)
         form = super(BaseModelAdmin, self).get_form(request, obj, **kwargs)
         form = self.auto_number(form)
         return form
@@ -265,10 +321,13 @@ class BaseModelAdmin (admin.ModelAdmin):
     def reverse_next_to_dashboard(self, next_url_name, request, obj, **kwargs):
         url = ''
         if next_url_name and request.GET.get('dashboard_id') and request.GET.get('dashboard_model') and request.GET.get('dashboard_type'):
-            url = reverse(next_url_name, kwargs={'dashboard_id': request.GET.get('dashboard_id'),
-                                                           'dashboard_model': request.GET.get('dashboard_model'),
-                                                           'dashboard_type': request.GET.get('dashboard_type'),
-                                                           'show': request.GET.get('show', 'any')})
+            kwargs = {'dashboard_id': request.GET.get('dashboard_id'),
+                      'dashboard_model': request.GET.get('dashboard_model'),
+                      'dashboard_type': request.GET.get('dashboard_type')}
+            # a subject dashboard url will also have "show"
+            if request.GET.get('show'):  # this may fail if a subject template does not set show
+                kwargs.update({'show': request.GET.get('show', 'any')})
+            url = reverse(next_url_name, kwargs=kwargs)
         elif next_url_name in ['changelist', 'add']:
             app_label = request.GET.get('app_label')
             module_name = request.GET.get('module_name').lower()
