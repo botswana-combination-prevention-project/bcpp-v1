@@ -4,10 +4,7 @@ from lab_order.models import Order
 
 
 class OrderAdmin(BaseModelAdmin):
-<<<<<<< HEAD
-=======
 
->>>>>>> caeb3cf13c1541c395368b623bcf1985bc642108
     def save_model(self, request, obj, form, change):
         if not change:
             obj.order_identifier = self.model.objects.get_identifier()
@@ -25,6 +22,6 @@ class OrderAdmin(BaseModelAdmin):
     fields = ('order_datetime', 'panel', 'aliquot', 'comment', 'dmis_reference', )
     list_display = ('order_identifier', 'order_datetime', 'panel', 'aliquot', 'dmis_reference')
     list_filter = ('order_datetime', 'panel', )
-    search_fields = ['order_identifier', 'dmis_reference', 'aliquot__aliquot_identifier', 'aliquot__receive__receive_identifier', 'aliquot__receive__protocol__protocol_identifier',]
+    search_fields = ['order_identifier', 'dmis_reference', 'aliquot__aliquot_identifier', 'aliquot__receive__receive_identifier', 'aliquot__receive__protocol__protocol_identifier']
     date_hierarchy = 'order_datetime'
 admin.site.register(Order, OrderAdmin)
