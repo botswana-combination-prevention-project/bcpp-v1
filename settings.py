@@ -83,7 +83,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bcpp22',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -100,7 +100,7 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
-        'mpp15-bhp066': {
+        'bcpp17-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -108,7 +108,117 @@ else:
             'NAME': 'bhp066_survey',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.36',
+            'HOST': '192.168.1.156',
+            'PORT': '3306',
+        },
+        'bcpp22-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.87',
+            'PORT': '3306',
+        },
+        'bcpp19-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.156',
+            'PORT': '3306',
+        },
+        'bcpp03-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.87',
+            'PORT': '3306',
+        },
+        'bcpp06-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.156',
+            'PORT': '3306',
+        },
+        'bcpp01-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.87',
+            'PORT': '3306',
+        },
+        'bcpp13-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.87',
+            'PORT': '3306',
+        },
+        'bcpp11-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.156',
+            'PORT': '3306',
+        },
+        'bcpp10-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.87',
+            'PORT': '3306',
+        },
+        'bcpp07-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.87',
+            'PORT': '3306',
+        },
+        'bcpp12-bhp066_survey': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_survey',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.156',
             'PORT': '3306',
         },
 #         'mpp83': {
@@ -350,7 +460,7 @@ INSTALLED_APPS = (
     'bcpp_survey',
     'bcpp_inspector',
     'bcpp_dispatch',
-    #'tastypie',
+    'tastypie',
 #     'bcpp_survey_dashboard',
 #     'bcpp_survey_lab',
 )
