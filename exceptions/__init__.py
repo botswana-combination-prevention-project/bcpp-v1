@@ -2,4 +2,3 @@
 
 class NextUrlError(Exception):
     pass
-
