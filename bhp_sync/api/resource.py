@@ -39,7 +39,6 @@ api_key.save()
 names = ['onep','ckgathi','chazha','django','erikvw','jtshikedi','rmabutho','ankhutelang']
 """
 
-
 class OutgoingTransactionMiddleManResource(ModelResource):
  
     """ APi resource based on model OutgoingTransaction filtered on is_consumed_middleman=False and is_consumed_server=False. 
