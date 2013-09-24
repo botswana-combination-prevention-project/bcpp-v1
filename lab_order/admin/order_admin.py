@@ -4,6 +4,10 @@ from lab_order.models import Order
 
 
 class OrderAdmin(BaseModelAdmin):
+<<<<<<< HEAD
+=======
+
+>>>>>>> caeb3cf13c1541c395368b623bcf1985bc642108
     def save_model(self, request, obj, form, change):
         if not change:
             obj.order_identifier = self.model.objects.get_identifier()
