@@ -330,13 +330,6 @@ class BaseSectionView(object):
             * search_model_admin_url: 'url',
             * search_result: search_result,
             * search_result_include_file: search_result_include_file,
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> 575351681bf093f96ba476dc5d2500f1410c5543
->>>>>>> 2765fae3f077216df211bb845aa67800455c6af7
         """
         self.set_section_name(kwargs.get('section_name'))
         search_term = kwargs.get('search_term', '')
