@@ -1,22 +1,9 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
-from autocomplete.views import autocomplete, AutocompleteSettings
-from autocomplete.admin import AutocompleteAdmin
 from lab_order.models import Order
 
 
-class AliquotAutocomplete(AutocompleteSettings):
-
-    search_fields = ('^aliquot_identifier',)
-autocomplete.register(Order.aliquot, AliquotAutocomplete)
-
-
-class OrderAutocomplete(AutocompleteSettings):
-    search_fields = ('^order_identifier',)
-#autocomplete.register(Order.aliquot, AliquotAutocomplete)
-
-
-class OrderAdmin(AutocompleteAdmin, BaseModelAdmin):
+class OrderAdmin(BaseModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not change:
