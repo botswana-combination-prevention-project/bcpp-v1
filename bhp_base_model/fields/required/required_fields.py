@@ -1,24 +1,24 @@
 import socket
-from django_extensions.db.fields import UUIDField
 from django.db.models import CharField
 from django.utils.translation import ugettext as _
+# from bhp_base_model.extensions import UUIDField
 
 
-class MyUUIDField (UUIDField):
-    """
-    http://code.djangoproject.com/ticket/12235
-    subclassed to avoid MultiValueDictKeyError when editing Inline objects
-    """
-    description = _("Custom Uuid field")
-
-    def contribute_to_class(self, cls, name):
-        if self.primary_key == True:
-            assert not cls._meta.has_auto_field, "A model can't have more than one AutoField: %s %s %s; have %s" % (self, cls, name, cls._meta.auto_field)
-            super(MyUUIDField, self).contribute_to_class(cls, name)
-            cls._meta.has_auto_field = True
-            cls._meta.auto_field = self
-        else:
-            super(MyUUIDField, self).contribute_to_class(cls, name)
+#class MyUUIDField (UUIDField):
+#     """
+#     http://code.djangoproject.com/ticket/12235
+#     subclassed to avoid MultiValueDictKeyError when editing Inline objects
+#     """
+#     description = _("Custom Uuid field")
+# 
+#     def contribute_to_class(self, cls, name):
+#         if self.primary_key == True:
+#             assert not cls._meta.has_auto_field, "A model can't have more than one AutoField: %s %s %s; have %s" % (self, cls, name, cls._meta.auto_field)
+#             super(MyUUIDField, self).contribute_to_class(cls, name)
+#             cls._meta.has_auto_field = True
+#             cls._meta.auto_field = self
+#         else:
+#             super(MyUUIDField, self).contribute_to_class(cls, name)
 
 
 class HostnameCreationField (CharField):

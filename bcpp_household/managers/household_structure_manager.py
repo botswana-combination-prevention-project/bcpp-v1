@@ -18,8 +18,8 @@ class HouseholdStructureManager(models.Manager):
         .. note:: this calls for the members from the household dashboard."""
         from bcpp_dashboard.classes import HouseholdDashboard
         dashboard_type = 'household'
-        dashboard_model = 'household'
-        dashboard_id = household_structure.household.pk
+        dashboard_model = 'household_structure'
+        dashboard_id = household_structure.pk
         household_dashboard = HouseholdDashboard(dashboard_type, dashboard_id, dashboard_model, survey=household_structure.survey.pk)
         return household_dashboard.get_household_members()
 
