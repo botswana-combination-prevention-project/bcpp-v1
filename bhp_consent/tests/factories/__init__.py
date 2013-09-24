@@ -1,2 +1,0 @@
-from consent_catalogue_factory import ConsentCatalogueFactory
-from attached_model_factory import AttachedModelFactory
