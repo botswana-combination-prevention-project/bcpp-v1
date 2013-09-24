@@ -35,13 +35,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
     list_display = ('subject',
                     'household_structure',
                     'survey',
-                    'visit_date',
                     'to_locator',
-                    #'contact',
-                    'cso',
-                    'lon',
-                    'lat',
-                    'ward',
                     'hiv_history',
                     'resident',
                     'relation',
@@ -54,8 +48,10 @@ class HouseholdMemberAdmin(BaseModelAdmin):
     search_fields = [
         'first_name',
         'household_structure__id',
-        'household_structure__plot__household__household_identifier',
-        'household_structure__plot__household__id',
+        'household_structure__household__household_identifier',
+        'household_structure__household__id',
+        'household_structure__plot__plot_identifier',
+        'household_structure__plot__id',
         'relation', 'id']
 
     list_filter = ('survey__survey_name', "present", 'member_status', 'modified',

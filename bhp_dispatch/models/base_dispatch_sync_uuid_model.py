@@ -102,6 +102,7 @@ class BaseDispatchSyncUuidModel(BaseSyncUuidModel):
             #        this condition should not occur!
 
             for attrname in lookup_attrs:
+                # dig into model instance until you get to the identifier
                 lookup_value = getattr(lookup_value, attrname, None)  # is this supposed to default to self?
             if not lookup_value:
                 raise DispatchContainerError('Expected to get a value for the user_container model \'{0}\' on dispatch_container_lookup for model \'{1}\'.'.format(user_container_model_cls, self.__class__))
