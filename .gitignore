@@ -8,4 +8,5 @@ keys
 south.log
 *.bz2
 .DS_Store
-edc_lib
+edc_core
+edc_lab
