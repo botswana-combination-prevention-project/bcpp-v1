@@ -1,5 +1,5 @@
-from base_membership_form import BaseMembershipForm
 from bcpp_subject.models import SubjectUndecided, SubjectUndecidedEntry
+from base_membership_form import BaseMembershipForm
 
 
 class SubjectUndecidedEntryForm(BaseMembershipForm):

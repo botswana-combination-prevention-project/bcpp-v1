@@ -30,4 +30,3 @@ def create_household_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, Plot):
             instance.post_save_create_household(created)
-

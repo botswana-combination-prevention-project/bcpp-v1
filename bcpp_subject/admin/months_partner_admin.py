@@ -1,8 +1,9 @@
 from django.contrib import admin
-from bhp_supplemental_fields.classes import SupplementalFields
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from edc_lib.bhp_supplemental_fields.classes import SupplementalFields
 from bcpp_subject.models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
 from bcpp_subject.forms import MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm
+from subject_visit_model_admin import SubjectVisitModelAdmin
+
 
 #Recent/ Second/ Third partners [SH]: 10% in pretest, 9% in BHS and all follow-up
 class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):

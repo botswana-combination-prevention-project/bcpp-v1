@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MaxValueValidator, MinValueValidator
-from audit_trail.audit import AuditTrail
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from edc_lib.audit_trail.audit import AuditTrail
 from bcpp_subject.choices import MOBILITY, SELF_CARE, ACTIVITIES, PAIN, ANXIETY
+from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class QualityOfLife (BaseScheduledVisitModel):

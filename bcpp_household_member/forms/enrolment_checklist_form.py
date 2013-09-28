@@ -1,5 +1,5 @@
 from django import forms
-from bhp_base_form.forms import BaseModelForm
+from edc_lib.bhp_base_form.forms import BaseModelForm
 from bcpp_household_member.models import EnrolmentChecklist
 
 
@@ -11,7 +11,7 @@ class EnrolmentChecklistForm(BaseModelForm):
         if household_structure:
             if household_structure.is_dispatched_as_item():
                 raise forms.ValidationError("Household is currently dispatched. Data may not be changed.")
-        #If not a citizen, are they legall married to a Botswana citizen    
+        #If not a citizen, are they legall married to a Botswana citizen
         if cleaned_data.get('citizen') == 'No' and not cleaned_data.get('legal_marriage'):
             raise forms.ValidationError('if participant is not a citizen, is he/she married to a Botswana Citizen?')
         #if legally married, do they have a marriage certificate

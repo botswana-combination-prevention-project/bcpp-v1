@@ -1,1 +1,0 @@
-from test_model_admin import TestModelAdmin

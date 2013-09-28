@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_base_admin.admin import BaseModelAdmin
+from edc_lib.bhp_base_admin.admin import BaseModelAdmin
 from bcpp_household.models import GpsDevice
 
 

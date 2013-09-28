@@ -1,6 +1,6 @@
-from bhp_map.classes import site_mappers
-from base_household_mapper import BaseHouseholdMapper
+from edc_lib.bhp_map.classes import site_mappers
 from choices.gaborone import GABORONE_SECTIONS, GABORONE_SUB_SECTIONS, GABORONE_LANDMARKS
+from base_household_mapper import BaseHouseholdMapper
 
 
 class GaboroneHouseholdMapper(BaseHouseholdMapper):

@@ -1,5 +1,5 @@
 from django import forms
-from bhp_dispatch.forms import DispatchForm
+from edc_lib.bhp_dispatch.forms import DispatchForm
 from bcpp_survey.models import Survey
 
 

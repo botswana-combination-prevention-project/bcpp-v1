@@ -1,6 +1,6 @@
 from bhp_map.classes import Mapper
+from edc_lib.bhp_map.choices import ICONS, OTHER_ICONS
 from bcpp_household.models import Plot
-from bhp_map.choices import ICONS, OTHER_ICONS
 
 
 class BaseHouseholdMapper(Mapper):

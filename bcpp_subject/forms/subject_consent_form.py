@@ -1,21 +1,15 @@
 from datetime import date
-from django import forms
-from bhp_common.utils import check_initials_field
-from bhp_consent.forms import BaseSubjectConsentForm
 from dateutil.relativedelta import relativedelta
-from bhp_variables.models import StudySpecific
-from bhp_registration.models import RegisteredSubject
-#from bcpp_survey.models import Survey
+from django import forms
+from edc_lib.bhp_common.utils import check_initials_field
+from edc_lib.bhp_consent.forms import BaseSubjectConsentForm
+from edc_lib.bhp_variables.models import StudySpecific
+from edc_lib.bhp_registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.models import SubjectConsent  # SubjectConsentYearOne, SubjectConsentYearTwo, SubjectConsentYearThree, SubjectConsentYearFour, SubjectConsentYearFive
+from bcpp_subject.models import SubjectConsent
 
 
 class SubjectConsentForm(BaseSubjectConsentForm):
-
-#    try:
-#        survey = Survey.objects.get(survey_slug='bcpp-year-2')
-#    except:
-#        survey = None
 
     def clean(self):
 
@@ -25,12 +19,11 @@ class SubjectConsentForm(BaseSubjectConsentForm):
                 raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
             if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
                 raise forms.ValidationError('You wrote subject is NOT a minor. Guardian\'s name is not required for adults. Please correct.')
-
             #repeat validation on dob against is_minor YES/NO
             try:
                 obj = StudySpecific.objects.all()[0]
             except IndexError:
-                raise TypeError("Please add your bhp_variables site specifics")
+                raise TypeError("Please add your edc_lib.bhp_variables site specifics")
             if cleaned_data.get('consent_datetime', None):
                 consent_datetime = cleaned_data.get('consent_datetime').date()
             else:

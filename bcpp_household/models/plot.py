@@ -1,16 +1,15 @@
-import re
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
-from django.conf import settings
-from audit_trail.audit import AuditTrail
-from bhp_dispatch.models import BaseDispatchSyncUuidModel
 from django.utils.translation import ugettext as _
-from bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
-from bhp_device.classes import Device
-from bhp_map.classes import site_mappers
-from bhp_map.exceptions import MapperError
-from bhp_identifier.exceptions import IdentifierError
+from django.conf import settings
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_lib.bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc_lib.bhp_device.classes import Device
+from edc_lib.bhp_map.classes import site_mappers
+from edc_lib.bhp_map.exceptions import MapperError
+from edc_lib.bhp_identifier.exceptions import IdentifierError
 from bcpp_household.managers import PlotManager
 from bcpp_household.classes import PlotIdentifier
 from bcpp_household.choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
@@ -299,7 +298,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def include_for_dispatch(self):
         return True
-    
+
     def get_contained_households(self):
         from bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)

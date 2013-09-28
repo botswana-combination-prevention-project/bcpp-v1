@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from bhp_base_model.fields import OtherCharField
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_base_model.fields import OtherCharField
 from bcpp_list.models import LiveWith, Religion, EthnicGroups
 from bcpp.choices import MARITALSTATUS_CHOICE
 from base_scheduled_visit_model import BaseScheduledVisitModel

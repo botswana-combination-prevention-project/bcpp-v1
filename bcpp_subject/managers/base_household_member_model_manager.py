@@ -9,6 +9,6 @@ class BaseHouseholdMemberModelManager(models.Manager):
         # deserialized date follows ECMA-262 specification which has less precision than that reported by mysql
         report_datetime = dateutil.parser.parse(report_datetime)
         margin = timedelta(microseconds=999)
-        HouseholdMember = models.get_model('mochudi_household_member', 'HouseholdStructure')
+        HouseholdMember = models.get_model('bcpp_household', 'HouseholdStructure')
         household_member = HouseholdMember.objects.get_by_natural_key(household_identifier, survey_name, subject_identifier_as_pk)
         return self.get(report_datetime__range=(report_datetime - margin, report_datetime + margin), household_member=household_member)

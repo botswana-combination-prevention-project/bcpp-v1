@@ -1,4 +1,4 @@
-from bhp_identifier.models import BaseIdentifierModel
+from edc_lib.bhp_identifier.models import BaseIdentifierModel
 
 
 class PlotIdentifierHistory(BaseIdentifierModel):

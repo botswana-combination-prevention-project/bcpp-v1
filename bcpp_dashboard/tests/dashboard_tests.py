@@ -3,20 +3,18 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.test import TestCase
 from django.db import IntegrityError
-from bcpp_dashboard.classes import SubjectDashboard, HtcSubjectDashboard
 from django.contrib.contenttypes.models import ContentType
-from bhp_content_type_map.models import ContentTypeMap
-# from bhp_registration.tests.factories import RegisteredSubjectFactory
-from bhp_lab_tracker.classes import site_lab_tracker
-from bhp_map.classes import site_mappers
-from bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
-from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_appointment.models import Configuration
-from bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc_lib.bhp_content_type_map.models import ContentTypeMap
+from edc_lib.bhp_lab_tracker.classes import site_lab_tracker
+from edc_lib.bhp_map.classes import site_mappers
+from edc_lib.bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
+from edc_lib.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc_lib.bhp_appointment.models import Configuration
+from edc_lib.bhp_consent.tests.factories import ConsentCatalogueFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_household.models import HouseholdStructure, Household
 from bcpp_household.tests.factories import HouseholdFactory, PlotFactory
-# from bcpp_subject.tests.factories import SubjectConsentFactory
+from bcpp_dashboard.classes import SubjectDashboard, HtcSubjectDashboard
 from bcpp_htc_subject.tests.factories import HtcSubjectConsentFactory
 from bcpp_survey.tests.factories import SurveyFactory
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
-from registered_subject_model_admin import RegisteredSubjectModelAdmin
-from bcpp_subject.models import CeaEnrolmentChecklist
-from bcpp_subject.forms import CeaEnrolmentChecklistForm
+from ..models import CeaEnrolmentChecklist
+from ..forms import CeaEnrolmentChecklistForm
+from .registered_subject_model_admin import RegisteredSubjectModelAdmin
 
 
 class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
