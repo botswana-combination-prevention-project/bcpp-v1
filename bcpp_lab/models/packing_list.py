@@ -1,4 +1,4 @@
-from lab_packing.models import BasePackingList
+from edc_lab.lab_packing.models import BasePackingList
 
 
 class PackingList(BasePackingList):

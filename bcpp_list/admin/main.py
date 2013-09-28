@@ -1,12 +1,12 @@
 from django.contrib import admin
-from bhp_base_admin.admin import BaseModelAdmin
-from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith, 
-                              NeighbourhoodProblems, CircumcisionBenefits, 
-                              FamilyPlanning, MedicalCareAccess, HouseholdSurveyCode, 
-                              HouseholdSurveyReason, HouseholdSurveySource, 
-                              SurveyGroup, HouseholdStructureRelation, 
-                              HouseholdSurveyStatus, SubjectAbsenteeReason, 
-                              SubjectMovedReason, SubjectUndecidedReason, 
+from edc_core.bhp_base_admin.admin import BaseModelAdmin
+from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
+                              NeighbourhoodProblems, CircumcisionBenefits,
+                              FamilyPlanning, MedicalCareAccess, HouseholdSurveyCode,
+                              HouseholdSurveyReason, HouseholdSurveySource,
+                              SurveyGroup, HouseholdStructureRelation,
+                              HouseholdSurveyStatus, SubjectAbsenteeReason,
+                              SubjectMovedReason, SubjectUndecidedReason,
                               PartnerResidency, HeartDisease,
                               Diagnoses, Religion, EthnicGroups, ReferredTo,
                               ReferredFor)
@@ -120,7 +120,6 @@ admin.site.register(EthnicGroups, EthnicGroupsAdmin)
 class ReferredForAdmin(BaseModelAdmin):
     pass
 admin.site.register(ReferredFor, ReferredForAdmin)
-
 
 
 class ReferredToAdmin(BaseModelAdmin):

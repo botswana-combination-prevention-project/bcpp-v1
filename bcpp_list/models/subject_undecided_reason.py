@@ -1,8 +1,7 @@
-from bhp_base_model.models import BaseListModel
+from edc_core.bhp_base_model.models import BaseListModel
 
 
 class SubjectUndecidedReason(BaseListModel):
-    
 
     class Meta:
         app_label = 'bcpp_list'

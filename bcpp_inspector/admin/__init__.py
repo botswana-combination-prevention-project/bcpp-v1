@@ -1,1 +1,1 @@
-from requisition_inspector_admin import RequisitionInspectorAdmin
+from .requisition_inspector_admin import RequisitionInspectorAdmin

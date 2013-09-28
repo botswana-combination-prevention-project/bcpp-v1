@@ -1,1 +1,1 @@
-from subject_requisition_inspector import SubjectRequisitionInspector
+from .subject_requisition_inspector import SubjectRequisitionInspector

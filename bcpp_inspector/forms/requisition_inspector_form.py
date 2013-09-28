@@ -1,5 +1,5 @@
 from django import forms
-from bcpp_inspector.models import SubjectRequisitionInspector
+from ..models import SubjectRequisitionInspector
 
 
 class RequisitionInspectorForm (forms.Form):
